@@ -12,7 +12,7 @@ dojo.provide("dojo.widget.SortableTable");
 
 dojo.deprecated("SortableTable will be removed in favor of FilteringTable.", "0.5");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.date.format");
 dojo.require("dojo.html.*");
 dojo.require("dojo.html.selection");

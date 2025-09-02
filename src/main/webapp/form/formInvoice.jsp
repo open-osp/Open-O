@@ -13,9 +13,12 @@
     }
 %>
 
-<%@ page import="oscar.form.*, oscar.form.data.*" %>
+<%@ page import="ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 
 <jsp:useBean id="providerBean" class="java.util.Properties"
              scope="session"/>
@@ -34,7 +37,7 @@
 
     //get project_home
     String project_home = request.getContextPath().substring(1);
-    //get provider name
+    //get providers name
     String providerName = providerBean.getProperty("" + provNo, "");
     String[] temp = providerName.split(",");
     if (temp.length > 1) {

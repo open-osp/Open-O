@@ -34,11 +34,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ConsultationResponse;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.consultations.ConsultationResponseSearchFilter;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ConsultationResponse;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.ProfessionalSpecialist;
+import ca.openosp.openo.commn.dao.ConsultResponseDao;
+import ca.openosp.openo.commn.dao.ProfessionalSpecialistDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.consultations.ConsultationResponseSearchFilter;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ConsultResponseDaoTest extends DaoTestFixtures {
 
@@ -48,7 +51,7 @@ public class ConsultResponseDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("consultationResponse", "professionalSpecialists", "demographic", "lst_gender", "provider",
+        SchemaUtils.restoreTable("consultationResponse", "professionalSpecialists", "demographic", "lst_gender", "providers",
                 "demographic_merged", "admission", "program", "health_safety");
     }
 

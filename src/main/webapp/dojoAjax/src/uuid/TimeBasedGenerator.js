@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.uuid.TimeBasedGenerator");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.type");
 dojo.require("dojo.lang.assert");
 

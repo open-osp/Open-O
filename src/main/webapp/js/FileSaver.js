@@ -78,7 +78,7 @@ var saveAs = saveAs
                 }
             }
             , FileSaver = function (blob, name) {
-                // First try a.download, then web filesystem, then object URLs
+                // First try a.download, then www filesystem, then object URLs
                 var
                     filesaver = this
                     , type = blob.type
@@ -141,7 +141,7 @@ var saveAs = saveAs
                     dispatch_all();
                     return;
                 }
-                // Object and web filesystem URLs have a problem saving in Google Chrome when
+                // Object and www filesystem URLs have a problem saving in Google Chrome when
                 // viewed in a tab, so I force save with application/octet-stream
                 // http://code.google.com/p/chromium/issues/detail?id=91158
                 if (view.chrome && type && type !== force_saveable_type) {

@@ -40,8 +40,8 @@
 %>
 
 <%@page import="java.util.Date" %>
-<%@page import="org.oscarehr.integration.mchcv.HCMagneticStripe" %>
-<%@page import="org.oscarehr.integration.mchcv.HCValidationResult" %>
+<%@page import="ca.openosp.openo.integration.mchcv.HCMagneticStripe" %>
+<%@page import="ca.openosp.openo.integration.mchcv.HCValidationResult" %>
 
 <html>
 <head>

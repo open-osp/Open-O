@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.lang.type");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.lang.whatAmI = function (value) {
     dojo.deprecated("dojo.lang.whatAmI", "use dojo.lang.getType instead", "0.5");

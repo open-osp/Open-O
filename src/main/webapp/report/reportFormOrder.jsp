@@ -13,9 +13,11 @@
     }
 %>
 <%@ page errorPage="../appointment/errorpage.jsp"
-         import="java.util.*, oscar.oscarReport.data.*" %>
-<%@ page import="oscar.login.*" %>
+         import="java.util.*, ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.login.*" %>
 <%@ page import="org.apache.commons.lang.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptReportConfigData" %>
+<%@ page import="ca.openosp.openo.report.data.RptReportItem" %>
 <%
     String reportId = request.getParameter("id") != null ? request.getParameter("id") : "0";
     String tableName = request.getParameter("tableName") != null ? request.getParameter("tableName") : "";

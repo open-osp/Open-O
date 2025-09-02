@@ -32,8 +32,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Dxresearch;
+import ca.openosp.openo.commn.dao.DxresearchDAO;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DxresearchDAOTest extends DaoTestFixtures {
 
@@ -46,7 +47,7 @@ public class DxresearchDAOTest extends DaoTestFixtures {
     @Before
     public void before() throws Exception {
         SchemaUtils.restoreTable("dxresearch", "demographic", "lst_gender", "admission", "demographic_merged",
-                "program", "health_safety", "provider", "providersite", "site", "program_team",
+                "program", "health_safety", "providers", "providersite", "site", "program_team",
                 "measurements", "measurementType", "measurementsExt", "quickList", "icd9", "ichppccode",
                 "billing", "billingdetail");
     }

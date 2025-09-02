@@ -24,9 +24,9 @@
 %>
 
 <%@page contentType="text/html" %>
-<%@page import="java.util.*,oscar.oscarLab.ca.on.CommonLabResultData,org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.QueueDao, oscar.oscarMDS.data.ProviderData" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.model.Provider" %>
+<%@page import="java.util.*,ca.openosp.openo.lab.ca.on.CommonLabResultData,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.dao.QueueDao, ca.openosp.openo.mds.data.ProviderData" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao, ca.openosp.openo.commn.model.Provider" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
@@ -57,7 +57,7 @@
     <link rel="stylesheet" type="text/css" href="<%=context%>/share/css/OscarStandardLayout.css"/>
     <script type="text/javascript">
         function setProvider(select) {
-            jQuery("#provider").val(select.options[select.selectedIndex].value);
+            jQuery("#providers").val(select.options[select.selectedIndex].value);
         }
     </script>
     <style type="text/css">

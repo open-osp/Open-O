@@ -44,17 +44,29 @@
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="oscar.oscarBilling.ca.bc.data.*,oscar.*,org.oscarehr.common.model.*" %>
-<%@page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*,oscar.oscarBilling.ca.bc.MSP.*" %>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.springframework.web.context.support.WebApplicationContextUtils, oscar.entities.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="oscar.oscarBilling.ca.on.administration.GstControl2Action" %>
-<%@ page import="oscar.oscarBilling.ca.bc.administration.GstReport" %>
+<%@page import="ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.*,ca.openosp.openo.commn.model.*" %>
+<%@page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.openo.billing.ca.bc.MSP.*" %>
+<%@page import="org.springframework.web.context.WebApplicationContext,org.springframework.web.context.support.WebApplicationContextUtils, ca.openosp.openo.entities.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.administration.GstReport" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.entities.Billingmaster" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MSPBillingNote" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MSPReconcile" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingCodeData" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingNote" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 
 

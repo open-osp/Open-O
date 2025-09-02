@@ -8,7 +8,7 @@
 		http://dojotoolkit.org/community/licensing.shtml
 */
 
-dojo.require("dojo.io.common"); // io/common.js provides setIFrameSrc and the IO module
+dojo.require("dojo.io.commons"); // io/commons.js provides setIFrameSrc and the IO module
 dojo.provide("dojo.io.cometd");
 dojo.require("dojo.AdapterRegistry");
 dojo.require("dojo.json");
@@ -19,7 +19,7 @@ dojo.require("dojo.io.IframeIO");
 dojo.require("dojo.io.ScriptSrcIO"); // for x-domain long polling
 dojo.require("dojo.io.cookie"); // for peering
 dojo.require("dojo.event.*");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.func");
 
 /*

@@ -41,25 +41,27 @@
 
 <%@page import="java.util.GregorianCalendar" %>
 <%@page import="java.sql.ResultSet" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicWs" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicWs" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.net.URLEncoder" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@ page import="org.oscarehr.common.model.Admission" %>
-<%@ page import="org.oscarehr.common.dao.AdmissionDao" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.managers.PatientConsentManager" %>
-<%@page import="org.oscarehr.common.model.ConsentType" %>
-<%@page import="org.oscarehr.common.model.Facility" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.GetConsentTransfer" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Admission" %>
+<%@ page import="ca.openosp.openo.commn.dao.AdmissionDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.managers.PatientConsentManager" %>
+<%@page import="ca.openosp.openo.commn.model.ConsentType" %>
+<%@page import="ca.openosp.openo.commn.model.Facility" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.GetConsentTransfer" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctProgram" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
     ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
@@ -99,8 +101,8 @@
     MiscUtils.getLogger().info("LINK DEMOGRAPHIC #### ProviderNo :" + providerNo + " ,demo No :" + demographic.getDemographicNo() + " , remoteFacilityId :" + remoteFacilityId + " ,remoteDemographicId " + remoteDemographicId + " orig demo " + demoNoRightNow);
 
 
-    //--- add to program so the caisi program access filtering doesn't cause a security problem ---
-    oscar.oscarEncounter.data.EctProgram program = new oscar.oscarEncounter.data.EctProgram(request.getSession());
+    //--- add to program so the caisi program access filtering doesn't cause a sec problem ---
+    EctProgram program = new EctProgram(request.getSession());
     String progId = program.getProgram(providerNo);
     if (progId.equals("0")) {
         Program p = programDao.getProgramByName("OSCAR");
@@ -115,7 +117,7 @@
     admission.setClientId(demographic.getDemographicNo());
     admission.setProgramId(Integer.parseInt(progId));
     admission.setProviderNo(providerNo);
-    admission.setAdmissionDate(oscar.MyDateFormat.getSysDate(admissionDate));
+    admission.setAdmissionDate(MyDateFormat.getSysDate(admissionDate));
     admission.setAdmissionStatus("current");
     admission.setTeamId(null);
     admission.setTemporaryAdmission(false);

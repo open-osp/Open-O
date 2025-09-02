@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.io.RhinoIO");
 
-dojo.require("dojo.io.common");
+dojo.require("dojo.io.commons");
 dojo.require("dojo.lang.func");
 dojo.require("dojo.lang.array");
 dojo.require("dojo.string.extras");

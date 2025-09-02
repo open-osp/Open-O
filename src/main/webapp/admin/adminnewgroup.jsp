@@ -29,12 +29,12 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="../provider/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.model.MyGroupPrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
 
 <%
     MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
@@ -81,7 +81,7 @@
                         }
                     }
                     if (checked == false) {
-                        alert('You must choose a provider');
+                        alert('You must choose a providers');
                         return false;
                     }
                     return true;

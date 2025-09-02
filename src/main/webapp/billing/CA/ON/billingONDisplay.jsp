@@ -63,13 +63,16 @@
 
 %>
 
-<%@ page import="java.math.*,java.util.*,java.sql.*,oscar.*,java.net.*"
+<%@ page import="java.math.*,java.util.*,java.sql.*,ca.openosp.*,java.net.*"
          errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ClinicNbr" %>
-<%@page import="org.oscarehr.common.dao.ClinicNbrDao" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicNbr" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicNbrDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingCorrectionPrep" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.*" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%
     GregorianCalendar now = new GregorianCalendar();

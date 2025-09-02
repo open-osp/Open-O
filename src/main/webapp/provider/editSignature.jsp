@@ -31,9 +31,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="oscar.oscarProvider.data.*" %>
-<%@ page import="oscar.oscarProvider.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.providers.data.*" %>
+<%@ page import="ca.openosp.openo.providers.pageUtil.*" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.providers.data.ProSignatureData" %>
 
 <%
     if (session.getValue("user") == null)
@@ -62,9 +63,7 @@
         <iframe id="hiddenFrame" src="javascript:void(0)" style="display: none"></iframe>
         <script>
             function toggleSig(n) {
-                var fr = document.getElementById("hiddenFrame");
-                var baseURL = "/" + "<%=application.getServletContextName()%>";
-                fr.src = baseURL + "/infirm.do?action=toggleSig&demoNo=" + n;
+                // Function disabled - infirm.do action no longer exists
             }
         </script>
 
@@ -98,8 +97,6 @@
 
                 <!-- add by caisi -->
                 <caisi:isModuleLoad moduleName="caisi">
-                    <c:import url="/infirm.do?action=getSig"/>
-
                     <INPUT TYPE="checkbox"
                             <%= ((Boolean)session.getAttribute("signOnNote")).booleanValue()?"checked":""%>
                            onchange="toggleSig('<%= curUser_no %>')">also sign the signiture in encounter notes
@@ -115,7 +112,6 @@
                 <br>
                 <!-- add by caisi -->
                 <caisi:isModuleLoad moduleName="caisi">
-                    <c:import url="/infirm.do?action=getSig"/>
                     <INPUT TYPE="checkbox"
                             <%= ((Boolean)session.getAttribute("signOnNote")).booleanValue()?"checked":""%>
                            onchange="toggleSig('<%= curUser_no %>')">also sign the signature in encounter notes

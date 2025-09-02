@@ -40,12 +40,20 @@
 
 <% long startTime = System.currentTimeMillis(); %>
 <%@ page
-        import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*,java.net.*" %>
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*" %>
 <%@ page
-        import="org.jdom.Element,oscar.oscarEncounter.oscarMeasurements.data.*,org.jdom.output.Format,org.jdom.output.XMLOutputter,oscar.oscarEncounter.oscarMeasurements.util.*,java.io.*" %>
+        import="org.jdom.Element,ca.openosp.openo.encounter.oscarMeasurements.data.*,org.jdom.output.Format,org.jdom.output.XMLOutputter,ca.openosp.openo.encounter.oscarMeasurements.util.*,java.io.*" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.FlowSheetCustomization" %>
+<%@ page import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.FlowSheetCustomization" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.FlowSheetItem" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.Recommendation" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.RecommendationCondition" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetCondition" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetColour" %>
+<%@ page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>

@@ -20,20 +20,21 @@
 <%
     String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*" errorPage="../../../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*" errorPage="../../../errorpage.jsp" %>
 
 
-<jsp:useBean id="SxmlMisc" class="oscar.SxmlMisc" scope="session"/>
+<jsp:useBean id="SxmlMisc" class="ca.openosp.SxmlMisc" scope="session"/>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@page import="org.oscarehr.billing.CA.model.BillingInr" %>
-<%@page import="org.oscarehr.billing.CA.dao.BillingInrDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@page import="ca.openosp.openo.billing.CA.model.BillingInr" %>
+<%@page import="ca.openosp.openo.billing.CA.dao.BillingInrDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     BillingInrDao billingInrDao = SpringUtils.getBean(BillingInrDao.class);
 %>

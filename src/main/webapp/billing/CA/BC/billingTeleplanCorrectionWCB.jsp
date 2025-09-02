@@ -38,22 +38,26 @@
     }
 %>
 
-<%@page import="oscar.oscarBilling.ca.bc.data.*,oscar.*" %>
-<%@page import="java.util.*,java.io.*,oscar.oscarBilling.ca.bc.MSP.*,oscar.oscarBilling.ca.bc.administration.*,java.sql.*" %>
+<%@page import="ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.*" %>
+<%@page import="java.util.*,java.io.*,ca.openosp.openo.billing.ca.bc.MSP.*,ca.openosp.openo.billing.ca.bc.administration.*,java.sql.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@ page import="oscar.entities.Billingmaster" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingmasterDAO" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanC12" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanC12Dao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicLocation" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.entities.Billingmaster" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanC12" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanC12Dao" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.administration.TeleplanCorrectionFormWCB" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MspErrorCodes" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);

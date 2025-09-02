@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.widget.html.layout");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.string.extras");
 dojo.require("dojo.html.style");
 dojo.require("dojo.html.layout");

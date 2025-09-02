@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.Chart");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.charting.PlotArea");
 
 dojo.charting.Chart = function (

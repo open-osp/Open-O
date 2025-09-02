@@ -25,8 +25,8 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -43,12 +43,14 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil" %>
-<%@page import="org.oscarehr.sharingcenter.dao.AffinityDomainDao" %>
-<%@page import="org.oscarehr.sharingcenter.model.AffinityDomainDataObject" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page
-        import="java.util.*,oscar.oscarDemographic.data.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*,oscar.oscarDemographic.pageUtil.*" %>
+        import="java.util.*,ca.openosp.openo.demographic.data.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,ca.openosp.openo.demographic.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.demographic.pageUtil.Util" %>
+<%@ page import="ca.openosp.openo.demographic.pageUtil.DemographicExportAction42Action" %>
+<%@ page import="ca.openosp.openo.demographic.pageUtil.PGPEncrypt" %>
+<%@ page import="ca.openosp.openo.report.data.DemographicSets" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -57,7 +59,7 @@
 
 <%
 
-    oscar.OscarProperties op = oscar.OscarProperties.getInstance();
+    OscarProperties op = OscarProperties.getInstance();
     String tmp_dir = op.getProperty("TMP_DIR");
     boolean tmp_dir_ready = Util.checkDir(tmp_dir);
 
@@ -73,17 +75,11 @@
     DemographicSets ds = new DemographicSets();
     List<String> sets = ds.getDemographicSets();
 
-//  oscar.oscarReport.data.RptSearchData searchData  = new oscar.oscarReport.data.RptSearchData();
+//  ca.openosp.openo.report.data.RptSearchData searchData  = new ca.openosp.openo.report.data.RptSearchData();
 //  ArrayList queryArray = searchData.getQueryTypes();
 
     String userRole = (String) session.getAttribute("userrole");
 
-// MARC-HI's Sharing Center
-    boolean isSharingCenterEnabled = SharingCenterUtil.isEnabled();
-
-//get all installed affinity domains
-    AffinityDomainDao affDao = SpringUtils.getBean(AffinityDomainDao.class);
-    List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
 %>
 
 <html>
@@ -331,24 +327,6 @@
                 <% } %>
 
                 <input class="btn btn-primary" type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="export"/>"/>
-
-                <% if (isSharingCenterEnabled) { %>
-                <!-- Sharing Center Submission -->
-                <br/>
-                <br/>
-                <div class="pull-left">
-                    <select name="affinityDomain" class="pull-left">
-
-                        <% for (AffinityDomainDataObject domain : affinityDomains) { %>
-                        <option value="<%=domain.getId()%>"><%=domain.getName()%>
-                        </option>
-                        <% } %>
-
-                    </select>
-                    <input type="submit" class="btn btn-info" id="SendToAffinityDomain" name="SendToAffinityDomain"
-                           value="Share">
-                </div>
-                <% } %>
 
             </form>
 

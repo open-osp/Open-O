@@ -22,13 +22,13 @@
     Toronto, Ontario, Canada
 
 --%>
-    <%@page import="org.oscarehr.common.model.UserProperty"%>
-    <%@page import="org.oscarehr.util.LoggedInInfo"%>
-    <%@page import="org.oscarehr.util.SpringUtils"%>
-    <%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-    <%@page import="oscar.OscarProperties"%>
+    <%@page import="ca.openosp.openo.commn.model.UserProperty"%>
+    <%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
+    <%@page import="ca.openosp.openo.utility.SpringUtils"%>
+    <%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO"%>
+    <%@page import="ca.openosp.OscarProperties"%>
     <%@page contentType="text/javascript"%>
-    <%@page import="org.oscarehr.casemgmt.common.Colour"%>
+    <%@page import="ca.openosp.openo.casemgmt.common.Colour"%>
 
     var numNotes = 0;   //How many saved notes do we have?
     var ctx;        //url context
@@ -518,12 +518,7 @@
                 ctx + "/oscarEncounter/displayMeasurements.do?hC=" + Colour.measurements,
                 ctx + "/oscarEncounter/displayConsultation.do?hC=" + Colour.consultation,
                 ctx + "/oscarEncounter/displayHRM.do?hC=" + Colour.hrmDocuments,
-                <%--ctx + "/oscarEncounter/displayMyOscar.do?hC=",--%>
-                <%--ctx + "/oscarEncounter/displayEconsultation.do?hC=",--%>
-                <%--ctx + "/oscarEncounter/displayEHR.do?hC=",--%>
-                <%--ctx + "/oscarEncounter/displayQuestimed.do?hC=",--%>
             ];
-            <%--var leftNavBarTitles = [ "preventions", "tickler", "Dx", "forms", "eforms", "docs","labs", "msgs", "measurements", "consultation", "HRM","PHR", "eams", "eConsult","ehr","Questimed"];--%>
             var leftNavBarTitles = ["preventions", "tickler", "Dx", "forms", "eforms", "docs", "labs", "msgs", "measurements", "consultation", "HRM"];
             var rightNavBar = [
                 ctx + "/oscarEncounter/displayAllergy.do?hC=" + Colour.allergy,
@@ -3426,40 +3421,6 @@ function autoSave(async) {
         return false;
     }
 
-    function sendToPhrr() {
-        if ($("printopDates").checked && !printDateRange()) {
-            return false;
-        } else if ($("printopAll").checked)
-            printAll();
-
-        if ($F("notes2print").length == 0 && $F("printCPP") == "false" && $F("printRx") == "false") {
-            alert(nothing2PrintMsg);
-            return false;
-        }
-
-        var url = ctx + "/SendToPhr.do";
-        var frm = document.forms["caseManagementEntryForm"];
-
-        if (frm.module == null) {
-            var moduleInput = document.createElement('input');
-            moduleInput.setAttribute("type", "hidden");
-            moduleInput.setAttribute("name", "module");
-            moduleInput.setAttribute("value", "echart");
-            frm.appendChild(moduleInput);
-        }
-
-        frm.method.value = "print";
-        var oldurl = frm.action;
-        frm.action = url;
-        sendToPhrPopup("", "sendtophr");
-        frm.target = "sendtophr";
-        frm.submit();
-        frm.target = "";
-        frm.action = oldurl;
-
-
-        return false;
-    }
 
     //print today's notes
     function printToday(e) {

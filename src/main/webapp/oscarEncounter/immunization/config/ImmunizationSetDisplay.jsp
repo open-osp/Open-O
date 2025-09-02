@@ -24,7 +24,9 @@
 
 --%>
 
-<%@ page import="java.util.*, org.w3c.dom.*, oscar.util.*" %>
+<%@ page import="java.util.*, org.w3c.dom.*, ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.config.data.EctImmImmunizationSetData" %>
+<%@ page import="ca.openosp.openo.util.UtilXML" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -106,7 +108,7 @@
     <form name="schedule">
         <%
             String setId = (String) request.getAttribute("setId");
-            oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData setData = new oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData();
+            EctImmImmunizationSetData setData = new EctImmImmunizationSetData();
             String xmlString = setData.getSetXMLDoc(setId);
 
             Document xmlDoc = UtilXML.parseXML(xmlString);
@@ -247,7 +249,7 @@
             String givenDate = cell.getAttribute("givenDate");
             String refusedDate = cell.getAttribute("refusedDate");
             String lot = cell.getAttribute("lot");
-            String provider = cell.getAttribute("provider");
+            String provider = cell.getAttribute("providers");
             String comments = cell.getAttribute("comments");
 
             s += "<input type=hidden id='" + id + "_givenDate'>"

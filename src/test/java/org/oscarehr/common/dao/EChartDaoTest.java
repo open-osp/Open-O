@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.EChart;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.EChart;
+import ca.openosp.openo.commn.dao.EChartDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class EChartDaoTest extends DaoTestFixtures {
 

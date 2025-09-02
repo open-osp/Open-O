@@ -25,6 +25,7 @@ package oscar.form.pharmaForms.formBPMH.util;
 
 import static org.junit.Assert.*;
 
+import ca.openosp.openo.form.pharmaForms.formBPMH.util.CaseNoteParser;
 import org.junit.Test;
 
 public class CaseNoteParserTest {

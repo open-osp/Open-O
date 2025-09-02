@@ -29,27 +29,24 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashSet;
 
-import org.hl7.fhir.dstu3.model.Attachment;
+import ca.openosp.openo.integration.fhir.builder.FhirBundleBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.oscarehr.common.model.Clinic;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Prevention;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Security;
-import org.oscarehr.integration.fhir.manager.OscarFhirConfigurationManager;
-import org.oscarehr.integration.fhir.model.ClinicalImpression;
-import org.oscarehr.integration.fhir.model.Immunization;
-import org.oscarehr.integration.fhir.model.AbstractOscarFhirResource;
-import org.oscarehr.integration.fhir.model.Patient;
-import org.oscarehr.integration.fhir.model.PerformingPractitioner;
-import org.oscarehr.integration.fhir.model.Practitioner;
-import org.oscarehr.integration.fhir.model.SubmittingPractitioner;
-import org.oscarehr.integration.fhir.resources.Settings;
-import org.oscarehr.integration.fhir.resources.constants.FhirDestination;
-import org.oscarehr.integration.fhir.resources.constants.Region;
-import org.oscarehr.util.LoggedInInfo;
+import ca.openosp.openo.commn.model.Clinic;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Prevention;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.Security;
+import ca.openosp.openo.integration.fhir.manager.OscarFhirConfigurationManager;
+import ca.openosp.openo.integration.fhir.model.Immunization;
+import ca.openosp.openo.integration.fhir.model.AbstractOscarFhirResource;
+import ca.openosp.openo.integration.fhir.model.Patient;
+import ca.openosp.openo.integration.fhir.model.PerformingPractitioner;
+import ca.openosp.openo.integration.fhir.model.SubmittingPractitioner;
+import ca.openosp.openo.integration.fhir.resources.Settings;
+import ca.openosp.openo.integration.fhir.resources.constants.FhirDestination;
+import ca.openosp.openo.integration.fhir.resources.constants.Region;
+import ca.openosp.openo.utility.LoggedInInfo;
 
 public class FhirMessageBuilderTest {
 
@@ -201,19 +198,19 @@ public class FhirMessageBuilderTest {
     //     System.out.println();
 
     //     LoggedInInfo loggedInInfo = new LoggedInInfo();
-    //     Security security = new Security();
-    //     security.setOneIdEmail("oneid@oneidemail.com");
-    //     loggedInInfo.setLoggedInProvider(provider);
-    //     loggedInInfo.setLoggedInSecurity(security);
+    //     Security sec = new Security();
+    //     sec.setOneIdEmail("oneid@oneidemail.com");
+    //     loggedInInfo.setLoggedInProvider(providers);
+    //     loggedInInfo.setLoggedInSecurity(sec);
 
-    //     Settings settings = new Settings(FhirDestination.BORN, Region.ON);
+    //     Settings settings = new Settings(FhirDestination.DHIR, Region.ON);
 
     //     OscarFhirConfigurationManager configurationManager = new OscarFhirConfigurationManager(loggedInInfo, settings);
     //     // normally this is done inside the Configuration manager but this test will not instantiate a DAO
     //     configurationManager.getSender().setClinic(clinic);
 
     //     Patient patient = new Patient(demographic, configurationManager);
-    //     Practitioner practitioner = new Practitioner(provider, configurationManager);
+    //     Practitioner practitioner = new Practitioner(providers, configurationManager);
 
     //     // Get the ClinicalImpresson as the Attachment resource for this message. ClinicalImpression is created
     //     // to automatically map patient medical annotations. In this case it is being customized after instantiation.
@@ -263,13 +260,13 @@ public class FhirMessageBuilderTest {
 
         patient.setFocusResource(Boolean.TRUE);
 
-        // The doctor type should be identified in the provider profile.
+        // The doctor type should be identified in the providers profile.
         PerformingPractitioner performing = new PerformingPractitioner(provider, configurationManager); // this could be a nurse or the same as the submitting
 
-        // A nurse should be identified in the provider profile.
+        // A nurse should be identified in the providers profile.
         PerformingPractitioner performing2 = new PerformingPractitioner(provider, configurationManager); // this second one is the nurse.
 
-        // this is the MRP or the provider in charge.
+        // this is the MRP or the providers in charge.
         // this practitioner must be active AND have a working ONEid code.
         SubmittingPractitioner submitting = new SubmittingPractitioner(provider, configurationManager);
 

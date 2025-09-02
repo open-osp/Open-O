@@ -24,14 +24,12 @@
 
 --%>
 
-<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil" %>
-<%@page import="org.oscarehr.sharingcenter.dao.AffinityDomainDao" %>
-<%@page import="org.oscarehr.sharingcenter.model.AffinityDomainDataObject" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 
-<%@page import="java.util.*,oscar.eform.*" %>
-<%@page import="org.oscarehr.web.eform.EfmPatientFormList" %>
+<%@page import="java.util.*,ca.openosp.openo.eform.*" %>
+<%@page import="ca.openosp.openo.web.eform.EfmPatientFormList" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%
@@ -55,14 +53,6 @@
     String appointment = request.getParameter("appointment");
     String parentAjaxId = request.getParameter("parentAjaxId");
 
-    boolean isMyOscarAvailable = EfmPatientFormList.isMyOscarAvailable(Integer.parseInt(demographic_no));
-
-    // MARC-HI's Sharing Center
-    boolean isSharingCenterEnabled = SharingCenterUtil.isEnabled();
-
-    // get all installed affinity domains
-    AffinityDomainDao affDao = SpringUtils.getBean(AffinityDomainDao.class);
-    List<AffinityDomainDataObject> affinityDomains = affDao.getAllAffinityDomains();
 
     int pageNo = 1;
     int pageSize = 25;
@@ -120,19 +110,6 @@
         <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
         <script type="text/javascript" language="javascript">
             $(document).ready(function () {
-                var shareDocumentsTarget = "../sharingcenter/documents/shareDocumentsAction.jsp";
-
-                // Share button click event
-                $("#SendToAffinityDomain").click(function () {
-                    // change the form's action (share page) then submit (only if forms are selected)
-                    if ($("input:checkbox[name='sendToPhr']:checked").size() > 0) {
-                        $("#sendToPhrForm").attr('action', shareDocumentsTarget);
-                        $("#sendToPhrForm").submit();
-                    } else {
-                        alert('No forms selected');
-                        return false;
-                    }
-                });
 
                 //setup pagination
                 <%
@@ -253,18 +230,11 @@
             </td>
             <td class="MainTableRightColumn" valign="top">
 
-                <form id="sendToPhrForm" action="efmpatientformlistSendPhrAction.jsp">
+                <div>
                     <input type="hidden" name="clientId" value="<%=demographic_no%>"/>
                     <input type="hidden" name="page" id="pageEl" value="<%=pageNo%>"/>
                     <table class="elements" width="100%">
                         <tr bgcolor=<%=deepColor%>>
-                            <%
-                                if (isMyOscarAvailable || isSharingCenterEnabled) {
-                            %>
-                            <th>&nbsp;</th>
-                            <%
-                                }
-                            %>
                             <th>
                                 <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&orderby=form_name&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>">
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnFormName"/>
@@ -283,15 +253,6 @@
                                 HashMap<String, ? extends Object> curform = eForms.get(i);
                         %>
                         <tr bgcolor="<%=((i % 2) == 1)?"#F2F2F2":"white"%>">
-                            <%
-                                if (isMyOscarAvailable || isSharingCenterEnabled) {
-                            %>
-                            <td>
-                                <input type="checkbox" name="sendToPhr" value="<%=curform.get("fdid")%>"/>
-                            </td>
-                            <%
-                                }
-                            %>
                             <td><a href="#"
                                    ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
                                    TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgViewFrm"/>"
@@ -316,26 +277,7 @@
                             }
                         %>
                     </table>
-                    <% if (isMyOscarAvailable) { %>
-                    <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnsendtophr"/>"> |
-                    <% } %>
 
-                    <!-- MARC-HI's Sharing Center -->
-                    <% if (isSharingCenterEnabled) { %>
-                    <input type="hidden" id="documentType" name="type" value="eforms"/>
-                    <div>
-						<span style="float: right;">
-                          <select name="affinityDomain">
-
-                            <% for (AffinityDomainDataObject domain : affinityDomains) { %>
-                              <option value="<%=domain.getId()%>"><%=domain.getName()%></option>
-                            <% } %>
-
-                          </select>
-                          <input type="button" id="SendToAffinityDomain" name="SendToAffinityDomain" value="Share">
-                        </span>
-                    </div>
-                    <% } %>
 
                     <br/>
 
@@ -351,7 +293,7 @@
                         <option value="250">250</option>
                         <option value="500">500</option>
                     </select>
-                </form>
+                </div>
 
             </td>
         </tr>

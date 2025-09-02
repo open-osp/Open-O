@@ -85,7 +85,7 @@ dojo.data.old.format.Csv = new function () {
         return arrayOfOutputRecords; // Array
     };
 
-    this.loadDataProviderFromFileContents = function (/* dojo.data.old.provider.Base */ dataProvider, /* string */ csvFileContents) {
+    this.loadDataProviderFromFileContents = function (/* dojo.data.old.providers.Base */ dataProvider, /* string */ csvFileContents) {
         dojo.lang.assertType(dataProvider, dojo.data.old.provider.Base);
         dojo.lang.assertType(csvFileContents, String);
         var arrayOfArrays = this.getArrayStructureFromCsvFileContents(csvFileContents);

@@ -28,9 +28,11 @@
     if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
 <%@page import="java.util.*" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="oscar.oscarWaitingList.bean.*" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.waitinglist.bean.*" %>
+<%@ page import="ca.openosp.openo.waitinglist.bean.WLWaitingListNameBeanHandler" %>
+<%@ page import="ca.openosp.openo.waitinglist.bean.WLWaitingListNameBean" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
     <head>

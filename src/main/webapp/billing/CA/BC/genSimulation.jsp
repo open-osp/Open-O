@@ -32,16 +32,17 @@
     }
 %>
 
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.util.DateRange" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.utility.DateRange" %>
 
 
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, oscar.oscarBilling.ca.bc.MSP.*, java.net.*, oscar.*"
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.billing.ca.bc.MSP.*, java.net.*"
          errorPage="../../../errorpage.jsp" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.ExtractBean" %>
 
 
 <%
@@ -53,7 +54,7 @@
 
     int bCount = 1;
     String batchCount = "0";
-    String provider = request.getParameter("provider");
+    String provider = request.getParameter("providers");
 
     String proOHIP = "";
     String billinggroup_no;
@@ -80,11 +81,11 @@
 
             if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0) {
                 //error msg here
-                //errorMsg += "The provider's group no is not correct!<br>";
+                //errorMsg += "The providers's group no is not correct!<br>";
                 billinggroup_no = "";
             }
 
-            oscar.oscarBilling.ca.bc.MSP.ExtractBean extract = new oscar.oscarBilling.ca.bc.MSP.ExtractBean();
+            ExtractBean extract = new ExtractBean();
             extract.setOscarHome(oscar_home);
             extract.seteFlag("0");
             extract.setDateRange(dateRange);

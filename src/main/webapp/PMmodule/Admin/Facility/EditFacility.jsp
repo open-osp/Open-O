@@ -51,9 +51,9 @@
 </script>
 <!-- don't close in 1 statement, will break IE7 -->
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 %>
@@ -88,11 +88,6 @@
         <tr class="b">
             <td width="20%">HIC:</td>
             <td><input type="checkbox" name="facility.hic"/></td>
-        </tr>
-        <tr class="b">
-            <td width="20%">OCAN Service Org Number:</td>
-            <td><input type="text" name="facility.ocanServiceOrgNumber" size="5" maxlength="5"
-                           id="ocanServiceOrgNumber"/></td>
         </tr>
         <tr class="b">
             <td width="20%">Primary Contact Name:</td>
@@ -178,14 +173,6 @@
         <tr class="b">
             <td width="20%">Enable Health Number Registry:</td>
             <td><input type="checkbox" name="facility.enableHealthNumberRegistry"/></td>
-        </tr>
-        <tr class="b">
-            <td width="20%">Enable OCAN Forms:</td>
-            <td><input type="checkbox" name="facility.enableOcanForms"/></td>
-        </tr>
-        <tr class="b">
-            <td width="20%">Enable CBI Form:</td>
-            <td><input type="checkbox" name="facility.enableCbiForm"/></td>
         </tr>
         <tr class="b">
             <td width="20%">Enable Anonymous Clients:</td>

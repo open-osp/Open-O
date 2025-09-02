@@ -22,7 +22,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="org.oscarehr.casemgmt.model.CaseManagementNoteExt" table="casemgmt_note_ext">
+	<class name="ca.openosp.openo.casemgmt.model.CaseManagementNoteExt" table="casemgmt_note_ext">
 		<id name="id" unsaved-value="0">
 			<generator class="native" />
 		</id>

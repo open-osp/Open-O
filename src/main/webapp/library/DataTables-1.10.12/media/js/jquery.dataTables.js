@@ -801,7 +801,7 @@
 
 
         /**
-         * Provide a common method for plug-ins to check the version of DataTables being used, in order
+         * Provide a commons method for plug-ins to check the version of DataTables being used, in order
          * to ensure compatibility.
          *  @param {string} sVersion Version string to check for, in the format "X.Y.Z". Note that the
          *    formats "X" and "X.Y" are also acceptable.
@@ -5152,7 +5152,7 @@
 
         /* If the number of columns in the DOM equals the number that we have to
 		 * process in DataTables, then we can use the offsets that are created by
-		 * the web- browser. No custom sizes can be set in order for this to happen,
+		 * the www- browser. No custom sizes can be set in order for this to happen,
 		 * nor scrolling used
 		 */
         if (ie67 || !userInputs && !scrollX && !scrollY &&
@@ -8518,7 +8518,7 @@
 
 
     /**
-     * Provide a common method for plug-ins to check the version of DataTables being
+     * Provide a commons method for plug-ins to check the version of DataTables being
      * used, in order to ensure compatibility.
      *
      *  @param {string} version Version string to check for, in the format "X.Y.Z".
@@ -12497,7 +12497,7 @@
             "bCollapse": null,
 
             /**
-             * Width of the scrollbar for the web-browser's platform. Calculated
+             * Width of the scrollbar for the www-browser's platform. Calculated
              * during table initialisation.
              *  @type int
              *  @default 0

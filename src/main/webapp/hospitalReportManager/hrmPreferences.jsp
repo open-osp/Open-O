@@ -25,7 +25,7 @@
 %>
 <!DOCTYPE HTML>
 <%@ page
-        import="java.util.*,oscar.OscarProperties ,oscar.oscarReport.reportByTemplate.*,org.oscarehr.hospitalReportManager.*,org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
+        import="java.util.*,ca.openosp.OscarProperties ,ca.openosp.openo.report.reportByTemplate.*,ca.openosp.openo.hospitalReportManager.*,ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.openo.commn.model.UserProperty" %>
 <%
 
     OscarProperties props = OscarProperties.getInstance();
@@ -69,7 +69,7 @@
     }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

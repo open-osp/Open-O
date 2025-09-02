@@ -30,8 +30,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="oscar.oscarEncounter.pageUtil.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.*" %>
 <%@ page import="java.util.Vector" %>
 
 <html>

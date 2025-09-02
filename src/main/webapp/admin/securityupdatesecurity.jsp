@@ -42,13 +42,14 @@
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="java.lang.*, java.util.*, java.text.*,java.sql.*, oscar.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.lang.*, java.util.*, java.text.*,java.sql.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Security" %>
-<%@ page import="org.oscarehr.common.dao.SecurityDao" %>
-<%@ page import="org.oscarehr.security.MfaActions2Action" %>
-<%@ page import="org.oscarehr.managers.MfaManager" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Security" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecurityDao" %>
+<%@ page import="ca.openosp.openo.security.MfaActions2Action" %>
+<%@ page import="ca.openosp.openo.managers.MfaManager" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 
 <%!
@@ -176,9 +177,9 @@
 	}
 
 	/**
-	 * Handles the reset MFA action for a given security ID.
+	 * Handles the reset MFA action for a given sec ID.
 	 *
-	 * @param {number} securityId - The ID of the security record.
+	 * @param {number} securityId - The ID of the sec record.
 	 */
 	function handleResetMfa(securityId) {
 		if (confirm("<bean:message key="admin.securityAddRecord.mfa.reset.confirm"/>")) {
@@ -254,7 +255,7 @@
                         <input type="hidden" name="provider_no"
                                value="<%= security.getProviderNo() %>"></td>
                 </tr>
-                <!-- new security -->
+                <!-- new sec -->
                 <tr>
                     <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formExpiryDate"/>:
                     </td>
@@ -278,7 +279,7 @@
                                                                                   value="1" <%= security.getBLocallockset()==0?"":"checked" %>>
                     </td>
                 </tr>
-                <!-- new security -->
+                <!-- new sec -->
                 <tr>
                     <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formPIN"/>:
                     </td>

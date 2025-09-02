@@ -23,16 +23,16 @@
 
 --%>
 
-<%@page import="org.oscarehr.PMmodule.model.Vacancy" %>
-<%@page import="org.oscarehr.PMmodule.model.VacancyTemplate" %>
-<%@page import="org.oscarehr.PMmodule.model.Criteria" %>
-<%@page import="org.oscarehr.PMmodule.dao.CriteriaDao" %>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaType" %>
-<%@page import="org.oscarehr.PMmodule.service.VacancyTemplateManager" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Vacancy" %>
+<%@page import="ca.openosp.openo.PMmodule.model.VacancyTemplate" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Criteria" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.CriteriaDao" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaType" %>
+<%@page import="ca.openosp.openo.PMmodule.service.VacancyTemplateManager" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="java.util.Date" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>

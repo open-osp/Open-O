@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.validate.de");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.validate.isGermanCurrency = function (/*String*/value) {
     //summary: checks to see if 'value' is a valid representation of German currency (Euros)

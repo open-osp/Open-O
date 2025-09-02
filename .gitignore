@@ -32,3 +32,12 @@ tmp/
 *.venv
 .env
 /.smarttomcat/
+.editorconfig
+.claude
+CLAUDE.md
+
+# Docusaurus
+/website/node_modules/
+/node_modules/
+/website/build/
+/website/.docusaurus/

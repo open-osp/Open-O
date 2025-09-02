@@ -27,11 +27,11 @@
 <%
     if (session.getValue("user") == null) response.sendRedirect("../logout.jsp");
 %>
-<%@ page import="java.sql.*, java.util.*, java.net.*, oscar.*"
+<%@ page import="java.sql.*, java.util.*, java.net.*, ca.openosp.*"
          errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
 <%
     DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
 %>

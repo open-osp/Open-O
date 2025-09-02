@@ -23,17 +23,18 @@
     Ontario, Canada
 
 --%>
-<%@page import="java.text.SimpleDateFormat, java.util.*,oscar.oscarPrevention.*,oscar.util.*" %>
+<%@page import="java.text.SimpleDateFormat, java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="org.oscarehr.common.model.PreventionsLotNrs" %>
-<%@ page import="org.oscarehr.common.dao.PreventionsLotNrsDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.PreventionsLotNrs" %>
+<%@ page import="ca.openosp.openo.commn.dao.PreventionsLotNrsDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionDisplayConfig" %>
 <%
     String curProvider_no, userfirstname, userlastname;
     curProvider_no = (String) session.getAttribute("user");

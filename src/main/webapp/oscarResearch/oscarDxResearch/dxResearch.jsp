@@ -24,8 +24,8 @@
 
 --%>
 
-<%@ page import="oscar.oscarResearch.oscarDxResearch.util.dxResearchCodingSystem" %>
-<%@ page import="com.quatro.service.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.dxresearch.util.dxResearchCodingSystem" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -97,7 +97,7 @@
               href="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" media="all"
               href="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/css/bootstrap-theme.min.css"/>
-        <link rel="stylesheet" type="text/css" href="dxResearch.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/oscarResearch/oscarDxResearch/dxResearch.css">
 
         <script type="text/javascript">
             //<!--

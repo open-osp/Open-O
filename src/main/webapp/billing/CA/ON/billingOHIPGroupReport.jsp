@@ -21,15 +21,16 @@
     String user_no = (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.BillCenter" %>
-<%@page import="org.oscarehr.common.dao.BillCenterDao" %>
-<%@page import="org.oscarehr.billing.CA.model.BillActivity" %>
-<%@page import="org.oscarehr.billing.CA.dao.BillActivityDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillCenter" %>
+<%@page import="ca.openosp.openo.commn.dao.BillCenterDao" %>
+<%@page import="ca.openosp.openo.billing.CA.model.BillActivity" %>
+<%@page import="ca.openosp.openo.billing.CA.dao.BillActivityDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
 
 <%

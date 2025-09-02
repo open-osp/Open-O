@@ -31,10 +31,10 @@ import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
-import oscar.oscarBilling.ca.bc.data.BillingPreference;
-import oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO;
+import ca.openosp.openo.billings.ca.bc.data.BillingPreference;
+import ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO;
 
 public class BillingPreferencesDAOTest extends DaoTestFixtures {
 

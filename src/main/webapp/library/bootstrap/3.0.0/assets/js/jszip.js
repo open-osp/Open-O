@@ -431,7 +431,7 @@ JSZip.prototype = (function () {
         var dirRecord = JSZip.signature.CENTRAL_FILE_HEADER +
             // version made by (00: DOS)
             "\x14\x00" +
-            // file header (common to file and central directory)
+            // file header (commons to file and central directory)
             header +
             // file comment length
             "\x00\x00" +

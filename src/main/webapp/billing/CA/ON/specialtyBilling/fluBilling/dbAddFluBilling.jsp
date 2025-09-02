@@ -39,15 +39,16 @@
 <%@ page import="java.sql.*" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="org.oscarehr.common.model.BillingService" %>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
     BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
@@ -68,15 +69,15 @@
     Billing b = new Billing();
     b.setClinicNo(Integer.parseInt(request.getParameter("clinicNo")));
     b.setDemographicNo(Integer.parseInt(request.getParameter("functionid").trim()));
-    b.setProviderNo(request.getParameter("provider").substring(7));
+    b.setProviderNo(request.getParameter("providers").substring(7));
     b.setAppointmentNo(Integer.parseInt(request.getParameter("appointment_no")));
     b.setOrganizationSpecCode("V03G");
     b.setDemographicName(request.getParameter("demo_name"));
     b.setHin(request.getParameter("demo_hin"));
-    b.setUpdateDate(oscar.MyDateFormat.getSysDate(request.getParameter("docdate")));
+    b.setUpdateDate(MyDateFormat.getSysDate(request.getParameter("docdate")));
     b.setUpdateTime(new java.util.Date());
-    b.setBillingDate(oscar.MyDateFormat.getSysDate(request.getParameter("apptDate")));
-    b.setBillingTime(oscar.MyDateFormat.getSysTime(request.getParameter("start_time")));
+    b.setBillingDate(MyDateFormat.getSysDate(request.getParameter("apptDate")));
+    b.setBillingTime(MyDateFormat.getSysTime(request.getParameter("start_time")));
     b.setClinicRefCode(request.getParameter("clinic_ref_code"));
     b.setContent(content);
     b.setTotal(svcPrice);
@@ -84,7 +85,7 @@
     b.setDob(request.getParameter("demo_dob"));
     b.setVisitDate(null);
     b.setVisitType(request.getParameter("xml_visittype"));
-    b.setProviderOhipNo(request.getParameter("provider").substring(0, 6));
+    b.setProviderOhipNo(request.getParameter("providers").substring(0, 6));
     b.setProviderRmaNo("");
     b.setApptProviderNo(request.getParameter("apptProvider"));
     b.setAsstProviderNo("0");
@@ -103,7 +104,7 @@
     bd.setServiceDesc(svcDesc);
     bd.setBillingAmount(sPrice);
     bd.setDiagnosticCode(request.getParameter("dxCode"));
-    bd.setAppointmentDate(oscar.MyDateFormat.getSysDate(request.getParameter("apptDate")));
+    bd.setAppointmentDate(MyDateFormat.getSysDate(request.getParameter("apptDate")));
     bd.setStatus(request.getParameter("xml_billtype"));
     bd.setBillingUnit("1");
     billingDetailDao.persist(bd);

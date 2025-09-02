@@ -25,10 +25,10 @@
 --%>
 <%@include file="/casemgmt/taglibs.jsp" %>
 <%@ page
-        import="oscar.oscarProvider.data.ProviderData, java.util.ArrayList,java.util.Map, java.util.List, org.oscarehr.util.SpringUtils" %>
+        import="ca.openosp.openo.providers.data.ProviderData, java.util.ArrayList,java.util.Map, java.util.List, ca.openosp.openo.utility.SpringUtils" %>
 <%@ page
-        import="org.oscarehr.common.dao.ProviderLabRoutingFavoritesDao, org.oscarehr.common.model.ProviderLabRoutingFavorite" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.model.Provider" %>
+        import="ca.openosp.openo.commn.dao.ProviderLabRoutingFavoritesDao, ca.openosp.openo.commn.model.ProviderLabRoutingFavorite" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao, ca.openosp.openo.commn.model.Provider" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -156,7 +156,7 @@
 </form>
 <script type="text/javascript">
     YAHOO.example.BasicRemote = function () {
-        var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
+        var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
         var oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponses'});
         oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
         // Define the schema of the delimited resultsTEST, PATIENT(1985-06-15)

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.commn.model.enumerator.LabType" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -45,7 +45,7 @@
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
 <%
-    pageContext.setAttribute("labTypes", org.oscarehr.common.model.enumerator.LabType.values());
+    pageContext.setAttribute("labTypes", LabType.values());
     String outcome = (String) request.getAttribute("outcome");
 %>
 

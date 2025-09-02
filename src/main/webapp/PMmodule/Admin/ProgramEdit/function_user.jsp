@@ -58,7 +58,7 @@
         return false;
         /*
             if(form.elements['function.providerNo'].value == '' || form.elements['function.providerNo'].value == 0) {
-                alert('You must choose a provider');
+                alert('You must choose a providers');
                 return false;
             }
             form.elements['function.id'].value='0';

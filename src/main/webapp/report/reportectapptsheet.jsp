@@ -51,9 +51,9 @@
     if (request.getParameter("limit2") != null) strLimit2 = request.getParameter("limit2");
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
-<jsp:useBean id="daySheetBean" class="oscar.AppointmentMainBean"
+<jsp:useBean id="daySheetBean" class="ca.openosp.AppointmentMainBean"
              scope="page"/>
 <%
     String[][] dbQueries = new String[][]{

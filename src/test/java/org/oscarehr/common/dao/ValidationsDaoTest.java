@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Validations;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Validations;
+import ca.openosp.openo.commn.dao.ValidationsDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ValidationsDaoTest extends DaoTestFixtures {
 
@@ -39,7 +40,7 @@ public class ValidationsDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("validations", "measurements", "provider");
+        SchemaUtils.restoreTable("validations", "measurements", "providers");
     }
 
     @Test

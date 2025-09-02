@@ -37,7 +37,8 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -90,7 +91,7 @@
                     <display-el:column property="city" title="City"/>
                     <display-el:column property="province" title="Province"/>
                     <display-el:column property="postal" title="Postal Code"/>
-                    <% if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) { %>
+                    <% if (IsPropertiesOn.isProviderFormalizeEnable()) { %>
                     <display-el:column property="providerIdFrom" title="ProviderID From"/>
                     <display-el:column property="providerIdTo" title="ProviderID To"/>
                     <% } %>

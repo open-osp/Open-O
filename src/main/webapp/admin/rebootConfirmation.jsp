@@ -10,7 +10,7 @@
 --%>
 <%@page contentType="text/html" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%

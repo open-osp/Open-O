@@ -36,10 +36,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ProviderSite;
-import org.oscarehr.common.model.ProviderSitePK;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ProviderSite;
+import ca.openosp.openo.commn.model.ProviderSitePK;
+import ca.openosp.openo.commn.dao.ProviderSiteDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProviderSiteDaoTest extends DaoTestFixtures {
 

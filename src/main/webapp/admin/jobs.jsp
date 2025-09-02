@@ -44,9 +44,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.jobs.OscarJobExecutingManager" %>
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -69,7 +70,7 @@
 
 
         <%
-            java.util.Map<Integer, java.util.concurrent.ScheduledFuture<Object>> futures = org.oscarehr.common.jobs.OscarJobExecutingManager.getFutures();
+            java.util.Map<Integer, java.util.concurrent.ScheduledFuture<Object>> futures = OscarJobExecutingManager.getFutures();
         %>
         <style>
             .red {
@@ -344,7 +345,7 @@
                     errorMsg += 'Please provide a valid job type\n';
                 }
                 if ($('#jobProvider').val().length == 0 || $('#jobProvider').val() == '0') {
-                    errorMsg += 'Please provide a valid job provider\n';
+                    errorMsg += 'Please provide a valid job providers\n';
                 }
 
                 if (errorMsg.length > 0) {

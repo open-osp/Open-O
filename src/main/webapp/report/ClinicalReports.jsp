@@ -41,10 +41,20 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.oscarReport.data.DemographicSets, oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.ClinicalReports.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.report.data.DemographicSets, ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.ClinicalReports.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*" %>
 <%@page import="com.Ostermiller.util.CSVPrinter,java.io.*" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicNameAgeString" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBean" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
+<%@ page import="ca.openosp.openo.report.ClinicalReports.ReportEvaluator" %>
+<%@ page import="ca.openosp.openo.report.ClinicalReports.ClinicalReportManager" %>
+<%@ page import="ca.openosp.openo.report.ClinicalReports.Numerator" %>
+<%@ page import="ca.openosp.openo.report.ClinicalReports.Denominator" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -661,7 +671,7 @@
                         for (Hashtable h : list) {
 
                         Map<String, String> demoHash = deName.getNameAgeSexHashtable(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
-                            org.oscarehr.common.model.Demographic demoObj = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
+                            ca.openosp.openo.commn.model.Demographic demoObj = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), "" + h.get("_demographic_no"));
 
                             String colour = "";
                             if (h.get("_report_result") != null && ("" + h.get("_report_result")).equals("false")) {
@@ -786,8 +796,8 @@
             return "";
         }
 
-        if (obj instanceof oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean) {
-            oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean md = (oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBean) obj;
+        if (obj instanceof EctMeasurementsDataBean) {
+            EctMeasurementsDataBean md = (EctMeasurementsDataBean) obj;
             return md.getDateObserved() + ": " + md.getDataField();
         }
 
@@ -887,7 +897,7 @@
     }
 
 
-    String commonRow(String heading,Map<String, String> demoHash,org.oscarehr.common.model.Demographic demoObj){
+    String commonRow(String heading,Map<String, String> demoHash,ca.openosp.openo.commn.model.Demographic demoObj){
         if (heading == null) {
             return "";
         }

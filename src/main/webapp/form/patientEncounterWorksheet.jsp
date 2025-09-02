@@ -38,20 +38,20 @@
     }
 %>
 
-<%@ page import="oscar.util.*, oscar.form.*, oscar.form.data.*,java.util.List" %>
+<%@ page import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*,java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Clinic" %>
-<%@ page import="org.oscarehr.common.dao.ClinicDAO" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.Allergy" %>
-<%@ page import="org.oscarehr.common.dao.AllergyDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Clinic" %>
+<%@ page import="ca.openosp.openo.commn.dao.ClinicDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.openo.commn.dao.AllergyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@ page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 
 <%

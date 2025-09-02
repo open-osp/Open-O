@@ -33,8 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ProviderData;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ProviderData;
+import ca.openosp.openo.commn.dao.ProviderDataDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProviderDataDaoTest extends DaoTestFixtures {
 
@@ -43,7 +44,7 @@ public class ProviderDataDaoTest extends DaoTestFixtures {
     @Before
     public void before() throws Exception {
         this.beforeForInnoDB();
-        SchemaUtils.restoreTable("provider", "providersite", "secUserRole");
+        SchemaUtils.restoreTable("providers", "providersite", "secUserRole");
     }
 
     @Test

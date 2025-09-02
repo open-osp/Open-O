@@ -24,49 +24,52 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.Misc" %>
-<%@page import="oscar.util.UtilMisc" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.Misc" %>
+<%@page import="ca.openosp.openo.util.UtilMisc" %>
 <%@include file="/casemgmt/taglibs.jsp" %>
 <%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO" %>
+<%@page import="ca.openosp.openo.encounter.pageUtil.NavBarDisplayDAO" %>
 <%@page import="java.util.Arrays,java.util.Properties,java.util.List,java.util.Set,java.util.ArrayList,java.util.Enumeration,java.util.HashSet,java.util.Iterator,java.text.SimpleDateFormat,java.util.Calendar,java.util.Date,java.text.ParseException" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.model.UserProperty,org.oscarehr.casemgmt.model.*,org.oscarehr.casemgmt.service.* " %>
-<%@page import="org.oscarehr.casemgmt.web.formbeans.*" %>
-<%@page import="org.oscarehr.PMmodule.model.*" %>
-<%@page import="org.oscarehr.common.model.*" %>
-<%@page import="org.oscarehr.common.dao.EFormDao" %>
-<%@page import="oscar.util.DateUtils" %>
-<%@page import="org.oscarehr.documentManager.EDocUtil" %>
+<%@page import="ca.openosp.openo.casemgmt.model.*,ca.openosp.openo.casemgmt.service.* " %>
+<%@page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
+<%@page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@page import="ca.openosp.openo.commn.model.*" %>
+<%@page import="ca.openosp.openo.commn.dao.EFormDao" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.casemgmt.common.Colour" %>
-<%@page import="org.oscarehr.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.casemgmt.common.Colour" %>
+<%@page import="ca.openosp.openo.documentManager.EDoc" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole" %>
-<%@page import="org.oscarehr.util.EncounterUtil" %>
+<%@page import="com.quatro.dao.security.*,ca.openosp.openo.model.security.Secrole" %>
+<%@page import="ca.openosp.openo.utility.EncounterUtil" %>
 <%@page import="org.apache.cxf.common.i18n.UncheckedException" %>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplay" %>
-<%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
-<%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplayNonNote" %>
-<%@page import="org.oscarehr.common.dao.EncounterTemplateDao" %>
-<%@page import="org.oscarehr.casemgmt.web.CheckBoxBean" %>
-<%@page import="org.oscarehr.managers.ProgramManager2" %>
-<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay" %>
+<%@page import="ca.openosp.openo.casemgmt.web.CaseManagementViewAction" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.casemgmt.dao.CaseManagementNoteLinkDAO" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplayNonNote" %>
+<%@page import="ca.openosp.openo.commn.dao.EncounterTemplateDao" %>
+<%@page import="ca.openosp.openo.casemgmt.web.CheckBoxBean" %>
+<%@page import="ca.openosp.openo.managers.ProgramManager2" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
-
 
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -81,11 +84,8 @@
         return;
     }
 %>
-
-
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-
 
     String demoNo = request.getParameter("demographicNo");
     String privateConsentEnabledProperty = OscarProperties.getInstance().getProperty("privateConsentEnabled");
@@ -112,7 +112,6 @@
         }
     }
 
-
     try {
         Facility facility = loggedInInfo.getCurrentFacility();
 
@@ -122,29 +121,34 @@
         }
 
         String demographicNo = request.getParameter("demographicNo");
-        oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
+        EctSessionBean bean = null;
         String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-        if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute(strBeanName)) == null) {
+        if ((bean = (EctSessionBean) request.getSession().getAttribute(strBeanName)) == null) {
             response.sendRedirect("error.jsp");
             return;
         }
 
         String provNo = bean.providerNo;
-
         String dateFormat = "dd-MMM-yyyy H:mm";
-
         SimpleDateFormat jsfmt = new SimpleDateFormat("MMM dd, yyyy");
         Date dToday = new Date();
         String strToday = jsfmt.format(dToday);
-
         String frmName = "caseManagementEntryForm" + demographicNo;
         CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) session.getAttribute(frmName);
-
         if (request.getParameter("caseManagementEntryForm") == null) {
             request.setAttribute("caseManagementEntryForm", cform);
         }
 %>
 
+<script type="text/javascript" src="<c:out value="${ctx}/js/jquery-1.7.1.min.js"/>"></script>
+<script type="text/javascript" src="<c:out value="${ctx}/library/jquery/jquery-ui-1.12.1.min.js" />"></script>
+<script type="text/javascript">
+    jQuery.noConflict();
+</script>
+<link rel="stylesheet" type="text/css" href="<c:out value="${ctx}"/>/library/jquery/jquery-ui-1.12.1.min.css">
+<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
+<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js" type="text/javascript"></script>
+<script type="text/javascript" src="<c:out value="${ctx}/js/newCaseManagementView.js.jsp"/>"></script>
 <script type="text/javascript">
     ctx = "<c:out value="${ctx}"/>";
     imgPrintgreen.src = ctx + "/oscarEncounter/graphics/printerGreen.png"; //preload green print image so firefox will update properly
@@ -157,7 +161,7 @@
     </caisi:isModuleLoad>
 
     <%
-    oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+    OscarProperties props = OscarProperties.getInstance();
     String requireIssue = props.getProperty("caisi.require_issue","true");
     if(requireIssue != null && requireIssue.equals("false")) {
     //require issue is false%>
@@ -187,7 +191,6 @@
 
 </script>
 <div id="topContent">
-
     <form name="caseManagementViewForm" action="${pageContext.request.contextPath}/CaseManagementView.do" method="post">
         <input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
         <input type="hidden" name="providerNo" value="<%=provNo%>"/>
@@ -442,7 +445,6 @@
                         <option value="http://search.nlm.nih.gov/medlineplus/query?DISAMBIGUATION=true&amp;FUNCTION=search&amp;SERVER2=server2&amp;SERVER1=server1&amp;PARAMETER=">
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="global.medlineplus"/></option>
                         <option value="casemgmt/tripsearch.jsp?searchterm=">Trip Database</option>
-                        <option value="casemgmt/macplussearch.jsp?searchterm=">MacPlus Database</option>
                         <option value="https://empendium.com/mcmtextbook/search?type=textbook&q=">McMaster Text Book
                         </option>
                     </select>
@@ -529,7 +531,7 @@
 
         String apptDate = request.getParameter("appointmentDate");
         if (apptDate == null || apptDate.equals("") || apptDate.equals("null")) {
-            apptDate = oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd");
+            apptDate = UtilDateUtilities.getToday("yyyy-MM-dd");
         }
 
         String startTime = request.getParameter("start_time");
@@ -712,43 +714,39 @@
 </form>
 
 <script type="text/javascript">
-
-
     /**
      * enable autocomplete for Issue search menus.
-     * I don't know why Javascript is scattered all over either. Sorry.
      */
-    jQuery(".issueAutocomplete").autocomplete({
-        source: function (request, response) {
-            jQuery.ajax({
-                url: ctx + "/CaseManagementEntry.do",
-                dataType: "json",
-                data: {
-                    term: request.term,
-                    method: "issueList",
-                    demographicNo: demographicNo,
-                    providerNo: providerNo
-                },
-                success: function (data) {
-                    response(jQuery.map(data, function (item) {
-                        return {
-                            label: item.description.trim() + ' (' + item.code + ')',
-                            value: item.description.trim(),
-                            id: item.id
-                        };
-                    }))
-                }
-            });
-        },
-        delay: 100,
-        minLength: 3,
-        select: function (event, ui) {
-            // <input type="hidden" name="newIssueId" id="newIssueId"/>
-            // <input type="hidden" name="newIssueName" id="newIssueName"/>
-            document.getElementById("newIssueId").value = ui.item.id;
-            document.getElementById("newIssueName").value = ui.item.value;
-        }
-    })
+    jQuery(document).ready(function($) {
+        var autocompleteUrl = ctx + "/CaseManagementEntry.do?method=issueList&demographicNo=" + demographicNo + "&providerNo=" + providerNo;
+        
+        $(".issueAutocomplete").autocomplete({
+            source: function(request, response) {
+                $.get(autocompleteUrl + "&term=" + request.term)
+                    .done(function(data) {
+                        // Transform the data to the format expected by jQuery UI autocomplete
+                        var transformedData = $.map(data, function(item) {
+                            return {
+                                label: item.description.trim() + ' (' + item.code + ')',
+                                value: item.description.trim(),
+                                id: item.id
+                            };
+                        });
+                        response(transformedData);
+                    })
+                    .fail(function(xhr, status, error) {
+                        console.error("Autocomplete request failed:", status, error);
+                        response([]);
+                    });
+            },
+            delay: 100,
+            minLength: 3,
+            select: function (event, ui) {
+                document.getElementById("newIssueId").value = ui.item.id;
+                document.getElementById("newIssueName").value = ui.item.value;
+            }
+        });
+    });
 </script>
 
 <%

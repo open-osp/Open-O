@@ -24,27 +24,29 @@
 
 --%>
 <!DOCTYPE html>
-<%@ page import="java.util.*, java.net.*, oscar.*, oscar.util.*, java.lang.*" %>
-<jsp:useBean id="scheduleRscheduleBean" class="oscar.RscheduleBean" scope="session"/>
+<%@ page import="java.util.*, java.net.*, ca.openosp.*, ca.openosp.openo.util.*, java.lang.*" %>
+<jsp:useBean id="scheduleRscheduleBean" class="ca.openosp.RscheduleBean" scope="session"/>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleDateDao" %>
-<%@ page import="org.oscarehr.common.model.RSchedule" %>
-<%@ page import="org.oscarehr.common.dao.RScheduleDao" %>
-<%@ page import="org.oscarehr.common.model.ScheduleTemplate" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleDateDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RSchedule" %>
+<%@ page import="ca.openosp.openo.commn.dao.RScheduleDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
 <%
     ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
     RScheduleDao rScheduleDao = SpringUtils.getBean(RScheduleDao.class);
     ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
 %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
 <html>
 
     <%
@@ -63,7 +65,7 @@
     </security:oscarSec>
 
 
-    <%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+    <%! boolean bMultisites = ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable(); %>
     <%! String[] bgColors; %>
     <%! List<String> excludedSites = new ArrayList<>(); %>
     <%

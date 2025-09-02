@@ -34,7 +34,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="java.lang.*, java.util.*, java.text.*,java.sql.*, oscar.*" %>
+<%@ page import="java.lang.*, java.util.*, java.text.*,java.sql.*, ca.openosp.*" %>
 <%
     String mcedtUsername = (String) session.getAttribute("mcedtUsername");
 %>
@@ -107,7 +107,7 @@
 </head>
 <body>
 <!-- <div class="show">
-       <img class="logo" src="web/img/kai.png"/>
+       <img class="logo" src="www/img/kai.png"/>
 </div> -->
 <div class="greyBox">
     <div class="center">

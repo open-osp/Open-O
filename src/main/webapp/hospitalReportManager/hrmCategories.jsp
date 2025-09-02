@@ -25,9 +25,9 @@
 %>
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMCategory" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMCategoryDao" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.model.HRMCategory" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMCategoryDao" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%

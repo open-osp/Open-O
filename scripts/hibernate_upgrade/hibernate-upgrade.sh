@@ -4,7 +4,7 @@
 # This script has been created to automate the upgrade between Hibernate 5.2.18 and 5.6.15.
 #
 # This script runs aider with Deepseek recursively
-# on all files that end with 'dao.java', 'Dao.java',
+# on all files that end with 'daos.java', 'Dao.java',
 # 'DAO.java', 'daoImpl.java', 'DaoImpl.java', or 'DAOImpl.java'.
 # 
 # Aider is prompted to update all JPA HQL queries to use proper
@@ -16,8 +16,8 @@
 # Use the current working directory as the target directory
 target_dir=$(pwd)
 
-# Find all files ending with 'dao.java', 'Dao.java', 'DAO.java', 'daoImpl.java', 'DaoImpl.java', or 'DAOImpl.java' (case insensitive)
-find "$target_dir" -type f -iname '*dao.java' -o -iname '*daoimpl.java' | while read -r file; do
+# Find all files ending with 'daos.java', 'Dao.java', 'DAO.java', 'daoImpl.java', 'DaoImpl.java', or 'DAOImpl.java' (case insensitive)
+find "$target_dir" -type f -iname '*daos.java' -o -iname '*daoimpl.java' | while read -r file; do
     echo "Processing $file..."
 
     # Run aider in unattended mode with Deepseek, automatically committing changes and resetting chat history

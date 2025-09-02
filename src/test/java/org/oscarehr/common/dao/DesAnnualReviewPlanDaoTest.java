@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.DesAnnualReviewPlan;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.DesAnnualReviewPlan;
+import ca.openosp.openo.commn.dao.DesAnnualReviewPlanDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DesAnnualReviewPlanDaoTest extends DaoTestFixtures {
 

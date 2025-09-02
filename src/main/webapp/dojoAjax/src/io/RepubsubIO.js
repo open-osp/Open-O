@@ -96,7 +96,7 @@ dojo.io.repubsub = new function () {
     // actually, now that I think about it a little bit more, it would sure be
     // useful to parse out the <script> src attributes. We're looking for
     // something with a "do_method=lib", since that's what would have included
-    // us in the first place (in the common case).
+    // us in the first place (in the commons case).
     this.parseGetStr = function () {
         var baseUrl = document.location.toString();
         var params = baseUrl.split("?", 2);

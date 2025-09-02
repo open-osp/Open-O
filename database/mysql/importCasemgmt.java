@@ -34,11 +34,11 @@ import java.io.IOException;
 /*
  *The import program performs 8 functions:
  *1) Creates a program called OSCAR.  All providers and demographics will belong here
- *2) Creates a dummy provider to sign imported encounter notes from eChart table
+ *2) Creates a dummy providers to sign imported encounter notes from eChart table
  *3) Copy all OSCAR providers with the 'all' privilege to OSCAR eChart as defined in secUserRole to program_provider
- *4) Set up access to program OSCAR by inserting OSCAR in program_access and specifying first 6 caisi roles, listed in access_type, in table program_access_roles for each provider
- *5) Copy all rows from demographic table into admission table, linking each record to OSCAR and provider: the progam combined with the caisi role effectively allows each provider to view demographic
- *6) Copy the most recent encounter from the eChart table to casemgmt_note table -- each note is signed by the dummy provider and each note is assigned a uuid for tracking history
+ *4) Set up access to program OSCAR by inserting OSCAR in program_access and specifying first 6 caisi roles, listed in access_type, in table program_access_roles for each providers
+ *5) Copy all rows from demographic table into admission table, linking each record to OSCAR and providers: the progam combined with the caisi role effectively allows each providers to view demographic
+ *6) Copy the most recent encounter from the eChart table to casemgmt_note table -- each note is signed by the dummy providers and each note is assigned a uuid for tracking history
  *7) Copy the demographic cpp from the eChart table to casemgmt_cpp table AND create one note for each cpp linked with a cpp issue
  *8) Split charts are then copied as per step 6 above
  */
@@ -106,19 +106,19 @@ public class importCasemgmt {
                         }                        
                         
                         System.out.println("Checking for additional providers to add");
-                        sql = "select provider_no from provider where provider_no = '000000'";
+                        sql = "select provider_no from providers where provider_no = '000000'";
                         rs1 = stmt.executeQuery(sql);
                         
                         if( !rs1.next() ) {
                             rs1.close();
-                            System.out.println("Creating dummy provider to sign imported notes");
-                            stmt.executeUpdate("INSERT INTO provider (provider_no, last_name, first_name, provider_type, specialty, team, sex, dob, address, phone, work_phone, ohip_no, rma_no," +
+                            System.out.println("Creating dummy providers to sign imported notes");
+                            stmt.executeUpdate("INSERT INTO providers (provider_no, last_name, first_name, provider_type, specialty, team, sex, dob, address, phone, work_phone, ohip_no, rma_no," +
                                     "billing_no, hso_no, status, comments, provider_activity) " +
                                     "VALUES ('000000','doe','doctor','doctor','','','','0001-01-01','','','','','','','','1','','')");
                             stmt.executeUpdate("insert into `secUserRole` (provider_no, role_name, orgcd, activeyn) values('000000', 'doctor', 'R0000001', 1)");
                         }
                         else
-                            System.out.println("Dummy provider present -- skipping");
+                            System.out.println("Dummy providers present -- skipping");
                         
                         //we have to make sure we only grant perms to entitled providers
                         sql = "select roleUserGroup from secObjPrivilege where objectName = '_eChart' and privilege = 'x'";
@@ -129,7 +129,7 @@ public class importCasemgmt {
                         }
                         
                         rs.close();
-                        sql = "select provider_no, role_name from secUserRole where provider_no in (select provider_no from provider) ";
+                        sql = "select provider_no, role_name from secUserRole where provider_no in (select provider_no from providers) ";
                         if( secObjs.size() > 0 )
                             sql += "and ";
                         
@@ -167,10 +167,10 @@ public class importCasemgmt {
                                 if( insert.executeUpdate() != 1 )
                                     throw new SQLException("insert into program_provider failed" + prov);
                                                                 
-                                System.out.println("Imported provider " + prov);
+                                System.out.println("Imported providers " + prov);
                             }
                             else
-                                System.out.println("provider " + prov + " present -- skipping");
+                                System.out.println("providers " + prov + " present -- skipping");
                             
                             rs1.close();
                         }

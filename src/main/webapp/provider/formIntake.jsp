@@ -9,14 +9,14 @@
 
 --%>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.oscarRx.util.*, oscar.util.*" errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.common.dao.MeasurementDao" %>
-<%@ page import="org.oscarehr.common.model.Measurement" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.rx.util.*, ca.openosp.openo.util.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.commn.dao.MeasurementDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Measurement" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ include file="/common/webAppContextAndSuperMgr.jsp" %>
 
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 
 
 <%
@@ -24,7 +24,9 @@
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 %>
 
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 
 
 <%!

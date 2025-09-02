@@ -24,11 +24,9 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
 <%
     if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
 %>
@@ -36,11 +34,13 @@
 
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page import="oscar.oscarEncounter.pageUtil.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.pageUtil.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.bean.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.data.*" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.data.*" %>
 <%@ page import="java.util.Vector" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.data.MeasurementMapConfig" %>
 <%
     EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
     MeasurementMapConfig measurementMapConfig = new MeasurementMapConfig();
@@ -109,22 +109,6 @@
             <input type="hidden" name="type" value="${type}"/>
         </c:if>
 
-        <%
-            if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(bean.getDemographicNo()));
-
-                String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-                        + "demographicId=" + bean.getDemographicNo() + "&"
-                        + "medicalDataType=Measurements" + "&"
-                        + "parentPage=" + request.getRequestURI();
-        %>
-        <input type="button" name="Button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%>
-               value="<%=LocaleUtils.getMessage(request, "SendToPHR")%>"
-               onclick="document.location.href='<%=sendDataPath%>'">
-        <%
-            }
-        %>
 
     </div>
 

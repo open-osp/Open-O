@@ -25,14 +25,14 @@ package org.oscarehr.billing.CA.BC.dao;
 
 import static org.junit.Assert.assertNotNull;
 
+import ca.openosp.openo.billing.CA.BC.dao.Hl7PidDao;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.billing.CA.BC.model.Hl7Pid;
+import ca.openosp.openo.billing.CA.BC.model.Hl7Pid;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class Hl7PidDaoTest extends DaoTestFixtures {
 
@@ -40,7 +40,7 @@ public class Hl7PidDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("hl7_pid", "hl7_link", "hl7_msh", "hl7_obr", "hl7_obx", "provider", "hl7_message");
+        SchemaUtils.restoreTable("hl7_pid", "hl7_link", "hl7_msh", "hl7_obr", "hl7_obx", "providers", "hl7_message");
     }
 
     @Test

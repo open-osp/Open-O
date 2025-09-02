@@ -25,9 +25,10 @@
 --%>
 
 <%@ include file="/taglibs.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.DemographicContact" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicContact" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     String id = request.getParameter("id");
     ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
@@ -69,7 +70,7 @@
 
     <select name="procontact_<%=id%>.type" id="procontact_<%=id%>.type">
         <option value="<%=DemographicContact.TYPE_PROVIDER%>">Internal</option>
-        <%if (oscar.OscarProperties.getInstance().getProperty("NEW_CONTACTS_UI_EXTERNAL_CONTACT", "true").equals("true")) { %>
+        <%if (OscarProperties.getInstance().getProperty("NEW_CONTACTS_UI_EXTERNAL_CONTACT", "true").equals("true")) { %>
         <option value="<%=DemographicContact.TYPE_CONTACT%>">External</option>
         <% } %>
         <option value="<%=DemographicContact.TYPE_PROFESSIONALSPECIALIST%>"

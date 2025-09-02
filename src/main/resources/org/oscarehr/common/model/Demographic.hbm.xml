@@ -8,8 +8,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.common.model">
-	<class name="Demographic" table="demographic">
+<hibernate-mapping package="ca.openosp.openo.commn.model">
+	<class name="ca.openosp.openo.commn.model.Demographic" table="demographic">
 		<id column="demographic_no" name="DemographicNo" type="integer">
 			<generator class="native" />
 		</id>
@@ -34,7 +34,6 @@
 		<property column="consentToUseEmailForCare" length="1" name="ConsentToUseEmailForCare" type="boolean"/>
 		<property column="phone" length="20" name="Phone" type="string" />
 		<property column="phone2" length="20" name="Phone2" type="string" />
-		<property column="myOscarUserName" length="255" name="myOscarUserName" type="string" />
 
 		<property column="hin" length="20" name="Hin" type="string" />
 		<property column="ver" length="3" name="Ver" type="string" />
@@ -69,7 +68,7 @@
 		<property name="HeadRecord" type="integer" formula="(select d.merged_to from demographic_merged d where d.deleted = 0 and d.demographic_no = demographic_no)" />
 
 		<property name="activeCount" type="integer" formula="(select count(*) from admission a where a.client_id=demographic_no and a.admission_status='current'
-				           and a.program_id in (select p.id from program p where p.type='Bed' ))" />
+				           and a.program_id in (select p.id from program p where p.type='Service' ))" />
 		<property name="hsAlertCount" formula="(select count(*) from health_safety h where h.demographic_no=demographic_no)" />
 
 		<set name="SubRecord" table="demographic_merged" where="deleted = 0" lazy="false">
@@ -77,7 +76,7 @@
 			<element column="demographic_no" type="integer" />
 		</set>
 
-                <many-to-one name="provider" class="org.oscarehr.common.model.Provider"
+                <many-to-one name="provider" class="ca.openosp.openo.commn.model.Provider"
 			column="provider_no" update="false" not-found='ignore' insert="false"
 			lazy="false" />
 

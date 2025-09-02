@@ -9,7 +9,7 @@
 */
 
 dojo.kwCompoundRequire({
-    common: ["dojo.event.common", "dojo.event.topic"],
+    common: ["dojo.event.commons", "dojo.event.topic"],
     browser: ["dojo.event.browser"],
     dashboard: ["dojo.event.browser"]
 });

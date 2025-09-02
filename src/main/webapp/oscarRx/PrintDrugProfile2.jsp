@@ -23,19 +23,23 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.model.PharmacyInfo" %>
+<%@page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ page import="oscar.oscarRx.data.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
+<%@ page import="ca.openosp.openo.rx.data.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="java.util.ArrayList,oscar.util.*,java.util.*,org.oscarehr.common.model.Drug,org.oscarehr.common.dao.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="java.util.ArrayList,ca.openosp.openo.util.*,java.util.*,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.commn.dao.*" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.commn.dao.DrugDao" %>
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
 %>
 <c:if test="${empty sessionScope.RxSessionBean}">
     <c:redirect url="error.html"/>
@@ -43,7 +47,7 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -111,7 +115,7 @@
                 showall = true;
             }
         }
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+        RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
         if (patient != null) {
             surname = patient.getSurname();
             firstName = patient.getFirstName();

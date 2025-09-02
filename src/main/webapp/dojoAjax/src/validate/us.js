@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.validate.us");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.validate.us.isCurrency = function (/*String*/value, /*Object?*/flags) {
     // summary: Validates U.S. currency
@@ -32,7 +32,7 @@ dojo.validate.us.isState = function (/*String*/value, /*Object?*/flags) {
 }
 
 dojo.validate.us.isPhoneNumber = function (/*String*/value) {
-    // summary: Validates 10 US digit phone number for several common formats
+    // summary: Validates 10 US digit phone number for several commons formats
     // value: The telephone number string
 
     var flags = {
@@ -57,7 +57,7 @@ dojo.validate.us.isPhoneNumber = function (/*String*/value) {
 }
 
 dojo.validate.us.isSocialSecurityNumber = function (/*String*/value) {
-// summary: Validates social security number
+// summary: Validates social sec number
     var flags = {
         format: [
             "###-##-####",

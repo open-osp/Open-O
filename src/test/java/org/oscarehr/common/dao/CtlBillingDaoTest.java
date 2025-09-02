@@ -31,7 +31,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.dao.CtlBillingServiceDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class CtlBillingDaoTest extends DaoTestFixtures {
 

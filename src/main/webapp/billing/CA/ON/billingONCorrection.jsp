@@ -18,37 +18,43 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@page import="org.oscarehr.common.dao.BillingOnItemPaymentDao" %>
-<%@page import="org.oscarehr.managers.SecurityInfoManager" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="java.math.*,java.util.*,java.sql.*,oscar.*,java.net.*" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingOnItemPaymentDao" %>
+<%@page import="ca.openosp.openo.managers.SecurityInfoManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="java.math.*,java.util.*,java.sql.*,ca.openosp.*,java.net.*" %>
 <!-- errorPage="/errorpage.jsp" -->
-<%@page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@page import="oscar.oscarDemographic.data.*" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@page import="ca.openosp.openo.demographic.data.*" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.util.DateUtils" %>
-<%@page import="org.oscarehr.common.model.BillingONItem" %>
-<%@page import="org.oscarehr.common.model.BillingONErrorCode, org.oscarehr.common.dao.BillingONErrorCodeDao" %>
-<%@page import="org.oscarehr.common.dao.BillingONEAReportDao, org.oscarehr.common.model.BillingONEAReport" %>
-<%@page import="org.oscarehr.common.model.RaDetail, org.oscarehr.common.dao.RaDetailDao" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation, org.oscarehr.common.dao.ClinicLocationDao" %>
-<%@page import="org.oscarehr.common.dao.BillingONPaymentDao, org.oscarehr.common.model.BillingONPayment" %>
-<%@page import="org.oscarehr.common.model.Provider,org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.dao.BillingONCHeader1Dao, org.oscarehr.common.model.BillingONCHeader1" %>
-<%@page import="org.oscarehr.common.model.BillingONExt, org.oscarehr.common.dao.BillingONExtDao" %>
-<%@page import="org.oscarehr.common.model.BillingService, org.oscarehr.common.dao.BillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.ClinicNbr, org.oscarehr.common.dao.ClinicNbrDao" %>
-<%@page import="org.oscarehr.common.model.Site, org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.ProviderSite, org.oscarehr.common.dao.ProviderSiteDao" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="org.oscarehr.common.service.BillingONService" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONErrorCodeDao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONEAReportDao" %>
+<%@page import="ca.openosp.openo.commn.dao.RaDetailDao" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONPaymentDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicNbrDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderSiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.ProfessionalSpecialistDao" %>
+<%@page import="ca.openosp.openo.commn.service.BillingONService" %>
 <%@page import="java.text.NumberFormat" %>
 
 <%@page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingRAImpl" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingDataHlp" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingPageUtil" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.Billing3rdPartPrep" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%@taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -116,7 +122,7 @@
     <% isTeamBillingOnly = true; %>
 </security:oscarSec>
 <%
-    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
     List<String> mgrSites = new ArrayList<String>();
 
     if (bMultisites) {
@@ -269,7 +275,7 @@
 
                 var provider = document.getElementById("provider_no");
                 if (provider.options[provider.selectedIndex].value == "") {
-                    alert("Billing provider must be set");
+                    alert("Billing providers must be set");
                     return false;
                 }
 
@@ -465,7 +471,7 @@
             if (bCh1 != null) {
                 clinicSite = bCh1.getClinic();
 
-                //multisite. check provider no
+                //multisite. check providers no
                 if (((isSiteAccessPrivacy || isTeamAccessPrivacy) && !providerAccessList.contains(bCh1.getProviderNo()))
                         || (bMultisites && !mgrSites.contains(clinicSite))) {
 
@@ -503,7 +509,7 @@
 
                     BigDecimal billTotal = bCh1.getTotal();
 
-                    org.oscarehr.common.model.Demographic sdemo = (new DemographicData()).getDemographic(loggedInInfo, DemoNo);
+                    Demographic sdemo = (new DemographicData()).getDemographic(loggedInInfo, DemoNo);
                     hin = sdemo.getHin() + sdemo.getVer();
                     DemoDOB = sdemo.getYearOfBirth() + sdemo.getMonthOfBirth() + sdemo.getDateOfBirth();
                     DemoSex = sdemo.getSex();
@@ -1291,7 +1297,7 @@
                         <div class="span5" id="thirdParty" style=" <%=thirdParty ? "" : "display:none"%>">
                             <a href="#" onclick="search3rdParty('billTo');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingCorrection.msgPayer"/></a><br>
                             <textarea id="billTo" name="billTo" cols="32" rows=4><%=payer%></textarea>
-                            <% String useDemoClinicInfoOnInvoice = oscar.OscarProperties.getInstance().getProperty("useDemoClinicInfoOnInvoice", "");
+                            <% String useDemoClinicInfoOnInvoice = OscarProperties.getInstance().getProperty("useDemoClinicInfoOnInvoice", "");
                                 if (bCh1 != null && !useDemoClinicInfoOnInvoice.isEmpty() && useDemoClinicInfoOnInvoice.equals("true")) {
                                     BillingONExt bExtUseBillTo = bExtDao.getUseBillTo(bCh1);
                                     String selectUseBillTo = "";

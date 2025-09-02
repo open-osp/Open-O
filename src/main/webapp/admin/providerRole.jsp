@@ -27,26 +27,30 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.ResourceBundle" %>
-<%@ page import="oscar.*" %>
-<%@ page import="oscar.log.*" %>
+<%@ page import="ca.openosp.*" %>
+<%@ page import="ca.openosp.openo.log.*" %>
 <%@ page import="org.springframework.util.StringUtils" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProgramProviderDAO" %>
-<%@ page import="org.oscarehr.common.model.SecRole" %>
-<%@ page import="org.oscarehr.common.dao.SecRoleDao" %>
-<%@ page import="com.quatro.model.security.Secuserrole" %>
-<%@ page import="com.quatro.dao.security.SecuserroleDao" %>
-<%@ page import="org.oscarehr.common.model.RecycleBin" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProgramProviderDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.SecRole" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecRoleDao" %>
+<%@ page import="ca.openosp.openo.model.security.Secuserrole" %>
+<%@ page import="ca.openosp.openo.daos.security.SecuserroleDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RecycleBin" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.RecycleBinDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramProviderService" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProgramProviderService" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     ProgramDao programDao = SpringUtils.getBean(ProgramDao.class);
@@ -93,10 +97,10 @@
     ArrayList<String> users = (ArrayList<String>) session.getServletContext().getAttribute("CaseMgmtUsers");
     boolean newCaseManagement = false;
 
-    if (!org.oscarehr.common.IsPropertiesOn.isCaisiEnable()) {
+    if (!IsPropertiesOn.isCaisiEnable()) {
         //This should only temporarily apply to oscar, not caisi.
-        //You cannot assign provider to one program "OSCAR" here if you have caisi enabled.
-        //If there is no program called "OSCAR", it will only assign empty program to the provider which is not acceptable.
+        //You cannot assign providers to one program "OSCAR" here if you have caisi enabled.
+        //If there is no program called "OSCAR", it will only assign empty program to the providers which is not acceptable.
         if ((users != null && users.size() > 0) || OscarProperties.getInstance().getProperty("CASEMANAGEMENT", "").equalsIgnoreCase("all"))
             newCaseManagement = true;
     }
@@ -334,7 +338,7 @@
 
     List<Boolean> primaries = new ArrayList<Boolean>();
 
-//when caisi is off, we need to show which role is the one in the program_provider table for each provider.
+//when caisi is off, we need to show which role is the one in the program_provider table for each providers.
     if (newCaseManagement) {
 
         // audit all roles for if primary is set.
@@ -440,18 +444,18 @@
             if(providerNo !== '' && roleName !== '') {
                 return true;
             } else {
-                alert('Please enter in a provider and a corresponding role');
+                alert('Please enter in a providers and a corresponding role');
                 return false;
             }
         }
 
 	/*
 	 * allow the addition of a role only if the role selection does not
-	 * equal any of the roles already selected for the target provider.
+	 * equal any of the roles already selected for the target providers.
 	 */
     function enableAddRoleButton(e) {
 		// get the originally selected values from all the other
-        // roles set for this provider.
+        // roles set for this providers.
 	    const forms = document.getElementsByClassName(e.form.attributes.class.value);
 	    const SELECTED_ROLE_VALUES = [];
 	    for(let i=0;i<forms.length;i++) {

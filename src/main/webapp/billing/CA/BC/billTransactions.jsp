@@ -1,4 +1,8 @@
 <%@page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.entities.BillHistory" %>
+<%@ page import="ca.openosp.openo.entities.Provider" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingHistoryDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MSPReconcile" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -19,8 +23,8 @@
     java.text.NumberFormat nf = java.text.NumberFormat.getCurrencyInstance();
     String billNo = request.getParameter("billNo");
     String billMasterNo = request.getParameter("billMasterNo");
-    oscar.oscarBilling.ca.bc.MSP.MSPReconcile rec = new oscar.oscarBilling.ca.bc.MSP.MSPReconcile();
-    oscar.oscarBilling.ca.bc.data.BillingHistoryDAO dao = new oscar.oscarBilling.ca.bc.data.BillingHistoryDAO();
+    MSPReconcile rec = new MSPReconcile();
+    BillingHistoryDAO dao = new BillingHistoryDAO();
     List billingTransactions = new ArrayList();
     if (billNo != null) {
         billingTransactions = dao.getBillHistoryByBillNo(billNo);
@@ -47,8 +51,8 @@
     </tr>
     <%
         for (Iterator iter = billingTransactions.iterator(); iter.hasNext(); ) {
-            oscar.entities.BillHistory item = (oscar.entities.BillHistory) iter.next();
-            oscar.entities.Provider provider = rec.getProvider(item.getPractitioner_no(), 0);
+            BillHistory item = (BillHistory) iter.next();
+            Provider provider = rec.getProvider(item.getPractitioner_no(), 0);
     %>
     <tr align="center">
         <td><%=rec.getStatusDesc(item.getBillingStatus())%>

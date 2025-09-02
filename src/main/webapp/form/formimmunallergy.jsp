@@ -13,9 +13,12 @@
     }
 %>
 
-<%@ page import="oscar.util.*, oscar.form.*, oscar.form.data.*" %>
+<%@ page import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 <%
     String formClass = "ImmunAllergy";
     String formLink = "formimmunallergy.jsp";
@@ -108,7 +111,7 @@
             var ret = checkAllDates();
             if (ret == true) {
                 //ret = confirm("Do you wish to save this form and view the print preview?");
-                popupFixedPage(650, 850, '../provider/notice.htm');
+                popupFixedPage(650, 850, '../providers/notice.htm');
                 document.forms[0].action = "../form/formbcbirthsummoprint.jsp";
                 document.forms[0].target = "planner";
                 document.forms[0].submit();

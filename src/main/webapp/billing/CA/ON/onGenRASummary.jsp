@@ -17,18 +17,22 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, java.net.*,oscar.*, oscar.util.*, oscar.MyDateFormat"
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, java.net.*,ca.openosp.*, ca.openosp.openo.util.*, ca.openosp.MyDateFormat"
          errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
 
 <jsp:useBean id="billingLocalInvNoBean" class="java.util.Properties" scope="page"/>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.RaHeader" %>
-<%@page import="org.oscarehr.common.dao.RaHeaderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.RaHeader" %>
+<%@page import="ca.openosp.openo.commn.dao.RaHeaderDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingRAPrep" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
     RaHeaderDao dao = SpringUtils.getBean(RaHeaderDao.class);
 %>

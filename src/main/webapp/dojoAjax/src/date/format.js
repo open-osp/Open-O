@@ -10,13 +10,13 @@
 
 dojo.provide("dojo.date.format");
 
-dojo.require("dojo.date.common");
+dojo.require("dojo.date.commons");
 dojo.require("dojo.date.supplemental");
 dojo.require("dojo.lang.array");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.func");
-dojo.require("dojo.string.common");
-dojo.require("dojo.i18n.common");
+dojo.require("dojo.string.commons");
+dojo.require("dojo.i18n.commons");
 
 // Load the bundles containing localization information for
 // names and formats
@@ -579,7 +579,7 @@ dojo.requireLocalization("dojo.i18n.calendar", "gregorianExtras", null, "ja,zh,R
     }
 })();
 
-//TODO: try to common strftime and format code somehow?
+//TODO: try to commons strftime and format code somehow?
 
 dojo.date.strftime = function (/*Date*/dateObject, /*String*/format, /*String?*/locale) {
 //

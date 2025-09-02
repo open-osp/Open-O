@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
 
     Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
@@ -45,7 +45,7 @@
               href="<c:out value="${ctx}"/>/css/print.css" media="print"/>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <title>Case Management</title>
-        <%! String refresh = oscar.OscarProperties.getInstance().getProperty("refresh.encounterLayout.jsp", "-1"); %>
+        <%! String refresh = OscarProperties.getInstance().getProperty("refresh.encounterLayout.jsp", "-1"); %>
         <%="-1".equals(refresh) ? "" : "<meta http-equiv=\"refresh\" content=\"" + refresh + ";\">"%>
     </head>
     <body>

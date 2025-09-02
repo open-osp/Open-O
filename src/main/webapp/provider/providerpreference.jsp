@@ -39,25 +39,25 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean" %>
-<%@page import="org.oscarehr.common.model.EForm" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.web.PrescriptionQrCodeUIBean" %>
+<%@page import="ca.openosp.openo.commn.model.EForm" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.model.EncounterForm" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.EncounterForm" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
 
 <%!
     CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
@@ -280,131 +280,7 @@
                            onClick="popupPage(360,680,'providerdisplaymygroup.jsp' );return false;"/>
                 </td>
             </tr>
-            <caisi:isModuleLoad moduleName="ticklerplus">
-                <tr id="ticklerPlus">
-                    <!-- check box of new-tickler-warnning-windows -->
-                    <td class="preferenceLabel">
-                        New Tickler Warning Window
-                    </td>
-                    <td class="preferenceValue">
-                        <%
-                            String myCheck1 = "";
-                            String myCheck2 = "";
-                            String myValue = "";
-                            if ("enabled".equals(newTicklerWarningWindow)) {
-                                myCheck1 = "checked";
-                                myCheck2 = "unchecked";
-                            } else {
-                                myCheck1 = "unchecked";
-                                myCheck2 = "checked";
-                            }
-                        %>
-
-                        <script type="text/javascript">
-                            function ticklerwarningchange() {
-                                var tickRadios = document.getElementsByName("new_tickler_warning_window");
-                                for (var i = 0; i < tickRadios.length; i++) {
-                                    if (tickRadios[i].checked == true) {
-                                        if (tickRadios[i].value == "enabled") {
-                                            // hidden ticklerforprovider row
-                                            document.getElementById("ticklerProvider").style.display = "table-row";
-                                        } else {
-                                            // show ticklerforprovider row
-                                            document.getElementById("ticklerProvider").style.display = "none";
-                                        }
-                                    }
-                                }
-                            }
-                        </script>
-
-                        <input type="radio" name="new_tickler_warning_window" value="enabled" <%= myCheck1 %>
-                               onchange="ticklerwarningchange()"> Enabled </input>
-                        <br>
-                        <input type="radio" name="new_tickler_warning_window" value="disabled" <%= myCheck2 %>
-                               onchange="ticklerwarningchange()"> Disabled </input>
-                    </td>
-                </tr>
-
-                <tr id="ticklerProvider" style=<%=myCheck1 == "checked" ? "display:table-row;" : "display:none" %>>
-                    <td class="preferenceLabel">
-                        Tickler Warning Window for which provider?
-                    </td>
-                    <td class="preferenceValue">
-                        <select id="ticklerforprovider" name="ticklerforproviderno">
-                            <%
-                                String ticklerforproviderNo = ticklerProviderNo;
-                                if (ticklerforproviderNo == null) {
-                                    ticklerforproviderNo = loggedInInfo.getLoggedInProviderNo();
-                                }
-                                ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
-                                List<Provider> listProvider = new ArrayList<Provider>();
-                                if (providerDao != null) {
-                                    listProvider = providerDao.getProviders();
-                                }
-                                for (Provider provider : listProvider) {
-                                    String selected = "";
-                                    if (ticklerforproviderNo.equals(provider.getProviderNo())) {
-                                        selected = "selected";
-                                    }
-                                    String strOption = String.format("<option value=\"%s\" %s>%s</option>"
-                                            , provider.getProviderNo(), selected, provider.getFormattedName());
-                                    out.print(strOption);
-                                }
-                            %>
-                        </select>
-                    </td>
-                </tr>
-
-                <!-- check box of the default PMM window -->
-                <tr>
-                    <td class="preferenceLabel">
-                        Default PMM
-                    </td>
-                    <td class="preferenceValue">
-                        <%
-                            String myCheck3 = "";
-                            String myCheck4 = "";
-                            if ("enabled".equals(defaultPMM)) {
-                                myCheck3 = "checked";
-                                myCheck4 = "unchecked";
-                            } else {
-                                myCheck3 = "unchecked";
-                                myCheck4 = "checked";
-                            }
-                        %>
-                        <input type="radio" name="default_pmm" value="enabled" <%= myCheck3 %>> Enabled
-                        <br>
-                        <input type="radio" name="default_pmm" value="disabled" <%= myCheck4 %>> Disabled
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="preferenceLabel">
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnCaisiBillPreferenceNotDelete"/>
-                    </td>
-                    <td class="preferenceValue">
-
-                        <% String myCheck5 = "";
-                            String myCheck6 = "";
-                            String value1 = caisiBillingNotDelete;
-                            if (value1 != null && value1.equals("1")) {
-                                myCheck5 = "checked";
-                                myCheck6 = "unchecked";
-                            } else {
-                                myCheck5 = "unchecked";
-                                myCheck6 = "checked";
-                            }
-
-                        %>
-
-                        <input type="radio" name="caisiBillingPreferenceNotDelete" value="1" <%= myCheck5 %> > Enabled
-                        <br>
-                        <input type="radio" name="caisiBillingPreferenceNotDelete" value="0" <%= myCheck6 %> > Disabled
-
-                    </td>
-                </tr>
-
-            </caisi:isModuleLoad>
+            <!-- ticklerPlus removed -->
 
             <!-- QR Code on prescriptions setting -->
             <tr>
@@ -756,10 +632,6 @@
                                           onClick="popupPage(230,860,'../setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditStaleDate"/></a></td>
                 </tr>
 
-                <tr>
-                    <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewMyDrugrefId');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetmyDrugrefID"/></a></td>
-                </tr>
 
                 <tr>
                     <td align="center"><a href=#
@@ -792,14 +664,6 @@
                 </tr>
                 <%}%>
             </oscar:oscarPropertiesCheck>
-            <tr>
-                <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'providerIndivoIdSetter.jsp');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetIndivoId"/></a></td>
-            </tr>
-            <tr>
-                <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseMyMeds');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetUseMyMeds"/></a></td>
-            </tr>
 
             <tr>
                 <td align="center"><a href=# onClick="popupPage(400,860,'../provider/CppPreferences.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.cppPrefs"/></a></td>
@@ -850,17 +714,6 @@
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewCobalt');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetCobalt"/></a></td>
-            </tr>
-            <% if (OscarProperties.getInstance().isPropertyActive("SINGLE_PAGE_CHART")) {%>
-            <tr>
-                <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewHideOldEchartLinkInAppt');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnHideOldEchartLinkInAppt"/></a></td>
-            </tr>
-            <% } %>
-            <tr>
-                <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewBornPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewBornPrefs"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#

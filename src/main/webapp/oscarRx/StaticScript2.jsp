@@ -23,26 +23,29 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DrugDao" %>
-<%@page import="org.oscarehr.common.dao.PartialDateDao" %>
-<%@page import="org.oscarehr.common.model.PartialDate" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DrugDao" %>
+<%@page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
+<%@page import="ca.openosp.openo.commn.model.PartialDate" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.Drug" %>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicWs" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.oscarRx.StaticScriptBean" %>
-<%@page import="oscar.oscarRx.util.RxUtil" %>
+<%@page import="ca.openosp.openo.commn.model.Drug" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicWs" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.rx.StaticScriptBean" %>
+<%@page import="ca.openosp.openo.prescript.util.RxUtil" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%@page import="java.util.ArrayList" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -68,11 +71,11 @@
 
         <%
             LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-            oscar.oscarRx.pageUtil.RxSessionBean rxBean = null;
+            RxSessionBean rxBean = null;
         %>
         <%
             if (request.getParameter("demographicNo") != null) {
-                rxBean = new oscar.oscarRx.pageUtil.RxSessionBean();
+                rxBean = new RxSessionBean();
 
                 rxBean.setProviderNo((String) session.getAttribute("user"));
                 rxBean.setDemographicNo(Integer.parseInt(request.getParameter("demographicNo")));
@@ -94,9 +97,9 @@
         <c:set var="ctx" value="${pageContext.request.contextPath}"/>
         <%
             if (rxBean == null) {
-                rxBean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+                rxBean = (RxSessionBean) pageContext.findAttribute("bean");
             }
-            com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+            SecurityManager securityManager = new SecurityManager();
         %>
 
 
@@ -121,8 +124,8 @@
 
             ArrayList<StaticScriptBean.DrugDisplayData> drugs = StaticScriptBean.getDrugList(loggedInInfo, currentDemographicNo, regionalIdentifier, cn, bn, atc);
 
-            oscar.oscarRx.data.RxPatientData.Patient patient = oscar.oscarRx.data.RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
-            String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
+            RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
+            String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
         %>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"/>
         "></script>

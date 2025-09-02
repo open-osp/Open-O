@@ -40,15 +40,17 @@
     }
 %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.oscarBilling.ca.bc.MSP.*,oscar.*" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.openo.billing.ca.bc.MSP.*,ca.openosp.*" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillActivity" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillActivityDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillActivity" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillActivityDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.ExtractBean" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
     BillActivityDao billActivityDao = SpringUtils.getBean(BillActivityDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -60,12 +62,12 @@
     String batchCount = "0";
     String oscar_home = oscarVariables.getProperty("project_home") + ".properties";
 
-    String provider = request.getParameter("provider");
+    String provider = request.getParameter("providers");
     String proOHIP = "";
     String specialty_code;
     String billinggroup_no;
     String groupFile = "";
-    if (oscar.oscarBilling.ca.bc.MSP.ExtractBean.HasBillingItemsToSubmit()) {
+    if (ExtractBean.HasBillingItemsToSubmit()) {
         if (provider.compareTo("all") == 0) {
             batchCount = "0";
             int fileCount = 0;
@@ -148,7 +150,7 @@
             batchCount = "0";
             int fileCount = 0;
 
-            String providerBillingNo = request.getParameter("provider");
+            String providerBillingNo = request.getParameter("providers");
             providerBillingNo = providerBillingNo.substring(0, providerBillingNo.indexOf(",")).trim();
 
             for (Provider p : providerDao.getBillableProvidersByOHIPNo(providerBillingNo)) {

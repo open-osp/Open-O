@@ -24,13 +24,13 @@
 
 --%>
 
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%! boolean bMultisites = ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable(); %>
 <%! String[] bgColors; %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*" errorPage="../appointment/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplate" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*" errorPage="../appointment/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>
 <%
     ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
 %>
@@ -56,9 +56,9 @@
 
 %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

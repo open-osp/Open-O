@@ -40,8 +40,9 @@
     }
 %>
 
-<%@page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarDemographic.pageUtil.Util" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao, org.oscarehr.util.SpringUtils,org.oscarehr.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.demographic.pageUtil.Util" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao, ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -179,7 +180,7 @@
     <body vlink="#0000FF">
 
     <%
-        oscar.OscarProperties op = oscar.OscarProperties.getInstance();
+        OscarProperties op = OscarProperties.getInstance();
         String learningEnabled = op.getProperty("OSCAR_LEARNING");
         if (!Util.checkDir(op.getProperty("TMP_DIR"))) { %>
     <p>

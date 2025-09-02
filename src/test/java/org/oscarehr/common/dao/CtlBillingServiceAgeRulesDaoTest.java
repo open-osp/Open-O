@@ -34,10 +34,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.CtlBillingServiceAgeRules;
-import org.oscarehr.common.model.CtlBillingServiceSexRules;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.CtlBillingServiceAgeRules;
+import ca.openosp.openo.commn.model.CtlBillingServiceSexRules;
+import ca.openosp.openo.commn.dao.CtlBillingServiceAgeRulesDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class CtlBillingServiceAgeRulesDaoTest extends DaoTestFixtures {
 

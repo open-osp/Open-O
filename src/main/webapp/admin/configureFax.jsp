@@ -39,14 +39,14 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.model.FaxConfig" %>
-<%@page import="org.oscarehr.common.dao.QueueDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.FaxConfig" %>
+<%@page import="ca.openosp.openo.commn.dao.QueueDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%@page import="java.util.List" %>
 <%@page import="java.util.HashMap" %>
-<%@ page import="org.oscarehr.managers.FaxManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.FaxManager" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <!DOCTYPE html>

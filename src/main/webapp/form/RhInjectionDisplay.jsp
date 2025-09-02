@@ -40,7 +40,10 @@
 %>
 
 <%@ page
-        import="oscar.util.*, oscar.form.*, oscar.form.data.*,java.util.*, oscar.oscarProvider.data.*, oscar.oscarPrevention.*" %>
+        import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*,java.util.*, ca.openosp.openo.providers.data.*, ca.openosp.openo.prevention.*" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionData" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 
 <%
     String id = request.getParameter("id");

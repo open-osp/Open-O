@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.IncomingLabRules;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.IncomingLabRules;
+import ca.openosp.openo.commn.dao.IncomingLabRulesDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class IncomingLabRulesDaoTest extends DaoTestFixtures {
 
@@ -39,7 +40,7 @@ public class IncomingLabRulesDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("incomingLabRules", "provider");
+        SchemaUtils.restoreTable("incomingLabRules", "providers");
     }
 
     @Test

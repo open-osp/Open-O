@@ -42,7 +42,9 @@
 %>
 
 <%@page
-        import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*" %>
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptSearchData" %>
+<%@ page import="ca.openosp.openo.report.data.DemographicSets" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>

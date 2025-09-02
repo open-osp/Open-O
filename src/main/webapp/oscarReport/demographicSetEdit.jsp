@@ -41,9 +41,12 @@
 
 <!-- page updated to support better use of CRUD operations -->
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page
-        import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*" %>
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.report.data.DemographicSets" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -185,7 +188,7 @@
                             <%
                                 for (int i = 0; i < list.size(); i++) {
                                     Map<String, String> h = list.get(i);
-                                    org.oscarehr.common.model.Demographic demo = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), h.get("demographic_no"));
+                                    Demographic demo = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), h.get("demographic_no"));
                             %>
                             <tr>
                                 <td><input type="checkbox" name="demoNo"
@@ -194,7 +197,7 @@
                                 </td>
                                 <td><%=demo.getLastName()%>, <%=demo.getFirstName()%>
                                 </td>
-                                <td><%=oscar.oscarDemographic.data.DemographicData.getDob(demo, "-")%>
+                                <td><%=DemographicData.getDob(demo, "-")%>
                                 </td>
                                 <td><%=demo.getAge()%>
                                 </td>

@@ -1,5 +1,5 @@
 dojo.require("dojo.widget.ValidationTextbox");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 dojo.provide("dojo.widget.AlphaTextBox");
 
 

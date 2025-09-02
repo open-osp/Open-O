@@ -23,9 +23,9 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.managers.SecurityInfoManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.managers.SecurityInfoManager" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -63,7 +63,7 @@
             $(document).ready(function () {
                 $('#libraryTable').DataTable({
                     serverSide: true,
-                    ajax: "<%=request.getContextPath() %>/olis/AddToInbox.do?method=viewLog",
+                    ajax: "<%=request.getContextPath() %>/olis1/AddToInbox.do?method=viewLog",
                     searching: false,
                     "dom": '<"top"i>rt<"bottom"lp><"clear">',
                     "columns": [

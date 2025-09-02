@@ -2434,7 +2434,7 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.b
             'focus': 'blur'
         };
 
-        // The options specified to the provider globally.
+        // The options specified to the providers globally.
         var globalOptions = {};
 
         /**

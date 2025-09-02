@@ -10,8 +10,8 @@
 
 dojo.provide("dojo.lfx.rounded");
 
-dojo.require("dojo.lang.common");
-dojo.require("dojo.html.common");
+dojo.require("dojo.lang.commons");
+dojo.require("dojo.html.commons");
 dojo.require("dojo.html.style");
 dojo.require("dojo.html.display");
 dojo.require("dojo.html.layout");

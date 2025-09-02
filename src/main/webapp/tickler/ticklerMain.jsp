@@ -24,25 +24,25 @@
 
 --%>
 <!DOCTYPE html>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.*" %>
-<%@ page import="oscar.oscarLab.ca.on.*" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.dao.ViewDao" %>
-<%@ page import="org.oscarehr.common.model.View" %>
-<%@ page import="org.oscarehr.common.model.TicklerLink" %>
-<%@ page import="org.oscarehr.common.dao.TicklerLinkDao" %>
-<%@ page import="oscar.MyDateFormat" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.common.model.TicklerComment" %>
-<%@ page import="org.oscarehr.common.model.CustomFilter" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ViewDao" %>
+<%@ page import="ca.openosp.openo.commn.model.View" %>
+<%@ page import="ca.openosp.openo.commn.model.TicklerLink" %>
+<%@ page import="ca.openosp.openo.commn.dao.TicklerLinkDao" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.openo.commn.model.TicklerComment" %>
+<%@ page import="ca.openosp.openo.commn.model.CustomFilter" %>
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.owasp.encoder.Encode" %>
@@ -50,6 +50,7 @@
 <%@ page import="java.time.ZoneId" %>
 <%@ page import="java.time.LocalDateTime" %>
 <%@ page import="java.time.Duration" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -75,7 +76,7 @@
 %>
 
 <%
-    String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
+    String labReqVer = ca.openosp.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
     if (labReqVer.isEmpty()) {
         labReqVer = "07";
     }
@@ -650,7 +651,7 @@
                     <div class="form-group">
                         <label for="assignedTo"><fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerMain.msgAssignedTo"/></label>
                         <%
-                            if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                            if (ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable()) {
                                 SiteDao siteDao = (SiteDao) SpringUtils.getBean(SiteDao.class);
                                 List<Site> sites = siteDao.getActiveSitesByProviderNo(user_no);
                         %>
@@ -692,7 +693,7 @@
                         %>
                         <select id="assignedTo" class="form-control" name="assignedTo">
                             <%
-                                // Check for property to default assigned provider and if present - default to user logged in
+                                // Check for property to default assigned providers and if present - default to user logged in
                                 boolean ticklerDefaultAssignedProvier = OscarProperties.getInstance().isPropertyActive("tickler_default_assigned_provider");
                                 if (ticklerDefaultAssignedProvier) {
                                     if ("all".equals(assignedTo)) {

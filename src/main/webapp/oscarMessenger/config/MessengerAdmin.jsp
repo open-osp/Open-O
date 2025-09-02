@@ -136,7 +136,7 @@
                 }
 
                 $(document).ready(function () {
-                    // create the provider name array
+                    // create the providers name array
                     var providers = new Array();
 
 
@@ -154,7 +154,7 @@
                         var memberId = $("#add-member-id-" + groupId).val();
                         if (memberId) {
                             addMember(memberId, groupId)
-                            $(".search-provider").val('');
+                            $(".search-providers").val('');
                         }
                     });
 
@@ -174,12 +174,12 @@
                     });
 
 
-                    $("span.provider-name").each(function () {
+                    $("span.providers-name").each(function () {
                         var provider = {value: this.id, label: $(this).text().trim()}
                         providers.push(provider);
                     });
 
-                    $(".search-provider").autocomplete({
+                    $(".search-providers").autocomplete({
                         source: providers,
                         focus: function (event, ui) {
                             $(this).val(ui.item.label);

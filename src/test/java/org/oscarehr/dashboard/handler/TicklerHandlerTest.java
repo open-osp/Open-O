@@ -28,13 +28,13 @@ import static org.junit.Assert.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.openosp.openo.dashboard.handler.TicklerHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Tickler;
-import org.oscarehr.managers.TicklerManager;
-import org.oscarehr.managers.TicklerManagerImpl;
-import org.oscarehr.util.LoggedInInfo;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.managers.TicklerManagerImpl;
+import ca.openosp.openo.utility.LoggedInInfo;
 
 public class TicklerHandlerTest {
 

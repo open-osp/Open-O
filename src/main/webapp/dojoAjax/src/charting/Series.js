@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.Series");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.charting.Plotters");
 
 dojo.charting.Series = function (/* object? */kwArgs) {

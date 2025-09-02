@@ -26,11 +26,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="oscar.oscarRx.data.*,java.util.*" %>
+<%@ page import="ca.openosp.openo.rx.data.*,java.util.*" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
-    oscar.oscarRx.data.RxPatientData.Patient patient = null;
+    RxSessionBean bean = null;
+    RxPatientData.Patient patient = null;
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
     String surname = "", firstName = "";
@@ -57,12 +61,12 @@
         <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
         }
-        patient = (oscar.oscarRx.data.RxPatientData.Patient) session.getAttribute("Patient");
+        patient = (RxPatientData.Patient) session.getAttribute("Patient");
         if (patient != null) {
             surname = patient.getSurname();
             firstName = patient.getFirstName();
@@ -109,7 +113,7 @@
                     <tr>
                         <td>
                             <% RxPharmacyData pharmacy = new RxPharmacyData();
-                                List<org.oscarehr.common.model.PharmacyInfo> pharList = pharmacy.getAllPharmacies();
+                                List<PharmacyInfo> pharList = pharmacy.getAllPharmacies();
                             %>
 
                             <div style=" width:860px; height:460px; overflow:auto;">
@@ -124,7 +128,7 @@
                                         <td>&nbsp;</td>
                                     </tr>
                                     <% for (int i = 0; i < pharList.size(); i++) {
-                                        org.oscarehr.common.model.PharmacyInfo ph = pharList.get(i);
+                                        PharmacyInfo ph = pharList.get(i);
                                     %>
                                     <tr>
                                         <td><a

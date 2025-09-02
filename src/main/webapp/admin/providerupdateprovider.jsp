@@ -23,10 +23,10 @@
     Ontario, Canada
 
 --%>
-<%@ page import="org.oscarehr.common.model.LookupListItem" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.LookupList" %>
-<%@ page import="org.oscarehr.managers.LookupListManager" %>
+<%@ page import="ca.openosp.openo.commn.model.LookupListItem" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.LookupList" %>
+<%@ page import="ca.openosp.openo.managers.LookupListManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -43,25 +43,27 @@
         return;
     }
 %>
-<%@ page import="java.util.*, oscar.SxmlMisc, oscar.oscarProvider.data.ProviderBillCenter" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.log.LogAction,oscar.log.LogConst" %>
-<%@ page import="org.oscarehr.common.model.ClinicNbr" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.ClinicNbrDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
-<%@ page import="org.oscarehr.common.dao.SecurityDao" %>
-<%@ page import="org.oscarehr.common.model.Security" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.common.model.ProviderSite" %>
-<%@ page import="org.oscarehr.common.dao.ProviderSiteDao" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
+<%@ page import="java.util.*, ca.openosp.SxmlMisc, ca.openosp.openo.providers.data.ProviderBillCenter" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.log.LogAction,ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.commn.model.ClinicNbr" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.ClinicNbrDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecurityDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Security" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderSite" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderSiteDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.Gender" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.Gender" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
 %>
@@ -204,7 +206,7 @@
                 </tr>
 
 
-                <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
+                <% if (IsPropertiesOn.isMultisitesEnable()) { %>
                 <tr>
                     <td>
                         <div align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.sitesAssigned"/><font color="red">:</font>
@@ -250,11 +252,6 @@
                             <option value="admin"
                                     <% if (provider.getProviderType().equals("admin")) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionAdmin"/></option>
-                            <caisi:isModuleLoad moduleName="survey">
-                                <option value="er_clerk"
-                                        <% if (provider.getProviderType().equals("er_clerk")) { %>
-                                        SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionErClerk"/></option>
-                            </caisi:isModuleLoad>
                         </select>
                         <!--input type="text" name="provider_type" value="<%= provider.getProviderType() %>" maxlength="15" -->
                     </td>
@@ -316,7 +313,7 @@
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formDOB"/>:
                         </td>
                         <td><input type="text" name="dob"
-                                   value="<%= oscar.MyDateFormat.getMyStandardDate(provider.getDob()) %>"
+                                   value="<%= MyDateFormat.getMyStandardDate(provider.getDob()) %>"
                                    maxlength="11"></td>
                     </tr>
                     <tr>
@@ -489,14 +486,6 @@
                         </select>
                         </td>
                     </tr>
-                    <% if (OscarProperties.getInstance().getBooleanProperty("questimed.enabled", "true")) { %>
-                    <tr>
-                        <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formQuestimedUsername"/>:</td>
-                        <td><input type="text" name="questimedUserName"
-                                   value="<%=StringUtils.trimToEmpty(userPropertyDAO.getStringValue(provider_no, UserProperty.QUESTIMED_USERNAME))%>"
-                                   maxlength="255"></td>
-                    </tr>
-                    <%}%>
                     <tr>
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formOfficialFirstName"/>:</td>
                         <td><input type="text" name="officialFirstName"

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.encounter.immunization.config.data.EctImmImmunizationSetData" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -48,7 +48,7 @@
     stat = request.getAttribute("stat") != null ? Integer.parseInt((String) request.getAttribute("stat")) : stat;
     boolean deletedList = stat == 0 ? false : true;
 
-    oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData immuSets = new oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData();
+    EctImmImmunizationSetData immuSets = new EctImmImmunizationSetData();
     immuSets.estImmunizationVecs(stat);
 
 %>

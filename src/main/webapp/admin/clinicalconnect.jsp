@@ -40,7 +40,7 @@
 %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.ws.rest.util.ClinicalConnectUtil" %>
+<%@ page import="ca.openosp.openo.webserv.rest.util.ClinicalConnectUtil" %>
 
 <%
     String username = request.getParameter("serviceUsername");

@@ -11,7 +11,7 @@
 dojo.provide("dojo.widget.InternetTextbox");
 
 dojo.require("dojo.widget.ValidationTextbox");
-dojo.require("dojo.validate.web");
+dojo.require("dojo.validate.www");
 
 dojo.widget.defineWidget(
     "dojo.widget.IpAddressTextbox",

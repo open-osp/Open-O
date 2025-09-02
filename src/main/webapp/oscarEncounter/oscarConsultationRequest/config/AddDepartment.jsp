@@ -25,7 +25,9 @@
 --%>
 
 <%@ page import="java.util.ResourceBundle" %>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -102,7 +104,7 @@
         <tr style="vertical-align: top">
             <td class="MainTableLeftColumn">
                 <%
-                    oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar(request);
+                    EctConTitlebar titlebar = new EctConTitlebar(request);
                     out.print(titlebar.estBar(request));
                 %>
             </td>

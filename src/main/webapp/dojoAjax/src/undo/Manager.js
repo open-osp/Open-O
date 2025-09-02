@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.undo.Manager");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.undo.Manager = function (/*dojo.undo.Manager Object */parent) {
     //summary: Constructor for a dojo.undo.Manager object.

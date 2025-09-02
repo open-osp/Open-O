@@ -41,8 +41,8 @@
     }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*" %>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 Prescriptions
 <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#C0C0C0">
     <tr class="title">

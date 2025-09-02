@@ -24,18 +24,18 @@
 
 --%>
 
-<%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteDAO" %>
-<%@page import="org.oscarehr.common.model.SecRole" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.SecRoleDao" %>
-<%@page import="oscar.oscarDB.*" %>
+<%@page import="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAO" %>
+<%@page import="ca.openosp.openo.commn.model.SecRole" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.SecRoleDao" %>
+<%@page import="ca.openosp.openo.db.*" %>
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.util.DbConnectionFilter" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.log.LogAction" %>
+<%@page import="ca.openosp.openo.utility.DbConnectionFilter" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.log.LogAction" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

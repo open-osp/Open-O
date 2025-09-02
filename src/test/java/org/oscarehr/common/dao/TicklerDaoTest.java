@@ -32,17 +32,19 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.dao.ProgramDao;
-import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.PMmodule.model.Program;
+import ca.openosp.openo.PMmodule.dao.ProgramDao;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.PMmodule.model.Program;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Tickler;
-import org.oscarehr.common.model.TicklerComment;
-import org.oscarehr.common.model.TicklerUpdate;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.commn.model.TicklerComment;
+import ca.openosp.openo.commn.model.TicklerUpdate;
+import ca.openosp.openo.commn.dao.TicklerDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class TicklerDaoTest extends DaoTestFixtures {
 
@@ -54,7 +56,7 @@ public class TicklerDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("tickler", "tickler_update", "tickler_comments", "custom_filter", "provider", "demographic", "program", "lst_gender", "admission", "demographic_merged",
+        SchemaUtils.restoreTable("tickler", "tickler_update", "tickler_comments", "custom_filter", "providers", "demographic", "program", "lst_gender", "admission", "demographic_merged",
                 "health_safety", "providersite", "site", "program_team", "log", "Facility", "program_queue", "tickler_category");
     }
 

@@ -40,9 +40,13 @@
 %>
 
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="oscar.oscarEncounter.immunization.data.*, oscar.util.*, oscar.oscarDemographic.data.*" %>
-<%@ page import="oscar.oscarEncounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.data.*, ca.openosp.openo.util.*, ca.openosp.openo.demographic.data.*" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.data.EctImmConfigData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -52,7 +56,7 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.ScheduleConfig.title"/></title>
     <%
-        oscar.oscarEncounter.pageUtil.EctSessionBean bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean");
+        EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
 
         String demoNo = request.getParameter("demographic_no") == null ? (String) request.getAttribute("demographic_no") : request.getParameter("demographic_no");
 
@@ -62,7 +66,7 @@
         String age = "";
         if (demoNo != null) {
             DemographicData dData = new DemographicData();
-            org.oscarehr.common.model.Demographic demographic = dData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
+            Demographic demographic = dData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
             last_name = demographic.getLastName();
             first_name = demographic.getFirstName();
             sex = demographic.getSex();

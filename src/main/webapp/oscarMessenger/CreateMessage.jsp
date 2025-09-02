@@ -24,23 +24,27 @@
 
 --%>
 
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%@ page import="org.w3c.dom.*" %>
-<%@ page import="oscar.oscarMessenger.util.Msgxml" %>
-<%@ page import="oscar.oscarDemographic.data.*" %>
-<%@ page import="org.oscarehr.managers.MessagingManager" %>
-<%@ page import="org.oscarehr.common.model.Groups" %>
-<%@ page import="oscar.oscarMessenger.data.MsgProviderData" %>
+<%@ page import="ca.openosp.openo.messenger.util.Msgxml" %>
+<%@ page import="ca.openosp.openo.demographic.data.*" %>
+<%@ page import="ca.openosp.openo.managers.MessagingManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Groups" %>
+<%@ page import="ca.openosp.openo.messenger.data.MsgProviderData" %>
 <%@ page import="java.util.Map, java.util.List" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.messenger.pageUtil.MsgSessionBean" %>
+<%@ page import="ca.openosp.openo.managers.MessengerGroupManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -68,7 +72,7 @@
 
 
 <%
-    org.oscarehr.managers.MessengerGroupManager groupManager = SpringUtils.getBean(org.oscarehr.managers.MessengerGroupManager.class);
+    MessengerGroupManager groupManager = SpringUtils.getBean(MessengerGroupManager.class);
     Map<Groups, List<MsgProviderData>> groups = groupManager.getAllGroupsWithMembers(LoggedInInfo.getLoggedInInfoFromSession(request));
     Map<String, List<MsgProviderData>> remoteMembers = groupManager.getAllRemoteMembers(LoggedInInfo.getLoggedInInfoFromSession(request));
     List<MsgProviderData> localMembers = groupManager.getAllLocalMembers(LoggedInInfo.getLoggedInInfoFromSession(request));
@@ -82,11 +86,11 @@
     pageContext.setAttribute("messageSubject", request.getAttribute("ReSubject"));
     pageContext.setAttribute("messageBody", request.getAttribute("ReText"));
 
-    oscar.oscarMessenger.pageUtil.MsgSessionBean bean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) pageContext.findAttribute("bean");
+    MsgSessionBean bean = (MsgSessionBean) pageContext.findAttribute("bean");
 
     String demographic_no = (String) request.getAttribute("demographic_no");
     DemographicData demoData = new DemographicData();
-    org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
+    Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
     String demoName = "";
     if (demo != null) {
         demoName = demo.getLastName() + ", " + demo.getFirstName();

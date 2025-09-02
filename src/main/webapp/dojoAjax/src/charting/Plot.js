@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.Plot");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.charting.Axis");
 dojo.require("dojo.charting.Series");
 

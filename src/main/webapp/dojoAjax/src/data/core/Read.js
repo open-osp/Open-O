@@ -14,7 +14,7 @@ dojo.require("dojo.lang.declare");
 dojo.require("dojo.experimental");
 
 /* summary:
- *   This is an abstract API that data provider implementations conform to.  
+ *   This is an abstract API that data providers implementations conform to.
  *   This file defines methods signatures and intentionally leaves all the
  *   methods unimplemented.
  */

@@ -14,7 +14,7 @@ dojo.require("dojo.data.old.Item");
 // -------------------------------------------------------------------
 // Constructor
 // -------------------------------------------------------------------
-dojo.data.old.Kind = function (/* dojo.data.old.provider.Base */ dataProvider) {
+dojo.data.old.Kind = function (/* dojo.data.old.providers.Base */ dataProvider) {
     /**
      * summary:
      * A Kind represents a kind of item.  In the dojo data model

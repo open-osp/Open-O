@@ -25,13 +25,14 @@ package org.oscarehr.billing.CA.ON.dao;
 
 import static org.junit.Assert.assertNotNull;
 
+import ca.openosp.openo.billing.CA.ON.dao.BillingONHeaderDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.ON.model.BillingONHeader;
+import ca.openosp.openo.billing.CA.ON.model.BillingONHeader;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingONHeaderDaoTest extends DaoTestFixtures {
 

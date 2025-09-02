@@ -27,12 +27,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.CustomFilter;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.CustomFilter;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.dao.CustomFilterDao;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 
 public class CustomFilterDaoTest extends DaoTestFixtures {
@@ -42,7 +43,7 @@ public class CustomFilterDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("custom_filter", "custom_filter_providers", "custom_filter_assignees", "tickler", "tickler_update", "tickler_comments", "custom_filter", "provider", "demographic", "program", "lst_gender", "admission", "demographic_merged",
+        SchemaUtils.restoreTable("custom_filter", "custom_filter_providers", "custom_filter_assignees", "tickler", "tickler_update", "tickler_comments", "custom_filter", "providers", "demographic", "program", "lst_gender", "admission", "demographic_merged",
                 "health_safety", "providersite", "site", "program_team", "log", "Facility", "program_queue");
     }
 

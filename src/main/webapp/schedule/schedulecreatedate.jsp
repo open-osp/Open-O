@@ -26,7 +26,7 @@
 <%!
     //multisite starts =====================
     private List<Site> sites;
-    private boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    private boolean bMultisites = ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable();
 
     private String getSiteHTML(String reason, List<Site> sites) {
         if (reason == null || reason.trim().length() == 0)
@@ -51,21 +51,21 @@
     boolean scheduleOverlaps = false;
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<jsp:useBean id="scheduleRscheduleBean" class="oscar.RscheduleBean" scope="session"/>
+<jsp:useBean id="scheduleRscheduleBean" class="ca.openosp.RscheduleBean" scope="session"/>
 <jsp:useBean id="scheduleDateBean" class="java.util.Hashtable" scope="session"/>
 <jsp:useBean id="scheduleHolidayBean" class="java.util.Hashtable" scope="session"/>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleDateDao" %>
-<%@ page import="org.oscarehr.common.model.RSchedule" %>
-<%@ page import="org.oscarehr.common.dao.RScheduleDao" %>
-<%@ page import="org.oscarehr.common.model.ScheduleHoliday" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleHolidayDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleDateDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RSchedule" %>
+<%@ page import="ca.openosp.openo.commn.dao.RScheduleDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleHoliday" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleHolidayDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%
     ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
     RScheduleDao rScheduleDao = (RScheduleDao) SpringUtils.getBean(RScheduleDao.class);
@@ -226,9 +226,9 @@
 /////////////////////////////////////
 
 %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="oscar.appt.ApptUtil" %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.appt.ApptUtil" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <html>
     <head>

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -42,8 +42,8 @@
 %>
 
 <%
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-    bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean");
+    EctSessionBean bean = null;
+    bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
 %>
 <html>
     <head>

@@ -33,7 +33,8 @@
     String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
 %>
 
-<%@ page import="java.util.*, oscar.eform.*" %>
+<%@ page import="java.util.*, ca.openosp.openo.eform.*" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%

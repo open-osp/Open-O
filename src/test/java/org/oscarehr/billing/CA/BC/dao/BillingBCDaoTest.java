@@ -29,10 +29,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.common.dao.BillingBCDao;
+import ca.openosp.openo.commn.dao.BillingBCDao;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingBCDaoTest extends DaoTestFixtures {
 

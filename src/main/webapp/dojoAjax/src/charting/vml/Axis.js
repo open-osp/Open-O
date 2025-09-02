@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.vml.Axis");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 if (dojo.render.vml.capable) {
     dojo.extend(dojo.charting.Axis, {

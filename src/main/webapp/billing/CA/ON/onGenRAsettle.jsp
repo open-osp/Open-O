@@ -18,17 +18,18 @@
 
 --%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat"
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*,ca.openosp.MyDateFormat"
          errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.RaHeader" %>
-<%@page import="org.oscarehr.common.dao.RaHeaderDao" %>
-<%@page import="org.oscarehr.common.model.RaDetail" %>
-<%@page import="org.oscarehr.common.dao.RaDetailDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.RaHeader" %>
+<%@page import="ca.openosp.openo.commn.dao.RaHeaderDao" %>
+<%@page import="ca.openosp.openo.commn.model.RaDetail" %>
+<%@page import="ca.openosp.openo.commn.dao.RaDetailDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingRAPrep" %>
 <%
     RaHeaderDao dao = SpringUtils.getBean(RaHeaderDao.class);
     BillingDao billingDao = SpringUtils.getBean(BillingDao.class);

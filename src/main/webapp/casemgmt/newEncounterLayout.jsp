@@ -28,17 +28,20 @@
 <%@ include file="/casemgmt/taglibs.jsp" %>
 
 <%@page import="java.util.Enumeration, org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.casemgmt.web.formbeans.*, org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO, oscar.OscarProperties" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.provider.web.CppPreferencesUIBean" %>
-<%@page import="org.oscarehr.casemgmt.common.Colour" %>
-<%@page import="org.oscarehr.common.dao.ProviderDataDao" %>
-<%@page import="org.oscarehr.common.model.ProviderData" %>
+<%@page import="ca.openosp.openo.casemgmt.web.formbeans.*, ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.provider.web.CppPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.casemgmt.common.Colour" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderData" %>
 <%@page import="org.owasp.encoder.Encode" %>
 <%@page import="java.util.List, java.util.Random" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteExt" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
 
 
 <%
@@ -46,13 +49,13 @@
 
     String roleName = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
+    EctSessionBean bean = null;
     String beanName = "casemgmt_oscar_bean" + (String) request.getAttribute("demographicNo");
 
     pageContext.setAttribute("providerNo", request.getParameter("providerNo"), PageContext.PAGE_SCOPE);
     pageContext.setAttribute("demographicNo", request.getParameter("demographicNo"), PageContext.PAGE_SCOPE);
 
-    org.oscarehr.casemgmt.model.CaseManagementNoteExt cme = new org.oscarehr.casemgmt.model.CaseManagementNoteExt();
+    CaseManagementNoteExt cme = new CaseManagementNoteExt();
 
     String frmName = "caseManagementEntryForm" + request.getParameter("demographicNo");
     CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean) session.getAttribute(frmName);
@@ -385,12 +388,6 @@
             oMedsLabel = "oscarEncounter.oMeds.title";
             famHistoryLabel = "oscarEncounter.famHistory.title";
             riskFactorsLabel = "oscarEncounter.riskFactors.title";
-
-            diagnosticNotesLabel = "oscarEncounter.eyeform.diagnosticNotes.title";
-            pastOcularHistoryLabel = "oscarEncounter.eyeform.pastOcularHistory.title";
-            patientLogLabel = "oscarEncounter.eyeform.patientLog.title";
-            ocularMedicationsLabel = "oscarEncounter.eyeform.ocularMedications.title";
-            currentHistoryLabel = "oscarEncounter.eyeform.currentHistory.title";
 
             quickChartMsg = "<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.quickChart.msg"/>";
             fullChartMsg = "<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.fullChart.msg"/>";
@@ -850,13 +847,6 @@
                 <input type="submit" id="printOp" style="border: 1px solid #7682b1;"
                        value="Print" onclick="return printNotes();">
 
-                <indivo:indivoRegistered
-                        demographic="<%=(String) request.getAttribute(\"demographicNo\")%>"
-                        provider="<%=(String) request.getSession().getAttribute(\"user\")%>">
-                    <input type="submit" id="sendToPhr"
-                           style="border: 1px solid #7682b1;" value="Send To Phr"
-                           onclick="return sendToPhrr();">
-                </indivo:indivoRegistered>
                 <input type="submit" id="cancelprintOp"
                        style="border: 1px solid #7682b1;" value="Cancel"
                        onclick="$('printOps').style.display='none';"> <input

@@ -25,13 +25,14 @@ package org.oscarehr.PMmodule.dao;
 
 import static org.junit.Assert.assertNotNull;
 
+import ca.openosp.openo.PMmodule.dao.VacancyTemplateDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.model.VacancyTemplate;
+import ca.openosp.openo.PMmodule.model.VacancyTemplate;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class VacancyTemplateDaoTest extends DaoTestFixtures {
 

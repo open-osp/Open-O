@@ -28,9 +28,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="oscar.oscarReport.oscarMeasurements.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.report.oscarMeasurements.pageUtil.*" %>
 <%@ page import="java.util.*, java.sql.*, java.text.*, java.net.*" %>
-<%@ page import="org.oscarehr.common.model.MeasurementType" %>
+<%@ page import="ca.openosp.openo.commn.model.MeasurementType" %>
 
 <%
     GregorianCalendar now = new GregorianCalendar();

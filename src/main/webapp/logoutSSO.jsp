@@ -24,13 +24,13 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
 <%@page import="java.net.URLEncoder" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="java.util.HashMap, oscar.log.*"
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="java.util.HashMap, ca.openosp.openo.log.*"
         errorPage="/errorpage.jsp" %>
 
 <%

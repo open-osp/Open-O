@@ -2,14 +2,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="oscar.*, org.oscarehr.util.*,oscar.util.*,java.net.URLEncoder"%>
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.*,ca.openosp.openo.utility.*,ca.openosp.openo.util.*,java.net.URLEncoder"%>
 <c:if test="${infirmaryView_isOscar == 'false'}">
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	session.setAttribute("case_program_id", session.getAttribute(SessionConstants.CURRENT_PROGRAM_ID));
-	org.caisi.core.web.Infirm2Action.updateCurrentProgram((String)session.getAttribute(SessionConstants.CURRENT_PROGRAM_ID),loggedInInfo.getLoggedInProviderNo());
 	java.util.Date todayDate=new java.util.Date();
 	todayDate.setHours(23);
 	todayDate.setMinutes(59);
@@ -84,11 +83,9 @@
 					<c:if test="${demographic_no == 0}">
 						<c:choose>
 							<c:when test="${not empty tickler_no}">
-								<caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
 									<a href="#" onClick="popupPage(700, 1000, '../tickler/ticklerDemoMain.jsp?demoview=0'); return false;" title="${tickler_note}">
 										<font color="red">!</font>
 									</a>
-								</caisi:isModuleLoad>
 							</c:when>
 							<c:otherwise>
 								<b><c:out value="${de.label}"/></b>
@@ -106,7 +103,7 @@
 						<%
 							String eURL = base_eURL + "&appointmentNo=" + rsAppointNO + "&demographicNo=" + demographic_no + "&reason=" + URLEncoder.encode(reason) + "&startTime=" + apptime.getHours() + ":" + apptime.getMinutes() + "&status=" + status;
 						%>
-						<a href="#" onClick="popupWithApptNo(710, 1024, '../oscarSurveillance/CheckSurveillance.do?demographicNo=${demographic_no}&proceed=${eURL}', 'encounter'); return false;" title="<fmt:setBundle basename='oscarResources'/><fmt:message key='global.encounter'/>">
+						<a href="#" onClick="popupWithApptNo(710, 1024, '${eURL}', 'encounter'); return false;" title="<fmt:setBundle basename='oscarResources'/><fmt:message key='global.encounter'/>">
 							|<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.btnE"/>
 						</a>
 					</c:if>

@@ -29,12 +29,13 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.openosp.openo.billing.CA.BC.dao.BillingStatusTypesDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.BC.model.BillingStatusTypes;
+import ca.openosp.openo.billing.CA.BC.model.BillingStatusTypes;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingStatusTypesDaoTest extends DaoTestFixtures {
 

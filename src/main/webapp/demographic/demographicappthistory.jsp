@@ -38,38 +38,43 @@
         return;
     }
 %>
-<%@page import="oscar.util.*" %>
+<%@page import="ca.openosp.openo.util.*" %>
 <%@page import="org.apache.commons.beanutils.BeanUtils" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicWs" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicWs" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
-<%@ page import="java.util.*, java.sql.*, java.net.*, oscar.*, oscar.oscarDB.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*, ca.openosp.openo.db.*" errorPage="/errorpage.jsp" %>
 <%@ page
-        import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager, org.oscarehr.caisi_integrator.ws.CachedAppointment, org.oscarehr.caisi_integrator.ws.CachedProvider, org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.caisi_integrator.ws.*" %>
-<%@ page import="org.oscarehr.common.model.CachedAppointmentComparator" %>
+        import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager, ca.openosp.openo.caisi_integrator.ws.CachedAppointment, ca.openosp.openo.caisi_integrator.ws.CachedProvider, ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.caisi_integrator.ws.*" %>
+<%@ page import="ca.openosp.openo.commn.model.CachedAppointmentComparator" %>
 
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
 
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.model.AppointmentArchive" %>
-<%@page import="org.oscarehr.common.dao.AppointmentStatusDao" %>
-<%@page import="org.oscarehr.common.model.AppointmentStatus" %>
-<%@page import="org.oscarehr.managers.LookupListManager" %>
-<%@page import="org.oscarehr.common.model.LookupList" %>
-<%@page import="org.oscarehr.common.model.LookupListItem" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.model.AppointmentArchive" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentStatusDao" %>
+<%@page import="ca.openosp.openo.commn.model.AppointmentStatus" %>
+<%@page import="ca.openosp.openo.managers.LookupListManager" %>
+<%@page import="ca.openosp.openo.commn.model.LookupList" %>
+<%@page import="ca.openosp.openo.commn.model.LookupListItem" %>
 
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.managers.AppointmentManager" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -99,7 +104,7 @@
     }
 
 
-    if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+    if (IsPropertiesOn.isMultisitesEnable()) {
         SiteDao siteDao = (SiteDao) WebApplicationContextUtils.getWebApplicationContext(application)
                 .getBean(SiteDao.class);
         sites = siteDao.getAllActiveSites();
@@ -158,23 +163,6 @@
                         popup.opener = self;
                     }
                 }
-            }
-
-            function printVisit() {
-                printVisit('');
-            }
-
-            function printVisit(cpp) {
-                var sels = document.getElementsByName('sel');
-                var ids = "";
-                for (var x = 0; x < sels.length; x++) {
-                    if (sels[x].checked) {
-                        if (ids.length > 0)
-                            ids += ",";
-                        ids += sels[x].value;
-                    }
-                }
-                location.href = ctx + "/eyeform/Eyeform.do?method=print&apptNos=" + ids + "&cpp=" + cpp;
             }
 
             function selectAllCheckboxes() {
@@ -267,7 +255,7 @@
                         <TH width="15%"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicappthistory.msgProvider"/></b></TH>
                         <TH><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicappthistory.msgComments"/></b></TH>
 
-                        <% if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) { %>
+                        <% if (IsPropertiesOn.isMultisitesEnable()) { %>
                         <TH width="5%">Location</TH>
                         <% } %>
                     </tr>
@@ -280,7 +268,7 @@
                         if (request.getParameter("limit2") != null)
                             iPageSize = Integer.parseInt(request.getParameter("limit2"));
                         List<Object> appointmentList;
-                        org.oscarehr.managers.AppointmentManager appointmentManager = SpringUtils.getBean(org.oscarehr.managers.AppointmentManager.class);
+                        AppointmentManager appointmentManager = SpringUtils.getBean(AppointmentManager.class);
 
                         if (!"true".equals(showDeleted)) {
                             appointmentList = new java.util.ArrayList<Object>();
@@ -406,7 +394,7 @@
                         <td>&nbsp;<%=remarks%><% if (newline) {%><br/>&nbsp;<%}%><%=comments%>
                         </td>
                         <%
-                            if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                            if (IsPropertiesOn.isMultisitesEnable()) {
                                 String[] sbc = siteBgColor.get(appointment.getLocation());
                         %>
                         <td style='background-color:<%= sbc[0] %>'><%= sbc[1] %>

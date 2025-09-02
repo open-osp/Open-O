@@ -39,10 +39,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ReportTemp;
-import org.oscarehr.common.model.ReportTempPK;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ReportTemp;
+import ca.openosp.openo.commn.model.ReportTempPK;
+import ca.openosp.openo.commn.dao.ReportTempDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ReportTempDaoTest extends DaoTestFixtures {
     protected ReportTempDao dao = (ReportTempDao) SpringUtils.getBean(ReportTempDao.class);

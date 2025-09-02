@@ -32,14 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.DemographicExt;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.common.dao.DemographicDao;
+import ca.openosp.openo.commn.model.DemographicExt;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.dao.DemographicExtDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DemographicExtDaoTest extends DaoTestFixtures {
 
@@ -54,7 +54,7 @@ public class DemographicExtDaoTest extends DaoTestFixtures {
     public void before() throws Exception {
         //SchemaUtils.restoreTable("demographicExt","lst_gender","demographic_merged","admission");
         SchemaUtils.restoreTable("demographic", "lst_gender", "admission", "demographic_merged", "program",
-                "health_safety", "provider", "providersite", "site", "program_team", "log", "Facility", "demographicExt");
+                "health_safety", "providers", "providersite", "site", "program_team", "log", "Facility", "demographicExt");
 
 
         for (int i = 0; i < 20; i++) {

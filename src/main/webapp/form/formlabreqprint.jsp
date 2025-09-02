@@ -39,7 +39,7 @@
     }
 %>
 
-<%@ page import="java.util.*, oscar.form.*, oscar.OscarProperties" %>
+<%@ page import="java.util.*, ca.openosp.openo.form.*, ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

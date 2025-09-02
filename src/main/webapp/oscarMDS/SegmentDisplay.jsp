@@ -25,7 +25,9 @@
 --%>
 <%@page errorPage="../provider/errorpage.jsp" %>
 <%@ page
-        import="java.util.*, oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*" %>
+        import="java.util.*, ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
+<%@ page import="ca.openosp.openo.mds.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -485,7 +487,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
 
                     for (i = 0; i < mDSSegmentData.headersArray.size(); i++) {
                         linenum = 0;
-                        if (((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportFlag.equals("MICROBIOLOGY CULTURE")) { %>
+                        if (((Headers) mDSSegmentData.headersArray.get(i)).reportFlag.equals("MICROBIOLOGY CULTURE")) { %>
 
                 <table <%=i > 0 ? "style=\"page-break-before:always;\"" : ""%> border="0"
                                                                                cellpadding="0" cellspacing="0"
@@ -495,7 +497,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                     </tr>
                     <tr>
                         <td bgcolor="#FFCC00" width="200" height="22" valign="bottom">
-                            <div class="Title2"><%=((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportFlag%>
+                            <div class="Title2"><%=((Headers) mDSSegmentData.headersArray.get(i)).reportFlag%>
                             </div>
                         </td>
                         <td align="right" bgcolor="#FFCC00" width="100">&nbsp;</td>
@@ -516,12 +518,12 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                         <td width="6%" align="middle" valign="bottom" class="Cell"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.formTestLocation"/></td>
                         <td width="6%" align="middle" valign="bottom" class="Cell"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.formNew"/></td>
                     </tr>
-                    <% if (((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading != null) {
-                        for (int x = 0; x < ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading.length; x++) { %>
+                    <% if (((Headers) mDSSegmentData.headersArray.get(i)).reportHeading != null) {
+                        for (int x = 0; x < ((Headers) mDSSegmentData.headersArray.get(i)).reportHeading.length; x++) { %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>"
                         class="NormalRes">
                         <td align="middle"
-                            colspan="8"><%=((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x].equals("") ? "&nbsp;" : ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x]%>
+                            colspan="8"><%=((Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x].equals("") ? "&nbsp;" : ((Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x]%>
                         </td>
                     </tr>
                     <% }
@@ -530,16 +532,16 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
 
                     <% j = 0;
                         int linenumbefore = linenum;
-                        while (j < ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size()) {
-                            if (((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(0)).name.length() >= 3
-                                    && ((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(0)).name.substring(0, 3).equals("ORG")) {
+                        while (j < ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size()) {
+                            if (((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(0)).name.length() >= 3
+                                    && ((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(0)).name.substring(0, 3).equals("ORG")) {
                                 int firstorgindex = j;
                                 int lastorgindex = j;
                                 int m;
 
-                                while (lastorgindex + 1 < ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size()
-                                        && ((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(lastorgindex + 1)).resultsArray.get(0)).name.length() >= 3
-                                        && ((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(lastorgindex + 1)).resultsArray.get(0)).name.substring(0, 3).equals("ORG")) {
+                                while (lastorgindex + 1 < ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size()
+                                        && ((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(lastorgindex + 1)).resultsArray.get(0)).name.length() >= 3
+                                        && ((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(lastorgindex + 1)).resultsArray.get(0)).name.substring(0, 3).equals("ORG")) {
                                     lastorgindex++;
                                 } %>
 
@@ -549,7 +551,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.msgORG"/> <%=m - firstorgindex + 1%>
                         </td>
                         <td align="left"
-                            colspan="7"><%=((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(m)).resultsArray.get(0)).getLabNotes(0)%>
+                            colspan="7"><%=((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(m)).resultsArray.get(0)).getLabNotes(0)%>
                         </td>
 
 
@@ -573,22 +575,22 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                     <% for (m = firstorgindex; m <= lastorgindex; m++) {  // m is organism index - inter over organisms to display results
                         int n;  // n is antibiotic index
                         String magicWord = "xyzzy";  // used to identify the results we've already processed
-                        oscar.oscarMDS.data.GroupedReports thisGroup = (oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(m);
+                        GroupedReports thisGroup = (GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(m);
                         for (n = 1; n < thisGroup.resultsArray.size(); n++) {  // iter over antibiotics
-                            String aName = ((oscar.oscarMDS.data.Results) thisGroup.resultsArray.get(n)).name;
-                            if (((oscar.oscarMDS.data.Results) thisGroup.resultsArray.get(n)).observationValue != magicWord) { // not yet seen this antibiotic %>
+                            String aName = ((Results) thisGroup.resultsArray.get(n)).name;
+                            if (((Results) thisGroup.resultsArray.get(n)).observationValue != magicWord) { // not yet seen this antibiotic %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>"
                         class="NormalRes">
                         <td valign="top"
-                            align="left"><%= ((oscar.oscarMDS.data.Results) thisGroup.resultsArray.get(n)).name %>
+                            align="left"><%= ((Results) thisGroup.resultsArray.get(n)).name %>
                         </td>
                         <% for (int p = firstorgindex; p <= lastorgindex; p++) { // iter over organisms to print their results for this antibiotic
                             boolean foundResult = false;
-                            for (int q = 1; q < ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.size(); q++) { // search the results for this organism for this particular antibiotic
-                                if (((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).name.equals(aName)) { %>
-                        <td align="middle"><%=((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).observationValue%>
+                            for (int q = 1; q < ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.size(); q++) { // search the results for this organism for this particular antibiotic
+                                if (((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).name.equals(aName)) { %>
+                        <td align="middle"><%=((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).observationValue%>
                         </td>
-                        <% ((oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).observationValue = magicWord; // signal that we've displayed this result
+                        <% ((Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(p)).resultsArray.get(q)).observationValue = magicWord; // signal that we've displayed this result
                             foundResult = true;
                             break; // finish the q=1...n for loop; we found what we want
                         }
@@ -605,8 +607,8 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                     } // end for m=1... (iter over all organisms)
                         j = lastorgindex + 1;
                     } else {  // not an organism sensitivity section
-                        for (k = 0; k < ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.size(); k++) {
-                            oscar.oscarMDS.data.Results thisResult = (oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(k);
+                        for (k = 0; k < ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.size(); k++) {
+                            Results thisResult = (Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(k);
                             if (thisResult.resultStatus.startsWith("DNR") || (thisResult.resultStatus.startsWith("Deleted") && thisResult.notes == null))
                                 continue;
                             AbnFlag = thisResult.abnormalFlags;
@@ -681,7 +683,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                     </tr>
                     <tr>
                         <td bgcolor="#FFCC00" width="200" height="22" valign="bottom">
-                            <div class="Title2"><%=((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportFlag%>
+                            <div class="Title2"><%=((Headers) mDSSegmentData.headersArray.get(i)).reportFlag%>
                             </div>
                         </td>
                         <td align="right" bgcolor="#FFCC00" width="100">&nbsp;</td>
@@ -703,12 +705,12 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                         <td width="6%" align="middle" valign="bottom" class="Cell"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.formNew"/></td>
                     </tr>
 
-                    <% if (((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading != null) {
-                        for (int x = 0; x < ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading.length; x++) { %>
+                    <% if (((Headers) mDSSegmentData.headersArray.get(i)).reportHeading != null) {
+                        for (int x = 0; x < ((Headers) mDSSegmentData.headersArray.get(i)).reportHeading.length; x++) { %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>"
                         class="NormalRes">
                         <td align="middle"
-                            colspan="8"><%=((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x].equals("") ? "&nbsp;" : ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x]%>
+                            colspan="8"><%=((Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x].equals("") ? "&nbsp;" : ((Headers) mDSSegmentData.headersArray.get(i)).reportHeading[x]%>
                         </td>
                     </tr>
                     <% }
@@ -716,11 +718,11 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                     } %>
 
                     <% int linenumbefore = linenum;
-                        for (j = 0; j < ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size(); j++) {
-                            oscar.oscarMDS.data.GroupedReports thisGroup = (oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j); %>
+                        for (j = 0; j < ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.size(); j++) {
+                            GroupedReports thisGroup = (GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j); %>
 
-                    <% for (k = 0; k < ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.size(); k++) {
-                        oscar.oscarMDS.data.Results thisResult = (oscar.oscarMDS.data.Results) ((oscar.oscarMDS.data.GroupedReports) ((oscar.oscarMDS.data.Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(k);
+                    <% for (k = 0; k < ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.size(); k++) {
+                        Results thisResult = (Results) ((GroupedReports) ((Headers) mDSSegmentData.headersArray.get(i)).groupedReportsArray.get(j)).resultsArray.get(k);
                         if (thisResult.resultStatus.startsWith("DNR") || (thisResult.resultStatus.startsWith("Deleted") && thisResult.notes == null))
                             continue;
                         AbnFlag = thisResult.abnormalFlags;

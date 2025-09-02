@@ -9,4 +9,4 @@
 */
 
 dojo.provide("dojo.string");
-dojo.require("dojo.string.common");
+dojo.require("dojo.string.commons");

@@ -27,7 +27,7 @@
 
 
 <%@ page
-        import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList, oscar.oscarLab.ForwardingRules, oscar.OscarProperties" %>
+        import="ca.openosp.openo.mds.data.ProviderData, java.util.ArrayList, ca.openosp.openo.lab.ForwardingRules, ca.openosp.OscarProperties" %>
 
 <%
 

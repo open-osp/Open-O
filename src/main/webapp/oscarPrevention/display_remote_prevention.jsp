@@ -40,22 +40,22 @@
 
 <%@page import="java.util.Map" %>
 <%@page import="java.util.HashMap" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.RemotePreventionHelper" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicWs" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.FacilityIdIntegerCompositePk" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedDemographicPrevention" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.RemotePreventionHelper" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicWs" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdIntegerCompositePk" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedDemographicPrevention" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
 
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedFacility" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedProvider" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.FacilityIdStringCompositePk" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedProvider" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
 <%@page import="java.util.List" %>
 <html xmlns="http://www.w3.org/1999/xhtml">

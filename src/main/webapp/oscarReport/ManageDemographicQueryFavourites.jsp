@@ -42,10 +42,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="oscar.oscarReport.data.RptSearchData,java.util.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptSearchData,java.util.*" %>
 
 <%
-    oscar.oscarReport.data.RptSearchData searchData = new oscar.oscarReport.data.RptSearchData();
+    RptSearchData searchData = new RptSearchData();
     java.util.ArrayList queryArray = searchData.getQueryTypes();
 %>
 

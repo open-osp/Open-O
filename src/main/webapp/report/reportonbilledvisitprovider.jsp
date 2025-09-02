@@ -21,9 +21,9 @@
 <%@ page errorPage="../errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="com.quatro.model.security.Secuserrole" %>
-<%@ page import="com.quatro.dao.security.SecuserroleDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.model.security.Secuserrole" %>
+<%@ page import="ca.openosp.openo.daos.security.SecuserroleDao" %>
 <%
     SecuserroleDao secuserroleDao = (SecuserroleDao) SpringUtils.getBean(SecuserroleDao.class);
 %>
@@ -65,9 +65,9 @@
         }
     }
 %>
-<%@page import="oscar.oscarDB.DBPreparedHandler" %>
+<%@page import="ca.openosp.openo.db.DBPreparedHandler" %>
 
-<%@page import="oscar.Misc" %>
+<%@page import="ca.openosp.Misc" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -105,7 +105,7 @@
     Properties oldRoleProp = new Properties();
     Vector vec = new Vector();
     Vector oldRoleList = new Vector();
-    String query = "select u.*, p.first_name, p.last_name from secUserRole u, provider p ";
+    String query = "select u.*, p.first_name, p.last_name from secUserRole u, providers p ";
 
     query += "where u.provider_no=p.provider_no  order by p.first_name, p.last_name";
 
@@ -119,7 +119,7 @@
         oldRoleList.add(Misc.getString(rs, "provider_no"));
     }
 
-    query = "select * from provider order by first_name, last_name";
+    query = "select * from providers order by first_name, last_name";
     rs = dbObj.queryResults(query);
 
     while (rs.next()) {
@@ -152,7 +152,7 @@
             <th width="30%" nowrap><b>First Name</b></th>
             <th width="30%" nowrap><b>Last Name</b></th>
             <!--th width="10%" nowrap>
-                <b>provider type</b>
+                <b>providers type</b>
               </th>
               <th width="10%" nowrap>
                 <b>specialty</b>

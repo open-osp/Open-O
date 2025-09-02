@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lang.extras");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.lang.setTimeout = function (/*Function*/func, /*int*/delay /*, ...*/) {
     // summary:

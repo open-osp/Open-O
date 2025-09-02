@@ -38,9 +38,9 @@
         return;
     }
 %>
-<%@page import="org.oscarehr.web.admin.KeyManagerUIBean" %>
-<%@page import="org.oscarehr.common.model.PublicKey" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
+<%@page import="ca.openosp.openo.web.admin.KeyManagerUIBean" %>
+<%@page import="ca.openosp.openo.commn.model.PublicKey" %>
+<%@page import="ca.openosp.openo.commn.model.ProfessionalSpecialist" %>
 
 <%@include file="/layouts/html_top.jspf" %>
 

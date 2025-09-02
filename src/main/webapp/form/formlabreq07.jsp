@@ -40,13 +40,17 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 <%@ page
-        import="oscar.form.*, oscar.OscarProperties, java.util.Date, oscar.util.UtilDateUtilities" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.common.dao.FrmLabReqPreSetDao, org.oscarehr.util.SpringUtils" %>
+        import="ca.openosp.openo.form.*, ca.openosp.OscarProperties, java.util.Date, ca.openosp.openo.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.FrmLabReqPreSetDao, ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmLabReq07Record" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordHelp" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
@@ -125,7 +129,7 @@
             if (ret == true) {
 
                 //ret = confirm("Do you wish to save this form and view the print preview?");
-                //popupFixedPage(650,850,'../provider/notice.htm');
+                //popupFixedPage(650,850,'../providers/notice.htm');
                 temp = document.forms[0].action;
                 <c:url var="formAction" value="form/formname.do">
 			        <c:param name="__title" value="Lab Request"/>

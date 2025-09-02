@@ -27,9 +27,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ page import="oscar.oscarRx.data.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.rx.data.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -52,7 +56,7 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        RxSessionBean bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -71,11 +75,11 @@
 
     </head>
     <%
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+        RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
         String scriptNo = request.getParameter("scriptNo");
         //load prescription
-        oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs = patient.getPrescribedDrugScripts();
-        oscar.oscarRx.data.RxPrescriptionData.Prescription prescription = null;
+        RxPrescriptionData.Prescription[] prescribedDrugs = patient.getPrescribedDrugScripts();
+        RxPrescriptionData.Prescription prescription = null;
         for (int x = 0; x < prescribedDrugs.length; x++) {
             if (prescribedDrugs[x].getScript_no() != null && prescribedDrugs[x].getScript_no().equals(scriptNo)) {
                 prescription = prescribedDrugs[x];
@@ -122,7 +126,7 @@
                                             %>
                                             <tr>
                                                 <td width="50%" valign="top"
-                                                    nowrap="nowrap"><%=oscar.util.DateUtils.formatDate(originalPrintDate, request.getLocale()) %>
+                                                    nowrap="nowrap"><%=DateUtils.formatDate(originalPrintDate, request.getLocale()) %>
                                                 </td>
                                                 <td width="50%" valign="top"
                                                     nowrap="nowrap"><%=providerDao.getProvider(originalProviderNo).getFormattedName() %>

@@ -30,11 +30,10 @@ import java.security.PublicKey;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.hl7.v2.oscar_to_oscar.SendingUtils;
+import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.SendingUtils;
 
 public class UploadingTest extends DaoTestFixtures {
 
@@ -50,7 +49,7 @@ public class UploadingTest extends DaoTestFixtures {
      */
     public static final String CLIENT_KEY = "";
 
-    private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+    private static Logger logger = ca.openosp.openo.utility.MiscUtils.getLogger();
 
     @BeforeClass
     public static void init() throws Exception {

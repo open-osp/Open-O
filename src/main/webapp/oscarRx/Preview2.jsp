@@ -23,29 +23,29 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.oscarRx.data.RxPatientData" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="oscar.oscarProvider.data.ProSignatureData, oscar.oscarProvider.data.ProviderData" %>
-<%@ page import="oscar.oscarRx.data.*" %>
+<%@ page import="ca.openosp.openo.providers.data.ProSignatureData, ca.openosp.openo.providers.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.rx.data.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 
-<%@ page import="oscar.*,
+<%@ page import="ca.openosp.*,
                  java.lang.*,
                  java.util.Date,
                  java.text.SimpleDateFormat,
-                 oscar.oscarRx.util.RxUtil,
+                 ca.openosp.openo.prescript.util.RxUtil,
                  org.springframework.web.context.WebApplicationContext,
                  org.springframework.web.context.support.WebApplicationContextUtils,
-                 org.oscarehr.common.dao.UserPropertyDAO,
-                 org.oscarehr.common.model.UserProperty" %>
+                 ca.openosp.openo.commn.dao.UserPropertyDAO,
+                 ca.openosp.openo.commn.model.UserProperty" %>
 
 <!-- Classes needed for signature injection -->
-<%@page import="org.oscarehr.common.model.*" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
+<%@page import="ca.openosp.openo.commn.model.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<%@page import="ca.openosp.openo.ui.servlet.ImageRenderingServlet" %>
 <!-- end -->
 <%@ page import="org.owasp.encoder.Encode" %>
 <%
@@ -53,13 +53,19 @@
     String providerNo = loggedInInfo.getLoggedInProviderNo();
     String scriptid = request.getParameter("scriptId");
     String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
 %>
 
-<%@page import="org.oscarehr.web.PrescriptionQrCodeUIBean" %>
-<%@ page import="org.oscarehr.managers.DemographicManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.web.PrescriptionQrCodeUIBean" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.util.Objects" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxProviderData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.commn.model.DemographicExt" %>
+<%@ page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -114,7 +120,7 @@
         <c:if test="${not empty sessionScope.RxSessionBean}">
             <%
                 // Directly access the RxSessionBean from the session
-                bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+                bean = (RxSessionBean) session.getAttribute("RxSessionBean");
                 if (bean != null && !bean.isValid()) {
                     response.sendRedirect("error.html");
                     return; // Ensure no further JSP processing
@@ -139,22 +145,22 @@
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
 
     <%
-        Date rxDate = oscar.oscarRx.util.RxUtil.Today();
+        Date rxDate = RxUtil.Today();
 //String rePrint = request.getParameter("rePrint");
         String rePrint = (String) request.getSession().getAttribute("rePrint");
 //String rePrint = (String)request.getSession().getAttribute("rePrint");
-        oscar.oscarRx.data.RxProviderData.Provider provider;
+        RxProviderData.Provider provider;
         String signingProvider;
         if (rePrint != null && rePrint.equalsIgnoreCase("true")) {
-            bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
+            bean = (RxSessionBean) session.getAttribute("tmpBeanRX");
             signingProvider = bean.getStashItem(0).getProviderNo();
             rxDate = bean.getStashItem(0).getRxDate();
-            provider = new oscar.oscarRx.data.RxProviderData().getProvider(signingProvider);
+            provider = new RxProviderData().getProvider(signingProvider);
 //    session.setAttribute("tmpBeanRX", null);
             String ip = request.getRemoteAddr();
             //LogAction.addLog((String) session.getAttribute("user"), LogConst.UPDATE, LogConst.CON_PRESCRIPTION, String.valueOf(bean.getDemographicNo()), ip);
         } else {
-            bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("RxSessionBean");
+            bean = (RxSessionBean) pageContext.findAttribute("RxSessionBean");
 
             //set Date to latest in stash
             Date tmp;
@@ -167,12 +173,12 @@
             }
             rePrint = "";
             signingProvider = bean.getProviderNo();
-            provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+            provider = new RxProviderData().getProvider(bean.getProviderNo());
         }
 
         DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
-        oscar.oscarRx.data.RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+        RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
         String patientAddress = patient.getAddress() == null ? "" : patient.getAddress();
         String patientCity = patient.getCity() == null ? "" : patient.getCity();
         String patientProvince = patient.getProvince() == null ? "" : patient.getProvince();
@@ -181,7 +187,7 @@
         String patientHin = patient.getHin() == null ? "" : patient.getHin();
 
 
-        oscar.oscarRx.data.RxPrescriptionData.Prescription rx = null;
+        RxPrescriptionData.Prescription rx = null;
         int i;
         ProSignatureData sig = new ProSignatureData();
         boolean hasSig = sig.hasSignature(signingProvider);
@@ -337,7 +343,7 @@
                                                 + "<fmt:setBundle basename='oscarResources'/><fmt:message key='RxPreview.msgTel'/>" + ": " + patientPhone
                                                 + (patientDOB != null && !patientDOB.trim().equals("") ? "\n"
                                                 + "<fmt:setBundle basename='oscarResources'/><fmt:message key='RxPreview.msgDOB'/>" + ": " + patientDOB : "")
-                                                + (!patientHin.trim().equals("") ? "\n" + "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscar.oscarRx.hin'/>" + ": " + patientHin : "");
+                                                + (!patientHin.trim().equals("") ? "\n" + "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscar.rx.hin'/>" + ": " + patientHin : "");
                                     }
                                 %>
                                 <input type="hidden" name="doctorName"
@@ -417,10 +423,10 @@
                                 <input type="hidden" name="patientPhone"
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="RxPreview.msgTel"/><%=StringEscapeUtils.escapeHtml(patientPhone) %>"/>
                                 <input type="hidden" name="rxDate"
-                                       value="<%= StringEscapeUtils.escapeHtml(oscar.oscarRx.util.RxUtil.DateToString(rxDate, "MMMM d, yyyy")) %>"/>
+                                       value="<%= StringEscapeUtils.escapeHtml(RxUtil.DateToString(rxDate, "MMMM d, yyyy")) %>"/>
                                 <input type="hidden" name="sigDoctorName"
                                        value="<%= StringEscapeUtils.escapeHtml(doctorName) %>"/>
-                                <!--img src="img/rx.gif" border="0"-->
+                                <!--img src="img/prescript.gif" border="0"-->
                             </th>
                             <th valign=top height="100px" id="clinicAddress">
                                 <b><%=doctorName%>
@@ -501,28 +507,28 @@
 										<oscar:oscarPropertiesCheck value="true" property="showRxBandNumber">
                                             <c:if test="${ not empty bandNumber }">
                                                 <br/>
-                                                <b><fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.oscarRx.bandNumber"/></b>
+                                                <b><fmt:setBundle basename="oscarResources"/><fmt:message key="ca.openosp.openo.rx.bandNumber"/></b>
                                                 <c:out value="${ bandNumber }"/>
                                             </c:if>
                                         </oscar:oscarPropertiesCheck>
 										<b>
 											<% if (!props.getProperty("showRxHin", "").equals("false")) { %>
-												<fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.oscarRx.hin"/><%= Encode.forHtmlContent(patientHin) %>
+												<fmt:setBundle basename="oscarResources"/><fmt:message key="ca.openosp.openo.rx.hin"/><%= Encode.forHtmlContent(patientHin) %>
 											<% } %>
 										</b><br>
 										<% if (props.getProperty("showRxChartNo", "").equalsIgnoreCase("true")) { %>
-											<fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.oscarRx.chartNo"/><%=ptChartNo%>
+											<fmt:setBundle basename="oscarResources"/><fmt:message key="ca.openosp.openo.rx.chartNo"/><%=ptChartNo%>
 										<% } %>
 								</span>
                                 <span style="float:right">
-									<%= oscar.oscarRx.util.RxUtil.DateToString(rxDate, "MMMM d, yyyy", request.getLocale()) %>
+									<%= RxUtil.DateToString(rxDate, "MMMM d, yyyy", request.getLocale()) %>
 								</span>
                             </th>
                         </tr>
                         </thead>
                         <tfoot>
-                        <% if (oscar.OscarProperties.getInstance().getProperty("RX_FOOTER") != null) {
-                            out.write(oscar.OscarProperties.getInstance().getProperty("RX_FOOTER"));
+                        <% if (ca.openosp.OscarProperties.getInstance().getProperty("RX_FOOTER") != null) {
+                            out.write(ca.openosp.OscarProperties.getInstance().getProperty("RX_FOOTER"));
                         } %>
 
                         <tr valign=bottom>
@@ -577,11 +583,7 @@
 
                         <tr valign=bottom>
                             <td height=25px>
-                                <% if (props.getProperty("signature_tablet", "").equals("yes")) { %>
-                                <input type="button" value=
-                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="RxPreview.digitallySign"/> class="noprint"
-                                       onclick="setInterval('refreshImage()', POLL_TIME); document.location='<%=request.getContextPath()%>/signature_pad/topaz_signature_pad.jnlp.jsp?<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=<%=signatureRequestId%>'"/>
-                                <% } %>
+                                <%-- Topaz signature pad support removed - HTML5 signature capture is now standard --%>
                             </td>
                             <td height=25px>
                                 &nbsp; <%= Encode.forHtmlContent(doctorName) %>
@@ -623,10 +625,10 @@
                         </tr>
                         <% } %>
 
-                        <% if (oscar.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null && oscar.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT").length() > 0) { %>
+                        <% if (ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null && ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT").length() > 0) { %>
                         <tr valign=bottom align="center">
                             <td height=25px colspan="2" style="font-size: 9px"></br>
-                                <%= oscar.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") %>
+                                <%= ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") %>
                             </td>
                         </tr>
                         <% } %>
@@ -641,7 +643,7 @@
                                 String fullOutLine = rx.getFullOutLine().replaceAll(";", "<br />");
 
                                 if (fullOutLine == null || fullOutLine.length() <= 6) {
-                                    org.oscarehr.util.MiscUtils.getLogger();
+                                    ca.openosp.openo.utility.MiscUtils.getLogger();
                                     fullOutLine = "<span style=\"color:red;font-size:16;font-weight:bold\">An error occurred, please write a new prescription.</span><br />" + fullOutLine;
                                 }
                         %>

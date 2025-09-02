@@ -43,9 +43,11 @@
     if (request.getParameter("ooy") != null) ooy = Integer.parseInt(request.getParameter("ooy"));
 %>
 <%@ page
-        import="java.util.*, java.net.*, oscar.util.*, oscar.form.graphic.*"
+        import="java.util.*, java.net.*, ca.openosp.openo.util.*, ca.openosp.openo.form.graphic.*"
         errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.form.graphic.FrmGraphicAR" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

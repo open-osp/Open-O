@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -42,7 +42,9 @@
 %>
 
 <%@ page
-        import="oscar.util.UtilMisc,oscar.oscarEncounter.data.*,java.net.*,java.util.*" %>
+        import="ca.openosp.openo.util.UtilMisc,ca.openosp.openo.encounter.data.*,java.net.*,java.util.*" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     String provNo = request.getParameter("provider_no");
@@ -56,7 +58,7 @@
 
 <%
     EctFormData.Form[] forms = EctFormData.getForms();
-    oscar.util.UtilDateUtilities dateConvert = new oscar.util.UtilDateUtilities();
+    UtilDateUtilities dateConvert = new UtilDateUtilities();
 %>
 <html>
     <head>

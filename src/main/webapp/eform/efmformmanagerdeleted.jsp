@@ -23,7 +23,8 @@
     Ontario, Canada
 
 --%>
-<%@ page import="oscar.eform.data.*, oscar.eform.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.openo.eform.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%

@@ -25,7 +25,7 @@
 --%>
 <!DOCTYPE html>
 
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
@@ -41,10 +41,10 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.dao.ProviderDataDao" %>
-<%@page import="org.oscarehr.managers.DemographicManager" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@page import="ca.openosp.openo.managers.DemographicManager" %>
 
-<%@page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl" %>
+<%@page import="ca.openosp.openo.appt.status.service.impl.AppointmentStatusMgrImpl" %>
 <%
     if (session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
 
@@ -58,42 +58,39 @@
 <%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page import="java.time.format.FormatStyle" %>
 <%@ page import="java.time.ZoneId" %>
-<%@ page import="oscar.appt.*" %>
-<%@ page import="oscar.util.*" %>
-<%@ page import="oscar.appt.status.service.AppointmentStatusMgr" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.OtherIdManager" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.SessionConstants" %>
-<%@ page import="org.oscarehr.common.model.AppointmentStatus" %>
-<%@ page import="org.oscarehr.common.dao.BillingONCHeader1Dao" %>
-<%@ page import="org.oscarehr.common.model.BillingONCHeader1" %>
-<%@ page import="org.oscarehr.common.model.DemographicCust" %>
-<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@ page import="org.oscarehr.common.model.EncounterForm" %>
-<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
-<%@ page import="org.oscarehr.common.dao.BillingONExtDao" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.managers.LookupListManager" %>
-<%@ page import="org.oscarehr.common.model.LookupList" %>
+<%@ page import="ca.openosp.openo.appt.*" %>
+<%@ page import="ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.appt.status.service.AppointmentStatusMgr" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.OtherIdManager" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicCustDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.EncounterFormDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProviderManager" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.LookupListManager" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.BillingDataHlp" %>
-<%@ page import="org.oscarehr.common.dao.AppointmentTypeDao" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingDataHlp" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppointmentTypeDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.appt.ApptUtil" %>
+<%@ page import="ca.openosp.openo.appt.ApptData" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -156,7 +153,7 @@
     }
 
     BillingONExtDao billingOnExtDao = (BillingONExtDao) SpringUtils.getBean(BillingONExtDao.class);
-    oscar.OscarProperties pros = oscar.OscarProperties.getInstance();
+    OscarProperties pros = OscarProperties.getInstance();
     String strEditable = pros.getProperty("ENABLE_EDIT_APPT_STATUS");
     String apptStatusHere = pros.getProperty("appt_status_here");
 
@@ -168,12 +165,12 @@
     boolean caisiEnabled = moduleNames != null && org.apache.commons.lang.StringUtils.containsIgnoreCase(moduleNames, "Caisi");
     boolean locationEnabled = caisiEnabled && (useProgramLocation != null && useProgramLocation.equals("true"));
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_APPOINTMENT;
+    String annotation_display = CaseManagementNoteLink.DISP_APPOINTMENT;
     CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 
     boolean isSiteSelected = false;
-    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
     List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
 
 
@@ -858,8 +855,8 @@
         //Else if we are coming back from search this has been done for us
         //Else how did we get here?
         if (bFirstDisp) {
-            oscar.oscarDemographic.data.DemographicData dd = new oscar.oscarDemographic.data.DemographicData();
-            org.oscarehr.common.model.Demographic demo = dd.getDemographic(loggedInInfo, String.valueOf(appt.getDemographicNo()));
+            DemographicData dd = new DemographicData();
+            Demographic demo = dd.getDemographic(loggedInInfo, String.valueOf(appt.getDemographicNo()));
             doctorNo = demo != null ? (demo.getProviderNo()) : "";
         } else if (!request.getParameter("doctor_no").equals("")) {
             doctorNo = request.getParameter("doctor_no");
@@ -1492,10 +1489,10 @@
         <%--        String formatDate = "";--%>
         <%--        try { // attempt to change string format--%>
         <%--        java.util.ResourceBundle prop = ResourceBundle.getBundle("oscarResources", request.getLocale());--%>
-        <%--        formatDate = oscar.util.UtilDateUtilities.DateToString(d, prop.getString("date.EEEyyyyMMdd"));--%>
+        <%--        formatDate = ca.openosp.openo.util.UtilDateUtilities.DateToString(d, prop.getString("date.EEEyyyyMMdd"));--%>
         <%--        } catch (Exception e) {--%>
-        <%--            org.oscarehr.util.MiscUtils.getLogger().error("Error", e);--%>
-        <%--            formatDate = oscar.util.UtilDateUtilities.DateToString(inform.parse(strDate), "EEE, yyyy-MM-dd");--%>
+        <%--            ca.openosp.openo.utility.MiscUtils.getLogger().error("Error", e);--%>
+        <%--            formatDate = ca.openosp.openo.util.UtilDateUtilities.DateToString(inform.parse(strDate), "EEE, yyyy-MM-dd");--%>
         <%--        }--%>
         <%--    %>--%>
         <%--    <div class="header">--%>

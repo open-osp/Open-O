@@ -16,14 +16,14 @@ dojo.data.old.format.Json = new function () {
     // -------------------------------------------------------------------
     // Public functions
     // -------------------------------------------------------------------
-    this.loadDataProviderFromFileContents = function (/* dojo.data.old.provider.Base */ dataProvider, /* string */ jsonFileContents) {
+    this.loadDataProviderFromFileContents = function (/* dojo.data.old.providers.Base */ dataProvider, /* string */ jsonFileContents) {
         dojo.lang.assertType(dataProvider, dojo.data.old.provider.Base);
         dojo.lang.assertType(jsonFileContents, String);
         var arrayOfJsonData = eval("(" + jsonFileContents + ")");
         this.loadDataProviderFromArrayOfJsonData(dataProvider, arrayOfJsonData);
     };
 
-    this.loadDataProviderFromArrayOfJsonData = function (/* dojo.data.old.provider.Base */ dataProvider, /* Array */ arrayOfJsonData) {
+    this.loadDataProviderFromArrayOfJsonData = function (/* dojo.data.old.providers.Base */ dataProvider, /* Array */ arrayOfJsonData) {
         dojo.lang.assertType(arrayOfJsonData, Array, {optional: true});
         if (arrayOfJsonData && (arrayOfJsonData.length > 0)) {
             var firstRow = arrayOfJsonData[0];
@@ -46,7 +46,7 @@ dojo.data.old.format.Json = new function () {
     // -------------------------------------------------------------------
     // Private functions
     // -------------------------------------------------------------------
-    function _loadDataProviderFromArrayOfArrays(/* dojo.data.old.provider.Base */ dataProvider, /* Array */ arrayOfJsonData) {
+    function _loadDataProviderFromArrayOfArrays(/* dojo.data.old.providers.Base */ dataProvider, /* Array */ arrayOfJsonData) {
         /**
          * Example:
          * var arrayOfJsonStates = [
@@ -69,7 +69,7 @@ dojo.data.old.format.Json = new function () {
         }
     }
 
-    function _loadDataProviderFromArrayOfObjects(/* dojo.data.old.provider.Base */ dataProvider, /* Array */ arrayOfJsonData) {
+    function _loadDataProviderFromArrayOfObjects(/* dojo.data.old.providers.Base */ dataProvider, /* Array */ arrayOfJsonData) {
         /**
          * Example:
          * var arrayOfJsonStates = [

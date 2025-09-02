@@ -34,8 +34,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.SecurityToken;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.SecurityToken;
+import ca.openosp.openo.commn.dao.SecurityTokenDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class SecurityTokenDaoTest extends DaoTestFixtures {
 

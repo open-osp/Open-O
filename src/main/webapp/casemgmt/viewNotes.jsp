@@ -25,22 +25,25 @@
 --%>
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="oscar.util.ConversionUtils"%>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplay"%>
+<%@page import="ca.openosp.openo.util.ConversionUtils"%>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay"%>
 <%  long start = System.currentTimeMillis(); %>
 <%@include file="/casemgmt/taglibs.jsp"%>
 <%@page
-	import="java.util.List, java.util.Set, java.util.Iterator, org.oscarehr.casemgmt.model.CaseManagementIssue, org.oscarehr.casemgmt.model.CaseManagementNoteExt, org.oscarehr.casemgmt.model.CaseManagementNote"%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="org.oscarehr.provider.web.CppPreferencesUIBean"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction"%>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@page import="org.oscarehr.common.model.UserProperty"%>
-<%@page import="org.oscarehr.common.model.PartialDate"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+	import="java.util.List, java.util.Set, java.util.Iterator, ca.openosp.openo.casemgmt.model.CaseManagementIssue, ca.openosp.openo.casemgmt.model.CaseManagementNoteExt, ca.openosp.openo.casemgmt.model.CaseManagementNote"%>
+<%@page import="ca.openosp.openo.commn.model.Provider"%>
+<%@page import="ca.openosp.openo.provider.web.CppPreferencesUIBean"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.casemgmt.web.CaseManagementViewAction"%>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO"%>
+<%@page import="ca.openosp.openo.commn.model.UserProperty"%>
+<%@page import="ca.openosp.openo.commn.model.PartialDate"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
 <%@page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -68,7 +71,7 @@
 <h3>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+	SecurityManager securityManager = new SecurityManager();
 	if(securityManager.hasWriteAccess("_" + request.getParameter("issue_code"),roleName$)) {
 %>
 <a href="javascript:void(0)" title='Add Item' onclick="return showEdit(event,'<fmt:setBundle basename="oscarResources"/><fmt:message key="${param.title}" />','',0,'','','','<%=request.getAttribute("addUrl")%>0', '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=request.getAttribute("cppIssue")%>','','<c:out value="${param.demographicNo}"/>');">+</a>
@@ -123,7 +126,7 @@
 
             String htmlNoteTxt = note.getNote() + addlData;
 
-            boolean singleLine = Boolean.valueOf(oscar.OscarProperties.getInstance().getProperty("echart.cpp.single_line", "false"));
+            boolean singleLine = Boolean.valueOf(OscarProperties.getInstance().getProperty("echart.cpp.single_line", "false"));
             UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
             UserProperty prop = userPropertyDao.getProp(loggedInInfo.getLoggedInProviderNo(), UserProperty.CPP_SINGLE_LINE);
             if (prop != null) {
@@ -198,8 +201,8 @@
   <c:forEach var="remoteNote" items="${remoteNotes}" varStatus="status">
     <% 
        // pull the JSP var "remoteNote" into a Java variable
-       org.oscarehr.casemgmt.web.NoteDisplay note =
-         (org.oscarehr.casemgmt.web.NoteDisplay) pageContext.getAttribute("remoteNote");
+       NoteDisplay note =
+         (NoteDisplay) pageContext.getAttribute("remoteNote");
 
        // now you can use 'note' in your scriptlet
        String rawText   = note.getNote().replaceAll("\n","<br>");
@@ -264,12 +267,12 @@
 
             if (type!=null && !type.trim().equals("")) {
                 if (type.equals(PartialDate.YEARONLY))
-                    val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy");
+                    val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy");
                 else if (type.equals(PartialDate.YEARMONTH))
-                    val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM");
-                else val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
+                    val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM");
+                else val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
             } else {
-                val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
+                val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
             }
             return val;
         }

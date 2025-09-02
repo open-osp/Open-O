@@ -31,26 +31,29 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import ca.openosp.openo.casemgmt.service.CaseManagementManager;
+import ca.openosp.openo.casemgmt.service.NoteSelectionCriteria;
+import ca.openosp.openo.casemgmt.service.NoteSelectionResult;
+import ca.openosp.openo.casemgmt.service.NoteService;
 import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
-import org.oscarehr.PMmodule.model.ProgramProvider;
-import org.oscarehr.PMmodule.utility.ProgramAccessCache;
-import org.oscarehr.PMmodule.utility.RoleCache;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.service.impl.DefaultNoteService;
-import org.oscarehr.casemgmt.web.NoteDisplay;
+import ca.openosp.openo.PMmodule.dao.ProgramProviderDAO;
+import ca.openosp.openo.PMmodule.model.ProgramProvider;
+import ca.openosp.openo.PMmodule.utility.ProgramAccessCache;
+import ca.openosp.openo.PMmodule.utility.RoleCache;
+import ca.openosp.openo.casemgmt.model.CaseManagementNote;
+import ca.openosp.openo.casemgmt.service.impl.DefaultNoteService;
+import ca.openosp.openo.casemgmt.web.NoteDisplay;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.AuthUtils;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DefaultNoteServiceTest extends DaoTestFixtures {
-    private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+    private static Logger logger = ca.openosp.openo.utility.MiscUtils.getLogger();
 
     private NoteService service = SpringUtils.getBean(DefaultNoteService.class);
 
@@ -110,7 +113,7 @@ public class DefaultNoteServiceTest extends DaoTestFixtures {
         Provider provider = loggedInInfo.getLoggedInProvider();
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        //Add this provider to the program
+        //Add this providers to the program
         ProgramProvider pp = new ProgramProvider();
         pp.setProgramId((long) 10016);
         pp.setProviderNo(loggedInInfo.getLoggedInProviderNo());

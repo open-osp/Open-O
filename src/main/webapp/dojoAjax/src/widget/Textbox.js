@@ -16,9 +16,9 @@ dojo.require("dojo.widget.Manager");
 dojo.require("dojo.widget.Parse");
 dojo.require("dojo.xml.Parse");
 dojo.require("dojo.lang.array");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
-dojo.require("dojo.i18n.common");
+dojo.require("dojo.i18n.commons");
 dojo.requireLocalization("dojo.widget", "validate", null, "fr,ja,zh-cn,ROOT");
 
 dojo.widget.defineWidget(

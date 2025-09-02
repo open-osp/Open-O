@@ -23,7 +23,6 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -61,12 +60,13 @@
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
     <head>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.page.title"/> Start Time
-            : <%=oscar.OscarProperties.getInstance().getStartTime()%>
+            : <%=OscarProperties.getInstance().getStartTime()%>
         </title>
         <link rel="stylesheet" type="text/css"
               href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
@@ -426,7 +426,7 @@
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.frmGroups"/>
                 </a></li>
 
-                <% if (org.oscarehr.common.IsPropertiesOn.isIndivicaRichTextLetterEnable()) { %>
+                <% if (IsPropertiesOn.isIndivicaRichTextLetterEnable()) { %>
                 <li><a href="${pageContext.request.contextPath}/admin/../eform/efmformrtl_config.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.richTextLetter"/></a></li>
                 <% } %>
 
@@ -480,8 +480,6 @@
 
 
                     <li><a href="#"
-                           onclick='popupPage(600,900,"${pageContext.request.contextPath}/oscarReport/oscarReportRehabStudy.jsp")'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.rehabStudy"/></a></li>
-                    <li><a href="#"
                            onclick='popupPage(600,900,"${pageContext.request.contextPath}/oscarReport/patientlist.jsp")'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.exportPatientbyAppt"/></a></li>
                     <caisi:isModuleLoad moduleName="caisi">
                         <li><a href="${pageContext.request.contextPath}/PMmodule/reports/activity_report_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.activityRpt"/></a></li>
@@ -492,9 +490,6 @@
                     </caisi:isModuleLoad>
                     <li><a href="${pageContext.request.contextPath}/oscarReport/cds_4_report_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.cdsRpt"/></a></li>
                     <li><a href="${pageContext.request.contextPath}/oscarReport/mis_report_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.misRpt"/></a></li>
-                    <li><a href="${pageContext.request.contextPath}/oscarReport/ocan_report_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ocanRpt"/></a></li>
-                    <li><a href="${pageContext.request.contextPath}/oscarReport/ocan_iar.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ocanIarRpt"/></a></li>
-                    <li><a href="${pageContext.request.contextPath}/oscarReport/ocan_reporting.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ocanReporting"/></a></li>
                     <li><a href="${pageContext.request.contextPath}/oscarReport/cbi_submit_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.cbiSubmit"/></a></li>
                     <li><a href="${pageContext.request.contextPath}/admin/cbiAdmin.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.cbi.reportlink"/></a></li>
                     <li><a href="${pageContext.request.contextPath}/oscarReport/cbi_report_form.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.cbiRpt"/></a></li>
@@ -505,9 +500,6 @@
                     </oscar:oscarPropertiesCheck>
                     <li><a href="#"
                            onclick='popupPage(600,900,"${pageContext.request.contextPath}/report/DxresearchReport.do")'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.diseaseRegister"/></a></li>
-
-                    <li><a href="#"
-                           onclick='popupPage(550,810, "${pageContext.request.contextPath}/admin/demographicstudy.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnStudy"/></a></li>
                     <%
                         if (oscarVariables.getProperty("billregion", "").equals("ON")) {
                     %>
@@ -578,9 +570,6 @@
                     <li><a href="${pageContext.request.contextPath}/issueAdmin.do?method=list">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.issueEditor"/>
                     </a></li>
-                    <li><a href="${pageContext.request.contextPath}/SurveyManager.do">
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.surveyManager"/>
-                    </a></li>
                     <li><a href="${pageContext.request.contextPath}/DefaultEncounterIssue.do">
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.defaultEncounterIssue"/>
                     </a></li>
@@ -615,9 +604,6 @@
                     </security:oscarSec>
                     <security:oscarSec roleName="<%=roleName$%>"
                                        objectName="_admin.userCreatedForms" rights="r">
-                        <li><a href="${pageContext.request.contextPath}/SurveyManager.do">
-                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.surveyManager"/>
-                        </a></li>
                     </security:oscarSec>
                 </ul>
             </div>
@@ -713,7 +699,7 @@
                     <li><a href="#"
                            onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/ManageClinic.do");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.clinicAdmin"/></a></li>
                     <%
-                        if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                        if (IsPropertiesOn.isMultisitesEnable()) {
                     %>
                     <li><a href="#"
                            onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/ManageSites.do");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.sitesAdmin"/></a></li>
@@ -758,7 +744,7 @@
                         <%--				if (oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled())--%>
                         <%--						{--%>
                         <%--			%>--%>
-                        <%--			<security:oscarSec roleName="<%=roleName$%>"--%>
+                        <%--			<sec:oscarSec roleName="<%=roleName$%>"--%>
                         <%--				objectName="_admin.cookieRevolver" rights="r">--%>
                         <%--		--%>
                         <%--				<li>&nbsp; <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.titleFactorAuth"/>--%>
@@ -781,7 +767,7 @@
                         <%--						onclick="popupPage(500,700,'../gatekeeper/matrixadmin/show');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.genMatrixCards"/></a></li>--%>
                         <%--				</ul>--%>
                         <%--				</li>--%>
-                        <%--			</security:oscarSec>--%>
+                        <%--			</sec:oscarSec>--%>
                         <%--			<%--%>
                         <%--				}--%>
                         <%--			%>           	--%>
@@ -845,41 +831,6 @@
                     %>
                     <li><a href="#" onclick='popupPage(400, 400, "${pageContext.request.contextPath}/olis/Preferences.jsp");return false;'>OLIS Preferences</a></li>
                     <% } %>
-                    <li><a href="#" onclick='popupPage(800, 1000, "${pageContext.request.contextPath}/admin/MyoscarConfiguration.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.phrconfig"/></a></li>
-                    <%
-                        if (StringUtils.trimToNull(OscarProperties.getInstance().getProperty("oscar_myoscar_sync_component_url")) != null) {
-                            MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                            if (myOscarLoggedInInfo != null && myOscarLoggedInInfo.isLoggedIn()) {
-                    %>
-                    <li><a href="#" onclick='popupPage(800, 1000, "${pageContext.request.contextPath}/admin/oscar_myoscar_sync_config_redirect.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.oscar_phr_sync_config"/></a></li>
-                    <%
-                    } else {
-                    %>
-                    <li onclick="alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.oscar_phr_sync_config_must_be_logged_in"/>');">
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.oscar_phr_sync_config"/></li>
-                    <%
-                            }
-                        }
-                    %>
-
-                    <%
-                        if (oscarVariables.getProperty("hsfo.loginSiteCode", "") != null && !"".equalsIgnoreCase(oscarVariables.getProperty("hsfo.loginSiteCode", ""))) {
-                    %>
-                    <li><a href="#"
-                           onclick='popupPage(400,600, "${pageContext.request.contextPath}/admin/RecommitHSFO.do"/>?method=showSchedule&quot;);return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.hsfoSubmit"/></a></li>
-                    <%
-                        }
-                    %>
-
-                    <%
-                        if (oscarVariables.getProperty("hsfo2.loginSiteCode", "") != null && !"".equalsIgnoreCase(oscarVariables.getProperty("hsfo2.loginSiteCode", ""))) {
-                    %>
-                    <li><a href="#"
-                           onclick='popupPage(400,600, "${pageContext.request.contextPath}/admin/RecommitHSFO2.do"/>?method=showSchedule&quot;);return false;'>schedule
-                        HSFO2 XML resubmit</a></li>
-                    <%
-                        }
-                    %>
 
                     <li><a href="javascript:void(0);" onclick="popupPage(550,800, "${pageContext.request.contextPath}/admin/updateDrugref.jsp");return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.UpdateDrugref"/></a></li>
                 </ul>
@@ -925,23 +876,6 @@
 
         </security:oscarSec>
         <!-- #Data Management END-->
-
-
-        <oscar:oscarPropertiesCheck property="OSCAR_LEARNING" value="yes">
-            <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
-                <div class="adminBox">
-                    <h3>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning"/></h3>
-                    <ul>
-                        <li><a href="#"
-                               onclick='popupPage(550,800, "${pageContext.request.contextPath}/oscarLearning/CourseManager.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.manageCourses"/></a></li>
-                        <li><a href="#"
-                               onclick='popupPage(550,800, "${pageContext.request.contextPath}/demographic/demographicImport.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.importPatient"/></a></li>
-                        <li><a href="#"
-                               onclick='popupPage(550,800, "${pageContext.request.contextPath}/oscarLearning/StudentImport.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.importStudent"/></a></li>
-                    </ul>
-                </div>
-            </security:oscarSec>
-        </oscar:oscarPropertiesCheck>
 
 
     </caisi:isModuleLoad>

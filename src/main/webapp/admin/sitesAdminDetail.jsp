@@ -37,7 +37,8 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -45,8 +46,6 @@
         <link rel="stylesheet" type="text/css"
               href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
-        <script type="text/javascript" language="JavaScript"
-                src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
         <script type="text/javascript" language="JavaScript"
                 src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
         <link href="${request.contextPath}/css/displaytag.css" rel="stylesheet"></link>
@@ -56,7 +55,7 @@
 
     </head>
 
-    <body vlink="#0000FF" class="BodyStyle" onload="$('colorField').style.backgroundColor=$('colorField').value;">
+    <body vlink="#0000FF" class="BodyStyle" onload="document.getElementById('colorField').style.backgroundColor = document.getElementById('colorField').value;">
     <nested:form action="/admin/ManageSites">
         <table class="MainTable">
             <tr class="MainTableTopRow">
@@ -91,8 +90,8 @@
                         </tr>
                         <tr>
                             <td>Theme Color:<sup style="color:red">*</sup></td>
-                            <td><nested:text styleId="colorField" property="site.bgColor"
-                                             onclick="popup(350,450,'../colorpicker/colorpicker.htm','colorpicker');return false;"></nested:text>
+                            <td><nested:text styleId="colorField" property="site.bgColor" type="color"
+                                             onchange="this.style.backgroundColor = this.value;"></nested:text>
                             </td>
                         </tr>
                         <tr>
@@ -137,7 +136,7 @@
                             <td>Postal Code:</td>
                             <td><nested:text property="site.postal"></nested:text></td>
                         </tr>
-                        <% if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) { %>
+                        <% if (IsPropertiesOn.isProviderFormalizeEnable()) { %>
                         <tr>
                             <td>ProviderID From:</td>
                             <td><nested:text property="site.providerIdFrom"></nested:text></td>

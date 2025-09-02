@@ -42,10 +42,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DepartmentDao" %>
-<%@page import="org.oscarehr.common.model.Department" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DepartmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Department" %>
 <%@page import="java.util.List" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
 
 <%
     DepartmentDao departmentDao = SpringUtils.getBean(DepartmentDao.class);
@@ -97,7 +98,7 @@
         <tr style="vertical-align: top">
             <td class="MainTableLeftColumn">
                 <%
-                    oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar(request);
+                    EctConTitlebar titlebar = new EctConTitlebar(request);
                     out.print(titlebar.estBar(request));
                 %>
             </td>

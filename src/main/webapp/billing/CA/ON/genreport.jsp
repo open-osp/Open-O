@@ -17,17 +17,19 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, oscar.oscarBilling.ca.on.OHIP.*, java.net.*"
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.billing.ca.on.OHIP.*, java.net.*"
          errorPage="/errorpage.jsp" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillActivity" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillActivityDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillActivity" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillActivityDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.OHIP.ExtractBean" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
     BillActivityDao billActivityDao = SpringUtils.getBean(BillActivityDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -50,7 +52,7 @@
     int bCount = 1;
     String batchCount = "0";
 //String oscar_home= oscarVariables.getProperty("project_home")+".properties";
-    String provider = request.getParameter("provider");
+    String provider = request.getParameter("providers");
     String proOHIP = "";
     String specialty_code;
     String billinggroup_no;
@@ -83,7 +85,7 @@
                     billinggroup_no = "0000";
                 }
 
-                oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
+                ExtractBean extract = new ExtractBean();
                 //extract.setOscarHome(oscar_home);
                 extract.seteFlag(eFlag);
                 // extract.setDateRange("");
@@ -129,7 +131,7 @@
             }
         }
     } else {
-        Provider p = providerDao.getProvider(request.getParameter("provider").substring(0, 6));
+        Provider p = providerDao.getProvider(request.getParameter("providers").substring(0, 6));
         if (p != null) {
             if (p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
 
@@ -155,7 +157,7 @@
                     if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0) {
                         billinggroup_no = "0000";
                     }
-                    oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
+                    ExtractBean extract = new ExtractBean();
                     //extract.setOscarHome(oscar_home);
                     extract.seteFlag(eFlag);
                     //   extract.setDateRange("");

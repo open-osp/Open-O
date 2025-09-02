@@ -20,7 +20,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="org.oscarehr.casemgmt.model.CaseManagementCPP"
+	<class name="ca.openosp.openo.casemgmt.model.CaseManagementCPP"
 		table="casemgmt_cpp">
 		<id name="id" column="id" unsaved-value="0">
 			<generator class="native" />

@@ -1,17 +1,18 @@
 <%@ taglib prefix="oscar" uri="/oscarPropertiestag" %>
-<%@page import="java.util.*,oscar.util.*" %>
+<%@page import="java.util.*,ca.openosp.openo.util.*" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
-<%@ page import="oscar.oscarClinic.ClinicData" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingPreference" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
+<%@ page import="ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreference" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
 <%
     SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
     PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
@@ -84,7 +85,7 @@
                 <tr>
 
                     <%
-                        // Check for a global setting that overrides any per-provider setting
+                        // Check for a global setting that overrides any per-providers setting
                         boolean globalAutoPopulateRefer = false;
                         List<Property> propertyList = propertyDao.findGlobalByName("auto_populate_refer");
                         if (!propertyList.isEmpty()) {
@@ -290,7 +291,7 @@
             })
 
             function disableFields(selected) {
-                // disable other settings whenever a default provider is selected to override.
+                // disable other settings whenever a default providers is selected to override.
                 if (selected && selected !== defaultValue) {
 
                     // $("#referral").prop('disabled', true);
@@ -301,7 +302,7 @@
                     // $("#invoicePayeeInfo").prop('disabled', true);
                     // $("#invoicePayeeDisplayClinicInfo").prop('disabled', true);
 
-                    $("#default-provider-alert").show();
+                    $("#default-providers-alert").show();
 
                 } else {
 
@@ -313,7 +314,7 @@
                     // $("#invoicePayeeInfo").prop('disabled', false);
                     // $("#invoicePayeeDisplayClinicInfo").prop('disabled', false);
 
-                    $("#default-provider-alert").hide();
+                    $("#default-providers-alert").hide();
                 }
             }
 

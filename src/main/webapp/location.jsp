@@ -24,12 +24,12 @@
 
 --%>
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.caisi.service.InfirmBedProgramManager" %>
-<%@ page import="oscar.util.LabelValueBean" %>
+<%@ page import="ca.openosp.openo.util.LabelValueBean" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ include file="/common/webAppContextAndSuperMgr.jsp" %>
@@ -45,9 +45,8 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     String providerNo = loggedInInfo.getLoggedInProviderNo();
     Facility facility = loggedInInfo.getCurrentFacility();
-    InfirmBedProgramManager bpm = SpringUtils.getBean(InfirmBedProgramManager.class);
-    List<LabelValueBean> programs = bpm.getProgramBeans(providerNo, facility.getId());
-    int defaultprogramId = bpm.getDefaultProgramId(providerNo);
+    List<LabelValueBean> programs = new ArrayList<LabelValueBean>();
+    int defaultprogramId = 0;
 %>
 <p>&nbsp;</p>
 <table align="center">
@@ -75,7 +74,7 @@
 <script type="text/javascript">
     function setLocation() {
         var programIdForLocation = jQuery("#programIdForLocation").val();
-        window.location.href = "provider/providercontrol.jsp?<%=org.oscarehr.util.SessionConstants.CURRENT_PROGRAM_ID%>=" + programIdForLocation;
+        window.location.href = "providers/providercontrol.jsp?<%=ca.openosp.openo.utility.SessionConstants.CURRENT_PROGRAM_ID%>=" + programIdForLocation;
     }
 </script>
 </html>

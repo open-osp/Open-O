@@ -23,6 +23,6 @@
 
 --%>
 <%
-    String url = request.getContextPath() + "/PMmodule/GenericIntake/Search.do";
+    String url = request.getContextPath() + "/index.jsp";
 %>
 <META HTTP-EQUIV="refresh" content="0;URL=<%=url%>">

@@ -42,11 +42,11 @@
 <%
 
 %>
-<%@ page import="java.util.*, java.sql.*,java.io.*, oscar.util.*, java.text.*, java.net.*,sun.misc.*"
+<%@ page import="java.util.*, java.sql.*,java.io.*, ca.openosp.openo.util.*, java.text.*, java.net.*,sun.misc.*"
          errorPage="../appointment/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 %>

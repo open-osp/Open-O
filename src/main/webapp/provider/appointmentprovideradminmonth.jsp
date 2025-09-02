@@ -24,22 +24,22 @@
 
 --%>
 <!DOCTYPE html>
-<%@ page import="org.oscarehr.common.dao.ProviderSiteDao" %>
-<%@ page import="org.oscarehr.util.SessionConstants" %>
-<%@ page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleHolidayDao" %>
-<%@ page import="org.oscarehr.common.model.ScheduleHoliday" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleDateDao" %>
-<%@ page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@ page import="org.oscarehr.common.dao.ProviderSiteDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderSiteDao" %>
+<%@ page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleHolidayDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleHoliday" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleDateDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderSiteDao" %>
 
 <%
     UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
@@ -53,7 +53,7 @@
 <%!
     //multisite starts =====================
     private List<Site> sites;
-    private boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    private boolean bMultisites = ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable();
 
     private List<Site> curUserSites = new ArrayList<Site>();
     private String[] curScheduleMultisite;
@@ -96,15 +96,8 @@
     mygroupno = (request.getParameter("mygroup_no") == null ? providerPreference.getMyGroupNo() : request.getParameter("mygroup_no"));
     if (mygroupno == null)
         mygroupno = ".default";
-    if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
-        n_t_w_w = (String) session.getAttribute("newticklerwarningwindow");
-    }
     String newticklerwarningwindow = null;
     String default_pmm = null;
-    if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
-        newticklerwarningwindow = (String) session.getAttribute("newticklerwarningwindow");
-        default_pmm = (String) session.getAttribute("default_pmm");
-    }
 
     int startHour = providerPreference.getStartHour();
     int endHour = providerPreference.getEndHour();
@@ -112,7 +105,7 @@
     int view = 0;
 
     /*
-     * Get all the forms, eforms, and quicklinks that the logged in provider
+     * Get all the forms, eforms, and quicklinks that the logged in providers
      * needs to see in all the appointment entries
      */
 
@@ -179,7 +172,7 @@
         selectedSite = (requestSite == null ? (String) session.getAttribute("site_selected") : requestSite);
 
         if (isSiteAccessPrivacy || isTeamAccessPrivacy) {
-            //user has Access Privacy, set user provider and group list
+            //user has Access Privacy, set user providers and group list
             String siteManagerProviderNo = (String) session.getAttribute("user");
             curUserSites = siteDao.getActiveSitesByProviderNo(siteManagerProviderNo);
             if (selectedSite == null) {
@@ -195,11 +188,11 @@
             CurrentSiteMap.put(s.getName(), "Y");
         }
 
-        CurrentSiteMap.put("NONE", "Y"); // added by vic for the reason that some provider could work in multiple clinics in same day, when the schedule template will set the default location to NONE.
+        CurrentSiteMap.put("NONE", "Y"); // added by vic for the reason that some providers could work in multiple clinics in same day, when the schedule template will set the default location to NONE.
 
         // a site has been seleceted
         if (selectedSite != null) {
-            //get site provider list
+            //get site providers list
             siteProviderNos = siteDao.getProviderNoBySiteLocation(selectedSite);
             siteGroups = siteDao.getGroupBySiteLocation(selectedSite);
         }
@@ -214,14 +207,14 @@
 //multisite ends =======================
 %>
 
-<%@ page import="java.lang.*, java.util.*,java.net.*,oscar.*" %>
+<%@ page import="java.lang.*, java.util.*,java.net.*,ca.openosp.*" %>
 <%
     java.util.Properties oscarVariables = OscarProperties.getInstance();
 %>
 
 <jsp:useBean id="scheduleHolidayBean" class="java.util.Hashtable"
              scope="session"/>
-<jsp:useBean id="providerNameBean" class="oscar.Dict" scope="page"/>
+<jsp:useBean id="providerNameBean" class="ca.openosp.Dict" scope="page"/>
 <jsp:useBean id="myGrpBean" class="java.util.Properties" scope="page"/>
 
 
@@ -308,9 +301,9 @@
 
     }
 %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="oscar.appt.ApptUtil" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.appt.ApptUtil" %>
 
     <body bgcolor="#EEEEFF" onLoad="refreshAllTabAlerts();">
 
@@ -383,13 +376,7 @@
             function selectprovider(s) {
                 if (s.options[s.selectedIndex].value.indexOf("_grp_") != -1) {
                     var newGroupNo = s.options[s.selectedIndex].value.substring(5);
-                    <%if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()){%>
-                    {
-                        popupOscarRx(10, 10, "providercontrol.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&new_tickler_warning_window=<%=n_t_w_w%>&color_template=deepblue&dboperation=updatepreference&displaymode=updatepreference&mygroup_no=" + newGroupNo) + "<%=eformIds.toString()%><%=ectFormNames.toString()%>";
-                    }
-                    <%}else {%>
                     popupOscarRx(10, 10, "providercontrol.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&color_template=deepblue&dboperation=updatepreference&displaymode=updatepreference&mygroup_no=" + newGroupNo + "<%=eformIds.toString()%><%=ectFormNames.toString()%>");
-                    <%}%>
                 } else {
                     if (self.location.href.lastIndexOf("&providerview=") > 0)
                         a = self.location.href.substring(0, self.location.href.lastIndexOf("&providerview="));
@@ -405,7 +392,7 @@
                 if (u.lastIndexOf("&providerview=") > 0) {
                     self.location.href = u.substring(0, u.lastIndexOf("&providerview="));
                 }
-                if (u.lastIndexOf("&mygroup_no=") > 0) { // group switch should be treated same as provider switch
+                if (u.lastIndexOf("&mygroup_no=") > 0) { // group switch should be treated same as providers switch
                     self.location.href = u.substring(0, u.lastIndexOf("&mygroup_no="));
                 } else {
                     history.go(0);
@@ -426,7 +413,7 @@
             }
 
             function refreshTabAlerts(id) {
-                var url = "../provider/tabAlertsRefresh.jsp";
+                var url = "../providers/tabAlertsRefresh.jsp";
                 var pars = "id=" + id;
 
                 var myAjax = new Ajax.Updater(id, url, {method: 'get', parameters: pars});
@@ -966,10 +953,10 @@
                         popupOscarRx(600, 1024, '../billing/CA/<%=prov%>/billingReportCenter.jsp?displaymode=billreport&providerview=<%=curUser_no%>');
                         return false;  //code for 'B'illing
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.calendarShortcut"/> :
-                        popupOscarRx(425, 430, '../share/CalendarPopup.jsp?urlfrom=../provider/providercontrol.jsp&year=<%=strYear%>&month=<%=strMonth%>&param=<%=URLEncoder.encode("&view=0&displaymode=day&dboperation=searchappointmentday","UTF-8")%>');
+                        popupOscarRx(425, 430, '../share/CalendarPopup.jsp?urlfrom=../providers/providercontrol.jsp&year=<%=strYear%>&month=<%=strMonth%>&param=<%=URLEncoder.encode("&view=0&displaymode=day&dboperation=searchappointmentday","UTF-8")%>');
                         return false;  //run code for 'C'alendar
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.edocShortcut"/> :
-                        popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');
+                        popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=providers&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');
                         return false;  //run code for e'D'oc
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.resourcesShortcut"/> :
                         popupOscarRx(550, 687, '<%=resourcebaseurl%>');
@@ -978,12 +965,7 @@
                         popupOscarRx(600, 750, '<%=resourcebaseurl%>');
                         return false;  //run code for 'H'elp
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.ticklerShortcut"/> : {
-                        <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
                         popupOscarRx(700, 1024, '../tickler/ticklerMain.jsp', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>') //run code for t'I'ckler
-                        </caisi:isModuleLoad>
-                        <caisi:isModuleLoad moduleName="ticklerplus">
-                        popupOscarRx(700, 1024, '../Tickler.do', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>'); //run code for t'I'ckler+
-                        </caisi:isModuleLoad>
                         return false;
                     }
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.labShortcut"/> :
@@ -1002,14 +984,8 @@
                         popupOscarRx(650, 1024, '../report/reportindex.jsp', 'reportPage');
                         return false;  //run code for 'R'eports
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.prefShortcut"/> : {
-                        <caisi:isModuleLoad moduleName="ticklerplus">
-                        popupOscarRx(715, 680, 'providerpreference.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&mygroup_no=<%=mygroupno%>&new_tickler_warning_window=<%=newticklerwarningwindow%>&default_pmm=<%=default_pmm%>'); //run code for tickler+ 'P'references
-                        return false;
-                        </caisi:isModuleLoad>
-                        <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
                         popupOscarRx(715, 680, 'providerpreference.jsp?provider_no=<%=curUser_no%>&start_hour=<%=startHour%>&end_hour=<%=endHour%>&every_min=<%=everyMin%>&mygroup_no=<%=mygroupno%>'); //run code for 'P'references
                         return false;
-                        </caisi:isModuleLoad>
                     }
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchShortcut"/> :
                         popupOscarRx(550, 687, '../demographic/search.jsp');
@@ -1029,8 +1005,6 @@
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.workflowShortcut"/> :
                         popupOscarRx(700, 1024, '../oscarWorkflow/WorkFlowList.jsp', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.workflow"/>');
                         return false; //code for 'W'orkflow
-                    case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.phrShortcut"/> :
-                        popupOscarRx('600', '1024', '../phr/PhrMessage.do?method=viewMessages', 'INDIVOMESSENGER2<%=curUser_no%>')
                     default :
                         return;
                 }

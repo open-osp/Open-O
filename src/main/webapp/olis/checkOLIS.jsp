@@ -25,9 +25,15 @@
 --%>
 <%@page import="com.indivica.olis.parameters.*,com.indivica.olis.*,com.indivica.olis.queries.*,org.apache.commons.lang.time.DateUtils" %>
 <%@page
-        import="oscar.OscarProperties,java.net.InetAddress,java.io.*,java.util.List,java.util.*,javax.net.ssl.*,java.security.*,java.security.cert.*" %>
+        import="ca.openosp.OscarProperties,java.net.InetAddress,java.io.*,java.util.List,java.util.*,javax.net.ssl.*,java.security.*,java.security.cert.*" %>
 <%@page
-        import="org.oscarehr.util.DbConnectionFilter,java.sql.*,org.oscarehr.util.SpringUtils,org.oscarehr.util.LoggedInInfo" %>
+        import="ca.openosp.openo.utility.DbConnectionFilter,java.sql.*,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.olis1.Driver" %>
+<%@ page import="ca.openosp.openo.olis1.parameters.OBR22" %>
+<%@ page import="ca.openosp.openo.olis1.parameters.ZRP1" %>
+<%@ page import="ca.openosp.openo.olis1.parameters.PID3" %>
+<%@ page import="ca.openosp.openo.olis1.queries.Query" %>
+<%@ page import="ca.openosp.openo.olis1.queries.Z01Query" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     if (session.getAttribute("userrole") == null) {
@@ -84,7 +90,7 @@
         Connection c = DbConnectionFilter.getThreadLocalDbConnection(); //select only
         try {
 
-            PreparedStatement ps_findConfiguredProviders = c.prepareStatement("select * from provider where practitionerNo != ''");
+            PreparedStatement ps_findConfiguredProviders = c.prepareStatement("select * from providers where practitionerNo != ''");
             PreparedStatement ps_prop = c.prepareStatement("select * from property where provider_no = ? and name = ?");
             ResultSet rs = ps_findConfiguredProviders.executeQuery();
 
@@ -195,7 +201,7 @@
         ((Z01Query) query).setRequestingHic(zrp1);
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        com.indivica.olis.Driver.submitOLISQuery(loggedInInfo, request, query);
+        Driver.submitOLISQuery(loggedInInfo, request, query);
         String msgInXML = (String) request.getAttribute("msgInXML");
         String signedRequest = (String) request.getAttribute("signedRequest");
         String signedData = (String) request.getAttribute("signedData");
@@ -280,7 +286,7 @@
                     errors.add(prob(key + " keystore is empty"));
                     return false;
                 }
-                String name = "olis";
+                String name = "olis1";
                 Enumeration e = keystore.aliases();
                 while (e.hasMoreElements()) {
                     name = (String) e.nextElement();
@@ -330,10 +336,10 @@
     public boolean checkIP(List<String> errors) {
         boolean correct = true;
         try {
-            InetAddress address = InetAddress.getByName("olis.ssha.ca");
+            InetAddress address = InetAddress.getByName("olis1.ssha.ca");
             String ipAddr = address.getHostAddress();
             if (!"76.75.164.17".equals(ipAddr)) {
-                errors.add(prob("Add line in /etc/hosts file:<br><br> 76.75.164.17   olis.ssha.ca"));
+                errors.add(prob("Add line in /etc/hosts file:<br><br> 76.75.164.17   olis1.ssha.ca"));
                 correct = false;
             }
         } catch (Exception e) {
@@ -469,9 +475,9 @@
     public String getDomain() {
         OscarProperties oscarProperties = OscarProperties.getInstance();
         if (oscarProperties.getProperty("olis_request_url") != null && oscarProperties.getProperty("olis_request_url").equals("https://cst.olis.ssha.ca/ssha.olis.webservices.ER7/OLIS.asmx")) {
-            return "cst.olis.ssha.ca";
+            return "cst.olis1.ssha.ca";
         }
-        return "olis.ssha.ca";
+        return "olis1.ssha.ca";
     }
 
 

@@ -28,15 +28,15 @@
     String form_name = "ar1_99_08";
     String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
-<%@page import="org.oscarehr.common.dao.FormDao" %>
-<%@page import="org.oscarehr.common.model.Form" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
+<%@page import="ca.openosp.openo.commn.dao.FormDao" %>
+<%@page import="ca.openosp.openo.commn.model.Form" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
     FormDao formDao = SpringUtils.getBean(FormDao.class);

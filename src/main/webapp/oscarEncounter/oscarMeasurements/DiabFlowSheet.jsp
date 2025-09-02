@@ -8,19 +8,29 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <% long startTime = System.currentTimeMillis(); %>
 <%@page contentType="text/html" %>
-<%@page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*,java.net.*, oscar.oscarRx.util.*" %>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.log.*" %>
-<%@page import="org.springframework.web.context.WebApplicationContext,oscar.oscarResearch.oscarDxResearch.bean.*" %>
-<%@page import="org.oscarehr.common.dao.FlowSheetCustomizationDao,org.oscarehr.common.model.FlowSheetCustomization" %>
-<%@page import="org.oscarehr.common.dao.FlowSheetDrugDao,org.oscarehr.common.model.FlowSheetDrug" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO,org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*, ca.openosp.openo.rx.util.*" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.log.*" %>
+<%@page import="org.springframework.web.context.WebApplicationContext,ca.openosp.openo.dxresearch.bean.*" %>
+<%@page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao,ca.openosp.openo.commn.model.FlowSheetCustomization" %>
+<%@page import="ca.openosp.openo.commn.dao.FlowSheetDrugDao,ca.openosp.openo.commn.model.FlowSheetDrug" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO,ca.openosp.openo.commn.model.UserProperty" %>
 
-<%@page import="org.oscarehr.common.dao.AllergyDao" %>
-<%@page import="org.oscarehr.common.model.Allergy" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.AllergyDao" %>
+<%@page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.FlowSheetItem" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBean" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypeBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
 
 <%@ include file="/common/webAppContextAndSuperMgr.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

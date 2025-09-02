@@ -18,14 +18,14 @@
 
 --%>
 <!DOCTYPE html>
-<%@page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.dao.DxresearchDAO" %>
-<%@page import="org.oscarehr.common.model.Dxresearch" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DxresearchDAO" %>
+<%@page import="ca.openosp.openo.commn.model.Dxresearch" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -34,17 +34,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ page errorPage="/errorpage.jsp"
-         import="java.util.*,java.math.*,java.net.*,java.sql.*,oscar.util.*,oscar.*,oscar.appt.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.administration.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*, java.util.Properties" %>
+         import="java.util.*,java.math.*,java.net.*,java.sql.*,ca.openosp.openo.util.*,ca.openosp.*,ca.openosp.openo.appt.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.administration.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*, java.util.Properties" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
-<%@ page import="org.oscarehr.common.dao.BillingONCHeader1Dao, org.oscarehr.common.model.BillingONCHeader1" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao, ca.openosp.openo.commn.model.BillingONCHeader1" %>
 
 
 <%
@@ -182,7 +182,7 @@
     String action = "edit";
     Properties propHist = null;
     Vector vecHist = new Vector();
-    // get provider's detail
+    // get providers's detail
     String proOHIPNO = "", proRMA = "";
 
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -268,9 +268,21 @@
 <c:set var="demographicNo" value="${param.demographic_no}" scope="request"/>
 
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.appt.ApptUtil" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstReport" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.Billing3rdPartPrep" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingReviewPrep" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxProviderData" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <head>
     <title>OscarBilling</title>
 
@@ -695,7 +707,7 @@
                 Calendar serviceDateCal = Calendar.getInstance();
                 java.util.Date serviceDate = null;
                 try {
-                    serviceDate = oscar.util.DateUtils.parseDate(request.getParameter("service_date"),request.getLocale());
+                    serviceDate = DateUtils.parseDate(request.getParameter("service_date"),request.getLocale());
                     serviceDateCal.setTime(serviceDate);
                 } catch (java.text.ParseException e) {}
 
@@ -1064,7 +1076,7 @@
                     List al = pObj.getPaymentType();
 
                     Billing3rdPartPrep privateObj = new Billing3rdPartPrep();
-                    oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider((String) session.getAttribute("user"));
+                    RxProviderData.Provider provider = new RxProviderData().getProvider((String) session.getAttribute("user"));
 
                 /*
                 = propClinic.getProperty("clinic_name", "") + "\n"
@@ -1161,7 +1173,7 @@
                                         fname = p.getFirstName();
                                         payeename = fname + " " + lname;
 
-                                        Properties prop = oscar.OscarProperties.getInstance();
+                                        Properties prop = OscarProperties.getInstance();
                                         String payee = prop.getProperty("PAYEE", "");
                                         payee = payee.trim();
                                         if (payee.length() > 0) {
@@ -1299,7 +1311,7 @@
 
     function addToDiseaseRegistry() {
         if (validateItems()) {
-            var url = "../../../oscarResearch/oscarDxResearch/dxResearch.do";
+            var url = "../../../oscarResearch/dxresearch/dxResearch.do";
             //var data = Form.serialize(dxForm);
             data = jQuery('#dxForm').serialize();
             //new Ajax.Updater('dxListing',url, {method: 'post',postBody: data,asynchronous:true,onComplete: getNewCurrentDxCodeList});
@@ -1329,7 +1341,7 @@
 
     function getNewCurrentDxCodeList(origRequest) {
         //alert("calling get NEW current Dx Code List");
-        var url = "../../../oscarResearch/oscarDxResearch/currentCodeList.jsp";
+        var url = "../../../oscarResearch/dxresearch/currentCodeList.jsp";
         var ran_number = Math.round(Math.random() * 1000000);
         var params = "demographicNo=<%=demo_no%>&rand=" + ran_number;  //hack to get around ie caching the page
         //alert(params);

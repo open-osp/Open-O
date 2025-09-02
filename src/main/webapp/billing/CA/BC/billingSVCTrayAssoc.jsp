@@ -101,7 +101,7 @@
     </form>
     <p/><display:table class="displayGrid" name="list" pagesize="50"
                        defaultsort="1" defaultorder="descending"
-                       decorator="oscar.oscarBilling.ca.bc.pageUtil.BillCodesTableWrapper">
+                       decorator="ca.openosp.openo.billings.ca.bc.pageUtil.BillCodesTableWrapper">
         <display:column property="billingServiceNo" title="Procedure Fee Code"/>
         <display:column property="billingServiceTrayNo" title="Tray Fee Code"/>
         <display:column property="associationStatus" title="Options"/>

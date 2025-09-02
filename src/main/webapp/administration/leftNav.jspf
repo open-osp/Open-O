@@ -24,7 +24,8 @@
 
 --%>
 
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
@@ -285,7 +286,7 @@ String curProvider_no = (String)session.getAttribute("user");
 						<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.frmGroups"/>
 					</a></li>
 		
-					<% if (org.oscarehr.common.IsPropertiesOn.isIndivicaRichTextLetterEnable()) { %>
+					<% if (IsPropertiesOn.isIndivicaRichTextLetterEnable()) { %>
 					<li><a href="${ctx}/eform/efmformrtl_config.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.richTextLetter"/></a></li>
 					<% } %>
 		
@@ -615,7 +616,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					<li><a href='javascript:void(0);'
 						class="xlink" rel="${ctx}/admin/ManageClinic.do"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.clinicAdmin"/></a></li>
 					<%
-						if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable())
+						if (IsPropertiesOn.isMultisitesEnable())
 									{
 					%>
 					<li><a href='javascript:void(0);'
@@ -689,7 +690,7 @@ String curProvider_no = (String)session.getAttribute("user");
 <%--						if (oscar.oscarSecurity.CRHelper.isCRFrameworkEnabled())--%>
 <%--								{--%>
 <%--					%>--%>
-<%--					<security:oscarSec roleName="<%=roleName$%>" objectName="_admin.cookieRevolver" rights="r">--%>
+<%--					<sec:oscarSec roleName="<%=roleName$%>" objectName="_admin.cookieRevolver" rights="r">--%>
 <%--						<li>&nbsp; <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.titleFactorAuth"/>--%>
 <%--						<ul>--%>
 <%--							<li><a href='javascript:void(0);'--%>
@@ -710,7 +711,7 @@ String curProvider_no = (String)session.getAttribute("user");
 <%--								class="xlink" rel='${ctx}/gatekeeper/matrixadmin/show'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.genMatrixCards"/></a></li>--%>
 <%--						</ul>--%>
 <%--						</li>--%>
-<%--					</security:oscarSec>--%>
+<%--					</sec:oscarSec>--%>
 <%--					<%--%>
 <%--						}--%>
 <%--					%>           	--%>
@@ -789,9 +790,9 @@ String curProvider_no = (String)session.getAttribute("user");
 					<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.traceabilityReport"/></a></li>
 				</security:oscarSec>				
 				
-<%--				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">--%>
+<%--				<sec:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">--%>
 <%--					<li><a href='javascript:void(0);' class="xlink" rel="${ctx}/admin/oscarStatus.do"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.oscarStatus.oscarStatus"/></a></li>--%>
-<%--				</security:oscarSec>	--%>
+<%--				</sec:oscarSec>	--%>
 							
 				</ul>	
 				</div>
@@ -817,7 +818,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					</li>
 <%--					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorStatus.jsp">Integrator Status</a></li>--%>
 					
-<%--					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/setProviderStaleDate.do?method=viewIntegratorProperties'><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetIntegratorPreferences"/></a></li>--%>
+<%--					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/setProviderStaleDate.do?method=viewIntegratorProperties'><fmt:setBundle basename="oscarResources"/><fmt:message key="providers.btnSetIntegratorPreferences"/></a></li>--%>
 <%--					<li><a href='javascript:void(0);' class="xlink" rel='${ctx}/lab/CA/ALL/sendOruR01.jsp'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.sendOruR01"/></a></li>--%>
 					
 					<caisi:isModuleLoad moduleName="HRM">	
@@ -856,8 +857,7 @@ String curProvider_no = (String)session.getAttribute("user");
 		                        %>		
 			
 					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/updateDrugref.jsp" ><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.UpdateDrugref"/></a></li>	
-<%--					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/Know2actConfiguration.jsp" ><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.Know2ActConfig"/></a></li>--%>
-					<li><a href="javascript:void(0);" class="xlink" rel="${ctx}/admin/surveillanceConfiguration.jsp" ><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.surveillanceConfig"/></a></li>						
+<%-- K2A config link removed --%>
 <%--					<li><a  href='javascript:void(0);' class="xlink" rel="${ctx}/admin/integratorPushStatus.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.integratorPush"/></a></li>--%>
 
 					<caisi:isModuleLoad moduleName="BORN">	
@@ -934,51 +934,6 @@ String curProvider_no = (String)session.getAttribute("user");
 </oscar:oscarPropertiesCheck>
 <!-- #Hamilton Public Health END-->
 
-<!-- #SHARING CENTER -->
-<oscar:oscarPropertiesCheck property="sharingcenter.enabled" value="true">
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.sharingcenter" rights="r" reverse="<%=false%>">
-				<div class="accordion-heading">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#adminNav" href="#collapseThirteen">
-				<fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.title"/>
-				<i class="icon-chevron-right"></i>
-				</a>
-				</div>
-				
-				<div id="collapseThirteen" class="accordion-body collapse">
-				<div class="accordion-inner">
-			
-				<ul>
-					<li><a href="${ctx}/sharingcenter/affinitydomain/manage.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.affinitydomain.manage"/></a></li>
-					<li><a href="${ctx}/sharingcenter/affinitydomain/clinic.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.clinicinfo"/></a></li>								
-					<li><a href="${ctx}/sharingcenter/security/infrastructure.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.security"/></a></li>
-				</ul>
-				</div>
-				</div>
-	</security:oscarSec>
-</oscar:oscarPropertiesCheck>
-<!-- #SHARING CENTER END -->	
-
-<oscar:oscarPropertiesCheck property="OSCAR_LEARNING" value="yes">
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
-				<div class="accordion-heading">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#adminNav" href="#collapseFourteen">
-				<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning"/>
-				<i class="icon-chevron-right"></i>
-				</a>
-				</div>
-				<div id="collapseFourteen" class="accordion-body collapse">
-				<div class="accordion-inner">
-				<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/oscarLearning/CourseManager.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.manageCourses"/></a></li>
-					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/demographic/demographicImport.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.importPatient"/></a></li>
-					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/oscarLearning/StudentImport.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.learning.importStudent"/></a></li>
-				</ul>
-				</div>
-				</div>
-	</security:oscarSec>
-</oscar:oscarPropertiesCheck>
 
  <oscar:oscarPropertiesCheck property="billregion" value="ON">
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
@@ -990,8 +945,6 @@ String curProvider_no = (String)session.getAttribute("user");
 				</div>
 				<div id="collapseSixteen" class="accordion-body collapse">
 				<div class="accordion-inner">
-				<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/pregnancy/migrateToSplitOnArEnhancedForm.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.updates.migrate_onarenhanced"/></a></li>
 						
 				</ul>
 				</div>

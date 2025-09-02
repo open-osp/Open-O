@@ -8,11 +8,11 @@
 		http://dojotoolkit.org/community/licensing.shtml
 */
 
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 dojo.provide("dojo.html.selection");
 
 dojo.require("dojo.dom");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 /**
  * type of selection

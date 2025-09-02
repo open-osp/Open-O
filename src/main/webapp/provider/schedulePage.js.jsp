@@ -26,17 +26,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     String newticklerwarningwindow = null;
-    String ocanWarningWindow = null;
     String cbiReminderWindow = null;
 
-    if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
-        newticklerwarningwindow = (String) session.getAttribute("newticklerwarningwindow");
-    }
-    if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("OCAN_warning_window")) {
-        ocanWarningWindow = (String) session.getAttribute("ocanWarningWindow");
-    }
-
-    if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW")) {
+    if (ca.openosp.openo.commn.IsPropertiesOn.isCaisiEnable() && ca.openosp.openo.commn.IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW")) {
         cbiReminderWindow = (String) session.getAttribute("cbiReminderWindow");
     }
 
@@ -274,10 +266,6 @@ popupPage(700,720, url);
 
 //popup a new tickler warning window
 function load() {
-var ocan = "<%=ocanWarningWindow%>";
-if(ocan!="null" && cbi!="") {
-alert(ocan);
-}
 var cbi = "<%=cbiReminderWindow%>";
 if(cbi!="null" && cbi!="") {
 alert(cbi);

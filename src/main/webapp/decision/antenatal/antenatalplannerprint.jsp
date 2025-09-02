@@ -31,18 +31,20 @@
     String curUser_no = (String) session.getAttribute("user");
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*,java.io.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,java.io.*"
         errorPage="../../appointment/errorpage.jsp" %>
 
 <jsp:useBean id="riskDataBean" class="java.util.Properties" scope="page"/>
 <jsp:useBean id="risks"
-             class="oscar.decision.DesAntenatalPlannerRisks_99_12" scope="page"/>
+             class="ca.openosp.openo.decision.DesAntenatalPlannerRisks_99_12" scope="page"/>
 <jsp:useBean id="checklist"
-             class="oscar.decision.DesAntenatalPlannerChecklist_99_12" scope="page"/>
+             class="ca.openosp.openo.decision.DesAntenatalPlannerChecklist_99_12" scope="page"/>
 <%@ include file="../../admin/dbconnection.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Desaprisk" %>
-<%@page import="org.oscarehr.common.dao.DesapriskDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Desaprisk" %>
+<%@page import="ca.openosp.openo.commn.dao.DesapriskDao" %>
+<%@ page import="ca.openosp.openo.db.DBHandler" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
     DesapriskDao desapriskDao = SpringUtils.getBean(DesapriskDao.class);
 %>
@@ -65,7 +67,7 @@
 
     ResultSet rsdemo = null;
     if (!form_no.equals("0")) {
-        rsdemo = oscar.oscarDB.DBHandler.GetSQL("select * from formAR where ID = " + form_no);
+        rsdemo = DBHandler.GetSQL("select * from formAR where ID = " + form_no);
 
         ResultSetMetaData resultsetmetadata = rsdemo.getMetaData();
         while (rsdemo.next()) {

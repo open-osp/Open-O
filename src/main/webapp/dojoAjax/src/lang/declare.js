@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lang.declare");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.extras");
 
 dojo.lang.declare = function (	/*String*/ className,

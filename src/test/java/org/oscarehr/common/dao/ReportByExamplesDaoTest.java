@@ -31,8 +31,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ReportByExamples;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ReportByExamples;
+import ca.openosp.openo.commn.dao.ReportByExamplesDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ReportByExamplesDaoTest extends DaoTestFixtures {
 
@@ -40,7 +41,7 @@ public class ReportByExamplesDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("reportByExamples", "provider");
+        SchemaUtils.restoreTable("reportByExamples", "providers");
     }
 
     @Test

@@ -9,8 +9,8 @@
 */
 
 dojo.provide("dojo.validate.check");
-dojo.require("dojo.validate.common");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.validate.commons");
+dojo.require("dojo.lang.commons");
 
 dojo.validate.check = function (/*HTMLFormElement*/form, /*Object*/profile) {
     // summary: validates user input of an HTML form based on input profile

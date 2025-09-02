@@ -24,8 +24,8 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.ISO36612" %>
-<%@page import="org.oscarehr.managers.LookupListManager" %>
+<%@page import="ca.openosp.openo.commn.ISO36612" %>
+<%@page import="ca.openosp.openo.managers.LookupListManager" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
@@ -40,30 +40,19 @@
         return;
     }
 %>
-<%@page import="org.oscarehr.sharingcenter.SharingCenterUtil" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.ConformanceTestHelper" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtArchiveDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
-<%@page import="org.oscarehr.common.dao.WaitingListDao" %>
-<%@page import="org.oscarehr.common.dao.WaitingListNameDao" %>
-<%@page import="org.oscarehr.common.model.WaitingListName" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.ConformanceTestHelper" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.Gender" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.managers.ProgramManager2" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction" %>
-<%@page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@page import="org.oscarehr.managers.PatientConsentManager" %>
+<%@page import="ca.openosp.openo.commn.Gender" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.managers.ProgramManager2" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
+<%@page import="java.util.HashSet" %>
+<%@page import="ca.openosp.openo.managers.PatientConsentManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session"/>
+<jsp:useBean id="apptMainBean" class="ca.openosp.AppointmentMainBean" scope="session"/>
 <%
     String demographic$ = request.getParameter("demographic_no");
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -84,29 +73,22 @@
 
 %>
 <%@ page
-        import="java.util.*, java.net.*,java.text.DecimalFormat, oscar.*, oscar.oscarDemographic.data.ProvinceNames, oscar.oscarWaitingList.WaitingList, oscar.oscarReport.data.DemographicSets,oscar.log.*" %>
-<%@ page import="oscar.oscarDemographic.data.*" %>
-<%@ page import="oscar.oscarDemographic.pageUtil.Util" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.*" %>
-<%@ page import="org.oscarehr.common.OtherIdManager" %>
-<%@ page import="org.oscarehr.common.web.Contact2Action" %>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="org.oscarehr.common.model.DemographicCust" %>
-<%@page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.managers.DemographicManager" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.PMmodule.service.AdmissionManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+        import="java.util.*, java.net.*,java.text.DecimalFormat, ca.openosp.*, ca.openosp.openo.demographic.data.ProvinceNames, ca.openosp.openo.waitinglist.WaitingList, ca.openosp.openo.report.data.DemographicSets,ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.*" %>
+<%@ page import="ca.openosp.openo.demographic.pageUtil.Util" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.OtherIdManager" %>
+<%@ page import="ca.openosp.openo.commn.web.Contact2Action" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.PMmodule.service.AdmissionManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 
 <%!
@@ -196,11 +178,9 @@
         noteReason = "";
     }
 
-    // MARC-HI's Sharing Center
-    boolean isSharingCenterEnabled = SharingCenterUtil.isEnabled();
 
     String currentProgram = "";
-    String programId = (String) session.getAttribute(org.oscarehr.util.SessionConstants.CURRENT_PROGRAM_ID);
+    String programId = (String) session.getAttribute(ca.openosp.openo.utility.SessionConstants.CURRENT_PROGRAM_ID);
     if (programId != null && programId.length() > 0) {
         Integer prId = null;
         try {
@@ -245,9 +225,18 @@
 
 %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicMerged" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicRelationship" %>
+<%@ page import="ca.openosp.openo.utility.*" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.dao.*" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <!DOCTYPE html>
 <html>
 
@@ -936,7 +925,7 @@
         List<DemographicExtArchive> extArchives = demographicExtArchiveDao.getDemographicExtArchiveByDemoAndKey(Integer.parseInt(demographic_no), "demo_cell");
 
         AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
-        Admission bedAdmission = admissionManager.getCurrentBedProgramAdmission(demographic.getDemographicNo());
+        Admission bedAdmission = null;
         Admission communityAdmission = admissionManager.getCurrentCommunityProgramAdmission(demographic.getDemographicNo());
         List<Admission> serviceAdmissions = admissionManager.getCurrentServiceProgramAdmission(demographic.getDemographicNo());
         if (serviceAdmissions == null) {
@@ -1000,11 +989,11 @@
                                             }
                                             //----------------------------REFERRAL DOCTOR --------------end-----------
 
-                                            if (oscar.util.StringUtils.filled(demographic.getYearOfBirth()))
+                                            if (ca.openosp.openo.util.StringUtils.filled(demographic.getYearOfBirth()))
                                                 birthYear = StringUtils.trimToEmpty(demographic.getYearOfBirth());
-                                            if (oscar.util.StringUtils.filled(demographic.getMonthOfBirth()))
+                                            if (ca.openosp.openo.util.StringUtils.filled(demographic.getMonthOfBirth()))
                                                 birthMonth = StringUtils.trimToEmpty(demographic.getMonthOfBirth());
-                                            if (oscar.util.StringUtils.filled(demographic.getDateOfBirth()))
+                                            if (ca.openosp.openo.util.StringUtils.filled(demographic.getDateOfBirth()))
                                                 birthDate = StringUtils.trimToEmpty(demographic.getDateOfBirth());
 
                                             dob_year = Integer.parseInt(birthYear);
@@ -1165,7 +1154,6 @@
 
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart"
                                            rights="r" reverse="<%=false%>">
-                            <special:SpecialEncounterTag moduleName="eyeform" reverse="true">
                                 <tr>
                                     <td>
                                         <a href="javascript: function myFunction() {return false; }"
@@ -1207,17 +1195,6 @@
                                         </div>
                                     </td>
                                 </tr>
-                            </special:SpecialEncounterTag>
-                            <special:SpecialEncounterTag moduleName="eyeform">
-                                <tr>
-                                    <td>
-                                        <a href="javascript: function myFunction() {return false; }"
-                                           onClick="popupEChart(710, 1024,encURL);return false;"
-                                           title="<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEChart"/>">
-                                            <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEChart"/></a>
-                                    </td>
-                                </tr>
-                            </special:SpecialEncounterTag>
                             <tr>
                                 <td><a
                                         href="javascript: function myFunction() {return false; }"
@@ -1228,17 +1205,10 @@
                         </security:oscarSec>
                         <tr>
                             <td>
-                                <%if (org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {%>
-                                <a
-                                        href="javascript: function myFunction() {return false; }"
-                                        onClick="popupPage(700,1000,'../Tickler.do?filter.demographic_no=<%=demographic_no%>');return false;">
-                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/></a>
-                                <% } else { %>
                                 <a
                                         href="javascript: function myFunction() {return false; }"
                                         onClick="popupPage(700,1000,'<%= request.getContextPath() %>/tickler/ticklerMain.jsp?demoview=<%=demographic_no%>');return false;">
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/></a>
-                                <% } %>
                             </td>
                         </tr>
                         <tr>
@@ -1313,20 +1283,6 @@
                                         onClick="popupPage(710,970,'<%= request.getContextPath() %>/documentManager/documentReport.jsp?function=demographic&doctype=lab&functionid=<%=demographic.getDemographicNo()%>&curUser=<%=curProvider_no%>&mode=add')"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnAddDocument"/></a></td>
                             </tr>
                         </special:SpecialPlugin>
-                        <special:SpecialEncounterTag moduleName="eyeform">
-                            <% String iviewTag = oscarProps.getProperty("iviewTag");
-
-                                if (iviewTag != null && !"".equalsIgnoreCase(iviewTag.trim())) {
-                            %>
-                            <tr>
-                                <td>
-                                    <a href='<%=request.getContextPath()%>/mod/specialencounterComp/iviewServlet?method=iview&demoNo=<%=demographic.getDemographicNo()%>&<%=System.currentTimeMillis() %>'>
-                                        <%=iviewTag %>
-                                    </a>
-                                </td>
-                            </tr>
-                            <%} %>
-                        </special:SpecialEncounterTag>
                         <tr>
                             <td><a
                                     href="<%= request.getContextPath() %>/eform/efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&apptProvider=<%=apptProvider%>&appointment=<%=appointment%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEForm"/></a></td>
@@ -1336,18 +1292,6 @@
                                     href="<%= request.getContextPath() %>/eform/efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>">
                                 <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnAddEForm"/> </a></td>
                         </tr>
-
-                        <% if (isSharingCenterEnabled) { %>
-                        <!-- Sharing Center Links -->
-                        <tr>
-                            <td>
-                                <a href="<%= request.getContextPath() %>/sharingcenter/networks/sharingnetworks.jsp?demographic_no=<%=demographic_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.networks.sharingnetworks"/></a></td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="<%= request.getContextPath() %>/sharingcenter/documents/SharedDocuments.do?demographic_no=<%=demographic_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="sharingcenter.documents.shareddocuments"/></a></td>
-                        </tr>
-                        <% } // endif isSharingCenterEnabled %>
 
                     </table>
                 </td>
@@ -1385,7 +1329,7 @@
                                         <tr>
                                             <td>
                                                 <%
-                                                    oscar.oscarDemographic.data.DemographicMerged dmDAO = new oscar.oscarDemographic.data.DemographicMerged();
+                                                    DemographicMerged dmDAO = new DemographicMerged();
                                                     String dboperation = "search_detail";
                                                     String head = dmDAO.getHead(demographic_no);
                                                     ArrayList records = dmDAO.getTail(head);
@@ -2586,9 +2530,6 @@
                                                                 <div class="demographicSection" id="programs">
                                                                     <h3>Programs</h3>
                                                                     <ul>
-                                                                        <li><span class="label">Bed:</span><span
-                                                                                class="info"><%=bedAdmission != null ? bedAdmission.getProgramName() : "N/A" %></span>
-                                                                        </li>
                                                                         <%
                                                                             for (Admission adm : serviceAdmissions) {
                                                                         %>
@@ -2730,7 +2671,7 @@
                                                         </td>
                                                         <td align="left">
                                                             <%
-                                                                String lang = oscar.util.StringUtils.noNull(demographic.getOfficialLanguage()); %>
+                                                                String lang = ca.openosp.openo.util.StringUtils.noNull(demographic.getOfficialLanguage()); %>
                                                             <select name="official_lang" <%=getDisabled("official_lang")%>>
                                                                 <option value="English" <%=lang.equals("English") ? "selected" : ""%> >
                                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgEnglish"/></option>
@@ -2745,7 +2686,7 @@
                                                         </td>
                                                         <td>
                                                             <%
-                                                                String spokenLang = oscar.util.StringUtils.noNull(demographic.getSpokenLanguage()); %>
+                                                                String spokenLang = ca.openosp.openo.util.StringUtils.noNull(demographic.getSpokenLanguage()); %>
                                                             <select name="spoken_lang"
                                                                     style="width: 200px;" <%=getDisabled("spoken_lang")%>>
                                                                 <%for (String splang : Util.spokenLangProperties.getLangSorted()) { %>
@@ -3365,7 +3306,7 @@
                                                         </b></td>
                                                         <td align="left">
                                                             <%
-                                                                String newsletter = oscar.util.StringUtils.noNull(demographic.getNewsletter()).trim();
+                                                                String newsletter = ca.openosp.openo.util.StringUtils.noNull(demographic.getNewsletter()).trim();
                                                                 if (newsletter == null || newsletter.equals("")) {
                                                                     newsletter = "Unknown";
                                                                 }
@@ -3418,49 +3359,6 @@
                                                             <input type="text" id="patientGender" name="gender"
                                                                    value="<%=Encode.forHtmlAttribute(StringUtils.trimToEmpty(demographic.getGender()))%>"/>
                                                         </td>
-
-                                                            <%--								<td align="right"><b><fmt:message--%>
-                                                            <%--									key="demographic.demographiceditdemographic.formPHRUserName" />: </b></td>--%>
-                                                            <%--								<td align="left">--%>
-                                                            <%--								<input type="text" name="myOscarUserName" size="30" <%=getDisabled("myOscarUserName")%>--%>
-                                                            <%--									value="<%=demographic.getMyOscarUserName()!=null? demographic.getMyOscarUserName() : ""%>">--%>
-                                                            <%--								<%if (demographic.getEmail()!=null && !demographic.getEmail().equals("") && (demographic.getMyOscarUserName()==null ||demographic.getMyOscarUserName().equals(""))) {%>--%>
-                                                            <%--									<input type="button" id="emailInvite" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEmailInvite"/>" onclick="sendEmailInvite('<%=demographic.getDemographicNo()%>')"/>--%>
-                                                            <%--									<script>--%>
-                                                            <%--										function sendEmailInvite(demoNo) {--%>
-                                                            <%--											var http = new XMLHttpRequest();--%>
-                                                            <%--											var url = "../ws/rs/app/PHREmailInvite/"+demoNo;--%>
-                                                            <%--											http.open("GET", url, true);--%>
-                                                            <%--											http.onreadystatechange = function() {--%>
-                                                            <%--												if(http.readyState == 4 && http.status == 200) {--%>
-                                                            <%--													var success = http.responseXML.getElementsByTagName("success")[0].childNodes[0].nodeValue=="true";--%>
-                                                            <%--													var btn = document.getElementById("emailInvite");--%>
-                                                            <%--													btn.disabled = true;--%>
-                                                            <%--													if (success) btn.value = "<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEmailInviteSent"/>";--%>
-                                                            <%--													else btn.value = "<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnEmailInviteError"/>";--%>
-                                                            <%--												}--%>
-                                                            <%--											}--%>
-                                                            <%--											http.send(null);--%>
-                                                            <%--										}--%>
-                                                            <%--									</script>--%>
-
-                                                            <%--								<%}%>--%>
-
-                                                            <%--								<%if (demographic.getMyOscarUserName()==null ||demographic.getMyOscarUserName().equals("")) {%>--%>
-
-                                                            <%--								<%--%>
-                                                            <%--									String onclickString="popup(900, 800, '../phr/indivo/RegisterIndivo.jsp?demographicNo="+demographic_no+"', 'indivoRegistration');";--%>
-                                                            <%--									MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);--%>
-                                                            <%--									if (myOscarLoggedInInfo==null || !myOscarLoggedInInfo.isLoggedIn()) onclickString="alert('Please login to MyOscar first.')";--%>
-                                                            <%--								%>--%>
-                                                            <%--								<br />--%>
-                                                            <%--								<a href="javascript:"--%>
-                                                            <%--									onclick="<%=onclickString%>"><sub--%>
-                                                            <%--									style="white-space: nowrap;"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgRegisterPHR"/></sub></a> --%>
-                                                            <%--								<%}else{%>--%>
-                                                            <%--									<input type="button" id="phrConsent" style="display:none;" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.confirmAccount"/>"  value="Confirm" />--%>
-                                                            <%--								<%}%>--%>
-                                                            <%--								</td>--%>
                                                     </tr>
                                                         <%--							<tr valign="top">--%>
                                                         <%--								<td align="right"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.consentToUseEmailForCare"/></b></td>--%>
@@ -3853,7 +3751,7 @@
                                                             <option value="-1"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgNotSet"/></option>
                                                             <%for (CountryCode cc : countryList) { %>
                                                             <option value="<%=cc.getCountryId()%>"
-                                                                    <% if (oscar.util.StringUtils.noNull(demographic.getCountryOfOrigin()).equals(cc.getCountryId())) {
+                                                                    <% if (ca.openosp.openo.util.StringUtils.noNull(demographic.getCountryOfOrigin()).equals(cc.getCountryId())) {
                                                                         out.print("SELECTED");
                                                                     }%>><%=cc.getCountryName() %>
                                                             </option>
@@ -4754,16 +4652,16 @@
                                                                         <td align="left">
                                                                             <%
 
-                                                                                List<org.oscarehr.common.model.WaitingList> wls = waitingListDao.search_wlstatus(Integer.parseInt(demographic_no));
+                                                                                List<ca.openosp.openo.commn.model.WaitingList> wls = waitingListDao.search_wlstatus(Integer.parseInt(demographic_no));
 
                                                                                 String wlId = "", listID = "", wlnote = "";
                                                                                 String wlReferralDate = "";
                                                                                 if (wls.size() > 0) {
-                                                                                    org.oscarehr.common.model.WaitingList wl = wls.get(0);
+                                                                                    ca.openosp.openo.commn.model.WaitingList wl = wls.get(0);
                                                                                     wlId = wl.getId().toString();
                                                                                     listID = String.valueOf(wl.getListId());
                                                                                     wlnote = wl.getNote();
-                                                                                    wlReferralDate = oscar.util.ConversionUtils.toDateString(wl.getOnListSince());
+                                                                                    wlReferralDate = ConversionUtils.toDateString(wl.getOnListSince());
                                                                                     if (wlReferralDate != null && wlReferralDate.length() > 10) {
                                                                                         wlReferralDate = wlReferralDate.substring(0, 11);
                                                                                     }
@@ -4780,7 +4678,7 @@
                                                                             <%} %>
                                                                             <%
 
-                                                                                List<WaitingListName> wlns = waitingListNameDao.findCurrentByGroup(((org.oscarehr.common.model.ProviderPreference) session.getAttribute(org.oscarehr.util.SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE)).getMyGroupNo());
+                                                                                List<WaitingListName> wlns = waitingListNameDao.findCurrentByGroup(((ProviderPreference) session.getAttribute(ca.openosp.openo.utility.SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE)).getMyGroupNo());
                                                                                 for (WaitingListName wln : wlns) {
                                                                             %>
                                                                             <option value="<%=wln.getId()%>"
@@ -4855,14 +4753,18 @@
                                                                             <select id="rsid" name="rps">
                                                                                 <option value=""></option>
                                                                                 <%
-                                                                                    GenericIntakeEditAction gieat = new GenericIntakeEditAction();
-                                                                                    gieat.setProgramManager(pm);
-
-
                                                                                     String _pvid = loggedInInfo.getLoggedInProviderNo();
-                                                                                    Set<Program> pset = gieat.getActiveProviderProgramsInFacility(loggedInInfo, _pvid, loggedInInfo.getCurrentFacility().getId());
-                                                                                    List<Program> bedP = gieat.getBedPrograms(pset, _pvid);
-                                                                                    List<Program> commP = gieat.getCommunityPrograms();
+                                                                                    ProgramManager tempPm = SpringUtils.getBean(ProgramManager.class);
+                                                                                    
+                                                                                    // Get providers's programs for permission checking - recreating getActiveProviderPrograms logic
+                                                                                    Set<Program> pset = new HashSet<Program>();
+                                                                                    for (Program providerProgram : tempPm.getProgramDomain(_pvid)) {
+                                                                                        if (providerProgram != null && providerProgram.isActive()) {
+                                                                                            pset.add(providerProgram);
+                                                                                        }
+                                                                                    }
+                                                                                    
+                                                                                    Program[] bedP = new Program[0];
                                                                                     Program oscarp = programDao.getProgramByName("OSCAR");
 
 
@@ -5065,7 +4967,7 @@
                                                         </td>
                                                         <td width="30%" align='center' valign="top"><input
                                                                 type="hidden" name="displaymode" value="Update Record">
-                                                            <!-- security code block --> <span id="updateButton"
+                                                            <!-- sec code block --> <span id="updateButton"
                                                                                                style="display: none;"> <security:oscarSec
                                                                     roleName="<%=roleName$%>" objectName="_demographic"
                                                                     rights="w">
@@ -5074,7 +4976,7 @@
                                                                 %>
                                                                 <input type="submit" <%=(showCbiReminder?"onclick='showCbiReminder()'":"")%>
                                                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnUpdate"/>">
-                                                            </security:oscarSec> </span> <!-- security code block -->
+                                                            </security:oscarSec> </span> <!-- sec code block -->
                                                         </td>
                                                         <td width="40%" align='right' valign="top"><span
                                                                 id="swipeButton" style="display: none;"> <input

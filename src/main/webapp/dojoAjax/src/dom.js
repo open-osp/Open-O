@@ -30,7 +30,7 @@ dojo.dom.dojoml = "http://www.dojotoolkit.org/2004/dojoml";
  **/
 dojo.dom.xmlns = {
     //	summary
-    //	aliases for various common XML namespaces
+    //	aliases for various commons XML namespaces
     svg: "http://www.w3.org/2000/svg",
     smil: "http://www.w3.org/2001/SMIL20/",
     mml: "http://www.w3.org/1998/Math/MathML",

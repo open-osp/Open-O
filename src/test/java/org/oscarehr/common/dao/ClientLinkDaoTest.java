@@ -28,13 +28,13 @@ package org.oscarehr.common.dao;
 //import java.util.Arrays;
 //import java.util.List;
 //import org.junit.Test;
-//import org.oscarehr.common.dao.utils.EntityDataGenerator;
-//import org.oscarehr.common.model.ClientLink;
+//import org.oscarehr.commons.daos.utils.EntityDataGenerator;
+//import org.oscarehr.commons.model.ClientLink;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 public class ClientLinkDaoTest extends DaoTestFixtures {
 
@@ -42,7 +42,7 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 
     @Before
     public void setUp() throws Exception {
-        SchemaUtils.restoreTable("Facility", "demographic", "provider", "ClientLink");
+        SchemaUtils.restoreTable("Facility", "demographic", "providers", "ClientLink");
     }
 
     // ALL TESTS SKIPPED DUE TO LOCAL DATABASE ERROR:
@@ -86,12 +86,12 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink4.setClientId(9999);
 //		clientLink4.setLinkType(type);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink1,
 //				clientLink2
@@ -144,12 +144,12 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink4.setClientId(9999);
 //		clientLink4.setLinkType(type);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink1
 //				));
@@ -201,12 +201,12 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink4.setClientId(9999);
 //		clientLink4.setLinkType(type);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink2
 //				));
@@ -257,12 +257,12 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink4.setClientId(9999);
 //		clientLink4.setLinkType(type);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink1
 //				));
@@ -324,13 +324,13 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink5.setLinkType(type);
 //		clientLink5.setUnlinkProviderNo(unlinkProviderNo);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
-//		dao.persist(clientLink5);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
+//		daos.persist(clientLink5);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink1
 //				));
@@ -393,13 +393,13 @@ public class ClientLinkDaoTest extends DaoTestFixtures {
 //		clientLink5.setLinkType(type);
 //		clientLink5.setUnlinkProviderNo(null);
 //
-//		dao.persist(clientLink1);
-//		dao.persist(clientLink2);
-//		dao.persist(clientLink3);
-//		dao.persist(clientLink4);
-//		dao.persist(clientLink5);
+//		daos.persist(clientLink1);
+//		daos.persist(clientLink2);
+//		daos.persist(clientLink3);
+//		daos.persist(clientLink4);
+//		daos.persist(clientLink5);
 //
-//		List<ClientLink> result = dao.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type); 
+//		List<ClientLink> result = daos.findByFacilityIdClientIdType(facilityId, clientId, currentlyLinked, type);
 //		List<ClientLink> expectedResult = new ArrayList<ClientLink>(Arrays.asList(
 //				clientLink1
 //				));

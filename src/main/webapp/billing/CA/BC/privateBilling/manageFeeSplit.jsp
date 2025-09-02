@@ -1,11 +1,11 @@
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ taglib prefix="security" uri="/oscarSecuritytag" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -35,7 +35,7 @@
             int feeSplitInt = Integer.parseInt(feeSplit);
             if (feeSplitInt > 100 || feeSplitInt < 0) {
                 failedToSave = true;
-                MiscUtils.getLogger().error("Invalid value for property 'fee_split' was passed for provider '" + providerNo + "' with value '" + feeSplit + "'");
+                MiscUtils.getLogger().error("Invalid value for property 'fee_split' was passed for providers '" + providerNo + "' with value '" + feeSplit + "'");
             } else {
                 List<Property> feeSplitProps = propertyDao.findByNameAndProvider("fee_split", providerNo);
                 if (!feeSplitProps.isEmpty()) {
@@ -52,10 +52,10 @@
         }
     } catch (NumberFormatException e) {
         failedToSave = true;
-        MiscUtils.getLogger().error("Invalid value for property 'fee_split' was passed for provider '" + providerNo + "' with value '" + feeSplit + "'", e);
+        MiscUtils.getLogger().error("Invalid value for property 'fee_split' was passed for providers '" + providerNo + "' with value '" + feeSplit + "'", e);
     } catch (Exception e) {
         failedToSave = true;
-        MiscUtils.getLogger().error("Exception thrown trying to save property 'fee_split' to provider '" + providerNo + "' with value '" + feeSplit + "'", e);
+        MiscUtils.getLogger().error("Exception thrown trying to save property 'fee_split' to providers '" + providerNo + "' with value '" + feeSplit + "'", e);
     }
 
     List<Property> feeSplitProps = propertyDao.findByName("fee_split");

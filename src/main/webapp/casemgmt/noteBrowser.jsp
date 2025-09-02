@@ -23,12 +23,12 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.util.Hashtable" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@page import="java.util.Collections" %>
-<%@page import="oscar.MyDateFormat" %>
-<%@page import="oscar.util.DateUtils" %>
+<%@page import="ca.openosp.MyDateFormat" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
 <%@page import="java.util.ArrayList" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -36,17 +36,16 @@
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
-<%@page import="org.oscarehr.documentManager.EDocUtil,org.oscarehr.documentManager.EDoc" %>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplay,org.oscarehr.casemgmt.web.NoteDisplayLocal" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager,org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@page import="org.oscarehr.common.dao.CtlDocClassDao,org.oscarehr.common.dao.QueueDao" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay,ca.openosp.openo.casemgmt.web.NoteDisplayLocal" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager,ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlDocClassDao,ca.openosp.openo.commn.dao.QueueDao" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%

@@ -24,9 +24,10 @@
 --%>
 <%@ include file="/taglibs.jsp" %>
 
-<%@ page import="org.oscarehr.PMmodule.web.formbean.*" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.ProgramManagerViewFormBean" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <form action="${pageContext.request.contextPath}/PMmodule/ProgramManager.do" method="post">
@@ -91,9 +92,6 @@
                             Program program = (Program) request.getAttribute("program");
 
                             for (int i = 0; i < ProgramManagerViewFormBean.tabs.length; i++) {
-                                if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Bed Check") && program.isService()) {
-                                    continue;
-                                }
 
                                 if (selectedTab != null && !selectedTab.trim().equals("") && ProgramManagerViewFormBean.tabs[i].equals(selectedTab)) {
                         %>
@@ -162,15 +160,6 @@
                         %>
                         <security:oscarSec roleName="<%=roleName$%>"
                                            objectName="_pmm_editProgram.access" rights="r">
-                            <td><a href="javascript:void(0)"
-                                   onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
-                            </a></td>
-                        </security:oscarSec>
-                        <%
-                        } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Bed Check")) {
-                        %>
-                        <security:oscarSec roleName="<%=roleName$%>"
-                                           objectName="_pmm_editProgram.bedCheck" rights="r">
                             <td><a href="javascript:void(0)"
                                    onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
                             </a></td>

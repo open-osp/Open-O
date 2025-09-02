@@ -30,7 +30,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.junit.Test;
-import org.oscarehr.rx.util.RxUtil;
+import ca.openosp.openo.prescription.util.RxUtil;
 
 public class RxUtilCheck {
 

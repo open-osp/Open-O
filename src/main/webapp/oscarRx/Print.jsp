@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -58,7 +58,7 @@
             </c:if>
         </c:if>
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
         %>
         <link rel="stylesheet" type="text/css" href="styles.css">
     </head>

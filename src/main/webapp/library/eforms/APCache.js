@@ -5,9 +5,9 @@
  Description
  ===========
  
- APCache provides an interface for making calls against a web page in 
+ APCache provides an interface for making calls against a www page in
  OSCAR's eforms which will return the value of queries defined in 
- OSCAR/web/WEB-INF/classes/src/oscar/richeform/apconfig.xml.
+ OSCAR/www/WEB-INF/classes/src/oscar/richeform/apconfig.xml.
  
  Requirements
  ============

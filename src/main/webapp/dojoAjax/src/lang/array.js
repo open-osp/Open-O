@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lang.array");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 // FIXME: Is this worthless since you can do: if(name in obj)
 // is this the right place for this?

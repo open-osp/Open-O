@@ -11,7 +11,7 @@
 dojo.provide("dojo.widget.RealNumberTextbox");
 
 dojo.require("dojo.widget.IntegerTextbox");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.widget.defineWidget(
     "dojo.widget.RealNumberTextbox",

@@ -27,7 +27,7 @@
 
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="oscar.login.*, oscar.oscarDB.*, oscar.MyDateFormat" %>
+<%@ page import="ca.openosp.openo.login.*, ca.openosp.openo.db.*, ca.openosp.MyDateFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -66,17 +66,17 @@
     Properties prop = null;
     String providerName = "";
     String sql = "";
-//provider name list, date, action, create button
+//providers name list, date, action, create button
 %>
 
 <%
     DBPreparedHandler dbObj = new DBPreparedHandler();
     Properties propName = new Properties();
-    // select provider list
+    // select providers list
     if (isSiteAccessPrivacy) {
-        sql = "select p.* from provider p INNER JOIN providersite s ON p.provider_no = s.provider_no WHERE s.site_id IN (SELECT site_id from providersite where provider_no=" + curUser_no + ") order by p.first_name, p.last_name";
+        sql = "select p.* from providers p INNER JOIN providersite s ON p.provider_no = s.provider_no WHERE s.site_id IN (SELECT site_id from providersite where provider_no=" + curUser_no + ") order by p.first_name, p.last_name";
     } else {
-        sql = "select * from provider p order by p.first_name, p.last_name ";
+        sql = "select * from providers p order by p.first_name, p.last_name ";
     }
     ResultSet rs = dbObj.queryResults(sql);
 
@@ -90,8 +90,11 @@
     }
 %>
 
-<%@page import="oscar.Misc" %>
+<%@page import="ca.openosp.Misc" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandler" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandlerParam" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <html>
     <script src="${pageContext.request.contextPath}/csrfguard"></script>
     <head>
@@ -212,7 +215,7 @@
 
             String sDate = request.getParameter("startDate");
             String eDate = request.getParameter("endDate");
-            String strDbType = oscar.OscarProperties.getInstance().getProperty("db_type").trim();
+            String strDbType = OscarProperties.getInstance().getProperty("db_type").trim();
             if ("".equals(sDate) || sDate == null) sDate = "1900-01-01";
             if ("".equals(eDate) || eDate == null) eDate = "2999-01-01";
 

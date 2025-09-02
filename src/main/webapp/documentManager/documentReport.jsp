@@ -24,10 +24,10 @@
 
 --%>
 <!DOCTYPE html>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.openo.commn.model.UserProperty" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%
@@ -39,7 +39,7 @@
     String user_no = (String) session.getAttribute("user");
     String demographicNo = (String) session.getAttribute("casemgmt_DemoNo");
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_DOCUMENT;
+    String annotation_display = CaseManagementNoteLink.DISP_DOCUMENT;
     String appointment = request.getParameter("appointmentNo");
     int appointmentNo = 0;
     if (appointment != null && !appointment.isEmpty()) {
@@ -52,17 +52,17 @@
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.common.dao.CtlDocClassDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlDocClassDao" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 
 
@@ -114,12 +114,12 @@
         demographicNo = moduleid;
     }
 
-//module can be either demographic or provider from what i can tell
+//module can be either demographic or providers from what i can tell
 
     String moduleName = "";
     if (module.equals("demographic")) {
         moduleName = EDocUtil.getDemographicName(loggedInInfo, moduleid);
-    } else if (module.equals("provider")) {
+    } else if (module.equals("providers")) {
         moduleName = EDocUtil.getProviderName(moduleid);
     }
 
@@ -241,19 +241,6 @@
 
                 var form = document.forms[2];
                 if (verifyChecks(form)) {
-                    form.action = actionPath;
-                    form.submit();
-                    return true;
-                } else
-                    return false;
-            }
-
-            function submitPhrForm(actionPath, windowName) {
-
-                var form = document.forms[2];
-                if (verifyChecks(form)) {
-                    form.onsubmit = phrActionPopup(actionPath, windowName);
-                    form.target = windowName;
                     form.action = actionPath;
                     form.submit();
                     return true;
@@ -395,7 +382,7 @@
 
                 categories.add(privatedocs);
                 categoryKeys.add(moduleName + "'s Private Documents");
-                if (module.equals("provider")) {
+                if (module.equals("providers")) {
                     ArrayList publicdocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PUBLIC, EDocUtil.EDocSort.OBSERVATIONDATE, viewstatus);
                     categories.add(publicdocs);
                     categoryKeys.add("Public Documents");

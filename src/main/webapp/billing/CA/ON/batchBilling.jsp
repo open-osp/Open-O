@@ -25,8 +25,8 @@
 
 --%>
 
-<%@page import="oscar.util.DateUtils" %>
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%
     if (session.getAttribute("user") == null) response.sendRedirect("../../../../logout.jsp");
     String user_no = "";
@@ -34,9 +34,9 @@
 %>
 <%@ include file="../../../casemgmt/taglibs.jsp" %>
 <%@ page import="java.util.*, java.sql.*, java.net.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ClinicLocationDao, org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.dao.BatchBillingDAO, org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation, org.oscarehr.common.model.Provider, org.oscarehr.common.model.BatchBilling, org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao, ca.openosp.openo.PMmodule.dao.ProviderDao, ca.openosp.openo.commn.dao.BatchBillingDAO, ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicLocation, ca.openosp.openo.commn.model.Provider, ca.openosp.openo.commn.model.BatchBilling, ca.openosp.openo.commn.model.Demographic" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <%
     ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean(ClinicLocationDao.class);

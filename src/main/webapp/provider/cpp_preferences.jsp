@@ -25,7 +25,7 @@
 --%>
 
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@ page import="org.oscarehr.provider.web.CppPreferencesUIBean" %>
+<%@ page import="ca.openosp.openo.provider.web.CppPreferencesUIBean" %>
 <%
     String curUser_no;
     curUser_no = (String) session.getAttribute("user");

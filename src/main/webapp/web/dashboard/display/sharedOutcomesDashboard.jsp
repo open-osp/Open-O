@@ -23,10 +23,10 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.managers.DashboardManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.managers.DashboardManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
     DashboardManager dashboardManager = SpringUtils.getBean(DashboardManager.class);
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

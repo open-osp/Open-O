@@ -30,9 +30,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ClinicNbr;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ClinicNbr;
+import ca.openosp.openo.commn.dao.ClinicNbrDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ClinicNbrDaoTest extends DaoTestFixtures {
 
@@ -73,12 +74,12 @@ public class ClinicNbrDaoTest extends DaoTestFixtures {
 //		nbr4.setNbrStatus("A");
 //		nbr4.setNbrValue("3");
 //
-//		dao.persist(nbr1);
-//		dao.persist(nbr2);
-//		dao.persist(nbr3);
-//		dao.persist(nbr4);
+//		daos.persist(nbr1);
+//		daos.persist(nbr2);
+//		daos.persist(nbr3);
+//		daos.persist(nbr4);
 //
-//		ArrayList<ClinicNbr> result = dao.findAll();
+//		ArrayList<ClinicNbr> result = daos.findAll();
 //		ArrayList<ClinicNbr> expectedResult = new ArrayList<ClinicNbr>(Arrays.asList(nbr1, nbr3, nbr4));
 //
 //		for (int i = 0; i < result.size() - 1; i++) {

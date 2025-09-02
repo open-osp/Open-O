@@ -27,14 +27,17 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DigitalSignature;
-import org.oscarehr.common.model.Facility;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.DigitalSignature;
+import ca.openosp.openo.commn.model.Facility;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.dao.DigitalSignatureDao;
+import ca.openosp.openo.commn.dao.FacilityDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DigitalSignatureDaoTest extends DaoTestFixtures {
 
@@ -46,7 +49,7 @@ public class DigitalSignatureDaoTest extends DaoTestFixtures {
     @Before
     public void before() throws Exception {
         beforeForInnoDB();
-        SchemaUtils.restoreTable("demographic", "provider", "Facility", "DigitalSignature");
+        SchemaUtils.restoreTable("demographic", "providers", "Facility", "DigitalSignature");
     }
 
     @Test

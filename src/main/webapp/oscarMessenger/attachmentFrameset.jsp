@@ -27,7 +27,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="oscar.util.*" %>
+<%@ page import="ca.openosp.openo.util.*" %>
 
 <html>
 <head>

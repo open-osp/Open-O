@@ -7,7 +7,7 @@ function refreshAllTabAlerts() {
 }
 
 function refreshTabAlerts(idval) {
-    var url = "../provider/tabAlertsRefresh.jsp";
+    var url = "../providers/tabAlertsRefresh.jsp";
     $.get(url, {id: idval}, function (data, textStatus) {
         $("#" + idval).html(data);
     }, "html");

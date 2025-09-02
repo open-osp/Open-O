@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.widget.DatePicker");
-dojo.require("dojo.date.common");
+dojo.require("dojo.date.commons");
 dojo.require("dojo.date.format");
 dojo.require("dojo.date.serialize");
 dojo.require("dojo.widget.*");

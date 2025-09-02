@@ -24,7 +24,9 @@
 
 --%>
 
-<%@ page import="java.util.*, oscar.oscarReport.reportByTemplate.*" %>
+<%@ page import="java.util.*, ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportManager" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportObject" %>
 <%
 
     if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");

@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.FlowSheetCustomization;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.FlowSheetCustomization;
+import ca.openosp.openo.commn.dao.FlowSheetCustomizationDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class FlowSheetCustomizationDaoTest extends DaoTestFixtures {
 

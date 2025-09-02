@@ -19,8 +19,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.PMmodule.model">
-	<class name="Program" table="program">
+<hibernate-mapping package="ca.openosp.openo.PMmodule.model">
+	<class name="ca.openosp.openo.PMmodule.model.Program" table="program">
 		<id name="id" unsaved-value="0">
 			<generator class="native" />
 		</id>
@@ -47,11 +47,9 @@
 		<property name="hic" />
 		<property name="programStatus" />
 		<property name="intakeProgram" />
-		<property name="bedProgramLinkId" />
 		<property name="manOrWoman" />
 		<property name="transgender" />
 		<property name="firstNation" />
-		<property name="bedProgramAffiliated" />
 		<property name="alcohol" />
 		<property name="abstinenceSupport" />
 		<property name="physicalHealth" />

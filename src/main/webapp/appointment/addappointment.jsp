@@ -50,49 +50,53 @@ Ontario, Canada
 <%@ page import="java.time.format.FormatStyle" %>
 <%@ page import="java.time.ZoneId" %>
 
-<%@ page import="java.util.*, java.lang.*, oscar.appt.*" %>
+<%@ page import="java.util.*, java.lang.*, ca.openosp.openo.appt.*" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="oscar.appt.status.service.AppointmentStatusMgr" %>
-<%@ page import="oscar.appt.status.service.impl.AppointmentStatusMgrImpl" %>
-<%@ page import="oscar.oscarBilling.ca.bc.decisionSupport.BillingGuidelines" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.openo.appt.status.service.AppointmentStatusMgr" %>
+<%@ page import="ca.openosp.openo.appt.status.service.impl.AppointmentStatusMgrImpl" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.decisionSupport.BillingGuidelines" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<%@ page import="org.oscarehr.common.model.AppointmentStatus" %>
-<%@ page import="org.oscarehr.common.model.DemographicCust" %>
-<%@ page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.EncounterForm" %>
-<%@ page import="org.oscarehr.common.dao.EncounterFormDao" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@ page import="org.oscarehr.managers.ProgramManager2" %>
-<%@ page import="org.oscarehr.decisionSupport.model.DSConsequence" %>
+<%@ page import="ca.openosp.openo.commn.model.AppointmentStatus" %>
+<%@ page import="ca.openosp.openo.commn.model.DemographicCust" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicCustDao" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.model.EncounterForm" %>
+<%@ page import="ca.openosp.openo.commn.dao.EncounterFormDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@ page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProviderManager" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@ page import="ca.openosp.openo.managers.ProgramManager2" %>
+<%@ page import="ca.openosp.openo.decisionSupport.model.DSConsequence" %>
 
-<%@ page import="org.oscarehr.util.MiscUtils" %>
-<%@ page import="org.oscarehr.util.SessionConstants" %>
-<%@ page import="org.oscarehr.common.model.ProviderPreference" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 
-<%@ page import="org.oscarehr.managers.LookupListManager" %>
-<%@ page import="org.oscarehr.common.model.LookupList" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
-<%@ page import="org.oscarehr.common.dao.AppointmentTypeDao" %>
-<%@ page import="org.oscarehr.common.model.AppointmentType" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.managers.LookupListManager" %>
+<%@ page import="ca.openosp.openo.commn.model.LookupList" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppointmentTypeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.AppointmentType" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.appt.JdbcApptImpl" %>
+<%@ page import="ca.openosp.openo.appt.ApptUtil" %>
+<%@ page import="ca.openosp.openo.appt.ApptData" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -163,7 +167,7 @@ Ontario, Canada
 
     ApptData apptObj = ApptUtil.getAppointmentFromSession(request);
 
-    oscar.OscarProperties pros = oscar.OscarProperties.getInstance();
+    OscarProperties pros = OscarProperties.getInstance();
     String strEditable = pros.getProperty("ENABLE_EDIT_APPT_STATUS");
     Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
 
@@ -265,7 +269,7 @@ Ontario, Canada
             // multisites start ==================
             SiteDao siteDao = (SiteDao) SpringUtils.getBean("siteDao");
             List<Site> sites = siteDao.getActiveSitesByProviderNo((String) session.getAttribute("user"));
-            boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+            boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
             // multisites end ==================
             if (bMultisites) { %>
         <style>
@@ -717,7 +721,7 @@ Ontario, Canada
                 $(window).on('beforeunload', function () {
                     cancelPageLock();
                 });
-                //cancel any page view/locks held by provider on clicking 'X'
+                //cancel any page view/locks held by providers on clicking 'X'
                 $("form#addappt").on("submit", function () {
                     $(window).off('beforeunload');
                 });
@@ -863,7 +867,7 @@ Ontario, Canada
             }
 
 
-            // select provider lastname & firstname
+            // select providers lastname & firstname
             String pLastname = "";
             String pFirstname = "";
             Provider p = providerDao.getProvider(curProvider_no);

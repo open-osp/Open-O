@@ -32,16 +32,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.openosp.openo.PMmodule.dao.VacancyClientMatchDao;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
-import org.oscarehr.PMmodule.model.VacancyClientMatch;
+import ca.openosp.openo.PMmodule.model.VacancyClientMatch;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class VacancyClientMatchDaoTest extends DaoTestFixtures {
 
@@ -75,40 +75,40 @@ public class VacancyClientMatchDaoTest extends DaoTestFixtures {
     //     EntityDataGenerator.generateTestDataForModelClass(vCM1);
     //     vCM1.setClient_id(clientId1);
     //     vCM1.setVacancy_id(vacancyId1);
-    //     dao.persist(vCM1);
+    //     daos.persist(vCM1);
 
     //     VacancyClientMatch vCM2 = new VacancyClientMatch();
     //     EntityDataGenerator.generateTestDataForModelClass(vCM2);
     //     vCM2.setClient_id(clientId2);
     //     vCM2.setVacancy_id(vacancyId1);
-    //     dao.persist(vCM2);
+    //     daos.persist(vCM2);
 
     //     VacancyClientMatch vCM3 = new VacancyClientMatch();
     //     EntityDataGenerator.generateTestDataForModelClass(vCM3);
     //     vCM3.setClient_id(clientId1);
     //     vCM3.setVacancy_id(vacancyId2);
-    //     dao.persist(vCM3);
+    //     daos.persist(vCM3);
 
     //     VacancyClientMatch vCM4 = new VacancyClientMatch();
     //     EntityDataGenerator.generateTestDataForModelClass(vCM4);
     //     vCM4.setClient_id(clientId2);
     //     vCM4.setVacancy_id(vacancyId1);
-    //     dao.persist(vCM4);
+    //     daos.persist(vCM4);
 
     //     VacancyClientMatch vCM5 = new VacancyClientMatch();
     //     EntityDataGenerator.generateTestDataForModelClass(vCM5);
     //     vCM5.setClient_id(clientId2);
     //     vCM5.setVacancy_id(vacancyId2);
-    //     dao.persist(vCM5);
+    //     daos.persist(vCM5);
 
     //     VacancyClientMatch vCM6 = new VacancyClientMatch();
     //     EntityDataGenerator.generateTestDataForModelClass(vCM6);
     //     vCM6.setClient_id(clientId2);
     //     vCM6.setVacancy_id(vacancyId1);
-    //     dao.persist(vCM6);
+    //     daos.persist(vCM6);
 
     //     List<VacancyClientMatch> expectedResult = new ArrayList<VacancyClientMatch>(Arrays.asList(vCM2, vCM4, vCM6));
-    //     List<VacancyClientMatch> result = dao.findByClientIdAndVacancyId(clientId2, vacancyId1);
+    //     List<VacancyClientMatch> result = daos.findByClientIdAndVacancyId(clientId2, vacancyId1);
 
     //     Logger logger = MiscUtils.getLogger();
 

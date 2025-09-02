@@ -43,17 +43,17 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="org.springframework.web.context.WebApplicationContext,
                 org.springframework.web.context.support.WebApplicationContextUtils,
-                org.oscarehr.casemgmt.model.CaseManagementNote,
-                org.oscarehr.casemgmt.model.CaseManagementNoteLink,
-                org.oscarehr.casemgmt.service.CaseManagementManager,
-                org.oscarehr.common.dao.SecRoleDao,
-                org.oscarehr.common.model.SecRole,
-                org.oscarehr.util.SpringUtils,
-                oscar.oscarEncounter.data.EctProgram,
+                ca.openosp.openo.casemgmt.model.CaseManagementNote,
+                ca.openosp.openo.casemgmt.model.CaseManagementNoteLink,
+                ca.openosp.openo.casemgmt.service.CaseManagementManager,
+                ca.openosp.openo.commn.dao.SecRoleDao,
+                ca.openosp.openo.commn.model.SecRole,
+                ca.openosp.openo.utility.SpringUtils,
+                ca.openosp.openo.encounter.data.EctProgram,
                 java.util.Date,
                 java.util.List" %>
-<%@page import="oscar.log.LogAction, oscar.log.LogConst" %>
-<%@page import="org.oscarehr.documentManager.EDocUtil" %>
+<%@page import="ca.openosp.openo.log.LogAction, ca.openosp.openo.log.LogConst" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -116,7 +116,7 @@
     if (p_cmn != null) p_cmn = cmm.getMostRecentNote(p_cmn.getUuid());
 
     String uuid = "";
-    //if get provider no is -1 , it's a document note.
+    //if get providers no is -1 , it's a document note.
     if (p_cmn != null && !p_cmn.getProviderNo().equals("-1")) uuid = p_cmn.getUuid();
     else p_cmn = null;//don't use document note as annotation.
     //get note from attribute

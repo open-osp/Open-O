@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.undo.browser");
-dojo.require("dojo.io.common");
+dojo.require("dojo.io.commons");
 
 try {
     if ((!djConfig["preventBackButtonFix"]) && (!dojo.hostenv.post_load_)) {
@@ -90,7 +90,7 @@ dojo.undo.browser = {
         //	Don't test this page using local disk for MSIE. MSIE will not create
         //	a history list for iframe_history.html if served from a file: URL.
         //	The XML served back from the XHR tests will also not be properly
-        //	created if served from local disk. Serve the test pages from a web
+        //	created if served from local disk. Serve the test pages from a www
         //	server to test in that browser.
         //	IE 6.0:
         //	same behavior as IE 5.5 SP2

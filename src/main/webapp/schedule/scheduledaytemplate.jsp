@@ -28,13 +28,13 @@
 
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*"
         errorPage="../appointment/errorpage.jsp" %>
 
-<jsp:useBean id="providerNameBean" class="oscar.Dict" scope="session"/>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
+<jsp:useBean id="providerNameBean" class="ca.openosp.Dict" scope="session"/>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleTemplateCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleTemplateCodeDao" %>
 <%
     ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
 %>

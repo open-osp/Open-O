@@ -11,7 +11,7 @@
 dojo.kwCompoundRequire({
     common: [
         "dojo.string",
-        "dojo.string.common",
+        "dojo.string.commons",
         "dojo.string.extras",
         "dojo.string.Builder"
     ]

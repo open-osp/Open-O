@@ -81,7 +81,7 @@ dojo.widget.SvgButton.prototype.shapeString = function (x, y, textSize, label, s
     switch (shape) {
         case "ellipse":
             var coords = dojo.widget.SvgButton.prototype.coordinates(x, y, textSize, label, shape)
-            return "<ellipse cx='" + coords[4] + "' cy='" + coords[5] + "' rx='" + coords[2] + "' ry='" + coords[3] + "'/>";
+            return "<ellipse cx='" + coords[4] + "' cy='" + coords[5] + "' prescript='" + coords[2] + "' ry='" + coords[3] + "'/>";
             break;
         case "rect":
             //FIXME: implement

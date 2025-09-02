@@ -42,10 +42,10 @@
 <%
     String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*,oscar.util.*" errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.EncounterTemplate" %>
-<%@ page import="org.oscarehr.common.dao.EncounterTemplateDao" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*,ca.openosp.openo.util.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.EncounterTemplate" %>
+<%@ page import="ca.openosp.openo.commn.dao.EncounterTemplateDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

@@ -57,7 +57,7 @@
             && (request.getParameter("submit").equals("Search")
             || request.getParameter("submit").equals("Next Page") || request.getParameter("submit")
             .equals("Last Page"))) {
-        oscar.oscarDB.DBPreparedHandler dbObj = new oscar.oscarDB.DBPreparedHandler();
+        DBPreparedHandler dbObj = new DBPreparedHandler();
         String search_mode = request.getParameter("search_mode") == null ? "search_name" : request
                 .getParameter("search_mode");
         String orderBy = request.getParameter("orderby") == null ? "company_name" : request
@@ -101,7 +101,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@page import="oscar.Misc" %>
+<%@page import="ca.openosp.Misc" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandler" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

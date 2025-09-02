@@ -18,12 +18,12 @@
 
 --%>
 
-<%@ page import="java.util.*, java.sql.*, oscar.login.*, oscar.*" errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.ReportProvider" %>
-<%@ page import="org.oscarehr.common.dao.ReportProviderDao" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.openo.login.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ReportProvider" %>
+<%@ page import="ca.openosp.openo.commn.dao.ReportProviderDao" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     ReportProviderDao reportProviderDao = SpringUtils.getBean(ReportProviderDao.class);

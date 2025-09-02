@@ -45,14 +45,15 @@
 
 
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Institution" %>
-<%@page import="org.oscarehr.common.dao.InstitutionDao" %>
-<%@page import="org.oscarehr.common.model.Department" %>
-<%@page import="org.oscarehr.common.dao.DepartmentDao" %>
-<%@page import="org.oscarehr.common.model.InstitutionDepartment" %>
-<%@page import="org.oscarehr.common.model.InstitutionDepartmentPK" %>
-<%@page import="org.oscarehr.common.dao.InstitutitionDepartmentDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Institution" %>
+<%@page import="ca.openosp.openo.commn.dao.InstitutionDao" %>
+<%@page import="ca.openosp.openo.commn.model.Department" %>
+<%@page import="ca.openosp.openo.commn.dao.DepartmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.InstitutionDepartment" %>
+<%@page import="ca.openosp.openo.commn.model.InstitutionDepartmentPK" %>
+<%@page import="ca.openosp.openo.commn.dao.InstitutitionDepartmentDao" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
 <%
     InstitutionDao institutionDao = SpringUtils.getBean(InstitutionDao.class);
     DepartmentDao departmentDao = SpringUtils.getBean(DepartmentDao.class);
@@ -101,7 +102,7 @@
         <tr style="vertical-align: top">
             <td class="MainTableLeftColumn">
                 <%
-                    oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar();
+                    EctConTitlebar titlebar = new EctConTitlebar();
                     out.print(titlebar.estBar(request));
                 %>
             </td>

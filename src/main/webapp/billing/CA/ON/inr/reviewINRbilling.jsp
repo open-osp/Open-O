@@ -18,10 +18,10 @@
 
 --%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.BillingService" %>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao" %>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
 <%
     BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
 %>
@@ -42,9 +42,9 @@
     demo_name = request.getParameter("demo_name");
     demo_dob = request.getParameter("demo_dob");
     demo_hin = request.getParameter("demo_hin");
-    provider = request.getParameter("provider");
+    provider = request.getParameter("providers");
     if (provider.trim().length() <= 0) {
-        errorCode = "Please select a provider.<br>";
+        errorCode = "Please select a providers.<br>";
     } else {
         provider_ohip_no = provider.substring(0, 6);
         provider_no = provider.substring(7);

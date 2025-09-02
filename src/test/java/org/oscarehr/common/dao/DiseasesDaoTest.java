@@ -30,8 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Diseases;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Diseases;
+import ca.openosp.openo.commn.dao.DiseasesDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DiseasesDaoTest extends DaoTestFixtures {
 

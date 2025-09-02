@@ -36,9 +36,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.MeasurementGroupStyle;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.MeasurementGroupStyle;
+import ca.openosp.openo.commn.dao.MeasurementGroupStyleDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class MeasurementGroupStyleDaoTest extends DaoTestFixtures {
 

@@ -29,8 +29,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.EFormGroup;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.EFormGroup;
+import ca.openosp.openo.commn.dao.EFormGroupDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class EFormGroupDaoTest extends DaoTestFixtures {
 

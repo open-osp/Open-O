@@ -41,23 +41,28 @@
     }
 %>
 <%@ page
-        import="java.sql.*, oscar.login.*, java.util.*,oscar.*,oscar.oscarDB.*,oscar.oscarProvider.data.ProviderBillCenter"
+        import="java.sql.*, ca.openosp.openo.login.*, java.util.*,ca.openosp.*,ca.openosp.openo.db.*,ca.openosp.openo.providers.data.ProviderBillCenter"
         errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.ProviderArchive" %>
-<%@page import="org.oscarehr.common.dao.ProviderArchiveDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderArchive" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderArchiveDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="org.apache.commons.beanutils.BeanUtils" %>
-<%@page import="org.oscarehr.common.model.ProviderSite" %>
-<%@page import="org.oscarehr.common.model.ProviderSitePK" %>
-<%@page import="org.oscarehr.common.dao.ProviderSiteDao" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderSite" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderSitePK" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderSiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandler" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     ProviderDao providerDao = (ProviderDao) SpringUtils.getBean(ProviderDao.class);
     ProviderSiteDao providerSiteDao = SpringUtils.getBean(ProviderSiteDao.class);
@@ -82,22 +87,22 @@
             billCenter.updateBillCenter(request.getParameter("provider_no"), request.getParameter("billcenter"));
 
 
-//multi-office provide id formalize check, can be turn off on properties multioffice.formalize.provider.id
+//multi-office provide id formalize check, can be turn off on properties multioffice.formalize.providers.id
             boolean isProviderFormalize = true;
             String errMsgProviderFormalize = "admin.provideraddrecord.msgAdditionFailure";
             Integer min_value = 0;
             Integer max_value = 0;
 
-            if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) {
+            if (IsPropertiesOn.isProviderFormalizeEnable()) {
 
                 String StrProviderId = request.getParameter("provider_no");
                 OscarProperties props = OscarProperties.getInstance();
 
                 String[] provider_sites = {};
 
-                // get provider id ranger
+                // get providers id ranger
                 if (request.getParameter("provider_type").equalsIgnoreCase("doctor")) {
-                    //provider is doctor, get provider id range from Property
+                    //providers is doctor, get providers id range from Property
                     min_value = new Integer(props.getProperty("multioffice.formalize.doctor.minimum.provider.id", ""));
                     max_value = new Integer(props.getProperty("multioffice.formalize.doctor.maximum.provider.id", ""));
                 } else {
@@ -111,7 +116,7 @@
                         errMsgProviderFormalize = "admin.provideraddrecord.msgFormalizeProviderIdMultiSiteFailure";
                     } else {
                         if (provider_sites.length == 1) {
-                            //get provider id range from site
+                            //get providers id range from site
                             String provider_site_id = provider_sites[0];
                             SiteDao siteDao = (SiteDao) WebApplicationContextUtils.getWebApplicationContext(application).getBean(SiteDao.class);
                             Site provider_site = siteDao.getById(new Integer(provider_site_id));
@@ -143,7 +148,7 @@
 
             }
 
-            if (!org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable() || isProviderFormalize) {
+            if (!IsPropertiesOn.isProviderFormalizeEnable() || isProviderFormalize) {
                 ProviderArchiveDao providerArchiveDao = (ProviderArchiveDao) SpringUtils.getBean(ProviderArchiveDao.class);
                 Provider provider = providerDao.getProvider(request.getParameter("provider_no"));
                 ProviderArchive pa = new ProviderArchive();
@@ -195,11 +200,6 @@
                     userPropertyDAO.saveProp(provider.getProviderNo(), UserProperty.CLINICALCONNECT_ID, clinicalConnectId);
                     userPropertyDAO.saveProp(provider.getProviderNo(), UserProperty.CLINICALCONNECT_TYPE, clinicalConnectType);
 
-                    if (OscarProperties.getInstance().getBooleanProperty("questimed.enabled", "true")) {
-                        String questimedUserName = request.getParameter("questimedUserName");
-                        userPropertyDAO.saveProp(provider.getProviderNo(), UserProperty.QUESTIMED_USERNAME, questimedUserName);
-                    }
-
                     String officialFirstName = request.getParameter("officialFirstName");
                     String officialSecondName = request.getParameter("officialSecondName");
                     String officialLastName = request.getParameter("officialLastName");
@@ -211,7 +211,7 @@
                     userPropertyDAO.saveProp(provider.getProviderNo(), UserProperty.OFFICIAL_OLIS_IDTYPE, officialOlisIdtype);
 
 
-                    if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                    if (IsPropertiesOn.isMultisitesEnable()) {
                         String[] sites = request.getParameterValues("sites");
                         DBPreparedHandler dbObj = new DBPreparedHandler();
                         String provider_no = request.getParameter("provider_no");

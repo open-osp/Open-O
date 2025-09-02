@@ -23,20 +23,20 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.model.DrugReason" %>
-<%@page import="org.oscarehr.common.dao.DrugReasonDao" %>
-<%@page import="org.oscarehr.common.model.PartialDate" %>
-<%@page import="org.oscarehr.common.dao.PartialDateDao" %>
-<%@page import="org.oscarehr.managers.CodingSystemManager" %>
-<%@page import="org.oscarehr.managers.PharmacyManager" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.common.model.PharmacyInfo" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.DrugReason" %>
+<%@page import="ca.openosp.openo.commn.dao.DrugReasonDao" %>
+<%@page import="ca.openosp.openo.commn.model.PartialDate" %>
+<%@page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
+<%@page import="ca.openosp.openo.managers.CodingSystemManager" %>
+<%@page import="ca.openosp.openo.managers.PharmacyManager" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.List" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.common.dao.DrugDao,org.oscarehr.common.model.Drug,org.oscarehr.util.MiscUtils,org.oscarehr.util.SpringUtils,org.oscarehr.PMmodule.dao.ProviderDao,org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DrugDao,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.utility.MiscUtils,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.PMmodule.dao.ProviderDao,ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -120,7 +120,8 @@
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
@@ -222,7 +223,7 @@
                 </tr>
                 <tr>
                     <td class="label">Rx Date:</td>
-                    <td><%=partialDateDao.getDatePartial(oscar.util.UtilDateUtilities.DateToString(drug.getRxDate()), PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_STARTDATE) %>
+                    <td><%=partialDateDao.getDatePartial(UtilDateUtilities.DateToString(drug.getRxDate()), PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_STARTDATE) %>
                     </td>
                 </tr>
                 <tr>
@@ -232,7 +233,7 @@
                 </tr>
                 <tr>
                     <td class="label">Written Date:</td>
-                    <td><%=partialDateDao.getDatePartial(oscar.util.UtilDateUtilities.DateToString(drug.getWrittenDate()), PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE) %>
+                    <td><%=partialDateDao.getDatePartial(UtilDateUtilities.DateToString(drug.getWrittenDate()), PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE) %>
                     </td>
                 </tr>
                 <tr>
@@ -497,7 +498,7 @@
             <br/>
 
             <input type="button" value="Annotation" title="Annotation" class="ControlPushButton"
-                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP%>&table_id=<%=drug.getId()%>&demo=<%=drug.getDemographicId()%>','anwin','width=400,height=500');">
+                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=ca.openosp.openo.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP%>&table_id=<%=drug.getId()%>&demo=<%=drug.getDemographicId()%>','anwin','width=400,height=500');">
 
 
             <%--

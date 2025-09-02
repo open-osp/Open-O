@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.gfx.matrix");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.math.*");
 
 dojo.gfx.matrix.Matrix2D = function (arg) {
@@ -158,7 +158,7 @@ dojo.mixin(dojo.gfx.matrix, {
         return (matrix instanceof dojo.gfx.matrix.Matrix2D) ? matrix : new dojo.gfx.matrix.Matrix2D(matrix); // dojo.gfx.matrix.Matrix2D
     },
 
-    // common operations
+    // commons operations
 
     clone: function (matrix) {
         // summary: creates a copy of a 2D matrix

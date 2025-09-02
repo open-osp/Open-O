@@ -8,7 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@ page import="java.io.*, java.util.*, oscar.eform.*, oscar.eform.EFormUtil" %>
+<%@ page import="java.io.*, java.util.*, ca.openosp.openo.eform.*, ca.openosp.openo.eform.EFormUtil" %>
 
 <option value="">template</option>
 

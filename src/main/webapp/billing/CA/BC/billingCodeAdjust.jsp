@@ -39,8 +39,9 @@
     }
 %>
 
-<%@page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData,oscar.oscarBilling.ca.bc.pageUtil.*" %>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao,org.oscarehr.util.SpringUtils,org.oscarehr.common.model.*" %>
+<%@page import="java.util.*,ca.openosp.openo.billings.ca.bc.data.BillingCodeData,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
 <%BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class); %>
 
 <html>
@@ -124,7 +125,7 @@
                     </tr>
                     <%
                         for (int i = 0; i < list.size(); i++) {
-                            org.oscarehr.common.model.BillingService bcd = (org.oscarehr.common.model.BillingService) list.get(i);
+                            BillingService bcd = (BillingService) list.get(i);
                     %>
                     <tr align="center">
                         <td><strong><%=bcd.getServiceCode()%>

@@ -41,7 +41,10 @@
 
 
 <%@page contentType='text/xml'
-        import="oscar.oscarMessenger.docxfer.send.*, oscar.oscarMessenger.docxfer.util.*" %>
+        import="ca.openosp.openo.messenger.docxfer.send.*, ca.openosp.openo.messenger.docxfer.util.*" %>
+<%@ page import="ca.openosp.openo.messenger.docxfer.util.MsgCommxml" %>
+<%@ page import="ca.openosp.openo.messenger.pageUtil.MsgSessionBean" %>
+<%@ page import="ca.openosp.openo.messenger.docxfer.send.MsgSendDocument" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -56,7 +59,7 @@
 </c:if>
 
 <%
-    oscar.oscarMessenger.pageUtil.MsgSessionBean bean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) pageContext.findAttribute("bean");
+    MsgSessionBean bean = (MsgSessionBean) pageContext.findAttribute("bean");
     String checks = "";
     java.util.Enumeration names = request.getParameterNames();
 
@@ -69,7 +72,7 @@
         }
     }
 
-    String xmlDoc = oscar.oscarMessenger.docxfer.util.MsgCommxml.decode64(request.getParameter("xmlDoc"));
+    String xmlDoc = MsgCommxml.decode64(request.getParameter("xmlDoc"));
     String idEnc = request.getParameter("id");
 
     String sXML = MsgCommxml.toXML(new MsgSendDocument().parseChecks(xmlDoc, checks));

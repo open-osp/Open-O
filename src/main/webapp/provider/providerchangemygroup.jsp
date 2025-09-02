@@ -24,16 +24,16 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 <%
     String oldGroup_no = request.getParameter("mygroup_no") == null ? "." : request.getParameter("mygroup_no");
 %>
 <%@ page import="java.util.*,java.sql.*"
          errorPage="../provider/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
 
 <%
     MyGroupDao dao = SpringUtils.getBean(MyGroupDao.class);
@@ -139,10 +139,6 @@
                                    VALUE='<%=providerPreference.getEveryMin()%>'>
                             <INPUT TYPE="hidden" NAME="provider_no"
                                    VALUE='<%=(String) session.getAttribute("user")%>'>
-                            <caisi:isModuleLoad moduleName="ticklerplus">
-                                <INPUT TYPE="hidden" NAME="new_tickler_warning_window"
-                                       VALUE='<%=(String) session.getAttribute("newticklerwarningwindow")%>'>
-                            </caisi:isModuleLoad>
                             <INPUT TYPE="hidden" NAME="color_template" VALUE='deepblue'>
                             <INPUT TYPE="hidden" NAME="dboperation" VALUE='updatepreference'>
                             <INPUT TYPE="hidden" NAME="displaymode" VALUE='updatepreference'>

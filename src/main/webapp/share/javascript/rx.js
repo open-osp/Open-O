@@ -20,7 +20,7 @@ function goDOC() {
 
 
 function goOMD() {
-    var docURL = "../common/OntarioMDRedirect.jsp?keyword=eCPS&params=" + document.RxSearchDrugForm.searchString.value;
+    var docURL = "../commons/OntarioMDRedirect.jsp?keyword=eCPS&params=" + document.RxSearchDrugForm.searchString.value;
     popupDrugOfChoice(743, 817, docURL);
 }
 
@@ -97,7 +97,7 @@ function hidepic(picture) {
 
 function isEmpty() {
     if (document.RxSearchDrugForm.searchString.value.length == 0) {
-        alert("Search Field is Empty in rx.js");
+        alert("Search Field is Empty in prescript.js");
         document.RxSearchDrugForm.searchString.focus();
         return false;
     }

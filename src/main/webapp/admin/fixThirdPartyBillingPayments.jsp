@@ -26,8 +26,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="java.math.BigDecimal" %>
-<%@page import="org.oscarehr.common.dao.BillingONItemDao" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONItemDao" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -36,10 +36,10 @@
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 
-<%@page import="org.oscarehr.common.dao.BillingONCHeader1Dao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
 
 <%@page import="java.util.Calendar" %>
 <%@page import="java.util.Date" %>
@@ -47,19 +47,19 @@
 
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.Date" %>
-<%@page import="org.oscarehr.common.model.BillingONCHeader1" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONCHeader1" %>
 
-<%@page import="org.oscarehr.common.dao.BillingONPaymentDao" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONPaymentDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment" %>
 
-<%@page import="org.oscarehr.common.dao.BillingOnItemPaymentDao" %>
-<%@page import="org.oscarehr.common.model.BillingOnItemPayment" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingOnItemPaymentDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingOnItemPayment" %>
 
-<%@page import="org.oscarehr.common.dao.BillingONItemDao" %>
-<%@page import="org.oscarehr.common.model.BillingONItem" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONItemDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONItem" %>
 
-<%@page import="org.oscarehr.common.dao.BillingONExtDao" %>
-<%@page import="org.oscarehr.common.model.BillingONExt" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONExt" %>
 
 <%@page import="org.apache.logging.log4j.Logger" %>
 

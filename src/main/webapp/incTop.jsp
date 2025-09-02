@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
 
     Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
@@ -25,7 +25,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
 <body>
-    <%    oscar.OscarProperties props = oscar.OscarProperties.getInstance(); %>
+    <%    OscarProperties props = OscarProperties.getInstance(); %>
 <table border=0 width='100%' cellpadding="3">
     <tr bgcolor='gold'>
         <td>

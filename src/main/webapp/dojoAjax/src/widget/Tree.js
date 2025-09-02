@@ -25,7 +25,7 @@ dojo.require("dojo.event.*");
 dojo.require("dojo.io.*");
 dojo.require("dojo.widget.HtmlWidget");
 dojo.require("dojo.widget.TreeNode");
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 dojo.require("dojo.html.selection");
 
 

@@ -49,12 +49,12 @@
 
 
 <%@ page import="java.util.*, java.text.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Measurement" %>
-<%@page import="org.oscarehr.common.dao.MeasurementDao" %>
-<%@page import="org.oscarehr.common.dao.DxresearchDAO" %>
-<%@page import="org.oscarehr.common.model.Dxresearch" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Measurement" %>
+<%@page import="ca.openosp.openo.commn.dao.MeasurementDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DxresearchDAO" %>
+<%@page import="ca.openosp.openo.commn.model.Dxresearch" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
     MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
     DxresearchDAO dxResearchDao = (DxresearchDAO) SpringUtils.getBean(DxresearchDAO.class);
@@ -62,7 +62,7 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
     pageContext.setAttribute("demographic_no", request.getParameter("demographic_no"));
-    String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
+    String labReqVer = ca.openosp.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
     if (labReqVer.equals("")) {
         labReqVer = "07";
     }
@@ -165,7 +165,7 @@
     }
 
     if (screeningDx != null) {
-        String baseUrl = request.getContextPath() + "/oscarResearch/oscarDxResearch/dxResearchUpdate.do";
+        String baseUrl = request.getContextPath() + "/oscarResearch/dxresearch/dxResearchUpdate.do";
         String did = screeningDx.getId().toString();
         String demo = Integer.toString(Integer.parseInt(demographicNo));
         String provider = loggedInInfo.getLoggedInProviderNo();
@@ -179,7 +179,7 @@
 
     dxs = dxResearchDao.findByDemographicNoResearchCodeAndCodingSystem(Integer.parseInt(demographicNo), "585", "icd9");
     if (dxs.size() == 0) {
-        String popupUrl = request.getContextPath() + "/oscarResearch/oscarDxResearch/dxResearch.do"
+        String popupUrl = request.getContextPath() + "/oscarResearch/dxresearch/dxResearch.do"
                         + "?selectedCodingSystem=icd9"
                         + "&xml_research1=585"
                         + "&xml_research2="
@@ -202,7 +202,7 @@ Order Labs - <a title="Create Lab Requisition" href="javascript:void(0);"
                 onclick="generateLabReq(<%=demographicNo %>);return false;">Lab Requisition</a>
 <br/><br/>
 <%
-    String flowsheet = oscar.OscarProperties.getInstance().getProperty("ckd_flowsheet", "indicators");
+    String flowsheet = ca.openosp.OscarProperties.getInstance().getProperty("ckd_flowsheet", "indicators");
     if (flowsheet.equals("indicators")) {
 %>
 Go to CDM Indicators <a href="javascript:void(0);"

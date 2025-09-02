@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.widget.RadioGroup");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.event.browser");
 dojo.require("dojo.html.selection");
 dojo.require("dojo.widget.*");
@@ -21,7 +21,7 @@ dojo.widget.defineWidget(
     dojo.widget.HtmlWidget,
     function () {
         // summary:
-        // 	Widget that provides useful/common functionality that may be desirable
+        // 	Widget that provides useful/commons functionality that may be desirable
         // 	when interacting with ul/ol html lists.
         //
         // The core behaviour of the lists this widget manages is expected to be determined

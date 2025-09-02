@@ -15,7 +15,7 @@ dojo.require("dojo.widget.Button");
 dojo.require("dojo.widget.demoEngine.DemoItem");
 dojo.require("dojo.io.*");
 dojo.require("dojo.lfx.*");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.widget.defineWidget("my.widget.demoEngine.DemoNavigator",
     dojo.widget.HtmlWidget,

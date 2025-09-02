@@ -11,18 +11,19 @@
 <%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page contentType="text/html" %>
 <%@page import="java.util.*,
-                org.oscarehr.common.dao.DemographicDao,
-                org.oscarehr.common.model.Demographic,
-                org.oscarehr.PMmodule.dao.ProviderDao,
-                org.oscarehr.common.model.Provider,
-                org.oscarehr.olis.dao.OLISRequestNomenclatureDao,
-                org.oscarehr.olis.dao.OLISResultNomenclatureDao,
-                org.oscarehr.olis.model.OLISRequestNomenclature,
-                org.oscarehr.olis.model.OLISResultNomenclature,
-                org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+                ca.openosp.openo.commn.dao.DemographicDao,
+                ca.openosp.openo.commn.model.Demographic,
+                ca.openosp.openo.PMmodule.dao.ProviderDao,
+                ca.openosp.openo.commn.model.Provider,
+                ca.openosp.openo.olis.dao.OLISRequestNomenclatureDao,
+                ca.openosp.openo.olis.dao.OLISResultNomenclatureDao,
+                ca.openosp.openo.olis.model.OLISRequestNomenclature,
+                ca.openosp.openo.olis.model.OLISResultNomenclature,
+                ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.Misc" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
@@ -630,7 +631,7 @@ opener.refreshView();</script>
 
                                             for (OLISResultNomenclature nomenclature : resultNomenclatureList) {
                                         %>
-                                        <option value="<%=nomenclature.getId() %>"><%=oscar.Misc.getStr(nomenclature.getName(), "").trim()%>
+                                        <option value="<%=nomenclature.getId() %>"><%=Misc.getStr(nomenclature.getName(), "").trim()%>
                                         </option>
                                         <%
                                             }
@@ -643,7 +644,7 @@ opener.refreshView();</script>
 
                                             for (OLISRequestNomenclature nomenclature : requestNomenclatureList) {
                                         %>
-                                        <option value="<%=nomenclature.getId() %>"><%=oscar.Misc.getStr(nomenclature.getName(), "").trim() %>
+                                        <option value="<%=nomenclature.getId() %>"><%=Misc.getStr(nomenclature.getName(), "").trim() %>
                                         </option>
                                         <%
                                             }

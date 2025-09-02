@@ -15,9 +15,11 @@
 %>
 
 <%@ page
-        import="java.util.*, oscar.oscarReport.data.*, java.sql.*, oscar.login.*, java.net.*"
+        import="java.util.*, ca.openosp.openo.report.data.*, java.sql.*, ca.openosp.openo.login.*, java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<%@ page import="ca.openosp.openo.login.DBHelp" %>
+<%@ page import="ca.openosp.openo.report.data.RptReportCreator" %>
+<% java.util.Properties oscarVariables = ca.openosp.OscarProperties.getInstance(); %>
 
 <%
     if (request.getParameter("submit") != null && request.getParameter("submit").equals("Report in CSV")) {

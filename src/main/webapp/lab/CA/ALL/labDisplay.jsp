@@ -28,45 +28,48 @@
 <%@page import="net.sf.json.JSONSerializer" %>
 <%@page import="net.sf.json.JSONArray" %>
 <%@page import="net.sf.json.JSONObject" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.oscarehr.common.dao.PatientLabRoutingDao" %>
-<%@ page import="org.oscarehr.common.model.PatientLabRouting" %>
-<%@ page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
+<%@ page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="org.apache.commons.lang.builder.ReflectionToStringBuilder" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="org.w3c.dom.Document" %>
-<%@ page import="org.oscarehr.caisi_integrator.ws.CachedDemographicLabResult" %>
-<%@ page import="oscar.oscarLab.ca.all.web.LabDisplayHelper" %>
-<%@ page import="oscar.oscarLab.ca.all.util.LabVersionComparator"%>
+<%@ page import="ca.openosp.openo.caisi_integrator.ws.CachedDemographicLabResult" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.web.LabDisplayHelper" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.util.LabVersionComparator"%>
 
 <%@ page import="java.util.*,
-                 oscar.util.UtilDateUtilities,
-                 oscar.oscarLab.ca.all.*,
-                 oscar.oscarLab.ca.all.parsers.*,
-                 oscar.oscarLab.LabRequestReportLink,
-                 oscar.oscarMDS.data.ReportStatus,
-                 oscar.log.*,
-                 oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.common.model.MeasurementMap, org.oscarehr.common.dao.MeasurementMapDao" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
+                 ca.openosp.openo.util.UtilDateUtilities,
+                 ca.openosp.openo.lab.ca.all.*,
+                 ca.openosp.openo.lab.ca.all.parsers.*,
+                 ca.openosp.openo.lab.LabRequestReportLink,
+                 ca.openosp.openo.mds.data.ReportStatus,
+                 ca.openosp.openo.log.*,
+                 ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.model.MeasurementMap, ca.openosp.openo.commn.dao.MeasurementMapDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page
-        import="org.oscarehr.casemgmt.service.CaseManagementManager, org.oscarehr.common.dao.Hl7TextMessageDao, org.oscarehr.common.model.Hl7TextMessage,org.oscarehr.common.dao.Hl7TextInfoDao,org.oscarehr.common.model.Hl7TextInfo" %>
+        import="ca.openosp.openo.casemgmt.service.CaseManagementManager, ca.openosp.openo.commn.dao.Hl7TextMessageDao, ca.openosp.openo.commn.model.Hl7TextMessage,ca.openosp.openo.commn.dao.Hl7TextInfoDao,ca.openosp.openo.commn.model.Hl7TextInfo" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session"/>
 <%@    page import="javax.swing.text.rtf.RTFEditorKit" %>
 <%@    page import="java.io.ByteArrayInputStream" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.parsers.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.AcknowledgementData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProperties" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -84,7 +87,7 @@
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-    oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+    OscarProperties props = OscarProperties.getInstance();
     String segmentID = request.getParameter("segmentID");
     String providerNo = request.getParameter("providerNo");
     String searchProviderNo = StringUtils.trimToEmpty(request.getParameter("searchProviderNo"));
@@ -268,7 +271,7 @@ request.setAttribute("missingTests", missingTests);
     }
 
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_LABTEST;
+    String annotation_display = CaseManagementNoteLink.DISP_LABTEST;
     CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 %>
@@ -871,24 +874,6 @@ request.setAttribute("missingTests", missingTests);
             window.open(link, "linkwin", "width=500, height=200");
         }
 
-        function sendToPHR(labId, demographicNo) {
-            <%
-                MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
-
-                if (myOscarLoggedInInfo==null || !myOscarLoggedInInfo.isLoggedIn())
-                {
-                    %>
-            alert('Please Login to MyOscar before performing this action.');
-            <%
-        }
-        else
-        {
-            %>
-            popup(450, 600, "<%=request.getContextPath()%>/phr/SendToPhrPreview.jsp?labId=" + labId + "&demographic_no=" + demographicNo, "sendtophr");
-            <%
-        }
-    %>
-        }
 
         function matchMe() {
             <% if ( !isLinkedToDemographic) { %>
@@ -907,7 +892,7 @@ request.setAttribute("missingTests", missingTests);
                     if (json != null) {
                         var success = json.isLinkedToDemographic;
                         var demoid = '';
-                        //check if lab is linked to a provider
+                        //check if lab is linked to a providers
                         if (success) {
                             console.log("Lab IS linked to demographic: " + success);
                             console.log("Processing action: " + action);
@@ -1052,7 +1037,7 @@ request.setAttribute("missingTests", missingTests);
                 if (providerNo.equals(reportStatus.getOscarProviderNo())) {
                     labStatus = reportStatus.getStatus();
                     if (labStatus.equals("A")) {
-                        ackFlag = true;//lab has been ack by this provider.
+                        ackFlag = true;//lab has been ack by this providers.
                         break;
                     }
                 }
@@ -2385,7 +2370,7 @@ request.setAttribute("missingTests", missingTests);
 
                     <%
                                            		//CLS textual results - use 4 columns.
-                                           		if(handler instanceof CLSHandler && ( (oscar.oscarLab.ca.all.parsers.CLSHandler) handler).isUnstructured()) {
+                                           		if(handler instanceof CLSHandler && ( (CLSHandler) handler).isUnstructured()) {
                                            	%>
                 <td align="left" colspan="4">
                     <%= handler.getOBXResult(j, k) %>
@@ -2633,10 +2618,6 @@ request.setAttribute("missingTests", missingTests);
                     <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/> " onClick="window.close()">
                     <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                            onClick="printPDF('<%=Encode.forJavaScript(segmentID)%>')">
-                    <indivo:indivoRegistered demographic="<%=demographicID%>" provider="<%=providerNo%>">
-                        <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnSendToPHR"/>"
-                               onClick="sendToPHR('<%=Encode.forJavaScript(segmentID)%>', '<%=demographicID%>')">
-                    </indivo:indivoRegistered>
                     <% if (searchProviderNo != null) { // we were called from e-chart %>
                     <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "
                            onClick="popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= Encode.forJavaScript(segmentID) %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'encounter')">

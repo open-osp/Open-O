@@ -33,11 +33,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.common.dao.DocumentDao.Module;
+import ca.openosp.openo.commn.dao.DocumentDao.Module;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Document;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Document;
+import ca.openosp.openo.commn.dao.DocumentDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DocumentDaoTest extends DaoTestFixtures {
 
@@ -48,7 +49,7 @@ public class DocumentDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("consultResponseDoc", "document", "ctl_document", "consultdocs", "provider", "providersite", "demographic", "provider_facility", "Facility", "demographic_merged", "EFormDocs", "document_review");
+        SchemaUtils.restoreTable("consultResponseDoc", "document", "ctl_document", "consultdocs", "providers", "providersite", "demographic", "provider_facility", "Facility", "demographic_merged", "EFormDocs", "document_review");
     }
 
     @Test

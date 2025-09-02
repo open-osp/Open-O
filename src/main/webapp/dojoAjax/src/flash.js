@@ -12,7 +12,7 @@ dojo.provide("dojo.flash");
 
 dojo.require("dojo.string.*");
 dojo.require("dojo.uri.*");
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 
 dojo.flash = function () {
     // summary:
@@ -89,7 +89,7 @@ dojo.flash = function () {
     //	a way that can pass large amounts of data back and forth reliably and
     //	very fast. The dojo.flash
     //	framework encapsulates the specific way in which this communication occurs,
-    //	presenting a common interface to JavaScript irrespective of the underlying
+    //	presenting a commons interface to JavaScript irrespective of the underlying
     //	Flash version.
     //
     //	There are currently three major ways to do Flash/JavaScript communication
@@ -839,7 +839,7 @@ dojo.flash.Communicator = function () {
     //	a way that can pass large amounts of data back and forth reliably,
     //	very fast, and with synchronous method calls. This class encapsulates the
     //	specific way in which this communication occurs,
-    //	presenting a common interface to JavaScript irrespective of the underlying
+    //	presenting a commons interface to JavaScript irrespective of the underlying
     //	Flash version.
 
     if (dojo.flash.useFlash6()) {

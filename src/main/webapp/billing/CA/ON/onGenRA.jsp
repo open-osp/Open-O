@@ -36,10 +36,12 @@
     <%isTeamAccessPrivacy = true; %>
 </security:oscarSec>
 
-<%@ page import="java.io.*, java.sql.*, oscar.*, oscar.util.*, java.util.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
-<jsp:useBean id="documentBean" class="oscar.DocumentBean" scope="request"/>
+<%@ page import="java.io.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.util.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingRAImpl" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<jsp:useBean id="documentBean" class="ca.openosp.DocumentBean" scope="request"/>
 
 <%
     JdbcBillingRAImpl dbObj = new JdbcBillingRAImpl();

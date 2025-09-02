@@ -44,16 +44,16 @@
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
-<%@ page import="oscar.util.StringUtils" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingFormData" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="oscar.oscarClinic.ClinicData" %>
-<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
+<%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
 <%@ page import="java.util.*" %>
 
 

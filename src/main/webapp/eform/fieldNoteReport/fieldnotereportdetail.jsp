@@ -24,10 +24,10 @@
 
 --%>
 
-<%@ page import="org.oscarehr.common.service.FieldNoteManager" %>
-<%@ page import="org.oscarehr.common.model.EFormValue" %>
+<%@ page import="ca.openosp.openo.commn.service.FieldNoteManager" %>
+<%@ page import="ca.openosp.openo.commn.model.EFormValue" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 

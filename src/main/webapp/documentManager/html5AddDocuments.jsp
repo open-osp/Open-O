@@ -46,7 +46,8 @@
 * @license Mit Style License
 */
 -->
-<%@page import="oscar.oscarProvider.data.*,java.util.*,oscar.oscarLab.ca.on.CommonLabResultData,org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.QueueDao" %>
+<%@page import="ca.openosp.openo.providers.data.*,java.util.*,ca.openosp.openo.lab.ca.on.CommonLabResultData,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.dao.QueueDao" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
@@ -69,7 +70,7 @@
             queueId = Integer.parseInt(queueIdStr);
         }
         String provider = CommonLabResultData.NOT_ASSIGNED_PROVIDER_NO;
-        //String provider ="";//(String) session.getValue("user");
+        //String providers ="";//(String) session.getValue("user");
     %>
 
     <style type="text/css">
@@ -130,7 +131,7 @@
 
         // add dedicated css
         noswfupload.css("../share/css/noswfupload.css", "../share/css/noswfupload-icons.css");
-        var upload_url;//global to attached provider no and queue no.
+        var upload_url;//global to attached providers no and queue no.
 
         onload = function () {
             var
@@ -278,7 +279,7 @@
         };
 
         function changeProviderAndQueue() {
-            upload_url = "../documentManager/addEditDocument.do?method=html5MultiUpload&queue=" + $('queue').value + "&provider=" + $('provider').value;
+            upload_url = "../documentManager/addEditDocument.do?method=html5MultiUpload&queue=" + $('queue').value + "&providers=" + $('provider').value;
 
         }
 

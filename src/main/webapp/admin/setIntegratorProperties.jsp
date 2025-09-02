@@ -26,7 +26,7 @@
 
 <%@page contentType="text/html" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
 
 <%
     String curUser_no;
@@ -242,8 +242,8 @@
             <table id="integratorPrefTable" border=0>
                 <tr>
                     <td></td>
-                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.integratorPreferences.enabled"/></th>
-                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.integratorPreferences.disabled"/></th>
+                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="providers.integratorPreferences.enabled"/></th>
+                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="providers.integratorPreferences.disabled"/></th>
                 </tr>
                 <tr>
                     <td>Demographic Records</td>

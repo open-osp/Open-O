@@ -25,6 +25,7 @@ package oscar.form.pharmaForms.formBPMH.bean;
 
 import static org.junit.Assert.*;
 
+import ca.openosp.openo.form.pharmaForms.formBPMH.bean.BpmhDrug;
 import org.junit.Before;
 import org.junit.Test;
 

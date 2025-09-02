@@ -44,9 +44,9 @@
 
 <%
     DBPreparedHandler dbObj = new DBPreparedHandler();
-    // select provider list
+    // select providers list
     Properties prop = new Properties();
-    String sql = "select u.*, p.first_name, p.last_name from secUserRole u, provider p ";
+    String sql = "select u.*, p.first_name, p.last_name from secUserRole u, providers p ";
 
     sql += "where u.provider_no=p.provider_no  order by p.first_name, p.last_name";
 
@@ -71,9 +71,9 @@
             providerName = Misc.getString(rs, "first_name") + " " + Misc.getString(rs, "last_name");
     }
 %>
-<%@page import="oscar.oscarDB.DBPreparedHandler" %>
+<%@page import="ca.openosp.openo.db.DBPreparedHandler" %>
 
-<%@page import="oscar.Misc" %>
+<%@page import="ca.openosp.Misc" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -102,7 +102,7 @@
                 if (document.myform.codeType.value == "" || document.myform.startDate.value == "" || document.myform.endDate.value == ""
                     || (document.myform.providerNoDoctor.value == "" && document.myform.providerNoResident.value == ""
                         && document.myform.providerNoNP.value == "" && document.myform.providerNoSW.value == "")) {
-                    alert("Please select the codeType/period/provider item(s) from the drop down list before query.");
+                    alert("Please select the codeType/period/providers item(s) from the drop down list before query.");
                     return false;
                 } else {
                     return true;

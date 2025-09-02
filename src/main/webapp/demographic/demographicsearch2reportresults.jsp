@@ -56,12 +56,13 @@
 
 %>
 
-<%@ page import="java.util.*, java.sql.*,java.net.*, oscar.*" %>
+<%@ page import="java.util.*, java.sql.*,java.net.*, ca.openosp.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.Misc" %>
 
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 

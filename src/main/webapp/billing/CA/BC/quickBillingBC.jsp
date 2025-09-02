@@ -48,7 +48,7 @@
 
 
 <%@page import="java.util.*,
-                oscar.util.*,
+                ca.openosp.openo.util.*,
                 org.springframework.web.context.support.WebApplicationContextUtils,
                 org.springframework.web.context.WebApplicationContext" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -90,7 +90,7 @@
 
             if (<c:out value="${quickBillingBC.isHeaderSet}" />) {
                 // lock out the header.
-                $("#provider").attr("disabled", "disabled");
+                $("#providers").attr("disabled", "disabled");
                 $("#visitLocation").attr("disabled", "disabled");
                 $("#visitDate").attr("disabled", "disabled");
 
@@ -107,11 +107,11 @@
             $('#visitDate').datepicker({
                 dateFormat: "dd-mm-yy",
                 beforeShow: function (input, inst) {
-                    if ($("#provider :selected").val() == "empty") {
+                    if ($("#providers :selected").val() == "empty") {
 
                         //$(this).datepicker( "hide" )
                         alert("Select Billing Physician");
-                        $("#provider").focus();
+                        $("#providers").focus();
 
                     } else if ($("#visitLocation :selected").val() == "empty") {
 

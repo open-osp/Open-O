@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.style");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.kwCompoundRequire({
     browser: ["dojo.html.style"]
 });

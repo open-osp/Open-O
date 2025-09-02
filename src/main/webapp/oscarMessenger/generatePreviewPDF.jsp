@@ -25,21 +25,21 @@
 --%>
 
 <%@ page
-        import="oscar.oscarMessenger.docxfer.send.*,
-                oscar.oscarMessenger.docxfer.util.*,
-                oscar.oscarEncounter.data.*,
-                oscar.oscarEncounter.pageUtil.EctSessionBean,
-                oscar.oscarRx.pageUtil.RxSessionBean,
-                oscar.oscarRx.data.RxPatientData,
-                oscar.oscarMessenger.pageUtil.MsgSessionBean,
-                oscar.oscarDemographic.data.*" %>
+        import="ca.openosp.openo.messenger.docxfer.send.*,
+                ca.openosp.openo.messenger.docxfer.util.*,
+                ca.openosp.openo.encounter.data.*,
+                ca.openosp.openo.encounter.pageUtil.EctSessionBean,
+                ca.openosp.openo.prescript.pageUtil.RxSessionBean,
+                ca.openosp.openo.prescript.data.RxPatientData,
+                ca.openosp.openo.messenger.pageUtil.MsgSessionBean,
+                ca.openosp.openo.demographic.data.*" %>
 
-<%@ page import=" java.util.*, org.w3c.dom.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
+<%@ page import=" java.util.*, org.w3c.dom.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
          errorPage="../appointment/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.EChartDao" %>
-<%@ page import="org.oscarehr.common.model.EChart" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.EChartDao" %>
+<%@ page import="ca.openosp.openo.commn.model.EChart" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
     EChartDao eChartDao = SpringUtils.getBean(EChartDao.class);
 %>
@@ -62,7 +62,9 @@
     }
 %>
 
-<%@ page import="oscar.util.*" %>
+<%@ page import="ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 
 
 <%
@@ -71,7 +73,7 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
     DemographicData demoData = new DemographicData();
-    org.oscarehr.common.model.Demographic demo = demoData.getDemographic(loggedInInfo, demographic_no);
+    Demographic demo = demoData.getDemographic(loggedInInfo, demographic_no);
     String demoName = "";
     if (demo != null) {
         demoName = demo.getLastName() + ", " + demo.getFirstName();
@@ -87,7 +89,7 @@
     EctSessionBean bean = new EctSessionBean();
     bean.demographicNo = demographic_no;
 
-    oscar.oscarMessenger.pageUtil.MsgSessionBean MsgSessionBean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
+    MsgSessionBean MsgSessionBean = (MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
 
     request.getSession().setAttribute("EctSessionBean", bean);
 
@@ -345,7 +347,7 @@
                                             RxSessionBean Rxbean;
 
                                             if (request.getSession().getAttribute("RxSessionBean") != null) {
-                                                Rxbean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+                                                Rxbean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
                                             } else {
                                                 Rxbean = new RxSessionBean();
                                             }

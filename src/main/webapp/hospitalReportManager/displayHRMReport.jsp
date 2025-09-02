@@ -8,10 +8,10 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.apache.commons.lang.StringUtils,oscar.log.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="org.apache.commons.lang.StringUtils,ca.openosp.openo.log.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -39,14 +39,21 @@
     HRMProviderConfidentialityStatementDao hrmProviderConfidentialityStatementDao = (HRMProviderConfidentialityStatementDao) SpringUtils.getBean(HRMProviderConfidentialityStatementDao.class);
 %>
 
-<%@page import="org.oscarehr.hospitalReportManager.*, org.oscarehr.hospitalReportManager.model.*, org.oscarehr.util.SpringUtils, org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.*, ca.openosp.openo.hospitalReportManager.model.*, ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
-<%@ page import="org.oscarehr.hospitalReportManager.dao.*" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.dao.*" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.owasp.csrfguard.CsrfGuard" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.HRMDisplayReport2Action" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.HRMReportParser" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.HRMReport" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.model.*" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.dao.*" %>
 <!DOCTYPE html>
 
 <%
@@ -401,13 +408,8 @@
     <div id="buttonBox">
         <input type="button" id="msgBtn_<%=hrmReportId%>" value="Msg"
                onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>/>
-        <% if (OscarProperties.getInstance().isPropertyActive("ticklerplus")) { %>
-        <input type="button" id="mainTickler_<%=hrmReportId%>" value="Tickler"
-               onClick="popupPatientTickler(710, 1024,'<%= request.getContextPath() %>/Tickler.do?', 'Tickler','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
-        <% } else { %>
         <input type="button" id="mainTickler_<%=hrmReportId%>" value="Tickler"
                onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/tickler/ForwardDemographicTickler.do?docType=HRM&docId=<%=hrmReportId%>&demographic_no=', 'Tickler','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
-        <%} %>
         <input type="button" id="mainEchart_<%=hrmReportId%>"
                value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "
                onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/oscarEncounter/IncomingEncounter.do?updateParent=false&reason=
@@ -904,7 +906,7 @@
         jQuery(setupHrmDemoAutoCompletion(<%=hrmReportId%>, <%=csrfTokenJs%>));
 
         YAHOO.example.BasicRemote = function () {
-            var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
+            var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
             var oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponses'});
             oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
             // Define the schema of the delimited resultsTEST, PATIENT(1985-06-15)

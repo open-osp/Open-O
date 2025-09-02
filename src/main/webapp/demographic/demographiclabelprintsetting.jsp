@@ -40,14 +40,18 @@
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, java.net.*, oscar.*" errorPage="../appointment/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*" errorPage="../appointment/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.Misc" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -57,7 +61,7 @@
     if (session.getValue("user") == null) response.sendRedirect("../logout.jsp");
     String curProvider_no = (String) session.getAttribute("user");
 
-    java.util.Properties oscarVariables = oscar.OscarProperties.getInstance();
+    java.util.Properties oscarVariables = OscarProperties.getInstance();
 
     DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);

@@ -1,4 +1,6 @@
-<%--
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.commn.model.Allergy" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -58,7 +60,7 @@
         </c:if>
 
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
             RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
             String name = (String) request.getAttribute("name");
             String type = (String) request.getAttribute("type");
@@ -75,7 +77,7 @@
             Boolean nonDrug = null;
 
             if (allergyToArchive != null && !allergyToArchive.isEmpty()) {
-                org.oscarehr.common.model.Allergy a = patient.getAllergy(Integer.parseInt(allergyToArchive));
+                Allergy a = patient.getAllergy(Integer.parseInt(allergyToArchive));
                 if (a != null) {
                     reaction = a.getReaction();
                     startDate = a.getStartDateFormatted();

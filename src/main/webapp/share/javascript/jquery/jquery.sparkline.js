@@ -225,7 +225,7 @@
          */
         getDefaults = function () {
             return {
-                // Settings common to most/all chart types
+                // Settings commons to most/all chart types
                 common: {
                     type: 'line',
                     lineColor: '#00f',

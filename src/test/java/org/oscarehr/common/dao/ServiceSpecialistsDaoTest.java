@@ -28,9 +28,10 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ServiceSpecialists;
-import org.oscarehr.common.model.ServiceSpecialistsPK;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ServiceSpecialists;
+import ca.openosp.openo.commn.model.ServiceSpecialistsPK;
+import ca.openosp.openo.commn.dao.ServiceSpecialistsDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ServiceSpecialistsDaoTest extends DaoTestFixtures {
 

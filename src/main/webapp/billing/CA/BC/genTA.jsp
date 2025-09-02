@@ -41,24 +41,26 @@
 
 
 <%@ page
-        import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat,oscar.oscarBilling.ca.bc.MSP.*,oscar.*" %>
+        import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat,ca.openosp.openo.billing.ca.bc.MSP.*" %>
 
 
-<jsp:useBean id="documentBean" class="oscar.DocumentBean" scope="request"/>
+<jsp:useBean id="documentBean" class="ca.openosp.DocumentBean" scope="request"/>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanS21" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanS21Dao" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanS00" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanS00Dao" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanS23" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanS23Dao" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanS25" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanS25Dao" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanS22" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanS22Dao" %>
-<%@ page import="org.oscarehr.billing.CA.BC.model.TeleplanC12" %>
-<%@ page import="org.oscarehr.billing.CA.BC.dao.TeleplanC12Dao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanS21" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanS21Dao" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanS00" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanS00Dao" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanS23" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanS23Dao" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanS25" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanS25Dao" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanS22" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanS22Dao" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.model.TeleplanC12" %>
+<%@ page import="ca.openosp.openo.billing.CA.BC.dao.TeleplanC12Dao" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MSPReconcile" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     TeleplanS21Dao teleplanS21Dao = SpringUtils.getBean(TeleplanS21Dao.class);
     TeleplanS00Dao teleplanS00Dao = SpringUtils.getBean(TeleplanS00Dao.class);

@@ -47,7 +47,7 @@
 //		(e.g., the window object in a browser).
 // description:
 //		Refer to 'dj_global' rather than referring to window to ensure your
-//		code runs correctly in contexts other than web browsers (eg: Rhino on a server).
+//		code runs correctly in contexts other than www browsers (eg: Rhino on a server).
 var dj_global = this;
 
 //TODOC:  HOW TO DOC THIS?
@@ -90,7 +90,7 @@ dojo.global = function () {
     //		(e.g., the window object in a browser).
     // description:
     //		Refer to 'dojo.global()' rather than referring to window to ensure your
-    //		code runs correctly in contexts other than web browsers (eg: Rhino on a server).
+    //		code runs correctly in contexts other than www browsers (eg: Rhino on a server).
     return dj_currentContext;
 }
 

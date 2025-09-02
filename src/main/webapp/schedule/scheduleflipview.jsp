@@ -24,22 +24,22 @@
 
 --%>
 
-<%@page import="oscar.appt.ApptData" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.MyGroup" %>
-<%@page import="org.oscarehr.common.dao.MyGroupDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplate" %>
-<%@page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.appt.ApptData" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleTemplateCode" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateCodeDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
@@ -50,7 +50,7 @@
 
 <%!
     //multisite starts =====================
-    private boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    private boolean bMultisites = ca.openosp.openo.commn.IsPropertiesOn.isMultisitesEnable();
     private JdbcApptImpl jdbc = new JdbcApptImpl();
     private List<Site> sites;
     private String[] curScheduleMultisite;
@@ -82,14 +82,14 @@
     String[] param = new String[3];
 
     String originalPage = request.getParameter("originalpage") != null ? request.getParameter("originalpage") : "schedule";
-    String originalPagePath = "../provider/providercontrol.jsp";
+    String originalPagePath = "../providers/providercontrol.jsp";
 
     if (originalPage.equals("waitingList")) {
         originalPagePath = "../oscarWaitingList/DisplayWaitingList.jsp";
     }
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
 
 <jsp:useBean id="DateTimeCodeBean" class="java.util.Hashtable"
@@ -98,11 +98,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@page import="oscar.appt.JdbcApptImpl" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.appt.JdbcApptImpl" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="oscar.appt.ApptUtil" %>
+<%@page import="ca.openosp.openo.appt.ApptUtil" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <html>
     <head>

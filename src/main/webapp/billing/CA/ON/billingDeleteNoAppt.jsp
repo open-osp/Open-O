@@ -21,13 +21,15 @@
     String curUser_no = (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingCorrectionPrep" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
 %>

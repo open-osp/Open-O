@@ -24,16 +24,18 @@
 
 --%>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="oscar.oscarEncounter.pageUtil.EctDisplayLabAction2" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.encounter.pageUtil.EctDisplayLabAction2" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="java.net.URLEncoder" %>
-<%@page import="oscar.oscarLab.ca.all.web.LabDisplayHelper" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.lab.ca.all.web.LabDisplayHelper" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.oscarLab.ca.on.LabResultData" %>
-<%@ page import="oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.*" %>
-<%@ page import="oscar.util.DateUtils" %>
-<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
+<%@ page import="ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.*" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
+<%@ page import="ca.openosp.openo.mds.data.ProviderData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -53,13 +55,13 @@
 <%
 
 
-    //oscar.oscarMDS.data.MDSResultsData mDSData = new oscar.oscarMDS.data.MDSResultsData();
+    //ca.openosp.openo.mds.data.MDSResultsData mDSData = new ca.openosp.openo.mds.data.MDSResultsData();
     CommonLabResultData comLab = new CommonLabResultData();
     //String providerNo = request.getParameter("providerNo");
     String providerNo = (String) session.getAttribute("user");
     String searchProviderNo = request.getParameter("searchProviderNo");
     String ackStatus = request.getParameter("status");
-    String demographicNo = request.getParameter("demographicNo"); // used when searching for labs by patient instead of provider
+    String demographicNo = request.getParameter("demographicNo"); // used when searching for labs by patient instead of providers
 
     if (ackStatus == null) {
         ackStatus = "N";
@@ -233,7 +235,7 @@
                             <% if (demographicNo != null) { %>
                             <input type="button" class="smallButton"
                                    value="Search OLIS"
-                                   onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')">
+                                   onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis1/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')">
                             <% } %>
 
                             <% if (demographicNo == null && request.getParameter("fname") != null) { %>

@@ -19,8 +19,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.PMmodule.model">
-	<class name="ProgramTeam" table="program_team">
+<hibernate-mapping package="ca.openosp.openo.PMmodule.model">
+	<class name="ca.openosp.openo.PMmodule.model.ProgramTeam" table="program_team">
 		<meta attribute="sync-DAO">false</meta>
 		<id name="id" type="integer" column="team_id" unsaved-value="0">
 			<generator class="native" />

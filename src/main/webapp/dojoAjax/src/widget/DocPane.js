@@ -17,7 +17,7 @@ dojo.require("dojo.widget.HtmlWidget");
 dojo.require("dojo.widget.Editor2");
 dojo.require("dojo.widget.Dialog");
 
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 dojo.require("dojo.html.display");
 
 dojo.widget.DocPane = function () {

@@ -40,15 +40,15 @@
     }
 %>
 
-<%@ page import="java.math.*,java.util.*,oscar.oscarBilling.ca.bc.MSP.*,oscar.util.*" %>
+<%@ page import="java.math.*,java.util.*,ca.openosp.openo.billing.ca.bc.MSP.*,ca.openosp.openo.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ReportProviderDao" %>
-<%@page import="org.oscarehr.common.model.ReportProvider" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ReportProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.ReportProvider" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
 
 
 <%
@@ -102,7 +102,9 @@
 </security:oscarSec>
 
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.MSP.MSPReconcile" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 <!DOCTYPE HTML>
 <html>
 <head>

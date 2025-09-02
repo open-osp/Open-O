@@ -8,7 +8,7 @@
 		http://dojotoolkit.org/community/licensing.shtml
 */
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.func");
 dojo.require("dojo.lang.declare");
 dojo.provide("dojo.dnd.DragAndDrop");

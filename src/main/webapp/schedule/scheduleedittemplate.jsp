@@ -28,20 +28,20 @@
 
 %>
 <%@ page
-        import="java.util.*, java.net.*, java.sql.*, oscar.*, java.text.*, java.lang.*"
+        import="java.util.*, java.net.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*"
         errorPage="../appointment/errorpage.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<jsp:useBean id="myTempBean" class="oscar.ScheduleTemplateBean" scope="page"/>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ScheduleTemplate" %>
-<%@ page import="org.oscarehr.common.model.ScheduleTemplatePrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
-<%@ page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
+<jsp:useBean id="myTempBean" class="ca.openosp.ScheduleTemplateBean" scope="page"/>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleTemplatePrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleTemplateCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleTemplateCodeDao" %>
 <%
     ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
     ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
@@ -72,7 +72,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduleedittemplate.title"/></title>
-        <!--link rel="stylesheet" href="<%= request.getContextPath() %>/web.css" /-->
+        <!--link rel="stylesheet" href="<%= request.getContextPath() %>/www.css" /-->
 
         <script language="JavaScript">
             <!--

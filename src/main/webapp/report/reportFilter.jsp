@@ -14,7 +14,9 @@
 %>
 
 <%@ page errorPage="../appointment/errorpage.jsp"
-         import="java.util.*, oscar.oscarReport.data.*" %>
+         import="java.util.*, ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptReportFilter" %>
+<%@ page import="ca.openosp.openo.report.data.RptReportItem" %>
 <%
     String reportId = request.getParameter("id") != null ? request.getParameter("id") : "0";
 // get form name

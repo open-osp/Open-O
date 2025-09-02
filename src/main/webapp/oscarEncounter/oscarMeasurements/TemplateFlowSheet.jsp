@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 
 
 <jsp:include page="TemplateFlowSheetPage.jspf"/>

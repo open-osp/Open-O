@@ -4,6 +4,7 @@
     "service": "open-o",
     "workspaceFolder": "/workspace",
     "shutdownAction": "stopCompose",
+    "dockerComposeOptions": ["--project-name", "openo-emr"],
     "postCreateCommand": "sh .devcontainer/development/setup/seed_data.sh && cd /workspace && mvn -B dependency:go-offline dependency:sources dependency:resolve -Dclassifier=javadoc",
 
     "customizations": {
@@ -12,7 +13,8 @@
                 "waderyan.gitblame",
                 "redhat.vscode-community-server-connector",
                 "redhat.fabric8-analytics",
-                "vscjava.vscode-java-pack"
+                "vscjava.vscode-java-pack",
+                "anthropic.claude-code"
             ],
             "settings": {
                 "terminal.integrated.shell.linux": "/bin/bash",
@@ -24,7 +26,7 @@
         }
     },
 
-    "forwardPorts": [8080, 8000, 3306],
+    "forwardPorts": [8080, 8000, 3306, 3000],
     "containerUser": "root",
     "remoteUser": "root"
 }

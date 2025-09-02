@@ -35,24 +35,25 @@ import java.util.UUID;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import ca.openosp.openo.util.UtilDateUtilities;
 import org.apache.logging.log4j.Logger;
-import org.oscarehr.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.DaoTestFixtures;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.ProviderInboxRoutingDao;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.commn.dao.ProviderInboxRoutingDao;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.oscarehr.documentManager.EDoc;
-import org.oscarehr.documentManager.EDocUtil;
-import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
-import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
-import oscar.util.ConversionUtils;
+import ca.openosp.openo.documentManager.EDoc;
+import ca.openosp.openo.documentManager.EDocUtil;
+import ca.openosp.openo.lab.ca.all.upload.HandlerClassFactory;
+import ca.openosp.openo.lab.ca.all.upload.handlers.MessageHandler;
+import ca.openosp.openo.util.ConversionUtils;
 
 public class DataUtils {
 
@@ -105,7 +106,7 @@ public class DataUtils {
             demographicDao.save(d);
 
             if (logger.isInfoEnabled()) {
-                logger.info("Set provider " + p + " for " + d);
+                logger.info("Set providers " + p + " for " + d);
             }
         }
     }
@@ -122,7 +123,7 @@ public class DataUtils {
                 String fileName = "sample_upload_for_" + user + "_" + i + "_" + System.currentTimeMillis() + ".txt";
                 String source = "";
                 EDoc newDoc = new EDoc("", "", fileName, "", user, user, source, 'A',
-                        oscar.util.UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
+                        UtilDateUtilities.getToday("yyyy-MM-dd"), "", "", "demographic", "-1", 0);
                 newDoc.setDocPublic("0");
                 fileName = newDoc.getFileName();
 
@@ -160,7 +161,7 @@ public class DataUtils {
 	private static String getCanonicalPath(String fileName) {
 		String docDir = System.getProperty("DOCUMENT_DIR"); 
 		if (docDir == null || docDir.trim().equals("")) {
-			docDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+			docDir = ca.openosp.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
 			docDir = "/var/lib/OscarDocument";
 		}
 		
@@ -258,7 +259,7 @@ public class DataUtils {
         private EntityKind getEntityKind(String elementName) {
             if (elementName.equals("demographic")) {
                 return EntityKind.DEMO;
-            } else if (elementName.equals("provider")) {
+            } else if (elementName.equals("providers")) {
                 return EntityKind.PROVIDER;
             }
             return null;
@@ -352,7 +353,7 @@ public class DataUtils {
             providerDao.updateProvider(provider);
 
             if (logger.isInfoEnabled()) {
-                logger.info("Created new provider: " + provider);
+                logger.info("Created new providers: " + provider);
             }
         }
     }

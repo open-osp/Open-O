@@ -36,11 +36,11 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.dao.BillActivityDao;
-import org.oscarehr.billing.CA.model.BillActivity;
+import ca.openosp.openo.billing.CA.dao.BillActivityDao;
+import ca.openosp.openo.billing.CA.model.BillActivity;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillActivityDaoTest extends DaoTestFixtures {
 

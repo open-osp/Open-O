@@ -25,7 +25,7 @@
 --%>
 
 
-<%@ page import="java.util.*, java.sql.*, oscar.*"
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*"
          errorPage="../appointment/errorpage.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 

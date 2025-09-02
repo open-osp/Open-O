@@ -29,7 +29,11 @@
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportManager" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.Choice" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.Parameter" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportObject" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>

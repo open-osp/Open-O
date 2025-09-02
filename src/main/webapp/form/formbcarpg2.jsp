@@ -13,10 +13,16 @@
     }
 %>
 
-<%@ page import="oscar.form.graphic.*, oscar.util.*, oscar.form.*, oscar.form.data.*" %>
+<%@ page import="ca.openosp.openo.form.graphic.*, ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
+<%@ page import="ca.openosp.openo.form.graphic.FrmGraphicAR" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <%
     String formClass = "BCAR";

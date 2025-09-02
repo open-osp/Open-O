@@ -31,15 +31,17 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ConsultationRequest;
-import org.oscarehr.common.model.ConsultationServices;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.consultations.ConsultationRequestSearchFilter;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ConsultationRequest;
+import ca.openosp.openo.commn.model.ConsultationServices;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.dao.ConsultRequestDao;
+import ca.openosp.openo.commn.dao.ConsultationServiceDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.consultations.ConsultationRequestSearchFilter;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ConsultRequestDaoTest extends DaoTestFixtures {
 
@@ -49,7 +51,7 @@ public class ConsultRequestDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("consultationRequests", "consultationServices", "demographic", "professionalSpecialists", "provider", "lst_gender", "demographic_merged", "admission", "program", "health_safety", "LookupListItem", "serviceSpecialists");
+        SchemaUtils.restoreTable("consultationRequests", "consultationServices", "demographic", "professionalSpecialists", "providers", "lst_gender", "demographic_merged", "admission", "program", "health_safety", "LookupListItem", "serviceSpecialists");
     }
 
     @Test

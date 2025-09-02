@@ -47,9 +47,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.PrintResourceLog;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.commn.model.PrintResourceLog;
+import ca.openosp.openo.commn.dao.PrintResourceLogDao;
+import ca.openosp.openo.utility.SpringUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 public class PrintResourceLogDaoTest extends DaoTestFixtures {
 

@@ -93,10 +93,6 @@
         <td><c:out value="${program.firstNation}"/></td>
     </tr>
     <tr class="b">
-        <td width="20%">Bed Program Affiliated:</td>
-        <td><c:out value="${program.bedProgramAffiliated}"/></td>
-    </tr>
-    <tr class="b">
         <td width="20%">Alcohol:</td>
         <td><c:out value="${program.alcohol}"/></td>
     </tr>

@@ -17,18 +17,22 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.util.DateRange" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.utility.DateRange" %>
 <%
     if (session.getAttribute("user") == null)
         response.sendRedirect("../../../logout.jsp");
 %>
 
 <%@ page import="java.util.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@ page import="oscar.oscarProvider.data.ProviderBillCenter" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderBillCenter" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingProviderData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingCreateBillingFile" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingClaimImpl" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingDiskCreatePrep" %>
 
 
 <%

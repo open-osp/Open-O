@@ -24,9 +24,10 @@
 
 --%>
 
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@page import="java.util.*" %>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -44,7 +45,7 @@
 %>
 
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean2 = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+    RxSessionBean bean2 = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
     RxPrescriptionData.Prescription[] allRxInStash = bean2.getStash();
     List allRandomIdInStash = new ArrayList();
     for (RxPrescriptionData.Prescription rx : allRxInStash) {
@@ -58,7 +59,7 @@
 <%if (OscarProperties.getInstance().getProperty("rx_enhance") != null && OscarProperties.getInstance().getProperty("rx_enhance").equals("true")) { %>
 <script type="text/javascript">
 
-    var errorMsg = "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.error.msgFailed'/>";
+    var errorMsg = "Failed";
     //oscarLog("errorMsg="+errorMsg);
     var interactStr = '<%=interactingDrugList%>';
     var randomIds = '<%=allRandomIdInStash%>';
@@ -124,31 +125,31 @@
     function getEffect(str) {
         switch (str) {
             case "a":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.AugmentsNoClinicalEffect'/>";
+                return "Augments (no clinical effect)";
             case "A":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.Augments'/>";
+                return "Augments";
             case "i":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.InhibitsNoClinicalEffect'/>";
+                return "Inhibits (no clinical effect)";
             case "I":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.Inhibits'/>";
+                return "Inhibits";
             case "n":
             case "N":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.NoEffect'/>";
+                return "No Effect";
             default:
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.effect.Unknown'/>";
+                return "Unknown";
         }
     }
 
     function getEvidence(str) {
         switch (str) {
             case "P":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.evidence.Poor'/>";
+                return "Poor";
             case "F":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.evidence.Fair'/>";
+                return "Fair";
             case "G":
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.evidence.Good'/>";
+                return "Good";
             default:
-                return "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.evidence.Unknown'/>";
+                return "Unknown";
         }
     }
 </script>
@@ -156,7 +157,7 @@
 <%} else {%>
 <script type="text/javascript">
 
-    var errorMsg = "<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.MyDrugref.InteractingDrugs.error.msgFailed'/>";
+    var errorMsg = "Failed";
     //oscarLog("errorMsg="+errorMsg);
     var interactStr = '<%=interactingDrugList%>';
     var randomIds = '<%=allRandomIdInStash%>';

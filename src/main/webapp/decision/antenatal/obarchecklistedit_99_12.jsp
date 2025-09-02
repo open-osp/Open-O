@@ -28,8 +28,10 @@
 
     String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, java.io.*, oscar.*"
+<%@ page import="java.util.*, java.sql.*, java.io.*, ca.openosp.*"
          errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>

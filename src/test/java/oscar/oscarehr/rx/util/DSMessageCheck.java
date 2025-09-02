@@ -32,14 +32,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.rx.util.DrugrefUtil;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.ws.rest.to.model.RxDsMessageTo1;
+import ca.openosp.openo.prescription.util.DrugrefUtil;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.webserv.rest.to.model.RxDsMessageTo1;
 
-import oscar.OscarProperties;
+import ca.openosp.OscarProperties;
 
-import org.oscarehr.common.model.Facility;
+import ca.openosp.openo.commn.model.Facility;
 
 public class DSMessageCheck extends DaoTestFixtures {
     protected Logger logger = MiscUtils.getLogger();
@@ -86,7 +86,6 @@ public class DSMessageCheck extends DaoTestFixtures {
 
         OscarProperties.getInstance().setProperty("RX_INTERACTION_LOCAL_DRUGREF_REGIONAL_IDENTIFIER", "yes");
 
-        OscarProperties.getInstance().setProperty("mydrugref_id", "jaygallagher@gmail.com");
 
         Locale locale = Locale.CANADA;
 

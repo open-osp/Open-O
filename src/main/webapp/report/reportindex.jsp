@@ -47,12 +47,12 @@
     String curUser_no = (String) session.getAttribute("user");
     String mygroupno = providerPreference.getMyGroupNo();
     mygroupno = StringUtils.trimToEmpty(mygroupno);
-    String billingRegion = (oscar.OscarProperties.getInstance()).getProperty("billregion");
+    String billingRegion = (ca.openosp.OscarProperties.getInstance()).getProperty("billregion");
 %>
 <%@ page
-        import="java.util.*, oscar.*, java.sql.*, java.text.*, java.net.*"
+        import="java.util.*, ca.openosp.*, java.sql.*, java.text.*, java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
-<jsp:useBean id="reportMainBean" class="oscar.AppointmentMainBean"
+<jsp:useBean id="reportMainBean" class="ca.openosp.AppointmentMainBean"
              scope="session"/>
 <% if (!reportMainBean.getBDoConfigure()) { %>
 <%@ include file="reportMainBeanConn.jspf" %>
@@ -743,13 +743,6 @@
                 <td width="2"><%=j%>
                     <%j++;%>
                 </td>
-                <td width="1"></td>
-                <td width="300"><a href=#
-                                   onClick="popupPage(600,750,'demographicstudyreport.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.btnDemographicStudyList"/></a></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
             </tr>
 
             <tr>
@@ -785,7 +778,7 @@
                 <td></td>
             </tr>
 
-            <% //if((oscar.OscarProperties.getInstance()).getProperty("demographicExt") != null && (oscar.OscarProperties.getInstance()).getProperty("demographicExt").startsWith("Approximate EDD")) {
+            <% //if((ca.openosp.OscarProperties.getInstance()).getProperty("demographicExt") != null && (ca.openosp.OscarProperties.getInstance()).getProperty("demographicExt").startsWith("Approximate EDD")) {
             %>
             <tr>
                 <td width="2"><%=j%>
@@ -861,12 +854,7 @@
                                 <div><a
                                         href="${pageContext.request.contextPath}/PMmodule/Reports/ProgramActivityReport.do">Activity Report</a></div>
                                 <div><a
-                                        href="${pageContext.request.contextPath}/SurveyManager.do?method=reportForm">User Created Form Report</a></div>
-                                <div><a
                                         href="${pageContext.request.contextPath}/QuatroReport/ReportList.do">Quatro Report Runner</a></div>
-                                <div><a href="javascript:void(0);"
-                                        onclick="javascript:createStreetHealthReport();return false;">Street Health
-                                    Mental Health Report</a></div>
                             </caisi:isModuleLoad></div>
                     </c:if>
 

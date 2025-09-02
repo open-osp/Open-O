@@ -30,20 +30,20 @@
     String user_no = (String) session.getAttribute("user");
     String demographic_no = (String) session.getAttribute("demo_no");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*"
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*"
          errorPage="/errorpage.jsp" %>
 
-<jsp:useBean id="checklist" class="oscar.OBChecklist_99_12" scope="page"/>
-<jsp:useBean id="risks" class="oscar.OBRisks_99_12" scope="page"/>
+<jsp:useBean id="checklist" class="ca.openosp.OBChecklist_99_12" scope="page"/>
+<jsp:useBean id="risks" class="ca.openosp.OBRisks_99_12" scope="page"/>
 
 <%@ include file="../admin/dbconnection.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
-<%@page import="org.oscarehr.common.dao.FormDao" %>
-<%@page import="org.oscarehr.common.model.Form" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
+<%@page import="ca.openosp.openo.commn.dao.FormDao" %>
+<%@page import="ca.openosp.openo.commn.model.Form" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
     FormDao formDao = SpringUtils.getBean(FormDao.class);
@@ -1405,7 +1405,7 @@
             StringBuffer tt;
             if (f != null) {
                 temp = f.getContent();
-                Properties savedar1risk1 = risks.getRiskName("../webapps/" + oscarVariables.getProperty("project_home") + "/provider/obarrisks_99_12.xml");
+                Properties savedar1risk1 = risks.getRiskName("../webapps/" + oscarVariables.getProperty("project_home") + "/providers/obarrisks_99_12.xml");
                 for (Enumeration e = savedar1risk1.propertyNames(); e.hasMoreElements(); ) {
                     tt = new StringBuffer().append(e.nextElement());
                     if (SxmlMisc.getXmlContent(temp, savedar1risk1.getProperty(tt.toString())) != null)
@@ -1595,7 +1595,7 @@
                 if (SxmlMisc.getXmlContent(temp, "<xml_nadref>", "</xml_nadref>") != null)
                     savedar1risk.setProperty("75", "xml_nadref");
             }
-            out.println(checklist.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/provider/obarchecklist_99_12.xml"), savedar1risk));
+            out.println(checklist.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/providers/obarchecklist_99_12.xml"), savedar1risk));
         }
     }
 

@@ -25,16 +25,17 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ page import="oscar.eform.data.*" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData" %>
-<%@ page import="org.oscarehr.common.model.enumerator.DocumentType" %>
-<%@ page import="org.oscarehr.documentManager.DocumentAttachmentManager" %>
-<%@ page import="org.oscarehr.managers.EmailComposeManager" %>
-<%@ page import="org.oscarehr.managers.SecurityInfoManager"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="oscar.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.eform.data.*" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.DocumentType" %>
+<%@ page import="ca.openosp.openo.documentManager.DocumentAttachmentManager" %>
+<%@ page import="ca.openosp.openo.managers.EmailComposeManager" %>
+<%@ page import="ca.openosp.openo.managers.SecurityInfoManager"%>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
 <%@ page import="java.util.List" %>
+<%@ page import="ca.openosp.openo.eform.data.EForm" %>
 
 <%!
     public void addHiddenEFormAttachments(LoggedInInfo loggedInInfo, EForm eForm, String eFormId) {

@@ -28,8 +28,9 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.MsgDemoMap;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.MsgDemoMap;
+import ca.openosp.openo.commn.dao.MsgDemoMapDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class MsgDemoMapDaoTest extends DaoTestFixtures {
 
@@ -42,7 +43,7 @@ public class MsgDemoMapDaoTest extends DaoTestFixtures {
     @Before
     public void before() throws Exception {
         SchemaUtils.restoreTable("msgDemoMap", "demographic", "lst_gender", "admission", "demographic_merged",
-                "program", "health_safety", "provider", "providersite", "site", "program_team", "messagetbl");
+                "program", "health_safety", "providers", "providersite", "site", "program_team", "messagetbl");
     }
 
     @Test

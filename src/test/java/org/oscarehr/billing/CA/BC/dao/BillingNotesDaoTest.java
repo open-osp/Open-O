@@ -23,11 +23,12 @@
  */
 package org.oscarehr.billing.CA.BC.dao;
 
+import ca.openosp.openo.billing.CA.BC.dao.BillingNoteDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingNotesDaoTest extends DaoTestFixtures {
 

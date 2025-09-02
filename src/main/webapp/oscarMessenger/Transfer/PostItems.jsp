@@ -40,7 +40,10 @@
 %>
 
 <%@page contentType='text/xml'
-        import="oscar.oscarMessenger.docxfer.send.*, oscar.oscarMessenger.docxfer.util.*" %>
+        import="ca.openosp.openo.messenger.docxfer.send.*, ca.openosp.openo.messenger.docxfer.util.*" %>
+<%@ page import="ca.openosp.openo.messenger.docxfer.util.MsgCommxml" %>
+<%@ page import="ca.openosp.openo.messenger.pageUtil.MsgSessionBean" %>
+<%@ page import="ca.openosp.openo.messenger.docxfer.send.MsgSendDocument" %>
 <%
 
     String checks = "";
@@ -56,12 +59,12 @@
     }
 
     //out.println(checks);
-    String xmlDoc = oscar.oscarMessenger.docxfer.util.MsgCommxml.decode64(request.getParameter("xmlDoc"));
+    String xmlDoc = MsgCommxml.decode64(request.getParameter("xmlDoc"));
     java.util.ArrayList aList = new java.util.ArrayList();
     String sXML = MsgCommxml.toXML(new MsgSendDocument().parseChecks2(xmlDoc, checks, aList));
 
-    oscar.oscarMessenger.pageUtil.MsgSessionBean bean;
-    bean = (oscar.oscarMessenger.pageUtil.MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
+    MsgSessionBean bean;
+    bean = (MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
     bean.setAttachment(sXML);
 
     response.sendRedirect("../CreateMessage.jsp");

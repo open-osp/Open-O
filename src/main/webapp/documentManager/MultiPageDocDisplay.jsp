@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -40,20 +40,26 @@
     }
 %>
 
-<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@ page import="java.util.*" %>
-<%@ page
-        import="org.oscarehr.phr.util.MyOscarUtils,org.oscarehr.myoscar.utils.MyOscarLoggedInInfo,org.oscarehr.util.WebUtils" %>
+<%@ page import="ca.openosp.openo.utility.WebUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.oscarLab.ca.all.*,oscar.oscarMDS.data.*,oscar.oscarLab.ca.all.util.*" %>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*, org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.lab.ca.all.*,ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.all.util.*" %>
+<%@page import="org.springframework.web.context.WebApplicationContext,ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.*, ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.AcknowledgementData" %>
+<%@ page import="ca.openosp.openo.mds.data.ReportStatus" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderInboxRoutingDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderInboxItem" %>
 <%!
     ProviderInboxRoutingDao providerInboxRoutingDao = SpringUtils.getBean(ProviderInboxRoutingDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -443,7 +449,7 @@
                                             var popup = window.open(varpage, windowname, windowprops);
                                         }
                                         YAHOO.example.BasicRemote = function () {
-                                            var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
+                                            var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
                                             var oDS = new YAHOO.util.XHRDataSource(url, {
                                                 connMethodPost: true,
                                                 connXhrMode: 'ignoreStaleResponses'
@@ -924,20 +930,7 @@
                                                            onClick="javascript: checkDelete('documentReport.jsp?delDocumentNo=1&amp;function=demographic&amp;functionid=1&amp;viewstatus=active','test')"/>
                                                 </security:oscarSec>
                                                 <% } %>
-                                                <%
-                                                    if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                                                        MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                                                        boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
-                                                %>
-                                                <input type="button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%>
-                                                       tabindex="<%=tabindex++%>"
-                                                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnSendToPHR"/>"
-                                                       onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
-
-                                                <%
-                                                        }
-
-                                                    }
+                                                <%}
                                                 %>
                                             </td>
                                         </tr>

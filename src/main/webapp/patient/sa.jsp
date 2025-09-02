@@ -30,18 +30,18 @@
     String user_no = (String) session.getAttribute("user");
     String demographic_no = (String) session.getAttribute("demo_no");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*,java.net.*" errorPage="../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*,java.net.*" errorPage="../errorpage.jsp" %>
 
-<jsp:useBean id="risks" class="oscar.OBRisks_99_12" scope="page"/>
+<jsp:useBean id="risks" class="ca.openosp.OBRisks_99_12" scope="page"/>
 
 <%@ include file="../admin/dbconnection.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
-<%@page import="org.oscarehr.common.dao.FormDao" %>
-<%@page import="org.oscarehr.common.model.Form" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
+<%@page import="ca.openosp.openo.commn.dao.FormDao" %>
+<%@page import="ca.openosp.openo.commn.model.Form" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
     FormDao formDao = SpringUtils.getBean(FormDao.class);
@@ -1422,7 +1422,7 @@
 </table>
 <%
     if (bNewList) {
-        out.println(risks.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/provider/obarrisks_99_12.xml")));
+        out.println(risks.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/providers/obarrisks_99_12.xml")));
     }
 %>
 </form>

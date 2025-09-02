@@ -33,9 +33,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.BillingONCHeader1;
-import org.oscarehr.util.DateRange;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.BillingONCHeader1;
+import ca.openosp.openo.utility.DateRange;
+import ca.openosp.openo.commn.dao.BillingONCHeader1Dao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingONCHeader1DaoTest extends DaoTestFixtures {
 
@@ -46,9 +47,9 @@ public class BillingONCHeader1DaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("billing_on_cheader1", "billing_on_item", "gstControl", "billingservice", "provider",
+        SchemaUtils.restoreTable("billing_on_cheader1", "billing_on_item", "gstControl", "billingservice", "providers",
                 "demographic", "lst_gender", "admission", "demographic_merged", "program",
-                "health_safety", "provider", "providersite", "site", "program_team", "log", "Facility", "billing_on_payment");
+                "health_safety", "providers", "providersite", "site", "program_team", "log", "Facility", "billing_on_payment");
     }
 
     @Test

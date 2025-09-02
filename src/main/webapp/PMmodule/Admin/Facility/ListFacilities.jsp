@@ -75,11 +75,6 @@
         <display:column property="contactName" sortable="true"
                         title="Contact name"/>
         <display:column property="hic" sortable="true" title="HIC?"/>
-        <display:column sortable="false" title="">
-            <a
-                    href="<%=request.getContextPath() %>/PMmodule/BedManager.do?method=manage&facilityId=<c:out value="${facility.id}" />"/>Manage
-            Beds </a>
-        </display:column>
     </display:table>
 </form>
 <div>

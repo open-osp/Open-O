@@ -20,7 +20,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="org.oscarehr.casemgmt.model.CaseManagementNote"
+	<class name="ca.openosp.openo.casemgmt.model.CaseManagementNote"
 		table="casemgmt_note">
 		<id name="id" column="note_id" unsaved-value="0">
 			<generator class="native" />
@@ -40,17 +40,17 @@
 		<property name="reporter_program_team" />
 		<property name="history" />
 		<property name="uuid" />
-		<many-to-one name="provider" class="org.oscarehr.common.model.Provider"
+		<many-to-one name="provider" class="ca.openosp.openo.commn.model.Provider"
 			column="provider_no" update="false" not-found='ignore' insert="false"
 			lazy="false" />
 		<set name="issues" table="casemgmt_issue_notes" lazy="false">
 			<key column="note_id" />
 			<many-to-many column="id"
-				class="org.oscarehr.casemgmt.model.CaseManagementIssue" />
+				class="ca.openosp.openo.casemgmt.model.CaseManagementIssue" />
 		</set>
                 <set name="extend" table="casemgmt_note_ext" lazy="false">
                         <key column="note_id" update="false" />
-                        <one-to-many class="org.oscarehr.casemgmt.model.CaseManagementNoteExt"/>
+                        <one-to-many class="ca.openosp.openo.casemgmt.model.CaseManagementNoteExt"/>
                 </set>
 		<property name="roleName" type="string"
 			formula="(select r.role_name from secRole r where r.role_no = reporter_caisi_role)" />
@@ -76,7 +76,7 @@
 	</class>
 
 	<sql-query name="mostRecent">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select high_priority casemgmt_note.note_id as {cmn.id}, update_date as
 		{cmn.update_date}, observation_date as {cmn.observation_date},
 		demographic_no as {cmn.demographic_no}, provider_no as
@@ -106,7 +106,7 @@
 		{cmn.observation_date} asc
 	</sql-query>
 	<sql-query name="mostRecentTime">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select high_priority casemgmt_note.note_id as {cmn.id}, update_date as
 		{cmn.update_date}, observation_date as {cmn.observation_date},
 		demographic_no as {cmn.demographic_no}, provider_no as
@@ -136,7 +136,7 @@
 		{cmn.observation_date} asc
 	</sql-query>
 	<sql-query name="mostRecentLimit">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select high_priority casemgmt_note.note_id as {cmn.id}, update_date as
 		{cmn.update_date}, observation_date as {cmn.observation_date},
 		demographic_no as {cmn.demographic_no}, provider_no as
@@ -166,7 +166,7 @@
 		{cmn.observation_date} desc limit ?, ?
 	</sql-query>
 	<sql-query name="appointmentNotes">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select high_priority casemgmt_note.note_id as {cmn.id}, update_date as
 		{cmn.update_date}, observation_date as {cmn.observation_date},
 		demographic_no as {cmn.demographic_no}, provider_no as
@@ -196,7 +196,7 @@
 		{cmn.observation_date} asc
 	</sql-query>
 	<sql-query name="issueNotes">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select high_priority distinct casemgmt_note.note_id as {cmn.id}, casemgmt_note.update_date as
 		{cmn.update_date}, casemgmt_note.observation_date as {cmn.observation_date},
 		casemgmt_note.demographic_no as {cmn.demographic_no}, casemgmt_note.provider_no as
@@ -234,7 +234,7 @@
 		and cmi2.issue_id in (?) and cmn2.demographic_no = ? group by cmn2.uuid)
 	</sql-query>
 	<sql-query name="mostRecentOra">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select note_id as {cmn.id}, update_date as {cmn.update_date},
 		observation_date as {cmn.observation_date}, demographic_no as
 		{cmn.demographic_no}, provider_no as {cmn.providerNo}, note as
@@ -262,7 +262,7 @@
 		using(note_id) order by {cmn.observation_date} asc
 	</sql-query>
 	<sql-query name="mostRecentTimeOra">
-		<return alias="cmn" class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+		<return alias="cmn" class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		select note_id as {cmn.id}, update_date as {cmn.update_date},
 		observation_date as {cmn.observation_date}, demographic_no as
 		{cmn.demographic_no}, provider_no as {cmn.providerNo}, note as

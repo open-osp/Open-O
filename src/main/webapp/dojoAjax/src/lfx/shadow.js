@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lfx.shadow");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.uri.Uri");
 
 dojo.lfx.shadow = function (/* HTMLElement */node) {

@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.svg.PlotArea");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 if (dojo.render.svg.capable) {
     dojo.require("dojo.svg");

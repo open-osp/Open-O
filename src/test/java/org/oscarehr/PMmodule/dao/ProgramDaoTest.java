@@ -25,11 +25,12 @@ package org.oscarehr.PMmodule.dao;
 
 import static org.junit.Assert.assertNotNull;
 
+import ca.openosp.openo.PMmodule.dao.ProgramDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProgramDaoTest extends DaoTestFixtures {
 
@@ -37,7 +38,7 @@ public class ProgramDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("program", "admission", "Facility", "program_queue", "lst_orgcd", "secUserRole", "provider");
+        SchemaUtils.restoreTable("program", "admission", "Facility", "program_queue", "lst_orgcd", "secUserRole", "providers");
     }
 
     @Test

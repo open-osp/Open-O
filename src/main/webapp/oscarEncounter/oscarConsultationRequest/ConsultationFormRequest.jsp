@@ -39,7 +39,7 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
@@ -50,54 +50,57 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
 
-<%@page import="java.util.ArrayList, java.util.List, java.util.*, oscar.OscarProperties, oscar.oscarLab.ca.on.*" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager,org.oscarehr.casemgmt.model.CaseManagementNote,org.oscarehr.casemgmt.model.Issue,org.oscarehr.common.model.UserProperty,org.oscarehr.common.dao.UserPropertyDAO,org.springframework.web.context.support.*,org.springframework.web.context.*" %>
+<%@page import="java.util.ArrayList, java.util.List, java.util.*, ca.openosp.OscarProperties, ca.openosp.openo.lab.ca.on.*" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager,ca.openosp.openo.casemgmt.model.CaseManagementNote,ca.openosp.openo.casemgmt.model.Issue,ca.openosp.openo.commn.dao.UserPropertyDAO,org.springframework.web.context.support.*,org.springframework.web.context.*" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequest2Form" %>
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
-<%@page import="oscar.oscarDemographic.data.DemographicData" %>
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewRequest2Action" %>
-<%@page import="org.oscarehr.util.MiscUtils,oscar.oscarClinic.ClinicData" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao, org.oscarehr.PMmodule.model.Program" %>
-<%@page import="oscar.oscarDemographic.data.DemographicData, oscar.oscarRx.data.RxProviderData, oscar.oscarRx.data.RxProviderData.Provider, oscar.oscarClinic.ClinicData" %>
-<%@ page import="org.oscarehr.common.dao.FaxConfigDao, org.oscarehr.common.model.FaxConfig" %>
-<%@page import="org.oscarehr.common.dao.ConsultationServiceDao" %>
-<%@page import="org.oscarehr.common.model.ConsultationServices" %>
-<%@ page import="org.oscarehr.managers.DemographicManager" %>
-<%@page import="org.oscarehr.common.model.DemographicContact" %>
-<%@page import="org.oscarehr.common.model.ProfessionalContact" %>
-<%@page import="org.oscarehr.common.dao.ContactSpecialtyDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicContactDao" %>
-<%@page import="org.oscarehr.common.model.ContactSpecialty" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ConsultationRequestExtKey" %>
-<%@ page import="org.oscarehr.common.dao.ConsultationRequestExtDao" %>
-<%@ page import="org.oscarehr.managers.ConsultationManager" %>
-<%@ page import="oscar.oscarEncounter.data.EctFormData" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequest2Form" %>
+<%@page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
+<%@page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewRequest2Action" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils,ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<%@ page import="ca.openosp.openo.ui.servlet.ImageRenderingServlet" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao, ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.demographic.data.DemographicData, ca.openosp.openo.prescript.data.RxProviderData, ca.openosp.openo.prescript.data.RxProviderData.Provider, ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.commn.dao.FaxConfigDao" %>
+<%@page import="ca.openosp.openo.commn.dao.ConsultationServiceDao" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@page import="ca.openosp.openo.commn.dao.ContactSpecialtyDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicContactDao" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ConsultationRequestExtKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.ConsultationRequestExtDao" %>
+<%@ page import="ca.openosp.openo.managers.ConsultationManager" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctFormData" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.model.EFormData" %>
-<%@ page import="oscar.eform.EFormUtil" %>
-<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
-<%@ page import="oscar.util.StringUtils" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.demographic.data.EctInformation" %>
+<%@ page import="ca.openosp.openo.demographic.data.RxInformation" %>
+<%@ page
+  import="ca.openosp.openo.encounter.oscarConsultationRequest.config.data.EctConConfigurationJavascriptData" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
+<%@ page import="ca.openosp.openo.managers.LookupListManager" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 
 <jsp:useBean id="displayServiceUtil" scope="request"
-             class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil"/>
+             class="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil"/>
 <!DOCTYPE html>
 <html>
 
-    <%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+    <%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 
     <%
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -138,7 +141,7 @@
         String providerNo = (String) session.getAttribute("user");
         String providerNoFromChart = null;
         DemographicData demoData = null;
-        org.oscarehr.common.model.Demographic demographic = null;
+        Demographic demographic = null;
 
         RxProviderData rx = new RxProviderData();
         List<Provider> prList = rx.getAllProviders();
@@ -155,7 +158,7 @@
             demo = consultUtil.demoNo;
         }
 
-        // Check if the selected provider is currently active. If it is not active, add it to the prList, as the list only contains active providers.
+        // Check if the selected providers is currently active. If it is not active, add it to the prList, as the list only contains active providers.
         Boolean isProviderActive = false;
         for (Provider activeProvider : prList) {
             if (consultUtil.providerNo != null && consultUtil.providerNo.equalsIgnoreCase(activeProvider.getProviderNo())) {
@@ -173,7 +176,7 @@
 
         UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
         if (demo != null) {
-            demoData = new oscar.oscarDemographic.data.DemographicData();
+            demoData = new DemographicData();
             demographic = demoData.getDemographic(loggedInInfo, demo);
             providerNoFromChart = demographic.getProviderNo();
             demo_mrp = demographic.getProviderNo();
@@ -264,7 +267,7 @@
 		 --%>
     <%
 
-        org.oscarehr.managers.LookupListManager lookupListManager = SpringUtils.getBean(org.oscarehr.managers.LookupListManager.class);
+        LookupListManager lookupListManager = SpringUtils.getBean(LookupListManager.class);
         pageContext.setAttribute("appointmentInstructionList", lookupListManager.findLookupListByName(loggedInInfo, "consultApptInst"));
 
     %>
@@ -663,8 +666,8 @@
         var services = new Array();				// the following are used as a 2D table for makes and models
         var specialists = new Array();
         var specialistFaxNumber = "";
-        <%oscar.oscarEncounter.oscarConsultationRequest.config.data.EctConConfigurationJavascriptData configScript;
-				configScript = new oscar.oscarEncounter.oscarConsultationRequest.config.data.EctConConfigurationJavascriptData();
+        <%EctConConfigurationJavascriptData configScript;
+				configScript = new EctConConfigurationJavascriptData();
 				out.println(configScript.getJavascript());%>
 
         /////////////////////////////////////////////////////////////////////
@@ -1271,7 +1274,7 @@
 
 
     <%
-        String lhndType = "provider"; //set default as provider
+        String lhndType = "providers"; //set default as providers
         String providerDefault = providerNo;
 
         if (consultUtil.letterheadName == null) {
@@ -1283,7 +1286,7 @@
                 lhnd = lhndProperty.getValue();
             }
 
-            //1 or null = provider, 2 = MRP and 3 = clinic
+            //1 or null = providers, 2 = MRP and 3 = clinic
 
             if (lhnd != null) {
                 if ("2".equals(lhnd)) {
@@ -1586,7 +1589,7 @@ if (userAgent != null) {
                 } else if (request.getAttribute("validateError") == null) {
                     //  new request
                     if (demo != null) {
-                        oscar.oscarDemographic.data.RxInformation RxInfo = new oscar.oscarDemographic.data.RxInformation();
+                        RxInformation RxInfo = new RxInformation();
                         EctViewRequest2Action.fillFormValues(thisForm, consultUtil);
 
                         if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_ALLERGIES", "true"))) {
@@ -1596,7 +1599,7 @@ if (userAgent != null) {
 
                         if ("true".equalsIgnoreCase(props.getProperty("CONSULTATION_AUTO_INCLUDE_MEDICATIONS", "true"))) {
                             if (props.getProperty("currentMedications", "").equalsIgnoreCase("otherMedications")) {
-                                oscar.oscarDemographic.data.EctInformation EctInfo = new oscar.oscarDemographic.data.EctInformation(loggedInInfo, demo);
+                                EctInformation EctInfo = new EctInformation(loggedInInfo, demo);
                                 thisForm.setCurrentMedications(EctInfo.getFamilyHistory());
                             } else {
                                 thisForm.setCurrentMedications(RxInfo.getCurrentMedication(demo));
@@ -2381,7 +2384,7 @@ if (userAgent != null) {
                                                         if (p.getProviderNo().compareTo("-1") != 0 && (p.getFirstName() != null || p.getSurname() != null)) {
                                                 %>
                                                 <option value="<%=p.getProviderNo() %>"
-                                                        <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(p.getProviderNo())) ? "selected='selected'" : (consultUtil.letterheadName == null && p.getProviderNo().equalsIgnoreCase(providerDefault) && lhndType.equals("provider") ? "selected='selected'" : "") %>>
+                                                        <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(p.getProviderNo())) ? "selected='selected'" : (consultUtil.letterheadName == null && p.getProviderNo().equalsIgnoreCase(providerDefault) && lhndType.equals("providers") ? "selected='selected'" : "") %>>
                                                     <%=Encode.forHtmlContent(p.getSurname())%>
                                                     ,&nbsp;<%=Encode.forHtmlContent(p.getFirstName().replace("Dr.", ""))%>
                                                 </option>
@@ -2784,7 +2787,6 @@ if (userAgent != null) {
                                 onSelectSpecialist(document.EctConsultationFormRequest2Form.specialist);
 
                                 <%
-		            	//new with BORN referrals. Allow form to be loaded with service and
 		            	//specialist pre-selected
 		            	String reqService = request.getParameter("service");
 

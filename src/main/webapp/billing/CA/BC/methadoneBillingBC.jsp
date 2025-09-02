@@ -30,7 +30,7 @@
 
 <%@page language="java" contentType="text/html" %>
 <%@page import="java.util.*,
-                oscar.util.*,
+                ca.openosp.openo.util.*,
                 org.springframework.web.context.support.WebApplicationContextUtils,
                 org.springframework.web.context.WebApplicationContext" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -72,11 +72,11 @@
                 dateFormat: "yy-mm-dd",
                 buttonImage: "images/datepicker.gif",
                 beforeShow: function (input, inst) {
-                    if ($("#provider :selected").val() == "empty") {
+                    if ($("#providers :selected").val() == "empty") {
 
                         //$(this).datepicker( "hide" )
                         alert("Select Billing Physician");
-                        $("#provider").focus();
+                        $("#providers").focus();
 
                     } else if ($("#visitLocation :selected").val() == "empty") {
 
@@ -177,7 +177,7 @@
             </li>
 
             <li>
-                <!--   fmt:message key="billing.provider.billProvider"/ -->
+                <!--   fmt:message key="billing.providers.billProvider"/ -->
 
                 Status
                 <input type="text" name="patientStatus" value="<c:out value="${methadoneBillingBC.patientStatus}" />">

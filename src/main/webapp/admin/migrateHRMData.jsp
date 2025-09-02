@@ -23,26 +23,26 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="java.util.LinkedList" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
 <%@page import="java.io.File" %>
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@page import="java.util.ArrayList" %>
-<%@page import="org.oscarehr.hospitalReportManager.HRMReportParser" %>
-<%@page import="org.oscarehr.hospitalReportManager.HRMReport" %>
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMDocument" %>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentDao" %>
-<%@page import="org.oscarehr.common.model.OscarLog" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.log.LogAction" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.HRMReportParser" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.HRMReport" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.model.HRMDocument" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao" %>
+<%@page import="ca.openosp.openo.commn.model.OscarLog" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.log.LogAction" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page contentType="text/html" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>

@@ -31,15 +31,15 @@
     String premiumFlag = "";
     String service_form = "", service_name = "";
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
 <%@ include file="../admin/dbconnection.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@ page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingServicePremium" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServicePremiumDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingServicePremium" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServicePremiumDao" %>
 <%
     CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
     CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);

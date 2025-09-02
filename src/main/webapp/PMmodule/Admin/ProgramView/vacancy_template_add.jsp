@@ -24,12 +24,12 @@
 --%>
 
 
-<%@page import="org.oscarehr.PMmodule.model.VacancyTemplate" %>
-<%@page import="org.oscarehr.PMmodule.model.Criteria" %>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaType" %>
-<%@page import="org.oscarehr.PMmodule.service.VacancyTemplateManager" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.PMmodule.model.VacancyTemplate" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Criteria" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaType" %>
+<%@page import="ca.openosp.openo.PMmodule.service.VacancyTemplateManager" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@page import="java.util.List" %>
 <%@ include file="/taglibs.jsp" %>

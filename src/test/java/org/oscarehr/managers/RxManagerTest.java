@@ -24,17 +24,19 @@
 
 package org.oscarehr.managers;
 
+import ca.openosp.openo.managers.PrescriptionManagerImpl;
+import ca.openosp.openo.managers.RxManager;
+import ca.openosp.openo.managers.RxManagerImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.common.dao.DrugDao;
-import org.oscarehr.common.dao.DrugDaoImpl;
-import org.oscarehr.common.exception.AccessDeniedException;
-import org.oscarehr.common.model.AbstractModel;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.Prescription;
-import org.oscarehr.util.LoggedInInfo;
+import ca.openosp.openo.commn.dao.DrugDaoImpl;
+import ca.openosp.openo.commn.exception.AccessDeniedException;
+import ca.openosp.openo.commn.model.AbstractModel;
+import ca.openosp.openo.commn.model.Drug;
+import ca.openosp.openo.commn.model.Prescription;
+import ca.openosp.openo.utility.LoggedInInfo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -216,7 +218,7 @@ public class RxManagerTest extends RxManagerImpl {
         Drug result = this.updateDrug(info, d);
 
         assertNotNull(result);
-        assertEquals(1, (int) d.getId()); //should take on id assigned by dao.addNewDrug
+        assertEquals(1, (int) d.getId()); //should take on id assigned by daos.addNewDrug
         assertEquals("ASA", d.getGenericName()); //should not change other fields.
 
         // merge() should have adjusted the this.old variable

@@ -30,8 +30,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.CtlDocument;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.CtlDocument;
+import ca.openosp.openo.commn.dao.CtlDocumentDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class CtlDocumentDaoTest extends DaoTestFixtures {
 

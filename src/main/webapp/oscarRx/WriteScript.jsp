@@ -27,10 +27,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page import="java.util.*,oscar.oscarRx.data.*,oscar.oscarRx.pageUtil.*,oscar.oscarRx.util.*" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@ page import="java.util.*,ca.openosp.openo.rx.data.*,ca.openosp.openo.rx.pageUtil.*,ca.openosp.openo.rx.util.*" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.prescript.util.LimitedUseCode" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxDrugData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxCodesData" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.util.LimitedUseLookup" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxWriteScriptForm" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 
 <%long start = System.currentTimeMillis();%>
 
@@ -84,7 +92,7 @@
             boolean isCustom = true;
             String atcCode = null;
             String regionalIdentifier = "";
-            String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
+            String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
             Long now = new Date().getTime();
             String annotation_attrib = "";// = "anno"+now;
 
@@ -793,16 +801,6 @@
             }
 
 
-            function HideW(id, resourceId, updated) {
-                var url = 'GetmyDrugrefInfo.do?method=setWarningToHide';
-                //callReplacementWebService("GetmyDrugrefInfo.do?method=setWarningToHide",'interactionsRxMyD');function callReplacementWebService(url,id){
-                var ran_number = Math.round(Math.random() * 1000000);
-                var params = "resId=" + resourceId + "&updatedat=" + updated + "&rand=" + ran_number;  //hack to get around ie caching the page
-
-                //console.log("params: "+params);
-                new Ajax.Updater(id, url, {method: 'get', parameters: params, asynchronous: true});
-
-            }
 
 
             var resHidden2 = 0;
@@ -1442,7 +1440,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                             <br>
                             <!-- peice Went Here --> <%
                                 //RxPatientData.Patient.Allergy[] allerg = (RxPatientData.Patient.Allergy[]) request.getAttribute("ALLERGIES");
-                                org.oscarehr.common.model.Allergy[] allerg = bean.getAllergyWarnings(loggedInInfo, atcCode);
+                                Allergy[] allerg = bean.getAllergyWarnings(loggedInInfo, atcCode);
                                 if (allerg != null && allerg.length > 0) {
                                     for (int allergIndex = 0; allergIndex < allerg.length; allergIndex++) {
                             %>
@@ -1557,9 +1555,6 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                                 <div id="interactionsRx"></div>
                                 <div id="renalDosing"></div>
                                 --%>
-                                        <div id="interactionsRxMyD"></div>
-                                        <div id="warningsRxMyD"></div>
-                                        <div id="bulletinsRxMyD"></div>
                                         &nbsp;
                                     </td>
                                 </tr>
@@ -1634,16 +1629,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                 }
 
                 // callReplacementWebService("InteractionDisplay.jsp",'interactionsRx');
-                callReplacementWebService("GetmyDrugrefInfo.do?method=view&target=interactionsRx", 'interactionsRx');
-                <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">
-                callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
-                </oscar:oscarPropertiesCheck>
 
-                <%--  OLD CALLS TO THE WEB SERVICES
-                callReplacementWebService("InteractionDisplayMyD.jsp",'interactionsRxMyD');
-                callReplacementWebService("WarningDisplayMyD.jsp",'warningsRxMyD');
-                callReplacementWebService("BulletinDisplayMyD.jsp",'bulletinsRxMyD');
-                --%>
             </script>
         </td>
     </tr>

@@ -35,16 +35,16 @@
 
 <c:if test="${authenticated eq true}">
 
-    <%@page import="org.oscarehr.util.DigitalSignatureUtils" %>
-    <%@page import="org.oscarehr.util.MiscUtils" %>
+    <%@page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+    <%@page import="ca.openosp.openo.utility.MiscUtils" %>
     <%@page import="java.io.FileOutputStream" %>
     <%@page import="java.io.InputStream" %>
-    <%@page import="org.oscarehr.util.LoggedInInfo" %>
+    <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
     <%@page import="org.apache.commons.codec.binary.Base64" %>
-    <%@ page import="org.oscarehr.common.model.DigitalSignature" %>
-    <%@ page import="org.oscarehr.managers.DigitalSignatureManager" %>
-    <%@ page import="org.oscarehr.util.SpringUtils" %>
-    <%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
+    <%@ page import="ca.openosp.openo.commn.model.DigitalSignature" %>
+    <%@ page import="ca.openosp.openo.managers.DigitalSignatureManager" %>
+    <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+    <%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
     <%
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

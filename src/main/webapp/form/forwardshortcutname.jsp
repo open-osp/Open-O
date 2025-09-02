@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -34,7 +34,8 @@
     <%response.sendRedirect("../logout.jsp");%>
 </security:oscarSec>
 
-<%@ page import="java.net.URLDecoder, oscar.form.data.*" %>
+<%@ page import="java.net.URLDecoder, ca.openosp.openo.form.data.*" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
 
 <%
 

@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lang.repr");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.AdapterRegistry");
 dojo.require("dojo.string.extras");
 

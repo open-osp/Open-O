@@ -28,11 +28,12 @@
 </head>
 <body>
 <%@ page
-        import="java.io.*, java.sql.*, java.util.*,java.net.*, oscar.*, java.math.*"
+        import="java.io.*, java.sql.*, java.util.*,java.net.*, ca.openosp.*, java.math.*"
         errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.*" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <jsp:useBean id="dbBillingDataBean" scope="page"
-             class="oscar.dbBillingData">
+             class="ca.openosp.dbBillingData">
     <jsp:setProperty name="dbBillingDataBean" property="*"/>
 </jsp:useBean>
 

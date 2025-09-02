@@ -14,7 +14,7 @@ dojo.require("dojo.collections.ArrayList");
 
 dojo.collections.Set = new function () {
     //	summary
-    //	Singleton for dealing with common set operations.
+    //	Singleton for dealing with commons set operations.
     this.union = function (/* array */setA, /* array */setB) {
         //	summary
         //	Return the union of the two passed sets.

@@ -24,9 +24,10 @@
 
 package org.oscarehr.fax.util;
 
+import ca.openosp.openo.fax.util.PdfCoverPageCreator;
 import org.junit.Test;
-import org.oscarehr.fax.core.FaxAccount;
-import org.oscarehr.fax.core.FaxRecipient;
+import ca.openosp.openo.fax.core.FaxAccount;
+import ca.openosp.openo.fax.core.FaxRecipient;
 
 import java.io.File;
 import java.io.FileNotFoundException;

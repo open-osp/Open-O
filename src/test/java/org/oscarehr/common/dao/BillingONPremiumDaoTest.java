@@ -38,9 +38,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.BillingONPremium;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.BillingONPremium;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.dao.BillingONPremiumDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingONPremiumDaoTest extends DaoTestFixtures {
 
@@ -61,7 +62,7 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
     public void testGetActiveRAPremiumsByPayDate() throws Exception {
         Date startDate = new Date(dfm.parse("20090101").getTime());
         Date endDate = new Date(dfm.parse("20120101").getTime());
-        Locale locale = new Locale(""); // not used in dao method
+        Locale locale = new Locale(""); // not used in daos method
 
         // One day before lower boundary
         BillingONPremium billONPrem1 = new BillingONPremium();
@@ -133,17 +134,17 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
      * Ensures that query only returns premiums where
      * the paydate is within the given range,
      * the status is set to true, and
-     * the provider numbers match.
+     * the providers numbers match.
      */
     public void testGetActiveRAPremiumsByProvider() throws Exception {
         Provider provider = new Provider();
         provider.setProviderNo("1");
         Date startDate = new Date(dfm.parse("20090101").getTime());
         Date endDate = new Date(dfm.parse("20120101").getTime());
-        Locale locale = new Locale(""); // not used in dao method
+        Locale locale = new Locale(""); // not used in daos method
 
         // On day of lower boundary
-        // Matching provider number
+        // Matching providers number
         BillingONPremium billONPrem1 = new BillingONPremium();
         EntityDataGenerator.generateTestDataForModelClass(billONPrem1);
         Date date1 = new Date(dfm.parse("20090101").getTime());
@@ -152,7 +153,7 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
         billONPrem1.setStatus(true);
 
         // Inside range
-        // Non-matching provider number
+        // Non-matching providers number
         BillingONPremium billONPrem2 = new BillingONPremium();
         EntityDataGenerator.generateTestDataForModelClass(billONPrem2);
         Date date2 = new Date(dfm.parse("20100601").getTime());
@@ -161,7 +162,7 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
         billONPrem2.setStatus(true);
 
         // Inside range
-        // Matching provider number
+        // Matching providers number
         BillingONPremium billONPrem3 = new BillingONPremium();
         EntityDataGenerator.generateTestDataForModelClass(billONPrem3);
         Date date3 = new Date(dfm.parse("20110101").getTime());
@@ -170,7 +171,7 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
         billONPrem3.setStatus(true);
 
         // Inside range
-        // Matching provider number
+        // Matching providers number
         BillingONPremium billONPrem4 = new BillingONPremium();
         EntityDataGenerator.generateTestDataForModelClass(billONPrem4);
         Date date4 = new Date(dfm.parse("20110601").getTime());
@@ -179,7 +180,7 @@ public class BillingONPremiumDaoTest extends DaoTestFixtures {
         billONPrem4.setStatus(false);
 
         // On day of upper boundary
-        // Matching provider number
+        // Matching providers number
         BillingONPremium billONPrem5 = new BillingONPremium();
         EntityDataGenerator.generateTestDataForModelClass(billONPrem5);
         Date date5 = new Date(dfm.parse("20120101").getTime());

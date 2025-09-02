@@ -33,9 +33,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Billing;
-import org.oscarehr.util.DateRange;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Billing;
+import ca.openosp.openo.utility.DateRange;
+import ca.openosp.openo.commn.dao.BillingDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingDaoTest extends DaoTestFixtures {
 
@@ -43,7 +44,7 @@ public class BillingDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("billing", "billingdetail", "billingmaster", "provider", "appointment", "demographic", "lst_gender", "admission", "demographic_merged", "program", "health_safety", "provider", "providersite", "site", "program_team", "log");
+        SchemaUtils.restoreTable("billing", "billingdetail", "billingmaster", "providers", "appointment", "demographic", "lst_gender", "admission", "demographic_merged", "program", "health_safety", "providers", "providersite", "site", "program_team", "log");
     }
 
     @Test

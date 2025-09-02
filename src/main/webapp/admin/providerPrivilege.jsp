@@ -45,29 +45,31 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.BatchUpdateException" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="oscar.util.*" %>
-<%@ page import="oscar.login.*" %>
-<%@ page import="oscar.log.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.SecRole" %>
-<%@ page import="org.oscarehr.common.dao.SecRoleDao" %>
-<%@ page import="org.oscarehr.common.model.SecPrivilege" %>
-<%@ page import="org.oscarehr.common.dao.SecPrivilegeDao" %>
-<%@ page import="org.oscarehr.common.model.SecObjectName" %>
-<%@ page import="org.oscarehr.common.dao.SecObjectNameDao" %>
-<%@ page import="org.oscarehr.common.dao.SecObjectNameDaoImpl" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
-<%@ page import="org.oscarehr.common.model.SecObjPrivilege" %>
-<%@ page import="org.oscarehr.common.model.SecObjPrivilegePrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.SecObjPrivilegeDao" %>
-<%@ page import="org.oscarehr.common.model.RecycleBin" %>
-<%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>
+<%@ page import="ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.login.*" %>
+<%@ page import="ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.SecRole" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecRoleDao" %>
+<%@ page import="ca.openosp.openo.commn.model.SecPrivilege" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecPrivilegeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.SecObjectName" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecObjectNameDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecObjectNameDaoImpl" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.model.SecObjPrivilege" %>
+<%@ page import="ca.openosp.openo.commn.model.SecObjPrivilegePrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecObjPrivilegeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RecycleBin" %>
+<%@ page import="ca.openosp.openo.commn.dao.RecycleBinDao" %>
 <%@ page import="org.springframework.dao.DataIntegrityViolationException" %>
 <%@ page import="org.springframework.web.util.HtmlUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -118,7 +120,7 @@
             vecObjectId.add(objectName);
     }
 
-// get provider name from database
+// get providers name from database
     Vector vecProviderName = new Vector();
     Vector vecProviderNo = new Vector();
     List<ProviderData> providers = providerDataDao.findAllOrderByLastName();

@@ -43,9 +43,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.MyGroupAccessRestriction;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.commn.model.MyGroupAccessRestriction;
+import ca.openosp.openo.commn.dao.MyGroupAccessRestrictionDao;
+import ca.openosp.openo.utility.SpringUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 
 public class MyGroupAccessRestrictionDaoTest extends DaoTestFixtures {

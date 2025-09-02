@@ -23,18 +23,24 @@
     Ontario, Canada
 
 --%>
-<%@ page import="oscar.oscarProvider.data.*, oscar.OscarProperties, oscar.oscarClinic.ClinicData, java.util.*" %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.providers.data.*, ca.openosp.OscarProperties, ca.openosp.openo.clinic.ClinicData, java.util.*" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.providers.data.ProSignatureData" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxProviderData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -69,13 +75,13 @@
         </c:if>
 
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+            RxSessionBean bean = (RxSessionBean) session.getAttribute("RxSessionBean");
 
 //are we printing in the past?
             String reprint = (String) request.getAttribute("rePrint") != null ? (String) request.getAttribute("rePrint") : "false";
             String createAnewRx;
             if (reprint.equalsIgnoreCase("true")) {
-                bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
+                bean = (RxSessionBean) session.getAttribute("tmpBeanRX");
                 createAnewRx = "window.location.href = '" + request.getContextPath() + "/oscarRx/SearchDrug.jsp'";
             } else
                 createAnewRx = "javascript:clearPending('')";
@@ -94,7 +100,7 @@
                     if (result != null) location = result.getLocation();
                 }
 
-                oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+                RxProviderData.Provider provider = new RxProviderData().getProvider(bean.getProviderNo());
                 ProSignatureData sig = new ProSignatureData();
                 boolean hasSig = sig.hasSignature(bean.getProviderNo());
                 String doctorName = "";
@@ -126,7 +132,7 @@
 
 
             } else if (props.getProperty("clinicSatelliteName") != null) {
-                oscar.oscarRx.data.RxProviderData.Provider provider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+                RxProviderData.Provider provider = new RxProviderData().getProvider(bean.getProviderNo());
                 ProSignatureData sig = new ProSignatureData();
                 boolean hasSig = sig.hasSignature(bean.getProviderNo());
                 String doctorName = "";
@@ -207,7 +213,7 @@
             function printPaste2Parent() {
 
                 try {
-                    text = "****<%=oscar.oscarProvider.data.ProviderData.getProviderName(bean.getProviderNo())%>********************************************************************************";
+                    text = "****<%=ProviderData.getProviderName(bean.getProviderNo())%>********************************************************************************";
                     text = text.substring(0, 82) + "\n";
                     if (document.all) {
                         text += preview.document.forms[0].rx_no_newlines.value
@@ -252,58 +258,8 @@
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="addressSelect()">
 
-    <!-- added by vic, hsfo -->
-    <%
-        int hsfo_patient_id = bean.getDemographicNo();
-        oscar.form.study.HSFO.HSFODAO hsfoDAO = new oscar.form.study.HSFO.HSFODAO();
-        int dx = hsfoDAO.retrievePatientDx(String.valueOf(hsfo_patient_id));
-        if (dx >= 0 && dx < 7) {
-            // dx>=0 means patient is enrolled in HSFO program
-            // dx==7 means patient has all 3 symptoms, according to hsfo requirement, stop showing the popup
-    %>
-    <script>
-        function toggleView(form) {
-            var dxCode = (form.hsfo_Hypertension.checked ? 1 : 0) + (form.hsfo_Diabetes.checked ? 2 : 0) + (form.hsfo_Dyslipidemia.checked ? 4 : 0);
-            // send dx code to HsfoPreview.jsp so that it will be displayed and persisted there
-            document.getElementById("hsfoPop").style.display = "none";
-            document.getElementById("bodyView").style.display = "block";
-            document.getElementById("preview").src = "HsfoPreview.jsp?dxCode=" + dxCode;
-        }
-    </script>
-    <div id="hsfoPop"
-         style="border: ridge; background-color: ivory; width: 550px; height: 150px; position: absolute; left: 100px; top: 100px;">
-        <form name="hsfoForm">
-            <center><BR>
-                <table>
-                    <tr>
-                        <td colspan="3"><b>Please mark the corresponding symptom(s)
-                            for the enrolled patient.</b></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="hsfo_Hypertension" value="1"
-                                <%= (dx&1)==0?"":"checked" %>> Hypertension
-                        </td>
-                        <td><input type="checkbox" name="hsfo_Diabetes" value="2"
-                                <%= (dx&2)==0?"":"checked" %>> Diabetes
-                        </td>
-                        <td><input type="checkbox" name="hsfo_Dyslipidemia" value="4"
-                                <%= (dx&4)==0?"":"checked" %>> Dyslipidemia
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" align="center">
-                            <hr>
-                            <input type="button" name="hsfo_submit" value="submit"
-                                   onclick="toggleView(this.form);"></td>
-                    </tr>
-                </table>
-            </center>
-        </form>
-    </div>
-    <div id="bodyView" style="display: none">
-                <% } else { %>
-        <div id="bodyView">
-            <% } %> <!-- end of add -->
+    <!-- HSFO functionality removed -->
+    <div id="bodyView">
 
 
             <table border="0" cellpadding="0" cellspacing="0"
@@ -349,9 +305,9 @@
 
                             <tr>
                                 <td width=440px>
-                                    <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
+                                    <div class="DivContentPadding">
                                         <iframe id=preview name=preview width=440px height=580px
-                                                src="<%= dx<0?"oscarRx/Preview.jsp?rePrint="+reprint:dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+                                                src="oscarRx/Preview.jsp?rePrint=<%=reprint%>"
                                                 align=center border=0 frameborder=0></iframe>
                                     </div>
                                 </td>
@@ -448,7 +404,7 @@
                                         </tr>
                                         <%
                                             for (int i = 0; i < bean.getStashSize(); i++) {
-                                                oscar.oscarRx.data.RxPrescriptionData.Prescription rx
+                                                RxPrescriptionData.Prescription rx
                                                         = bean.getStashItem(i);
 
                                                 if (!rx.isCustom()) {

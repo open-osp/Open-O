@@ -52,7 +52,7 @@ $(document).ready(function(){
 	}
 
 	function refreshTabAlerts(id) {
-	var url = "../provider/tabAlertsRefresh.jsp";
+	var url = "../providers/tabAlertsRefresh.jsp";
 	var parameters = {"id":id};
 
 	$id = $("#"+id);

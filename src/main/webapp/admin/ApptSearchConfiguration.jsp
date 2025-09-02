@@ -44,16 +44,15 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html ng-app="phrConfig">
+<html ng-app="apptConfig">
 <head ng-cloak>
-    <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.phrconfig"/></title>
+    <title>Appointment Search Configuration</title>
     <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=request.getContextPath() %>/css/font-awesome.min.css">
     <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
     <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/library/angular.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath() %>/library/ui-bootstrap-tpls-0.11.0.js"></script>
-    <script src="<%=request.getContextPath() %>/web/common/phrServices.js"></script>
     <script src="<%=request.getContextPath() %>/web/common/providerServices.js"></script>
     <script src="<%=request.getContextPath() %>/web/common/consentServices.js"></script>
     <script src="<%=request.getContextPath() %>/web/common/scheduleServices.js"></script>
@@ -63,9 +62,9 @@
 </head>
 
 <body vlink="#0000FF" class="BodyStyle" ng-cloak style="margin:7px;">
-<div ng-controller="phrConfig" ng-cloak>
+<div ng-controller="apptConfig" ng-cloak>
     <div class="page-header">
-        <h4><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.phrconfig"/> <small data-ng-show="phrActive"> <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.phr.active"/></small><small data-ng-show="serverOffline"> Connector Offline</small></h4>
+        <h4>Appointment Search Configuration</h4>
     </div>
 
     <%--  div class="container"> --%>
@@ -108,7 +107,7 @@
                                              ng-click="removeProvider(provider, currentSearchConfig.bookingProviders, $index, $event)"></md-icon>
                                 </td>
                                 <td>
-                                    <%-- button class="btn btn-default" aria-label="Add Appointment Code"  ng-click="cnf.openAddTeamMemberDialog(provider, $event)" style="padding:0px; margin:0px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appointmentSearchConfig.add"/></button> --%>
+                                    <%-- button class="btn btn-default" aria-label="Add Appointment Code"  ng-click="cnf.openAddTeamMemberDialog(providers, $event)" style="padding:0px; margin:0px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appointmentSearchConfig.add"/></button> --%>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-xs dropdown-toggle"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -271,51 +270,16 @@
     <%-- /div> containrer --%>
 
     <script>
-        var app = angular.module("phrConfig", ['phrServices', 'providerServices', 'btford.markdown', 'consentServices', 'scheduleServices', 'ui.bootstrap']);
+        var app = angular.module("apptConfig", ['providerServices', 'btford.markdown', 'consentServices', 'scheduleServices', 'ui.bootstrap']);
 
-        app.controller("phrConfig", function ($scope, $window, phrService, providerService, consentService, scheduleService, $location, $modal) {
+        app.controller("apptConfig", function ($scope, $window, providerService, consentService, scheduleService, $location, $modal) {
 
             $scope.serverOffline = false;
             $scope.activeProviders = [];
             activeProvidersHash = {};
             $scope.userpassError = false;
             $scope.working = false;
-            $scope.phrConsentConfigured = false;
-            $scope.showPHRUserCreate = false;
             $scope.selectUserMethod = true;
-
-            $scope.initButtonText = "Initialize";
-
-            checkStatus = function () {
-                phrService.isPHRInit().then(function (data) {
-                    console.log("data coming back", data);
-                    $scope.phrActive = data.success;
-                    console.log($scope.phrActive);
-
-                    if ($scope.phrActive) {
-                        //getAbilities();
-                        checkConsent();
-
-
-                        console.log("$scope.phrActive");
-                    }
-                });
-            };
-            checkStatus();
-
-            checkConsent = function () {
-
-                phrService.isPHRConsentCheck().then(function (data) {
-                    console.log("data coming back", data);
-                    $scope.phrConsentConfigured = data.success;
-                    console.log($scope.phrConsent);
-
-                    if ($scope.phrConsentConfigured) {
-                        getConsent(data.message);
-                    }
-
-                });
-            };
 
 
             getConsent = function (id) {
@@ -326,43 +290,6 @@
                 });
             }
 
-
-            $scope.selectPHRUser = function () {
-                $scope.selectUserMethod = false;
-                $scope.showPHRUserCreate = true;
-                $scope.newProvider = {};
-
-                providerService.suggestProviderNo().then(function (data) {
-                    console.log("suggestProviderNo", data);
-                    $scope.newProvider.providerNo = data.message;
-
-                });
-
-                $scope.newProvider.firstName = "SelfBook"
-                $scope.newProvider.lastName = "SelfBook";
-                var location = $location.absUrl();
-                var n = location.indexOf("/admin/PHRConfiguration.jsp");
-                $scope.newProvider.comments = location.substring(0, n);
-
-            }
-
-
-            $scope.linkExistingUser = function () {
-                //Show drop list to select user.
-                console.log("$scope.newProvider", $scope.newProvider);
-                phrService.createPHRuser($scope.newProvider).then(function (resp) {
-                    console.log("createPHRuser coming back", resp);
-                    alert(resp.message);
-                    $scope.showPHRUserCreate = false;
-                    checkStatus();
-                });
-            }
-
-
-            $scope.openPHRWindow = function (recc) {
-                console.log("opening window for ", recc);
-                $window.open('../ws/rs/app/openPHRWindow/' + recc.link);
-            };
 
             getAllActiveProviders = function () {
                 providerService.getAllActiveProviders().then(function (data) {
@@ -414,7 +341,7 @@
                         if($scope.currentSearchConfig.appointmentCodeDurations[codes.code] != null){
                             codes.onlineBooking = true;
                         }
-                        //activeProvidersHash[provider.providerNo] = provider;
+                        //activeProvidersHash[providers.providerNo] = providers;
                     });
                     */
                     //console.log("getTypes", activeProvidersHash); //data);
@@ -429,8 +356,8 @@
                 scheduleService.getTypes().then(function (data) {
                     console.log("getTypes ", data);
                     $scope.oscarAppointmentTypes = data;
-                    //angular.forEach($scope.activeProviders, function(provider) {
-                    //	activeProvidersHash[provider.providerNo] = provider;
+                    //angular.forEach($scope.activeProviders, function(providers) {
+                    //	activeProvidersHash[providers.providerNo] = providers;
                     //});
                     //console.log("getTypes", activeProvidersHash); //data);
                 });
@@ -486,7 +413,7 @@
 
 
             $scope.removeProvider = function (provider, providersList, idx, ev) {
-                var r = confirm("Are you sure you want to remove this provider?");
+                var r = confirm("Are you sure you want to remove this providers?");
                 console.log("removeProvider", r, provider, idx, providersList);
                 if (r == true) {
                     providersList.splice(idx, 1);

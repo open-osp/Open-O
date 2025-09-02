@@ -35,12 +35,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Appointment;
+import ca.openosp.openo.commn.dao.OscarAppointmentDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class OscarAppointmentDaoTest extends DaoTestFixtures {
 
@@ -50,7 +50,7 @@ public class OscarAppointmentDaoTest extends DaoTestFixtures {
     public void before() throws Exception {
         //nothing here yet. should clean up the appointment table to a known state
         SchemaUtils.restoreTable("appointment", "demographic", "lst_gender", "admission",
-                "demographic_merged", "program", "health_safety", "provider", "providersite", "site", "program_team", "log", "Facility",
+                "demographic_merged", "program", "health_safety", "providers", "providersite", "site", "program_team", "log", "Facility",
                 "mygroup", "drugs", "appointmentArchive");
     }
 

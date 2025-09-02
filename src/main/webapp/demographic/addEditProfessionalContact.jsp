@@ -24,13 +24,13 @@
 
 --%>
 
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="java.util.Properties" %>
-<%@ page import="java.util.List, org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.List, ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.common.dao.ContactSpecialtyDao" %>
-<%@ page import="org.oscarehr.common.model.ContactSpecialty" %>
+<%@ page import="ca.openosp.openo.commn.dao.ContactSpecialtyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ContactSpecialty" %>
 
 <html>
     <script src="${pageContext.request.contextPath}/csrfguard"></script>

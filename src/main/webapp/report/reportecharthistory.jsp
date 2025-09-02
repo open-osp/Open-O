@@ -50,11 +50,12 @@
     if (request.getParameter("limit1") != null) strLimit1 = request.getParameter("limit1");
     if (request.getParameter("limit2") != null) strLimit2 = request.getParameter("limit2");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*,oscar.oscarProvider.data.*"
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,ca.openosp.openo.providers.data.*"
          errorPage="../appointment/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.EChartDao" %>
-<%@ page import="org.oscarehr.common.model.EChart" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.EChartDao" %>
+<%@ page import="ca.openosp.openo.commn.model.EChart" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
 
 <%
     EChartDao eChartDao = SpringUtils.getBean(EChartDao.class);

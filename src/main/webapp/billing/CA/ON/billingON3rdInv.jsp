@@ -20,26 +20,26 @@
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@page import="oscar.util.DateUtils,org.oscarehr.util.SpringUtils, org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.util.DateUtils,ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="java.util.Properties,java.util.Date,java.util.List,java.util.ArrayList,java.math.BigDecimal" %>
-<%@page import="org.oscarehr.common.dao.BillingONPaymentDao,org.oscarehr.common.model.BillingONPayment" %>
-<%@page import="org.oscarehr.common.dao.BillingServiceDao,org.oscarehr.common.model.BillingService" %>
-<%@page import="org.oscarehr.common.dao.ClinicDAO,org.oscarehr.common.model.Clinic" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao,org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao,org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.BillingONExtDao,org.oscarehr.common.model.BillingONExt" %>
-<%@page import="org.oscarehr.common.dao.BillingONCHeader1Dao,org.oscarehr.common.model.BillingONCHeader1" %>
-<%@page import="org.oscarehr.common.model.BillingONItem, org.oscarehr.common.service.BillingONService" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="oscar.oscarBilling.ca.on.pageUtil.Billing3rdPartPrep" %>
-<%@page import="oscar.oscarBilling.ca.on.administration.GstControl2Action" %>
-<%@ page import="org.oscarehr.billing.CA.ON.util.DisplayInvoiceLogo2Action" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONPaymentDao,ca.openosp.openo.commn.model.BillingONPayment" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao,ca.openosp.openo.commn.model.BillingService" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicDAO,ca.openosp.openo.commn.model.Clinic" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao,ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao,ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONExtDao,ca.openosp.openo.commn.model.BillingONExt" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao,ca.openosp.openo.commn.model.BillingONCHeader1" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONItem, ca.openosp.openo.commn.service.BillingONService" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.billings.ca.on.pageUtil.Billing3rdPartPrep" %>
+<%@page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
+<%@ page import="ca.openosp.openo.billing.CA.ON.util.DisplayInvoiceLogo2Action" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -87,7 +87,7 @@
 
     ClinicDAO clinicDao = (ClinicDAO) SpringUtils.getBean(ClinicDAO.class);
     Clinic clinic = clinicDao.getClinic();
-    oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+    OscarProperties props = OscarProperties.getInstance();
 
     Properties gstProp = new Properties();
     GstControl2Action db = new GstControl2Action();
@@ -358,7 +358,7 @@
         <td><%=providerFormattedName%>
         </td>
 
-        <% Properties prop = oscar.OscarProperties.getInstance();
+        <% Properties prop = OscarProperties.getInstance();
             String payee = prop.getProperty("PAYEE", "");
             payee = payee.trim();
             if (payee.length() > 0) {

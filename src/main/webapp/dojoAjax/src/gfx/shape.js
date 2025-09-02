@@ -12,7 +12,7 @@ dojo.provide("dojo.gfx.shape");
 
 dojo.require("dojo.lang.declare");
 
-dojo.require("dojo.gfx.common");
+dojo.require("dojo.gfx.commons");
 
 dojo.declare("dojo.gfx.Shape", null, {
     // summary: a Shape object, which knows how to apply

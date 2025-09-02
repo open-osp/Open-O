@@ -53,9 +53,9 @@
     }
 %>
 
-<%@ page import="org.oscarehr.decisionSupport.model.DSGuideline" %>
+<%@ page import="ca.openosp.openo.decisionSupport.model.DSGuideline" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.decisionSupport.model.DSCondition" %>
+<%@ page import="ca.openosp.openo.decisionSupport.model.DSCondition" %>
 
 <%
     pageContext.setAttribute("demographic_no", request.getParameter("demographic_no"));

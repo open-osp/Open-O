@@ -34,10 +34,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.BillingONCHeader1;
-import org.oscarehr.common.model.BillingONExt;
-import org.oscarehr.common.model.BillingONPayment;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.BillingONCHeader1;
+import ca.openosp.openo.commn.model.BillingONExt;
+import ca.openosp.openo.commn.model.BillingONPayment;
+import ca.openosp.openo.commn.dao.BillingONExtDao;
+import ca.openosp.openo.commn.dao.BillingONPaymentDao;
+import ca.openosp.openo.commn.dao.BillingONCHeader1Dao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingONExtDaoTest extends DaoTestFixtures {
 
@@ -100,10 +103,10 @@ public class BillingONExtDaoTest extends DaoTestFixtures {
 //		extraBillingPayment2.setPaymentId(1);
 //		
 //		paymentDao.persist(paymentRecord);
-//		dao.persist(extraBillingPayment);
-//		dao.persist(extraBillingPayment2);
+//		daos.persist(extraBillingPayment);
+//		daos.persist(extraBillingPayment2);
 //		
-//		BigDecimal payment = dao.getPayment(paymentRecord);
+//		BigDecimal payment = daos.getPayment(paymentRecord);
 //		Logger logger = MiscUtils.getLogger();
 //		
 //		// test incomplete
@@ -213,10 +216,10 @@ public class BillingONExtDaoTest extends DaoTestFixtures {
 //		extraBillingPayment2.setPaymentId(1);
 //		
 //		paymentDao.persist(paymentRecord);
-//		dao.persist(extraBillingPayment);
-//		dao.persist(extraBillingPayment2);
+//		daos.persist(extraBillingPayment);
+//		daos.persist(extraBillingPayment2);
 //		
-//		BigDecimal refund = dao.getRefund(paymentRecord);
+//		BigDecimal refund = daos.getRefund(paymentRecord);
 //		Logger logger = MiscUtils.getLogger();
 //		
 //		// test incomplete
@@ -350,10 +353,10 @@ public class BillingONExtDaoTest extends DaoTestFixtures {
 //		extraBillingPayment.setKeyVal("remitTo");
 //		
 //		cHeader1Dao.persist(cHeader1);
-//		dao.persist(extraBillingPayment);
-//		dao.persist(extraBillingPayment2);
+//		daos.persist(extraBillingPayment);
+//		daos.persist(extraBillingPayment2);
 //		
-//		BillingONExt billingRecord = dao.getRemitTo(cHeader1);
+//		BillingONExt billingRecord = daos.getRemitTo(cHeader1);
 //		Logger logger = MiscUtils.getLogger();
 //		
 //		// test incomplete
@@ -434,10 +437,10 @@ public class BillingONExtDaoTest extends DaoTestFixtures {
 //		extraBillingPayment.setKeyVal("billTo");
 //		
 //		cHeader1Dao.persist(cHeader1);
-//		dao.persist(extraBillingPayment);
-//		dao.persist(extraBillingPayment2);
+//		daos.persist(extraBillingPayment);
+//		daos.persist(extraBillingPayment2);
 //		
-//		BillingONExt billingRecord = dao.getBillTo(cHeader1);
+//		BillingONExt billingRecord = daos.getBillTo(cHeader1);
 //		Logger logger = MiscUtils.getLogger();
 //		
 //		// test incomplete
@@ -522,10 +525,10 @@ public class BillingONExtDaoTest extends DaoTestFixtures {
 //		extraBillingPayment.setKeyVal("billTo");
 //		
 //		cHeader1Dao.persist(cHeader1);
-//		dao.persist(extraBillingPayment);
-//		dao.persist(extraBillingPayment2);
+//		daos.persist(extraBillingPayment);
+//		daos.persist(extraBillingPayment2);
 //		
-//		BillingONExt billingRecord = dao.getBillToInactive(cHeader1);
+//		BillingONExt billingRecord = daos.getBillToInactive(cHeader1);
 //		Logger logger = MiscUtils.getLogger();
 //		
 //		// test incomplete

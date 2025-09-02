@@ -39,10 +39,13 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page
-        import="java.util.*, org.w3c.dom.*, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.*" %>
-<%@ page import="oscar.oscarClinic.*" %>
+        import="java.util.*, org.w3c.dom.*, ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.clinic.*" %>
+<%@ page import="ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFaxForm" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -53,8 +56,8 @@
     requestId = (String) request.getAttribute("reqId");
 
     //if (requestId == null) { return "bad"; }
-    oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil reqFrm;
-    reqFrm = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil();
+    EctConsultationFormRequestUtil reqFrm;
+    reqFrm = new EctConsultationFormRequestUtil();
     reqFrm.estRequestFromId(LoggedInInfo.getLoggedInInfoFromSession(request), requestId);
     ClinicData clinic = new ClinicData();
 

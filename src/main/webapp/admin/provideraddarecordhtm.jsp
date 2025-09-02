@@ -26,25 +26,27 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="java.util.*,oscar.oscarProvider.data.*" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="java.util.*,ca.openosp.openo.providers.data.*" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.common.model.LookupListItem" %>
-<%@ page import="org.oscarehr.common.model.LookupList" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.managers.LookupListManager" %>
-<%@ page import="org.oscarehr.common.model.ClinicNbr" %>
-<%@ page import="org.oscarehr.common.dao.ClinicNbrDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
-<%@ page import="org.oscarehr.common.model.Site" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.Gender" %>
+<%@ page import="ca.openosp.openo.commn.model.LookupListItem" %>
+<%@ page import="ca.openosp.openo.commn.model.LookupList" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.LookupListManager" %>
+<%@ page import="ca.openosp.openo.commn.model.ClinicNbr" %>
+<%@ page import="ca.openosp.openo.commn.dao.ClinicNbrDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.Gender" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderBillCenter" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <%
     String curProvider_no = (String) session.getAttribute("user");
-    //display the main provider page
-    //includeing the provider name and a month calendar
+    //display the main providers page
+    //includeing the providers name and a month calendar
 
     ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
     List<ProviderData> list = providerDataDao.findAll();
@@ -54,7 +56,7 @@
             String pn = h.getId();
             providerList.add(Integer.valueOf(pn));
         } catch (
-                Exception e) {/*empty*/} /*No need to do anything. Just want to avoid a NumberFormatException from provider numbers with alphanumeric Characters*/
+                Exception e) {/*empty*/} /*No need to do anything. Just want to avoid a NumberFormatException from providers numbers with alphanumeric Characters*/
     }
 
     String suggestProviderNo = "";
@@ -189,7 +191,7 @@
                 </tr>
 
                 <%
-                    if (org.oscarehr.common.IsPropertiesOn.isMultisitesEnable()) {
+                    if (IsPropertiesOn.isMultisitesEnable()) {
                 %>
                 <tr>
                     <td>

@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.data.old.Observable");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.assert");
 
 // -------------------------------------------------------------------

@@ -24,11 +24,11 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="org.oscarehr.provider.web.UserPreference2Action" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.provider.web.UserPreference2Action" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <%
     @SuppressWarnings("unchecked")
@@ -51,9 +51,8 @@
             //jQuery("#general").hide();
             jQuery("#scheduling").hide();
             jQuery("#encounter").hide();
-            jQuery("#rx").hide();
+            jQuery("#prescript").hide();
             jQuery("#consultation").hide();
-            jQuery("#myoscar").hide();
             jQuery("#caisi").hide();
             jQuery("#billing").hide();
 
@@ -172,7 +171,6 @@
             <h3 class="head" pane="encounter"><a href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.section.encounter"/></a></h3>
             <h3 class="head" pane="rx"><a href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.section.rx"/></a></h3>
             <h3 class="head" pane="consultation"><a href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.section.consultation"/></a></h3>
-            <h3 class="head" pane="myoscar"><a href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.section.phr"/></a></h3>
             <h3 class="head" pane="caisi"><a href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.section.caisi"/></a></h3>
         </div>
     </div>
@@ -209,12 +207,6 @@
                         <td><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.general.fax"/>:</td>
                         <td><input type="text"
                                    size="25" <%=UserPreference2Action.getTextData(prefs, "pref." + UserProperty.FAX)%>/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.general.drugrefid"/>:</td>
-                        <td><input type="text"
-                                   size="25" <%=UserPreference2Action.getTextData(prefs, "pref." + UserProperty.MYDRUGREF_ID)%> />
                         </td>
                     </tr>
                     <tr style="height:20px">
@@ -442,7 +434,7 @@
             </table>
             <br/><br/>
             <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.btnSave"/>"/>
-        </div>    <!-- rx -->
+        </div>    <!-- prescript -->
 
 
         <div id="consultation" class="pref_pane">
@@ -474,28 +466,6 @@
         </div>    <!-- consultations -->
 
 
-        <div id="myoscar" class="pref_pane">
-            <h3 style="text-align:center"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.phr.title"/></h3>
-            <br/><br/>
-            <table border="0">
-                <tr>
-                    <td nowrap="nowrap"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.phr.id"/>:</td>
-                    <td><input type="text"
-                               size="20" <%=UserPreference2Action.getTextData(prefs, "pref." + UserProperty.MYOSCAR_ID)%>/>
-                    </td>
-                </tr>
-                <tr>
-                    <td nowrap="nowrap"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.phr.mymeds"/>:</td>
-                    <td><%=UserPreference2Action.getSelect(prefs, "pref." + UserProperty.MYMEDS)%>
-                    </td>
-                </tr>
-                <tr style="height:20px">
-                    <td colspan="2"></td>
-                </tr>
-            </table>
-            <br/><br/>
-            <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.btnSave"/>"/>
-        </div>    <!-- myoscar -->
 
         <div id="caisi" class="pref_pane">
             <h3 style="text-align:center"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.pref.caisi.title"/></h3>

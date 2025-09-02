@@ -39,7 +39,7 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
 
     //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
@@ -56,12 +56,16 @@
   creatorDemo = Encode.forHtmlContent(creatorDemo);
 %>
 
-<%@page import="oscar.oscarDemographic.data.*,java.util.*" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.common.dao.CtlRelationshipsDao" %>
-<%@page import="org.oscarehr.common.model.CtlRelationships" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlRelationshipsDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlRelationships" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicRelationship" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -114,7 +118,7 @@
         </tr>
         <tr>
             <td class="MainTableLeftColumn" valign="top">&nbsp;
-                <%if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable()) { %>
+                <%if (IsPropertiesOn.isCaisiEnable()) { %>
 
                 <a href="<%=request.getContextPath()%>/PMmodule/ClientManager.do?id=<%=creatorDemo%>">Back to PMM </a>
 
@@ -230,7 +234,7 @@
                      Map<String, String> h = list.get(i);
                      String relatedDemo = h.get("demographic_no");
                                 DemographicData dd = new DemographicData();
-                                org.oscarehr.common.model.Demographic demographic = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), relatedDemo); %>
+                                Demographic demographic = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), relatedDemo); %>
                         <tr>
 				<td><%=Encode.forHtmlContent(demographic.getLastName() +", "+demographic.getFirstName())%></td>
 				<td><%=Encode.forHtmlContent(h.get("relation"))%></td>

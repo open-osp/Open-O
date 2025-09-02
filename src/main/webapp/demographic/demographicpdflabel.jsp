@@ -56,21 +56,25 @@
     }
 %>
 <%@ page
-        import="java.util.*, java.sql.*, java.net.*,java.text.DecimalFormat, oscar.*, oscar.oscarDemographic.data.ProvinceNames, oscar.oscarWaitingList.WaitingList" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="org.oscarehr.common.model.DemographicCust" %>
-<%@page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.dao.WaitingListDao" %>
-<%@page import="org.oscarehr.common.dao.WaitingListNameDao" %>
-<%@page import="org.oscarehr.common.model.WaitingListName" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
+        import="java.util.*, java.sql.*, java.net.*,java.text.DecimalFormat, ca.openosp.*, ca.openosp.openo.demographic.data.ProvinceNames, ca.openosp.openo.waitinglist.WaitingList" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.ProfessionalSpecialist" %>
+<%@page import="ca.openosp.openo.commn.dao.ProfessionalSpecialistDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicCust" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicCustDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.dao.WaitingListDao" %>
+<%@page import="ca.openosp.openo.commn.dao.WaitingListNameDao" %>
+<%@page import="ca.openosp.openo.commn.model.WaitingListName" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="ca.openosp.Misc" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
     DemographicCustDao demographicCustDao = (DemographicCustDao) SpringUtils.getBean(DemographicCustDao.class);
@@ -212,9 +216,6 @@
             </tr>
             <tr valign="top">
                 <td align="left"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.formEmail"/>: </b><%=d.getEmail() != null ? d.getEmail() : ""%>
-                </td>
-                <td align="left"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.formPHRUserName"/>: </b></td>
-                <td align="left"><%=d.getMyOscarUserName() != null ? d.getMyOscarUserName() : ""%>
                 </td>
             </tr>
             <tr valign="top">
@@ -392,7 +393,7 @@
             <tr valign="top">
                 <td align="left" nowrap><b>Waiting List: </b> <%
                     String listID = "", wlnote = "";
-                    for (org.oscarehr.common.model.WaitingList w : waitingListDao.search_wlstatus(Integer.parseInt(demographic_no))) {
+                    for (ca.openosp.openo.commn.model.WaitingList w : waitingListDao.search_wlstatus(Integer.parseInt(demographic_no))) {
                         listID = String.valueOf(w.getListId());
                         wlnote = w.getNote();
                     }

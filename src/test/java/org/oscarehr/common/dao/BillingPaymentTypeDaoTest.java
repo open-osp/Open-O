@@ -33,15 +33,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.BillingPaymentType;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.BillingPaymentType;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 import java.util.Collections;
+import ca.openosp.openo.commn.dao.BillingPaymentTypeDao;
 import java.util.Comparator;
 
 public class BillingPaymentTypeDaoTest extends DaoTestFixtures {

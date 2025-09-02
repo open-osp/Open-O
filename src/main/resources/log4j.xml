@@ -34,7 +34,7 @@
 		<priority value="INFO" />
 	</category>
 
-	<category name="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
+	<category name="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="INTEGRATOR_FILE" />
 	</category>
@@ -104,7 +104,7 @@
 	</category>
 	
 	<!-- control if you want the possible excessive memory usage warnings. WARN and below will show them -->
-	<category name="org.oscarehr.util.ProblemCheckFilter">
+	<category name="org.oscarehr.utility.ProblemCheckFilter">
 		<priority value="ERROR" />
 	</category>
 	

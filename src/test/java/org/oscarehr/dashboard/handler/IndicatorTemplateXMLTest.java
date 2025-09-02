@@ -25,6 +25,7 @@ package org.oscarehr.dashboard.handler;
 
 import static org.junit.Assert.*;
 
+import ca.openosp.openo.dashboard.handler.IndicatorTemplateXML;
 import org.junit.Assert;
 
 import java.io.IOException;
@@ -37,9 +38,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.dashboard.query.DrillDownAction;
-import org.oscarehr.dashboard.query.RangeInterface;
-import org.oscarehr.dashboard.query.RangeInterface.Limit;
+import ca.openosp.openo.dashboard.query.DrillDownAction;
+import ca.openosp.openo.dashboard.query.RangeInterface;
+import ca.openosp.openo.dashboard.query.RangeInterface.Limit;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -127,7 +128,7 @@ public class IndicatorTemplateXMLTest {
 
     @Test
     public void testGetIndicatorParameters() {
-        assertEquals("provider", indicatorTemplateXML.getIndicatorParameters().get(0).getId());
+        assertEquals("providers", indicatorTemplateXML.getIndicatorParameters().get(0).getId());
     }
 
     @Test
@@ -152,7 +153,7 @@ public class IndicatorTemplateXMLTest {
 
     @Test
     public void testGetDrilldownParameters() {
-        assertEquals("provider", indicatorTemplateXML.getDrilldownParameters("null").get(0).getId());
+        assertEquals("providers", indicatorTemplateXML.getDrilldownParameters("null").get(0).getId());
     }
 
     @Test

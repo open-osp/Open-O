@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.date.serialize");
 
-dojo.require("dojo.string.common");
+dojo.require("dojo.string.commons");
 
 /* ISO 8601 Functions
  *********************/

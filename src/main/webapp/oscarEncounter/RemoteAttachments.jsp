@@ -39,19 +39,21 @@
     }
 %>
 
-<%@ page import="oscar.oscarEncounter.immunization.data.*" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.data.*" %>
 <%@ page
-        import="oscar.oscarEncounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*" %>
+        import="ca.openosp.openo.encounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.encounter.data.EctRemoteAttachments" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-    if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
+    EctSessionBean bean = null;
+    if ((bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
-    oscar.oscarEncounter.data.EctRemoteAttachments remoAttach = new oscar.oscarEncounter.data.EctRemoteAttachments();
+    EctRemoteAttachments remoAttach = new EctRemoteAttachments();
     remoAttach.estMessageIds(bean.getDemographicNo());
     out.print(bean.getDemographicNo());
 %>

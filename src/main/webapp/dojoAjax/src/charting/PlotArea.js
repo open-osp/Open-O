@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.PlotArea");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.gfx.color");
 dojo.require("dojo.gfx.color.hsl");
 dojo.require("dojo.charting.Plot");
@@ -107,7 +107,7 @@ dojo.extend(dojo.charting.PlotArea, {
     setAxesRanges: function () {
         //	summary
         //	Find and set the ranges on all axes on this plotArea.
-        //	We do this because plots may have axes in common; if you
+        //	We do this because plots may have axes in commons; if you
         //	want to use this, make sure you do it *before* initialization.
         var ranges = {};
         var axes = {};

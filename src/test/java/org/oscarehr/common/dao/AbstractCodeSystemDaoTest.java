@@ -24,10 +24,11 @@
 package org.oscarehr.common.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.oscarehr.common.dao.AbstractCodeSystemDao.getDaoName;
+import static ca.openosp.openo.commn.dao.AbstractCodeSystemDao.getDaoName;
 
 import org.junit.Before;
 import org.junit.Test;
+import ca.openosp.openo.commn.dao.AbstractCodeSystemDao;
 
 public class AbstractCodeSystemDaoTest extends DaoTestFixtures {
 

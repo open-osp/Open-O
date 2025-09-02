@@ -39,12 +39,12 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.model.PatientLabRouting" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.common.dao.PatientLabRoutingDao" %>
+<%@page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
 <%@page errorPage="../provider/errorpage.jsp" %>
 <%@ page
-        import="java.util.*, oscar.oscarMDS.data.*,oscar.oscarLab.ca.on.CML.*,oscar.oscarLab.LabRequestReportLink,oscar.oscarDB.*,java.sql.*,oscar.log.*,org.oscarehr.util.SpringUtils,org.oscarehr.casemgmt.service.CaseManagementManager,org.oscarehr.casemgmt.model.*" %>
+        import="java.util.*, ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.CML.*,ca.openosp.openo.lab.LabRequestReportLink,ca.openosp.openo.db.*,java.sql.*,ca.openosp.openo.log.*,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.casemgmt.service.CaseManagementManager,ca.openosp.openo.casemgmt.model.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%
@@ -60,7 +60,7 @@
     reqIDL = LabRequestReportLink.getRequestTableIdByReport("labPatientPhysicianInfo", Long.valueOf(segmentID));
     String reqTableID = reqIDL == null ? "" : reqIDL.toString();
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_LABTEST2;
+    String annotation_display = CaseManagementNoteLink.DISP_LABTEST2;
     CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
 %>
@@ -92,7 +92,14 @@
     String AbnFlag = "";
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CML.CMLLabTest" %>
+<%@ page import="ca.openosp.openo.mds.data.ReportStatus" %>
+<%@ page import="ca.openosp.openo.mds.data.MDSSegmentData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

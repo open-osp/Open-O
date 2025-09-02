@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.widget.MonthlyCalendar");
-dojo.require("dojo.date.common");
+dojo.require("dojo.date.commons");
 dojo.require("dojo.date.format");
 dojo.require("dojo.widget.*");
 dojo.require("dojo.widget.DatePicker");

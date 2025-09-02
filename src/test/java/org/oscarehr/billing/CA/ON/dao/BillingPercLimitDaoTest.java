@@ -27,13 +27,14 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Date;
 
+import ca.openosp.openo.billing.CA.ON.dao.BillingPercLimitDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.ON.model.BillingPercLimit;
+import ca.openosp.openo.billing.CA.ON.model.BillingPercLimit;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingPercLimitDaoTest extends DaoTestFixtures {
 

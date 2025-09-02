@@ -30,17 +30,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ca.openosp.openo.dashboard.handler.DiseaseRegistryHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.DxresearchDAO;
+import ca.openosp.openo.commn.dao.DemographicDao;
+import ca.openosp.openo.commn.dao.DxresearchDAO;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Dxresearch;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DiseaseRegistryHandlerTest {
 
@@ -56,7 +57,7 @@ public class DiseaseRegistryHandlerTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         SchemaUtils.restoreTable("dxresearch", "demographic", "lst_gender", "admission", "demographic_merged",
-                "program", "health_safety", "provider", "providersite", "site", "program_team",
+                "program", "health_safety", "providers", "providersite", "site", "program_team",
                 "log", "Facility", "demographicExt", "measurements", "measurementType", "measurementsExt",
                 "quickList", "icd9", "ichppccode", "billing", "billingdetail");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoAsCurrentClassAndMethod();

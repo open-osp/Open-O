@@ -19,8 +19,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.PMmodule.model">
-	<class name="ClientReferral" table="client_referral">
+<hibernate-mapping package="ca.openosp.openo.PMmodule.model">
+	<class name="ca.openosp.openo.PMmodule.model.ClientReferral" table="client_referral">
 		<id column="referral_id" name="Id" type="java.lang.Long">
 			<generator class="native" />
 		</id>

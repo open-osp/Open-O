@@ -28,12 +28,13 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.Drug" %>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.common.model.DrugDispensing" %>
+<%@page import="ca.openosp.openo.commn.model.Drug" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.model.DrugDispensing" %>
 <%@page import="java.util.Map" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed = true;
@@ -155,7 +156,7 @@
                 }
 
                 if ($("select[name='dispensedBy']").val() == 'Select Below') {
-                    alert('You must choose a dispensing provider');
+                    alert('You must choose a dispensing providers');
                     return false;
                 }
 
@@ -373,7 +374,7 @@
                                 </tr>
                                 <tr>
                                     <td><b>Entered Date:</b></td>
-                                    <td><%=oscar.util.UtilDateUtilities.DateToString(drug.getCreateDate())%>
+                                    <td><%=UtilDateUtilities.DateToString(drug.getCreateDate())%>
                                     </td>
                                 </tr>
                                 <tr>

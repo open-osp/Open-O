@@ -11,13 +11,13 @@
 dojo.provide("dojo.data.old.Item");
 dojo.require("dojo.data.old.Observable");
 dojo.require("dojo.data.old.Value");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.assert");
 
 // -------------------------------------------------------------------
 // Constructor
 // -------------------------------------------------------------------
-dojo.data.old.Item = function (/* dojo.data.old.provider.Base */ dataProvider) {
+dojo.data.old.Item = function (/* dojo.data.old.providers.Base */ dataProvider) {
     /**
      * summary:
      * An Item has attributes and attribute values, sort of like

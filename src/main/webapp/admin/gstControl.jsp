@@ -19,7 +19,8 @@
 
 --%>
 <%@ page
-        import="java.util.*,oscar.oscarReport.data.*, java.util.Properties, oscar.oscarBilling.ca.on.administration.*" %>
+        import="java.util.*,ca.openosp.openo.report.data.*, java.util.Properties, ca.openosp.openo.billing.ca.on.administration.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

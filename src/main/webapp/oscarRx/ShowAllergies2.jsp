@@ -23,24 +23,26 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@ page language="java" import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page language="java" import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@page import="org.oscarehr.common.dao.PartialDateDao" %>
-<%@page import="org.oscarehr.common.model.PartialDate" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
+<%@page import="ca.openosp.openo.commn.model.PartialDate" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.commn.model.Allergy" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -58,7 +60,7 @@
 
 <%
     OscarProperties props = OscarProperties.getInstance();
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
     PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
 %>
 
@@ -68,7 +70,7 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -76,9 +78,9 @@
     %>
 </c:if>
 <%
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_ALLERGY;
-    oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) session.getAttribute("Patient");
-    com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+    String annotation_display = CaseManagementNoteLink.DISP_ALLERGY;
+    RxPatientData.Patient patient = (RxPatientData.Patient) session.getAttribute("Patient");
+    SecurityManager securityManager = new SecurityManager();
 %>
 <html>
     <head>
@@ -459,27 +461,6 @@
     String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[1] + "'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[2] + "'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='" + ColourCodesArray[3] + "'><td> </td></table></td> <td >Severe</td> </tr></table>";
 %>
 				</span>
-                            <%
-                                if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                                    MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                                    boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demoNo));
-                                    if (enabledMyOscarButton) {
-                                        String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-                                                + "demographicId=" + demoNo + "&"
-                                                + "medicalDataType=Allergies" + "&"
-                                                + "parentPage=" + request.getRequestURI();
-                            %>
-                            | <a href="<%=sendDataPath%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%>
-                        </a>
-                            <%
-                            } else {
-                            %>
-                            | <span
-                                style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-                            <%
-                                    }
-                                }
-                            %>
                         </td>
                     </tr>
                     <tr>
@@ -519,7 +500,7 @@
                                                 boolean hasDrugAllergy = false;
                                                 int iNKDA = 0;
 
-                                                for (org.oscarehr.common.model.Allergy allergy : patient.getAllergies(LoggedInInfo.getLoggedInInfoFromSession(request))) {
+                                                for (Allergy allergy : patient.getAllergies(LoggedInInfo.getLoggedInInfoFromSession(request))) {
                                                     if (!allergy.getArchived()) {
                                                         if (allergy.getTypeCode() > 0) hasDrugAllergy = true;
                                                         if (allergy.getDescription().equals("No Known Drug Allergies"))
@@ -601,7 +582,7 @@
                                                 <%
                                                     CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
                                                     @SuppressWarnings("unchecked")
-                                                    List<CaseManagementNoteLink> existingAnnots = cmm.getLinkByTableId(org.oscarehr.casemgmt.model.CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergy.getAllergyId()));
+                                                    List<CaseManagementNoteLink> existingAnnots = cmm.getLinkByTableId(CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergy.getAllergyId()));
                                                 %>
                                                 <td>
                                                     <%

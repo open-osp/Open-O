@@ -39,7 +39,8 @@
     }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.data.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptConsultReportData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -61,7 +62,7 @@
         pros = request.getParameter("proNo");
     }
 
-    oscar.oscarReport.data.RptConsultReportData conData = new oscar.oscarReport.data.RptConsultReportData();
+    RptConsultReportData conData = new RptConsultReportData();
     conData.consultReportGenerate(pros, mons);
     ArrayList proList = conData.providerList();
 %>
@@ -163,7 +164,7 @@
             <td class="MainTableRightColumn">
                 <table border=0 cellspacing=4 width=900>
                     <%
-                        oscar.oscarReport.data.RptConsultReportData.DemoConsultDataStruct demoData;
+                        RptConsultReportData.DemoConsultDataStruct demoData;
                         for (int i = 0; i < conData.demoList.size(); i++) {
                             demoData = (RptConsultReportData.DemoConsultDataStruct) conData.demoList.get(i);
                     %>

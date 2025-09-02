@@ -25,7 +25,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="dxResearch.css">
+        <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/oscarResearch/oscarDxResearch/dxResearch.css">
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
@@ -58,7 +58,7 @@
                 //clear list
                 $("#clear_list").click(function () {
                     if (confirm('Are you sure you want to delete all associations?')) {
-                        //$.get("<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=clearAssociations");
+                        //$.get("<%= request.getContextPath() %>/oscarResearch/dxresearch/dxResearchLoadAssociations.do?method=clearAssociations");
                         $.ajax({
                             type: "GET",
                             url: "<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/dxResearchLoadAssociations.do?method=clearAssociations",
@@ -99,7 +99,7 @@
         </script>
 
     </head>
-    <link rel="stylesheet" type="text/css" href="dxResearch.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/oscarResearch/oscarDxResearch/dxResearch.css">
     <body class="BodyStyle" vlink="#0000FF" rightmargin="0" leftmargin="0"
           topmargin="0" marginwidth="0" marginheight="0" onload="setfocus()" bgcolor="#EEEEFF">
     <!--  -->

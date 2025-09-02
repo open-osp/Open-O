@@ -23,7 +23,8 @@
 
 --%>
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.oscarehr.PMmodule.web.formbean.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.StaffManagerViewFormBean" %>
 <style>
     .sortable {
         background-color: #555;

@@ -18,25 +18,29 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.util.DateRange" %>
-<%@ page import="java.math.*,java.util.*,java.sql.*,oscar.*,oscar.oscarBilling.ca.on.OHIP.*,java.net.*"
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.utility.DateRange" %>
+<%@ page import="java.math.*,java.util.*,java.sql.*,ca.openosp.*,ca.openosp.openo.billing.ca.on.OHIP.*,java.net.*"
          errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.ProviderBillCenter" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*,ca.openosp.openo.providers.data.ProviderBillCenter" %>
 
-<jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean"
+<jsp:useBean id="apptMainBean" class="ca.openosp.AppointmentMainBean"
              scope="session"/>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingProviderData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingCreateBillingFile" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingDiskCreatePrep" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 
 <%
     //
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-    String provider = request.getParameter("provider");
+    String provider = request.getParameter("providers");
     String mohOffice = request.getParameter("billcenter");
     String[] BILLING_STATUS = new String[]{"O", "W", "I"};
     int diskId = 0;
@@ -84,7 +88,7 @@
                 String ohipFilename = obj.getOhipfilename(diskId);
                 String htmlFilename = obj.getHtmlfilename(diskId, dataProvider.getProviderNo());
                 boolean existBillCenter = oriBillCenter.hasBillCenter(dataProvider.getProviderNo());
-                // create the billing file with provider's own bill center
+                // create the billing file with providers's own bill center
                 if (existBillCenter && oriBillCenter.getBillCenter(dataProvider.getProviderNo()).compareTo(mohOffice) != 0)
                     headerId = obj.createBatchHeader(dataProvider, "" + diskId, oriBillCenter.getBillCenter(dataProvider.getProviderNo()), "1", (String) session.getAttribute("user"));
                 else
@@ -147,7 +151,7 @@
                     String htmlFilename = obj.getHtmlfilename(diskId, dataProvider.getProviderNo());
 
                     boolean existBillCenter = oriBillCenter.hasBillCenter(dataProvider.getProviderNo());
-                    // create the billing file with provider's own bill center
+                    // create the billing file with providers's own bill center
                     if (existBillCenter && oriBillCenter.getBillCenter(dataProvider.getProviderNo()).compareTo(mohOffice) != 0)
                         headerId = obj.createBatchHeader(dataProvider, "" + diskId, oriBillCenter.getBillCenter(dataProvider.getProviderNo()), "" + (i + 1), (String) session.getAttribute("user"));
                     else
@@ -167,7 +171,7 @@
             }
         }
     } else {
-        // solo - one provider
+        // solo - one providers
         BillingDiskCreatePrep obj = new BillingDiskCreatePrep();
         List lProvider = new Vector();
         lProvider.add(obj.getProviderObj(provider));
@@ -175,7 +179,7 @@
         objFile.setDateRange(dateRange);
         for (int i = 0; i < lProvider.size(); i++) {
             BillingProviderData dataProvider = (BillingProviderData) lProvider.get(i);
-            // not for group provider
+            // not for group providers
             if (!(dataProvider.getBillingGroupNo().equals("") || dataProvider.getBillingGroupNo().equals("0000")))
                 continue;
 

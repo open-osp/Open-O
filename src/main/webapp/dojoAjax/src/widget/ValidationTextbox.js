@@ -11,7 +11,7 @@
 dojo.provide("dojo.widget.ValidationTextbox");
 
 dojo.require("dojo.widget.Textbox");
-dojo.require("dojo.i18n.common");
+dojo.require("dojo.i18n.commons");
 
 dojo.widget.defineWidget(
     "dojo.widget.ValidationTextbox",

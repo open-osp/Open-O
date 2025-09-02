@@ -40,11 +40,14 @@
 %>
 
 <%@ page language="java" %>
-<%@ page import="oscar.form.*, oscar.form.data.*" %>
+<%@ page import="ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties"
              scope="session"/>
 

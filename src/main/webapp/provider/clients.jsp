@@ -30,16 +30,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.common.dao.ServiceRequestTokenDao" %>
-<%@ page import="org.oscarehr.common.dao.ServiceAccessTokenDao" %>
-<%@ page import="org.oscarehr.common.dao.ServiceClientDao" %>
-<%@ page import="org.oscarehr.common.model.ServiceClient" %>
-<%@ page import="org.oscarehr.common.model.ServiceRequestToken" %>
-<%@ page import="org.oscarehr.common.model.ServiceAccessToken" %>
+<%@ page import="ca.openosp.openo.commn.dao.ServiceRequestTokenDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ServiceAccessTokenDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ServiceClientDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ServiceClient" %>
+<%@ page import="ca.openosp.openo.commn.model.ServiceRequestToken" %>
+<%@ page import="ca.openosp.openo.commn.model.ServiceAccessToken" %>
 <%
     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -53,7 +53,7 @@
     List<ServiceRequestToken> requestTokens = new ArrayList<ServiceRequestToken>();
     List<ServiceAccessToken> accessTokens = new ArrayList<ServiceAccessToken>();
 
-    //find all the tokens/clients associated with this provider
+    //find all the tokens/clients associated with this providers
     for (ServiceRequestToken t : serviceRequestTokenDao.findAll()) {
         if (t.getProviderNo() != null && t.getProviderNo().equals(providerNo)) {
             requestTokens.add(t);

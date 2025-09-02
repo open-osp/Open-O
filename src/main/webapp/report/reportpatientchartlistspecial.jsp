@@ -40,21 +40,21 @@
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
          errorPage="../appointment/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
 
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<jsp:useBean id="patientBean" class="oscar.AppointmentMainBean" scope="page"/>
+<jsp:useBean id="patientBean" class="ca.openosp.AppointmentMainBean" scope="page"/>
 <jsp:useBean id="myGroupBean" class="java.util.Vector" scope="page"/>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 
@@ -170,7 +170,7 @@
                 if (rsdemo.getInt("demographic_no") != dnoTemp) dnoTemp = rsdemo.getInt("demographic_no");
                 else continue;
                 bodd = bodd ? false : true;
-                if (!strTemp.equals(param[0])) { //new provider for a new table
+                if (!strTemp.equals(param[0])) { //new providers for a new table
                     strTemp = param[0];
                     bFistL = true;
                     out.println("</table> <p>");

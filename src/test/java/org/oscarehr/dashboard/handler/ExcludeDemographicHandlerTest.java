@@ -24,17 +24,17 @@
 
 package org.oscarehr.dashboard.handler;
 
+import ca.openosp.openo.dashboard.handler.ExcludeDemographicHandler;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.common.dao.DemographicDao;
+import ca.openosp.openo.commn.dao.DemographicDao;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.LoggedInInfo;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.LoggedInInfo;
 //import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 import static org.junit.Assert.*;
 
@@ -57,7 +57,7 @@ public class ExcludeDemographicHandlerTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         SchemaUtils.restoreTable("demographic", "lst_gender", "admission", "demographic_merged",
-                "program", "health_safety", "provider", "providersite", "site", "program_team",
+                "program", "health_safety", "providers", "providersite", "site", "program_team",
                 "log", "Facility", "demographicExt");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoAsCurrentClassAndMethod();
         Provider provider = new Provider();

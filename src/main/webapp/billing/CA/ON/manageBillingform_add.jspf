@@ -25,7 +25,7 @@
 --%>
 
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
 
 <% String errorMessage = request.getParameter("errorMessage"); %>
 

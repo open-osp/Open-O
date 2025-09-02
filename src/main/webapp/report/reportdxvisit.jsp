@@ -13,13 +13,13 @@
     }
 %>
 
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.common.dao.DxresearchDAO" %>
-<%@page import="org.oscarehr.common.model.Ichppccode" %>
-<%@page import="org.oscarehr.common.dao.IchppccodeDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DxresearchDAO" %>
+<%@page import="ca.openosp.openo.commn.model.Ichppccode" %>
+<%@page import="ca.openosp.openo.commn.dao.IchppccodeDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%
     //reportdxvisit.jsp?sdate=2003-04-01&edate=2003-12-31
     //
@@ -28,14 +28,14 @@
     String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, oscar.oscarDB.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, ca.openosp.openo.db.*,java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>PATIENT LIST</title>
     <meta http-equiv=Expires content=-1>
-    <!--link rel="stylesheet" href="<%= request.getContextPath() %>/web.css" -->
+    <!--link rel="stylesheet" href="<%= request.getContextPath() %>/www.css" -->
     <script language="JavaScript">
         <!--
         function setfocus() {
@@ -63,7 +63,7 @@
 
 // get nurse name list
     ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
-    for (org.oscarehr.common.model.Provider p : dao.getProvidersByTypePattern("nurse%")) {
+    for (ca.openosp.openo.commn.model.Provider p : dao.getProvidersByTypePattern("nurse%")) {
         vNurse.add(p.getLastName() + ", " + p.getFirstName());
         vNurseNo.add(p.getProviderNo());
     }

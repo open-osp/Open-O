@@ -19,11 +19,11 @@
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment" %>
-<%@page import="org.oscarehr.common.model.BillingPaymentType" %>
-<%@page import="org.oscarehr.common.dao.BillingPaymentTypeDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment" %>
+<%@page import="ca.openosp.openo.commn.model.BillingPaymentType" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingPaymentTypeDao" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%
     BillingONPayment billPayment = (BillingONPayment) request.getAttribute("billPayment");
@@ -31,7 +31,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page
-        import="java.util.*, oscar.util.*,oscar.oscarBilling.ca.on.pageUtil.*,oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.*,java.math.* ,oscar.oscarBilling.ca.on.administration.*" %>
+        import="java.util.*, ca.openosp.openo.util.*,ca.openosp.openo.billing.ca.on.pageUtil.*,ca.openosp.openo.billing.ca.on.data.*,ca.openosp.openo.providers.data.*,java.math.* ,ca.openosp.openo.billing.ca.on.administration.*" %>
 
 <html>
 <head>

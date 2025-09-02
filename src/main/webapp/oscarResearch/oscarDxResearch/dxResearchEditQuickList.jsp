@@ -34,7 +34,7 @@
     int Count = 0;
 %>
 
-<link rel="stylesheet" type="text/css" href="dxResearch.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/oscarResearch/oscarDxResearch/dxResearch.css">
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

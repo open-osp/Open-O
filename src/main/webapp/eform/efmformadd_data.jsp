@@ -24,11 +24,12 @@
 
 --%>
 
-<%@ page import="oscar.eform.data.*" %>
-<%@ page import="org.oscarehr.managers.EmailComposeManager" %>
-<%@ page import="org.oscarehr.managers.SecurityInfoManager"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.eform.data.*" %>
+<%@ page import="ca.openosp.openo.managers.EmailComposeManager" %>
+<%@ page import="ca.openosp.openo.managers.SecurityInfoManager"%>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.eform.data.EForm" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
@@ -104,7 +105,7 @@
     } else {
         //if the info is in the request parameter
         thisEForm = new EForm(fid, demographic_no);
-        thisEForm.setProviderNo(provider_no);  //needs provider for the action
+        thisEForm.setProviderNo(provider_no);  //needs providers for the action
     }
 
     if (appointment_no != null) {

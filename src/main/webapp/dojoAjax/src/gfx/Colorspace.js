@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.gfx.Colorspace");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.math.matrix");
 
 // to convert to YUV:

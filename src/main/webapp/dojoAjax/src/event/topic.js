@@ -8,7 +8,7 @@
 		http://dojotoolkit.org/community/licensing.shtml
 */
 
-dojo.require("dojo.event.common");
+dojo.require("dojo.event.commons");
 dojo.provide("dojo.event.topic");
 
 dojo.event.topic = new function () {

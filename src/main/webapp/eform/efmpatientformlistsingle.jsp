@@ -24,8 +24,9 @@
 
 --%>
 
-<%@page import="java.util.*,oscar.eform.*" %>
-<%@page import="org.oscarehr.web.eform.EfmPatientFormList" %>
+<%@page import="java.util.*,ca.openosp.openo.eform.*" %>
+<%@page import="ca.openosp.openo.web.eform.EfmPatientFormList" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String demographic_no = request.getParameter("demographic_no");
@@ -45,7 +46,6 @@
     String appointment = request.getParameter("appointment");
     String parentAjaxId = request.getParameter("parentAjaxId");
 
-    boolean isMyOscarAvailable = EfmPatientFormList.isMyOscarAvailable(Integer.parseInt(demographic_no));
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -132,8 +132,7 @@
         <tr>
             <td class="MainTableRightColumn" valign="top">
 
-                <form action="efmpatientformlistSendPhrAction.jsp">
-                    <input type="hidden" name="clientId" value="<%=demographic_no%>"/>
+                <div>
                     <table class="elements" width="100%">
                         <tr bgcolor=<%=deepColor%>>
                             <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnFormName"/></th>
@@ -151,15 +150,6 @@
                                 HashMap<String, ? extends Object> curform = eForms.get(i);
                         %>
                         <tr bgcolor="<%=((i % 2) == 1)?"#F2F2F2":"white"%>">
-                            <%
-                                if (isMyOscarAvailable) {
-                            %>
-                            <td>
-                                <input type="checkbox" name="sendToPhr" value="<%=curform.get("fdid")%>"/>
-                            </td>
-                            <%
-                                }
-                            %>
                             <td>
                                 <a href="#"
                                    ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
@@ -186,12 +176,8 @@
                             }
                         %>
                     </table>
-                    <% if (isMyOscarAvailable) { %>
-                    <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnsendtophr"/>"> |
-                    <% } %>
                     <button onclick="showHtml(); return false;">Save as PDF</button>
-
-                </form>
+                </div>
 
             </td>
         </tr>

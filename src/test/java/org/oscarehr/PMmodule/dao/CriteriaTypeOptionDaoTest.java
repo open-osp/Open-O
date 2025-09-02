@@ -32,15 +32,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ca.openosp.openo.PMmodule.dao.CriteriaTypeOptionDao;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.model.CriteriaTypeOption;
+import ca.openosp.openo.PMmodule.model.CriteriaTypeOption;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class CriteriaTypeOptionDaoTest extends DaoTestFixtures {
 

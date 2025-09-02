@@ -18,14 +18,16 @@
 
 --%>
 
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@page import="java.util.Date" %>
-<%@page import="org.oscarehr.util.DateRange" %>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, oscar.oscarBilling.ca.on.OHIP.*, java.net.*"
+<%@page import="ca.openosp.openo.utility.DateRange" %>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.billing.ca.on.OHIP.*, java.net.*"
          errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.OHIP.ExtractBean" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -39,8 +41,8 @@
 
     int bCount = 1;
     String batchCount = "0";
-    String provider = request.getParameter("provider");
-    if (provider.length() != PROVIDER_BILLINGNO_LENGTH) errorMsg = "The provider's billing code is not correct!<br>";
+    String provider = request.getParameter("providers");
+    if (provider.length() != PROVIDER_BILLINGNO_LENGTH) errorMsg = "The providers's billing code is not correct!<br>";
 
     String proOHIP = "";
     String specialty_code;
@@ -66,17 +68,17 @@
 
             if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null") == 0 || specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH) {
                 //error msg here
-                errorMsg += "The provider's specialty code is not correct!<br>";
+                errorMsg += "The providers's specialty code is not correct!<br>";
                 specialty_code = "00";
             }
 
             if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0 || billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH) {
                 //error msg here
-                errorMsg += "The provider's group no is not correct!<br>";
+                errorMsg += "The providers's group no is not correct!<br>";
                 billinggroup_no = "0000";
             }
 
-            oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
+            ExtractBean extract = new ExtractBean();
             //extract.setOscarHome(oscar_home);
             extract.seteFlag("0");
             extract.setDateRange(dateRange);

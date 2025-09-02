@@ -39,7 +39,7 @@
     }
 %>
 
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%
 
     String strLimit1 = "0";
@@ -47,11 +47,11 @@
     if (request.getParameter("limit1") != null) strLimit1 = request.getParameter("limit1");
     if (request.getParameter("limit2") != null) strLimit2 = request.getParameter("limit2");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*"
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*"
          errorPage="/errorpage.jsp" %>
-<jsp:useBean id="reportMainBean" class="oscar.AppointmentMainBean"
+<jsp:useBean id="reportMainBean" class="ca.openosp.AppointmentMainBean"
              scope="session"/>
-<jsp:useBean id="providerNameBean" class="oscar.Dict" scope="page"/>
+<jsp:useBean id="providerNameBean" class="ca.openosp.Dict" scope="page"/>
 <% if (!reportMainBean.getBDoConfigure()) { %>
 <%@ include file="reportMainBeanConn.jspf" %>
 <% } %>

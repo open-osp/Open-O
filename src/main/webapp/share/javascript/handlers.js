@@ -6,7 +6,7 @@ The FileProgress class is not part of SWFUpload.
 /* **********************
    Event Handlers
    These are my custom event handlers to make my
-   web application behave the way I went when SWFUpload
+   www application behave the way I went when SWFUpload
    completes different tasks.  These aren't part of the SWFUpload
    package.  They are part of my application.  Without these none
    of the actions SWFUpload makes will show up in my application.

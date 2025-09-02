@@ -11,7 +11,7 @@
 dojo.provide("dojo.a11y");
 
 dojo.require("dojo.uri.*");
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 
 dojo.a11y = {
     // imgPath: String path to the test image for determining if images are displayed or not

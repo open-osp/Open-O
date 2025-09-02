@@ -39,9 +39,12 @@
 %>
 
 <%@ page
-        import="oscar.form.*, oscar.OscarProperties, java.util.Date, oscar.util.UtilDateUtilities" %>
-<%@page import="org.oscarehr.common.dao.FrmLabReqPreSetDao, org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+        import="ca.openosp.openo.form.*, ca.openosp.OscarProperties, java.util.Date, ca.openosp.openo.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.commn.dao.FrmLabReqPreSetDao, ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmMentalHealthForm42Record" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <html>
     <head>
@@ -103,7 +106,7 @@
             //{
 
             //ret = confirm("Do you wish to save this form and view the print preview?");
-            //popupFixedPage(650,850,'../provider/notice.htm');
+            //popupFixedPage(650,850,'../providers/notice.htm');
             temp = document.forms[0].action;
             document.forms[0].action = "form/formname.do?__title=MentalHealthForm42&__cfgfile=mentalHealthForm42Print&__cfgfile=mentalHealthForm42Print_2&__template=mentalHealthForm42";
             document.forms[0].submit.value = "printall";

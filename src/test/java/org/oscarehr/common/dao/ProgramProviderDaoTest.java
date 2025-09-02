@@ -25,14 +25,13 @@ package org.oscarehr.common.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
-import org.oscarehr.PMmodule.dao.ProgramProviderDAO;
-import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.PMmodule.model.ProgramProvider;
+import ca.openosp.openo.PMmodule.dao.ProgramProviderDAO;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.PMmodule.model.ProgramProvider;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProgramProviderDaoTest extends DaoTestFixtures {
 
@@ -48,7 +47,7 @@ public class ProgramProviderDaoTest extends DaoTestFixtures {
     public void testUpdateProviderRoles() throws Exception {
         String providerId = "111";
 
-        // Creating a new provider in this test to enforce foreign key addition of "provider_id" in the "program_provider" table
+        // Creating a new providers in this test to enforce foreign key addition of "provider_id" in the "program_provider" table
         Provider provider = new Provider();
         EntityDataGenerator.generateTestDataForModelClass(provider);
         provider.setProviderNo(providerId);

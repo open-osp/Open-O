@@ -177,7 +177,7 @@
                                          ng-click="removeProvider(provider, currentSearchConfig.bookingProviders, $index, $event)"></md-icon>
                             </td>
                             <td>
-                                <%-- button class="btn btn-default" aria-label="Add Appointment Code"  ng-click="cnf.openAddTeamMemberDialog(provider, $event)" style="padding:0px; margin:0px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appointmentSearchConfig.add"/></button> --%>
+                                <%-- button class="btn btn-default" aria-label="Add Appointment Code"  ng-click="cnf.openAddTeamMemberDialog(providers, $event)" style="padding:0px; margin:0px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.appointmentSearchConfig.add"/></button> --%>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-xs dropdown-toggle"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -477,7 +477,7 @@
 
         $scope.loadedSurveillanceConfigs = [];
 
-        $scope.k2aSurveillanceConfigs = [];
+        // k2a surveillance config removed
 
 
         getSearchConfigList = function () {
@@ -487,8 +487,8 @@
                 //if($scope.currentId != null && $scope.currentId != 0){
                 //$scope.openSearchConfig($scope.currentId);
                 //}
-                //angular.forEach($scope.activeProviders, function(provider) {
-                //	activeProvidersHash[provider.providerNo] = provider;
+                //angular.forEach($scope.activeProviders, function(providers) {
+                //	activeProvidersHash[providers.providerNo] = providers;
                 //});
                 //console.log("getTypes", activeProvidersHash); //data);
             });
@@ -514,8 +514,8 @@
                 //if($scope.currentId != null && $scope.currentId != 0){
                 //$scope.openSearchConfig($scope.currentId);
                 //}
-                //angular.forEach($scope.activeProviders, function(provider) {
-                //	activeProvidersHash[provider.providerNo] = provider;
+                //angular.forEach($scope.activeProviders, function(providers) {
+                //	activeProvidersHash[providers.providerNo] = providers;
                 //});
                 //console.log("getTypes", activeProvidersHash); //data);
             });
@@ -531,8 +531,8 @@
                 //if($scope.currentId != null && $scope.currentId != 0){
                 //$scope.openSearchConfig($scope.currentId);
                 //}
-                //angular.forEach($scope.activeProviders, function(provider) {
-                //	activeProvidersHash[provider.providerNo] = provider;
+                //angular.forEach($scope.activeProviders, function(providers) {
+                //	activeProvidersHash[providers.providerNo] = providers;
                 //});
                 //console.log("getTypes", activeProvidersHash); //data);
             });
@@ -556,8 +556,8 @@
             scheduleService.getTypes().then(function (data) {
                 console.log("getTypes ", data);
                 $scope.oscarAppointmentTypes = data;
-                //angular.forEach($scope.activeProviders, function(provider) {
-                //	activeProvidersHash[provider.providerNo] = provider;
+                //angular.forEach($scope.activeProviders, function(providers) {
+                //	activeProvidersHash[providers.providerNo] = providers;
                 //});
                 //console.log("getTypes", activeProvidersHash); //data);
             });
@@ -585,7 +585,7 @@
                     if($scope.currentSearchConfig.appointmentCodeDurations[codes.code] != null){
                         codes.onlineBooking = true;
                     }
-                    //activeProvidersHash[provider.providerNo] = provider;
+                    //activeProvidersHash[providers.providerNo] = providers;
                 });
                 */
                 //console.log("getTypes", activeProvidersHash); //data);
@@ -655,7 +655,7 @@
         getAllActiveProviders();
 
         $scope.removeProvider = function (provider, providersList, idx, ev) {
-            var r = confirm("Are you sure you want to remove this provider?");
+            var r = confirm("Are you sure you want to remove this providers?");
             console.log("removeProvider", r, provider, idx, providersList);
             if (r == true) {
                 providersList.splice(idx, 1);
@@ -774,8 +774,8 @@
         /*getAllActiveProviders = function(){
             providerService.getAllActiveProviders().then(function(data){
                 $scope.activeProviders = data;
-                angular.forEach($scope.activeProviders, function(provider) {
-                    activeProvidersHash[provider.providerNo] = provider;
+                angular.forEach($scope.activeProviders, function(providers) {
+                    activeProvidersHash[providers.providerNo] = providers;
                 });
                 console.log("getAllActiveProviders", activeProvidersHash); //data);
         });

@@ -12,7 +12,7 @@ dojo.provide("dojo.logging.Logger");
 dojo.provide("dojo.logging.LogFilter");
 dojo.provide("dojo.logging.Record");
 dojo.provide("dojo.log");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.declare");
 
 /*		This is the dojo logging facility, which is imported from nWidgets

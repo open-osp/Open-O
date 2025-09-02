@@ -39,17 +39,17 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.MyGroupDao" %>
-<%@page import="org.oscarehr.common.model.MyGroup" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.common.dao.ScheduleDateDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleDateDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
     AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
     OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
@@ -64,8 +64,12 @@
     boolean bEdit = request.getParameter("appointment_no") != null ? true : false;
 %>
 <%@ page
-        import="java.util.*, java.sql.*,java.net.*, oscar.*, oscar.util.*, org.oscarehr.common.OtherIdManager"
+        import="java.util.*, java.sql.*,java.net.*, ca.openosp.*, ca.openosp.openo.util.*, ca.openosp.openo.commn.OtherIdManager"
         errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -471,7 +475,7 @@
                             + dotStr + other.getName() + "|"; //+	rsdemo.getString("reason") + "<br>";
                 }
 
-                if (!String.valueOf(other.getProviderNo()).equals(temp)) { //new provider record
+                if (!String.valueOf(other.getProviderNo()).equals(temp)) { //new providers record
                     otherAppt.setProperty(other.getProviderNo() + "appt", appt);
                     temp = String.valueOf(other.getProviderNo());
                     appt = "";

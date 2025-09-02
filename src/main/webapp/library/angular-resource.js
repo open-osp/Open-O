@@ -61,7 +61,7 @@
      */
 
     /**
-     * @ngdoc provider
+     * @ngdoc providers
      * @name $resourceProvider
      *
      * @description

@@ -22,15 +22,20 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.BillingONItem" %>
-<%@page import="org.oscarehr.common.dao.BillingONItemDao" %>
-<%@page import="java.util.*, java.text.*,java.sql.*, java.net.*, oscar.*, oscar.util.*, org.oscarehr.provider.model.PreventionManager" %>
-<%@page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.common.dao.ProviderPreferenceDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONItem" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONItemDao" %>
+<%@page import="java.util.*, java.text.*,java.sql.*, java.net.*, ca.openosp.*, ca.openosp.openo.util.*, ca.openosp.openo.provider.model.PreventionManager" %>
+<%@page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderPreferenceDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingItemData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingReviewImpl" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingClaimHeader1Data" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%
     String prov = request.getParameter("billRegion");
@@ -50,7 +55,7 @@
         response.sendRedirect("../../../logout.jsp");
     }
 
-    oscar.OscarProperties oscarVariables = oscar.OscarProperties.getInstance();
+    OscarProperties oscarVariables = OscarProperties.getInstance();
 
     String user_no = (String) session.getAttribute("user");
 

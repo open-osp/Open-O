@@ -25,7 +25,7 @@
 --%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
 %>
@@ -45,14 +45,16 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="java.util.*,oscar.oscarRx.data.*,oscar.oscarRx.pageUtil.*, oscar.OscarProperties" %>
+<%@ page import="java.util.*,ca.openosp.openo.rx.data.*,ca.openosp.openo.rx.pageUtil.*, ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxDrugData" %>
 <c:if test="${empty RxSessionBean}">
     <% response.sendRedirect("error.html"); %>
 </c:if>
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -155,14 +157,6 @@
                 else return false;
             }
 
-            function callTreatments(textId, id) {
-                var ele = $(textId);
-                var url = "TreatmentMyD.jsp"
-                var ran_number = Math.round(Math.random() * 1000000);
-                var params = "demographicNo=<%=bean.getDemographicNo()%>&cond=" + ele.value + "&rand=" + ran_number;  //hack to get around ie caching the page
-                new Ajax.Updater(id, url, {method: 'get', parameters: params, asynchronous: true});
-                $('treatmentsMyD').toggle();
-            }
 
 
         </script>
@@ -219,10 +213,6 @@
                                             <!--<input type="hidden" name="otcExcluded" value="true"/>OTC Excluded-->
                                         </td>
                                         <td width=100>
-                                            <% if (!OscarProperties.getInstance().getProperty("rx.drugofchoice.hide", "false").equals("true")) { %>
-                                            <a href="#"
-                                               onclick="callTreatments('searchString','treatmentsMyD');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseDrug.msgDrugOfChoice"/></a>
-                                            <%} %>
                                         </td>
                                         <td>
                                             <oscar:oscarPropertiesCheck property="drugref_route_search" value="on">
@@ -406,11 +396,6 @@
         </tr>
     </table>
 
-    <div id="treatmentsMyD"
-         style="position: absolute; left: 1px; top: 1px; width: 800px; height: 600px; display:none; z-index: 1">
-        <a href="javascript: function myFunction() {return false; }" onclick="$('treatmentsMyD').toggle();"
-           style="text-decoration: none;">X</a>
-    </div>
 
 
     </body>

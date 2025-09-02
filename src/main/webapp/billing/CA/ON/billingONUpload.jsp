@@ -24,7 +24,8 @@
     session.setAttribute("homepath", props.getProperty("project_home", ""));
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="oscar.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <html>
 <head>

@@ -30,8 +30,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.HL7HandlerMSHMapping;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.HL7HandlerMSHMapping;
+import ca.openosp.openo.commn.dao.HL7HandlerMSHMappingDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class HL7HandlerMSHMappingDaoTest extends DaoTestFixtures {
 

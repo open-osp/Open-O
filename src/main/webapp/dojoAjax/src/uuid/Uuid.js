@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.uuid.Uuid");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.assert");
 
 dojo.uuid.Uuid = function (/* string || generator */ input) {

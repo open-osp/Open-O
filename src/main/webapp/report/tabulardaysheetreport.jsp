@@ -20,18 +20,19 @@
     String orderby = request.getParameter("orderby") != null ? request.getParameter("orderby") : ("a.start_time");
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*,org.oscarehr.common.model.*,org.apache.commons.lang.time.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,ca.openosp.openo.commn.model.*,org.apache.commons.lang.time.*"
         errorPage="../appointment/errorpage.jsp" %>
-<jsp:useBean id="daySheetBean" class="oscar.AppointmentMainBean" scope="page"/>
+<%@ page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<jsp:useBean id="daySheetBean" class="ca.openosp.AppointmentMainBean" scope="page"/>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 <%
-    org.oscarehr.common.model.ProviderPreference providerPreference = org.oscarehr.web.admin.ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
+    ca.openosp.openo.commn.model.ProviderPreference providerPreference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
     int endHour = providerPreference.getEndHour();
     int startHour = providerPreference.getStartHour();
 
     String[][] dbQueries = new String[][]{
-            {"search_daysheetall", "select a.appointment_date, a.provider_no, a.start_time, a.end_time, a.reason, p.last_name, p.first_name, d.last_name,d.first_name,d.chart_no, d.phone, d.date_of_birth, d.month_of_birth, d.year_of_birth, d.hin from appointment a,demographic d,provider p, mygroup m where a.appointment_date=? and  m.mygroup_no=? and BINARY a.status != 'C' and a.demographic_no=d.demographic_no and a.provider_no=p.provider_no AND p.provider_no=m.provider_no order by p.provider_no, a.appointment_date, " + orderby},
-            {"search_daysheetsingleall", "select a.appointment_date, a.provider_no,a.start_time,a.end_time, a.reason,p.last_name,p.first_name,d.last_name,d.first_name,d.chart_no, d.phone, d.date_of_birth, d.month_of_birth, d.year_of_birth, d.hin from appointment a,demographic d,provider p where a.appointment_date=? and a.provider_no=? and BINARY a.status != 'C' and a.demographic_no=d.demographic_no and a.provider_no=p.provider_no order by a.appointment_date," + orderby},
+            {"search_daysheetall", "select a.appointment_date, a.provider_no, a.start_time, a.end_time, a.reason, p.last_name, p.first_name, d.last_name,d.first_name,d.chart_no, d.phone, d.date_of_birth, d.month_of_birth, d.year_of_birth, d.hin from appointment a,demographic d,providers p, mygroup m where a.appointment_date=? and  m.mygroup_no=? and BINARY a.status != 'C' and a.demographic_no=d.demographic_no and a.provider_no=p.provider_no AND p.provider_no=m.provider_no order by p.provider_no, a.appointment_date, " + orderby},
+            {"search_daysheetsingleall", "select a.appointment_date, a.provider_no,a.start_time,a.end_time, a.reason,p.last_name,p.first_name,d.last_name,d.first_name,d.chart_no, d.phone, d.date_of_birth, d.month_of_birth, d.year_of_birth, d.hin from appointment a,demographic d,providers p where a.appointment_date=? and a.provider_no=? and BINARY a.status != 'C' and a.demographic_no=d.demographic_no and a.provider_no=p.provider_no order by a.appointment_date," + orderby},
     };
     String[][] responseTargets = new String[][]{};
     daySheetBean.doConfigure(dbQueries, responseTargets);

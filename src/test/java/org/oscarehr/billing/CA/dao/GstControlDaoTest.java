@@ -27,13 +27,14 @@ import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 
+import ca.openosp.openo.billing.CA.dao.GstControlDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.model.GstControl;
+import ca.openosp.openo.billing.CA.model.GstControl;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class GstControlDaoTest extends DaoTestFixtures {
 

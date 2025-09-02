@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ProviderLabRoutingModel;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ProviderLabRoutingModel;
+import ca.openosp.openo.commn.dao.ProviderLabRoutingDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProviderLabRoutingDaoTest extends DaoTestFixtures {
 
@@ -41,7 +42,7 @@ public class ProviderLabRoutingDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("provider", "providerLabRouting", "patientLabRouting", "mdsMSH", "mdsPID", "mdsPV1", "mdsZFR", "mdsOBR", "mdsZRG", "document");
+        SchemaUtils.restoreTable("providers", "providerLabRouting", "patientLabRouting", "mdsMSH", "mdsPID", "mdsPV1", "mdsZFR", "mdsOBR", "mdsZRG", "document");
     }
 
     @Test

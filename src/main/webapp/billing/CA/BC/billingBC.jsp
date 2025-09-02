@@ -40,22 +40,32 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 
 <%@taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@page import="java.util.*, oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.*,oscar.entities.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
-<%@ page import="oscar.oscarResearch.oscarDxResearch.util.dxResearchCodingSystem" %>
+<%@page import="java.util.*, ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.openo.billing.ca.bc.pageUtil.*,ca.openosp.*,ca.openosp.openo.entities.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingreferralDao" %>
+<%@ page import="ca.openosp.openo.dxresearch.util.dxResearchCodingSystem" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
-<%@ page import="org.oscarehr.managers.DemographicManager,oscar.oscarBilling.ca.bc.MSP.ServiceCodeValidationLogic" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager,ca.openosp.openo.billings.ca.bc.MSP.ServiceCodeValidationLogic" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
+<%@ page import="ca.openosp.openo.entities.PaymentType" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingSessionBean" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.ServiceCodeAssociation" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingAssociationPersistence" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingCreateBillingForm" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.SupServiceCodeAssocDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreference" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%!
 
@@ -114,9 +124,9 @@
     // load new WCB type
     String newWCBClaim = (String) request.getAttribute("newWCBClaim");
 
-    /* billing from appointment will fetch the defaults for the provider whom the appointment was with
-     * "sign save and bill" will fetch the defaults for the logged in provider who wrote and signed the encounter note
-     * If "xml_provider" is null then the logged in provider is used
+    /* billing from appointment will fetch the defaults for the providers whom the appointment was with
+     * "sign save and bill" will fetch the defaults for the logged in providers who wrote and signed the encounter note
+     * If "xml_provider" is null then the logged in providers is used
      */
     String targetProvider = loggedInInfo.getLoggedInProviderNo();
     String alternateProvider = request.getParameter("xml_provider");
@@ -125,9 +135,9 @@
     }
 
     /*
-     * find and default providers set for the current target provider in the
+     * find and default providers set for the current target providers in the
      * billing preference settings.
-     * Target provider now becomes the provider set in the invoice settings.
+     * Target providers now becomes the providers set in the invoice settings.
      */
     List<Property> defaultBillingProviderPropertyList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.default_billing_provider, targetProvider);
     if (defaultBillingProviderPropertyList != null && !defaultBillingProviderPropertyList.isEmpty()) {
@@ -138,7 +148,7 @@
     }
 
     /* the value set preset in the session overrides the parameter value
-     * The target provider becomes "none". The remaining values are overridden by the
+     * The target providers becomes "none". The remaining values are overridden by the
      * session bean.
      */
     if (bean.getBillingProvider() == null) {
@@ -154,7 +164,7 @@
      */
 
 
-    /* sort out which Billing form to use based on global and provider settings.
+    /* sort out which Billing form to use based on global and providers settings.
      * 1. Default value set in the properties file
      */
     String defaultBillingForm = OscarProperties.getInstance().getProperty("default_view");
@@ -176,7 +186,7 @@
         }
     }
 
-    // 3. individual provider billing preferences.
+    // 3. individual providers billing preferences.
     List<Property> userSetDefaultBillingFormPropertyList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.default_billing_form, targetProvider);
     if (userSetDefaultBillingFormPropertyList != null && !userSetDefaultBillingFormPropertyList.isEmpty()) {
         Property userSetDefaultBillingFormProperty = userSetDefaultBillingFormPropertyList.get(0);
@@ -193,7 +203,7 @@
 
     // 3.a. in some situations if the default billing form is set as Private it may be possible
     // to set the Billing Type to private as well
-    // The common code for a private billing form is PRI
+    // The commons code for a private billing form is PRI
     if ("PRI".equals(defaultBillingForm)) {
         bean.setBillType("Pri");
     }
@@ -231,7 +241,7 @@
         }
     }
 
-    // 3. override visit location "visittype" code preference by provider
+    // 3. override visit location "visittype" code preference by providers
     List<Property> defaultServiceLocationList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.bc_default_service_location, targetProvider);
     if (defaultServiceLocationList != null && !defaultServiceLocationList.isEmpty()) {
         Property defaultServiceLocationProperty = defaultServiceLocationList.get(0);
@@ -241,7 +251,7 @@
         }
         if (providerSetDefaultLocation != null && !providerSetDefaultLocation.isEmpty()
                 && !Property.PROPERTY_VALUE.clinicdefault.name().equalsIgnoreCase(providerSetDefaultLocation)) {
-            // override default from Oscar properties or billing properties with the provider preference
+            // override default from Oscar properties or billing properties with the providers preference
             defaultServiceLocation = providerSetDefaultLocation;
         }
     }
@@ -1082,7 +1092,7 @@
                         }
                     },
                     /*
-                     * Is provider selected
+                     * Is providers selected
                      */
                     xml_provider: {
                         required: function (element) {
@@ -1395,7 +1405,7 @@
                                 }
                             }
                         }
-                        // If the global setting is not enabled, check the per-provider preference
+                        // If the global setting is not enabled, check the per-providers preference
                         if (!autoPopulateRefer) {
                             autoPopulateRefer = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_populate_refer, targetProvider);
                         }

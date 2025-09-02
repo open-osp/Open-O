@@ -18,7 +18,7 @@
 
 --%>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*, oscar.appt.*, org.oscarehr.common.dao.AppointmentTypeDao, org.oscarehr.common.model.AppointmentType, org.oscarehr.util.SpringUtils" %>
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*, ca.openosp.openo.appt.*, ca.openosp.openo.commn.dao.AppointmentTypeDao, ca.openosp.openo.commn.model.AppointmentType, ca.openosp.openo.utility.SpringUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
@@ -37,10 +37,11 @@
 <%@ page errorPage="../errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
-<%@ page import="oscar.util.*" %>
-<%@ page import="oscar.login.*" %>
-<%@ page import="oscar.log.*" %>
+<%@ page import="ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.login.*" %>
+<%@ page import="ca.openosp.openo.log.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
 <head>
     <title>
@@ -271,7 +272,7 @@
                     </th>
                 </tr>
                 <%
-                    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+                    boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
                     List<AppointmentType> types = new ArrayList<AppointmentType>();
                     AppointmentTypeDao dao = (AppointmentTypeDao) SpringUtils.getBean(AppointmentTypeDao.class);
                     types = dao.listAll();

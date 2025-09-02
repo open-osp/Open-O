@@ -1,5 +1,6 @@
 services:
   open-o:
+    container_name: openo-tomcat-dev
     build:
       context: ./development
       dockerfile: Dockerfile
@@ -9,7 +10,7 @@ services:
     volumes:
       - m2-volume:/root/.m2
       - ..:/workspace:cached 
-      - ../src/main/resources/db_data/:/db-data/
+      - ../.devcontainer/db/db_data/:/db-data/
     env_file:
       - ./development/config/shared/local.env
     environment:
@@ -19,12 +20,14 @@ services:
     networks:
       - open-o-network
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
+    container_name: openo-mariadb-dev
     build:
-      context: ./../
-      dockerfile: ./.devcontainer/db/Dockerfile
+      context: ../
+      dockerfile: .devcontainer/db/Dockerfile
     env_file:
       - ./development/config/shared/local.env
     ports:
@@ -41,6 +44,12 @@ services:
         limits:
           memory: 2G
           cpus: "2"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 60s
 
 volumes:
   mariadb-files:

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ca.openosp.openo.integration.mcedt.DelegateFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.transport.http.HTTPConduit;
@@ -27,11 +28,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.oscarehr.common.dao.utils.ConfigUtils;
-import org.oscarehr.integration.ebs.client.ng.EdtClientBuilder;
-import org.oscarehr.integration.ebs.client.ng.EdtClientBuilderConfig;
-import org.oscarehr.integration.mcedt.mailbox.CidPrefixResourceResolver;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.integration.ebs.client.ng.EdtClientBuilder;
+import ca.openosp.openo.integration.ebs.client.ng.EdtClientBuilderConfig;
+import ca.openosp.openo.integration.mcedt.mailbox.CidPrefixResourceResolver;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import ca.ontario.health.edt.Detail;
@@ -46,7 +47,7 @@ import ca.ontario.health.edt.TypeListData;
 import ca.ontario.health.edt.TypeListResult;
 import ca.ontario.health.edt.UpdateRequest;
 import ca.ontario.health.edt.UploadData;
-import oscar.OscarProperties;
+import ca.openosp.OscarProperties;
 
 public abstract class EDTBaseTest {
     protected static Logger logger = MiscUtils.getLogger();
@@ -136,7 +137,7 @@ public abstract class EDTBaseTest {
         // Check if the Spring context (bean factory) has been initialized yet
         // Set up the context if it's null
         if(SpringUtils.getBeanFactory() == null) {
-            oscar.OscarProperties p = oscar.OscarProperties.getInstance();
+            ca.openosp.OscarProperties p = ca.openosp.OscarProperties.getInstance();
             // Set the properties
             p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
             p.setProperty("db_username", ConfigUtils.getProperty("db_user"));

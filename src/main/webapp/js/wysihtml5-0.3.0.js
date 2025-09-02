@@ -1909,7 +1909,7 @@ rangy.createModule("WrappedRange", function (api, module) {
     var range = document.selection.createRange();
     alert(range.parentElement().id); // Should alert "ul" but alerts "b"
 
-    This method returns the common ancestor node of the following:
+    This method returns the commons ancestor node of the following:
     - the parentElement() of the textRange
     - the parentElement() of the textRange after calling collapse(true)
     - the parentElement() of the textRange after calling collapse(false)
@@ -3428,7 +3428,7 @@ wysihtml5.browser = (function () {
 
         /**
          * Whether the browser supports sandboxed iframes
-         * Currently only IE 6+ offers such feature <iframe security="restricted">
+         * Currently only IE 6+ offers such feature <iframe sec="restricted">
          *
          * http://msdn.microsoft.com/en-us/library/ms534622(v=vs.85).aspx
          * http://blogs.msdn.com/b/ie/archive/2008/01/18/using-frames-more-securely.aspx
@@ -5314,14 +5314,14 @@ wysihtml5.dom.replaceWithChildNodes = function (node) {
  * Sandbox for executing javascript, parsing css styles and doing dom operations in a secure way
  *
  * Browser Compatibility:
- *  - Secure in MSIE 6+, but only when the user hasn't made changes to his security level "restricted"
+ *  - Secure in MSIE 6+, but only when the user hasn't made changes to his sec level "restricted"
  *  - Partially secure in other browsers (Firefox, Opera, Safari, Chrome, ...)
  *
  * Please note that this class can't benefit from the HTML5 sandbox attribute for the following reasons:
  *    - sandboxing doesn't work correctly with inlined content (src="javascript:'<html>...</html>'")
  *    - sandboxing of physical documents causes that the dom isn't accessible anymore from the outside (iframe.contentWindow, ...)
  *    - setting the "allow-same-origin" flag would fix that, but then still javascript and dom events refuse to fire
- *    - therefore the "allow-scripts" flag is needed, which then would deactivate any security, as the js executed inside the iframe
+ *    - therefore the "allow-scripts" flag is needed, which then would deactivate any sec, as the js executed inside the iframe
  *      can do anything as if the sandbox attribute wasn't set
  *
  * @param {Function} [readyCallback] Method that gets invoked when the sandbox is ready
@@ -5410,11 +5410,11 @@ wysihtml5.dom.replaceWithChildNodes = function (node) {
              *    In order to make this happen we need to set the "allow-scripts" flag.
              *    A combination of allow-scripts and allow-same-origin is almost the same as setting no sandbox attribute at all.
              *  - Chrome & Safari, doesn't seem to support sandboxing correctly when the iframe's html is inlined (no physical document)
-             *  - IE needs to have the security="restricted" attribute set before the iframe is
+             *  - IE needs to have the sec="restricted" attribute set before the iframe is
              *    inserted into the dom tree
-             *  - Believe it or not but in IE "security" in document.createElement("iframe") is false, even
+             *  - Believe it or not but in IE "sec" in document.createElement("iframe") is false, even
              *    though it supports it
-             *  - When an iframe has security="restricted", in IE eval() & execScript() don't work anymore
+             *  - When an iframe has sec="restricted", in IE eval() & execScript() don't work anymore
              *  - IE doesn't fire the onload event when the content is inlined in the src attribute, therefore we rely
              *    on the onreadystatechange event
              */
@@ -5687,7 +5687,7 @@ wysihtml5.dom.setStyles = function (styles) {
 })(wysihtml5.dom);
 
 /**
- * Fix most common html formatting misbehaviors of browsers implementation when inserting
+ * Fix most commons html formatting misbehaviors of browsers implementation when inserting
  * content via copy & paste contentEditable
  *
  * @author Christopher Blum

@@ -25,9 +25,10 @@ package org.oscarehr.PMmodule.web.forms;
 
 import java.util.Calendar;
 
+import ca.openosp.openo.PMmodule.web.forms.IntegratorPushItem;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 public class IntegratorPushItemTest {
 

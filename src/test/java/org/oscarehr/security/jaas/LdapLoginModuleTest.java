@@ -41,18 +41,18 @@ import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
 
-import oscar.OscarProperties;
-import oscar.login.jaas.LdapLoginModule;
-import oscar.login.jaas.LoginModuleFactory;
-import oscar.login.jaas.OscarCallbackHandler;
-import oscar.login.jaas.OscarConfiguration;
-import oscar.login.jaas.OscarPrincipal;
+import ca.openosp.OscarProperties;
+import ca.openosp.openo.login.jaas.LdapLoginModule;
+import ca.openosp.openo.login.jaas.LoginModuleFactory;
+import ca.openosp.openo.login.jaas.OscarCallbackHandler;
+import ca.openosp.openo.login.jaas.OscarConfiguration;
+import ca.openosp.openo.login.jaas.OscarPrincipal;
 
 public class LdapLoginModuleTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("security", "provider", "secUserRole");
+        SchemaUtils.restoreTable("sec", "providers", "secUserRole");
     }
 
     @Test

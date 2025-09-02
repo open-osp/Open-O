@@ -27,7 +27,7 @@
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList" %>
+<%@ page import="ca.openosp.openo.mds.data.ProviderData, java.util.ArrayList" %>
 
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
 <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
@@ -35,7 +35,6 @@
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-    <script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/prototype.js"/>"></script>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/screen.js"/>"></script>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/rx.js"/>"></script>
@@ -52,7 +51,7 @@
         var docId = '<%=docId%>';
         var allSelected = "";
         if (document.providerSelectForm.selectedProviders.selectedIndex == -1) {
-            alert("Please select at least one provider");
+            alert("Please select at least one providers");
         } else {
             for (i = 0; i < document.providerSelectForm.selectedProviders.options.length; i++) {
                 if (document.providerSelectForm.selectedProviders.options[i].selected) {

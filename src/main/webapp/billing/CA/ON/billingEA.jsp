@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
     Copyright (c) 2006-. OSCARservice, OpenSoft System. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <%
     if (session.getValue("user") == null)
         response.sendRedirect("../../logout.jsp");

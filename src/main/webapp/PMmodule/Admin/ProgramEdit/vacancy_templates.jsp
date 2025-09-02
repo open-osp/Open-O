@@ -24,8 +24,8 @@
 --%>
 
 
-<%@page import="org.oscarehr.PMmodule.model.VacancyTemplate" %>
-<%@page import="org.oscarehr.PMmodule.service.VacancyTemplateManager" %>
+<%@page import="ca.openosp.openo.PMmodule.model.VacancyTemplate" %>
+<%@page import="ca.openosp.openo.PMmodule.service.VacancyTemplateManager" %>
 <%@page import="java.util.List" %>
 
 <%@ include file="/taglibs.jsp" %>

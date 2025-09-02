@@ -33,7 +33,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.junit.Test;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 public class QuickTest {
 

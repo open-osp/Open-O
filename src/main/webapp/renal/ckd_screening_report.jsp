@@ -25,7 +25,7 @@
 --%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -44,12 +44,12 @@
 %>
 
 <%@page import="java.util.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.renal.CkdScreener" %>
-<%@page import="org.oscarehr.renal.CkdScreenerReportHandler" %>
-<%@page import="org.oscarehr.renal.CKDReportContainer" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.renal.CkdScreener" %>
+<%@page import="ca.openosp.openo.renal.CkdScreenerReportHandler" %>
+<%@page import="ca.openosp.openo.renal.CKDReportContainer" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 
 
 <%
@@ -58,7 +58,7 @@
     CkdScreenerReportHandler report = new CkdScreenerReportHandler();
     List<CKDReportContainer> ckds = report.generateReport();
 
-    String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
+    String labReqVer = ca.openosp.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
     if (labReqVer.equals("")) {
         labReqVer = "07";
     }

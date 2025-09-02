@@ -24,8 +24,8 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.oscarRx.data.RxPatientData" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -92,15 +92,15 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
 <%@page
-        import="oscar.log.*,oscar.util.UtilMisc,oscar.oscarEncounter.data.*, java.net.*,java.util.*,oscar.util.UtilDateUtilities" %>
+        import="ca.openosp.openo.log.*,ca.openosp.openo.util.UtilMisc,ca.openosp.openo.encounter.data.*, java.net.*,java.util.*,ca.openosp.openo.util.UtilDateUtilities" %>
 <%@page
-        import="oscar.oscarMDS.data.MDSResultsData,oscar.oscarLab.ca.on.*, oscar.oscarMessenger.util.MsgDemoMap, oscar.oscarMessenger.data.MsgMessageData" %>
+        import="ca.openosp.openo.mds.data.MDSResultsData,ca.openosp.openo.lab.ca.on.*, ca.openosp.openo.messenger.util.MsgDemoMap, ca.openosp.openo.messenger.data.MsgMessageData" %>
 <%@page
-        import="oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarResearch.oscarDxResearch.bean.*,oscar.util.*" %>
+        import="ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.dxresearch.bean.*,ca.openosp.openo.util.*" %>
 <%@page
-        import="oscar.eform.*, org.apache.commons.lang.StringEscapeUtils" %>
+        import="ca.openosp.openo.eform.*, org.apache.commons.lang.StringEscapeUtils" %>
 
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <%
     String ip = request.getRemoteAddr();
@@ -110,8 +110,8 @@
     //The oscarEncounter session manager, if the session bean is not in the context it looks for a session cookie with the appropriate name and value, if the required cookie is not available
     //it dumps you out to an erros page.
 
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-    if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
+    EctSessionBean bean = null;
+    if ((bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
@@ -171,7 +171,7 @@
 
 <%
     //need these variables for the forms
-    oscar.util.UtilDateUtilities dateConvert = new oscar.util.UtilDateUtilities();
+    UtilDateUtilities dateConvert = new UtilDateUtilities();
     String demoNo = bean.demographicNo;
     String provNo = bean.providerNo;
     EctFormData.Form[] forms = EctFormData.getForms();
@@ -195,7 +195,7 @@
     String pAge = Integer.toString(dateConvert.calcAge(bean.yearOfBirth, bean.monthOfBirth, bean.dateOfBirth));
 
     String province = (oscarVariables.getProperty("billregion", "")).trim().toUpperCase();
-    Properties windowSizes = oscar.oscarEncounter.pageUtil.EctWindowSizes.getWindowSizes(provNo);
+    Properties windowSizes = EctWindowSizes.getWindowSizes(provNo);
 
     MsgDemoMap msgDemoMap = new MsgDemoMap();
 
@@ -213,7 +213,16 @@
 %>
 
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctWindowSizes" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.encounter.data.*" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -1441,7 +1450,7 @@
                                             <div class="presBox" id="allergyBox">
                                                 <ul>
                                                     <%
-                                                        org.oscarehr.common.model.Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demoNo)).getAllergies(loggedInInfo);
+                                                        Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demoNo)).getAllergies(loggedInInfo);
 
                                                         for (int j = 0; j < allergies.length; j++) {%>
                                                     <li><a
@@ -1498,8 +1507,8 @@
                                             </table>
                                             <div class="presBox" style="width: 100%;" id="presBox">
                                                 <%
-                                                    oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-                                                    oscar.oscarRx.data.RxPrescriptionData.Prescription[] arr = {};
+                                                    RxPrescriptionData prescriptData = new RxPrescriptionData();
+                                                    RxPrescriptionData.Prescription[] arr = {};
                                                     arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(bean.demographicNo));
                                                     if (arr.length > 0) {%>
                                                 <table>
@@ -1692,7 +1701,7 @@
                                                                              class="ControlPushButton2"
                                                                              value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/>"
                                                                              onClick="document.forms['encForm'].btnPressed.value='Save'; popupPage(700, 960, 'print', 'encounterPrint.jsp');"/>
-                                            <input type="hidden" name="btnPressed" value=""><!-- security code block -->
+                                            <input type="hidden" name="btnPressed" value=""><!-- sec code block -->
                                             <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart"
                                                                rights="w">
                                                 <% if (!bPrincipalControl || (bPrincipalControl && bPrincipalDisplay)) { %>
@@ -1718,7 +1727,7 @@
                                                            onclick="document.forms['encForm'].btnPressed.value='Verify and Sign'; document.forms['encForm'].submit();">
                                                 </security:oscarSec>
                                                 <% } %>
-                                            </security:oscarSec> <!-- security code block --> <input type="button"
+                                            </security:oscarSec> <!-- sec code block --> <input type="button"
                                                                                                      style="height: 20px"
                                                                                                      name="buttonPressed"
                                                                                                      value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnExit"/>"

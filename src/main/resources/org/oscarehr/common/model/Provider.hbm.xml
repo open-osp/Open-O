@@ -8,8 +8,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.common.model">
-	<class name="Provider" table="provider">
+<hibernate-mapping package="ca.openosp.openo.commn.model">
+	<class name="ca.openosp.openo.commn.model.Provider" table="provider">
 		<id column="provider_no" name="ProviderNo" type="string">
 			<generator class="assigned" />
 		</id>

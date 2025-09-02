@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.dao.EFormDao" %>
+<%@page import="ca.openosp.openo.commn.dao.EFormDao" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -41,23 +41,25 @@
 %>
 
 <%@ page import="java.util.ResourceBundle" %>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConAddSpecialistForm" %>
+<%@page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConAddSpecialistForm" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.Map" %>
 <%@page import="java.util.HashMap" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.InstitutionDao" %>
-<%@page import="org.oscarehr.common.model.Institution" %>
-<%@page import="org.oscarehr.common.dao.InstitutitionDepartmentDao, org.oscarehr.common.dao.ConsultationServiceDao" %>
-<%@page import="org.oscarehr.common.model.InstitutionDepartment, org.oscarehr.common.model.ConsultationServices" %>
-<%@page import="org.oscarehr.common.dao.DepartmentDao" %>
-<%@page import="org.oscarehr.common.model.Department" %>
-<%@page import="org.oscarehr.common.model.EForm" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.InstitutionDao" %>
+<%@page import="ca.openosp.openo.commn.model.Institution" %>
+<%@page import="ca.openosp.openo.commn.dao.InstitutitionDepartmentDao, ca.openosp.openo.commn.dao.ConsultationServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.InstitutionDepartment, ca.openosp.openo.commn.model.ConsultationServices" %>
+<%@page import="ca.openosp.openo.commn.dao.DepartmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Department" %>
+<%@page import="ca.openosp.openo.commn.model.EForm" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%
     InstitutionDao institutionDao = SpringUtils.getBean(InstitutionDao.class);
@@ -68,7 +70,7 @@
     List<EForm> eforms = eformDao.findAll(true);
     pageContext.setAttribute("eforms", eforms);
 
-    String referralNoMsg = oscar.OscarProperties.getInstance().getProperty("referral_no.msg", "Must be an integer");
+    String referralNoMsg = OscarProperties.getInstance().getProperty("referral_no.msg", "Must be an integer");
 
     ConsultationServiceDao specialtyDao = SpringUtils.getBean(ConsultationServiceDao.class);
     List<ConsultationServices> specialties = specialtyDao.findActive();
@@ -180,7 +182,7 @@
         <tr style="vertical-align: top">
             <td class="MainTableLeftColumn">
                 <%
-                    oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar(request);
+                    EctConTitlebar titlebar = new EctConTitlebar(request);
                     out.print(titlebar.estBar(request));
                 %>
             </td>

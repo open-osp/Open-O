@@ -38,10 +38,10 @@
 	-->
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 
-	<bean class="org.ServletContextConfig"/>
+	<bean class="ca.openosp.openo.config.ServletContextConfig"/>
     <!-- Enable annotation-driven transaction management with CGLIB proxies -->
     <tx:annotation-driven proxy-target-class="true"/>
-	<bean id="propertyConfigurer" class="org.oscarehr.common.OscarPropertyPlaceholderConfigurer">
+	<bean id="propertyConfigurer" class="ca.openosp.openo.commn.OscarPropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:oscar_mcmaster.properties</value>
@@ -60,132 +60,121 @@
 
 	<!-- setup CXF -->
 	<import resource="classpath:spring_ws.xml" />
-	<!-- <context:component-scan base-package="org.oscarehr.common.dao" /> -->
+	<!-- <context:component-scan base-package="org.oscarehr.commons.daos" /> -->
 	
-	<bean id="hl7HandlerMSHMappingDao" class="org.oscarehr.common.dao.HL7HandlerMSHMappingDaoImpl" autowire="byName" />
+	<bean id="hl7HandlerMSHMappingDao" class="ca.openosp.openo.commn.dao.HL7HandlerMSHMappingDaoImpl" autowire="byName" />
 	<!-- hibernated DAO -->
-    <bean id="gstControlDao" class="org.oscarehr.billing.CA.dao.GstControlDaoImpl" autowire="byName" />
-	<bean id="programDao" class="org.oscarehr.PMmodule.dao.ProgramDaoImpl" autowire="byName" />
-	<bean id="programQueueDao" class="org.oscarehr.PMmodule.dao.ProgramQueueDaoImpl" autowire="byName" />
-	<bean id="clientReferralDAO" class="org.oscarehr.PMmodule.dao.ClientReferralDAOImpl" autowire="byName" />
-	<bean id="agencyDao" class="org.oscarehr.PMmodule.dao.AgencyDaoImpl" autowire="byName" />
-	<bean id="admissionDao" class="org.oscarehr.common.dao.AdmissionDaoImpl" autowire="byName" />
-	<bean id="providerDao" class="org.oscarehr.PMmodule.dao.ProviderDaoImpl" autowire="byName" />
-	<bean id="streetHealthDao" class="org.oscarehr.PMmodule.dao.StreetHealthDaoImpl" autowire="byName" />
-	<bean id="otherIdDao" class="org.oscarehr.common.dao.OtherIdDAOImpl" autowire="byName" />
+    <bean id="gstControlDao" class="ca.openosp.openo.billing.CA.dao.GstControlDaoImpl" autowire="byName" />
+	<bean id="programDao" class="ca.openosp.openo.PMmodule.dao.ProgramDaoImpl" autowire="byName" />
+	<bean id="programQueueDao" class="ca.openosp.openo.PMmodule.dao.ProgramQueueDaoImpl" autowire="byName" />
+	<bean id="clientReferralDAO" class="ca.openosp.openo.PMmodule.dao.ClientReferralDAOImpl" autowire="byName" />
+	<bean id="agencyDao" class="ca.openosp.openo.PMmodule.dao.AgencyDaoImpl" autowire="byName" />
+	<bean id="providerDao" class="ca.openosp.openo.PMmodule.dao.ProviderDaoImpl" autowire="byName" />
+	<bean id="otherIdDao" class="ca.openosp.openo.commn.dao.OtherIdDAOImpl" autowire="byName" />
 
-	<bean id="CaseManagementIssueDAO" class="org.oscarehr.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
-	<bean id="caseManagementIssueDAO" class="org.oscarehr.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
-	<bean id="CaseManagementNoteDAO" class="org.oscarehr.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
-	<bean id="caseManagementNoteDAO" class="org.oscarehr.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
-	<bean id="CaseManagementTmpSaveDao" class="org.oscarehr.common.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
-	<bean id="caseManagementTmpSaveDao" class="org.oscarehr.common.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
-	<bean id="CaseManagementNoteExtDAO" class="org.oscarehr.casemgmt.dao.CaseManagementNoteExtDAOImpl" autowire="byName" />
-	<bean id="CaseManagementNoteLinkDAO" class="org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAOImpl" autowire="byName" />
-	<bean id="CaseManagementCPPDAO" class="org.oscarehr.casemgmt.dao.CaseManagementCPPDAOImpl" autowire="byName" />
-	<bean id="queueDao" class="org.oscarehr.common.dao.QueueDaoImpl" autowire="byName" />
-	<bean id="waitingListNameDao" class="org.oscarehr.common.dao.WaitingListNameDaoImpl" autowire="byName" />
+	<bean id="CaseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
+	<bean id="caseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
+	<bean id="CaseManagementNoteDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
+	<bean id="caseManagementNoteDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
+	<bean id="CaseManagementTmpSaveDao" class="ca.openosp.openo.commn.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
+	<bean id="caseManagementTmpSaveDao" class="ca.openosp.openo.commn.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
+	<bean id="CaseManagementNoteExtDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteExtDAOImpl" autowire="byName" />
+	<bean id="CaseManagementNoteLinkDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteLinkDAOImpl" autowire="byName" />
+	<bean id="CaseManagementCPPDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementCPPDAOImpl" autowire="byName" />
+	<bean id="queueDao" class="ca.openosp.openo.commn.dao.QueueDaoImpl" autowire="byName" />
+	<bean id="waitingListNameDao" class="ca.openosp.openo.commn.dao.WaitingListNameDaoImpl" autowire="byName" />
 	
 	
 	
-	 <bean id="appointmentArchiveDao" class="org.oscarehr.common.dao.AppointmentArchiveDaoImpl" autowire="byName" />
-	<bean id="appointmentTypeDao" class="org.oscarehr.common.dao.AppointmentTypeDaoImpl" autowire="byName" />
-	<bean id="billingONCHeader1Dao" class="org.oscarehr.common.dao.BillingONCHeader1DaoImpl" autowire="byName" />
+	 <bean id="appointmentArchiveDao" class="ca.openosp.openo.commn.dao.AppointmentArchiveDaoImpl" autowire="byName" />
+	<bean id="appointmentTypeDao" class="ca.openosp.openo.commn.dao.AppointmentTypeDaoImpl" autowire="byName" />
+	<bean id="billingONCHeader1Dao" class="ca.openosp.openo.commn.dao.BillingONCHeader1DaoImpl" autowire="byName" />
 	
-	<bean id="DxDao" class="org.oscarehr.common.dao.DxDaoImpl" autowire="byName" />
-	<bean id="CasemgmtNoteLockDao" class="org.oscarehr.common.dao.CasemgmtNoteLockDaoImpl" autowire="byName" />
+	<bean id="DxDao" class="ca.openosp.openo.commn.dao.DxDaoImpl" autowire="byName" />
+	<bean id="CasemgmtNoteLockDao" class="ca.openosp.openo.commn.dao.CasemgmtNoteLockDaoImpl" autowire="byName" />
 	
-	<bean id="AllergyDao" class="org.oscarehr.common.dao.AllergyMergedDemographicDaoImpl" autowire="byName" />
-	<bean id="allergyDao" class="org.oscarehr.common.dao.AllergyMergedDemographicDaoImpl" autowire="byName" />
-	<bean id="secRoleDao" class="org.oscarehr.common.dao.SecRoleDaoImpl" autowire="byName" />
-	<bean id="IssueDAO" class="org.oscarehr.casemgmt.dao.IssueDAOImpl" autowire="byName" />
-	<bean id="secroleDao" class="com.quatro.dao.security.SecroleDaoImpl" autowire="byName"/>
-	<bean id="RoleProgramAccessDAO" class="org.oscarehr.casemgmt.dao.RoleProgramAccessDAOImpl" autowire="byName" />
-	<bean id="clientImageDAO" class="org.oscarehr.casemgmt.dao.ClientImageDAOImpl" autowire="byName" />
-	<bean id="programProviderDAO" class="org.oscarehr.PMmodule.dao.ProgramProviderDAOImpl" autowire="byName" />
-	<bean id="programFunctionalUserDAO" class="org.oscarehr.PMmodule.dao.ProgramFunctionalUserDAOImpl" autowire="byName" />
-	<bean id="programAccessDAO" class="org.oscarehr.PMmodule.dao.ProgramAccessDAOImpl" autowire="byName" />
-	<bean id="defaultRoleAccessDAO" class="org.oscarehr.PMmodule.dao.DefaultRoleAccessDAOImpl" autowire="byName" />
-	<bean id="programClientStatusDAO" class="org.oscarehr.PMmodule.dao.ProgramClientStatusDAOImpl" autowire="byName" />
-	<bean id="programTeamDAO" class="org.oscarehr.PMmodule.dao.ProgramTeamDAOImpl" autowire="byName" />
-	<bean id="bedProgramDao" class="org.caisi.dao.BedProgramDaoImpl" autowire="byName" />
-	<bean id="demographicDao" class="org.oscarehr.common.dao.DemographicDaoImpl" autowire="byName" />
-	<bean id="secUserRoleDao" class="org.oscarehr.PMmodule.dao.SecUserRoleDaoImpl" autowire="byName"/>
-	<bean id="programSignatureDao" class="org.oscarehr.PMmodule.dao.ProgramSignatureDaoImpl" autowire="byName" />
-	<bean id="programClientRestrictionDAO" class="org.oscarehr.PMmodule.dao.ProgramClientRestrictionDAOImpl" autowire="byName" />
-	<bean id="UserPropertyDAO" class="org.oscarehr.common.dao.UserPropertyDAOImpl" autowire="byName" />
-	<!-- <bean id="demographicDao" class="org.oscarehr.common.dao.DemographicDaoImpl" autowire="byName" /> -->
-	<bean id="clinicDAO" class="org.oscarehr.common.dao.ClinicDAOImpl" autowire="byName" />
-	<bean id="dataExportDAO" class="org.oscarehr.common.dao.DataExportDaoImpl" autowire="byName" />
-	<bean id="siteDao" class="org.oscarehr.common.dao.SiteDaoImpl" autowire="byName" />
-	<bean id="BillingmasterDAO" class="oscar.oscarBilling.ca.bc.data.BillingmasterDAO" autowire="byName" />
-	<bean id="BillingPreferencesDAO" class="oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO" autowire="byName" />
-	<bean id="PrivateBillTransactionDAO" class="oscar.oscarBilling.ca.bc.data.PrivateBillTransactionsDAO" autowire="byName" />
-	<bean id="SupServiceCodeAssocDAO" class="oscar.oscarBilling.ca.bc.data.SupServiceCodeAssocDAO" autowire="byName" />
-	<bean id="BillingreferralDAO" class="org.oscarehr.common.dao.BillingreferralDaoImpl" autowire="byName" />
-	<bean id="DxresearchDAO" class="org.oscarehr.common.dao.DxresearchDAOImpl" autowire="byName" />
-	<bean id="icd9Dao" class="org.oscarehr.common.dao.Icd9DaoImpl" autowire="byName" />
-	<bean id="defaultIssueDao" class="org.caisi.dao.DefaultIssueDaoImpl" autowire="byName" />
+	<bean id="AllergyDao" class="ca.openosp.openo.commn.dao.AllergyMergedDemographicDaoImpl" autowire="byName" />
+	<bean id="allergyDao" class="ca.openosp.openo.commn.dao.AllergyMergedDemographicDaoImpl" autowire="byName" />
+	<bean id="secRoleDao" class="ca.openosp.openo.commn.dao.SecRoleDaoImpl" autowire="byName" />
+	<bean id="IssueDAO" class="ca.openosp.openo.casemgmt.dao.IssueDAOImpl" autowire="byName" />
+	<bean id="secroleDao" class="ca.openosp.openo.daos.security.SecroleDaoImpl" autowire="byName"/>
+	<bean id="RoleProgramAccessDAO" class="ca.openosp.openo.casemgmt.dao.RoleProgramAccessDAOImpl" autowire="byName" />
+	<bean id="clientImageDAO" class="ca.openosp.openo.casemgmt.dao.ClientImageDAOImpl" autowire="byName" />
+	<bean id="programProviderDAO" class="ca.openosp.openo.PMmodule.dao.ProgramProviderDAOImpl" autowire="byName" />
+	<bean id="programFunctionalUserDAO" class="ca.openosp.openo.PMmodule.dao.ProgramFunctionalUserDAOImpl" autowire="byName" />
+	<bean id="programAccessDAO" class="ca.openosp.openo.PMmodule.dao.ProgramAccessDAOImpl" autowire="byName" />
+	<bean id="defaultRoleAccessDAO" class="ca.openosp.openo.PMmodule.dao.DefaultRoleAccessDAOImpl" autowire="byName" />
+	<bean id="programClientStatusDAO" class="ca.openosp.openo.PMmodule.dao.ProgramClientStatusDAOImpl" autowire="byName" />
+	<bean id="programTeamDAO" class="ca.openosp.openo.PMmodule.dao.ProgramTeamDAOImpl" autowire="byName" />
+	<bean id="demographicDao" class="ca.openosp.openo.commn.dao.DemographicDaoImpl" autowire="byName" />
+	<bean id="secUserRoleDao" class="ca.openosp.openo.PMmodule.dao.SecUserRoleDaoImpl" autowire="byName"/>
+	<bean id="programSignatureDao" class="ca.openosp.openo.PMmodule.dao.ProgramSignatureDaoImpl" autowire="byName" />
+	<bean id="programClientRestrictionDAO" class="ca.openosp.openo.PMmodule.dao.ProgramClientRestrictionDAOImpl" autowire="byName" />
+	<bean id="UserPropertyDAO" class="ca.openosp.openo.commn.dao.UserPropertyDAOImpl" autowire="byName" />
+	<!-- <bean id="demographicDao" class="org.oscarehr.commons.daos.DemographicDaoImpl" autowire="byName" /> -->
+	<bean id="dataExportDAO" class="ca.openosp.openo.commn.dao.DataExportDaoImpl" autowire="byName" />
+	<bean id="siteDao" class="ca.openosp.openo.commn.dao.SiteDaoImpl" autowire="byName" />
+	<bean id="BillingmasterDAO" class="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" autowire="byName" />
+	<bean id="BillingPreferencesDAO" class="ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO" autowire="byName" />
+	<bean id="PrivateBillTransactionDAO" class="ca.openosp.openo.billings.ca.bc.data.PrivateBillTransactionsDAO" autowire="byName" />
+	<bean id="SupServiceCodeAssocDAO" class="ca.openosp.openo.billings.ca.bc.data.SupServiceCodeAssocDAO" autowire="byName" />
+	<bean id="BillingreferralDAO" class="ca.openosp.openo.commn.dao.BillingreferralDaoImpl" autowire="byName" />
+	<bean id="DxresearchDAO" class="ca.openosp.openo.commn.dao.DxresearchDAOImpl" autowire="byName" />
+	<bean id="icd9Dao" class="ca.openosp.openo.commn.dao.Icd9DaoImpl" autowire="byName" />
+	<bean id="defaultIssueDao" class="ca.openosp.openo.daos.DefaultIssueDaoImpl" autowire="byName" />
 	
-    <bean id="MacroDAO" class="org.oscarehr.eyeform.dao.MacroDaoImpl" autowire="byName" />
-	<bean id="rourke2009Dao" class="org.oscarehr.common.dao.forms.Rourke2009DAO" autowire="byName" />
-	<bean id="ocanSubmissionLogDao" class="org.oscarehr.PMmodule.dao.OcanSubmissionLogDaoImpl" autowire="byName" />
+	<bean id="rourke2009Dao" class="ca.openosp.openo.commn.dao.forms.Rourke2009DAO" autowire="byName" />
 
-	<bean id="lookupDao" class="com.quatro.dao.LookupDaoImpl" autowire="byName" />
-	<bean id="documentDao" class="org.oscarehr.common.dao.DocumentMergeDemographicDAOImpl" autowire="byName" />
-	<bean id="userAccessDao" class="com.quatro.dao.security.UserAccessDaoImpl" autowire="byName" />
-	<bean id="demographicExtDao" class="org.oscarehr.common.dao.DemographicExtDaoImpl" autowire="byName" />
-	<bean id="providerDefaultProgramDao" class="org.oscarehr.common.dao.ProviderDefaultProgramDaoImpl" autowire="byName" />
-	<bean id="providerInboxRoutingDAO" class="org.oscarehr.common.dao.ProviderInboxRoutingDaoImpl" autowire="byName"/>
-	<bean id="ProviderLabRoutingFavoritesDao" class="org.oscarehr.common.dao.ProviderLabRoutingFavoritesDaoImpl" autowire="byName"/>
+	<bean id="lookupDao" class="ca.openosp.openo.daos.LookupDaoImpl" autowire="byName" />
+	<bean id="documentDao" class="ca.openosp.openo.commn.dao.DocumentMergeDemographicDAOImpl" autowire="byName" />
+	<bean id="userAccessDao" class="ca.openosp.openo.daos.security.UserAccessDaoImpl" autowire="byName" />
+	<bean id="demographicExtDao" class="ca.openosp.openo.commn.dao.DemographicExtDaoImpl" autowire="byName" />
+	<bean id="providerDefaultProgramDao" class="ca.openosp.openo.commn.dao.ProviderDefaultProgramDaoImpl" autowire="byName" />
+	<bean id="providerInboxRoutingDAO" class="ca.openosp.openo.commn.dao.ProviderInboxRoutingDaoImpl" autowire="byName"/>
+	<bean id="ProviderLabRoutingFavoritesDao" class="ca.openosp.openo.commn.dao.ProviderLabRoutingFavoritesDaoImpl" autowire="byName"/>
 
-        <bean id="queueDocumentLinkDAO" class="org.oscarehr.common.dao.QueueDocumentLinkDaoImpl" autowire="byName"/>
+        <bean id="queueDocumentLinkDAO" class="ca.openosp.openo.commn.dao.QueueDocumentLinkDaoImpl" autowire="byName"/>
 
-	<bean id="caseloadDao" class="org.oscarehr.common.dao.CaseloadDaoImpl" autowire="byName" />
-	<bean id="inboxResultsDao" class="org.oscarehr.common.dao.InboxResultsDaoImpl" autowire="byName" />
-    <bean id="inboxResultsRepository" class="org.oscarehr.common.dao.InboxResultsRepositoryImpl" autowire="byName" />
-    <bean id="securityDao" class="org.oscarehr.common.dao.SecurityDaoImpl" autowire="byName" />
-    <bean id="oscarLogDao" class="org.oscarehr.common.dao.OscarLogDaoImpl" autowire="byName" />
-    <bean id="providerPreferenceDao" class="org.oscarehr.common.dao.ProviderPreferenceDaoImpl" autowire="byName" />
-    <bean id="EFormDao" class="org.oscarehr.common.dao.EFormDaoImpl" autowire="byName" />
-    <bean id="encounterFormDao" class="org.oscarehr.common.dao.EncounterFormDaoImpl" autowire="byName" />
-    <bean id="systemMessageDao" class="org.oscarehr.common.dao.SystemMessageDaoImpl" autowire="byName" />
-    <bean id="billingPaymentTypeDao" class="org.oscarehr.common.dao.BillingPaymentTypeDaoImpl" autowire="byName" />
-    <bean id="billingONPaymentDao" class="org.oscarehr.common.dao.BillingONPaymentDaoImpl" autowire="byName" />
+	<bean id="caseloadDao" class="ca.openosp.openo.commn.dao.CaseloadDaoImpl" autowire="byName" />
+	<bean id="inboxResultsDao" class="ca.openosp.openo.commn.dao.InboxResultsDaoImpl" autowire="byName" />
+    <bean id="inboxResultsRepository" class="ca.openosp.openo.commn.dao.InboxResultsRepositoryImpl" autowire="byName" />
+    <bean id="securityDao" class="ca.openosp.openo.commn.dao.SecurityDaoImpl" autowire="byName" />
+    <bean id="oscarLogDao" class="ca.openosp.openo.commn.dao.OscarLogDaoImpl" autowire="byName" />
+    <bean id="providerPreferenceDao" class="ca.openosp.openo.commn.dao.ProviderPreferenceDaoImpl" autowire="byName" />
+    <bean id="EFormDao" class="ca.openosp.openo.commn.dao.EFormDaoImpl" autowire="byName" />
+    <bean id="encounterFormDao" class="ca.openosp.openo.commn.dao.EncounterFormDaoImpl" autowire="byName" />
+    <bean id="systemMessageDao" class="ca.openosp.openo.commn.dao.SystemMessageDaoImpl" autowire="byName" />
+    <bean id="billingPaymentTypeDao" class="ca.openosp.openo.commn.dao.BillingPaymentTypeDaoImpl" autowire="byName" />
+    <bean id="billingONPaymentDao" class="ca.openosp.openo.commn.dao.BillingONPaymentDaoImpl" autowire="byName" />
 	
 
 	<!-- Dao classes that implement OscarSuperDao -->
-	<bean id="providerSuperDao" class="oscar.dao.ProviderDao" autowire="byName" />
+	<bean id="providerSuperDao" class="ca.openosp.openo.dao.ProviderDao" autowire="byName" />
 	
 
-	<bean id="eChartDao" class="org.oscarehr.common.dao.EChartDaoImpl" autowire="byName" />
-	<bean id="encounterWindowDao" class="org.oscarehr.common.dao.EncounterWindowDaoImpl" autowire="byName" />
+	<bean id="eChartDao" class="ca.openosp.openo.commn.dao.EChartDaoImpl" autowire="byName" />
+	<bean id="encounterWindowDao" class="ca.openosp.openo.commn.dao.EncounterWindowDaoImpl" autowire="byName" />
 
 	<!-- OSCAR Desicion Support -->
-	<bean id="dsService" class="org.oscarehr.decisionSupport.service.DSServiceMyDrugref">
+	<bean id="dsService" class="ca.openosp.openo.decisionSupport.service.DSServiceImpl">
 	</bean>
 
 	<!--Container for holding preventions -->
-	<bean id="preventionMgr" class="org.oscarehr.provider.model.PreventionManager"></bean>
+	<bean id="preventionMgr" class="ca.openosp.openo.provider.model.PreventionManager"></bean>
 
-	<!-- OcanDataProcessor is used to create the OCAN xml submission file based on intake data -->
-	<bean id="ocanDataProcessor" class="oscar.ocan.service.OcanDataProcessor">
-		<property name="serviceOrganizationNumber" value="1001" />
-		<property name="submissionFileLocation" value="C:/TEMP/ocan_test" />
-	</bean>
 
 	<!-- OscarSuperManager manager provides business logic facade for jsp layer -->
-	<bean id="oscarSuperManager" class="oscar.service.OscarSuperManagerImpl" autowire="byName" init-method="init"/>
+	<bean id="oscarSuperManager" class="ca.openosp.openo.service.OscarSuperManagerImpl" autowire="byName" init-method="init"/>
 
-	<bean id="lookupManager" class="com.quatro.service.LookupManagerImpl" autowire="byName">
+	<bean id="lookupManager" class="ca.openosp.openo.services.LookupManagerImpl" autowire="byName">
 		<property name="lookupDao" ref="lookupDao" />
 	</bean>
-	<bean id="userAccessManager" class="com.quatro.service.security.UserAccessManagerImpl" autowire="byName">
+	<bean id="userAccessManager" class="ca.openosp.openo.services.security.UserAccessManagerImpl" autowire="byName">
 		<property name="userAccessDao" ref="userAccessDao" />
 	</bean>
 
 	<!-- configure the available measurement flow sheets -->
-	<bean id="measurementTemplateFlowSheet" class="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig">
+	<bean id="measurementTemplateFlowSheet" class="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig">
 		<property name="flowSheets">
 			<list>
 				<!--value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/diabetesFlowsheet.xml</value-->
@@ -214,15 +203,15 @@
 	</bean>
 
 	<!-- managers  -->
-	<bean id="agencyManager" class="org.oscarehr.PMmodule.service.AgencyManagerImpl" autowire="byName" />
-	<bean id="facilityMessageManager" class="org.caisi.service.FacilityMessageManagerImpl">
+	<bean id="agencyManager" class="ca.openosp.openo.PMmodule.service.AgencyManagerImpl" autowire="byName" />
+	<bean id="facilityMessageManager" class="ca.openosp.openo.services.OrganizationMessageManagerImpl">
 	</bean>
 
 	<!-- Manager classes -->
-	<bean id="programQueueManager" class="org.oscarehr.PMmodule.service.ProgramQueueManagerImpl" autowire="byName" />
-	<bean id="admissionManager" class="org.oscarehr.PMmodule.service.AdmissionManagerImpl" autowire="byType" />
+	<bean id="programQueueManager" class="ca.openosp.openo.PMmodule.service.ProgramQueueManagerImpl" autowire="byName" />
+	<bean id="admissionManager" class="ca.openosp.openo.PMmodule.service.AdmissionManagerImpl" autowire="byType" />
 	
-	<bean id="caseManagementManager" class="org.oscarehr.casemgmt.service.CaseManagementManagerImpl" autowire="byName">
+	<bean id="caseManagementManager" class="ca.openosp.openo.casemgmt.service.CaseManagementManagerImpl" autowire="byName">
 		<property name="caseManagementNoteDAO" ref="CaseManagementNoteDAO" />
 		<property name="caseManagementNoteExtDAO" ref="CaseManagementNoteExtDAO" />
 		<property name="caseManagementNoteLinkDAO" ref="CaseManagementNoteLinkDAO" />
@@ -248,11 +237,11 @@
 		<property name="dxDao" ref="DxDao" />
 	</bean>
 
-	<bean id="ClientImageManager" class="org.oscarehr.casemgmt.service.ClientImageManagerImpl" autowire="byName" />
-	<bean id="programManager" class="org.oscarehr.PMmodule.service.ProgramManagerImpl" autowire="byName">
+	<bean id="ClientImageManager" class="ca.openosp.openo.casemgmt.service.ClientImageManagerImpl" autowire="byName" />
+	<bean id="programManager" class="ca.openosp.openo.PMmodule.service.ProgramManagerImpl" autowire="byName">
 		<property name="enabled" value="${pmm.refer.temporaryAdmission.enabled}" />
 	</bean>
-	<bean id="clientManager" class="org.oscarehr.PMmodule.service.ClientManagerImpl" autowire="byName">
+	<bean id="clientManager" class="ca.openosp.openo.PMmodule.service.ClientManagerImpl" autowire="byName">
 		<property name="demographicDao" ref="demographicDao" />
 		<property name="clientReferralDAO" ref="clientReferralDAO" />
 		<property name="programQueueManager" ref="programQueueManager" />
@@ -261,49 +250,38 @@
 		<property name="demographicExtDao" ref="demographicExtDao" />
 		<property name="outsideOfDomainEnabled" value="${pmm.client.search.outside.of.domain.enabled}" />
 	</bean>
-	<bean id="infirmBedProgramManager" class="org.caisi.service.InfirmBedProgramManagerImpl" autowire="byName">
-		<property name="programProviderDAOT" ref="programProviderDAO" />
-		<property name="demographicDao" ref="demographicDao" />
-		<property name="providerDefaultProgramDao" ref="providerDefaultProgramDao" />
-	</bean>
 
 	
- 	<bean id="demographicManagerT" class="org.caisi.service.DemographicManagerTickler">
+ 	<bean id="demographicManagerT" class="ca.openosp.openo.services.DemographicManagerTickler">
 		<property name="demographicDao" ref="demographicDao" />
 	</bean>
-	<bean id="preparedTicklerManagerT" class="org.caisi.tickler.prepared.PreparedTicklerManagerImpl" scope="singleton" />
-	<bean id="providerManager" class="org.oscarehr.PMmodule.service.ProviderManagerImpl" autowire="byName" />
-	<bean id="clientRestrictionManager" class="org.oscarehr.PMmodule.service.ClientRestrictionManagerImpl" autowire="byName" />
+	<bean id="preparedTicklerManagerT" class="ca.openosp.openo.wl.prepared.PreparedTicklerManagerImpl" scope="singleton" />
+	<bean id="providerManager" class="ca.openosp.openo.PMmodule.service.ProviderManagerImpl" autowire="byName" />
+	<bean id="clientRestrictionManager" class="ca.openosp.openo.PMmodule.service.ClientRestrictionManagerImpl" autowire="byName" />
 	
 	<!-- Admin Start -->
-	<bean id="secobjprivilegeDao" class="com.quatro.dao.security.SecobjprivilegeDaoImpl" autowire="byName" />
-	<bean id="secProviderDao" class="com.quatro.dao.security.SecProviderDaoImpl" autowire="byName" />
-	<bean id="secuserroleDao" class="com.quatro.dao.security.SecuserroleDaoImpl" autowire="byName" />
-        <bean id="secObjectNameDao" class="com.quatro.dao.security.SecObjectNameDaoImpl" autowire="byName"/>
+	<bean id="secobjprivilegeDao" class="ca.openosp.openo.daos.security.SecobjprivilegeDaoImpl" autowire="byName" />
+	<bean id="secProviderDao" class="ca.openosp.openo.daos.security.SecProviderDaoImpl" autowire="byName" />
+	<bean id="secuserroleDao" class="ca.openosp.openo.daos.security.SecuserroleDaoImpl" autowire="byName" />
+        <bean id="secObjectNameDao" class="ca.openosp.openo.daos.security.SecObjectNameDaoImpl" autowire="byName"/>
 
-	<bean id="rolesManager" class="com.quatro.service.security.RolesManagerImpl" autowire="byName">
+	<bean id="rolesManager" class="ca.openosp.openo.services.security.RolesManagerImpl" autowire="byName">
 		<property name="secroleDao" ref="secroleDao" />
 		<property name="secobjprivilegeDao" ref="secobjprivilegeDao" />
 	</bean>
 
-	<bean id="drilldownQueryHandler" class="org.oscarehr.dashboard.handler.DrilldownQueryHandler" autowire="byName" />
-	<bean id="indicatorQueryHandler" class="org.oscarehr.dashboard.handler.IndicatorQueryHandler" autowire="byName" />
-	<bean id="exportQueryHandler" class="org.oscarehr.dashboard.handler.ExportQueryHandler" autowire="byName" />
+	<bean id="drilldownQueryHandler" class="ca.openosp.openo.dashboard.handler.DrilldownQueryHandler" autowire="byName" />
+	<bean id="indicatorQueryHandler" class="ca.openosp.openo.dashboard.handler.IndicatorQueryHandler" autowire="byName" />
+	<bean id="exportQueryHandler" class="ca.openosp.openo.dashboard.handler.ExportQueryHandler" autowire="byName" />
 		
-	<bean id="extPrintMeasurements" class="org.oscarehr.casemgmt.service.MeasurementPrint" autowire="byName"/>
-	<bean id="extPrintOcularProcedures" class="org.oscarehr.eyeform.web.OcularProcPrint" autowire="byName"/>
-	<bean id="extPrintSpecsHistory" class="org.oscarehr.eyeform.web.SpecsHistoryPrint" autowire="byName"/>
+	<bean id="extPrintMeasurements" class="ca.openosp.openo.casemgmt.service.MeasurementPrint" autowire="byName"/>
 
 	<!-- Encounter Form DAO -->
-	<bean id="Rourke2009DAO" class="org.oscarehr.common.dao.forms.Rourke2009DAO" autowire="byName"/>
-	<bean id="FormBCAR2020Dao" class="org.oscarehr.common.dao.forms.FormBCAR2020Dao" autowire="byName"/>
-	<bean id="FormBCAR2020DataDao" class="org.oscarehr.common.dao.forms.FormBCAR2020DataDao" autowire="byName"/>
-	<bean id="FormBCAR2020TextDao" class="org.oscarehr.common.dao.forms.FormBCAR2020TextDao" autowire="byName"/>
+	<bean id="Rourke2009DAO" class="ca.openosp.openo.commn.dao.forms.Rourke2009DAO" autowire="byName"/>
+	<bean id="FormBCAR2020Dao" class="ca.openosp.openo.commn.dao.forms.FormBCAR2020Dao" autowire="byName"/>
+	<bean id="FormBCAR2020DataDao" class="ca.openosp.openo.commn.dao.forms.FormBCAR2020DataDao" autowire="byName"/>
+	<bean id="FormBCAR2020TextDao" class="ca.openosp.openo.commn.dao.forms.FormBCAR2020TextDao" autowire="byName"/>
 
-	<!-- Bed Program DAO (Used for Accessing Caseload in the dashboard)-->
-	<!-- <bean id="bedProgramDao" class="org.caisi.dao.BedProgramDaoImpl" autowire="byName">
-    	<property name="sessionFactory" ref="sessionFactory"/>
-	</bean> -->
 
 
 	<!--<bean id="preventionMgr" class="org.oscarehr.managers.PreventionManagerImpl"></bean>-->
@@ -315,43 +293,42 @@
 	<bean id="drugDispensingManager" class="org.oscarehr.managers.DrugDispensingManagerImpl"></bean>
 	<bean id="drugProductManager" class="org.oscarehr.managers.DrugProductManagerImpl"></bean>
 	<bean id="rxManager" class="org.oscarehr.managers.RxManagerImpl"></bean> -->
-	<!-- <bean id="drugConverter" class="org.oscarehr.ws.rest.conversion.DrugConverterImpl"></bean>
-	<bean id="prescriptionConverter" class="org.oscarehr.ws.rest.conversion.PrescriptionConverterImpl"></bean>
-	<bean id="favoriteConverter" class="org.oscarehr.ws.rest.conversion.FavoriteConverterImpl"></bean> -->
+	<!-- <bean id="drugConverter" class="org.oscarehr.webservbserv.rest.conversion.DrugConverterImpl"></bean>
+	<bean id="prescriptionConverter" class="org.oscarehr.webservbserv.rest.conversion.PrescriptionConverterImpl"></bean>
+	<bean id="favoriteConverter" class="org.oscarehr.webservbserv.rest.conversion.FavoriteConverterImpl"></bean> -->
 	<!-- <bean id="consultationManager" class="org.oscarehr.managers.ConsultationManagerImpl"></bean>
 	<bean id="demographicManager" class="org.oscarehr.managers.DemographicManagerImpl"></bean>
 	<bean id="appManager" class="org.oscarehr.managers.AppManagerImpl"></bean>
 	<bean id="billingManager" class="org.oscarehr.managers.BillingManagerImpl"></bean> -->
-	<!--<bean id="admissionManager" class="org.oscarehr.PMmodule.service.AdmissionManagerImpl"></bean> -->
+	<!--<bean id="admissionManager" class="ca.openosp.openo.service.PMmodule.AdmissionManagerImpl"></bean> -->
 	<!-- <bean id="drugLookUp" class="org.oscarehr.managers.DrugLookUp"></bean>
 	<bean id="documentManager" class="org.oscarehr.managers.DocumentManagerImpl"></bean>
 	<bean id="scheduleManager" class="org.oscarehr.managers.ScheduleManagerImpl"></bean>
 	<bean id="appointmentManager" class="org.oscarehr.managers.AppointmentManagerImpl"></bean> -->
-	<!--<bean id="providerManager" class="org.oscarehr.PMmodule.service.ProviderManagerImpl"></bean>-->
+	<!--<bean id="providerManager" class="ca.openosp.openo.service.PMmodule.ProviderManagerImpl"></bean>-->
 	<!-- <bean id="preferenceManager" class="org.oscarehr.managers.PreferenceManagerImpl"></bean>
 	<bean id="demographicSetsManager" class="org.oscarehr.managers.DemographicSetsManagerImpl"></bean>
 	<bean id="eFormReportToolManager" class="org.oscarehr.managers.EFormReportToolManagerImpl"></bean>
 	<bean id="oscarJobManager" class="org.oscarehr.managers.OscarJobManagerImpl"></bean>
 	<bean id="ticklerManager" class="org.oscarehr.managers.TicklerManagerImpl"></bean> -->
-	<!-- <bean id="ticklerConverter" class="org.oscarehr.ws.rest.conversion.TicklerConverter"></bean>
+	<!-- <bean id="ticklerConverter" class="org.oscarehr.webservbserv.rest.conversion.TicklerConverter"></bean>
 <bean id="dSService" class="org.oscarehr.decisionSupport.service.DSService"></bean> -->
-<!--<bean id="programManager" class="org.oscarehr.PMmodule.service.ProgramManagerImpl"></bean>-->
+<!--<bean id="programManager" class="ca.openosp.openo.service.PMmodule.ProgramManagerImpl"></bean>-->
 <!-- <bean id="messagingManager" class="org.oscarehr.managers.MessagingManagerImpl"></bean>
 <bean id="dashboardManager" class="org.oscarehr.managers.DashboardManagerImpl"></bean>
 <bean id="oscarLogManager" class="org.oscarehr.managers.OscarLogManagerImpl"></bean>
 <bean id="patientConsentManager" class="org.oscarehr.managers.PatientConsentManagerImpl"></bean> -->
-<!-- <bean id="messagingConverter" class="org.oscarehr.ws.rest.conversion.MessagingConverter"></bean> -->
+<!-- <bean id="messagingConverter" class="org.oscarehr.webservbserv.rest.conversion.MessagingConverter"></bean> -->
 <!-- <bean id="labManager" class="org.oscarehr.managers.LabManagerImpl"></bean>
 <bean id="inboxManager" class="org.oscarehr.managers.InboxManagerImpl"></bean>
 <bean id="appointmentSearchManager" class="org.oscarehr.managers.AppointmentSearchManagerImpl"></bean>
 <bean id="facilityManager" class="org.oscarehr.managers.FacilityManagerImpl"></bean> -->
-<!-- <bean id="vacancyTemplateManager" class="org.oscarehr.PMmodule.service.VacancyTemplateManagerImpl"></bean> -->
+<!-- <bean id="vacancyTemplateManager" class="ca.openosp.openo.service.PMmodule.VacancyTemplateManagerImpl"></bean> -->
  <!-- <bean id="eformDataManager" class="org.oscarehr.managers.EformDataManagerImpl"></bean> -->
 <!--<bean id="nioFileManager" class="org.oscarehr.managers.NioFileManagerImpl"></bean> -->
 <!-- <bean id="preventionDS" class="oscar.oscarPrevention.PreventionDSImpl"></bean>
-<bean id="integratorProgressDao" class="org.oscarehr.common.dao.IntegratorProgressDaoImpl"></bean> -->
-<!-- <bean id="messengerDemographicManager" class="org.oscarehr.managers.MessengerDemographicManagerImpl"></bean>
-<bean id="roomDemographicManager" class="org.oscarehr.managers.RoomDemographicManagerImpl"></bean> -->
+<bean id="integratorProgressDao" class="org.oscarehr.commons.daos.IntegratorProgressDaoImpl"></bean> -->
+<!-- <bean id="messengerDemographicManager" class="org.oscarehr.managers.MessengerDemographicManagerImpl"></bean> -->
 <!-- <bean id="documentAttachmentManager" class="org.oscarehr.documentManager.DocumentAttachmentManagerImpl"></bean> -->
 <!-- <bean id="faxDocumentManager" class="org.oscarehr.managers.FaxDocumentManagerImpl"></bean> -->
 
@@ -361,12 +338,12 @@
 
 
 	<!--Email Support -->
-        <context:component-scan base-package="oscar.service"/>
+        <context:component-scan base-package="ca.openosp.openo.service"/>
 
         <bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" p:corePoolSize="5"
           p:maxPoolSize="10" p:queueCapacity="100" p:waitForTasksToCompleteOnShutdown="true"/>
 
-        <bean id="asyncMailSender" class="oscar.service.AsyncMailSender" autowire="byName">
+        <bean id="asyncMailSender" class="ca.openosp.openo.service.AsyncMailSender" autowire="byName">
            <property name="taskExecutor" ref="taskExecutor" />
         </bean>
 
@@ -389,7 +366,7 @@
             </property>
         </bean>
 		
-		<bean id="eventService" class="org.oscarehr.event.EventService"/> 
+		<bean id="eventService" class="ca.openosp.openo.event.EventService"/>
 		<bean id="applicationEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster">  
               <property name="taskExecutor">  
                   <!--  bean class="org.springframework.core.task.SimpleAsyncTaskExecutor"/ -->  

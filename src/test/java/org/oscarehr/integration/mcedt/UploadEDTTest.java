@@ -1,8 +1,8 @@
 package org.oscarehr.integration.mcedt;
 
-import org.junit.Ignore;
+import ca.openosp.openo.integration.mcedt.DelegateFactory;
 import org.junit.Test;
-import org.oscarehr.integration.mcedt.mailbox.ActionUtils;
+import ca.openosp.openo.integration.mcedt.mailbox.ActionUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;

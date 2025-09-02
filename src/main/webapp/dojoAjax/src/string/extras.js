@@ -10,8 +10,8 @@
 
 dojo.provide("dojo.string.extras");
 
-dojo.require("dojo.string.common");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.string.commons");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.array");
 
 //TODO: should we use ${} substitution syntax instead, like widgets do?

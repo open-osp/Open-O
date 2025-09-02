@@ -43,13 +43,13 @@
 <%
     String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="/errorpage.jsp" %>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
-<%@page import="oscar.oscarBilling.ca.bc.data.BillingmasterDAO" %>
-<%@page import="oscar.entities.Billingmaster" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@page import="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" %>
+<%@page import="ca.openosp.openo.entities.Billingmaster" %>
 
 <%
     BillingDao billingDao = SpringUtils.getBean(BillingDao.class);

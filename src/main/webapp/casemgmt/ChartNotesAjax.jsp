@@ -24,49 +24,54 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.Misc" %>
-<%@page import="oscar.util.UtilMisc" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.Misc" %>
+<%@page import="ca.openosp.openo.util.UtilMisc" %>
 <%@include file="/casemgmt/taglibs.jsp" %>
 <%@taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="oscar.oscarEncounter.pageUtil.NavBarDisplayDAO" %>
+<%@page import="ca.openosp.openo.encounter.pageUtil.NavBarDisplayDAO" %>
 <%@page import="java.util.Arrays,java.util.Properties,java.util.List,java.util.Set,java.util.ArrayList,java.util.Enumeration,java.util.HashSet,java.util.Iterator,java.text.SimpleDateFormat,java.util.Calendar,java.util.Date,java.text.ParseException" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.model.UserProperty,org.oscarehr.casemgmt.model.*,org.oscarehr.casemgmt.service.* " %>
-<%@page import="org.oscarehr.casemgmt.web.formbeans.*" %>
-<%@page import="org.oscarehr.PMmodule.model.*" %>
-<%@page import="org.oscarehr.common.model.*" %>
-<%@page import="oscar.util.DateUtils" %>
-<%@page import="org.oscarehr.documentManager.EDocUtil" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty,ca.openosp.openo.casemgmt.model.*,ca.openosp.openo.casemgmt.service.* " %>
+<%@page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
+<%@page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@page import="ca.openosp.openo.commn.model.*" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.casemgmt.common.Colour" %>
-<%@page import="org.oscarehr.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.casemgmt.common.Colour" %>
+<%@page import="ca.openosp.openo.documentManager.EDoc" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="com.quatro.dao.security.*,com.quatro.model.security.Secrole" %>
-<%@page import="org.oscarehr.util.EncounterUtil" %>
+<%@page import="com.quatro.dao.security.*,ca.openosp.openo.model.security.Secrole" %>
+<%@page import="ca.openosp.openo.utility.EncounterUtil" %>
 <%@page import="org.apache.cxf.common.i18n.UncheckedException" %>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplay" %>
-<%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
-<%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteLinkDAO" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplayNonNote" %>
-<%@page import="org.oscarehr.common.dao.EncounterTemplateDao" %>
-<%@page import="org.oscarehr.casemgmt.web.CheckBoxBean" %>
-<%@page import="org.oscarehr.common.model.CasemgmtNoteLock" %>
-<%@page import="org.oscarehr.common.model.EmailLog" %>
-<%@page import="org.oscarehr.managers.EmailManager" %>
-<%@page import="org.oscarehr.managers.EmailComposeManager"%>
-<%@page import="org.oscarehr.managers.SecurityInfoManager"%>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay" %>
+<%@page import="ca.openosp.openo.casemgmt.web.CaseManagementViewAction" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.casemgmt.dao.CaseManagementNoteLinkDAO" %>
+<%@page import="ca.openosp.openo.commn.dao.ProfessionalSpecialistDao" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplayNonNote" %>
+<%@page import="ca.openosp.openo.commn.dao.EncounterTemplateDao" %>
+<%@page import="ca.openosp.openo.casemgmt.web.CheckBoxBean" %>
+<%@page import="ca.openosp.openo.commn.model.CasemgmtNoteLock" %>
+<%@page import="ca.openosp.openo.commn.model.EmailLog" %>
+<%@page import="ca.openosp.openo.managers.EmailManager" %>
+<%@page import="ca.openosp.openo.managers.EmailComposeManager"%>
+<%@page import="ca.openosp.openo.managers.SecurityInfoManager"%>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -102,9 +107,9 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
     }
 
     String demographicNo = request.getParameter("demographicNo");
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
+    EctSessionBean bean = null;
     String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-    if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute(strBeanName)) == null) {
+    if ((bean = (EctSessionBean) request.getSession().getAttribute(strBeanName)) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
@@ -1043,7 +1048,7 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
 			for (int j = 0; j < bean.templateNames.size(); j++)
 			{
 				String encounterTmp = bean.templateNames.get(j);
-				encounterTmp = oscar.util.StringUtils.maxLenString(encounterTmp, MaxLen, TruncLen, ellipses);
+				encounterTmp = StringUtils.maxLenString(encounterTmp, MaxLen, TruncLen, ellipses);
 				encounterTmp = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(encounterTmp);%>
     autoCompleted["<%=encounterTmp%>"] = "ajaxInsertTemplate('<%=encounterTmp%>')";
     autoCompList.push("<%=encounterTmp%>");
@@ -1112,7 +1117,7 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
         }
 
         if (apptDate == null || apptDate.equals("") || apptDate.equalsIgnoreCase("null")) {
-            encounterText = "\n[" + oscar.util.UtilDateUtilities.DateToString(new java.util.Date(), "dd-MMM-yyyy", request.getLocale()) + " .: " + reason + "] \n";
+            encounterText = "\n[" + UtilDateUtilities.DateToString(new java.util.Date(), "dd-MMM-yyyy", request.getLocale()) + " .: " + reason + "] \n";
         } else {
             apptDate = convertDateFmt(apptDate);
             encounterText = "\n[" + apptDate + " .: " + reason + "]\n";

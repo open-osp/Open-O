@@ -28,7 +28,9 @@
 
     String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, java.io.*, oscar.*" %>
+<%@ page import="java.util.*, java.sql.*, java.io.*, ca.openosp.*" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>

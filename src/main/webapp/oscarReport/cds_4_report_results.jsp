@@ -38,20 +38,20 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
 <%@page import="java.util.HashSet" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.managers.ProviderManager2" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.managers.ProviderManager2" %>
 <%@page import="java.util.Date" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.CdsFormOption" %>
-<%@page import="org.oscarehr.web.Cds4ReportUIBean" %>
+<%@page import="ca.openosp.openo.commn.model.CdsFormOption" %>
+<%@page import="ca.openosp.openo.web.Cds4ReportUIBean" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

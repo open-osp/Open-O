@@ -20,7 +20,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="org.oscarehr.casemgmt.model.CaseManagementIssue"
+	<class name="ca.openosp.openo.casemgmt.model.CaseManagementIssue"
 		table="casemgmt_issue">
 		<id name="id" column="id" unsaved-value="0">
 			<generator class="native" />
@@ -38,9 +38,9 @@
 			inverse="true">
 			<key column="id" />
 			<many-to-many column="note_id"
-				class="org.oscarehr.casemgmt.model.CaseManagementNote" />
+				class="ca.openosp.openo.casemgmt.model.CaseManagementNote" />
 		</set>
-		<many-to-one name="issue" class="org.oscarehr.casemgmt.model.Issue"
+		<many-to-one name="issue" class="ca.openosp.openo.casemgmt.model.Issue"
 			column="issue_id" update="false" insert="false" lazy="false" />
 	</class>
 </hibernate-mapping>

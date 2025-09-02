@@ -39,17 +39,17 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.web.MisReportUIBean" %>
-<%@page import="org.oscarehr.common.dao.FunctionalCentreDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.web.MisReportUIBean" %>
+<%@page import="ca.openosp.openo.commn.dao.FunctionalCentreDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.FunctionalCentre" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.FunctionalCentre" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.util.GregorianCalendar" %>
 <%@page import="java.text.DateFormatSymbols" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 
 <%
@@ -119,7 +119,7 @@
                 <select id="programIds" name="programIds" multiple='multiple' class="input">
                     <%
                         for (Program program : programs) {
-                            if (program.isBed() || program.isService()) {
+                            if ("Service".equalsIgnoreCase(program.getType())) {
                     %>
                     <option value="<%=program.getId()%>"><%=StringEscapeUtils.escapeHtml(program.getName() + " (" + program.getType() + ')')%>
                     </option>

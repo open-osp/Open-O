@@ -35,7 +35,7 @@
         var url = '<%=request.getContextPath() %>/PMmodule/ProviderSearch.do';
         url += '?q=' + name;
         url += '&formName=programManagerForm';
-        url += '&formElementId=provider.providerNo';
+        url += '&formElementId=providers.providerNo';
         url += '&formElementName=providerName';
 
         var name = document.programManagerForm.elements['providerName'].value;
@@ -47,13 +47,13 @@
         if (!confirm("Are you sure you want to delete the staff entry?")) {
             return;
         }
-        document.programManagerForm.elements['provider.id'].value = id;
+        document.programManagerForm.elements['providers.id'].value = id;
         document.programManagerForm.method.value = 'delete_provider';
         document.programManagerForm.submit();
     }
 
     function editProvider(id) {
-        document.programManagerForm.elements['provider.id'].value = id;
+        document.programManagerForm.elements['providers.id'].value = id;
         document.programManagerForm.method.value = 'edit_provider';
         document.programManagerForm.submit();
     }
@@ -64,7 +64,7 @@
             return;
         }
         document.programManagerForm.elements['teamId'].value = team_id;
-        document.programManagerForm.elements['provider.id'].value = id;
+        document.programManagerForm.elements['providers.id'].value = id;
         document.programManagerForm.method.value = 'assign_team';
         document.programManagerForm.submit();
     }
@@ -74,26 +74,26 @@
             return;
         }
         document.programManagerForm.elements['teamId'].value = team_id;
-        document.programManagerForm.elements['provider.id'].value = id;
+        document.programManagerForm.elements['providers.id'].value = id;
         document.programManagerForm.method.value = 'remove_team';
         document.programManagerForm.submit();
     }
 
     function assignRole(id, selectBox) {
         var role_id = selectBox.options[selectBox.selectedIndex].value;
-        document.programManagerForm.elements['provider.roleId'].value = role_id;
-        document.programManagerForm.elements['provider.id'].value = id;
+        document.programManagerForm.elements['providers.roleId'].value = role_id;
+        document.programManagerForm.elements['providers.id'].value = id;
         document.programManagerForm.method.value = 'assign_role';
         document.programManagerForm.submit();
     }
 
     function add_provider(form) {
-        if (form.elements['provider.providerNo'].value == 0) {
-            alert('You must choose a provider');
+        if (form.elements['providers.providerNo'].value == 0) {
+            alert('You must choose a providers');
             return false;
         }
         form.method.value = 'save_provider';
-        form.elements['provider.id'].value = 0;
+        form.elements['providers.id'].value = 0;
         form.submit();
     }
 </script>

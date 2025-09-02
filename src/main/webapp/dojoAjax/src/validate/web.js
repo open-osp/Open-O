@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.validate.web");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.validate.isIpAddress = function (/*String*/value, /*Object?*/flags) {
     // summary: Validates an IP address

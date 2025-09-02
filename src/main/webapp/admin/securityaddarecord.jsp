@@ -56,15 +56,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ page
-        import="java.lang.*, java.util.*, java.text.*,java.sql.*, oscar.*"
+        import="java.lang.*, java.util.*, java.text.*,java.sql.*, ca.openosp.*"
         errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.Security" %>
-<%@page import="org.oscarehr.common.dao.SecurityDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Security" %>
+<%@page import="ca.openosp.openo.commn.dao.SecurityDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.managers.MfaManager" %>
+<%@ page import="ca.openosp.openo.managers.MfaManager" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
@@ -76,12 +77,12 @@
     <script src="${pageContext.request.contextPath}/csrfguard"></script>
     <head>
         <style type="text/css">
-            /* Style for providers with security records */
+            /* Style for providers with sec records */
             .providerSecurity1 {
                 color: gray;
             }
 
-            /* Style for providers without security records */
+            /* Style for providers without sec records */
             .providerSecurity0 {
                 color: black;
             }
@@ -277,7 +278,7 @@
                         %>
                     </select></td>
                 </tr>
-                <!-- new security -->
+                <!-- new sec -->
                 <tr>
                     <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formExpiryDate"/>:
                     </td>
@@ -310,7 +311,7 @@
                 <%
                     }
                 %>
-                <!-- new security -->
+                <!-- new sec -->
                 <tr>
                     <td>
                         <div align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formPIN"/>:

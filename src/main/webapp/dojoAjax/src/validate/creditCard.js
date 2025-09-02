@@ -10,8 +10,8 @@
 
 dojo.provide('dojo.validate.creditCard');
 
-dojo.require("dojo.lang.common");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.lang.commons");
+dojo.require("dojo.validate.commons");
 
 /*
 	Validates Credit Cards using account number rules in conjunction with the Luhn algorigthm
@@ -72,7 +72,7 @@ dojo.validate.isValidCreditCardNumber = function (/*String|Int*/value,/*String?*
 
 dojo.validate.isValidCvv = function (/*String|Int*/value, /*String*/ccType) {
     //Summary:
-    //  returns true if the security code (CCV) matches the correct format for supplied ccType
+    //  returns true if the sec code (CCV) matches the correct format for supplied ccType
 
     //Value: Boolean
 

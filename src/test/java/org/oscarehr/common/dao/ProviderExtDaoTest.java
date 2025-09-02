@@ -27,9 +27,10 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.casemgmt.model.ProviderExt;
+import ca.openosp.openo.casemgmt.model.ProviderExt;
+import ca.openosp.openo.commn.dao.ProviderExtDao;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProviderExtDaoTest extends DaoTestFixtures {
 

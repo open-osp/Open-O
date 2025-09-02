@@ -35,16 +35,16 @@ import javax.security.auth.login.LoginContext;
 
 import org.junit.Test;
 
-import oscar.login.jaas.BaseLoginModule;
-import oscar.login.jaas.OscarCallbackHandler;
-import oscar.login.jaas.OscarConfiguration;
-import oscar.login.jaas.OscarPrincipal;
+import ca.openosp.openo.login.jaas.BaseLoginModule;
+import ca.openosp.openo.login.jaas.OscarCallbackHandler;
+import ca.openosp.openo.login.jaas.OscarConfiguration;
+import ca.openosp.openo.login.jaas.OscarPrincipal;
 
 public class BaseLoginModuleTest {
 
     @Test
     public void testBaseLoginModule() throws Exception {
-        // System.setProperty("java.security.auth.login.config", "loginConfig.jaas");
+        // System.setProperty("java.sec.auth.login.config", "loginConfig.jaas");
         Configuration.setConfiguration(new OscarConfiguration("dummyConfig", TestLoginModule.class.getName()));
 
         LoginContext loginContext = new LoginContext("dummyConfig", new OscarCallbackHandler("dummy", "pass"));

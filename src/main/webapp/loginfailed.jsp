@@ -25,7 +25,7 @@
 --%>
 
 <%@page
-        import="oscar.OscarProperties" %>
+        import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     String errormsg = request.getParameter("errormsg");

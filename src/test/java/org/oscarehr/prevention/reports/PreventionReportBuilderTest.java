@@ -25,15 +25,17 @@ package org.oscarehr.prevention.reports;
 
 import static org.junit.Assert.assertEquals;
 
+import ca.openosp.openo.prev.reports.Report;
+import ca.openosp.openo.prev.reports.ReportBuilder;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.AuthUtils;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.ws.rest.to.model.PreventionSearchTo1;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.webserv.rest.to.model.PreventionSearchTo1;
 
 public class PreventionReportBuilderTest extends DaoTestFixtures {
     private static Logger logger = MiscUtils.getLogger();
@@ -65,17 +67,17 @@ public class PreventionReportBuilderTest extends DaoTestFixtures {
                 <option value="4">ages between</option>
 			</select>
 
-		    <label for="provider">Age <small>in years, add m for months</small></label>
+		    <label for="providers">Age <small>in years, add m for months</small></label>
 		    <input type="text" class="form-control" id="lower" placeholder="age" ng-model="newReport.age1">
 		    <input type="text" class="form-control" id="high" placeholder="age" ng-show="newReport.agestyle == 4" ng-model="newReport.age2">
 		  
-			<label for="provider">Age Calculated</label>
+			<label for="providers">Age Calculated</label>
 		        		<input type="radio" ng-model="newReport.ageCalc" id="optionsRadios1" value="0" >
 			    		When report is run
 			    		<input type="radio" ng-model="newReport.ageCalc" id="optionsRadios2" value="1">
 			   		as of : <input type="date" class="form-control" id="lower" placeholder="2020-03-31">
 			  
-			 <label for="provider">Roster Status</label>
+			 <label for="providers">Roster Status</label>
 		    		    <input type="radio" ng-model="newReport.rosterStat" value="{{rs.name}}">
 				    {{rs.name}}
 					as of : <input type="date" class="form-control" id="lower" ng-model="newReport.rosterAsOf" placeholder="2020-03-31">

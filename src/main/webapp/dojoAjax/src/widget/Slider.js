@@ -690,7 +690,7 @@ dojo.widget.defineWidget(
 
         // initialValue: Number
         //	sets initialValueX.
-        //	TODO: should be called "value".  Also, common attributes between SliderHorizontal/SliderVertical
+        //	TODO: should be called "value".  Also, commons attributes between SliderHorizontal/SliderVertical
         //	should be consolidated to Slider1D base class
         initialValue: "",
 

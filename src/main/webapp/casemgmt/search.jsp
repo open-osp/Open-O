@@ -40,7 +40,7 @@
     }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
 
 <script>
     function popupNotePage(varpage) {

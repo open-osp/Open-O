@@ -152,7 +152,7 @@
                     return false;
                 };
 
-                // common event handler (keyup, ok and cancel)
+                // commons event handler (keyup, ok and cancel)
                 common = function (event) {
                     self.hide();
                     self.unbind(document.body, "keyup", key);
@@ -586,7 +586,7 @@
                 }
                 // build the proper dialog HTML
                 elDialog.innerHTML = this.build(item);
-                // assign all the common elements
+                // assign all the commons elements
                 btnReset = $("alertify-resetFocus");
                 btnResetBack = $("alertify-resetFocusBack");
                 btnOK = $("alertify-ok") || undefined;

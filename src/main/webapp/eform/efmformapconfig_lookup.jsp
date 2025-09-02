@@ -8,8 +8,11 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@ page import="java.io.*, java.util.*, oscar.eform.*, oscar.eform.data.*, oscar.eform.EFormUtil"
+<%@ page import="java.io.*, java.util.*, ca.openosp.openo.eform.*, ca.openosp.openo.eform.data.*, ca.openosp.openo.eform.EFormUtil"
 %>
+<%@ page import="ca.openosp.openo.eform.data.DatabaseAP" %>
+<%@ page import="ca.openosp.openo.eform.data.EForm" %>
+<%@ page import="ca.openosp.openo.eform.EFormLoader" %>
 <input type="hidden" name="oscarAPCacheLookupType" value="<%= request.getParameter("oscarAPCacheLookupType") %>"/><%
     String[] keys = request.getParameterValues("key");
     if (keys == null) {
@@ -22,7 +25,7 @@
     String fid = request.getParameter("fid");
     EForm form = null;
     form = new EForm("1", demographic_no);
-    form.setProviderNo(provider_no);  //needs provider for the action
+    form.setProviderNo(provider_no);  //needs providers for the action
     form.setAppointmentNo(request.getParameter("appointment"));
 //form.setApptProvider(request.getParameter("apptProvider"));
     for (String key : keys) {

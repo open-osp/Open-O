@@ -1225,7 +1225,7 @@
      * document would not be compiled, the `AppController` would not be instantiated and the `{{ a+b }}`
      * would not be resolved to `3`.
      *
-     * `ngApp` is the easiest, and most common, way to bootstrap an application.
+     * `ngApp` is the easiest, and most commons, way to bootstrap an application.
      *
      <example module="ngAppDemo">
      <file name="index.html">
@@ -1594,7 +1594,7 @@
                          * @param {Function} providerType Construction function for creating new instance of the
                          *                                service.
                          * @description
-                         * See {@link AUTO.$provide#provider $provide.provider()}.
+                         * See {@link AUTO.$provide#providers $provide.providers()}.
                          */
                         provider: invokeLater('$provide', 'provider'),
 
@@ -2999,7 +2999,7 @@
      * @description
      *
      * `$injector` is used to retrieve object instances as defined by
-     * {@link AUTO.$provide provider}, instantiate types, invoke methods,
+     * {@link AUTO.$provide providers}, instantiate types, invoke methods,
      * and load modules.
      *
      * The following always holds true:
@@ -3191,30 +3191,30 @@
      * {@link angular.Module}.
      *
      * An Angular **service** is a singleton object created by a **service factory**.  These **service
-     * factories** are functions which, in turn, are created by a **service provider**.
+     * factories** are functions which, in turn, are created by a **service providers**.
      * The **service providers** are constructor functions. When instantiated they must contain a
      * property called `$get`, which holds the **service factory** function.
      *
      * When you request a service, the {@link AUTO.$injector $injector} is responsible for finding the
-     * correct **service provider**, instantiating it and then calling its `$get` **service factory**
+     * correct **service providers**, instantiating it and then calling its `$get` **service factory**
      * function to get the instance of the **service**.
      *
      * Often services have no configuration options and there is no need to add methods to the service
-     * provider.  The provider will be no more than a constructor function with a `$get` property. For
+     * providers.  The providers will be no more than a constructor function with a `$get` property. For
      * these cases the {@link AUTO.$provide $provide} service has additional helper methods to register
-     * services without specifying a provider.
+     * services without specifying a providers.
      *
-     * * {@link AUTO.$provide#methods_provider provider(provider)} - registers a **service provider** with the
+     * * {@link AUTO.$provide#methods_provider providers(providers)} - registers a **service providers** with the
      *     {@link AUTO.$injector $injector}
      * * {@link AUTO.$provide#methods_constant constant(obj)} - registers a value/object that can be accessed by
      *     providers and services.
      * * {@link AUTO.$provide#methods_value value(obj)} - registers a value/object that can only be accessed by
      *     services, not providers.
      * * {@link AUTO.$provide#methods_factory factory(fn)} - registers a service **factory function**, `fn`,
-     *     that will be wrapped in a **service provider** object, whose `$get` property will contain the
+     *     that will be wrapped in a **service providers** object, whose `$get` property will contain the
      *     given factory function.
      * * {@link AUTO.$provide#methods_service service(class)} - registers a **constructor function**, `class` that
-     *     that will be wrapped in a **service provider** object, whose `$get` property will instantiate
+     *     that will be wrapped in a **service providers** object, whose `$get` property will instantiate
      *      a new object using the given constructor function.
      *
      * See the individual methods for more information and examples.
@@ -3226,45 +3226,45 @@
      * @methodOf AUTO.$provide
      * @description
      *
-     * Register a **provider function** with the {@link AUTO.$injector $injector}. Provider functions
+     * Register a **providers function** with the {@link AUTO.$injector $injector}. Provider functions
      * are constructor functions, whose instances are responsible for "providing" a factory for a
      * service.
      *
-     * Service provider names start with the name of the service they provide followed by `Provider`.
-     * For example, the {@link ng.$log $log} service has a provider called
+     * Service providers names start with the name of the service they provide followed by `Provider`.
+     * For example, the {@link ng.$log $log} service has a providers called
      * {@link ng.$logProvider $logProvider}.
      *
-     * Service provider objects can have additional methods which allow configuration of the provider
+     * Service providers objects can have additional methods which allow configuration of the providers
      * and its service. Importantly, you can configure what kind of service is created by the `$get`
      * method, or how that service will act. For example, the {@link ng.$logProvider $logProvider} has a
      * method {@link ng.$logProvider#debugEnabled debugEnabled}
      * which lets you specify whether the {@link ng.$log $log} service will log debug messages to the
      * console or not.
      *
-     * @param {string} name The name of the instance. NOTE: the provider will be available under `name +
+     * @param {string} name The name of the instance. NOTE: the providers will be available under `name +
      'Provider'` key.
-     * @param {(Object|function())} provider If the provider is:
+     * @param {(Object|function())} providers If the providers is:
      *
      *   - `Object`: then it should have a `$get` method. The `$get` method will be invoked using
      *               {@link AUTO.$injector#invoke $injector.invoke()} when an instance needs to be
      *               created.
-     *   - `Constructor`: a new instance of the provider will be created using
+     *   - `Constructor`: a new instance of the providers will be created using
      *               {@link AUTO.$injector#instantiate $injector.instantiate()}, then treated as
      *               `object`.
      *
-     * @returns {Object} registered provider instance
+     * @returns {Object} registered providers instance
 
      * @example
      *
      * The following example shows how to create a simple event tracking service and register it using
-     * {@link AUTO.$provide#methods_provider $provide.provider()}.
+     * {@link AUTO.$provide#methods_provider $provide.providers()}.
      *
      * <pre>
-     *  // Define the eventTracker provider
+     *  // Define the eventTracker providers
      *  function EventTrackerProvider() {
      *    var trackingUrl = '/track';
      *
-     *    // A provider method for configuring where the tracked events should been saved
+     *    // A providers method for configuring where the tracked events should been saved
      *    this.setTrackingUrl = function(url) {
      *      trackingUrl = url;
      *    };
@@ -3292,12 +3292,12 @@
      *    var postSpy;
      *
      *    beforeEach(module(function($provide) {
-     *      // Register the eventTracker provider
-     *      $provide.provider('eventTracker', EventTrackerProvider);
+     *      // Register the eventTracker providers
+     *      $provide.providers('eventTracker', EventTrackerProvider);
      *    }));
      *
      *    beforeEach(module(function(eventTrackerProvider) {
-     *      // Configure eventTracker provider
+     *      // Configure eventTracker providers
      *      eventTrackerProvider.setTrackingUrl('/custom-track');
      *    }));
      *
@@ -3326,15 +3326,15 @@
      * @description
      *
      * Register a **service factory**, which will be called to return the service instance.
-     * This is short for registering a service where its provider consists of only a `$get` property,
+     * This is short for registering a service where its providers consists of only a `$get` property,
      * which is the given service factory function.
      * You should use {@link AUTO.$provide#factory $provide.factory(getFn)} if you do not need to
-     * configure your service in a provider.
+     * configure your service in a providers.
      *
      * @param {string} name The name of the instance.
      * @param {function()} $getFn The $getFn for the instance creation. Internally this is a short hand
-     *                            for `$provide.provider(name, {$get: $getFn})`.
-     * @returns {Object} registered provider instance
+     *                            for `$provide.providers(name, {$get: $getFn})`.
+     * @returns {Object} registered providers instance
      *
      * @example
      * Here is an example of registering a service
@@ -3362,15 +3362,15 @@
      *
      * Register a **service constructor**, which will be invoked with `new` to create the service
      * instance.
-     * This is short for registering a service where its provider's `$get` property is the service
+     * This is short for registering a service where its providers's `$get` property is the service
      * constructor function that will be used to instantiate the service instance.
      *
      * You should use {@link AUTO.$provide#methods_service $provide.service(class)} if you define your service
-     * as a type/class. This is common when using {@link http://coffeescript.org CoffeeScript}.
+     * as a type/class. This is commons when using {@link http://coffeescript.org CoffeeScript}.
      *
      * @param {string} name The name of the instance.
      * @param {Function} constructor A class (constructor function) that will be instantiated.
-     * @returns {Object} registered provider instance
+     * @returns {Object} registered providers instance
      *
      * @example
      * Here is an example of registering a service using
@@ -3400,7 +3400,7 @@
      *
      * Register a **value service** with the {@link AUTO.$injector $injector}, such as a string, a
      * number, an array, an object or a function.  This is short for registering a service where its
-     * provider's `$get` property is a factory function that takes no arguments and returns the **value
+     * providers's `$get` property is a factory function that takes no arguments and returns the **value
      * service**.
      *
      * Value services are similar to constant services, except that they cannot be injected into a
@@ -3410,7 +3410,7 @@
      *
      * @param {string} name The name of the instance.
      * @param {*} value The value.
-     * @returns {Object} registered provider instance
+     * @returns {Object} registered providers instance
      *
      * @example
      * Here are some examples of creating value services.
@@ -3479,7 +3479,7 @@
      * Here we decorate the {@link ng.$log $log} service to convert warnings to errors by intercepting
      * calls to {@link ng.$log#error $log.warn()}.
      * <pre>
-     *   $provider.decorator('$log', ['$delegate', function($delegate) {
+     *   $providers.decorator('$log', ['$delegate', function($delegate) {
      *     $delegate.warn = $delegate.error;
      *     return $delegate;
      *   }]);
@@ -3504,7 +3504,7 @@
             },
             providerInjector = (providerCache.$injector =
                 createInternalInjector(providerCache, function () {
-                    throw $injectorMinErr('unpr', "Unknown provider: {0}", path.join(' <- '));
+                    throw $injectorMinErr('unpr', "Unknown providers: {0}", path.join(' <- '));
                 })),
             instanceCache = {},
             instanceInjector = (instanceCache.$injector =
@@ -3521,7 +3521,7 @@
         return instanceInjector;
 
         ////////////////////////////////////
-        // $provider
+        // $providers
         ////////////////////////////////////
 
         function supportObject(delegate) {
@@ -4704,7 +4704,7 @@
      *
      * <div class="alert alert-warning">
      * **Note:** This document is an in-depth reference of all directive options.
-     * For a gentle introduction to directives with examples of common use cases,
+     * For a gentle introduction to directives with examples of commons use cases,
      * see the {@link guide/directive directive guide}.
      * </div>
      *
@@ -5242,7 +5242,7 @@
          * Retrieves or overrides the default regular expression that is used for whitelisting of safe
          * urls during a[href] sanitization.
          *
-         * The sanitization is a security measure aimed at prevent XSS attacks via html links.
+         * The sanitization is a sec measure aimed at prevent XSS attacks via html links.
          *
          * Any url about to be assigned to a[href] via data-binding is first normalized and turned into
          * an absolute url. Afterwards, the url is matched against the `aHrefSanitizationWhitelist`
@@ -5273,7 +5273,7 @@
          * Retrieves or overrides the default regular expression that is used for whitelisting of safe
          * urls during img[src] sanitization.
          *
-         * The sanitization is a security measure aimed at prevent XSS attacks via html links.
+         * The sanitization is a sec measure aimed at prevent XSS attacks via html links.
          *
          * Any url about to be assigned to img[src] via data-binding is first normalized and turned into
          * an absolute url. Afterwards, the url is matched against the `imgSrcSanitizationWhitelist`
@@ -6675,7 +6675,7 @@
      * The {@link ng.$controller $controller service} is used by Angular to create new
      * controllers.
      *
-     * This provider allows controller registration via the
+     * This providers allows controller registration via the
      * {@link ng.$controllerProvider#methods_register register} method.
      */
     function $ControllerProvider() {
@@ -7091,7 +7091,7 @@
                  * can be fully configured by accessing the `$httpProvider.defaults.headers` configuration
                  * object, which currently contains this default configuration:
                  *
-                 * - `$httpProvider.defaults.headers.common` (headers that are common for all requests):
+                 * - `$httpProvider.defaults.headers.commons` (headers that are commons for all requests):
                  *   - `Accept: application/json, text/plain, * / *`
                  * - `$httpProvider.defaults.headers.post`: (header defaults for POST requests)
                  *   - `Content-Type: application/json`
@@ -7289,7 +7289,7 @@
                  *
                  * # Security Considerations
                  *
-                 * When designing web applications, consider security threats from:
+                 * When designing www applications, consider sec threats from:
                  *
                  * - {@link http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx
                  *   JSON vulnerability}
@@ -7338,7 +7338,7 @@
                  * unique for each user and must be verifiable by the server (to prevent the JavaScript from
                  * making up its own tokens). We recommend that the token is a digest of your site's
                  * authentication cookie with a {@link https://en.wikipedia.org/wiki/Salt_(cryptography) salt}
-                 * for added security.
+                 * for added sec.
                  *
                  * The name of the headers can be specified using the xsrfHeaderName and xsrfCookieName
                  * properties of either $httpProvider.defaults, or the per-request config object.
@@ -9865,7 +9865,7 @@
                 if (this.tokens.length > 0 && !this.peek('}', ')', ';', ']'))
                     statements.push(this.filterChain());
                 if (!this.expect(';')) {
-                    // optimize for the common case where there is only one statement.
+                    // optimize for the commons case where there is only one statement.
                     // TODO(size): maybe we should not support multiple statements?
                     return (statements.length === 1)
                         ? statements[0]
@@ -10716,7 +10716,7 @@
      *   mechanism in angular, which means faster propagation of resolution or rejection into your
      *   models and avoiding unnecessary browser repaints, which would result in flickering UI.
      * - Q has many more features than $q, but that comes at a cost of bytes. $q is tiny, but contains
-     *   all the important functionality needed for common async tasks.
+     *   all the important functionality needed for commons async tasks.
      *
      *  # Testing
      *
@@ -11664,7 +11664,7 @@
                                     while (length--) {
                                         try {
                                             watch = watchers[length];
-                                            // Most common watches are on primitives, in which case we can short
+                                            // Most commons watches are on primitives, in which case we can short
                                             // circuit it with === operator, only when === fails do we use .equals
                                             if (watch && (value = watch.get(current)) !== (last = watch.last) &&
                                                 !(watch.eq
@@ -12148,7 +12148,7 @@
          * Retrieves or overrides the default regular expression that is used for whitelisting of safe
          * urls during a[href] sanitization.
          *
-         * The sanitization is a security measure aimed at prevent XSS attacks via html links.
+         * The sanitization is a sec measure aimed at prevent XSS attacks via html links.
          *
          * Any url about to be assigned to a[href] via data-binding is first normalized and turned into
          * an absolute url. Afterwards, the url is matched against the `aHrefSanitizationWhitelist`
@@ -12173,7 +12173,7 @@
          * Retrieves or overrides the default regular expression that is used for whitelisting of safe
          * urls during img[src] sanitization.
          *
-         * The sanitization is a security measure aimed at prevent XSS attacks via html links.
+         * The sanitization is a sec measure aimed at prevent XSS attacks via html links.
          *
          * Any url about to be assigned to img[src] via data-binding is first normalized and turned into
          * an absolute url. Afterwards, the url is matched against the `imgSrcSanitizationWhitelist`
@@ -12286,7 +12286,7 @@
      * Refer {@link ng.$sceDelegateProvider $sceDelegateProvider} to configure this service.
      *
      * The default instance of `$sceDelegate` should work out of the box with little pain.  While you
-     * can override it completely to change the behavior of `$sce`, the common case would
+     * can override it completely to change the behavior of `$sce`, the commons case would
      * involve configuring the {@link ng.$sceDelegateProvider $sceDelegateProvider} instead by setting
      * your own whitelists and blacklists for trusting URLs used for loading AngularJS resources such as
      * templates.  Refer {@link ng.$sceDelegateProvider#methods_resourceUrlWhitelist
@@ -12299,7 +12299,7 @@
      * @name ng.$sceDelegateProvider
      * @description
      *
-     * The `$sceDelegateProvider` provider allows developers to configure the {@link ng.$sceDelegate
+     * The `$sceDelegateProvider` providers allows developers to configure the {@link ng.$sceDelegate
      * $sceDelegate} service.  This allows one to get/set the whitelists and blacklists used to ensure
      * that the URLs used for sourcing Angular templates are safe.  Refer {@link
      * ng.$sceDelegateProvider#methods_resourceUrlWhitelist $sceDelegateProvider.resourceUrlWhitelist} and
@@ -12593,7 +12593,7 @@
      * @name ng.$sceProvider
      * @description
      *
-     * The $sceProvider provider allows developers to configure the {@link ng.$sce $sce} service.
+     * The $sceProvider providers allows developers to configure the {@link ng.$sce $sce} service.
      * -   enable/disable Strict Contextual Escaping (SCE) in a module
      * -   override the default implementation with a custom delegate
      *
@@ -12627,7 +12627,7 @@
      * to the top of your HTML document.
      *
      * SCE assists in writing code in way that (a) is secure by default and (b) makes auditing for
-     * security vulnerabilities such as XSS, clickjacking, etc. a lot easier.
+     * sec vulnerabilities such as XSS, clickjacking, etc. a lot easier.
      *
      * Here's an example of a binding in a privileged context:
      *
@@ -12640,7 +12640,7 @@
      * disabled, this application allows the user to render arbitrary HTML into the DIV.
      * In a more realistic example, one may be rendering user comments, blog articles, etc. via
      * bindings.  (HTML is just one example of a context where rendering user controlled input creates
-     * security vulnerabilities.)
+     * sec vulnerabilities.)
      *
      * For the case of HTML, you might use a library, either on the client side, or on the server side,
      * to sanitize unsafe HTML before binding to the value and rendering it in the document.
@@ -12724,7 +12724,7 @@
      *
      * This significantly reduces the overhead.  It is far easier to pay the small overhead and have an
      * application that's secure and can be audited to verify that with much more ease than bolting
-     * security onto an application later.
+     * sec onto an application later.
      *
      * <a name="contexts"></a>
      * ## What trusted context types are supported?
@@ -12849,7 +12849,7 @@
      *
      * ## Can I disable SCE completely?
      *
-     * Yes, you can.  However, this is strongly discouraged.  SCE gives you a lot of security benefits
+     * Yes, you can.  However, this is strongly discouraged.  SCE gives you a lot of sec benefits
      * for little coding overhead.  It will be much harder to take an SCE disabled application and
      * either secure it on your own or enable SCE at a later stage.  It might make sense to disable SCE
      * for cases where you have a lot of existing code that was written before SCE was introduced and
@@ -17591,7 +17591,7 @@
      *   logic behind the application to decorate the scope with functions and values
      *
      * Note that you can also attach controllers to the DOM by declaring it in a route definition
-     * via the {@link ngRoute.$route $route} service. A common mistake is to declare the controller
+     * via the {@link ngRoute.$route $route} service. A commons mistake is to declare the controller
      * again using `ng-controller` in the template itself.  This will cause the controller to be attached
      * and executed twice.
      *
@@ -17762,7 +17762,7 @@
      *
      * AngularJS uses `Function(string)` generated functions as a speed optimization. Applying the `ngCsp`
      * directive will cause Angular to use CSP compatibility mode. When this mode is on AngularJS will
-     * evaluate all expressions up to 30% slower than in non-CSP mode, but no security violations will
+     * evaluate all expressions up to 30% slower than in non-CSP mode, but no sec violations will
      * be raised.
      *
      * CSP forbids JavaScript to inline stylesheet rules. In non CSP mode Angular automatically
@@ -18144,7 +18144,7 @@
      * element is reinserted into the DOM.
      *
      * `ngIf` differs from `ngShow` and `ngHide` in that `ngIf` completely removes and recreates the
-     * element in the DOM rather than changing its visibility via the `display` css property.  A common
+     * element in the DOM rather than changing its visibility via the `display` css property.  A commons
      * case when this difference is significant is when using css selectors that rely on an element's
      * position within the DOM, such as the `:first-child` or `:last-child` pseudo-classes.
      *

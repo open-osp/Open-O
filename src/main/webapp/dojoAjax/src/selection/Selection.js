@@ -11,7 +11,7 @@
 dojo.provide("dojo.selection.Selection");
 dojo.require("dojo.lang.array");
 dojo.require("dojo.lang.func");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.math");
 
 dojo.declare("dojo.selection.Selection", null,

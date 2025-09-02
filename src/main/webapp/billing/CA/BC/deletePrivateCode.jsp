@@ -14,7 +14,7 @@
 %>
 
 <%@page
-        import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData,oscar.oscarBilling.ca.bc.pageUtil.*" %>
+        import="java.util.*,ca.openosp.openo.billings.ca.bc.data.BillingCodeData,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
 <%
     String serviceCode = request.getParameter("code") == null ? "-1" : request.getParameter("code");
     BillingCodeData data = new BillingCodeData();

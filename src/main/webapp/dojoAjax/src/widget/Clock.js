@@ -13,7 +13,7 @@ dojo.provide("dojo.widget.Clock");
 dojo.require("dojo.widget.*");
 dojo.require("dojo.gfx.*");
 dojo.require("dojo.uri.Uri");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.timing.Timer");
 
 dojo.widget.defineWidget(

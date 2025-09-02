@@ -31,7 +31,7 @@ v<%
 %>
 
 <%@ page
-        import="oscar.form.*, java.util.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.oscarDB.*,oscar.oscarBilling.ca.bc.MSP.*" %>
+        import="ca.openosp.openo.form.*, java.util.*,ca.openosp.openo.billing.ca.bc.pageUtil.*,ca.openosp.openo.db.*,ca.openosp.openo.billing.ca.bc.MSP.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

@@ -52,7 +52,7 @@
         document.programManagerViewForm.submit();
     }
 
-    function do_batch_discharge(community, bed) {
+    function do_batch_discharge(community) {
         //get clients
         var elements = document.programManagerViewForm.elements;
         var admissionIds = new Array();
@@ -70,50 +70,32 @@
 
         //get program to admit to
         var programBox;
+        var programName = '';
         if (community) {
             programBox = document.programManagerViewForm.batch_discharge_community_program;
             document.programManagerViewForm.type.value = 'community';
-        } else {
-            programBox = document.programManagerViewForm.batch_discharge_program;
-            if (bed) {
-                programBox = document.programManagerViewForm.batch_discharge_program;
-                document.programManagerViewForm.type.value = 'Bed';
-            } else {
-                document.programManagerViewForm.type.value = 'Service';
-            }
-        }
-
-        if (bed == true && programBox.selectedIndex == -1) {
-            alert('No programs available. Cannot continue');
-            return;
-        }
-
-        if (bed == true) {
-            var programId = programBox.options[programBox.selectedIndex].value;
-            var programName = programBox.options[programBox.selectedIndex].text;
-
-            if (programId == 0) {
-                if (community) {
-                    alert('Please choose a Community Bed Program from the list');
-                } else {
-                    if (bed)
-                        alert('Please choose a CAISI Bed Program from the list');
-                    //else
-                    //	alert('Please choose a CAISI Service Program from the list');
+            if (programBox && programBox.selectedIndex >= 0) {
+                var programId = programBox.options[programBox.selectedIndex].value;
+                programName = programBox.options[programBox.selectedIndex].text;
+                if (programId == 0) {
+                    alert('Please choose a Community Program from the list');
+                    return;
                 }
-                return;
             }
+        } else {
+            document.programManagerViewForm.type.value = 'service';
         }
-        //get current program
-        var currentProgramId = document.programManagerViewForm.elements['id'].value;
-
-        var msg = 'You are about to discharge ' + numClients + ' client(s)., and admit them to ' + programName + '\n' +
-            'Are you sure you would like to continue?';
 
         if (numClients == 0) {
             alert('You have to select the clients');
             return;
         }
+
+        var msg = 'You are about to discharge ' + numClients + ' client(s)';
+        if (programName) {
+            msg += ' and admit them to ' + programName;
+        }
+        msg += '.\nAre you sure you would like to continue?';
 
         if (confirm(msg)) {
             document.programManagerViewForm.method.value = 'batch_discharge';
@@ -200,37 +182,11 @@
 </display:table>
 <br/>
 
-<c:if
-        test="${requestScope.allowBatchDischarge == true and program.type eq 'Bed'}">
-    <input type="button" value="Batch Discharge To CAISI Bed Program"
-           onclick="do_batch_discharge(false,true)"/>
-    <select name="batch_discharge_program">
-        <option value="0"></option>
-        <c:forEach var="program" items="${bedPrograms}">
-            <c:if test="${program.id != requestScope.id}">
-                <option value="<c:out value="${program.id}"/>"><c:out
-                        value="${program.name}"/></option>
-            </c:if>
-        </c:forEach>
-    </select>
-    <br/>
-    <input type="button" value="Batch Discharge To Community Bed Program"
-           onclick="do_batch_discharge(true,true)"/>
-    <select name="batch_discharge_community_program">
-        <option value="0"></option>
-        <c:forEach var="program" items="${communityPrograms}">
-            <c:if test="${program.id != requestScope.id}">
-                <option value="<c:out value="${program.id}"/>"><c:out
-                        value="${program.name}"/></option>
-            </c:if>
-        </c:forEach>
-    </select>
-</c:if>
 
 <c:if
         test="${requestScope.allowBatchDischarge == true and program.type eq 'Service'}">
     <input type="button" value="Batch Discharge"
-           onclick="do_batch_discharge(false,false)"/>
+           onclick="do_batch_discharge(false)"/>
 
     <!--
     <input type="button" value="Batch Discharge To CAISI Service Program" onclick="do_batch_discharge(false,false)" />

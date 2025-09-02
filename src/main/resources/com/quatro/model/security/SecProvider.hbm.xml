@@ -5,7 +5,7 @@
     author JZhang
 -->
 <hibernate-mapping>
-    <class name="com.quatro.model.security.SecProvider" table="provider">
+    <class name="ca.openosp.openo.model.security.SecProvider" table="provider">
         <id name="providerNo" type="java.lang.String">
             <column name="provider_no" length="6" />
             <generator class="native" />

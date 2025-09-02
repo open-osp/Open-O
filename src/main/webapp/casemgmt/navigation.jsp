@@ -26,26 +26,31 @@
 
 <%-- Updated by Eugene Petruhin on 11 dec 2008 while fixing #2356548 & #2393547 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <% long loadPage = System.currentTimeMillis(); %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementFlowSheet" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.util.MeasurementHelper" %>
-<%@ page import="oscar.oscarResearch.oscarDxResearch.bean.dxResearchBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.MeasurementHelper" %>
+<%@ page import="ca.openosp.openo.dxresearch.bean.dxResearchBeanHandler" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Vector" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.data.EctImmImmunizationData" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <%
     String province = ((String) oscarVariables.getProperty("billregion", "")).trim().toUpperCase();
-    oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
+    EctSessionBean bean = null;
     if ("true".equalsIgnoreCase((String) session.getAttribute("casemgmt_bean_flag"))) {
-        oscar.oscarEncounter.pageUtil.EctSessionBean bean1 = (oscar.oscarEncounter.pageUtil.EctSessionBean) session.getAttribute("EctSessionBean");
-        bean = new oscar.oscarEncounter.pageUtil.EctSessionBean();
+        EctSessionBean bean1 = (EctSessionBean) session.getAttribute("EctSessionBean");
+        bean = new EctSessionBean();
         bean.providerNo = bean1.providerNo;
         bean.demographicNo = bean1.demographicNo;
         bean.appointmentNo = bean1.appointmentNo;
@@ -62,10 +67,10 @@
         session.setAttribute("casemgmt_bean", bean);
         session.setAttribute("casemgmt_bean_flag", "false");
     }
-//bean=(oscar.oscarEncounter.pageUtil.EctSessionBean)session.getAttribute("EctSessionBean");
+//bean=(ca.openosp.openo.encounter.pageUtil.EctSessionBean)session.getAttribute("EctSessionBean");
 //session.setAttribute("casemgmt_bean", bean);
-    bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) session.getAttribute("casemgmt_bean");
-    if (bean == null) bean = new oscar.oscarEncounter.pageUtil.EctSessionBean();
+    bean = (EctSessionBean) session.getAttribute("casemgmt_bean");
+    if (bean == null) bean = new EctSessionBean();
     if (bean.appointmentNo == null) bean.appointmentNo = "0";
     String bsurl = (String) session.getAttribute("casemgmt_oscar_baseurl");
     String backurl = bsurl + "/oscarEncounter/IncomingEncounter.do?";
@@ -184,9 +189,6 @@
             <caisirole:SecurityAccess accessName="medical encounter" accessType="access"
                                       providerNo="<%=bean.providerNo%>" demoNo="<%=bean.demographicNo%>"
                                       programId="<%=pgId%>">
-                <!--
-                <a href='<%=bsurl%>/oscarSurveillance/CheckSurveillance.do?demographicNo=<%=bean.demographicNo%>&proceed=<%=java.net.URLEncoder.encode(eURL)%>'>Oscar Encounter</a>
-                -->
             </caisirole:SecurityAccess>
             <!-- tr><td><a href="</td></tr -->
 
@@ -257,7 +259,7 @@
                                           programId="<%=pgId%>">
                     <!-- IMMUNIZATION -->
                     <oscar:oscarPropertiesCheck property="IMMUNIZATION" value="yes" defaultVal="true">
-                        <% if (oscar.oscarEncounter.immunization.data.EctImmImmunizationData.hasImmunizations(bean.demographicNo)) { %>
+                        <% if (EctImmImmunizationData.hasImmunizations(bean.demographicNo)) { %>
                         <tr>
                             <td><a style="color:red" href="javascript:void(0)"
                                    onClick="popupPage('<%=bsurl%>/oscarEncounter/immunization/initSchedule.do');return false;">Immunizations</a>
@@ -291,7 +293,7 @@
                 <caisirole:SecurityAccess accessName="oscarcomm" accessType="access" providerNo="<%=bean.providerNo%>"
                                           demoNo="<%=bean.demographicNo%>" programId="<%=pgId%>">
 
-                    <% if (oscar.OscarProperties.getInstance().getProperty("oscarcomm", "").equals("on")) { %>
+                    <% if (OscarProperties.getInstance().getProperty("oscarcomm", "").equals("on")) { %>
                     <tr>
                         <td><a href="javascript:void(0)"
                                onClick="popupPage('<%=bsurl%>/oscarEncounter/RemoteAttachments.jsp');return false;">OscarComm</a>
@@ -307,7 +309,7 @@
 
                     <tr>
                         <td><a href="javascript:void(0)"
-                               onClick="popupPage('<%=bsurl%>/oscarResearch/oscarDxResearch/setupDxResearch.do?demographicNo=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&quickList=');return false;">Disease
+                               onClick="popupPage('<%=bsurl%>/oscarResearch/dxresearch/setupDxResearch.do?demographicNo=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&quickList=');return false;">Disease
                             Registry</a></td>
                     </tr>
                 </caisirole:SecurityAccess>
@@ -319,7 +321,7 @@
                                       demoNo="<%=bean.demographicNo%>" programId="<%=pgId%>">
                 <tr>
                     <td><a href="javascript:void(0)"
-                           onClick="popupPage('<%=bsurl%>/Tickler.do?method=edit&tickler.demographic_webName=<%=StringEscapeUtils.escapeJavaScript(bean.getPatientLastName() +"," + bean.getPatientFirstName())%>&tickler.demographicNo=<%=bean.demographicNo%>');return false;">Add
+                           onClick="popupPage('<%=bsurl%>/tickler/ticklerAdd.jsp?demographic_no=<%=bean.demographicNo%>&name=<%=StringEscapeUtils.escapeJavaScript(bean.getPatientLastName() +"," + bean.getPatientFirstName())%>');return false;">Add
                         Tickler</a></td>
                 </tr>
             </caisirole:SecurityAccess>
@@ -379,37 +381,6 @@
                     </td>
                 </tr>
             </caisirole:SecurityAccess>
-            <script>
-                function openSurvey(ctl) {
-                    var formId = ctl.options[ctl.selectedIndex].value;
-                    if (formId == 0) {
-                        return;
-                    }
-                    var id = document.getElementById('formInstanceId').value;
-                    var url = '<%=request.getContextPath() %>/PMmodule/Forms/SurveyExecute.do?method=survey&type=provider&formId=' + formId + '&formInstanceId=' + id + '&clientId=' + <%=bean.demographicNo%>;
-                    ctl.selectedIndex = 0;
-
-                    popupPage(url)
-
-                }
-            </script>
-            <tr style="background-color:#BBBBBB;">
-                <td>User Created Forms</td>
-            </tr>
-            <tr>
-                <td><input type="hidden" id="formInstanceId" value="0"/></td>
-            </tr>
-            <tr>
-                <td>
-                    <select property="view.formId" onchange="openSurvey(this);">
-                        <option value="0">&nbsp;</option>
-                        <c:forEach var="survey" items="${survey_list}">
-                            <option value="<c:out value="${survey.formId}"/>"><c:out
-                                    value="${survey.description}"/></option>
-                        </c:forEach>
-                    </select>
-                </td>
-            </tr>
 
             <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                 <tr style="background-color:#BBBBBB;">
@@ -529,8 +500,8 @@
             </tr>
 
             <%
-                String pAge = Integer.toString(oscar.util.UtilDateUtilities.calcAge(bean.yearOfBirth, bean.monthOfBirth, bean.dateOfBirth));
-                oscar.oscarLab.ca.on.CommonLabResultData comLab = new oscar.oscarLab.ca.on.CommonLabResultData();
+                String pAge = Integer.toString(UtilDateUtilities.calcAge(bean.yearOfBirth, bean.monthOfBirth, bean.dateOfBirth));
+                CommonLabResultData comLab = new CommonLabResultData();
                 java.util.ArrayList labs = comLab.populateLabResultsData(LoggedInInfo.getLoggedInInfoFromSession(request), "", bean.demographicNo, "", "", "", "U");
                 session.setAttribute("casemgmt_labsbeans", labs);
             %>
@@ -568,7 +539,7 @@
                 <tr>
                     <td>
                         <a href="javascript:void(0)"
-                           onClick="popupPage('<%=bsurl%>/Tickler.do?method=filter&filter.demographic_webName=<%=StringEscapeUtils.escapeJavaScript(bean.getPatientLastName() +"," + bean.getPatientFirstName())%>&filter.demographic_no=<%=bean.demographicNo%>');return false;">View
+                           onClick="popupPage('<%=bsurl%>/tickler/ticklerMain.jsp?demoview=<%=bean.demographicNo%>');return false;">View
                             Tickler</a><br>
                     </td>
                 </tr>

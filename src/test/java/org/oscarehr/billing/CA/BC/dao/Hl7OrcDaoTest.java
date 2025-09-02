@@ -25,13 +25,14 @@ package org.oscarehr.billing.CA.BC.dao;
 
 import static org.junit.Assert.assertNotNull;
 
+import ca.openosp.openo.billing.CA.BC.dao.Hl7OrcDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.billing.CA.BC.model.Hl7Orc;
+import ca.openosp.openo.billing.CA.BC.model.Hl7Orc;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class Hl7OrcDaoTest extends DaoTestFixtures {
 

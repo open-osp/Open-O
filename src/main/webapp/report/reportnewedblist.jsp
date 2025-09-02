@@ -53,12 +53,13 @@
     if (request.getParameter("endDate") != null) endDate = request.getParameter("endDate");
 %>
 <%@ page import="java.util.*, java.sql.*" errorPage="../errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.forms.FormsDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.forms.FormsDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
 
 <%
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
@@ -174,7 +175,7 @@
                     Integer id = (Integer) result[0];
                     Integer demographicNo = (Integer) result[1];
                     java.util.Date finalEdb1 = (java.util.Date) result[2];
-                    String finalEdb = oscar.util.ConversionUtils.toDateString(finalEdb1);
+                    String finalEdb = ConversionUtils.toDateString(finalEdb1);
                     String name = (String) result[3];
                     String age = (String) result[4];
                     String gravida = (String) result[5];

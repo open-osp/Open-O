@@ -73,7 +73,7 @@ ALTER TABLE `billing_on_payment` ADD COLUMN `total_credit` DECIMAL(10, 2) NOT NU
 alter table billing_on_cheader1 modify comment1 text;
 
 
-INSERT INTO `ctl_doctype` (`module`, `doctype`, `status`, `id`) VALUES('provider','invoice letterhead','A',null);
+INSERT INTO `ctl_doctype` (`module`, `doctype`, `status`, `id`) VALUES('providers','invoice letterhead','A',null);
 
 alter table site add siteLogoId int(11);
 alter table site add siteUrl varchar(50);

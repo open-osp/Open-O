@@ -707,7 +707,7 @@
     };
 
     /**
-     * Finds the common ancestor path between two states.
+     * Finds the commons ancestor path between two states.
      *
      * @param {Object} first The first state.
      * @param {Object} second The second state.
@@ -4269,7 +4269,7 @@
         }
 
         /**
-         * Merges a set of parameters with all parameters inherited between the common parents of the
+         * Merges a set of parameters with all parameters inherited between the commons parents of the
          * current state and a given destination state.
          *
          * @param {Object} newParams The set of parameters which will be composited with inherited params.
@@ -4452,7 +4452,7 @@
         var token = function (p) {
             return p.provide || p.token;
         };
-        /** Given a literal resolve or provider object, returns a Resolvable */
+        /** Given a literal resolve or providers object, returns a Resolvable */
         var literal2Resolvable = pattern([
             [prop('resolveFn'), function (p) {
                 return new Resolvable(token(p), p.resolveFn, p.deps, p.policy);
@@ -9124,10 +9124,10 @@
         };
 
         /**
-         * Creates a template by invoking an injectable provider function.
+         * Creates a template by invoking an injectable providers function.
          *
          * @param provider Function to invoke via `locals`
-         * @param {Function} injectFn a function used to invoke the template provider
+         * @param {Function} injectFn a function used to invoke the template providers
          * @return {string|Promise.<string>} The template html as a string, or a promise
          * for that string.
          */
@@ -9139,10 +9139,10 @@
         };
 
         /**
-         * Creates a component's template by invoking an injectable provider function.
+         * Creates a component's template by invoking an injectable providers function.
          *
          * @param provider Function to invoke via `locals`
-         * @param {Function} injectFn a function used to invoke the template provider
+         * @param {Function} injectFn a function used to invoke the template providers
          * @return {string} The template html as a string: "<component-name input1='::$resolve.foo'></component-name>".
          */
         TemplateFactory.prototype.fromComponentProvider = function (provider, params, context) {
@@ -9251,7 +9251,7 @@
      * navigation. A state describes (via the controller / template / view properties) what
      * the UI looks like and does at that place.
      *
-     * States often have things in common, and the primary way of factoring out these
+     * States often have things in commons, and the primary way of factoring out these
      * commonalities in this model is via the state hierarchy, i.e. parent/child states aka
      * nested states.
      *
@@ -9500,7 +9500,7 @@
      *
      * This class manages the router rules for what to do when the URL changes.
      *
-     * This provider remains for backwards compatibility.
+     * This providers remains for backwards compatibility.
      *
      * @deprecated
      */
@@ -9713,7 +9713,7 @@
     var router = null;
     $uiRouter.$inject = ['$locationProvider'];
 
-    /** This angular 1 provider instantiates a Router and exposes its services via the angular injector */
+    /** This angular 1 providers instantiates a Router and exposes its services via the angular injector */
     function $uiRouter($locationProvider) {
         // Create a new instance of the Router when the $uiRouterProvider is initialized
         router = this.router = new UIRouter();

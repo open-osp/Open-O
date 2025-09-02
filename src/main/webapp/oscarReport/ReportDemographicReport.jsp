@@ -42,7 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="oscar.oscarReport.data.RptSearchData,java.util.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptSearchData,java.util.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptDemographicColumnNames" %>
 
 
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
@@ -66,7 +67,7 @@
     }
 </script>
 <%
-    oscar.oscarReport.data.RptSearchData searchData = new oscar.oscarReport.data.RptSearchData();
+    RptSearchData searchData = new RptSearchData();
     java.util.ArrayList rosterArray;
     java.util.ArrayList patientArray;
     java.util.ArrayList providerArray;
@@ -700,7 +701,7 @@
         String[] selectArray = (String[]) request.getAttribute("selectArray");
         java.util.ArrayList searchList = (java.util.ArrayList) request.getAttribute("searchedArray");
         if (searchList != null && selectArray != null) {
-            oscar.oscarReport.data.RptDemographicColumnNames dcn = new oscar.oscarReport.data.RptDemographicColumnNames();
+            RptDemographicColumnNames dcn = new RptDemographicColumnNames();
     %>
 
     Search Returned : <%=searchList.size()%> Results

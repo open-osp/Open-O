@@ -23,7 +23,8 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.admin.web.MigrateRelationshipsToContactsHelper" %>
 <%@page contentType="text/html" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -114,7 +115,7 @@
     </form>
 
     <% } else {
-        boolean result = org.oscarehr.admin.web.MigrateRelationshipsToContactsHelper.doMigration(LoggedInInfo.getLoggedInInfoFromSession(request));
+        boolean result = MigrateRelationshipsToContactsHelper.doMigration(LoggedInInfo.getLoggedInInfoFromSession(request));
         if (result) {
     %><h4>Migration was successful</h4><%
     } else {

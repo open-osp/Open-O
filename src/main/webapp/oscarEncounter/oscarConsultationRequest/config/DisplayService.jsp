@@ -41,6 +41,7 @@
 
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -49,7 +50,7 @@
 <!DOCTYPE html>
 <html>
     <jsp:useBean id="displayServiceUtil" scope="request"
-                 class="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil"/>
+                 class="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConDisplayServiceUtil"/>
     <%
         displayServiceUtil.estSpecialistVector();
         String serviceId = (String) request.getAttribute("serviceId");
@@ -108,7 +109,7 @@
             <tr style="vertical-align: top">
                 <td class="MainTableLeftColumn">
                     <%
-                        oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar();
+                        EctConTitlebar titlebar = new EctConTitlebar();
                         out.print(titlebar.estBar(request));
                     %>
                 </td>

@@ -31,13 +31,13 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.common.Gender;
+import ca.openosp.openo.commn.Gender;
+import ca.openosp.openo.commn.dao.DemographicDao;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class DemographicDaoTest extends DaoTestFixtures {
 
@@ -47,7 +47,7 @@ public class DemographicDaoTest extends DaoTestFixtures {
     public void before() throws Exception {
         this.beforeForInnoDB();
         SchemaUtils.restoreTable("demographic", "lst_gender", "admission", "demographic_merged", "program",
-                "health_safety", "provider", "providersite", "site", "program_team", "log", "Facility", "demographicExt");
+                "health_safety", "providers", "providersite", "site", "program_team", "log", "Facility", "demographicExt");
     }
 
 
@@ -88,16 +88,6 @@ public class DemographicDaoTest extends DaoTestFixtures {
         assertEquals(1, dao.getDemographicByProvider(entity.getProviderNo(), false).size());
     }
 
-    @Ignore //Skipping until issue is resolved
-    public void testGetDemographicByMyOscarUserName() throws Exception {
-        Demographic entity = new Demographic();
-        EntityDataGenerator.generateTestDataForModelClass(entity);
-        entity.setDemographicNo(null);
-        entity.setMyOscarUserName("marc");
-        dao.save(entity);
-
-        assertNotNull(dao.getDemographicByMyOscarUserName("marc"));
-    }
 
     @Test
     public void testGetActiveDemosByHealthCardNo() throws Exception {
@@ -236,8 +226,8 @@ public class DemographicDaoTest extends DaoTestFixtures {
     // @Ignore
     // @Test
     // public void testFindByCriterion() {
-    // 	assertNotNull(dao.findByCriterion(new DemographicDaoImpl.DemographicCriterion(null, "", "", "", "", "", "", "")));
-    // 	assertNotNull(dao.findByCriterion(new DemographicDaoImpl.DemographicCriterion("", "", "", "", "", "", "", "")));
+    // 	assertNotNull(daos.findByCriterion(new DemographicDaoImpl.DemographicCriterion(null, "", "", "", "", "", "", "")));
+    // 	assertNotNull(daos.findByCriterion(new DemographicDaoImpl.DemographicCriterion("", "", "", "", "", "", "", "")));
     // }
 
     @Test

@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.html.layout");
 
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 dojo.require("dojo.html.style");
 dojo.require("dojo.html.display");
 

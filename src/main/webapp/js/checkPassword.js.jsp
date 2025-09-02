@@ -22,7 +22,7 @@
     Toronto, Ontario, Canada
 
 --%>
-    <%@ page import="oscar.OscarProperties"%>
+    <%@ page import="ca.openosp.OscarProperties"%>
     <%@ page import="org.springframework.web.util.JavaScriptUtils"%>
 
     <%@ page contentType="text/javascript"%>

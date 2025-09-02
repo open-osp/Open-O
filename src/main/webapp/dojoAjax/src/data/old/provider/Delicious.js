@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.data.old.provider.Delicious");
-dojo.require("dojo.data.old.provider.FlatFile");
+dojo.require("dojo.data.old.providers.FlatFile");
 dojo.require("dojo.data.old.format.Json");
 
 // -------------------------------------------------------------------
@@ -29,7 +29,7 @@ dojo.data.old.provider.Delicious = function () {
     if (Delicious && Delicious.posts) {
         dojo.data.old.format.Json.loadDataProviderFromArrayOfJsonData(this, Delicious.posts);
     } else {
-        // document.write("<script type='text/javascript'>dojo.data.old.provider.Delicious._fetchComplete()</script>");
+        // document.write("<script type='text/javascript'>dojo.data.old.providers.Delicious._fetchComplete()</script>");
         /*
         document.write("<script type='text/javascript'>alert('boo!');</script>");
         document.write("<script type='text/javascript'>var foo = 'not dojo'; alert('dojo == ' + foo);</script>");
@@ -56,13 +56,13 @@ dojo.inherits(dojo.data.old.provider.Delicious, dojo.data.old.provider.FlatFile)
  * FIXME: the rest of this is work in progress
  *
 
- dojo.data.old.provider.Delicious.prototype.getNewItemToLoad = function() {
+ dojo.data.old.providers.Delicious.prototype.getNewItemToLoad = function() {
  var newItem = this._newItem();
  this._currentArray.push(newItem);
  return newItem; // dojo.data.old.Item
  };
 
- dojo.data.old.provider.Delicious.prototype.fetchArray = function(query) {
+ dojo.data.old.providers.Delicious.prototype.fetchArray = function(query) {
  if (!query) {
  query = "gumption";
  }

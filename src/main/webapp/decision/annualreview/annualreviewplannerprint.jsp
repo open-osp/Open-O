@@ -31,23 +31,25 @@
     String curUser_no = (String) session.getAttribute("user");
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, oscar.util.*, java.text.*, java.lang.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.text.*, java.lang.*,java.net.*"
         errorPage="../../appointment/errorpage.jsp" %>
 
 <jsp:useBean id="riskDataBean" class="java.util.Properties" scope="page"/>
 <jsp:useBean id="risks"
-             class="oscar.decision.DesAntenatalPlannerRisks_99_12" scope="page"/>
+             class="ca.openosp.openo.decision.DesAntenatalPlannerRisks_99_12" scope="page"/>
 <jsp:useBean id="checklist"
-             class="oscar.decision.DesAnnualReviewPlannerChecklist" scope="page"/>
+             class="ca.openosp.openo.decision.DesAnnualReviewPlannerChecklist" scope="page"/>
 <%@ include file="../../admin/dbconnection.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.DesAnnualReviewPlan" %>
-<%@page import="org.oscarehr.common.dao.DesAnnualReviewPlanDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.DesAnnualReviewPlan" %>
+<%@page import="ca.openosp.openo.commn.dao.DesAnnualReviewPlanDao" %>
 <%
     DesAnnualReviewPlanDao desAnnualReviewPlanDao = SpringUtils.getBean(DesAnnualReviewPlanDao.class);
 %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 %>

@@ -8,7 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
 
-import org.junit.Ignore;
+import ca.openosp.openo.integration.mcedt.DelegateFactory;
 import org.junit.Test;
 
 import ca.ontario.health.edt.Detail;

@@ -28,9 +28,9 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
-import oscar.oscarLab.ca.all.parsers.CLSHandler;
+import ca.openosp.openo.lab.ca.all.parsers.CLSHandler;
 
 public class CLSHandlerTest {
 

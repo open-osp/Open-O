@@ -1,6 +1,6 @@
 <%@ taglib uri="http://displaytag.sf.net/el" prefix="display-el" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramClientRestriction" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramClientRestriction" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 
 <%--
 

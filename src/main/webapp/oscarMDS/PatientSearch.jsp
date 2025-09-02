@@ -23,8 +23,8 @@
     Ontario, Canada
 
 --%>
-<%@ page import="java.util.*, java.sql.*,java.net.*, oscar.oscarDB.DBPreparedHandler, oscar.MyDateFormat, oscar.Misc" %>
-<%@ page import="oscar.oscarDemographic.data.DemographicMerged" %>
+<%@ page import="java.util.*, java.sql.*,java.net.*, ca.openosp.openo.db.DBPreparedHandler, ca.openosp.MyDateFormat, ca.openosp.Misc" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicMerged" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -167,7 +167,7 @@
 </SCRIPT>
 <script>
     function updateOpener(t1, t2) {
-        <%if(request.getParameter("from") != null && "olis".equals(request.getParameter("from"))) {
+        <%if(request.getParameter("from") != null && "olis1".equals(request.getParameter("from"))) {
             %>window.opener.updateLabDemoStatus2(t1, t2);
         <%
             } else {
@@ -203,7 +203,7 @@
                 int age = 0;
 
                 ResultSet rs = null;
-                Properties props = oscar.OscarProperties.getInstance();
+                Properties props = ca.openosp.OscarProperties.getInstance();
                 DBPreparedHandler db = new DBPreparedHandler();
 
                 String keyword = "";
@@ -300,7 +300,7 @@
                     DemographicMerged dmDAO = new DemographicMerged();
 
                     while (rs.next() && idx < Integer.parseInt(strLimit2)) {
-                        String dem_no = oscar.Misc.getString(rs, "demographic_no");
+                        String dem_no = ca.openosp.Misc.getString(rs, "demographic_no");
                         String head = dmDAO.getHead(dem_no);
 
                         if (head != null && !head.equals(dem_no)) {
@@ -311,15 +311,15 @@
                         bodd = bodd ? false : true; //for the color of rows
                         nItems++; //to calculate if it is the end of records
 
-                        if (!(oscar.Misc.getString(rs, "month_of_birth").equals(""))) {//   ||oscar.Misc.getString(rs,"year_of_birth")||oscar.Misc.getString(rs,"date_of_birth")) {
-                            if (curMonth > Integer.parseInt(oscar.Misc.getString(rs, "month_of_birth"))) {
-                                age = curYear - Integer.parseInt(oscar.Misc.getString(rs, "year_of_birth"));
+                        if (!(ca.openosp.Misc.getString(rs, "month_of_birth").equals(""))) {//   ||ca.openosp.Misc.getString(rs,"year_of_birth")||ca.openosp.Misc.getString(rs,"date_of_birth")) {
+                            if (curMonth > Integer.parseInt(ca.openosp.Misc.getString(rs, "month_of_birth"))) {
+                                age = curYear - Integer.parseInt(ca.openosp.Misc.getString(rs, "year_of_birth"));
                             } else {
-                                if (curMonth == Integer.parseInt(oscar.Misc.getString(rs, "month_of_birth")) &&
-                                        curDay > Integer.parseInt(oscar.Misc.getString(rs, "date_of_birth"))) {
-                                    age = curYear - Integer.parseInt(oscar.Misc.getString(rs, "year_of_birth"));
+                                if (curMonth == Integer.parseInt(ca.openosp.Misc.getString(rs, "month_of_birth")) &&
+                                        curDay > Integer.parseInt(ca.openosp.Misc.getString(rs, "date_of_birth"))) {
+                                    age = curYear - Integer.parseInt(ca.openosp.Misc.getString(rs, "year_of_birth"));
                                 } else {
-                                    age = curYear - Integer.parseInt(oscar.Misc.getString(rs, "year_of_birth")) - 1;
+                                    age = curYear - Integer.parseInt(ca.openosp.Misc.getString(rs, "year_of_birth")) - 1;
                                 }
                             }
                         }
@@ -327,31 +327,31 @@
 
             <tr bgcolor="<%=bodd?"ivory":"white"%>" align="center">
                 <td><input type="submit" name="demographicNo"
-                           value="<%=oscar.Misc.getString(rs,"demographic_no")%>"
-                           onclick="updateOpener('<%=request.getParameter("labNo")%>','<%=oscar.Misc.getString(rs,"demographic_no")%>');">
+                           value="<%=ca.openosp.Misc.getString(rs,"demographic_no")%>"
+                           onclick="updateOpener('<%=request.getParameter("labNo")%>','<%=ca.openosp.Misc.getString(rs,"demographic_no")%>');">
                 </td>
-                <td><%=nbsp(Misc.toUpperLowerCase(oscar.Misc.getString(rs, "last_name")))%>
+                <td><%=nbsp(Misc.toUpperLowerCase(ca.openosp.Misc.getString(rs, "last_name")))%>
                 </td>
-                <td><%=nbsp(Misc.toUpperLowerCase(oscar.Misc.getString(rs, "first_name")))%>
+                <td><%=nbsp(Misc.toUpperLowerCase(ca.openosp.Misc.getString(rs, "first_name")))%>
                 </td>
                 <td><%= age %>
                 </td>
-                <td><%=nbsp(oscar.Misc.getString(rs, "roster_status"))%>
+                <td><%=nbsp(ca.openosp.Misc.getString(rs, "roster_status"))%>
                 </td>
-                <td><%=nbsp(oscar.Misc.getString(rs, "patient_status"))%>
+                <td><%=nbsp(ca.openosp.Misc.getString(rs, "patient_status"))%>
                 </td>
-                <td><%=nbsp(oscar.Misc.getString(rs, "sex"))%>
+                <td><%=nbsp(ca.openosp.Misc.getString(rs, "sex"))%>
                 </td>
-                <td><%=nbsp(oscar.Misc.getString(rs, "year_of_birth") + "-" + oscar.Misc.getString(rs, "month_of_birth") + "-" + oscar.Misc.getString(rs, "date_of_birth"))%>
+                <td><%=nbsp(ca.openosp.Misc.getString(rs, "year_of_birth") + "-" + ca.openosp.Misc.getString(rs, "month_of_birth") + "-" + ca.openosp.Misc.getString(rs, "date_of_birth"))%>
                 </td>
-                <td><%=providerBean.getProperty(oscar.Misc.getString(rs, "provider_no")) == null ? "&nbsp;" : providerBean.getProperty(oscar.Misc.getString(rs, "provider_no")) %>
+                <td><%=providerBean.getProperty(ca.openosp.Misc.getString(rs, "provider_no")) == null ? "&nbsp;" : providerBean.getProperty(ca.openosp.Misc.getString(rs, "provider_no")) %>
                 </td>
 
             </tr>
             <%
-                        bufName = new StringBuffer((oscar.Misc.getString(rs, "last_name") + "," + oscar.Misc.getString(rs, "first_name")));
-                        bufNo = new StringBuffer((oscar.Misc.getString(rs, "demographic_no")));
-                        bufChart = new StringBuffer((oscar.Misc.getString(rs, "chart_no")));
+                        bufName = new StringBuffer((ca.openosp.Misc.getString(rs, "last_name") + "," + ca.openosp.Misc.getString(rs, "first_name")));
+                        bufNo = new StringBuffer((ca.openosp.Misc.getString(rs, "demographic_no")));
+                        bufChart = new StringBuffer((ca.openosp.Misc.getString(rs, "chart_no")));
                     }
                 }
             %>

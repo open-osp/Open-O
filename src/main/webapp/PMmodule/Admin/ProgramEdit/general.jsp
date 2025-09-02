@@ -23,8 +23,8 @@
 
 --%>
 <%@ include file="/taglibs.jsp" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramSignature" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramSignature" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
 <script>
     function save() {
         var maxAllowed = document.programManagerForm.elements['program.maxAllowed'].value;
@@ -74,8 +74,6 @@
 <input type="hidden" name="old_location" value=<%if(p!=null) { %> "<%=p.getLocation()%>" <%} else { %> "" <%} %> />
 <input type="hidden" name="old_programStatus"
        value=<%if(p!=null) { %> "<%=p.getProgramStatus()%>" <%} else { %> "" <%} %> />
-<input type="hidden" name="old_bedProgramLinkId"
-       value=<%if(p!=null) { %> "<%=p.getBedProgramLinkId()%>" <%} else { %> "0" <%} %> />
 <input type="hidden" name="old_manOrWoman" value=<%if(p!=null) { %> "<%=p.getManOrWoman() %>" <%} else { %> "" <%} %> />
 <input type="hidden" name="old_abstinenceSupport"
        value=<%if(p!=null) { %> "<%=p.getAbstinenceSupport() %>" <%} else { %> "" <%} %> />
@@ -92,8 +90,6 @@
        value=<%if(p!=null) { %> "<%=p.isTransgender() %>" <%} else { %> "" <%} %> />
 <input type="hidden" name="old_firstNation"
        value=<%if(p!=null) { %> "<%=p.isFirstNation() %>" <%} else { %> "" <%} %> />
-<input type="hidden" name="old_bedProgramAffiliated"
-       value=<%if(p!=null) { %> "<%=p.isBedProgramAffiliated() %>" <%} else { %> "" <%} %> />
 <input type="hidden" name="old_alcohol" value=<%if(p!=null) { %> "<%=p.isAlcohol()%>" <%} else { %> "" <%} %> />
 <input type="hidden" name="old_physicalHealth"
        value=<%if(p!=null) { %> "<%=p.isPhysicalHealth() %>" <%} else { %> "" <%} %> />
@@ -187,7 +183,6 @@
     <tr class="b">
         <td width="20%">Type:</td>
         <td><select name="program.type" id="program.type">
-            <option value="Bed"/>
             <option value="Service"/>
             <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="false">
                 <option value="External"/>
@@ -224,19 +219,6 @@
         <td width="20%">Allow Batch Discharges:</td>
         <td><input type="checkbox" name="program.allowBatchDischarge"/></td>
     </tr>
-    <!--
-	<tr class="b">
-		<td width="20%">Link to Bed Program:</td>
-		<td><select name="program.bedProgramLinkId">
-			<option value="0">&nbsp;</option>
-			<c:forEach var="bp" items="${bed_programs}">
-				<option value="${bp.id}">
-					<c:out value="${bp.name}" />
-				</option>
-			</c:forEach>
-		</select></td>
-	</tr>
-	-->
     <tr class="b">
         <td width="20%">Man or Woman:</td>
         <td><select name="program.manOrWoman" id="program.manOrWoman">
@@ -252,10 +234,6 @@
     <tr class="b">
         <td width="20%">First Nation:</td>
         <td><input type="checkbox" name="program.firstNation"/></td>
-    </tr>
-    <tr class="b">
-        <td width="20%">Bed Program Affiliated:</td>
-        <td><input type="checkbox" name="program.bedProgramAffiliated"/></td>
     </tr>
     <tr class="b">
         <td width="20%">Alcohol:</td>

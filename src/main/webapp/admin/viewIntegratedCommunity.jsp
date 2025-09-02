@@ -39,12 +39,13 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedFacility" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
 <%@page import="java.util.List" %>
-<%@page import="java.util.Calendar,org.oscarehr.util.MiscUtils" %>
+<%@page import="java.util.Calendar,ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%@include file="/layouts/caisi_html_top.jspf" %>
 
@@ -54,7 +55,7 @@
 
     int secondsTillConsideredStale = -1;
     try {
-        secondsTillConsideredStale = Integer.parseInt(oscar.OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
+        secondsTillConsideredStale = Integer.parseInt(OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
     } catch (Exception e) {
         MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int", e);
         secondsTillConsideredStale = -1;

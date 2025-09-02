@@ -22,9 +22,9 @@
     EMR System
 
 --%>
-<%@page import="org.oscarehr.common.model.BillingService" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
 <%
     if (session.getAttribute("user") == null) {
         response.sendRedirect("../../logout.jsp");

@@ -31,9 +31,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.MyGroup;
-import org.oscarehr.common.model.MyGroupPrimaryKey;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.MyGroup;
+import ca.openosp.openo.commn.model.MyGroupPrimaryKey;
+import ca.openosp.openo.commn.dao.MyGroupDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class MyGroupDaoTest extends DaoTestFixtures {
 
@@ -45,7 +46,7 @@ public class MyGroupDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("mygroup", "provider");
+        SchemaUtils.restoreTable("mygroup", "providers");
     }
 
     @Test

@@ -39,15 +39,15 @@
 %>
 
 <%@page import="java.util.Calendar" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.managers.ProviderManager2" %>
-<%@page import="org.oscarehr.common.dao.FunctionalCentreDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.managers.ProviderManager2" %>
+<%@page import="ca.openosp.openo.commn.dao.FunctionalCentreDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.FunctionalCentre" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.FunctionalCentre" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.util.GregorianCalendar" %>
 <%@page import="java.text.DateFormatSymbols" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
@@ -168,7 +168,7 @@
             <div class="controls">
                 <select name="providerIds" class="input-medium" multiple="multiple">
                     <%
-                        // null for both active and inactive because the report might be for a provider who's just left in the current reporting period.
+                        // null for both active and inactive because the report might be for a providers who's just left in the current reporting period.
                         List<Provider> providers = providerManager.getProviders(loggedInInfo, null);
 
                         for (Provider provider : providers) {

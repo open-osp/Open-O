@@ -106,8 +106,8 @@
               <div class="form-group">
                 <!--  label class="control-label" for="exampleInputEmail3">Provider</label -->
                 <select class="form-control" ng-model="newConsent.providerNo">
-                    <option ng-repeat="provider in activeProviders" title="{{getFullProviderName(provider)}}" value="{{provider.providerNo}}">
-                         {{getProviderName(provider.providerNo)}}
+                    <option ng-repeat="providers in activeProviders" title="{{getFullProviderName(providers)}}" value="{{providers.providerNo}}">
+                         {{getProviderName(providers.providerNo)}}
                      </option>
                 </select>
               </div>

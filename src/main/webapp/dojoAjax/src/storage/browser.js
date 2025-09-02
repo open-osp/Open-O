@@ -18,17 +18,17 @@ dojo.require("dojo.uri.*");
 
 dojo.storage.browser.WhatWGStorageProvider = function () {
     // summary:
-    //		Storage provider that uses WHAT Working Group features in Firefox 2
+    //		Storage providers that uses WHAT Working Group features in Firefox 2
     //		to achieve permanent storage.
     // description:
     //		The WHAT WG storage API is documented at
     //		http://www.whatwg.org/specs/web-apps/current-work/#scs-client-side
     //
-    //		You can disable this storage provider with the following djConfig
+    //		You can disable this storage providers with the following djConfig
     //		variable:
     //		var djConfig = { disableWhatWGStorage: true };
     //
-    //		Authors of this storage provider-
+    //		Authors of this storage providers-
     //			JB Boisseau, jb.boisseau@eutech-ssii.com
     //			Brad Neuberg, bkn3@columbia.edu
 }
@@ -52,7 +52,7 @@ dojo.lang.extend(dojo.storage.browser.WhatWGStorageProvider, {
         // get current domain
         this._domain = location.hostname;
 
-        // indicate that this storage provider is now loaded
+        // indicate that this storage providers is now loaded
         this.initialized = true;
         dojo.storage.manager.loaded();
     },
@@ -183,9 +183,9 @@ dojo.lang.extend(dojo.storage.browser.WhatWGStorageProvider, {
 
 
 dojo.storage.browser.FlashStorageProvider = function () {
-    // summary: Storage provider that uses features in Flash to achieve permanent storage
+    // summary: Storage providers that uses features in Flash to achieve permanent storage
     // description:
-    //		Authors of this storage provider-
+    //		Authors of this storage providers-
     //			Brad Neuberg, bkn3@columbia.edu
 }
 
@@ -326,7 +326,7 @@ dojo.lang.extend(dojo.storage.browser.FlashStorageProvider, {
     _flashLoaded: function () {
         this._initialized = true;
 
-        // indicate that this storage provider is now loaded
+        // indicate that this storage providers is now loaded
         dojo.storage.manager.loaded();
     },
 

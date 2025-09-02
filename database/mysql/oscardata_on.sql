@@ -1790,8 +1790,8 @@ INSERT INTO `billingservice` (`service_code`, `description`, `value`, `percentag
 ('E849A', '----', '220.00', NULL, '2009-11-21', 'ON', '00'),
 ('E850A', 'Vulvectomy-rad.w/bilat.inguinal', '160.55', NULL, '1998-02-01', 'ON', '00'),
 ('E850C', 'Vulvectomy-rad.w/bilat.inguinal', '13.24', NULL, '1998-02-01', 'ON', '00'),
-('E851A', 'Vulvectomy-rad.w/bilat.common', '236.45', NULL, '1998-02-01', 'ON', '00'),
-('E851C', 'Vulvectomy-rad.w/bilat.common', '13.24', NULL, '1998-02-01', 'ON', '00'),
+('E851A', 'Vulvectomy-rad.w/bilat.commons', '236.45', NULL, '1998-02-01', 'ON', '00'),
+('E851C', 'Vulvectomy-rad.w/bilat.commons', '13.24', NULL, '1998-02-01', 'ON', '00'),
 ('E852A', 'Ectopic pregnancy-w/ tuboplasty', '47.90', NULL, '2002-04-01', 'ON', '00'),
 ('E853A', '----', '145.00', NULL, '2009-10-24', 'ON', '00'),
 ('E854A', 'Ureterolysis', '170.00', NULL, '2002-04-01', 'ON', '00'),
@@ -8291,8 +8291,8 @@ INSERT INTO `billingservice` (`service_code`, `description`, `value`, `percentag
 ('S403A', 'Exploration of renal and peri-renal tissues(with or without', '356.70', NULL, '2002-04-01', 'ON', '00'),
 ('S403B', 'Exploration of renal and peri-renal tissues(with or without', '11.40', NULL, '2002-04-01', 'ON', '00'),
 ('S403C', 'Exploration of renal and peri-renal tissues(with or without', '13.24', NULL, '2002-04-01', 'ON', '00'),
-('S404B', 'Nephrotomy with drainage - nephrostomy - when sole provider', '11.40', NULL, '2002-04-01', 'ON', '00'),
-('S404C', 'Nephrotomy with drainage - nephrostomy - when sole provider', '13.24', NULL, '2002-04-01', 'ON', '00'),
+('S404B', 'Nephrotomy with drainage - nephrostomy - when sole providers', '11.40', NULL, '2002-04-01', 'ON', '00'),
+('S404C', 'Nephrotomy with drainage - nephrostomy - when sole providers', '13.24', NULL, '2002-04-01', 'ON', '00'),
 ('S405A', 'Nephrotomy with removal of calculus', '482.40', NULL, '2002-04-01', 'ON', '00'),
 ('S405B', 'Nephrotomy with removal of calculus', '11.40', NULL, '2002-04-01', 'ON', '00'),
 ('S405C', 'Nephrotomy with removal of calculus', '13.24', NULL, '2002-04-01', 'ON', '00'),
@@ -13147,7 +13147,7 @@ INSERT INTO diagnosticcode VALUES (271,'454','Varicose veins of lower extremitie
 INSERT INTO diagnosticcode VALUES (272,'455','Haemorrhoids                                                                                        ','A','ON');
 INSERT INTO diagnosticcode VALUES (273,'457','Lymphangitis, lymphedema                                                                            ','A','ON');
 INSERT INTO diagnosticcode VALUES (274,'459','Other disorders of circulatory system                                                               ','A','ON');
-INSERT INTO diagnosticcode VALUES (275,'460','Acute nasopharyngitis, common cold, URTI                                                               ','A','ON');
+INSERT INTO diagnosticcode VALUES (275,'460','Acute nasopharyngitis, commons cold, URTI                                                               ','A','ON');
 INSERT INTO diagnosticcode VALUES (276,'461','Acute sinusitis                                                                                     ','A','ON');
 INSERT INTO diagnosticcode VALUES (277,'463','Acute tonsillitis                                                                                   ','A','ON');
 INSERT INTO diagnosticcode VALUES (278,'464','Acute laryngitis, tracheitis, croup, epiglottis                                                     ','A','ON');
@@ -13565,7 +13565,7 @@ INSERT INTO diagnosticcode VALUES (533,'042','AIDS                              
 --
 
 --
--- Dumping data for table 'provider'
+-- Dumping data for table 'providers'
 --
 
 --
@@ -13629,7 +13629,7 @@ INSERT INTO diagnosticcode VALUES (533,'042','AIDS                              
 --
 
 --
--- Dumping data for table 'security'
+-- Dumping data for table 'sec'
 --
 
 --
@@ -13735,7 +13735,7 @@ insert into billing_on_errorCode values ('R02', 'invalid HSN');
 insert into billing_on_errorCode values ('R03', 'invalid/missing province code');
 insert into billing_on_errorCode values ('R04', 'service excluded from RMBS');
 insert into billing_on_errorCode values ('R05', 'service DT prior 880401/PG/ON');
-insert into billing_on_errorCode values ('R06', 'wrong provider for RMBS');
+insert into billing_on_errorCode values ('R06', 'wrong providers for RMBS');
 insert into billing_on_errorCode values ('R07', 'invalid pay type for RMBS');
 insert into billing_on_errorCode values ('R08', 'invalid referral number');
 insert into billing_on_errorCode values ('R09', 'claim header 2 missing - RMB');
@@ -13866,7 +13866,7 @@ insert into billing_on_errorCode values ('80', 'technical fee adjustment for hos
 insert into billing_on_errorCode values ('AP', 'this payment is in accordance with legislation - if you disagree with the payment you may appeal to the General Manager');
 insert into billing_on_errorCode values ('EB', 'additional payment for the claim shown');
 insert into billing_on_errorCode values ('Q8', 'LAB not licensed to perform this test on date of service');
-insert into billing_on_errorCode values ('SR', 'fee reduced based on MOH utilization adjustment - contact your provider');
+insert into billing_on_errorCode values ('SR', 'fee reduced based on MOH utilization adjustment - contact your providers');
 insert into billing_on_errorCode values ('TH', 'fee reduced per HOH payment policy - contact your physician');
 insert into billing_on_errorCode values ('C1', 'allowed as repeat/limited consultation');
 insert into billing_on_errorCode values ('C2', 'allowed at re-assessment fee');
@@ -15731,7 +15731,7 @@ insert into frm_labreq_preset (lab_type,prop_name,prop_value,status) values ("Pr
 insert into frm_labreq_preset (lab_type,prop_name,prop_value,status) values ("PreLithium","o_otherTests2","ECG",'1');
 
 
-INSERT INTO `LookupList` VALUES (\N,'practitionerNoType','Practitioner No Type List','Select list for disambiguating practitionerNo in provider record',NULL,1,'oscar',now());
+INSERT INTO `LookupList` VALUES (\N,'practitionerNoType','Practitioner No Type List','Select list for disambiguating practitionerNo in providers record',NULL,1,'oscar',now());
 SET @lid = LAST_INSERT_ID();
 INSERT INTO `LookupListItem` VALUES (\N,@lid,'CPSO','College of Physicians and Surgeons of Ontario',3,1,'oscar',now()),(\N,@lid,'OCP','Ontario College of Pharmacists (OCP)',3,1,'oscar',now()),(\N,@lid,'CNORNP','RNP - College of Nurses of Ontario (CNO)',3,1,'oscar',now()),(\N,@lid,'CNORN','RN - College of Nurses of Ontario  (CNO)',3,1,'oscar',now()),(\N,@lid,'CNORPN','RPN - College of Nurses of Ontario  (CNO)',3,1,'oscar',now()),(\N,@lid,'CMO','College of Midwives of Ontario',3,1,'oscar',now());
 

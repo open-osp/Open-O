@@ -22,12 +22,12 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="/taglibs.jsp" %>
 
 <%@ include file="/common/messages.jsp" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
 <%@ page import="java.util.List" %>
 
 <div class="tabs" id="tabs">
@@ -55,10 +55,6 @@
         <tr class="b">
             <td width="20%">HIC:</td>
             <td><c:out value="${facilityManagerForm.facility.hic}"/></td>
-        </tr>
-        <tr class="b">
-            <td width="20%">OCAN Service Org Number:</td>
-            <td><c:out value="${facilityManagerForm.facility.ocanServiceOrgNumber}"/></td>
         </tr>
         <tr class="b">
             <td width="20%">Primary Contact Name:</td>
@@ -156,7 +152,7 @@
         <tr>
             <th>Name</th>
             <th>Client DOB</th>
-            <th>Bed Program</th>
+            <th>Program</th>
             <th>Discharge Date/Time</th>
         </tr>
         <c:forEach var="client" items="${associatedClients}">

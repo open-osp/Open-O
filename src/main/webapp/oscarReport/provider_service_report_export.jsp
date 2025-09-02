@@ -38,18 +38,18 @@
     }
 %>
 
-<%@page import="oscar.util.SqlUtils" %>
-<%@page import="org.oscarehr.web.ProviderServiceReportUIBean" %>
+<%@page import="ca.openosp.openo.util.SqlUtils" %>
+<%@page import="ca.openosp.openo.web.ProviderServiceReportUIBean" %>
 <%@page import="java.util.*" %>
 <%@page import="org.caisi.model.*" %>
-<%@page import="org.oscarehr.PMmodule.model.*" %>
-<%@page import="org.oscarehr.PMmodule.web.*" %>
-<%@page import="org.oscarehr.common.model.*" %>
-<%@page import="org.oscarehr.util.*" %>
+<%@page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@page import="ca.openosp.openo.PMmodule.web.*" %>
+<%@page import="ca.openosp.openo.commn.model.*" %>
+<%@page import="ca.openosp.openo.utility.*" %>
 <%@page import="java.text.*" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%
-    String agencyName = oscar.OscarProperties.getInstance().getProperty("db_name", "");
+    String agencyName = ca.openosp.OscarProperties.getInstance().getProperty("db_name", "");
     String startDateString = request.getParameter("startDate");
     String endDateString = request.getParameter("endDate");
     SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yyyy");

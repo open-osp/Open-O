@@ -40,11 +40,15 @@
 %>
 
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page
-        import="oscar.util.*, oscar.form.*, oscar.form.data.*,java.util.*,oscar.oscarPrevention.*" %>
+        import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*,java.util.*,ca.openosp.openo.prevention.*" %>
 <%@ page
-        import="oscar.oscarProvider.data.*,oscar.oscarWorkflow.*,oscar.oscarEncounter.oscarMeasurements.bean.*" %>
+        import="ca.openosp.openo.providers.data.*,ca.openosp.openo.workflow.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -271,13 +275,13 @@
                                 <label >Hospital/Clinic:</label><input type="text" name="location" size="9"/>
                                 <br/>
 
-                                <label for="provider" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
-                                      <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="provider">
+                                <label for="providers" class="fields">Provider:</label> <input type="text" name="providerName" id="providerName" value="<%=providerName%>"/>
+                                      <select onchange="javascript:hideExtraName(this);" id="providerDrop" name="providers">
                                           <%for (int i=0; i < providers.size(); i++) {
                                                Hashtable ph = (Hashtable) providers.get(i);%>
-                                            <option value="<%= ph.get("providerNo")%>" <%= ( ph.get("providerNo").equals(provider) ? " selected" : "" ) %>><%= ph.get("lastName") %> <%= ph.get("firstName") %></option>
+                                            <option value="<%= ph.get("providerNo")%>" <%= ( ph.get("providerNo").equals(providers) ? " selected" : "" ) %>><%= ph.get("lastName") %> <%= ph.get("firstName") %></option>
                                           <%}%>
-                                          <option value="-1" <%= ( "-1".equals(provider) ? " selected" : "" ) %> >Other</option>
+                                          <option value="-1" <%= ( "-1".equals(providers) ? " selected" : "" ) %> >Other</option>
                                       </select>
 
                                 <br/>

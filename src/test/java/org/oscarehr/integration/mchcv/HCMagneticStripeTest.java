@@ -23,6 +23,7 @@
  */
 package org.oscarehr.integration.mchcv;
 
+import ca.openosp.openo.integration.mchcv.HCMagneticStripe;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

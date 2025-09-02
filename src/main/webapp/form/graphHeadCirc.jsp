@@ -39,7 +39,11 @@
 %>
 
 <%@ page
-        import="oscar.form.*, oscar.form.data.*, oscar.util.*, java.util.Date" %>
+        import="ca.openosp.openo.form.*, ca.openosp.openo.form.data.*, ca.openosp.openo.util.*, java.util.Date" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRourkeRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 
 
 <html>
@@ -71,8 +75,8 @@
         double age = -1;
 
         try {
-            Date tToday = oscar.util.UtilDateUtilities.StringToDate(today, "yyyy/MM/dd");
-            Date tDob = (oscar.util.UtilDateUtilities.StringToDate(dob, "yyyy/MM/dd"));
+            Date tToday = UtilDateUtilities.StringToDate(today, "yyyy/MM/dd");
+            Date tDob = (UtilDateUtilities.StringToDate(dob, "yyyy/MM/dd"));
 
             age = (tToday.getTime() - tDob.getTime()) / (1000 * 3600 * 24);
             age = age / 30.4375; // the approximate number of days in a month

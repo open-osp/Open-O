@@ -40,16 +40,16 @@
 
 <!DOCTYPE HTML>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedProvider" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.FacilityIdStringCompositePk" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedProvider" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
-<%@page import="org.oscarehr.common.dao.OscarLogDao" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicTransfer" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.MatchingDemographicTransferScore" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarLogDao" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicTransfer" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.MatchingDemographicTransferScore" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -73,14 +73,16 @@
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*, oscar.util.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="oscar.oscarDemographic.data.DemographicMerged" %>
+<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, ca.openosp.*, ca.openosp.openo.util.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicMerged" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@ page import="org.oscarehr.common.model.DemographicExt" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@ page import="ca.openosp.openo.commn.model.DemographicExt" %>
+<%@ page import="ca.openosp.Misc" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 
 <%
@@ -393,7 +395,7 @@
                             providerPk.setIntegratorFacilityId(demographicTransfer.getIntegratorFacilityId());
                             providerPk.setCaisiItemId(demographicTransfer.getCaisiProviderId());
                             CachedProvider cachedProvider = CaisiIntegratorManager.getProvider(loggedInInfo, loggedInInfo.getCurrentFacility(), providerPk);
-                            MiscUtils.getLogger().debug("Cached provider, pk=" + providerPk.getIntegratorFacilityId() + "," + providerPk.getCaisiItemId() + ", cachedProvider=" + cachedProvider);
+                            MiscUtils.getLogger().debug("Cached providers, pk=" + providerPk.getIntegratorFacilityId() + "," + providerPk.getCaisiItemId() + ", cachedProvider=" + cachedProvider);
 
                             String providerName = "";
 

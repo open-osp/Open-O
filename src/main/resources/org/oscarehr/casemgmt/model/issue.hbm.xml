@@ -20,7 +20,7 @@
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="org.oscarehr.casemgmt.model.Issue" table="issue">
+	<class name="ca.openosp.openo.casemgmt.model.Issue" table="issue">
 		<id name="id" column="issue_id" unsaved-value="0">
 			<generator class="native" />
 		</id>

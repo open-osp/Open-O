@@ -43,10 +43,10 @@
 
 
 
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Measurement" %>
-<%@ page import="org.oscarehr.common.dao.MeasurementDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Measurement" %>
+<%@ page import="ca.openosp.openo.commn.dao.MeasurementDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
 
 <%

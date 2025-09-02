@@ -30,13 +30,15 @@
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 
-<%@ page import="oscar.login.*" %>
-<%@ page import="oscar.log.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.SecRole" %>
-<%@ page import="org.oscarehr.common.dao.SecRoleDao" %>
-<%@ page import="org.oscarehr.PMmodule.utility.RoleCache" %>
+<%@ page import="ca.openosp.openo.login.*" %>
+<%@ page import="ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.SecRole" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecRoleDao" %>
+<%@ page import="ca.openosp.openo.PMmodule.utility.RoleCache" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

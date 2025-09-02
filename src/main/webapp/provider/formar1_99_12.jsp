@@ -29,22 +29,22 @@
     String user_no = (String) session.getAttribute("user");
     String resource_baseurl = "http://resource.oscarmcmaster.org/oscarResource/";
 %>
-<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, oscar.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, ca.openosp.*" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
-<%@page import="org.oscarehr.common.dao.FormDao" %>
-<%@page import="org.oscarehr.common.model.Form" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
+<%@page import="ca.openosp.openo.commn.dao.FormDao" %>
+<%@page import="ca.openosp.openo.commn.model.Form" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
     FormDao formDao = SpringUtils.getBean(FormDao.class);
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 %>
 
-<jsp:useBean id="risks" class="oscar.OBRisks_99_12" scope="page"/>
+<jsp:useBean id="risks" class="ca.openosp.OBRisks_99_12" scope="page"/>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>
@@ -274,7 +274,7 @@
                         . </a> <input type="hidden" name="oox" value="0"> <input
                             type="hidden" name="ooy" value="0"> <input type="hidden"
                                                                        name="cmd" value=""> <%
-                        String newFormURL = "../provider/providercontrol.jsp?";
+                        String newFormURL = "../providers/providercontrol.jsp?";
                         if (request.getParameter("demographic_no") != null)
                             newFormURL += "demographic_no=" + request.getParameter("demographic_no");
                         if (request.getParameter("appointment_no") != null)
@@ -1438,7 +1438,7 @@
     </table>
     <%
         if (bNewList) {
-            out.println(risks.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/provider/obarrisks_99_12.xml")));
+            out.println(risks.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/providers/obarrisks_99_12.xml")));
         }
     %>
 </form>

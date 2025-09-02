@@ -39,12 +39,18 @@
     }
 %>
 
-<%@ page import="oscar.form.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.form.*, java.util.*" %>
 <%@ page import="java.io.FileInputStream" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.encounter.util.EctFileUtil" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmMentalHealthRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>
     <head>
@@ -67,14 +73,14 @@
             if (formId == 0) {
                 props = ((FrmMentalHealthRecord) rec).getFormCustRecord(props, provNo);
             }
-            oscar.oscarEncounter.util.EctFileUtil list = new oscar.oscarEncounter.util.EctFileUtil();
+            EctFileUtil list = new EctFileUtil();
             props.setProperty("c_lastVisited", "assessment");
 
             String projecthome = oscarVariables.getProperty("project_home");
             String path = "form/dataFiles";
 
             if (props.getProperty("a_formDate", "").equals("")) {
-                props.setProperty("a_formDate", oscar.util.UtilDateUtilities.DateToString(new java.util.Date(), "yyyy/MM/dd"));
+                props.setProperty("a_formDate", UtilDateUtilities.DateToString(new java.util.Date(), "yyyy/MM/dd"));
             }
         %>
 
@@ -99,7 +105,7 @@
                 var ret = numvalidate();
                 //if(ret==true) {
                 //ret = confirm("Do you wish to save this form and view the print preview?");
-                popupFixedPage(650, 850, '../provider/notice.htm');
+                popupFixedPage(650, 850, '../providers/notice.htm');
                 document.forms[0].action = "form/formmhassessmentprint.jsp";
                 document.forms[0].target = "planner";
                 document.forms[0].submit();

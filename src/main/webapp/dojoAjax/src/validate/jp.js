@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.validate.jp");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.validate.isJapaneseCurrency = function (/*String*/value) {
     //summary: checks to see if 'value' is a valid representation of Japanese currency

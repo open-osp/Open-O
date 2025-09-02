@@ -28,7 +28,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
-<%@ page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData,oscar.oscarBilling.ca.bc.pageUtil.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.billings.ca.bc.data.BillingCodeData,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
 
 <html>
     <head>
@@ -64,7 +64,7 @@
                 }
         %> <% request.setAttribute("test", list); %>
         <display:table name="test" defaultsort="1" defaultorder="descending"
-                       decorator="oscar.oscarBilling.ca.bc.pageUtil.BillCodesTableWrapper"
+                       decorator="ca.openosp.openo.billings.ca.bc.pageUtil.BillCodesTableWrapper"
                        class="table table-hover table-striped">
             <display:column property="serviceCode" title="Service Code" sortable="true" headerClass="sortable"/>
             <display:column property="description" title="Description" sortable="true" headerClass="sortable"/>

@@ -5,9 +5,9 @@
  --%>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -139,7 +139,7 @@
                     <td>${invoice.demographicName}</td>
 
                         <%-- Provider
-                          - show provider name from provider_no
+                          - show providers name from provider_no
                         --%>
                     <td>
                         <c:set var="providerNumber" value="${invoice.providerNumber}" scope="page"/>

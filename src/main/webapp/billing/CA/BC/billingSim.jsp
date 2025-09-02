@@ -38,11 +38,13 @@
     String user_no = (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*, java.net.*" errorPage="../../../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*" errorPage="../../../errorpage.jsp" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 
 
 <%
@@ -86,7 +88,7 @@
         function checkData() {
             var b = true;
             if (document.forms[0].provider.value == "000000") {
-                alert("Please select a provider!");
+                alert("Please select a providers!");
                 b = false;
             }//else if(document.forms[0].xml_vdate.value==""){
             //alert("Please give a date!");
@@ -131,7 +133,7 @@
 </table>
 
 <%
-    String providerview = request.getParameter("provider") == null ? "" : request.getParameter("provider");
+    String providerview = request.getParameter("providers") == null ? "" : request.getParameter("providers");
     String xml_vdate = request.getParameter("xml_vdate") == null ? "" : request.getParameter("xml_vdate");
     String xml_appointment_date = request.getParameter("xml_appointment_date") == null ? nowDate : request.getParameter("xml_appointment_date");
 %>

@@ -22,8 +22,12 @@
     EMR System
 
 --%>
-<%@page import="java.math.*, java.util.*,  oscar.*, java.net.*,oscar.oscarBilling.ca.bc.data.*,org.oscarehr.common.model.*,oscar.util.*" %>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.springframework.web.context.support.WebApplicationContextUtils, oscar.entities.*" %>
+<%@page import="java.math.*, java.util.*,  ca.openosp.*, java.net.*,ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.openo.commn.model.*,ca.openosp.openo.util.*" %>
+<%@page import="org.springframework.web.context.WebApplicationContext,org.springframework.web.context.support.WebApplicationContextUtils, ca.openosp.openo.entities.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingCodeData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.Misc" %>
 <%
     if (session.getAttribute("user") == null) {
         response.sendRedirect("../../logout.jsp");
@@ -47,7 +51,7 @@
     } else {
         searchStr = "%" + searchStr + "%";
     }
-    searchStr = oscar.Misc.mysqlEscape(searchStr);
+    searchStr = Misc.mysqlEscape(searchStr);
     BillingCodeData bcd = new BillingCodeData();
     List<BillingService> billServiceList = bcd.search(searchStr, serDate);
     boolean color = false;

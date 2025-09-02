@@ -40,7 +40,8 @@
 %>
 
 <%@ page
-        import="oscar.oscarEncounter.immunization.data.EctImmImmunizationData" %>
+        import="ca.openosp.openo.encounter.immunization.data.EctImmImmunizationData" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -51,7 +52,7 @@
     <title>Record Immunization</title>
     <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <%
-        oscar.oscarEncounter.pageUtil.EctSessionBean bean = (oscar.oscarEncounter.pageUtil.EctSessionBean) request.getSession().getAttribute("EctSessionBean");
+        EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
         String node = request.getParameter("node").toString();
         String immName = "";
         if (request.getParameter("name") != null)

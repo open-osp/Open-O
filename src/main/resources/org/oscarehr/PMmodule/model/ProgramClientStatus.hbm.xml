@@ -19,8 +19,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
-<hibernate-mapping package="org.oscarehr.PMmodule.model">
-	<class name="ProgramClientStatus" table="program_clientstatus">
+<hibernate-mapping package="ca.openosp.openo.PMmodule.model">
+	<class name="ca.openosp.openo.PMmodule.model.ProgramClientStatus" table="program_clientstatus">
 		<meta attribute="sync-DAO">false</meta>
 		<id name="id" type="integer" column="clientstatus_id"
 			unsaved-value="0">

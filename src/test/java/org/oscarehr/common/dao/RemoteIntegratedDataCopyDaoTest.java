@@ -52,11 +52,12 @@ import java.util.Date;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.RemoteIntegratedDataCopy;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.ObjectMarshalUtil;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.dao.RemoteIntegratedDataCopyDao;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.RemoteIntegratedDataCopy;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.ObjectMarshalUtil;
+import ca.openosp.openo.utility.SpringUtils;
 
 
 public class RemoteIntegratedDataCopyDaoTest extends DaoTestFixtures {
@@ -101,17 +102,17 @@ public class RemoteIntegratedDataCopyDaoTest extends DaoTestFixtures {
     @Test
     public void testCreateWithType() throws Exception {
         Provider drw = getProvider("Jaymus", "Melby", "111113", "111113", "doctor", "00", "M");
-        RemoteIntegratedDataCopy remoteIntegratedDataCopy = remoteIntegratedDataCopyDao.save(1, drw, drw.getProviderNo(), 1, "provider");
+        RemoteIntegratedDataCopy remoteIntegratedDataCopy = remoteIntegratedDataCopyDao.save(1, drw, drw.getProviderNo(), 1, "providers");
 
         assertEquals("111113", remoteIntegratedDataCopy.getProviderNo());
         assertEquals("" + 1, "" + remoteIntegratedDataCopy.getFacilityId());
-        assertEquals(Provider.class.getName() + "+provider", remoteIntegratedDataCopy.getDataType());
+        assertEquals(Provider.class.getName() + "+providers", remoteIntegratedDataCopy.getDataType());
 
         assertNotNull(remoteIntegratedDataCopy.getId());
         assertNotNull(remoteIntegratedDataCopyDao.find(remoteIntegratedDataCopy.getId()));
 
         Provider drwCopy = remoteIntegratedDataCopyDao.getObjectFrom(Provider.class, remoteIntegratedDataCopy);
-        RemoteIntegratedDataCopy remoteIntegratedDataCopy2 = remoteIntegratedDataCopyDao.findByDemoType(1, 1, Provider.class.getName() + "+provider");
+        RemoteIntegratedDataCopy remoteIntegratedDataCopy2 = remoteIntegratedDataCopyDao.findByDemoType(1, 1, Provider.class.getName() + "+providers");
 
         if (remoteIntegratedDataCopy2 == null) {
             MiscUtils.getLogger().error("it's null");
@@ -122,8 +123,8 @@ public class RemoteIntegratedDataCopyDaoTest extends DaoTestFixtures {
         compareProvider(drw, drwCopy);
         compareProvider(drw, drwCopy2);
 
-        assertNull(remoteIntegratedDataCopyDao.save(1, drwCopy, drwCopy.getProviderNo(), 1, "provider"));
-        assertNull(remoteIntegratedDataCopyDao.save(1, drwCopy2, drwCopy2.getProviderNo(), 1, "provider"));
+        assertNull(remoteIntegratedDataCopyDao.save(1, drwCopy, drwCopy.getProviderNo(), 1, "providers"));
+        assertNull(remoteIntegratedDataCopyDao.save(1, drwCopy2, drwCopy2.getProviderNo(), 1, "providers"));
 
     }
 

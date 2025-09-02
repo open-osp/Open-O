@@ -34,12 +34,12 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.oscarehr.common.dao.MeasurementDaoImpl.SearchCriteria;
+import ca.openosp.openo.commn.dao.MeasurementDaoImpl.SearchCriteria;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Measurement;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Measurement;
+import ca.openosp.openo.commn.dao.MeasurementDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class MeasurementDaoTest extends DaoTestFixtures {
 
@@ -47,7 +47,7 @@ public class MeasurementDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("measurements", "measurementType", "measurementsExt", "measurementMap", "provider", "demographic", "demographicExt");
+        SchemaUtils.restoreTable("measurements", "measurementType", "measurementsExt", "measurementMap", "providers", "demographic", "demographicExt");
     }
 
     @Test

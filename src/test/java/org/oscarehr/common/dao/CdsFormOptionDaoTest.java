@@ -26,7 +26,7 @@ package org.oscarehr.common.dao;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.utility.MiscUtils;
 
 public class CdsFormOptionDaoTest {
 
@@ -63,11 +63,11 @@ public class CdsFormOptionDaoTest {
 //		// formOption3.setCdsFormVersion("Invalid version");
 //		// formOption3.setCdsDataCategory("Invalid category");
 //		
-//		dao.persist(formOption1);
-//		dao.persist(formOption2);
-//		dao.persist(formOption3);
+//		daos.persist(formOption1);
+//		daos.persist(formOption2);
+//		daos.persist(formOption3);
 //		
-//		List<CdsFormOption> result = dao.findByVersionAndCategory(formVersion, mainCatgeory);
+//		List<CdsFormOption> result = daos.findByVersionAndCategory(formVersion, mainCatgeory);
 //		List<CdsFormOption> expectedResult = new ArrayList<CdsFormOption>(Arrays.asList(
 //				formOption1,
 //				formOption2
@@ -107,11 +107,11 @@ public class CdsFormOptionDaoTest {
 //		// formOption3.setCdsFormVersion("Invalid version");
 //		// formOption3.setCdsDataCategory("Test3");
 //		
-//		dao.persist(formOption1);
-//		dao.persist(formOption2);
-//		dao.persist(formOption3);
+//		daos.persist(formOption1);
+//		daos.persist(formOption2);
+//		daos.persist(formOption3);
 //		
-//		List<CdsFormOption> result = dao.findByVersion(formVersion);
+//		List<CdsFormOption> result = daos.findByVersion(formVersion);
 //		List<CdsFormOption> expectedResult = new ArrayList<CdsFormOption>(Arrays.asList(
 //				formOption1,
 //				formOption2

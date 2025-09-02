@@ -103,7 +103,7 @@ public class DownloadEDTTest extends EDTBaseTest {
     }
 
     /*
-     * Oscar dependency is throwing an error: javax.xml.ws.soap.SOAPFaultException: https://204.41.14.200:1443/EDTService/EDTService: cvc-complex-type 2.4: in element {http://edt.health.ontario.ca/}download of type {http://edt.health.ontario.ca/}download,
+     * Oscar dependency is throwing an error: javax.xml.webserv.soap.SOAPFaultException: https://204.41.14.200:1443/EDTService/EDTService: cvc-complex-type 2.4: in element {http://edt.health.ontario.ca/}download of type {http://edt.health.ontario.ca/}download,
      * found <resourceIDs> (in default namespace), but the next item should be an end-element.
      *
      * Note: Due to the current implementation of the dependency, we are not catching the exact error 'Rejected By Policy'.
@@ -264,7 +264,7 @@ public class DownloadEDTTest extends EDTBaseTest {
     }
 
     /*
-     * Oscar dependency is throwing an error: javax.xml.ws.soap.SOAPFaultException: javax.xml.ws.soap.SOAPFaultException: https://204.41.14.200:1443/EDTService/EDTService: cvc-particle 3.1: in element {http://edt.health.ontario.ca/}download of type {http://edt.health.ontario.ca/}download,
+     * Oscar dependency is throwing an error: javax.xml.webserv.soap.SOAPFaultException: javax.xml.webserv.soap.SOAPFaultException: https://204.41.14.200:1443/EDTService/EDTService: cvc-particle 3.1: in element {http://edt.health.ontario.ca/}download of type {http://edt.health.ontario.ca/}download,
      * found </ns5:download> (in namespace http://edt.health.ontario.ca/), but next item should be resourceIDs
      *
      * Note: Due to the current implementation of the dependency, we are not catching the exact error 'Rejected By Policy'.

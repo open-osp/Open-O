@@ -1,5 +1,5 @@
-<%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.util.WebUtils"%>
+<%@page import="ca.openosp.openo.utility.WebUtils"%>
+<%@page import="ca.openosp.openo.utility.WebUtils"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 
 <%@ include file="/taglibs.jsp"%>
@@ -46,7 +46,6 @@
 		<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.validate-1.19.5.min.js"></script>
 --%>
 
-		<script type="text/javascript" src="<%=request.getContextPath()%>/js/genericIntake.js"></script>
 	</head>
 	<body>
 		<div class="composite">

@@ -27,8 +27,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ page import="oscar.oscarRx.data.*, org.oscarehr.common.model.PharmacyInfo" %>
+<%@ page import="ca.openosp.openo.rx.data.*, ca.openosp.openo.commn.model.PharmacyInfo" %>
 <%@page import="java.util.List" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
 <c:if test="${empty sessionScope.RxSessionBean}">
     <% response.sendRedirect("error.html"); %>
 </c:if>
@@ -56,7 +60,7 @@
 %>
 
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+    RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
 
     String userfirstname = (String) session.getAttribute("userfirstname");
     String userlastname = (String) session.getAttribute("userlastname");
@@ -88,7 +92,7 @@
         if (request.getParameter("show") != null)
             if (request.getParameter("show").equals("all"))
                 showall = true;
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) session.getAttribute("Patient");
+        RxPatientData.Patient patient = (RxPatientData.Patient) session.getAttribute("Patient");
         if (patient != null) {
             surname = patient.getSurname();
             firstName = patient.getFirstName();
@@ -165,7 +169,7 @@
                                             </tr>
 
                                             <%
-                                                oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+                                                RxPrescriptionData.Prescription[] prescribedDrugs;
 
                                                 if (showall)
                                                     prescribedDrugs = patient.getPrescribedDrugs();
@@ -173,7 +177,7 @@
                                                     prescribedDrugs = patient.getPrescribedDrugsUnique();
 
                                                 for (int i = 0; i < prescribedDrugs.length; i++) {
-                                                    oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
+                                                    RxPrescriptionData.Prescription drug = prescribedDrugs[i];
                                                     String styleColor = "";
                                                     if (drug.isCurrent() == true && drug.isArchived()) {
                                                         styleColor = "style=\"color:red;text-decoration: line-through;\"";

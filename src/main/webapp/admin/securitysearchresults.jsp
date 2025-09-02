@@ -28,14 +28,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="java.sql.*, java.util.*, oscar.*" buffer="none" %>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.*" buffer="none" %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Security" %>
-<%@ page import="org.oscarehr.common.dao.SecurityDao" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Security" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecurityDao" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -144,7 +144,7 @@
         </tr>
         </thead>
         <%
-            List<org.oscarehr.common.model.Security> securityList = securityDao.findAllOrderBy("user_name");
+            List<Security> securityList = securityDao.findAllOrderBy("user_name");
 
             //if action is good, then give me the result
             String searchMode = request.getParameter("search_mode");

@@ -23,25 +23,25 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.managers.IntegratorFileLogManager" %>
-<%@page import="org.oscarehr.common.model.IntegratorFileLog" %>
+<%@page import="ca.openosp.openo.managers.IntegratorFileLogManager" %>
+<%@page import="ca.openosp.openo.commn.model.IntegratorFileLog" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.apache.logging.log4j.Logger" %>
-<%@page import="org.oscarehr.common.dao.IntegratorControlDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.FacilityDao" %>
-<%@page import="org.oscarehr.common.model.Facility" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedFacility" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.commn.dao.IntegratorControlDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.FacilityDao" %>
+<%@page import="ca.openosp.openo.commn.model.Facility" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@page import="java.util.List" %>
 <%@page contentType="text/html" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%

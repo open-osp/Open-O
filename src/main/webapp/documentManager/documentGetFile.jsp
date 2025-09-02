@@ -24,11 +24,12 @@
 
 --%>
 
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DocumentDao" %>
-<%@page import="org.oscarehr.common.model.Document" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DocumentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Document" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -48,8 +49,8 @@
 <%
     DocumentDao documentDao = SpringUtils.getBean(DocumentDao.class);
     String filename = "", filetype = "", doc_no = "";
-    String docdownload = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-    String downloadMethod = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DOWNLOAD_METHOD");
+    String docdownload = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+    String downloadMethod = OscarProperties.getInstance().getProperty("DOCUMENT_DOWNLOAD_METHOD");
     session.setAttribute("docdownload", docdownload);
     if (request.getParameter("document") != null) {
         filename = request.getParameter("document");

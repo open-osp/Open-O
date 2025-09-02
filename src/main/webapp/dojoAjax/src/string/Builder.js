@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.string.Builder");
 dojo.require("dojo.string");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 // NOTE: testing shows that direct "+=" concatenation is *much* faster on
 // Spidermoneky and Rhino, while arr.push()/arr.join() style concatenation is

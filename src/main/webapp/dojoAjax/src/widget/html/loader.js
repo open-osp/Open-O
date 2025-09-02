@@ -12,7 +12,7 @@ dojo.provide("dojo.widget.html.loader");
 
 dojo.require("dojo.widget.HtmlWidget");
 dojo.require("dojo.io.*");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.extras");
 
 dojo.require("dojo.experimental");

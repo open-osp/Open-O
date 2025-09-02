@@ -24,28 +24,42 @@
 
 --%>
 <%@page import="javax.swing.Spring"%>
-<%@page import="org.oscarehr.common.dao.DrugDao"%>
-<%@page import="org.oscarehr.common.model.Drug"%>
-<%@page import="org.oscarehr.common.model.DrugReason"%>
-<%@page import="org.oscarehr.common.dao.DrugReasonDao"%>
+<%@page import="ca.openosp.openo.commn.dao.DrugDao"%>
+<%@page import="ca.openosp.openo.commn.dao.DrugReasonDao"%>
 <%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
 <%long startTime = System.currentTimeMillis();%>
-<%@page import="oscar.oscarRx.data.RxPatientData"%>
-<%@page  import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*,java.net.*"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,oscar.log.*"%>
-<%@page import="org.springframework.web.context.WebApplicationContext,oscar.oscarResearch.oscarDxResearch.bean.*"%>
-<%@page import="org.oscarehr.common.dao.FlowSheetCustomizationDao,org.oscarehr.common.model.FlowSheetCustomization"%>
-<%@page import="org.oscarehr.common.dao.FlowSheetDrugDao,org.oscarehr.common.dao.FlowSheetDxDao,org.oscarehr.common.model.FlowSheetDrug,org.oscarehr.util.MiscUtils"%>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedMeasurement,org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager,org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPatientData"%>
+<%@page  import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*"%>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.log.*"%>
+<%@page import="org.springframework.web.context.WebApplicationContext,ca.openosp.openo.dxresearch.bean.*"%>
+<%@page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao"%>
+<%@page import="ca.openosp.openo.commn.dao.FlowSheetDrugDao,ca.openosp.openo.commn.dao.FlowSheetDxDao,ca.openosp.openo.utility.MiscUtils"%>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedMeasurement,ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager,ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@page import="oscar.OscarProperties"%>
+<%@page import="ca.openosp.OscarProperties"%>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.FlowSheetItem" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBean" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypeBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.dxresearch.bean.dxResearchBean" %>
+<%@ page import="ca.openosp.openo.dxresearch.bean.dxResearchBeanHandler" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
 
 <%
 	if(session.getValue("user") == null) response.sendRedirect("${ pageContext.request.contextPath }/logout.jsp");
@@ -92,13 +106,13 @@
 
     if (request.getParameter("sdate") != null){
         try{
-           sdate = oscar.util.UtilDateUtilities.StringToDate(request.getParameter("sdate"));
+           sdate = UtilDateUtilities.StringToDate(request.getParameter("sdate"));
         }catch(Exception e){sdate =null;}
     }
 
     if(request.getParameter("edate") != null){
         try{
-           edate = oscar.util.UtilDateUtilities.StringToDate(request.getParameter("edate"));
+           edate = UtilDateUtilities.StringToDate(request.getParameter("edate"));
         }catch(Exception e){edate = null;}
     }
 
@@ -333,7 +347,7 @@ div.headPrevention p {
 
     function fsPopup(width,height,url,window) {
     	<%
-    		com.quatro.service.security.SecurityManager securityMgr = new com.quatro.service.security.SecurityManager();
+    		SecurityManager securityMgr = new SecurityManager();
     		if(securityMgr.hasWriteAccess("_flowsheet."+mFlowsheet.getName(),roleName$)) {
     	%>
 
@@ -578,8 +592,8 @@ div.recommendations ul{
             <div class="wrapper" id="rxFullListing"  >
 
                 <%
-                    oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-                    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+                    RxPrescriptionData prescriptData = new RxPrescriptionData();
+                    RxPrescriptionData.Prescription [] arr = {};
                     arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demographic_no));
                     if (arr.length > 0){%>
                 <ul>
@@ -613,11 +627,11 @@ div.recommendations ul{
             <div class="wrapper" id="allergFullListing"  >
 
                 <%
-			org.oscarehr.common.model.Allergy[] allergies;
+			Allergy[] allergies;
                     allergies = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographic_no)).getActiveAllergies();
 
-// oscar.oscarRx.data.RxPatientData.Patient.Allergy[] allergies;
-//                    allergies = oscar.oscarRx.data.RxPatientData().getPatient(Integer.parseInt(demographic_no)).getAllergies();
+// oscar.rx.data.RxPatientData.Patient.Allergy[] allergies;
+//                    allergies = oscar.rx.data.RxPatientData().getPatient(Integer.parseInt(demographic_no)).getAllergies();
 
                     if (allergies.length > 0){%>
                 <ul>
@@ -892,8 +906,8 @@ function createAddAll(d,t,h){
 </script>
 
 <%
-    oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-    oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+    RxPrescriptionData prescriptData = new RxPrescriptionData();
+    RxPrescriptionData.Prescription [] arr = {};
 
     List<FlowSheetDrug> atcCodes = flowSheetDrugDao.getFlowSheetDrugs(temp,Integer.parseInt(demographic_no));
     for(FlowSheetDrug fsd : atcCodes){
@@ -913,7 +927,7 @@ function createAddAll(d,t,h){
     </div>
     <%
         out.flush();
-        for (oscar.oscarRx.data.RxPrescriptionData.Prescription pres : arr){
+        for (RxPrescriptionData.Prescription pres : arr){
     %>
     <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'','addPreventionData')" >
         <p <%=""/*r(hdata.get("refused"))*/%> title="fade=[on] header=[<%=""/*hdata.get("age")*/%> -- Date:<%=""/*hdata.get("prevention_date")*/%>] body=[<%=""/*com*/%>]" ><%=pres.getBrandName()%> <br/>
@@ -965,7 +979,7 @@ if(temp.equals("diab2") || temp.equals("chf")) {
 			<tr>
 				<td>
 
-					<!-- get all drugs of this type in our list, and sort by rx date -->
+					<!-- get all drugs of this type in our list, and sort by prescript date -->
 					<%
 						List<Drug> thisDrug = new ArrayList<Drug>();
 						for(Drug d : allDrugs) {

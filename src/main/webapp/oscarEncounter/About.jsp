@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
 
 
 <html>

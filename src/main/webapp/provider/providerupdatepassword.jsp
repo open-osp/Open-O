@@ -32,23 +32,20 @@
 %>
 
 <%@ page
-        import="java.lang.*, java.util.*, java.text.*,java.security.*, oscar.*"
+        import="java.lang.*, java.util.*, java.text.*,java.security.*, ca.openosp.*"
         errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Security" %>
-<%@ page import="org.oscarehr.common.dao.SecurityDao" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.managers.SecurityManager" %>
-<%@ page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@ page import="oscar.oscarProvider.data.ProviderMyOscarIdData" %>
-<%@ page import="org.oscarehr.phr.util.MyOscarUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Security" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecurityDao" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.SecurityManager" %>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 	SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
 
 %>
-<%@ page import="oscar.log.LogAction" %>
-<%@ page import="oscar.log.LogConst" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
 
 <%
     SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
@@ -116,10 +113,6 @@
             }
         }
 
-        if (ProviderMyOscarIdData.idIsSet(curUser_no)) {
-            MyOscarLoggedInInfo.setLoggedInInfo(request.getSession(), null);
-            MyOscarUtils.attemptMyOscarAutoLoginIfNotAlreadyLoggedInAsynchronously(loggedInInfo, true);
-        }
 
         //In case of the error for any reason go back.
         if (!errorMsg.isEmpty()) {

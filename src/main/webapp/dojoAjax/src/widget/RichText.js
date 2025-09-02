@@ -363,7 +363,7 @@ dojo.widget.defineWidget(
                 // elements have margins set in CSS :-(
 
                 //if the normal way fails, we try the hard way to get the list
-                //do not use _cacheLocalBlockFormatNames here, as it will trigger security warning in IE7
+                //do not use _cacheLocalBlockFormatNames here, as it will trigger sec warning in IE7
                 //in the array below, ul can not come directly after ol, otherwise the queryCommandValue returns Normal for it
                 var formats = ['p', 'pre', 'address', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ol', 'div', 'ul'];
                 var localhtml = "";

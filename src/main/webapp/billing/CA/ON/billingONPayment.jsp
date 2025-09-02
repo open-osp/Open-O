@@ -28,20 +28,20 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@page import="org.oscarehr.util.SpringUtils,org.oscarehr.util.LocaleUtils,org.oscarehr.util.MiscUtils, oscar.util.DateUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic, org.oscarehr.common.model.BillingONItem, org.oscarehr.common.model.BillingOnItemPayment, org.oscarehr.common.model.RaDetail" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.utility.LocaleUtils,ca.openosp.openo.utility.MiscUtils, ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic, ca.openosp.openo.commn.model.BillingONItem, ca.openosp.openo.commn.model.BillingOnItemPayment, ca.openosp.openo.commn.model.RaDetail" %>
 <%@page import="java.util.Locale, java.math.BigDecimal, java.util.Calendar,java.util.List,java.util.ArrayList, java.util.HashMap, java.util.Map, java.util.Date" %>
 <%@page import="java.text.ParseException" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment,org.oscarehr.common.dao.BillingONPaymentDao" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment,org.oscarehr.common.dao.BillingOnItemPaymentDao" %>
-<%@page import="org.oscarehr.common.model.BillingONCHeader1,org.oscarehr.common.dao.BillingONCHeader1Dao" %>
-<%@page import="org.oscarehr.common.model.BillingONExt,org.oscarehr.common.dao.BillingONExtDao" %>
-<%@page import="org.oscarehr.common.model.Demographic,org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Provider,org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.RaHeader,org.oscarehr.common.dao.RaHeaderDao" %>
-<%@page import="org.oscarehr.common.model.RaDetail,org.oscarehr.common.dao.RaDetailDao" %>
-<%@page import="org.oscarehr.common.model.BillingONPremium,org.oscarehr.common.dao.BillingONPremiumDao" %>
-<%@page import="org.oscarehr.common.model.BillingONItem, org.oscarehr.common.service.BillingONService" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment,ca.openosp.openo.commn.dao.BillingONPaymentDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment,ca.openosp.openo.commn.dao.BillingOnItemPaymentDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONCHeader1,ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONExt,ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic,ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider,ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.RaHeader,ca.openosp.openo.commn.dao.RaHeaderDao" %>
+<%@page import="ca.openosp.openo.commn.model.RaDetail,ca.openosp.openo.commn.dao.RaDetailDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPremium,ca.openosp.openo.commn.dao.BillingONPremiumDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONItem, ca.openosp.openo.commn.service.BillingONService" %>
 
 <%
     if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
@@ -306,9 +306,9 @@
                         }
 
                         if (providerNo != null && !providerNo.isEmpty() && !bCh1.getProviderNo().equals(providerNo)) {
-                            // Check to make sure that the provider account associated with the bill matches the
-                            // provider record we are searching on since it is not necessarily true:
-                            // radetail.providerOhipNo == provider.ohip_no && billing_on_cheader1.provider_no == provider.provider_no
+                            // Check to make sure that the providers account associated with the bill matches the
+                            // providers record we are searching on since it is not necessarily true:
+                            // radetail.providerOhipNo == providers.ohip_no && billing_on_cheader1.provider_no == providers.provider_no
                             continue;
                         }
 

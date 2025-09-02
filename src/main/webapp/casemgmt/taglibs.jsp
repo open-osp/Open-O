@@ -36,4 +36,3 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProperties" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>

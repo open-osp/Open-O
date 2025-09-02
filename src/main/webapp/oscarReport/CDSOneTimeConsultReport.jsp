@@ -39,9 +39,11 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page
-        import="org.apache.commons.lang.StringUtils,org.apache.commons.lang.StringEscapeUtils,java.util.*,oscar.oscarReport.data.*,oscar.util.*,oscar.oscarDB.*,java.sql.*,oscar.oscarDemographic.data.*,oscar.eform.*,org.oscarehr.common.model.Provider,org.oscarehr.managers.ProviderManager2,org.oscarehr.util.SpringUtils" %>
+        import="org.apache.commons.lang.StringUtils,org.apache.commons.lang.StringEscapeUtils,java.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.util.*,ca.openosp.openo.db.*,java.sql.*,ca.openosp.openo.demographic.data.*,ca.openosp.openo.eform.*,ca.openosp.openo.commn.model.Provider,ca.openosp.openo.managers.ProviderManager2,ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.eform.OneTimeConsultUtil" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -51,7 +53,7 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
-<jsp:useBean id="reportMainBean" class="oscar.AppointmentMainBean"
+<jsp:useBean id="reportMainBean" class="ca.openosp.AppointmentMainBean"
              scope="session"/>
 <% if (!reportMainBean.getBDoConfigure()) { %>
 <%@ include file="/report/reportMainBeanConn.jspf" %>
@@ -153,7 +155,7 @@
                     <br>
                     <select multiple="multiple" name="providerIds" size="15">
                         <%
-                            // null for both active and inactive because the report might be for a provider
+                            // null for both active and inactive because the report might be for a providers
                             // who's just left the current reporting period
                             List<Provider> providers = providerManager.getProviders(loggedInInfo, null);
 

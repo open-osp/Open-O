@@ -125,7 +125,7 @@
         </module> -->
         <!-- <module name="EmptyBlock"/> -->
 
-        <!-- Checks for common coding problems               -->
+        <!-- Checks for commons coding problems               -->
         <!-- https://checkstyle.org/checks/coding/index.html -->
         <!-- <module name="EmptyStatement"/> -->
         <!-- <module name="MissingSwitchDefault"/> -->

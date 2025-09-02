@@ -24,7 +24,7 @@
 --%>
 
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="java.util.*" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -32,19 +32,18 @@
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
-<%@page import="org.oscarehr.documentManager.EDocUtil,org.oscarehr.documentManager.EDoc" %>
-<%@page import="oscar.util.UtilDateUtilities" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@page import="java.util.Hashtable" %>
-<%@page import="org.oscarehr.common.dao.CtlDocClassDao,org.oscarehr.common.dao.QueueDao" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlDocClassDao,ca.openosp.openo.commn.dao.QueueDao" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -412,8 +411,7 @@ Remote documents not supported
         <%}%>
         <tr>
             <td align="left" valign="top" style="width: 400px">
-                <oscar:nameage demographicNo="<%=moduleid%>"/> &nbsp; <oscar:phrverification
-                    demographicNo="<%=moduleid%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="phr.verification.link"/></oscar:phrverification><br>
+                <oscar:nameage demographicNo="<%=moduleid%>"/><br>
                 <%=categoryKey%>
                 <br>
 

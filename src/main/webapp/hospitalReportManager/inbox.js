@@ -77,7 +77,7 @@ $(document).ready(function () {
             {
                 "data": "recipient_name", render: function (data, type, full, meta) {
                     if (full.provider_no != null && full.provider_no.length > 0) {
-                        return "<a href='javascript:void(0)' title='This recipient has been linked to a provider record'>" + full.recipient_name + "</a>";
+                        return "<a href='javascript:void(0)' title='This recipient has been linked to a providers record'>" + full.recipient_name + "</a>";
                     } else {
                         return full.recipient_name;
                     }

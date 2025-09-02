@@ -27,14 +27,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import ca.openosp.openo.PMmodule.dao.WaitlistDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.wlmatch.CriteriaBO;
-import org.oscarehr.PMmodule.wlmatch.CriteriasBO;
-import org.oscarehr.PMmodule.wlmatch.VacancyDisplayBO;
+import ca.openosp.openo.PMmodule.wlmatch.CriteriaBO;
+import ca.openosp.openo.PMmodule.wlmatch.CriteriasBO;
+import ca.openosp.openo.PMmodule.wlmatch.VacancyDisplayBO;
 import org.oscarehr.common.dao.DaoTestFixtures;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class WaitlistDaoTest extends DaoTestFixtures {
 

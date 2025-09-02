@@ -11,7 +11,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <%@ page
-        import="java.util.*,oscar.oscarReport.reportByTemplate.*,org.oscarehr.olis.*,org.oscarehr.olis.model.*, org.oscarehr.olis.dao.*, org.oscarehr.util.SpringUtils, org.joda.time.DateTime, org.joda.time.format.DateTimeFormat, org.joda.time.format.DateTimeFormatter" %>
+        import="java.util.*,ca.openosp.openo.report.reportByTemplate.*,ca.openosp.openo.olis.*,ca.openosp.openo.olis.model.*, ca.openosp.openo.olis.dao.*, ca.openosp.openo.utility.SpringUtils, org.joda.time.DateTime, org.joda.time.format.DateTimeFormat, org.joda.time.format.DateTimeFormatter" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
 
@@ -24,8 +24,8 @@
     ;
     OLISSystemPreferences olisPreferences = olisPrefDao.getPreferences();
 
-    String startTime = oscar.Misc.getStr(olisPreferences.getStartTime(), "");
-    String endTime = oscar.Misc.getStr(olisPreferences.getEndTime(), "");
+    String startTime = Misc.getStr(olisPreferences.getStartTime(), "");
+    String endTime = Misc.getStr(olisPreferences.getEndTime(), "");
     DateTimeFormatter output = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss Z");
     DateTimeFormatter input = DateTimeFormat.forPattern("YYYYMMddHHmmssZ");
 
@@ -50,7 +50,10 @@
     <%response.sendRedirect("../logout.jsp");%>
 </security:oscarSec>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ page import="ca.openosp.openo.olis.dao.OLISSystemPreferencesDao" %>
+<%@ page import="ca.openosp.openo.olis.model.OLISSystemPreferences" %>
+<%@ page import="ca.openosp.Misc" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

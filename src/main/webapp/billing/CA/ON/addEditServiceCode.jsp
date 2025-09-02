@@ -24,15 +24,17 @@
     }
 %>
 <%@ page errorPage="../../../appointment/errorpage.jsp"
-         import="java.util.*,java.sql.*,oscar.*,java.text.*, java.lang.*,java.net.*" %>
+         import="java.util.*,java.sql.*,ca.openosp.*,java.text.*, java.lang.*,java.net.*" %>
 
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page
-        import="org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.CSSStylesDAO, org.oscarehr.common.model.CssStyle, java.util.List" %>
-<%@ page import="org.oscarehr.common.model.BillingService" %>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@ page import="org.oscarehr.billing.CA.ON.model.BillingPercLimit" %>
-<%@ page import="org.oscarehr.billing.CA.ON.dao.BillingPercLimitDao" %>
+        import="ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.dao.CSSStylesDAO, ca.openosp.openo.commn.model.CssStyle, java.util.List" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.ON.model.BillingPercLimit" %>
+<%@ page import="ca.openosp.openo.billing.CA.ON.dao.BillingPercLimitDao" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
     BillingPercLimitDao billingPercLimitDao = SpringUtils.getBean(BillingPercLimitDao.class);
@@ -177,12 +179,12 @@
                     msg = "The selected Service Code has an entry for this Issue Date. <br> Select new issue date, or use 'Save' to update the existing entry.";
                     alert = "error";
                     prop.setProperty("service_code", serviceCode);
-                    prop.setProperty("description", oscar.util.StringUtils.noNull(bs.getDescription()));
-                    prop.setProperty("value", oscar.util.StringUtils.noNull(bs.getValue()));
-                    prop.setProperty("percentage", oscar.util.StringUtils.noNull(bs.getPercentage()));
-                    prop.setProperty("billingservice_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
-                    prop.setProperty("sliFlag", oscar.util.StringUtils.noNull(bs.getSliFlag().toString()));
-                    prop.setProperty("termination_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
+                    prop.setProperty("description", StringUtils.noNull(bs.getDescription()));
+                    prop.setProperty("value", StringUtils.noNull(bs.getValue()));
+                    prop.setProperty("percentage", StringUtils.noNull(bs.getPercentage()));
+                    prop.setProperty("billingservice_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
+                    prop.setProperty("sliFlag", StringUtils.noNull(bs.getSliFlag().toString()));
+                    prop.setProperty("termination_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
                     action = "edit" + serviceCode;
                     action2 = "add" + serviceCode;
                 } else {
@@ -221,14 +223,14 @@
                 codes.put(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate()), bs.getId().toString());
                 if (count == 1) {
                     prop.setProperty("service_code", serviceCode);
-                    prop.setProperty("description", oscar.util.StringUtils.noNull(bs.getDescription()));
-                    prop.setProperty("value", oscar.util.StringUtils.noNull(bs.getValue()));
-                    prop.setProperty("percentage", oscar.util.StringUtils.noNull(bs.getPercentage()));
-                    prop.setProperty("billingservice_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
-                    prop.setProperty("sliFlag", oscar.util.StringUtils.noNull(bs.getSliFlag().toString()));
-                    prop.setProperty("termination_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
+                    prop.setProperty("description", StringUtils.noNull(bs.getDescription()));
+                    prop.setProperty("value", StringUtils.noNull(bs.getValue()));
+                    prop.setProperty("percentage", StringUtils.noNull(bs.getPercentage()));
+                    prop.setProperty("billingservice_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
+                    prop.setProperty("sliFlag", StringUtils.noNull(bs.getSliFlag().toString()));
+                    prop.setProperty("termination_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
                     if (bs.getDisplayStyle() != null)
-                        prop.setProperty("displaystyle", oscar.util.StringUtils.noNull(bs.getDisplayStyle().toString()));
+                        prop.setProperty("displaystyle", StringUtils.noNull(bs.getDisplayStyle().toString()));
                     msg = "You can edit the service code by clicking 'Save' or add a new entry for this code by clicking 'Add Service Code'";
                     action = "edit" + serviceCode;
                     action2 = "add" + serviceCode;
@@ -267,14 +269,14 @@
 
             if (serviceNo == bs.getId().intValue()) {
                 prop.setProperty("service_code", serviceCode);
-                prop.setProperty("description", oscar.util.StringUtils.noNull(bs.getDescription()));
-                prop.setProperty("value", oscar.util.StringUtils.noNull(bs.getValue()));
-                prop.setProperty("percentage", oscar.util.StringUtils.noNull(bs.getPercentage()));
-                prop.setProperty("billingservice_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
-                prop.setProperty("sliFlag", oscar.util.StringUtils.noNull(bs.getSliFlag().toString()));
-                prop.setProperty("termination_date", oscar.util.StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
+                prop.setProperty("description", StringUtils.noNull(bs.getDescription()));
+                prop.setProperty("value", StringUtils.noNull(bs.getValue()));
+                prop.setProperty("percentage", StringUtils.noNull(bs.getPercentage()));
+                prop.setProperty("billingservice_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getBillingserviceDate())));
+                prop.setProperty("sliFlag", StringUtils.noNull(bs.getSliFlag().toString()));
+                prop.setProperty("termination_date", StringUtils.noNull(MyDateFormat.getMyStandardDate(bs.getTerminationDate())));
                 if (bs.getDisplayStyle() != null)
-                    prop.setProperty("displaystyle", oscar.util.StringUtils.noNull(bs.getDisplayStyle().toString()));
+                    prop.setProperty("displaystyle", StringUtils.noNull(bs.getDisplayStyle().toString()));
                 msg = "You can edit the service code by clicking 'Save' or add a new entry for this code by clicking 'Add Service Code'";
                 action = "edit" + serviceCode;
                 action2 = "add" + serviceCode;

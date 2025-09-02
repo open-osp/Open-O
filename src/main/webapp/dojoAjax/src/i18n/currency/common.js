@@ -14,9 +14,9 @@ dojo.require("dojo.experimental");
 dojo.experimental("dojo.i18n.currency");
 
 dojo.require("dojo.regexp");
-dojo.require("dojo.i18n.common");
+dojo.require("dojo.i18n.commons");
 dojo.require("dojo.i18n.number");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 /**
  * Method to Format and validate a given number a monetary value

@@ -39,11 +39,12 @@
     }
 %>
 
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.Misc" %>
 <%
 
     String postTo = request.getParameter("postTo");
@@ -53,10 +54,10 @@
     }
 
 
-    String startLimit = oscar.Misc.check(request.getParameter("startLimit"), "0");
-    String orderby = oscar.Misc.check(request.getParameter("orderby"), "LastName");
-    String column = oscar.Misc.check(request.getParameter("column"), null, orderby);
-    Object keyword = oscar.Misc.check(request.getParameter("keyword"), "");
+    String startLimit = Misc.check(request.getParameter("startLimit"), "0");
+    String orderby = Misc.check(request.getParameter("orderby"), "LastName");
+    String column = Misc.check(request.getParameter("column"), null, orderby);
+    Object keyword = Misc.check(request.getParameter("keyword"), "");
     if (column != null && column.equals("DemographicNo")) {
         keyword = ConversionUtils.fromIntString(keyword);
     }
@@ -138,17 +139,17 @@
                     href="javascript:PopupReturn('<%=d.getDemographicNo()%>')">
                 <%=d.getDemographicNo()%>
             </a></td>
-            <td class="Text"><%=oscar.Misc.toUpperLowerCase(d.getLastName())%>
+            <td class="Text"><%=Misc.toUpperLowerCase(d.getLastName())%>
             </td>
-            <td class="Text"><%=oscar.Misc.toUpperLowerCase(d.getFirstName())%>
+            <td class="Text"><%=Misc.toUpperLowerCase(d.getFirstName())%>
             </td>
-            <td class="Text" align="center"><%=oscar.Misc.check(d.getChartNo(), "")%>
+            <td class="Text" align="center"><%=Misc.check(d.getChartNo(), "")%>
             </td>
-            <td class="Text" align="center"><%=oscar.Misc.check(d.getSex(), "")%>
+            <td class="Text" align="center"><%=Misc.check(d.getSex(), "")%>
             </td>
             <td class="Text" align="center" nowrap><%= d.getBirthDayAsString()%>
             </td>
-            <td class="Text" align="center"><%=oscar.Misc.check(d.getPatientStatus(), "")%>
+            <td class="Text" align="center"><%=Misc.check(d.getPatientStatus(), "")%>
             </td>
         </tr>
         <%

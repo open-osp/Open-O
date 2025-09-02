@@ -24,16 +24,16 @@
 --%>
 
 
-<%@page import="oscar.eform.EFormUtil" %>
+<%@page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramQueue" %>
-<%@ page import="org.oscarehr.PMmodule.web.admin.ProgramManager2Action.RemoteQueueEntry" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramQueue" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.admin.ProgramManager2Action.RemoteQueueEntry" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramProviderDAO" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramProviderDAO" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ include file="/taglibs.jsp" %>
@@ -124,9 +124,6 @@
         popup("caseManagement" + clientId, "../oscarEncounter/IncomingEncounter.do?case_program_id=" + programId + "&demographicNo=" + clientId + "&status=B");
     }
 
-    function admitFromRemote(remoteReferralId) {
-        window.location = "<%=request.getContextPath()%>/PMmodule/GenericIntake/Search.do?method=searchFromRemoteAdmit&remoteReferralId=" + remoteReferralId;
-    }
 
     function removeFromRemoteQueue(remoteReferralId) {
         var form = document.programManagerViewForm;
@@ -305,7 +302,7 @@
                         String eURL = "../oscarEncounter/IncomingEncounter.do?programId=" + programId + "&providerNo=" + curUser_no + "&appointmentNo=" + rsAppointNO + "&demographicNo=" + demographic_no + "&curProviderNo=" + curUser_no + "&reason=" + java.net.URLEncoder.encode(reason) + "&encType=" + java.net.URLEncoder.encode("face to face encounter with client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(userfirstname + " " + userlastname) + "&curDate=null&appointmentDate=null&startTime=0:0" + "&status=" + status + "&source=cm";
         %>
         <a href=#
-           onClick="popupPage(710, 1024,'../oscarSurveillance/CheckSurveillance.do?demographicNo=<%=demographic_no%>&proceed=<%=java.net.URLEncoder.encode(eURL)%>');return false;"
+           onClick="popupPage(710, 1024,'<%=eURL%>');return false;"
            title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.encounter"/>"> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.btnEncounter"/></a>&nbsp;&nbsp;
         <a href=#
            onClick="popupPage(710,1024,'<%=request.getContextPath()%>/eform/efmshowform_data.jsp?demographicNo=<%=demographic_no%>&fdid=<%=curform.get("fdid")%>','0'); return false;"
@@ -342,12 +339,12 @@
                 <td colspan="2"><b style="color: red">Warning:<br/>
                     <c:choose>
                         <c:when test="${requestScope.sameFacility}">
-                            This client is currently admitted to a bed program (<c:out
+                            This client is currently admitted to a program (<c:out
                                 value="${current_program.name}"/>).<br />
                             By completing this admission, you will be discharging them from this current program.
                         </c:when>
                         <c:otherwise>
-                            This client is currently admitted to a bed program in another facility.<br />
+                            This client is currently admitted to a program in another facility.<br />
                             By completing this admission, you will be discharging them from this other<br />
                             facility. Please check with the other facility before processing this <br/>
                             automatic discharge and admission.
@@ -450,10 +447,6 @@
         <display:setProperty name="paging.banner.placement" value="bottom"/>
         <display:setProperty name="basic.msg.empty_list"
                              value="Queue is empty."/>
-        <display:column sortable="false" title="">
-            <input type="button" value="Admit"
-                   onclick="admitFromRemote('<c:out value="${queue_entry.referral.referralId}"/>')"/>
-        </display:column>
         <display:column sortable="false" title="">
             <input type="button" value="Reject"
                    onclick="removeFromRemoteQueue('<c:out value="${queue_entry.referral.referralId}"/>')"/>

@@ -38,8 +38,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="org.springframework.web.util.JavaScriptUtils" %>
 <%@ page
-        import="java.lang.*,oscar.*"
+        import="java.lang.*,ca.openosp.*"
         errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%!
     OscarProperties op = OscarProperties.getInstance();

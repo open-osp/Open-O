@@ -25,29 +25,27 @@
 --%>
 
 <%@page import="java.text.ParseException" %>
-<%@page import="org.oscarehr.common.model.PartialDate" %>
-<%@page import="org.oscarehr.common.dao.PartialDateDao" %>
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
+<%@page import="ca.openosp.OscarProperties" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.model.Consent" %>
-<%@page import="org.oscarehr.common.dao.ConsentDao" %>
-<%@page import="org.oscarehr.common.model.CVCMapping" %>
-<%@page import="org.oscarehr.common.dao.CVCImmunizationDao" %>
-<%@page import="org.oscarehr.common.dao.CVCMappingDao" %>
-<%@page import="org.oscarehr.common.model.CVCMedicationLotNumber" %>
+<%@page import="ca.openosp.openo.commn.dao.ConsentDao" %>
+<%@page import="ca.openosp.openo.commn.dao.CVCImmunizationDao" %>
+<%@page import="ca.openosp.openo.commn.dao.CVCMappingDao" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.common.model.CVCImmunization" %>
-<%@page import="org.oscarehr.managers.CanadianVaccineCatalogueManager" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.oscarProvider.data.ProviderData" %>
+<%@page import="ca.openosp.openo.managers.CanadianVaccineCatalogueManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.providers.data.ProviderData" %>
 <%@ page
-        import="oscar.oscarDemographic.data.DemographicData,java.text.SimpleDateFormat, java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*" %>
-<%@ page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.common.dao.PreventionsLotNrsDao" %>
-<%@page import="org.oscarehr.common.model.PreventionsLotNrs" %>
+        import="ca.openosp.openo.demographic.data.DemographicData,java.text.SimpleDateFormat, java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@page import="ca.openosp.openo.commn.dao.PreventionsLotNrsDao" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionData" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionDisplayConfig" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -212,8 +210,8 @@
     List<Map<String, String>> providers = ProviderData.getProviderList();
     List<Map<String, String>> allProviders = ProviderData.getProviderListOfAllTypes(true);
 
-    //because inactive providers can be the original provider for an entry, the next two blocks checks if that's the case
-    //and if so, dynamically adds the inactive original provider into the providers List for later use when constructing the GUI while continuing to exclude other inactive providers
+    //because inactive providers can be the original providers for an entry, the next two blocks checks if that's the case
+    //and if so, dynamically adds the inactive original providers into the providers List for later use when constructing the GUI while continuing to exclude other inactive providers
     Boolean providerFoundInActiveList = false;
     for (int i = 0; i < providers.size(); i++) {
         Map<String, String> h = providers.get(i);
@@ -222,8 +220,8 @@
         }
     }
 
-    //the below block is skipped if provider == -1 because we do NOT need to add this provider because -1 is used to mean "other", that is, a person outside the scope of this OSCAR
-    //the issue that happens if -1 is added is that there usually is a system provider with -1 as the provider_no, resulting in this system account appearing to be the provider for a particular prevention
+    //the below block is skipped if providers == -1 because we do NOT need to add this providers because -1 is used to mean "other", that is, a person outside the scope of this OSCAR
+    //the issue that happens if -1 is added is that there usually is a system providers with -1 as the provider_no, resulting in this system account appearing to be the providers for a particular prevention
     //TODO: writer recommends that eventually -1 is not set as the provider_no
     if (!providerFoundInActiveList && !"-1".equals(provider)) {
         for (int i = 0; i < allProviders.size() && !providerFoundInActiveList; i++) {
@@ -236,7 +234,7 @@
     }
 
     //Ensuring creator information is found/set. Note, the original creator can be inactive, so should iterate over allProviders list
-    //the creatorProvider was deliberately not mixed into the providers List the same was the provider was, because the creatorProvider is only relevant here
+    //the creatorProvider was deliberately not mixed into the providers List the same was the providers was, because the creatorProvider is only relevant here
     if (creatorProviderNo == "") {
         creatorProviderNo = provider;
     }
@@ -752,7 +750,7 @@
                 &nbsp;
                 <!--
                <%
-                 org.oscarehr.common.model.DemographicExt ineligx = demographicExtDao.getDemographicExt(Integer.parseInt(demographic_no),prevention+"Inelig");
+                 DemographicExt ineligx = demographicExtDao.getDemographicExt(Integer.parseInt(demographic_no),prevention+"Inelig");
 				 String inelig = "";
 				 if(ineligx != null) {
 					 inelig = ineligx.getValue();

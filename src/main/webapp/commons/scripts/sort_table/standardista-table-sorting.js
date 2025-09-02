@@ -22,7 +22,7 @@ var standardistaTableSorting = {
      * Initialises the Standardista Table Sorting module
      **/
     init: function () {
-        // first, check whether this web browser is capable of running this script
+        // first, check whether this www browser is capable of running this script
         if (!document.getElementsByTagName) {
             return;
         }

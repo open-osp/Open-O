@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -40,35 +40,40 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%@page
-        import="oscar.oscarEncounter.pageUtil.*,oscar.oscarEncounter.data.*" %>
+        import="ca.openosp.openo.encounter.pageUtil.*,ca.openosp.openo.encounter.data.*" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 
 <%
     String demo = request.getParameter("de");
     String proNo = (String) session.getAttribute("user");
-    oscar.oscarDemographic.data.DemographicData demoData = null;
-    org.oscarehr.common.model.Demographic demographic = null;
+    DemographicData demoData = null;
+    Demographic demographic = null;
 
-    oscar.oscarProvider.data.ProviderData pdata = new oscar.oscarProvider.data.ProviderData(proNo);
+    ProviderData pdata = new ProviderData(proNo);
     String team = pdata.getTeam();
 
     if (demo != null) {
-        demoData = new oscar.oscarDemographic.data.DemographicData();
+        demoData = new DemographicData();
         demographic = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
     } else
         response.sendRedirect("../error.jsp");
 
-    oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil consultUtil;
-    consultUtil = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil();
+    EctConsultationFormRequestUtil consultUtil;
+    consultUtil = new EctConsultationFormRequestUtil();
     consultUtil.estPatient(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
 
-    oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil theRequests;
-    theRequests = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil();
+    EctViewConsultationRequestsUtil theRequests;
+    theRequests = new EctViewConsultationRequestsUtil();
     theRequests.estConsultationVecByDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
 %>
 

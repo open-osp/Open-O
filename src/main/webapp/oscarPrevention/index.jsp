@@ -25,27 +25,25 @@
 --%>
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@page import="org.oscarehr.common.model.CVCMapping" %>
-<%@page import="org.oscarehr.common.dao.CVCMappingDao" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.commn.model.CVCMapping" %>
+<%@page import="ca.openosp.openo.commn.dao.CVCMappingDao" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.common.model.DHIRSubmissionLog" %>
-<%@page import="org.oscarehr.managers.DHIRSubmissionManager" %>
-<%@page import="org.oscarehr.common.model.Consent" %>
-<%@page import="org.oscarehr.common.dao.ConsentDao" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*" %>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao, org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.managers.PreventionManager" %>
+<%@page import="ca.openosp.openo.commn.model.DHIRSubmissionLog" %>
+<%@page import="ca.openosp.openo.managers.DHIRSubmissionManager" %>
+<%@page import="ca.openosp.openo.commn.model.Consent" %>
+<%@page import="ca.openosp.openo.commn.dao.ConsentDao" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao, ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.managers.PreventionManager" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -74,7 +72,7 @@
     String demographic_no = request.getParameter("demographic_no");
     DemographicData demoData = new DemographicData();
     String nameAge = demoData.getNameAgeString(loggedInInfo, demographic_no);
-    org.oscarehr.common.model.Demographic demo = demoData.getDemographic(loggedInInfo, demographic_no);
+    Demographic demo = demoData.getDemographic(loggedInInfo, demographic_no);
     String hin = demo.getHin() + demo.getVer();
     String mrp = demo.getProviderNo();
     PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
@@ -90,7 +88,7 @@
     Integer demographicId = Integer.parseInt(demographic_no);
     PreventionData.addRemotePreventions(loggedInInfo, p, demographicId);
     Date demographicDateOfBirth = PreventionData.getDemographicDateOfBirth(loggedInInfo, Integer.valueOf(demographic_no));
-    String demographicDob = oscar.util.UtilDateUtilities.DateToString(demographicDateOfBirth);
+    String demographicDob = UtilDateUtilities.DateToString(demographicDateOfBirth);
 
     PreventionDS pf = SpringUtils.getBean(PreventionDS.class);
 
@@ -146,7 +144,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 
-<%@page import="org.oscarehr.util.SessionConstants" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionData" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionDS" %>
+<%@ page import="ca.openosp.openo.prevention.Prevention" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionDisplayConfig" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <html>
 
     <head>
@@ -263,9 +267,6 @@
                     display(checkboxes);
                     var spaces = document.getElementsByName("printSp");
                     display(spaces);
-                    if (button.form.sendToPhrButton != null) {
-                        button.form.sendToPhrButton.style.display = 'block';
-                    }
                     showImmunizationOnlyPrintButton();
                 } else {
                     if (onPrint())
@@ -303,12 +304,6 @@
                 return true;
             }
 
-            function sendToPhr(button) {
-                var oldAction = button.form.action;
-                button.form.action = "<%=request.getContextPath()%>/phr/SendToPhrPreview.jsp"
-                button.form.submit();
-                button.form.action = oldAction;
-            }
 
             function addByLot() {
                 var lotNbr = $("#lotNumberToAdd").val();
@@ -741,27 +736,6 @@
                     <a href="#" onclick="popup(600,800,'http://www.phac-aspc.gc.ca/im/is-cv/index-eng.php')">Immunization
                         Schedules - Public Health Agency of Canada</a>
 
-                    <%
-                        if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                            MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                            boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographic_no));
-                            if (enabledMyOscarButton) {
-                                String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-                                        + "demographicId=" + demographic_no + "&"
-                                        + "medicalDataType=Immunizations" + "&"
-                                        + "parentPage=" + request.getRequestURI() + "?demographic_no=" + demographic_no;
-                    %>
-                    | | <a href="<%=sendDataPath%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%>
-                </a>
-                    <%
-                    } else {
-                    %>
-                    | | <span
-                        style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-                    <%
-                            }
-                        }
-                    %>
 
                     <%
                         if (warnings.size() > 0 || recomendations.size() > 0 || dsProblems) { %>
@@ -852,7 +826,7 @@
                         <input type="hidden" name="mrp" value="<%=mrp%>"/>
                         <input type="hidden" name="module" value="prevention">
                                 <%
-                 if (!oscar.OscarProperties.getInstance().getBooleanProperty("PREVENTION_CLASSIC_VIEW","yes")){
+                 if (!ca.openosp.OscarProperties.getInstance().getBooleanProperty("PREVENTION_CLASSIC_VIEW","yes")){
                    ArrayList<Map<String,Object>> hiddenlist = new ArrayList<Map<String,Object>>();
                   for (int i = 0 ; i < prevList.size(); i++){
                   		HashMap<String,String> h = prevList.get(i);
@@ -929,7 +903,7 @@
                                         <!--<%=refused(hdata.get("refused"))%>-->
                                         Date: <%=StringEscapeUtils.escapeHtml((String)hdata.get("prevention_date_no_time"))%>
                                                 <%if (hExt.get("comments") != null && (hExt.get("comments")).length()>0) {
-                    if (oscar.OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes")){%>
+                    if (ca.openosp.OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes")){%>
                                     <div class="comments">
                                         <span><%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%></span>
                                     </div>
@@ -1016,7 +990,7 @@
                                                 <!--<%=refused(hdata.get("refused"))%>-->
                                                 Date: <%=StringEscapeUtils.escapeHtml((String)hdata.get("prevention_date_no_time"))%>
                                                         <%if (hExt.get("comments") != null && (hExt.get("comments")).length()>0) {
-                     if (oscar.OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes")){ %>
+                     if (ca.openosp.OscarProperties.getInstance().getBooleanProperty("prevention_show_comments","yes")){ %>
                                             <div class="comments">
                                                 <span><%=StringEscapeUtils.escapeHtml((String) hExt.get("comments"))%></span>
                                             </div>
@@ -1125,10 +1099,6 @@
 				<input type="button" class="noPrint" name="printButton" onclick="EnablePrint(this)"
                        value="Enable Print">
 			</input>
-                <!--
-                            <br>
-                            <input type="button" name="sendToPhrButton" value="Send To MyOscar (PDF)" style="display: none;" onclick="sendToPhr(this)">
-                -->
             </td>
 
             <input type="hidden" id="demographicNo" name="demographicNo" value="<%=demographic_no%>"/>

@@ -30,7 +30,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
 <%@ page
-        import="oscar.oscarMDS.data.ProviderData, java.util.ArrayList, oscar.oscarLab.ForwardingRules, oscar.OscarProperties" %>
+        import="ca.openosp.openo.mds.data.ProviderData, java.util.ArrayList, ca.openosp.openo.lab.ForwardingRules, ca.openosp.OscarProperties" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
@@ -95,13 +95,13 @@
             OscarProperties props = OscarProperties.getInstance();
             String autoFileLabs = props.getProperty("AUTO_FILE_LABS");
             if (providerNo.equals("0")){%>
-            alert("You must select a provider to set the rules for.");
+            alert("You must select a providers to set the rules for.");
             return false;
             <%}else if(autoFileLabs != null && autoFileLabs.equalsIgnoreCase("yes")){%>
             return confirm("Are you sure you would like to update the forwarding rules?")
             <%}else{%>
             if (document.RULES.providerNums.value == '' && document.RULES.status[1].checked && <%= (frwdProviders.size() == 0)%>) {
-                alert("You must select a provider to forward the incoming labs to if you wish to automatically file them.");
+                alert("You must select a providers to forward the incoming labs to if you wish to automatically file them.");
                 return false;
             } else {
                 return confirm("Are you sure you would like to update the forwarding rules?")
@@ -256,9 +256,9 @@
 
     registerFormSubmit('ForwardRulesForm', 'dynamic-content');
 
-    $("#provider-selection").change(function (e) {
+    $("#providers-selection").change(function (e) {
         e.preventDefault();
-        $("#dynamic-content").load('${ctx}/admin/labforwardingrules.jsp?providerNo=' + $("#provider-selection").val(),
+        $("#dynamic-content").load('${ctx}/admin/labforwardingrules.jsp?providerNo=' + $("#providers-selection").val(),
             function (response, status, xhr) {
                 if (status == "error") {
                     var msg = "Sorry but there was an error: ";

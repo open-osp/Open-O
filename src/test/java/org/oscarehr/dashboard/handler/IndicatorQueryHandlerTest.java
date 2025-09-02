@@ -32,12 +32,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ca.openosp.openo.dashboard.handler.IndicatorQueryHandler;
+import ca.openosp.openo.dashboard.handler.IndicatorTemplateHandler;
+import ca.openosp.openo.dashboard.handler.IndicatorTemplateXML;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.dashboard.display.beans.GraphPlot;
-import org.oscarehr.dashboard.query.Parameter;
-import org.oscarehr.dashboard.query.RangeInterface;
+import ca.openosp.openo.dashboard.display.beans.GraphPlot;
+import ca.openosp.openo.dashboard.query.Parameter;
+import ca.openosp.openo.dashboard.query.RangeInterface;
 
 /**
  * Cannot automate this test because the EntityManager is called

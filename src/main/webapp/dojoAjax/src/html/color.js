@@ -12,7 +12,7 @@ dojo.require("dojo.html.style");
 dojo.provide("dojo.html.color");
 
 dojo.require("dojo.gfx.color");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.html.getBackgroundColor = function (/* HTMLElement */node) {
     //	summary

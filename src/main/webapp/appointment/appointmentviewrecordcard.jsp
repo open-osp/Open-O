@@ -40,17 +40,17 @@
     }
 %>
 
-<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat, org.oscarehr.common.OtherIdManager" %>
-<%@ page import="org.oscarehr.event.EventService, org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.MyDateFormat, ca.openosp.openo.commn.OtherIdManager" %>
+<%@ page import="ca.openosp.openo.event.EventService, ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.dao.ClinicDAO" %>
-<%@ page import="org.oscarehr.common.model.Clinic" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.dao.ClinicDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.Clinic" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -138,13 +138,13 @@
                 } else {
 
                     for(Appointment a: appointmentDao.findDemoAppointmentsOnDate(appt.getDemographicNo(),appt.getAppointmentDate())) {
-                        Provider provider = providerDao.getProvider(a.getProviderNo());
+                        Provider providers = providerDao.getProvider(a.getProviderNo());
 
             %>
                     <tr bgcolor="#eeeeff">
                 <td style="padding-right: 10px"><%=dateFormatter.format(a.getAppointmentDate())%></td>
                 <td style="padding-right: 10px"><%=timeFormatter.format(a.getStartTime())%></td>
-                <td style="padding-right: 10px"><%=provider.getLastName() + "," + provider.getFirstName().substring(0,1)%></td>
+                <td style="padding-right: 10px"><%=providers.getLastName() + "," + providers.getFirstName().substring(0,1)%></td>
                     </tr>
             <%
                     }

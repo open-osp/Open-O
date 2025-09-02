@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.*,java.util.*" %>
+<%@page import="ca.openosp.*,java.util.*" %>
 <%@page import="java.io.InputStream" %>
 <%@page import="java.util.ArrayList" %>
 <%@page import="java.util.HashMap" %>
@@ -36,7 +36,7 @@
 <%@page import="org.jdom.Element" %>
 <%@page import="org.jdom.filter.ElementFilter" %>
 <%@page import="org.jdom.input.SAXBuilder" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.apache.logging.log4j.Logger" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">

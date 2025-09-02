@@ -38,7 +38,7 @@
     }
 %>
 
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
 <%
     String scriptNo = request.getParameter("scriptNo");
     String comment = request.getParameter("comment");

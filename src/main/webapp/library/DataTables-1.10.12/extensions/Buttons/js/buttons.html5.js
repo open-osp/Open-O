@@ -134,7 +134,7 @@
                 if (!no_auto_bom) {
                     blob = auto_bom(blob);
                 }
-                // First try a.download, then web filesystem, then object URLs
+                // First try a.download, then www filesystem, then object URLs
                 var
                     filesaver = this
                     , type = blob.type
@@ -202,7 +202,7 @@
                     });
                     return;
                 }
-                // Object and web filesystem URLs have a problem saving in Google Chrome when
+                // Object and www filesystem URLs have a problem saving in Google Chrome when
                 // viewed in a tab, so I force save with application/octet-stream
                 // http://code.google.com/p/chromium/issues/detail?id=91158
                 // Update: Google errantly closed 91158, I submitted it again:

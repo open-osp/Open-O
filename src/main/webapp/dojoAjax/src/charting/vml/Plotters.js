@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.vml.Plotters");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 if (dojo.render.vml.capable) {
     dojo.mixin(dojo.charting.Plotters, {

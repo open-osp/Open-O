@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 -->
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -46,6 +46,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
 <c:if test="${!OscarProperties.getInstance().isBritishColumbiaBillingRegion()}">
     <a href="javascript:reportWindow('${e:forHtml(contextPath)}/oscarMDS/CreateLab.jsp',800,1000)" class="nav-link"><fmt:message key="global.createLab" /></a>
-    <a href="javascript:reportWindow('${e:forHtml(contextPath)}/olis/Search.jsp',800,1000)" class="nav-link"><fmt:message key="olis.olisSearch" /></a>
+    <a href="javascript:reportWindow('${e:forHtml(contextPath)}/olis1/Search.jsp',800,1000)" class="nav-link"><fmt:message key="olis.olisSearch" /></a>
     <a href="javascript:reportWindow('${hospitalReportUrl}',400, 400)" class="nav-link">HRM Status/Upload</a>
 </c:if>

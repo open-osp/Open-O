@@ -29,10 +29,10 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.oscarehr.PMmodule.dao.ProviderDao;
+import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ProviderDaoTest extends DaoTestFixtures {
 
@@ -40,7 +40,7 @@ public class ProviderDaoTest extends DaoTestFixtures {
 
     @Before
     public void before() throws Exception {
-        SchemaUtils.restoreTable("provider", "providersite", "demographic", "provider_facility", "Facility");
+        SchemaUtils.restoreTable("providers", "providersite", "demographic", "provider_facility", "Facility");
     }
 
     @Test

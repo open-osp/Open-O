@@ -42,11 +42,13 @@
 <%@ page
         import="java.util.Date,
                 org.caisi.model.*,
-                org.oscarehr.casemgmt.model.*,
-                org.oscarehr.common.model.*,
-                org.oscarehr.PMmodule.model.*,
+                ca.openosp.openo.casemgmt.model.*,
+                ca.openosp.openo.commn.model.*,
+                ca.openosp.openo.PMmodule.model.*,
                 org.springframework.context.*,
                 org.springframework.web.context.support.*" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1"
        bgcolor="#C0C0C0">

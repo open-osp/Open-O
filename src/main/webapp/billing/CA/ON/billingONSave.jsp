@@ -21,13 +21,22 @@
 
 
 <%@ page
-        import="java.util.*,java.sql.*,oscar.util.*,oscar.oscarBilling.ca.on.pageUtil.*,oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.*,java.math.* ,oscar.oscarBilling.ca.on.administration.*" %>
+        import="java.util.*,java.sql.*,ca.openosp.openo.util.*,ca.openosp.openo.billing.ca.on.pageUtil.*,ca.openosp.openo.billing.ca.on.data.*,ca.openosp.openo.providers.data.*,java.math.* ,ca.openosp.openo.billing.ca.on.administration.*" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page errorPage="/errorpage.jsp" import="java.util.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*,org.oscarehr.common.model.*,org.oscarehr.common.dao.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*,ca.openosp.openo.commn.model.*,ca.openosp.openo.commn.dao.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.appt.ApptStatusData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingDataHlp" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingSavePrep" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingONCHeader1" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingONExt" %>
 <%
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
     UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
@@ -91,7 +100,7 @@
         if (ret) {
             if (apptNo != null && apptNo.length() > 0 && !apptNo.equals("0")) {
                 String apptCurStatus = bObj.getApptStatus(apptNo);
-                oscar.appt.ApptStatusData as = new oscar.appt.ApptStatusData();
+                ApptStatusData as = new ApptStatusData();
                 String billStatus = as.billStatus(apptCurStatus);
                 bObj.updateApptStatus(apptNo, billStatus, (String) session.getAttribute("user"));
             }

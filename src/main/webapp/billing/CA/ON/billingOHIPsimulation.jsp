@@ -17,13 +17,13 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <html>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="org.oscarehr.util.DateRange" %>
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%@ page import="ca.openosp.openo.utility.DateRange" %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="java.math.*, java.util.*, oscar.util.*" %>
+<%@ page import="java.math.*, java.util.*, ca.openosp.openo.util.*" %>
 <%
     if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -46,10 +46,16 @@
 %>
 
 
-<%@ page import="java.util.*, java.sql.*, oscar.*, oscar.util.*, java.net.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.*" %>
-<jsp:useBean id="SxmlMisc" class="oscar.SxmlMisc" scope="session"/>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingReviewPrep" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<jsp:useBean id="SxmlMisc" class="ca.openosp.SxmlMisc" scope="session"/>
 
 <head>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnSimulationOHIPDiskette"/></title>
@@ -78,7 +84,7 @@
             String batchCount = "0";
             BigDecimal bigTotal = new BigDecimal((double) 0).setScale(2, BigDecimal.ROUND_HALF_UP);
             int recordCount = 0;
-            String pro = request.getParameter("provider");
+            String pro = request.getParameter("providers");
             BillingProviderData proObj;
             ArrayList<String> providers = new ArrayList<String>();
             String htmlValue = "";
@@ -99,19 +105,19 @@
                 proObj = (new JdbcBillingPageUtil()).getProviderObj(pro);
 
                 if (proObj.getOhipNo().length() != PROVIDER_BILLINGNO_LENGTH)
-                    errorMsg = "The provider's billing code is not correct!<br>";
+                    errorMsg = "The providers's billing code is not correct!<br>";
 
                 proOHIP = proObj.getOhipNo();
                 billinggroup_no = proObj.getBillingGroupNo();
                 specialty_code = proObj.getSpecialtyCode();
 
                 if (specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH) {
-                    errorMsg += "The provider's specialty code is not correct!<br>";
+                    errorMsg += "The providers's specialty code is not correct!<br>";
                     specialty_code = "00";
                 }
 
                 if (billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH) {
-                    errorMsg += "The provider's group no is not correct!<br>";
+                    errorMsg += "The providers's group no is not correct!<br>";
                     billinggroup_no = "0000";
                 }
 
@@ -162,7 +168,7 @@
                     proObj = (new JdbcBillingPageUtil()).getProviderObj(provider);
 
                     if (proObj.getOhipNo().length() != PROVIDER_BILLINGNO_LENGTH)
-                        errorMsg = "The billing code (" + proObj.getOhipNo() + ") for provider (" + provider + ") is not correct!<br>";
+                        errorMsg = "The billing code (" + proObj.getOhipNo() + ") for providers (" + provider + ") is not correct!<br>";
 
                     String proOHIP = "";
                     String specialty_code;
@@ -183,12 +189,12 @@
                     specialty_code = proObj.getSpecialtyCode();
 
                     if (specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH) {
-                        errorMsg += "The specialty code (" + specialty_code + ") for provider (" + provider + ") is not correct!<br>";
+                        errorMsg += "The specialty code (" + specialty_code + ") for providers (" + provider + ") is not correct!<br>";
                         specialty_code = "00";
                     }
 
                     if (billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH) {
-                        errorMsg += "The group no (" + billinggroup_no + ") for provider (" + provider + ") is not correct!<br>";
+                        errorMsg += "The group no (" + billinggroup_no + ") for providers (" + provider + ") is not correct!<br>";
                         billinggroup_no = "0000";
                     }
 
@@ -255,7 +261,7 @@
         function checkData() {
             var b = true;
             if (document.forms[0].provider.value == "000000") {
-                alert("Please select a provider!");
+                alert("Please select a providers!");
                 b = false;
             } else if (document.forms[0].xml_vdate.value == "") {
                 alert("Please give a date!");
@@ -309,7 +315,7 @@
 
 
             <%
-                String providerview = request.getParameter("provider") == null ? user_no : request.getParameter("provider");
+                String providerview = request.getParameter("providers") == null ? user_no : request.getParameter("providers");
                 String xml_vdate = request.getParameter("xml_vdate") == null ? "" : request.getParameter("xml_vdate");
                 String xml_appointment_date = request.getParameter("xml_appointment_date") == null ? nowDate : request.getParameter("xml_appointment_date");
             %>

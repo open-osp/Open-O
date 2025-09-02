@@ -10,7 +10,7 @@
 
 dojo.provide("dojo.lang.assert");
 
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.lang.array");
 dojo.require("dojo.lang.type");
 

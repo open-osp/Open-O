@@ -15,7 +15,7 @@ dojo.require("dojo.lang.assert");
 // -------------------------------------------------------------------
 // Constructor
 // -------------------------------------------------------------------
-dojo.data.old.Attribute = function (/* dojo.data.old.provider.Base */ dataProvider, /* string */ attributeId) {
+dojo.data.old.Attribute = function (/* dojo.data.old.providers.Base */ dataProvider, /* string */ attributeId) {
     /**
      * summary:
      * An Attribute object represents something like a column in
@@ -39,8 +39,8 @@ dojo.data.old.Attribute.prototype.getAttributeId = function () {
     /**
      * summary:
      * Returns the string token that uniquely identifies this
-     * attribute within the context of a data provider.
-     * For a data provider that accesses relational databases,
+     * attribute within the context of a data providers.
+     * For a data providers that accesses relational databases,
      * typical attributeIds might be tokens like "name", "age",
      * "ssn", or "dept_key".
      */

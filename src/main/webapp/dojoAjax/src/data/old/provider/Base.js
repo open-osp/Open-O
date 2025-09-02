@@ -18,8 +18,8 @@ dojo.data.old.provider.Base = function () {
     /**
      * summary:
      * A Data Provider serves as a connection to some data source,
-     * like a relational database.  This data provider Base class
-     * serves as an abstract superclass for other data provider
+     * like a relational database.  This data providers Base class
+     * serves as an abstract superclass for other data providers
      * classes.
      */
     this._countOfNestedTransactions = 0;
@@ -87,23 +87,23 @@ dojo.data.old.provider.Base.prototype.newAttribute = function (/* string */ attr
 };
 
 dojo.data.old.provider.Base.prototype.getAttribute = function (/* string */ attributeId) {
-    dojo.unimplemented('dojo.data.old.provider.Base');
+    dojo.unimplemented('dojo.data.old.providers.Base');
     var attribute;
     return attribute; // dojo.data.old.Attribute
 };
 
 dojo.data.old.provider.Base.prototype.getAttributes = function () {
-    dojo.unimplemented('dojo.data.old.provider.Base');
+    dojo.unimplemented('dojo.data.old.providers.Base');
     return this._arrayOfAttributes; // Array
 };
 
 dojo.data.old.provider.Base.prototype.fetchArray = function () {
-    dojo.unimplemented('dojo.data.old.provider.Base');
+    dojo.unimplemented('dojo.data.old.providers.Base');
     return []; // Array
 };
 
 dojo.data.old.provider.Base.prototype.fetchResultSet = function () {
-    dojo.unimplemented('dojo.data.old.provider.Base');
+    dojo.unimplemented('dojo.data.old.providers.Base');
     var resultSet;
     return resultSet; // dojo.data.old.ResultSet
 };
@@ -177,7 +177,7 @@ dojo.data.old.provider.Base.prototype._notifyObserversOfChanges = function (/* A
 };
 
 dojo.data.old.provider.Base.prototype._getResultSets = function () {
-    dojo.unimplemented('dojo.data.old.provider.Base');
+    dojo.unimplemented('dojo.data.old.providers.Base');
     return []; // Array
 };
 

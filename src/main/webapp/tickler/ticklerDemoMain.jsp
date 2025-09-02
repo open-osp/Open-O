@@ -64,23 +64,24 @@
     else
         updateParent = "false";
 %>
-<%@ page import="java.util.*,java.text.*, oscar.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.common.model.TicklerComment" %>
-<%@ page import="org.oscarehr.common.model.TicklerUpdate" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
-<%@ page import="org.oscarehr.common.model.TicklerLink" %>
-<%@ page import="org.oscarehr.common.dao.TicklerLinkDao" %>
-<%@ page import="oscar.oscarLab.ca.on.*" %>
+<%@ page import="java.util.*,java.text.*, ca.openosp.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.openo.commn.model.TicklerComment" %>
+<%@ page import="ca.openosp.openo.commn.model.TicklerUpdate" %>
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.commn.model.TicklerLink" %>
+<%@ page import="ca.openosp.openo.commn.dao.TicklerLinkDao" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
 
 <%
     TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
@@ -93,7 +94,7 @@
 
 
 <%
-    String labReqVer = oscar.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
+    String labReqVer = ca.openosp.OscarProperties.getInstance().getProperty("onare_labreqver", "07");
     if (labReqVer.equals("")) {
         labReqVer = "07";
     }
@@ -106,7 +107,7 @@
     int curDay = now.get(Calendar.DAY_OF_MONTH);
 %>
 <%
-    //String providerview=request.getParameter("provider")==null?"":request.getParameter("provider");
+    //String providerview=request.getParameter("providers")==null?"":request.getParameter("providers");
     String ticklerview = request.getParameter("ticklerview") == null ? "A" : request.getParameter("ticklerview");
     String xml_vdate = request.getParameter("xml_vdate") == null ? "" : request.getParameter("xml_vdate");
     String xml_appointment_date = request.getParameter("xml_appointment_date") == null ? "8888-12-31" : request.getParameter("xml_appointment_date");

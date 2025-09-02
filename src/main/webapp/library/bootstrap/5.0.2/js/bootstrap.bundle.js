@@ -2235,7 +2235,7 @@
         var currentNode = getParentNode(element);
 
         while (isHTMLElement(currentNode) && ['html', 'body'].indexOf(getNodeName(currentNode)) < 0) {
-            var css = getComputedStyle$1(currentNode); // This is non-exhaustive but covers the most common CSS properties that
+            var css = getComputedStyle$1(currentNode); // This is non-exhaustive but covers the most commons CSS properties that
             // create a containing block.
             // https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
 
@@ -3562,7 +3562,7 @@
                         reference: getCompositeRect(reference, getOffsetParent(popper), state.options.strategy === 'fixed'),
                         popper: getLayoutRect(popper)
                     }; // Modifiers have the ability to reset the current update cycle. The
-                    // most common use case for this is the `flip` modifier changing the
+                    // most commons use case for this is the `flip` modifier changing the
                     // placement, which then needs to re-run all the modifiers, because the
                     // logic was previously ran for the previous placement and is therefore
                     // stale/incorrect

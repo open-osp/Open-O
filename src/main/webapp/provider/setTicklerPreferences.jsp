@@ -82,7 +82,7 @@
                         <c:if test="${taskAssigneeMRPValue == 'mrp'}">checked</c:if> onclick="checkAssignee()" /> MRP
 
                     <input type="radio" id="taskAssigneeProvider" name="taskAssigneeMRP.value" value="provider"
-                        <c:if test="${taskAssigneeMRPValue == 'provider'}">checked</c:if> onclick="checkAssignee()" /> Set a provider
+                        <c:if test="${taskAssigneeMRPValue == 'providers'}">checked</c:if> onclick="checkAssignee()" /> Set a provider
 
                     <input type="hidden" id="taskAssignee" name="taskAssigneeSelection.value" />
 

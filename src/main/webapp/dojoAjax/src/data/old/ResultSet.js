@@ -15,10 +15,10 @@ dojo.require("dojo.collections.Collections");
 // -------------------------------------------------------------------
 // Constructor
 // -------------------------------------------------------------------
-dojo.data.old.ResultSet = function (/* dojo.data.old.provider.Base */ dataProvider, /* Array */ arrayOfItems) {
+dojo.data.old.ResultSet = function (/* dojo.data.old.providers.Base */ dataProvider, /* Array */ arrayOfItems) {
     /**
      * summary:
-     * A ResultSet holds a collection of Items.  A data provider
+     * A ResultSet holds a collection of Items.  A data providers
      * returns a ResultSet in reponse to a query.
      * (The name "Result Set" comes from the MySQL terminology.)
      */
@@ -66,5 +66,5 @@ dojo.data.old.ResultSet.prototype.contains = function (/* dojo.data.old.Item */ 
 };
 
 dojo.data.old.ResultSet.prototype.getDataProvider = function () {
-    return this._dataProvider; // dojo.data.old.provider.Base
+    return this._dataProvider; // dojo.data.old.providers.Base
 };

@@ -25,10 +25,10 @@
 --%>
 <!DOCTYPE html>
 
-<%@page import="org.oscarehr.common.model.FlowSheetUserCreated" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.dao.FlowSheetUserCreatedDao" %>
+<%@page import="ca.openosp.openo.commn.model.FlowSheetUserCreated" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.dao.FlowSheetUserCreatedDao" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -48,9 +48,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -179,7 +179,7 @@
                         <option value="<%=FlowSheetUserCreated.SCOPE_CLINIC %>" <%="clinic".equals(scope) ? "selected=\"selected\" " : "" %>>
                             Clinic
                         </option>
-                        <option value="<%=FlowSheetUserCreated.SCOPE_PROVIDER %>" <%="provider".equals(scope) ? "selected=\"selected\" " : "" %>>
+                        <option value="<%=FlowSheetUserCreated.SCOPE_PROVIDER %>" <%="providers".equals(scope) ? "selected=\"selected\" " : "" %>>
                             Provider
                         </option>
                         <option value="<%=FlowSheetUserCreated.SCOPE_PATIENT %>" <%="patient".equals(scope) ? "selected=\"selected\" " : "" %>>
@@ -257,7 +257,7 @@
 
 
         YAHOO.example.BasicRemote = function () {
-            var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
+            var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
             var oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponses'});
             oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
             oDS.responseSchema = {

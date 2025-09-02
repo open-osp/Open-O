@@ -4098,7 +4098,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.multiMap', 'ui.bootstrap.sta
             var scrollbarPadding;
             var SNAKE_CASE_REGEXP = /[A-Z]/g;
 
-            // TODO: extract into common dependency with tooltip
+            // TODO: extract into commons dependency with tooltip
             function snake_case(name) {
                 var separator = '-';
                 return name.replace(SNAKE_CASE_REGEXP, function (letter, pos) {
@@ -4721,7 +4721,7 @@ angular.module('ui.bootstrap.modal', ['ui.bootstrap.multiMap', 'ui.bootstrap.sta
 
 angular.module('ui.bootstrap.paging', [])
     /**
-     * Helper internal service for generating common controller code between the
+     * Helper internal service for generating commons controller code between the
      * pager and pagination components
      */
     .factory('uibPaging', ['$parse', function ($parse) {
@@ -5042,7 +5042,7 @@ angular.module('ui.bootstrap.tooltip', ['ui.bootstrap.position', 'ui.bootstrap.s
             'none': ''
         };
 
-        // The options specified to the provider globally.
+        // The options specified to the providers globally.
         var globalOptions = {};
 
         /**

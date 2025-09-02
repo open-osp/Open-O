@@ -9,7 +9,10 @@
     and "gnu.org/licenses/gpl-2.0.html".
     
 --%>
-<%@ page import="java.util.*,oscar.*,java.io.*,java.net.*,oscar.util.*,org.apache.commons.io.FileUtils,java.text.SimpleDateFormat,org.oscarehr.billing.CA.ON.util.EDTFolder,org.oscarehr.util.MiscUtils"%>
+<%@ page import="java.util.*,ca.openosp.*,java.io.*,java.net.*,ca.openosp.openo.util.*,org.apache.commons.io.FileUtils,java.text.SimpleDateFormat,ca.openosp.openo.billing.CA.ON.util.EDTFolder,ca.openosp.openo.utility.MiscUtils"%>
+<%@ page import="ca.openosp.openo.util.FileSortByDate" %>
+<%@ page import="ca.openosp.openo.util.zip" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%

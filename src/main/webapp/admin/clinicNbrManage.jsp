@@ -24,19 +24,19 @@
 %>
 <%@page contentType="text/html" %>
 
-<%@page import="org.oscarehr.common.model.ClinicNbr" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ClinicNbrDao" %>
-<%@page import="oscar.OscarProperties, org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicNbr" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicNbrDao" %>
+<%@page import="ca.openosp.OscarProperties, ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page
-        import="java.sql.*, java.util.*, oscar.*, oscar.SxmlMisc, oscar.oscarProvider.data.ProviderBillCenter"
+        import="java.sql.*, java.util.*, ca.openosp.*, ca.openosp.SxmlMisc, ca.openosp.openo.providers.data.ProviderBillCenter"
         errorPage="/errorpage.jsp" %>
 
 <html>
     <head>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
-        <title>Clinic NBR Management Start Time : <%=oscar.OscarProperties.getInstance().getStartTime()%>
+        <title>Clinic NBR Management Start Time : <%=OscarProperties.getInstance().getStartTime()%>
         </title>
         <script type="text/javascript">
             function toggleButtons(visible) {

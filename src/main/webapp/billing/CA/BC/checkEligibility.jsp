@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.Misc" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -25,9 +25,9 @@
 --%>
 
 <%
-    String result = oscar.Misc.safeString((String) request.getAttribute("Result"));
-    String msgs = oscar.Misc.safeString((String) request.getAttribute("Msgs"));
-    String error = oscar.Misc.safeString((String) request.getAttribute("error"));
+    String result = Misc.safeString((String) request.getAttribute("Result"));
+    String msgs = Misc.safeString((String) request.getAttribute("Msgs"));
+    String error = Misc.safeString((String) request.getAttribute("error"));
     if (error.length() != 0) {
         error = "Error in teleplan connection : " + error;
     }

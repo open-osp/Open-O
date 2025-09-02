@@ -18,7 +18,7 @@ dojo.require("dojo.string.*");
 dojo.require("dojo.html.metrics");
 
 dojo.require("dojo.gfx.color");
-dojo.require("dojo.gfx.common");
+dojo.require("dojo.gfx.commons");
 dojo.require("dojo.gfx.shape");
 dojo.require("dojo.gfx.path");
 

@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.charting.Axis");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.charting.Axis = function (/* string? */label, /* string? */scale, /* array? */labels) {
     var id = "dojo-charting-axis-" + dojo.charting.Axis.count++;

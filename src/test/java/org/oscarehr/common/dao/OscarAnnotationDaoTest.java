@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.OscarAnnotation;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.OscarAnnotation;
+import ca.openosp.openo.commn.dao.OscarAnnotationDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class OscarAnnotationDaoTest extends DaoTestFixtures {
 

@@ -21,7 +21,7 @@ dojo.require("dojo.io.*");
 /* summary:
  *   RemoteStore is an implemention the dojo.data.core.Read and Write APIs. 
  *   It is designed to serve as a base class for dojo.data stores which interact 
- *   with stateless web services that can querying and modifying record-oriented 
+ *   with stateless www services that can querying and modifying record-oriented
  *   data.  Its features include asynchronous and synchronous querying and saving; 
  *   caching of queries; transactions; and datatype mapping.
  */

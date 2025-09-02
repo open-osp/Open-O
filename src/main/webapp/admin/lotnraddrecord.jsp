@@ -44,16 +44,16 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.log.LogAction,oscar.log.LogConst" %>
-<%@ page import="oscar.log.*, oscar.oscarDB.*" %>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.log.LogAction,ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.log.*, ca.openosp.openo.db.*" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.PreventionsLotNrs" %>
-<%@ page import="org.oscarehr.common.dao.PreventionsLotNrsDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.PreventionsLotNrs" %>
+<%@ page import="ca.openosp.openo.commn.dao.PreventionsLotNrsDao" %>
 <%
     PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao) SpringUtils.getBean(PreventionsLotNrsDao.class);
 %>

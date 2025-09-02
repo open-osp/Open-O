@@ -30,13 +30,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import ca.openosp.openo.dashboard.handler.DrilldownQueryHandler;
+import ca.openosp.openo.dashboard.handler.IndicatorTemplateHandler;
+import ca.openosp.openo.dashboard.handler.IndicatorTemplateXML;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.dashboard.query.Column;
-import org.oscarehr.dashboard.query.DrillDownAction;
-import org.oscarehr.dashboard.query.Parameter;
-import org.oscarehr.dashboard.query.RangeInterface;
+import ca.openosp.openo.dashboard.query.Column;
+import ca.openosp.openo.dashboard.query.DrillDownAction;
+import ca.openosp.openo.dashboard.query.Parameter;
+import ca.openosp.openo.dashboard.query.RangeInterface;
 
 public class DrilldownQueryHandlerTest {
 

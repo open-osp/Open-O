@@ -26,13 +26,13 @@
 --%>
 
 <%@ page import="com.github.scribejava.core.model.OAuth1RequestToken" %>
-<%@ page import="org.oscarehr.common.dao.AppUserDao" %>
-<%@ page import="org.oscarehr.common.dao.AppDefinitionDao" %>
-<%@ page import="org.oscarehr.common.model.AppUser" %>
-<%@ page import="org.oscarehr.common.model.AppDefinition" %>
-<%@ page import="org.oscarehr.app.AppOAuth1Config" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.util.MiscUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppUserDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppDefinitionDao" %>
+<%@ page import="ca.openosp.openo.commn.model.AppUser" %>
+<%@ page import="ca.openosp.openo.commn.model.AppDefinition" %>
+<%@ page import="ca.openosp.openo.app.AppOAuth1Config" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="java.util.Date" %>
 <%@ page import="javax.servlet.http.*" %>
 <%@ page import="org.slf4j.Logger, org.slf4j.LoggerFactory" %>
@@ -54,12 +54,7 @@
         try {
             appId = Integer.parseInt(idParam);
         } catch (NumberFormatException e) {
-            if ("K2A".equals(idParam)) {
-                AppDefinition k2a = appDefDao.findByName("K2A");
-                if (k2a != null) {
-                    appId = k2a.getId();
-                }
-            }
+            // K2A handling removed
         }
     } else if (session.getAttribute("appId") != null) {
         appId = (Integer) session.getAttribute("appId");
@@ -77,7 +72,7 @@
     // Check if we’re in the “request token” phase or “access token” phase
     String oauthVerifier = request.getParameter("oauth_verifier");
     if (oauthVerifier == null) {
-        // --- Phase 1: redirect client to provider’s auth URL ---
+        // --- Phase 1: redirect client to providers’s auth URL ---
         try {
             OAuth1RequestToken requestToken =
                 (OAuth1RequestToken) request.getAttribute("requestToken");

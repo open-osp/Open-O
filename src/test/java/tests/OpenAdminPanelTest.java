@@ -37,7 +37,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -110,7 +110,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -162,7 +162,7 @@ public class OpenAdminPanelTest {
 
     }
 
-    // Test the open add provider window successful scenario
+    // Test the open add providers window successful scenario
     @Test
     public void testOpenAddProviderWindowSuccessful() throws InterruptedException {
 
@@ -186,7 +186,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -218,8 +218,8 @@ public class OpenAdminPanelTest {
             WebElement errorElement = driver.findElement(By.xpath("//*[contains(text(), 'Looks like something went wrong...')]"));
             if (errorElement.isDisplayed()) {
                 is500Error = true;
-                System.out.println("500 error encountered while opening add provider window.");
-                Assert.fail("500 error encountered while opening add provider window.");
+                System.out.println("500 error encountered while opening add providers window.");
+                Assert.fail("500 error encountered while opening add providers window.");
             }
         } catch (NoSuchElementException e) {
             System.out.println("No 500 error encountered.");
@@ -262,7 +262,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -338,7 +338,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -414,7 +414,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -490,7 +490,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -566,7 +566,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar
@@ -642,7 +642,7 @@ public class OpenAdminPanelTest {
 
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
-        Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
+        Assert.assertTrue(currentUrl.contains("providers/providercontrol.jsp"));
         System.out.println("Login successful, the current URL is: " + currentUrl);
 
         // Click on the 'Administration' tab on the menu bar

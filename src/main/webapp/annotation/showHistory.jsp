@@ -42,9 +42,9 @@
 
 <%@page import="org.springframework.web.context.WebApplicationContext,
                 org.springframework.web.context.support.WebApplicationContextUtils,
-                org.oscarehr.casemgmt.model.CaseManagementNote,
-                org.oscarehr.casemgmt.model.CaseManagementNoteLink,
-                org.oscarehr.casemgmt.service.CaseManagementManager,
+                ca.openosp.openo.casemgmt.model.CaseManagementNote,
+                ca.openosp.openo.casemgmt.model.CaseManagementNoteLink,
+                ca.openosp.openo.casemgmt.service.CaseManagementManager,
                 java.util.List" %>
 <%
     HttpSession se = request.getSession();

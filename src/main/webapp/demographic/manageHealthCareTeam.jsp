@@ -25,15 +25,15 @@
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List, org.apache.commons.lang.StringUtils" %>
-<%@ page import="org.oscarehr.common.web.Contact2Action" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.DemographicContact" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="org.oscarehr.common.dao.ContactSpecialtyDao" %>
-<%@ page import="org.oscarehr.common.model.ContactSpecialty" %>
+<%@ page import="ca.openosp.openo.commn.web.Contact2Action" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.DemographicContact" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ContactSpecialtyDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ContactSpecialty" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <security:oscarSec roleName="${ sessionScope.userrole }" objectName="_demographic" rights="r" reverse="${ false }">
@@ -274,7 +274,7 @@
         //--> Document Ready Methods
         jQuery(document).ready(function ($) {
 
-            //--> Add internal provider
+            //--> Add internal providers
             jQuery('#addHealthCareTeamButton').bind("click", function () {
                 // get the selected value
                 var selected = jQuery('#internalProviderList option:selected');

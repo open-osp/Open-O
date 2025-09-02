@@ -39,7 +39,7 @@
     }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.data.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

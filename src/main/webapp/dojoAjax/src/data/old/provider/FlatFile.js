@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.data.old.provider.FlatFile");
-dojo.require("dojo.data.old.provider.Base");
+dojo.require("dojo.data.old.providers.Base");
 dojo.require("dojo.data.old.Item");
 dojo.require("dojo.data.old.Attribute");
 dojo.require("dojo.data.old.ResultSet");
@@ -56,7 +56,7 @@ dojo.data.old.provider.FlatFile = function (/* keywords */ keywordParameters) {
                 var fileContents = dojo.hostenv.getText(fileUrl);
                 formatParser.loadDataProviderFromFileContents(this, fileContents);
             } else {
-                dojo.lang.assert(false, "new dojo.data.old.provider.FlatFile({url: }) was passed a file without a .csv or .json suffix");
+                dojo.lang.assert(false, "new dojo.data.old.providers.FlatFile({url: }) was passed a file without a .csv or .json suffix");
             }
         }
     }

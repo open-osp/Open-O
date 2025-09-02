@@ -27,12 +27,12 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
-import org.oscarehr.common.model.Facility;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Security;
-import org.oscarehr.util.LoggedInInfo;
+import ca.openosp.openo.commn.model.Facility;
+import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.Security;
+import ca.openosp.openo.utility.LoggedInInfo;
 
-import oscar.util.ConversionUtils;
+import ca.openosp.openo.util.ConversionUtils;
 
 public class AuthUtils {
 

@@ -24,13 +24,14 @@ package org.oscarehr.integration.fhir.model;
  */
 
 
+import ca.openosp.openo.integration.fhir.model.Organization;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.oscarehr.common.model.Clinic;
-// import org.oscarehr.common.model.ProfessionalContact;
-import org.oscarehr.util.MiscUtils;
+import ca.openosp.openo.commn.model.Clinic;
+// import org.oscarehr.commons.model.ProfessionalContact;
+import ca.openosp.openo.utility.MiscUtils;
 
 
 public class OrganizationTest {
@@ -53,7 +54,7 @@ public class OrganizationTest {
         clinic.setClinicFax("778-343-3453");
         clinic.setClinicName("Test Medical Clinic");
 
-        organization = new org.oscarehr.integration.fhir.model.Organization<Clinic>(clinic);
+        organization = new Organization<Clinic>(clinic);
     }
 
     @AfterClass

@@ -38,39 +38,41 @@
     }
 %>
 
-<%@page import="org.oscarehr.provider.model.PreventionManager" %>
+<%@page import="ca.openosp.openo.provider.model.PreventionManager" %>
 <%@ page
-        import="java.sql.*, java.util.*, oscar.MyDateFormat, oscar.oscarWaitingList.util.WLWaitingListUtil, oscar.log.*, org.oscarehr.common.OtherIdManager" %>
+        import="java.sql.*, java.util.*, ca.openosp.MyDateFormat, ca.openosp.openo.waitinglist.util.WLWaitingListUtil, ca.openosp.openo.log.*, ca.openosp.openo.commn.OtherIdManager" %>
 
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicArchiveDao" %>
-<%@page import="org.oscarehr.common.model.DemographicCust" %>
-<%@page import="org.oscarehr.common.dao.DemographicCustDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicExtArchiveDao" %>
-<%@page import="org.oscarehr.common.model.DemographicExt" %>
-<%@page import="org.oscarehr.common.model.DemographicExtArchive" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicCust" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicCustDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicExt" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicExtArchive" %>
 
-<%@ page import="org.oscarehr.common.dao.WaitingListDao" %>
-<%@ page import="org.oscarehr.common.model.WaitingList" %>
+<%@ page import="ca.openosp.openo.commn.dao.WaitingListDao" %>
+<%@ page import="ca.openosp.openo.commn.model.WaitingList" %>
 
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.provider.model.PreventionManager" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.provider.model.PreventionManager" %>
 
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.PMmodule.service.AdmissionManager" %>
-<%@page import="org.oscarehr.managers.PatientConsentManager" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.common.model.ConsentType" %>
-<%@page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.PMmodule.service.AdmissionManager" %>
+<%@page import="ca.openosp.openo.managers.PatientConsentManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.model.ConsentType" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicNameAgeString" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -78,7 +80,7 @@
 
 
 <%
-    java.util.Properties oscarVariables = oscar.OscarProperties.getInstance();
+    java.util.Properties oscarVariables = OscarProperties.getInstance();
 
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
@@ -141,7 +143,6 @@
             } else {
                 demographic.setConsentToUseEmailForCare(null);
             }
-            demographic.setMyOscarUserName(StringUtils.trimToNull(request.getParameter("myOscarUserName")));
             demographic.setYearOfBirth(request.getParameter("year_of_birth"));
             demographic.setMonthOfBirth(request.getParameter("month_of_birth") != null && request.getParameter("month_of_birth").length() == 1 ? "0" + request.getParameter("month_of_birth") : request.getParameter("month_of_birth"));
             demographic.setDateOfBirth(request.getParameter("date_of_birth") != null && request.getParameter("date_of_birth").length() == 1 ? "0" + request.getParameter("date_of_birth") : request.getParameter("date_of_birth"));
@@ -340,18 +341,6 @@
                 }
             }
 
-            if (demographic.getMyOscarUserName() != null && !demographic.getMyOscarUserName().trim().isEmpty()) {
-                Demographic myoscarDemographic = demographicDao.getDemographicByMyOscarUserName(demographic.getMyOscarUserName());
-                if (myoscarDemographic != null && !myoscarDemographic.getDemographicNo().equals(demographic.getDemographicNo())) {
-
-        %>
-        ***<font color='red'><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.msgDuplicatedPHR"/></font>
-        ***<br><br><a href=# onClick="history.go(-1);return false;"><b>&lt;-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnBack"/></b></a>
-        <%
-                    return;
-                }
-
-            }
             Long archiveId = demographicArchiveDao.archiveRecord(demographic);
             for (DemographicExt extension : extensions) {
                 DemographicExtArchive archive = new DemographicExtArchive(extension);
@@ -364,7 +353,7 @@
             demographicDao.save(demographic);
 
             try {
-                oscar.oscarDemographic.data.DemographicNameAgeString.resetDemographic(request.getParameter("demographic_no"));
+                DemographicNameAgeString.resetDemographic(request.getParameter("demographic_no"));
             } catch (Exception nameAgeEx) {
                 MiscUtils.getLogger().error("ERROR RESETTING NAME AGE", nameAgeEx);
             }
@@ -390,47 +379,13 @@
             }
 
             //update admission information
-            GenericIntakeEditAction gieat = new GenericIntakeEditAction();
             ProgramManager pm = SpringUtils.getBean(ProgramManager.class);
             AdmissionManager am = SpringUtils.getBean(AdmissionManager.class);
-            gieat.setAdmissionManager(am);
-            gieat.setProgramManager(pm);
-
-            String bedP = request.getParameter("rps");
-            if (bedP != null && bedP.length() > 0) {
-                try {
-                    gieat.admitBedCommunityProgram(demographic.getDemographicNo(), (String) session.getAttribute("user"), Integer.parseInt(bedP), "", "(Master record change)", new java.util.Date());
-                } catch (Exception e) {
-
-                }
-            }
-
-            String[] servP = request.getParameterValues("sp");
-            if (servP != null && servP.length > 0) {
-                Set<Integer> s = new HashSet<Integer>();
-                for (String _s : servP) s.add(Integer.parseInt(_s));
-                try {
-                    gieat.admitServicePrograms(demographic.getDemographicNo(), (String) session.getAttribute("user"), s, "(Master record change)", new java.util.Date());
-                } catch (Exception e) {
-                }
-            }
-
-            String _pvid = loggedInInfo.getLoggedInProviderNo();
-            Set<Program> pset = gieat.getActiveProviderProgramsInFacility(loggedInInfo, _pvid, loggedInInfo.getCurrentFacility().getId());
-            List<Program> allServiceProgramsShown = gieat.getServicePrograms(pset, _pvid);
-            for (Program p : allServiceProgramsShown) {
-                if (!isFound(servP, p.getId().toString())) {
-                    try {
-                        am.processDischarge(p.getId(), demographic.getDemographicNo(), "(Master record change)", "0");
-                    } catch (org.oscarehr.PMmodule.exception.AdmissionException e) {
-                    }
-                }
-            }
 
 
             //add to waiting list if the waiting_list parameter in the property file is set to true
-            oscar.oscarWaitingList.WaitingList wL = oscar.oscarWaitingList.WaitingList.getInstance();
-            if (wL.getFound() && oscar.OscarProperties.getInstance().getBooleanProperty("DEMOGRAPHIC_WAITING_LIST", "true")) {
+            ca.openosp.openo.waitinglist.WaitingList wL = ca.openosp.openo.waitinglist.WaitingList.getInstance();
+            if (wL.getFound() && OscarProperties.getInstance().getBooleanProperty("DEMOGRAPHIC_WAITING_LIST", "true")) {
                 WLWaitingListUtil.updateWaitingListRecord(
                         request.getParameter("list_id"), request.getParameter("waiting_list_note"),
                         request.getParameter("demographic_no"), request.getParameter("waiting_list_referral_date"));

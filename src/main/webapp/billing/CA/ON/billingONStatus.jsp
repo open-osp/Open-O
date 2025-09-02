@@ -22,16 +22,21 @@
 <%@page import="java.text.DecimalFormat" %>
 <%@page import="java.text.NumberFormat" %>
 <%@page import="java.util.*" %>
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.Site" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.owasp.encoder.Encode" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="oscar.oscarBilling.ca.on.data.*" %>
-<%@page import="oscar.oscarBilling.ca.on.pageUtil.*" %>
-<%@page import="oscar.util.*" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@page import="ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingStatusPrep" %>
+<%@ page import="ca.openosp.openo.util.LabelValueBean" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%--
     The taglib directive below imports the JSTL library. If you uncomment it,
@@ -56,7 +61,7 @@
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r" reverse="false">
     <%isSiteAccessPrivacy = true; %>
 </security:oscarSec>
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 <%
     //multi-site office , save all bgcolor to Hashmap
     HashMap<String, String> siteBgColor = new HashMap<String, String>();
@@ -487,7 +492,7 @@
                             <% } %>
 
                             function changeSite(sel) {
-                                sel.form.providerview.innerHTML = sel.value == "none" ? "" : "<option value='none'>---select provider---</option>" + _providers[sel.value];
+                                sel.form.providerview.innerHTML = sel.value == "none" ? "" : "<option value='none'>---select providers---</option>" + _providers[sel.value];
                                 sel.style.backgroundColor = sel.options[sel.selectedIndex].style.backgroundColor;
                                 if (sel.value == '<%=request.getParameter("site")%>') {
                                     if (document.serviceform.provider_ohipNo.value != '')

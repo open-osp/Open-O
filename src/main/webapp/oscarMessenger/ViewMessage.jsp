@@ -24,14 +24,14 @@
 
 --%>
 
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteDAO" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAO" %>
 <%@page import="java.util.Set" %>
 <%@page import="java.util.List" %>
 <%@page import="java.util.HashMap" %>
-<%@page import="org.oscarehr.common.model.ResidentOscarMsg" %>
-<%@page import="org.oscarehr.common.dao.ResidentOscarMsgDao" %>
-<%@page import="org.oscarehr.common.model.OscarMsgType" %>
+<%@page import="ca.openosp.openo.commn.model.ResidentOscarMsg" %>
+<%@page import="ca.openosp.openo.commn.dao.ResidentOscarMsgDao" %>
+<%@page import="ca.openosp.openo.commn.model.OscarMsgType" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String providerNo = (String) session.getAttribute("providerNo");
@@ -49,11 +49,10 @@
         return;
     }
 %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 
 <%
@@ -62,14 +61,15 @@
     if (request.getParameter("bFirstDisp") != null) bFirstDisp = (request.getParameter("bFirstDisp")).equals("true");
 %>
 <%@ page
-        import="oscar.oscarDemographic.data.*, java.util.Enumeration" %>
+        import="ca.openosp.openo.demographic.data.*, java.util.Enumeration" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/phr-tag.tld" prefix="phr" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="Encode" uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" %>
@@ -493,7 +493,7 @@
 
                                                 String demographic_no = request.getParameter("demographic_no");
                                                 DemographicData demoData = new DemographicData();
-                                                org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
+                                                Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demographic_no);
                                                 String demoName = "";
                                                 String demoLastName = "";
                                                 String demoFirstName = "";
@@ -628,20 +628,6 @@
 
                                                         <a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=session.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
 
-                                                        <phr:indivoRegistered provider="<%=providerNo%>"
-                                                                              demographic="${ demographic.key }">
-                                                            <%
-                                                                String onclickString = "alert('Please login to MyOscar first.')";
-
-                                                                MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                                                                if (myOscarLoggedInInfo != null && myOscarLoggedInInfo.isLoggedIn())
-                                                                    onclickString = "msg4phr = encodeURIComponent(document.getElementById('msgBody').innerHTML); sub4phr =  encodeURIComponent(document.getElementById('msgSubject').innerHTML); popupViewAttach(600,900,'../phr/PhrMessage.do?method=createMessage&providerNo=" + session.getAttribute("providerNo") + "&demographicNo=" + (String) pageContext.getAttribute("demographicNumber") + "&message='+msg4phr+'&subject='+sub4phr)";
-                                                            %>
-                                                            <a href="javascript: function myFunction() {return false; }"
-                                                               ONCLICK="<%=onclickString%>" title="myOscar">
-                                                                <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgSendMsgPHR"/>
-                                                            </a>
-                                                        </phr:indivoRegistered>
 
 
                                                         <input type="button" class="ControlPushButton"

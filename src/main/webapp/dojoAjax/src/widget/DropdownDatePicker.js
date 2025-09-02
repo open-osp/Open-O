@@ -17,8 +17,8 @@ dojo.require("dojo.event.*");
 dojo.require("dojo.html.*");
 dojo.require("dojo.date.format");
 dojo.require("dojo.date.serialize");
-dojo.require("dojo.string.common");
-dojo.require("dojo.i18n.common");
+dojo.require("dojo.string.commons");
+dojo.require("dojo.i18n.commons");
 dojo.requireLocalization("dojo.widget", "DropdownDatePicker", null, "ROOT");
 
 

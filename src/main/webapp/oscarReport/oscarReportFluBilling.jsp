@@ -39,8 +39,9 @@
     }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.data.*" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.report.data.RptFluReportData" %>
 
 
 <%@ include file="/taglibs.jsp" %>
@@ -68,7 +69,7 @@
         pros = request.getParameter("proNo");
     }
 
-    oscar.oscarReport.data.RptFluReportData fluData = new oscar.oscarReport.data.RptFluReportData();
+    RptFluReportData fluData = new RptFluReportData();
     fluData.fluReportGenerate(pros, years);
     List<Provider> providers = fluData.providerList();
 %>

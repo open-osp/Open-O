@@ -39,15 +39,16 @@
     }
 %>
 
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.billing.CA.BC.model.Hl7Obr" %>
-<%@page import="org.oscarehr.billing.CA.BC.model.Hl7Pid" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.model.Hl7Obr" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.model.Hl7Pid" %>
 <%@page import="java.util.List" %>
 <%@page import="java.sql.ResultSet" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.billing.CA.BC.dao.Hl7LinkDao" %>
-<%@page import="org.oscarehr.billing.CA.BC.model.Hl7Link" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.dao.Hl7LinkDao" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.model.Hl7Link" %>
+<%@ page import="ca.openosp.Misc" %>
 
 <%
 
@@ -160,23 +161,23 @@
                 <td class="Text"><input type="checkbox" name="chk"
                                         value="<%=pid.getId()%>"/></td>
                 <td class="Text"><a href="#"
-                                    onclick="return PopupLab('<%=pid.getId()%>');"><%=oscar.Misc.check(pid.getPatientName(), "")%>
+                                    onclick="return PopupLab('<%=pid.getId()%>');"><%=Misc.check(pid.getPatientName(), "")%>
                 </a></td>
                 <td class="Text">
                     <%=ConversionUtils.toDateString(pid.getDateOfBirth())%>
                 </td>
                 <td class="Text" align="center">
-                    <%=oscar.Misc.check(pid.getSex(), "")%>
+                    <%=Misc.check(pid.getSex(), "")%>
                 </td>
                 <td class="Text">
-                    <%=oscar.Misc.check(obr.getOrderingProvider(), "").replaceAll("~", ",<br/>")%>
+                    <%=Misc.check(obr.getOrderingProvider(), "").replaceAll("~", ",<br/>")%>
                 </td>
                 <td class="Text" style="border-right: #464646 1px solid;">
-                    <%=oscar.Misc.check(obr.getResultCopiesTo(), "").replaceAll("~", ",<br/>")%>
+                    <%=Misc.check(obr.getResultCopiesTo(), "").replaceAll("~", ",<br/>")%>
                 </td>
                 <td class="Text" style="border-left: #464646 1px solid;">
                     <a href="#" onclick="return PopupDemo('<%=link.getId()%>');">
-                        <%=oscar.Misc.check("" + demo.getDemographicNo(), "select")%>
+                        <%=Misc.check("" + demo.getDemographicNo(), "select")%>
                     </a>
                 </td>
                 <td class="Text">

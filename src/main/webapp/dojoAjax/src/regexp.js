@@ -50,7 +50,7 @@ dojo.regexp.tld = function (/*Object?*/flags) {
         "la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|" +
         "my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|" +
         "re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sk|sl|sm|sn|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|" +
-        "tn|to|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw";
+        "tn|to|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|webserv|ye|yt|yu|za|zm|zw";
 
     // Build top-level domain RE
     var a = [];
@@ -619,7 +619,7 @@ dojo.regexp.time = function (/*Object?*/flags) {
 dojo.regexp.numberFormat = function (/*Object?*/flags) {
     // summary: Builds a regular expression to match any sort of number based format
     // description:
-    //  Use this method for phone numbers, social security numbers, zip-codes, etc.
+    //  Use this method for phone numbers, social sec numbers, zip-codes, etc.
     //  The RE can match one format or one of multiple formats.
     //
     //  Format
@@ -630,7 +630,7 @@ dojo.regexp.numberFormat = function (/*Object?*/flags) {
     //  Example
     //    "(###) ###-####"       ->   (510) 542-9742
     //    "(###) ###-#### x#???" ->   (510) 542-9742 x153
-    //    "###-##-####"          ->   506-82-1089       i.e. social security number
+    //    "###-##-####"          ->   506-82-1089       i.e. social sec number
     //    "#####-####"           ->   98225-1649        i.e. zip code
     //
     // flags:  An object

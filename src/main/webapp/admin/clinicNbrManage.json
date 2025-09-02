@@ -1,8 +1,8 @@
 <%@page import="net.sf.json.JSONObject"%>
 <%@page import="net.sf.json.JSONSerializer"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.dao.ClinicNbrDao"%>
-<%@page import="org.oscarehr.common.model.ClinicNbr"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
+<%@page import="ca.openosp.openo.commn.dao.ClinicNbrDao"%>
+<%@page import="ca.openosp.openo.commn.model.ClinicNbr"%>
 <%
 	boolean success = false;
     String error = "";

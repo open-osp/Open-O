@@ -22,9 +22,10 @@
     EMR System
 
 --%>
-<%@page import="org.oscarehr.billing.CA.BC.model.WcbBpCode" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.billing.CA.dao.WcbBpCodeDao" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.model.WcbBpCode" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.billing.CA.dao.WcbBpCodeDao" %>
+<%@ page import="ca.openosp.Misc" %>
 <%
     if (session.getAttribute("user") == null) {
         response.sendRedirect("../../logout.jsp");
@@ -45,7 +46,7 @@
         } else {
             searchStr = "%" + searchStr + "%";
         }
-        searchStr = oscar.Misc.mysqlEscape(searchStr);
+        searchStr = Misc.mysqlEscape(searchStr);
     %>
     <script language="JavaScript">
     function posttoText(index){

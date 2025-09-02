@@ -23,21 +23,23 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="oscar.oscarRx.pageUtil.AllergyHelperBean" %>
-<%@page import="oscar.oscarRx.pageUtil.AllergyDisplay" %>
+<%@page import="ca.openosp.openo.prescript.pageUtil.AllergyHelperBean" %>
+<%@page import="ca.openosp.openo.prescript.pageUtil.AllergyDisplay" %>
 <%@page import="java.util.List" %>
-<%@page import="oscar.OscarProperties" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    oscar.oscarRx.data.RxPatientData.Patient patient = null;
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxPatientData.Patient patient = null;
+    RxSessionBean bean = null;
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
     String surname = "", firstName = "", age = "";
@@ -63,12 +65,12 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
         }
-        patient = (oscar.oscarRx.data.RxPatientData.Patient) session.getAttribute("Patient");
+        patient = (RxPatientData.Patient) session.getAttribute("Patient");
         if (patient != null) {
             surname = patient.getSurname();
             firstName = patient.getFirstName();
@@ -77,9 +79,9 @@
     %>
 </c:if>
 <%
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_ALLERGY;
+    String annotation_display = CaseManagementNoteLink.DISP_ALLERGY;
 
-    com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+    SecurityManager securityManager = new SecurityManager();
 %>
 <html>
     <head>
@@ -273,24 +275,6 @@
                     String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[1] + "'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[2] + "'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='" + ColourCodesArray[3] + "'><td> </td></table></td> <td >Severe</td> </tr></table>";
                 %>
 				</span>
-                                <%
-                                    if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                                        MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                                        boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demoNo));
-                                        if (enabledMyOscarButton) {
-                                %>
-                                |
-                                <a href="send_allergies_to_myoscar_action.jsp?demographicId=<%=demoNo%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%>
-                                </a>
-                                <%
-                                } else {
-                                %>
-                                |
-                                <span style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-                                <%
-                                        }
-                                    }
-                                %>
                             </div>
                         </td>
                     </tr>

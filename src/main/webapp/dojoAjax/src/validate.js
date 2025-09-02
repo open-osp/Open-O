@@ -9,4 +9,4 @@
 */
 
 dojo.provide("dojo.validate");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");

@@ -34,9 +34,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.ReportTableFieldCaption;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.ReportTableFieldCaption;
+import ca.openosp.openo.commn.dao.ReportTableFieldCaptionDao;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ReportTableFieldCaptionDaoTest extends DaoTestFixtures {
 

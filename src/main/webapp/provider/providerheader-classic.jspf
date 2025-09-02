@@ -24,12 +24,11 @@
 
 --%>
 
-<%@ page import="org.oscarehr.phr.util.MyOscarUtils"%>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.util.*" %>
 
@@ -39,7 +38,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="myoscar" %>
 
 <% 
 LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -135,7 +133,7 @@ function popupPage2(varpage) {
 	}
 
 	function refreshTabAlerts(id) {
-	var url = "../provider/tabAlertsRefresh.jsp";
+	var url = "../providers/tabAlertsRefresh.jsp";
 	var pars = "id=" + id;
 
 	var myAjax = new Ajax.Updater(id, url, {method: 'get', parameters: pars});
@@ -240,61 +238,28 @@ function popupPage2(varpage) {
 
 <security:oscarSec roleName="<%=roleName$%>" objectName="_pref" rights="r">
 <li>  
-    <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
-	<a href=# onClick ="popupPage2('<%=request.getContextPath()%>/provider/providerpreference.jsp?provider_no=<%=curUser_no%>');return false;" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.pref"/></a>
-    </caisi:isModuleLoad>
+	<a href=# onClick ="popupPage2('<%=request.getContextPath()%>/providers/providerpreference.jsp?provider_no=<%=curUser_no%>');return false;" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgSettings"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.pref"/></a>
 </li>
 </security:oscarSec>
 
  <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
 <li>
-   <a HREF="#" onclick="popupPage2('<%=request.getContextPath()%>/documentManager/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><fmt:setBundle basename="oscarResources"/><fmt:message key="global.edoc"/></a>
+   <a HREF="#" onclick="popupPage2('<%=request.getContextPath()%>/documentManager/documentReport.jsp?function=providers&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><fmt:setBundle basename="oscarResources"/><fmt:message key="global.edoc"/></a>
 </li>
 </security:oscarSec>
  </caisi:isModuleLoad>
  <security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
 <li>
-   <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
     <a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/tickler/ticklerMain.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>'>
 	<span id="oscar_new_tickler"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></span></a>
-   </caisi:isModuleLoad>
-   <caisi:isModuleLoad moduleName="ticklerplus">
-    <a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/Tickler.do?filter.assignee=<%=curUser_no%>&filter.demographic_no=&filter.demographic_webName=','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>'+'+'>
-	<span id="oscar_new_tickler"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></span></a>
-   </caisi:isModuleLoad>
 </li>
 </security:oscarSec>
-<oscar:oscarPropertiesCheck property="OSCAR_LEARNING" value="yes">
-<li>
-    <a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/oscarLearning/CourseView.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.courseview"/>');return false;" TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.courseview"/>'>
-	<span id="oscar_courseview"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btncourseview"/></span></a>
-</li>
-</oscar:oscarPropertiesCheck>
 
 <oscar:oscarPropertiesCheck property="WORKFLOW" value="yes">
    <li><a href="javascript: function myFunction() {return false; }" onClick="popupPage2('<%=request.getContextPath()%>/oscarWorkflow/WorkFlowList.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.workflow"/>')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnworkflow"/></a></li>
 </oscar:oscarPropertiesCheck>
 
-    <myoscar:indivoRegistered provider="<%=curUser_no%>">
-		<%
-		MyOscarUtils.attemptMyOscarAutoLoginIfNotAlreadyLoggedInAsynchronously(loggedInInfo, false);%>
-	    <li>
-			<a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/phr/PhrMessage.do?method=viewMessages','INDIVOMESSENGER2<%=curUser_no%>')" title='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.phr"/>'>
-				<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnphr"/>
-				<div id="unreadMessagesMenuMarker" style="display:inline-block;vertical-align:top"><!-- place holder for unread message count --></div>
-			</a>
-			<script type="text/javascript">
-				function pollMessageCount()
-				{
-					jQuery('#unreadMessagesMenuMarker').load('<%=request.getContextPath()%>/phr/msg/unread_message_count.jsp')
-				}
-				
-				window.setInterval(pollMessageCount, 60000);
-				window.setTimeout(pollMessageCount, 2000);
-			</script>
-	    </li>
-    </myoscar:indivoRegistered>
 
 <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
 	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc" rights="r">

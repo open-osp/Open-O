@@ -41,14 +41,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="oscar.oscarRx.data.RxDrugData,java.util.*" %>
+<%@page import="ca.openosp.openo.prescript.data.RxDrugData,java.util.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.Calendar" %>
-<%@page import="oscar.oscarRx.data.*" %>
-<%@page import="oscar.oscarRx.util.*" %>
+<%@page import="ca.openosp.openo.rx.data.*" %>
+<%@page import="ca.openosp.openo.rx.util.*" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
 <html>
 <head>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/dragiframe.js"/>"></script>
@@ -57,7 +59,7 @@
 <body onload="addHandle(document.getElementsByTagName('body').item(0), window);">
 <%
     try {
-        oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+        RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
         String randomId = request.getParameter("randomId");
         if (randomId != null) {
             RxPrescriptionData.Prescription rx = bean.getStashItem2(Integer.parseInt(randomId));

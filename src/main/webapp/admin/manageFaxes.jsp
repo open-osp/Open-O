@@ -24,9 +24,9 @@
 
 --%>
 <%@ page
-        import="org.oscarehr.common.dao.FaxConfigDao, org.oscarehr.common.model.FaxConfig, org.oscarehr.common.model.FaxJob, org.oscarehr.common.dao.FaxJobDao" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao, org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+        import="ca.openosp.openo.commn.dao.FaxConfigDao, ca.openosp.openo.commn.model.FaxConfig, ca.openosp.openo.commn.model.FaxJob, ca.openosp.openo.commn.dao.FaxJobDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao, ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.util.List, java.util.Collections" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>

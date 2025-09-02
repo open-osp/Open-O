@@ -40,21 +40,22 @@
 %>
 
 <%@page import="java.util.List" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@page import="java.util.Date" %>
-<%@page import="org.oscarehr.billing.CA.BC.dao.Hl7LinkDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.billing.CA.BC.dao.Hl7LinkDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.Misc" %>
 <%
     Hl7LinkDao dao = SpringUtils.getBean(Hl7LinkDao.class);
 
-    Date start = ConversionUtils.fromDateString(oscar.Misc.check(request.getParameter("start"), ""));
-    Date end = ConversionUtils.fromDateString(oscar.Misc.check(request.getParameter("end"), ""));
+    Date start = ConversionUtils.fromDateString(Misc.check(request.getParameter("start"), ""));
+    Date end = ConversionUtils.fromDateString(Misc.check(request.getParameter("end"), ""));
 
-    String provider_no = oscar.Misc.check(request.getParameter("provider_no"), "");
-    String orderby = oscar.Misc.check(request.getParameter("orderby"), "pid_id");
+    String provider_no = Misc.check(request.getParameter("provider_no"), "");
+    String orderby = Misc.check(request.getParameter("orderby"), "pid_id");
 
-    String command = oscar.Misc.check(request.getParameter("cmd_search"), "");
+    String command = Misc.check(request.getParameter("cmd_search"), "");
 
     String url = "searchreports.jsp?cmd_search=search&provider_no=" + provider_no;
 %>
@@ -163,11 +164,11 @@
         <td class="Text"><a href="searchreports.jsp"
                             onclick="PopupLab('<%=pid_id%>'); return false;"><%=pid_id%>
         </a></td>
-        <td class="Text" nowrap><%=oscar.Misc.check(patient_name, "")%>
+        <td class="Text" nowrap><%=Misc.check(patient_name, "")%>
         </td>
-        <td class="Text" nowrap><%=oscar.Misc.check(ordering_provider, "").replaceAll("~", ",<br/>")%>
+        <td class="Text" nowrap><%=Misc.check(ordering_provider, "").replaceAll("~", ",<br/>")%>
         </td>
-        <td class="Text"><%=oscar.Misc.check(result_copies_to, "").replaceAll("~", ",<br/>")%>
+        <td class="Text"><%=Misc.check(result_copies_to, "").replaceAll("~", ",<br/>")%>
         </td>
         <td class="Text" nowrap>
             <%
@@ -191,12 +192,12 @@
         </td>
         <td class="Text" nowrap>
             <%
-                String signed = oscar.Misc.check(signed_on, "");
+                String signed = Misc.check(signed_on, "");
                 out.print((signed.indexOf(" ") > -1) ? signed.substring(0, signed.indexOf(" ")) : signed);
             %>
         </td>
         <td class="Text"
-            nowrap><%=((last_name != null && !last_name.equals("")) ? oscar.Misc.check(last_name, "") + ", " + oscar.Misc.check(first_name, "") : "&nbsp;")%>
+            nowrap><%=((last_name != null && !last_name.equals("")) ? Misc.check(last_name, "") + ", " + Misc.check(first_name, "") : "&nbsp;")%>
         </td>
         <td class="Text" nowrap><%=date_time.substring(0, date_time.indexOf(" "))%>
         </td>

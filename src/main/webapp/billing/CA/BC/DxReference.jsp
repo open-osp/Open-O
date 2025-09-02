@@ -39,7 +39,8 @@
     }
 %>
 
-<%@page import="java.text.*, java.util.*, oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.*,oscar.entities.*" %>
+<%@page import="java.text.*, java.util.*, ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.openo.billing.ca.bc.pageUtil.*,ca.openosp.*,ca.openosp.openo.entities.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.DxReference" %>
 
 <%
     String demo = request.getParameter("demographicNo");

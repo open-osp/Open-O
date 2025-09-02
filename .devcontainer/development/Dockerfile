@@ -33,7 +33,35 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Remove unnecessary default web apps in Tomcat
+# Install Node.js (latest LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Install GitHub CLI
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y gh
+
+# Install Go
+RUN apt-get update && apt-get install -y golang-go
+
+# Install javadoc2md utility for converting Javadoc to Markdown
+RUN go install github.com/dburkart/javadoc2md/cmd/javadoc2md@latest
+
+# Install Claude Code CLI and Docusaurus
+RUN npm install -g @anthropic-ai/claude-code @docusaurus/core @docusaurus/preset-classic
+
+# Install pipx and Aider AI coding assistant
+RUN apt-get update && apt-get install -y pipx && \
+    pipx install aider-chat && \
+    pipx ensurepath
+
+# Create custom bashrc with tool reminders
+COPY ./config/bashrc /root/.bashrc
+
+# Remove unnecessary default www apps in Tomcat
 RUN rm -rf $TOMCAT_PATH/webapps/ROOT/* \
     $TOMCAT_PATH/webapps/docs \
     $TOMCAT_PATH/webapps/examples \
@@ -79,8 +107,9 @@ RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
 RUN dos2unix /scripts/* \
     && dos2unix /setup-dir/setup.sh
 
-# Make setup script executable and run it
-RUN chmod +x /setup-dir/setup.sh && /setup-dir/setup.sh
+# Make scripts executable and add to PATH
+RUN chmod +x /scripts/* /setup-dir/setup.sh && /setup-dir/setup.sh
+ENV PATH="/scripts:${PATH}"
 
 # Expose Tomcat port
 EXPOSE 8080

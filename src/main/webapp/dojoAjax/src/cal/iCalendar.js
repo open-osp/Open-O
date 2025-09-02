@@ -9,9 +9,9 @@
 */
 
 dojo.provide("dojo.cal.iCalendar");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.cal.textDirectory");
-dojo.require("dojo.date.common");
+dojo.require("dojo.date.commons");
 dojo.require("dojo.date.serialize");
 
 
@@ -484,14 +484,14 @@ dojo.extend(dojo.cal.iCalendar.VEvent, {
 
 
                 // while the spec doesn't prohibit it, it makes no sense to have a bymonth and a byweekno at the same time
-                // and if i'm wrong then i don't know how to apply that rule.  This is also documented elsewhere on the web
+                // and if i'm wrong then i don't know how to apply that rule.  This is also documented elsewhere on the www
                 if (rrule["byweekno"] && !rrule["bymonth"]) {
                     dojo.debug("TODO: no support for byweekno yet");
                 }
 
 
                 // while the spec doesn't prohibit it, it makes no sense to have a bymonth and a byweekno at the same time
-                // and if i'm wrong then i don't know how to apply that rule.  This is also documented elsewhere on the web
+                // and if i'm wrong then i don't know how to apply that rule.  This is also documented elsewhere on the www
                 if (rrule["byyearday"] && !rrule["bymonth"] && !rrule["byweekno"]) {
                     if (rrule["byyearday"].length > 1) {
                         var regex = "([+-]?)([0-9]{1,3})";

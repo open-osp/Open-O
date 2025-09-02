@@ -681,7 +681,7 @@
                         if (callback.apply(object[i++], args) === false)
                             break;
 
-                // A special, fast, case for the most common use of each
+                // A special, fast, case for the most commons use of each
             } else {
                 if (length === undefined) {
                     for (name in object)
@@ -3342,7 +3342,7 @@
         }
     });
 
-// Attach a bunch of functions for handling common AJAX events
+// Attach a bunch of functions for handling commons AJAX events
     jQuery.each("ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend".split(","), function (i, o) {
         jQuery.fn[o] = function (f) {
             return this.bind(o, f);

@@ -38,13 +38,13 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page
-        import="org.oscarehr.common.dao.DemographicDao,org.oscarehr.caisi_integrator.ws.DemographicWs,org.oscarehr.util.SpringUtils,org.oscarehr.common.model.Demographic" %>
+        import="ca.openosp.openo.commn.dao.DemographicDao,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.model.Demographic" %>
 <%@page
-        import="org.oscarehr.caisi_integrator.ws.DemographicTransfer,org.oscarehr.caisi_integrator.ws.CachedProvider,org.oscarehr.caisi_integrator.ws.*" %>
+        import="ca.openosp.openo.caisi_integrator.ws.*" %>
 <%@page
-        import="org.oscarehr.PMmodule.caisi_integrator.*,java.util.*,oscar.util.*" %>
+        import="ca.openosp.openo.PMmodule.caisi_integrator.*,java.util.*,ca.openosp.openo.util.*" %>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     Integer localDemographicId = Integer.parseInt(request.getParameter("demographicId"));
@@ -82,8 +82,13 @@
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.caisi_integrator.ws.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@ page import="ca.openosp.openo.PMmodule.caisi_integrator.ConformanceTestHelper" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>

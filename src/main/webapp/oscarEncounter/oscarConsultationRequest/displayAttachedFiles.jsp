@@ -39,19 +39,21 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page
-        import="java.util.ArrayList, oscar.oscarLab.ca.on.*, oscar.util.StringUtils" %>
+        import="java.util.ArrayList, ca.openosp.openo.lab.ca.on.*, ca.openosp.openo.util.StringUtils" %>
 <%@page import="java.util.List" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentDao" %>
-<%@ page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao" %>
-<%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocument" %>
-<%@ page import="org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic" %>
-<%@ page import="org.oscarehr.common.model.EFormData" %>
-<%@ page import="oscar.eform.EFormUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentToDemographicDao" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.model.HRMDocument" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.model.HRMDocumentToDemographic" %>
+<%@ page import="ca.openosp.openo.commn.model.EFormData" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 

@@ -63,7 +63,6 @@
             </select></td>
             <td><select name="searchType" id="searchType">
                 <option value="Any"/>
-                <option value="Bed"/>
                 <option value="Service"/>
                 <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="false">
                     <option value="External"/>

@@ -29,17 +29,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ page
-        import="oscar.oscarRx.data.*,oscar.oscarProvider.data.ProviderMyOscarIdData,oscar.oscarDemographic.data.DemographicData,oscar.OscarProperties,oscar.log.*" %>
-<%@ page import="org.oscarehr.common.model.*" %>
+        import="ca.openosp.openo.rx.data.*,ca.openosp.openo.demographic.data.DemographicData,ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
 
 
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
 %>
@@ -59,7 +58,7 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -82,9 +81,9 @@
     if (drugref_route == null) drugref_route = "";
     String[] d_route = ("Oral," + drugref_route).split(",");
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
+    String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
 
-    //This checks if the provider has the ExternalPresriber feature enabled, if so then a link appear for the provider to access the ExternalPrescriber
+    //This checks if the providers has the ExternalPresriber feature enabled, if so then a link appear for the providers to access the ExternalPrescriber
     ProviderPreference providerPreference = ProviderPreferencesUIBean.getProviderPreference(loggedInInfo.getLoggedInProviderNo());
 
     boolean eRxEnabled = false;
@@ -106,13 +105,20 @@
     }
 
 %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.casemgmt.web.PrescriptDrug" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.casemgmt.web.PrescriptDrug" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.Drug" %>
 <html>
     <head>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
@@ -123,7 +129,6 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
-        <script type="text/javascript" src="<c:out value="${ctx}/phr/phr.js"/>"></script>
 
         <script type="text/javascript">
 
@@ -149,7 +154,7 @@
 
 
             function goOMD() {
-                var docURL = "../common/OntarioMDRedirect.jsp?keyword=eCPS&params=" + document.RxSearchDrugForm.searchString.value;
+                var docURL = "../commons/OntarioMDRedirect.jsp?keyword=eCPS&params=" + document.RxSearchDrugForm.searchString.value;
                 popupDrugOfChoice(743, 817, docURL);
             }
 
@@ -250,7 +255,7 @@
 
     <%
         boolean showall = false;
-        oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+        RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
         if (request.getParameter("show") != null) if (request.getParameter("show").equals("all")) showall = true;
     %>
     <body topmargin="0" leftmargin="0" vlink="#0000FF" onload="load()">
@@ -298,15 +303,6 @@
                                             onClick="showpic('Layer1');" id="Calcs"><%=prefPharmacy%>
                                     </a></td>
                                 </tr>
-                                <indivo:indivoRegistered demographic="<%=String.valueOf(bean.getDemographicNo())%>"
-                                                         provider="<%=bean.getProviderNo()%>">
-                                    <tr>
-                                        <td colspan="3">
-                                            <a href="javascript: phrActionPopup('../oscarRx/SendToPhr.do?demoId=<%=Integer.toString(bean.getDemographicNo())%>', 'sendRxToPhr');">Send
-                                                To PHR</a>
-                                        </td>
-                                    </tr>
-                                </indivo:indivoRegistered>
 
                             </table>
                         </td>
@@ -325,12 +321,12 @@
                             <div style="height: 100px; overflow: auto; background-color: #DCDCDC; border: thin solid green; display: none;"
                                  id="reprint">
                                 <%
-                                    oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+                                    RxPrescriptionData.Prescription[] prescribedDrugs;
                                     prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
                                     String script_no = "";
 
                                     for (int i = 0; i < prescribedDrugs.length; i++) {
-                                        oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
+                                        RxPrescriptionData.Prescription drug = prescribedDrugs[i];
                                         if (drug.getScript_no() != null && script_no.equals(drug.getScript_no())) {
                                 %>
                                 <br>

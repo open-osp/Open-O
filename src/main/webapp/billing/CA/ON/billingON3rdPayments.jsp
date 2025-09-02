@@ -44,32 +44,33 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="java.math.*,java.util.*,java.sql.*,oscar.*,java.net.*,java.text.*"
+<%@ page import="java.math.*,java.util.*,java.sql.*,ca.openosp.*,java.net.*,java.text.*"
          errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.common.model.Site,org.oscarehr.common.dao.SiteDao" %>
-<%@page import="org.oscarehr.common.model.Provider,org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment,org.oscarehr.common.dao.BillingONPaymentDao" %>
-<%@page import="org.oscarehr.common.model.BillingPaymentType" %>
+<%@page import="ca.openosp.openo.commn.model.Site,ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider,ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment,ca.openosp.openo.commn.dao.BillingONPaymentDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingPaymentType" %>
 <%@page import="java.text.SimpleDateFormat,java.text.NumberFormat" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="org.springframework.web.context.WebApplicationContext" %>
 
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingONExtDao" %>
-<%@page import="org.oscarehr.common.model.BillingONExt" %>
-<%@page import="org.oscarehr.common.dao.BillingOnItemPaymentDao" %>
-<%@page import="org.oscarehr.billing.CA.ON.model.*" %>
-<%@page import="oscar.oscarBilling.ca.on.data.BillingItemData" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingONExtDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONExt" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingOnItemPaymentDao" %>
+<%@page import="ca.openosp.openo.billing.CA.ON.model.*" %>
+<%@page import="ca.openosp.openo.billings.ca.on.data.BillingItemData" %>
 <%@page import="java.math.BigDecimal" %>
-<%@page import="org.oscarehr.common.dao.BillingPaymentTypeDao" %>
-<%@page import="org.oscarehr.common.model.BillingPaymentType" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingPaymentTypeDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingPaymentType" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 <%
     List<String> errors = new ArrayList<String>();
     String datetime = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
     if (session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
     String providerNo = (String) session.getAttribute("user");
 

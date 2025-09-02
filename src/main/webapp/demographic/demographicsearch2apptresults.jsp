@@ -48,26 +48,28 @@
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedProvider" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.FacilityIdStringCompositePk" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedProvider" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 <%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="oscar.util.DateUtils" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.DemographicTransfer" %>
-<%@page import="org.oscarehr.caisi_integrator.ws.MatchingDemographicTransferScore" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.util.DateUtils" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicTransfer" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.MatchingDemographicTransferScore" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 
-<%@ page import="java.util.*, java.sql.*,java.net.*, oscar.*" errorPage="/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*,java.net.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="oscar.oscarDemographic.data.DemographicMerged" %>
-<%@page import="org.oscarehr.common.dao.OscarLogDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicMerged" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarLogDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.Misc" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 
 <%
@@ -402,7 +404,7 @@
 
                 <%
                     String ptstatus = request.getParameter("ptstatus") == null ? "active" : request.getParameter("ptstatus");
-                    org.oscarehr.util.MiscUtils.getLogger().debug("PSTATUS " + ptstatus);
+                    ca.openosp.openo.utility.MiscUtils.getLogger().debug("PSTATUS " + ptstatus);
 
                     int rowCounter = 0;
                     String bgColor = rowCounter % 2 == 0 ? "#EEEEFF" : "white";
@@ -570,7 +572,7 @@
                             providerPk.setIntegratorFacilityId(demographicTransfer.getIntegratorFacilityId());
                             providerPk.setCaisiItemId(demographicTransfer.getCaisiProviderId());
                             CachedProvider cachedProvider = CaisiIntegratorManager.getProvider(loggedInInfo, loggedInInfo.getCurrentFacility(), providerPk);
-                            MiscUtils.getLogger().debug("Cached provider, pk=" + providerPk.getIntegratorFacilityId() + "," + providerPk.getCaisiItemId() + ", cachedProvider=" + cachedProvider);
+                            MiscUtils.getLogger().debug("Cached providers, pk=" + providerPk.getIntegratorFacilityId() + "," + providerPk.getCaisiItemId() + ", cachedProvider=" + cachedProvider);
 
                             String providerName = "";
 
@@ -634,8 +636,11 @@
                         OscarProperties.getInstance().getProperty("caisi.search.workflow", "false").equals("true")) {
 
         %>
-        <a href="${pageContext.request.contextPath}/PMmodule/GenericIntake/Edit.do?method=create&type=quick&fromAppt=1" name="apptParamsName">
-            <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.search.btnCreateNew"/></a>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.search.noResultsWereFound"/>
+        <div class="createNew">
+            <a href="<%= request.getContextPath() %>/demographic/demographicaddarecordhtm.jsp?fromAppt=1&originalPage=<%=request.getParameter("originalPage")%>&search_mode=<%=Encode.forUriComponent(request.getParameter("search_mode"))%>&keyword=<%=Encode.forUriComponent(request.getParameter("keyword"))%>&notes=<%=Encode.forUriComponent(request.getParameter("notes"))%>&appointment_date=<%=request.getParameter("appointment_date")%>&year=<%=request.getParameter("year")%>&month=<%=request.getParameter("month")%>&day=<%=request.getParameter("day")%>&start_time=<%=request.getParameter("start_time")%>&end_time=<%=request.getParameter("end_time")%>&duration=<%=request.getParameter("duration")%>&bFirstDisp=false&provider_no=<%=request.getParameter("provider_no")%>&notes=<%=Encode.forUriComponent(request.getParameter("notes"))%>&reasonCode=<%=Encode.forUriComponent(request.getParameter("reasonCode"))%>&reason=<%=Encode.forUriComponent(request.getParameter("reason"))%>&location=<%=Encode.forUriComponent(request.getParameter("location"))%>&resources=<%=request.getParameter("resources")%>&type=<%=request.getParameter("type")%>&style=<%=request.getParameter("style")%>&billing=<%=request.getParameter("billing")%>&status=<%=Encode.forUriComponent(request.getParameter("status"))%>&createdatetime=<%=request.getParameter("createdatetime")%>&creator=<%=Encode.forUriComponent(request.getParameter("creator"))%>&remarks=<%=request.getParameter("remarks")%>">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.search.btnCreateNew"/></a>
+        </div>
         <%
         } else {
         %>

@@ -12,10 +12,10 @@
 When including the "inWindow" parameter as "true" it is assumed that tabletSignature.jsp
 is hosted in an IFrame and that the IFrame's parent window implements signatureHandler(e)
 --%>
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.ui.servlet.ImageRenderingServlet" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
 
 <!DOCTYPE html>
 <html lang="en">

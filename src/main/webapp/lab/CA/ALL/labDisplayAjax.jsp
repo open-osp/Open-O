@@ -24,34 +24,41 @@
 
 --%>
 
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.common.model.PatientLabRouting" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.oscarehr.common.dao.PatientLabRoutingDao" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
 <%@ page import="java.util.*,
                  java.sql.*,
-                 oscar.oscarDB.*,
-                 oscar.oscarLab.ca.all.*,
-                 oscar.oscarLab.ca.all.util.*,
-                 org.oscarehr.util.SpringUtils,
-                 oscar.oscarLab.ca.all.parsers.*,
-                 oscar.oscarLab.LabRequestReportLink,
-                 oscar.oscarMDS.data.ReportStatus,
-                 oscar.log.*,
-                 oscar.OscarProperties,
+                 ca.openosp.openo.db.*,
+                 ca.openosp.openo.lab.ca.all.*,
+                 ca.openosp.openo.lab.ca.all.util.*,
+                 ca.openosp.openo.utility.SpringUtils,
+                 ca.openosp.openo.lab.ca.all.parsers.*,
+                 ca.openosp.openo.lab.LabRequestReportLink,
+                 ca.openosp.openo.mds.data.ReportStatus,
+                 ca.openosp.openo.log.*,
+                 ca.openosp.OscarProperties,
                  org.apache.commons.codec.binary.Base64,
-                 org.oscarehr.common.dao.Hl7TextInfoDao,
-                 org.oscarehr.common.model.Hl7TextInfo,
-                 org.oscarehr.common.dao.UserPropertyDAO,
-                 org.oscarehr.common.model.UserProperty,
+                 ca.openosp.openo.commn.dao.Hl7TextInfoDao,
+                 ca.openosp.openo.commn.model.Hl7TextInfo,
+                 ca.openosp.openo.commn.dao.UserPropertyDAO,
+                 ca.openosp.openo.commn.model.UserProperty,
                  javax.swing.text.rtf.RTFEditorKit,
                  java.io.ByteArrayInputStream" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.parsers.MessageHandler" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.parsers.PATHL7Handler" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.parsers.ExcellerisOntarioHandler" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.parsers.Factory" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.AcknowledgementData" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProperties" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
@@ -70,7 +77,7 @@
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-    oscar.OscarProperties props = oscar.OscarProperties.getInstance();
+    OscarProperties props = OscarProperties.getInstance();
     String segmentID = request.getParameter("segmentID");
     String providerNo = request.getParameter("providerNo");
     String searchProviderNo = request.getParameter("searchProviderNo");
@@ -223,9 +230,6 @@
         window.open(link, "linkwin", "width=500, height=200");
     }
 
-    sendToPHR = function (labId, demographicNo) {
-        popup(300, 600, "<%=request.getContextPath()%>/phr/SendToPhrPreview.jsp?labId=" + labId + "&demographic_no=" + demographicNo, "sendtophr");
-    }
     popupStart = function (vheight, vwidth, varpage, windowname) {
         var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
         var popup = window.open(varpage, windowname, windowprops);
@@ -240,7 +244,7 @@
                 if (json != null) {
                     var success = json.isLinkedToDemographic;
                     var demoid = '';
-                    //check if lab is linked to a provider
+                    //check if lab is linked to a providers
                     if (success) {
                         if (action == 'ackLab') {
                             if (confirmAck()) {
@@ -1324,10 +1328,6 @@
 
                         <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                onClick="printPDF('<%=segmentID%>')">
-                        <indivo:indivoRegistered demographic="<%=demographicID%>" provider="<%=providerNo%>">
-                            <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnSendToPHR"/>"
-                                   onClick="sendToPHR('<%=segmentID%>', '<%=demographicID%>')">
-                        </indivo:indivoRegistered>
                         <% if (searchProviderNo != null) { // we were called from e-chart %>
                         <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "
                                onClick="popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=HL7&segmentID=<%= segmentID %>&name=<%=java.net.URLEncoder.encode(handler.getLastName()+", "+handler.getFirstName())%>', 'searchPatientWindow')">

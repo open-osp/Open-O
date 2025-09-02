@@ -11,7 +11,7 @@
 dojo.provide("dojo.widget.ShowSlide");
 
 dojo.require("dojo.widget.*");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 dojo.require("dojo.widget.HtmlWidget");
 dojo.require("dojo.lfx.html");
 dojo.require("dojo.html.display");

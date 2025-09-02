@@ -42,9 +42,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.BillingService;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.BillingService;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.commn.dao.BillingServiceDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class BillingServiceDaoTest extends DaoTestFixtures {
 
@@ -558,11 +559,11 @@ public class BillingServiceDaoTest extends DaoTestFixtures {
     //		// Region not null.
     //		BillingService billingService3 = createBillingServiceWithRegion(searchString, "ON", "20090101");
     //
-    //		dao.persist(billingService1);
-    //		dao.persist(billingService2);
-    //		dao.persist(billingService3);
+    //		daos.persist(billingService1);
+    //		daos.persist(billingService2);
+    //		daos.persist(billingService3);
     //
-    //		BillingService result = dao.searchPrivateBillingCode(searchString, date);
+    //		BillingService result = daos.searchPrivateBillingCode(searchString, date);
     //		BillingService expectedResult = billingService2;
     //
     //		assertEquals(expectedResult, result);
@@ -587,11 +588,11 @@ public class BillingServiceDaoTest extends DaoTestFixtures {
     //		// Region not null.
     //		BillingService billingService3 = createBillingServiceWithRegion(searchString, "ON", "20090101");
     //
-    //		dao.persist(billingService1);
-    //		dao.persist(billingService2);
-    //		dao.persist(billingService3);
+    //		daos.persist(billingService1);
+    //		daos.persist(billingService2);
+    //		daos.persist(billingService3);
     //
-    //		BillingService result = dao.searchPrivateBillingCode(searchString, date);
+    //		BillingService result = daos.searchPrivateBillingCode(searchString, date);
     //		BillingService expectedResult = billingService2;
     //
     //		assertEquals(expectedResult, result);
@@ -647,9 +648,9 @@ public class BillingServiceDaoTest extends DaoTestFixtures {
     //		String description = "New description";
     //		String termDate = "20091231";
     //		String region = "ON";
-    //		boolean pass = dao.insertBillingCode(code, date, description, termDate, region);
+    //		boolean pass = daos.insertBillingCode(code, date, description, termDate, region);
     //		assertTrue(pass);
-    //		BillingService billingService1 = dao.find(1);
+    //		BillingService billingService1 = daos.find(1);
     //		if (!billingService1.getServiceCode().equals(code) &&
     //				billingService1.getDescription().equals(description) &&
     //				billingService1.getTerminationDate() == new Date(dfm.parse(termDate).getTime()) &&
@@ -729,7 +730,7 @@ public class BillingServiceDaoTest extends DaoTestFixtures {
     //	public void testGetUnitPrice_ParseException() {
     //		String serviceCode = "service001";
     //		String referralDate = "notadate";
-    //		Object[] result = dao.getUnitPrice(serviceCode, referralDate);
+    //		Object[] result = daos.getUnitPrice(serviceCode, referralDate);
     //		// test incomplete
     //	}
 
@@ -768,7 +769,7 @@ public class BillingServiceDaoTest extends DaoTestFixtures {
     //	public void testGetUnitPercentage_ParseException() {
     //		String serviceCode = "service001";
     //		String referralDate = "notadate";
-    //		Object[] result = dao.getUnitPrice(serviceCode, referralDate);
+    //		Object[] result = daos.getUnitPrice(serviceCode, referralDate);
     //		// test incomplete
     //	}
 

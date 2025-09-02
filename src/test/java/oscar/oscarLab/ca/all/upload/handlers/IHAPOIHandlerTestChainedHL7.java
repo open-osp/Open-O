@@ -32,6 +32,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import ca.openosp.openo.lab.ca.all.upload.handlers.IHAPOIHandler;
 import org.apache.logging.log4j.Logger;
 
 import org.xml.sax.SAXException;
@@ -43,7 +44,7 @@ import org.xml.sax.SAXException;
  */
 public class IHAPOIHandlerTestChainedHL7 extends IHAPOIHandler {
 
-    private static Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+    private static Logger logger = ca.openosp.openo.utility.MiscUtils.getLogger();
     private static String TEST_FILE = "path to test file";
 
     // @Test

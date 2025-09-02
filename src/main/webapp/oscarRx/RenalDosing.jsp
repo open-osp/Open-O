@@ -24,12 +24,19 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page %>
-<%@page import="oscar.oscarDemographic.data.*,org.oscarehr.common.model.Demographic" %>
-<%@page import="oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler,java.util.*,oscar.oscarRx.util.*" %>
-<%@page import="oscar.oscarLab.ca.on.*,oscar.util.*,oscar.oscarLab.*" %>
+<%@page import="ca.openosp.openo.demographic.data.*,ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler,java.util.*,ca.openosp.openo.rx.util.*" %>
+<%@page import="ca.openosp.openo.lab.ca.on.*,ca.openosp.openo.util.*,ca.openosp.openo.lab.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.lab.SortHashtable" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabTestValues" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
+<%@ page import="ca.openosp.openo.prescript.util.RenalDosingFactory" %>
+<%@ page import="ca.openosp.openo.prescript.util.DosingRecomendation" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%

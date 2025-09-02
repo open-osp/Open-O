@@ -33,8 +33,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.View;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.View;
+import ca.openosp.openo.commn.dao.ViewDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class ViewDaoTest extends DaoTestFixtures {
 
@@ -88,14 +89,14 @@ public class ViewDaoTest extends DaoTestFixtures {
         view2.setProviderNo(null);
         dao.persist(view2);
 
-        //Provided provider number
+        //Provided providers number
         Map<String, View> expectedResult = new HashMap<String, View>();
         expectedResult.put(name1, view1);
         Map<String, View> result = dao.getView(viewName1, role1, providerNo1);
 
         assertEquals(expectedResult, result);
 
-        //No provider number provided
+        //No providers number provided
         Map<String, View> expectedResult2 = new HashMap<String, View>();
         expectedResult2.put(name2, view2);
         Map<String, View> result2 = dao.getView(viewName2, role2);

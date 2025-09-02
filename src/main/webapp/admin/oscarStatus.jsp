@@ -11,8 +11,8 @@
 <%@page contentType="text/html" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
-<%@page import="org.oscarehr.admin.traceability.BuildNumberPropertiesFileReader" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.admin.traceability.BuildNumberPropertiesFileReader" %>
 
 
 <%

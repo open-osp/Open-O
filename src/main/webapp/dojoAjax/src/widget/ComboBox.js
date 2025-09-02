@@ -23,7 +23,7 @@ dojo.declare(
     null,
     function (options) {
         // summary:
-        //		Reference implementation / interface for Combobox incremental data provider.
+        //		Reference implementation / interface for Combobox incremental data providers.
         //		This class takes a search string and returns values that match
         //		that search string.  The filtering of values (to find values matching given
         //		search string) is done on the server.
@@ -100,15 +100,15 @@ dojo.declare(
     null,
     function (/*Object*/ options, /*DomNode*/ node) {
         // summary:
-        //		Reference implementation / interface for Combobox data provider.
+        //		Reference implementation / interface for Combobox data providers.
         //		This class takes a search string and returns values that match
         //		that search string.    All possible values for the combobox are downloaded
         //		on initialization, and then startSearch() runs locally,
         //		merely filting that downloaded list, to find values matching search string
         //
-        //		NOTE: this data provider is designed as a naive reference
+        //		NOTE: this data providers is designed as a naive reference
         //		implementation, and as such it is written more for readability than
-        //		speed. A deployable data provider would implement lookups, search
+        //		speed. A deployable data providers would implement lookups, search
         //		caching (and invalidation), and a significantly less naive data
         //		structure for storage of items.
         //
@@ -288,11 +288,11 @@ dojo.widget.defineWidget(
         //		Auto-completing text box, and base class for Select widget.
         //
         //		The drop down box's values are populated from an class called
-        //		a data provider, which returns a list of values based on the characters
+        //		a data providers, which returns a list of values based on the characters
         //		that the user has typed into the input box.
         //
         //		Some of the options to the ComboBox are actually arguments to the data
-        //		provider.
+        //		providers.
 
         // forceValidOption: Boolean
         //		If true, only allow selection of strings in drop down list.
@@ -301,7 +301,7 @@ dojo.widget.defineWidget(
         forceValidOption: false,
 
         // searchType: String
-        //		Argument to data provider.
+        //		Argument to data providers.
         //		Specifies rule for matching typed in string w/list of available auto-completions.
         //			startString - look for auto-completions that start w/the specified string.
         //			subString - look for auto-completions containing the typed in string.
@@ -309,7 +309,7 @@ dojo.widget.defineWidget(
         searchType: "stringstart",
 
         // dataProvider: Object
-        //		(Read only) reference to data provider object created for this combobox
+        //		(Read only) reference to data providers object created for this combobox
         //		according to "dataProviderClass" argument.
         dataProvider: null,
 
@@ -325,8 +325,8 @@ dojo.widget.defineWidget(
         searchDelay: 100,
 
         // dataUrl: String
-        //		URL argument passed to data provider object (class name specified in "dataProviderClass")
-        //		An example of the URL format for the default data provider is
+        //		URL argument passed to data providers object (class name specified in "dataProviderClass")
+        //		An example of the URL format for the default data providers is
         //		"remoteComboBoxData.js?search=%{searchString}"
         dataUrl: "",
 
@@ -349,7 +349,7 @@ dojo.widget.defineWidget(
         selectedResult: null,
 
         // dataProviderClass: String
-        //		Name of data provider class (code that maps a search string to a list of values)
+        //		Name of data providers class (code that maps a search string to a list of values)
         //		The class must match the interface demonstrated by dojo.widget.incrementalComboBoxDataProvider
         dataProviderClass: "",
 
@@ -679,7 +679,7 @@ dojo.widget.defineWidget(
                 height = "0px";
             }
 
-            // Use specified data provider class; if no class is specified
+            // Use specified data providers class; if no class is specified
             // then use comboboxDataProvider or incrmentalComboBoxDataProvider
             // depending on setting of mode
             var dpClass;

@@ -12,7 +12,7 @@ dojo.provide("dojo.dnd.HtmlDragManager");
 dojo.require("dojo.dnd.DragAndDrop");
 dojo.require("dojo.event.*");
 dojo.require("dojo.lang.array");
-dojo.require("dojo.html.common");
+dojo.require("dojo.html.commons");
 dojo.require("dojo.html.layout");
 
 // NOTE: there will only ever be a single instance of HTMLDragManager, so it's

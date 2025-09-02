@@ -27,39 +27,40 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo" %>
-<%@page import="org.oscarehr.common.dao.DrugDao" %>
-<%@page import="org.oscarehr.common.model.Drug" %>
-<%@page import="org.oscarehr.common.model.PharmacyInfo" %>
-<%@page import="org.oscarehr.util.WebUtils" %>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@page import="oscar.oscarRx.data.*,oscar.oscarProvider.data.ProviderMyOscarIdData,oscar.oscarDemographic.data.DemographicData,oscar.OscarProperties,oscar.log.*" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DrugDao" %>
+<%@page import="ca.openosp.openo.commn.model.Drug" %>
+<%@page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@page import="ca.openosp.openo.rx.data.*,ca.openosp.openo.demographic.data.DemographicData,ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.*" %>
 <%@page import="java.util.Enumeration" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.casemgmt.web.PrescriptDrug" %>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="java.util.ArrayList,oscar.oscarRx.data.RxPrescriptionData" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean" %>
-<%@page import="org.oscarehr.study.StudyFactory, org.oscarehr.study.Study, org.oscarehr.study.types.MyMedsStudy" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@page import="org.oscarehr.casemgmt.model.Issue" %>
+<%@page import="ca.openosp.openo.casemgmt.web.PrescriptDrug" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="java.util.ArrayList,ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.casemgmt.model.Issue" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 
 <%
-    oscar.oscarRx.pageUtil.RxSessionBean bean = null;
+    RxSessionBean bean = null;
     String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
-    oscar.oscarRx.data.RxPatientData.Patient patient = (oscar.oscarRx.data.RxPatientData.Patient) request.getSession().getAttribute("Patient");
+    RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
 %>
 
 <%
@@ -72,7 +73,7 @@
 <%
         }
     }
-    com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+    SecurityManager securityManager = new SecurityManager();
 %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -97,7 +98,7 @@
 <c:if test="${not empty sessionScope.RxSessionBean}">
     <%
         // Directly access the RxSessionBean from the session
-        bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("RxSessionBean");
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
         if (bean != null && !bean.isValid()) {
             response.sendRedirect("error.html");
             return; // Ensure no further JSP processing
@@ -169,13 +170,13 @@
     }
     String[] d_route = ("Oral," + drugref_route).split(",");
 
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
+    String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
 
-    oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
+    RxPrescriptionData.Prescription[] prescribedDrugs;
     prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
     String script_no = "";
 
-    //This checks if the provider has the ExternalPresriber feature enabled, if so then a link appear for the provider to access the ExternalPrescriber
+    //This checks if the providers has the ExternalPresriber feature enabled, if so then a link appear for the providers to access the ExternalPrescriber
     ProviderPreference providerPreference = ProviderPreferencesUIBean.getProviderPreference(loggedInInfo.getLoggedInProviderNo());
 
     boolean eRxEnabled = false;
@@ -293,9 +294,7 @@
                 var url = "<c:out value="${ctx}"/>" + "/oscarRx/deleteRx.do?parameterValue=clearReRxDrugList";
                 var data = "rand=" + rand;
                 new Ajax.Request(url, {
-                    method: 'post', parameters: data, onSuccess: function (transport) {
-                        // updateCurrentInteractions();
-                    }
+                    method: 'post', parameters: data
                 });
             }
 
@@ -633,9 +632,7 @@
                 var data = "drugId=" + drugId + "&rand=" + Math.floor(Math.random() * 10001);
                 var url = '<c:out value="${ctx}"/>/oscarRx/rePrescribe2.do?method=saveReRxDrugIdToStash';
                 new Ajax.Updater('rxText', url, {
-                    method: 'get', parameters: data, evalScripts: true, insertion: Insertion.Bottom,
-                    onSuccess: function (transport) {
-                    }
+                    method: 'get', parameters: data, evalScripts: true, insertion: Insertion.Bottom
                 });
 
             }
@@ -945,12 +942,6 @@
                                             <input id="reset" type="button" class="ControlPushButton"
                                                    title="Clear pending prescriptions" onclick="resetStash();"
                                                    value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgResetPrescriptionRx3"/>"/>
-                                            <% if (!OscarProperties.getInstance().getProperty("rx.drugofchoice.hide", "false").equals("true")) { %>
-                                            <input type="button" class="ControlPushButton"
-                                                   onclick="callTreatments('searchString','treatmentsMyD')"
-                                                   value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgDrugOfChoiceRx3"/>"
-                                                   title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.DrugOfChoice"/>"/>
-                                            <%} %>
                                             <%if (OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")) {%>
                                             <a href="javascript:goOMD();"
                                                title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.OMD"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgOMDLookup"/></a>
@@ -1012,30 +1003,7 @@
                                                 <a href="javascript:popupWindow(720,920,'oscarRx/chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline
                                                     Drug Profile</a>
                                                 &nbsp;
-                                                <a href="javascript: void(0);"
-                                                   onclick="callReplacementWebService('GetmyDrugrefInfo.do?method=view','interactionsRxMyD');">DS
-                                                    run</a>
                                                 &nbsp;&nbsp;
-                                                <%
-                                                    if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                                                        MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                                                        boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demoNo));
-                                                        if (enabledMyOscarButton) {
-                                                            String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-                                                                    + "demographicId=" + demoNo + "&"
-                                                                    + "medicalDataType=Prescriptions" + "&"
-                                                                    + "parentPage=" + request.getRequestURI();
-                                                %>
-                                                <a href="<%=sendDataPath%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%>
-                                                </a>
-                                                <%
-                                                } else {
-                                                %>
-                                                <span style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-                                                <%
-                                                        }
-                                                    }
-                                                %>
                                             </div>
 
                                         </td>
@@ -1044,7 +1012,7 @@
                                             <td style="height: 150px; overflow: auto; border: thin solid #DCDCDC; display: none;" id="reprint">
 
                         <% for (int i = 0; prescribedDrugs.length > i; i++) {
-                                                        oscar.oscarRx.data.RxPrescriptionData.Prescription drug = prescribedDrugs[i];
+                                                        RxPrescriptionData.Prescription drug = prescribedDrugs[i];
                         %>
 
                                                     <%
@@ -1163,7 +1131,7 @@
                                                                             </td>
                                                                             <%
                                                                                 }
-                                                                                if (!OscarProperties.getInstance().getProperty("rx.profile_legend.hide", "false").equals("true")) {
+                                                                                if (!OscarProperties.getInstance().getProperty("prescript.profile_legend.hide", "false").equals("true")) {
 
                                                                                     if (longterm_acute) {
                                                                             %>
@@ -1259,18 +1227,12 @@
 
             </td>
             <td width="300px" valign="top">
-                <div id="interactionsRxMyD" style="float:right;"></div>
             </td>
         </tr>
 
     </table>
 
 
-    <div id="treatmentsMyD"
-         style="position: absolute; left: 1px; top: 1px; width: 800px; height: 600px; display:none; z-index: 1">
-        <a href="javascript: function myFunction() {return false; }" onclick="$('treatmentsMyD').toggle();"
-           style="text-decoration: none;">X</a>
-    </div>
 
 
     <div id="dragifm" style="top:0px;left:0px;"></div>
@@ -1313,7 +1275,7 @@
     <div id="themeLegend"
          style="position: absolute;display:none; width:500px;height:200px;background-color:white;padding:20px;border:1px solid grey">
         <a href="javascript:void(0);" class="currentDrug">Drug that is current</a><br/>
-        <%if (!OscarProperties.getInstance().getProperty("rx.delete_drug.hide", "false").equals("true")) {%>
+        <%if (!OscarProperties.getInstance().getProperty("prescript.delete_drug.hide", "false").equals("true")) {%>
         <a href="javascript:void(0);" class="archivedDrug">Drug that is archived</a><br/>
         <%} %>
         <a href="javascript:void(0);" class="expireInReference">Drug that is current but will expire within the
@@ -1633,9 +1595,6 @@
 
                     }
                 });
-                <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">
-                callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
-                </oscar:oscarPropertiesCheck>
             } else {
                 $("drugName_" + randomId).value = origDrugName;
             }
@@ -1645,9 +1604,7 @@
             var url = "<c:out value="${ctx}"/>" + "/oscarRx/deleteRx.do?parameterValue=clearStash";
             var data = "rand=" + Math.floor(Math.random() * 10001);
             new Ajax.Request(url, {
-                method: 'post', parameters: data, onSuccess: function (transport) {
-                    // updateCurrentInteractions();
-                }
+                method: 'post', parameters: data
             });
             $('rxText').innerHTML = "";//make pending prescriptions disappear.
             $("searchString").focus();
@@ -1659,7 +1616,6 @@
             new Ajax.Updater('rxText', url, {
                 method: 'get', parameters: data, asynchronous: true, evalScripts: true,
                 insertion: Insertion.Bottom, onSuccess: function (transport) {
-                    // updateCurrentInteractions();
                 }
             });
 
@@ -1691,7 +1647,6 @@
             var url = "<c:out value="${ctx}"/>" + "/oscarRx/rxStashDelete.do?parameterValue=deletePrescribe";
             new Ajax.Request(url, {
                 method: 'get', parameters: data, onSuccess: function (transport) {
-                    // updateCurrentInteractions();
                     if ($('deleteOnCloseRxBox').value == 'true') {
                         deleteRxOnCloseRxBox(randomId);
                     }
@@ -1718,7 +1673,6 @@
                         $(del).style.textDecoration = 'line-through';
                         $(discont).style.textDecoration = 'line-through';
                         $(prescrip).style.textDecoration = 'line-through';
-                        // updateCurrentInteractions();
                     }
                 }
             });
@@ -1786,7 +1740,6 @@
                         $(del).style.textDecoration = 'line-through';
                         $(discont).style.textDecoration = 'line-through';
                         $(prescrip).style.textDecoration = 'line-through';
-                        // updateCurrentInteractions();
                     }
                 });
             }
@@ -1889,32 +1842,11 @@
                     $('del_' + json.id).style.textDecoration = 'line-through';
                     $('discont_' + json.id).innerHTML = json.reason;
                     $('prescrip_' + json.id).style.textDecoration = 'line-through';
-                    // updateCurrentInteractions();
                 }
             });
 
         }
 
-        /*
-	     * deprecated: causes speed and accuracy issues.
-	     */
-        function updateCurrentInteractions() {
-            new Ajax.Request("GetmyDrugrefInfo.do?method=findInteractingDrugList&rand=" + Math.floor(Math.random() * 10001), {
-                method: 'get', onSuccess: function (transport) {
-                    new Ajax.Request("UpdateInteractingDrugs.jsp?rand=" + Math.floor(Math.random() * 10001), {
-                        method: 'get', onSuccess: function (transport) {
-                            var str = transport.responseText;
-                            str = str.replace('<script type="text/javascript">', '');
-                            str = str.replace(/<\/script>/, '');
-                            eval(str);
-                            <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">
-                            callReplacementWebService("GetmyDrugrefInfo.do?method=view&rand=" + Math.floor(Math.random() * 10001), 'interactionsRxMyD');
-                            </oscar:oscarPropertiesCheck>
-                        }
-                    });
-                }
-            });
-        }
 
         //represcribe long term meds
         function RePrescribeLongTerm() {
@@ -1925,10 +1857,7 @@
                 method: 'get',
                 parameters: data,
                 asynchronous: true,
-                insertion: Insertion.Bottom,
-                onSuccess: function (transport) {
-                    // updateCurrentInteractions();
-                }
+                insertion: Insertion.Bottom
             });
             return false;
         }
@@ -1989,9 +1918,7 @@
             var quantity = "quantity_" + rand;
             var repeat = "repeats_" + rand;
             new Ajax.Request(url, {
-                method: 'get', parameters: data, onSuccess: function (transport) {
-
-                }
+                method: 'get', parameters: data
             });
         }
 
@@ -2048,14 +1975,6 @@
             //oscarLog("bottom of popForm");
         }
 
-        function callTreatments(textId, id) {
-            var ele = $(textId);
-            var url = '<c:out value="${ctx}"/>/oscarRx/TreatmentMyD.jsp';
-            var ran_number = Math.round(Math.random() * 1000000);
-            var params = "demographicNo=<%=demoNo%>&cond=" + ele.value + "&rand=" + ran_number;  //hack to get around ie caching the page
-            new Ajax.Updater(id, url, {method: 'get', parameters: params, asynchronous: true});
-            $('treatmentsMyD').toggle();
-        }
 
         function callAdditionWebService(url, id) {
             var contextPath = '<c:out value="${ctx}"/>';
@@ -2083,9 +2002,6 @@
         }
 
         //callReplacementWebService("InteractionDisplay.jsp",'interactionsRx');
-        <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">
-        callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
-        </oscar:oscarPropertiesCheck>
         callReplacementWebService("ListDrugs.jsp", 'drugProfile');
 
         YAHOO.example.FnMultipleFields = function () {
@@ -2122,7 +2038,6 @@
                 new Ajax.Updater('rxText', url, {
                     method: 'get', parameters: params, evalScripts: true,
                     insertion: Insertion.Bottom, onSuccess: function (transport) {
-                        // updateCurrentInteractions();
                     }
                 });
 
@@ -2205,7 +2120,6 @@
                 numberOfHiddenResources = 0;
                 for (var i = 0; i < arr.length; i++) {
                     var element = arr[i];
-                    element = element.replace("mydrugref", "");
                     var elementArr = element.split("=");
                     var resId = elementArr[0];
                     var resUpdated = elementArr[1];
@@ -2221,7 +2135,6 @@
                 numberOfHiddenResources = 0
                 for (var i = 0; i < arr.length; i++) {
                     var element = arr[i];
-                    element = element.replace("mydrugref", "");
                     var elementArr = element.split("=");
                     var resId = elementArr[0];
                     var resUpdated = elementArr[1];
@@ -2256,42 +2169,6 @@
             }
         }
 
-        function ShowW(id, resourceId, updated) {
-
-            var params = "resId=" + resourceId + "&updatedat=" + updated
-            var url = '<c:out value="${ctx}"/>/oscarRx/GetmyDrugrefInfo.do?method=setWarningToShow&rand=' + Math.floor(Math.random() * 10001);
-            new Ajax.Updater('<c:out value="${ctx}"/>/oscarRx/showHideTotal', url, {
-                method: 'get',
-                parameters: params,
-                asynchronous: true,
-                evalScripts: true,
-                onSuccess: function (transport) {
-
-                    $(id).show();
-                    $('show_' + id).hide();
-
-                }
-            });
-        }
-
-        function HideW(id, resourceId, updated) {
-            var url = '<c:out value="${ctx}"/>/oscarRx/GetmyDrugrefInfo.do?method=setWarningToHide';
-            var ran_number = Math.round(Math.random() * 1000000);
-            var params = "resId=" + resourceId + "&updatedat=" + updated + "&rand=" + ran_number;  //hack to get around ie caching the page
-            //totalHiddenResources++;
-            new Ajax.Updater('oscarRxshowHideTotal', url, {
-                method: 'get',
-                parameters: params,
-                asynchronous: true,
-                evalScripts: true,
-                onSuccess: function (transport) {
-
-                    $(id).hide();
-                    $("show_" + id).show();
-
-                }
-            });
-        }
 
         function setSearchedDrug(drugId, name) {
             var url = '<c:out value="${ctx}"/>/oscarRx/WriteScript.do?parameterValue=createNewRx';
@@ -2303,10 +2180,7 @@
                 parameters: params,
                 asynchronous: true,
                 evalScripts: true,
-                insertion: Insertion.Bottom,
-                onSuccess: function (transport) {
-                    // updateCurrentInteractions();
-                }
+                insertion: Insertion.Bottom
             });
             $('searchString').value = "";
         }
@@ -2346,7 +2220,6 @@
                 new Ajax.Updater('rxText', url, {
                     method: 'get', parameters: data, asynchronous: false, evalScripts: true,
                     insertion: Insertion.Bottom, onSuccess: function (transport) {
-                        // updateCurrentInteractions();
                     }
                 });
             } else if (drugId != null) {
@@ -2359,7 +2232,6 @@
                 new Ajax.Updater('rxText', url, {
                     method: 'get', parameters: data, evalScripts: true,
                     insertion: Insertion.Bottom, onSuccess: function (transport) {
-                        // updateCurrentInteractions();
                     }
                 });
 
@@ -2436,7 +2308,6 @@ function rePrescribe2(uiRefId, drugId) {
     new Ajax.Updater('rxText', url, {
         method: 'get', parameters: data, evalScripts: true,
         insertion: Insertion.Bottom, onSuccess: function (transport) {
-            // updateCurrentInteractions();
         }
     });
 }
@@ -2446,7 +2317,6 @@ function rePrescribe2(uiRefId, drugId) {
         new Ajax.Updater('rxText', url, {
             method: 'get', asynchronous: false, evalScripts: true,
             insertion: Insertion.Bottom, onSuccess: function (transport) {
-                // updateCurrentInteractions();
             }
         });
 }
@@ -2798,11 +2668,11 @@ function getReRxCheckboxByUiRefId(uiRefId) {
 
 
     function updateSaveAllDrugsPrintCheckContinue() {
-        showUnstagedReRxConfirmation(updateSaveAllDrugsPrint);
+        updateSaveAllDrugsPrintContinue();
     }
 
     function updateSaveAllDrugsCheckContinue() {
-        showUnstagedReRxConfirmation(updateSaveAllDrugs);
+        updateSaveAllDrugsContinue();
     }
 
     const CONFIRMATION_MESSAGE = {
@@ -2834,12 +2704,7 @@ function getReRxCheckboxByUiRefId(uiRefId) {
     }
 
 <%
-		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(String.valueOf(bean.getDemographicNo()));
-		args.add(bean.getProviderNo());
-
-		Study myMeds = StudyFactory.getFactoryInstance().makeStudy(Study.MYMEDS, args);
-		out.write(myMeds.printInitcode());
+		// MyMeds study functionality removed
 %>
 
 

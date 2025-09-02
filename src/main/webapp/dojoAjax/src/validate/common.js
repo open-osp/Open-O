@@ -148,7 +148,7 @@ dojo.validate.isNumberFormat = function (/*String*/value, /*Object?*/flags) {
 //	Validates any sort of number based format
 //
 // description:
-//	Use it for phone numbers, social security numbers, zip-codes, etc.
+//	Use it for phone numbers, social sec numbers, zip-codes, etc.
 //	The value can be validated against one format or one of multiple formats.
 //
 //  Format
@@ -159,7 +159,7 @@ dojo.validate.isNumberFormat = function (/*String*/value, /*Object?*/flags) {
 //  Example   
 //    "(###) ###-####"       ->   (510) 542-9742
 //    "(###) ###-#### x#???" ->   (510) 542-9742 x153
-//    "###-##-####"          ->   506-82-1089       i.e. social security number
+//    "###-##-####"          ->   506-82-1089       i.e. social sec number
 //    "#####-####"           ->   98225-1649        i.e. zip code
 //
 // value: A string

@@ -41,7 +41,7 @@
 
 <%@page import="java.text.SimpleDateFormat" %>
 <%@ page
-        import="org.oscarehr.phr.util.MyOscarUtils,org.oscarehr.myoscar.utils.MyOscarLoggedInInfo,org.oscarehr.util.WebUtils" %>
+        import="ca.openosp.openo.utility.WebUtils" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -49,16 +49,20 @@
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page import="oscar.log.*" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="oscar.oscarLab.ca.all.*,oscar.oscarMDS.data.*" %>
-<%@page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.*,org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
-<%@ page import="org.oscarehr.documentManager.IncomingDocUtil" %>
+<%@ page import="ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.lab.ca.all.*,ca.openosp.openo.mds.data.*" %>
+<%@page import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.*,ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.documentManager.IncomingDocUtil" %>
+<%@ page import="ca.openosp.openo.log.LogAction" %>
+<%@ page import="ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.lab.ca.all.AcknowledgementData" %>
+<%@ page import="ca.openosp.openo.mds.data.ReportStatus" %>
+<%@ page import="ca.openosp.openo.commn.dao.*" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
 <%
 
     ProviderInboxRoutingDao providerInboxRoutingDao = SpringUtils.getBean(ProviderInboxRoutingDao.class);
@@ -110,8 +114,8 @@
 
     // Ensure that demographic id is not null, empty, or negative default value of "-1"
     if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")) {
-        // If demographic number does not equal to provider number (only for patient tickler), get the patient name
-        // Else get the provider name (only for doctor tickler)
+        // If demographic number does not equal to providers number (only for patient tickler), get the patient name
+        // Else get the providers name (only for doctor tickler)
         if (!demographicID.equals(providerNo)) {
             DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
             Demographic demographic = demographicDao.getDemographic(demographicID);
@@ -303,15 +307,6 @@
         <input type="submit" id="ackBtn_<%=docId%>"
                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
         <input type="button" value="Comment" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
-        <%
-            if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user"))) {
-                MyOscarLoggedInInfo myOscarLoggedInInfo = MyOscarLoggedInInfo.getLoggedInInfo(session);
-                boolean enabledMyOscarButton = MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demographicID));
-        %>
-        <input type="button" <%=WebUtils.getDisabledString(enabledMyOscarButton)%>
-               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnSendToPHR"/>"
-               onclick="popup(450, 600, '../phr/SendToPhrPreview.jsp?module=document&documentNo=<%=docId%>&demographic_no=<%=demographicID%>', 'sendtophr')"/>
-        <%}%>
         <%}%>
         <input type="button" id="fwdBtn_<%=docId%>" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.index.btnForward"/>"
                onClick="ForwardSelectedRows(<%=docId%> + ':DOC', null, null);">
@@ -334,15 +329,8 @@
                onclick="popupPatient(700,960,'${pageContext.servletContext.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=docId%>')" <%=btnDisabled %>/>
 
         <!--input type="button" id="ticklerBtn_<%=docId%>" value="Tickler" onclick="handleDocSave('<%=docId%>','addTickler')"/-->
+        <input type="button" id="mainTickler_<%=docId%>" value="Tickler" onClick="popupPatientTickler(710, 1024,'${pageContext.servletContext.contextPath}/tickler/ticklerAdd.jsp?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
         <%
-            if (org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()) {
-        %>
-        <input type="button" id="mainTickler_<%=docId%>" value="Tickler"
-               onClick="popupPatientTicklerPlus(710, 1024,'${pageContext.servletContext.contextPath}/Tickler.do?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
-        <% } else { %>
-                                                        <input type="button" id="mainTickler_<%=docId%>" value="Tickler" onClick="popupPatientTickler(710, 1024,'${pageContext.servletContext.contextPath}/tickler/ticklerAdd.jsp?', 'Tickler','<%=docId%>')" <%=btnDisabled %>>
-                                                        <% }
-
                                                             String refileBtnVisibility = "";
                                                             for (Hashtable ht : queues) {
                                                                 int id = (Integer) ht.get("id");
@@ -368,7 +356,7 @@
 
         <input type="button" id="refileDoc_<%=docId%>"
                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.noteBrowser.msgRefile"/>" onclick="refileDoc('<%=docId%>');" <%=refileBtnVisibility%> >
-        <select id="queueList_<%=docId%>" name="queueList">
+        <select id="queueList_<%=docId%>" name="queueList"
                 onchange="handleQueueListChange(this, document.getElementById('refileDoc_<%=docId%>'), '<%=docCurrentFiledQueue%>')">
             <%
                 for (Hashtable ht : queues) {
@@ -703,7 +691,7 @@
                             <td><%=prov == null ? "N/A" : prov.getFormattedName()%>
                             </td>
                             <td><% if (a.getStatus() == null) {%>
-                                "" <% } else if (a.getStatus().equals("N")) {%><fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.appt.ApptStatusData.msgNoShow"/><% } else if (a.getStatus().equals("C")) {%><fmt:setBundle basename="oscarResources"/><fmt:message key="oscar.appt.ApptStatusData.msgCanceled"/> <%}%>
+                                "" <% } else if (a.getStatus().equals("N")) {%><fmt:setBundle basename="oscarResources"/><fmt:message key="ca.openosp.openo.appt.ApptStatusData.msgNoShow"/><% } else if (a.getStatus().equals("C")) {%><fmt:setBundle basename="oscarResources"/><fmt:message key="ca.openosp.openo.appt.ApptStatusData.msgCanceled"/> <%}%>
                             </td>
                         </tr>
                         <%}%>
@@ -791,7 +779,7 @@
     jQuery(setupDemoAutoCompletion());
 
     function setupProviderAutoCompletion() {
-        var url = "${pageContext.servletContext.contextPath}/provider/SearchProvider.do?method=labSearch";
+        var url = "${pageContext.servletContext.contextPath}/providers/SearchProvider.do?method=labSearch";
 
         jQuery("#autocompleteprov<%=docId%>").autocomplete({
             source: url,

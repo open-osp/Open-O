@@ -25,11 +25,11 @@
 --%>
 
 
-<%@ page import="java.util.*,oscar.oscarReport.pageUtil.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.pageUtil.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<link rel="stylesheet" type="text/css" href="dxResearch.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/oscarResearch/oscarDxResearch/dxResearch.css">
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>

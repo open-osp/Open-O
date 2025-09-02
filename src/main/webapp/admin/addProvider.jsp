@@ -42,15 +42,15 @@
     }
 %>
 
-<%@ page import="oscar.oscarProvider.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.ProviderLabRoutingFavoritesDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderLabRoutingFavorite" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderLabRoutingFavoritesDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderLabRoutingFavorite" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 <html>
 <head>
@@ -71,7 +71,7 @@
         function preSubmit() {
 
             if ($('#fwdProviders').children('option').length == 0) {
-                alert("Please select a provider first.")
+                alert("Please select a providers first.")
                 return false;
             }
 
@@ -82,7 +82,7 @@
         $(document).ready(function () {
             $(document).tooltip();
 
-            var url = "${pageContext.request.contextPath}/provider/SearchProvider.do";
+            var url = "${pageContext.request.contextPath}/providers/SearchProvider.do";
             // as the standard autocomplete will do a ?term
             // we need to provide a call back that replaces it with ?query
             // as the standard autocomplete expects first level items

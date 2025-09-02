@@ -46,20 +46,22 @@
     <title></title>
 </head>
 <body>
-<%@ page import="oscar.*,java.text.*, java.util.*" %>
-<jsp:useBean id="billingItem" scope="page" class="oscar.BillingItemBean"/>
-<jsp:useBean id="billingBean" scope="session" class="oscar.BillingBean"/>
-<jsp:useBean id="billingDataBean" class="oscar.BillingDataBean" scope="session"/>
-<jsp:useBean id="billingPatientDataBean" class="oscar.BillingPatientDataBean" scope="session"/>
+<%@ page import="ca.openosp.*,java.text.*, java.util.*" %>
+<jsp:useBean id="billingItem" scope="page" class="ca.openosp.BillingItemBean"/>
+<jsp:useBean id="billingBean" scope="session" class="ca.openosp.BillingBean"/>
+<jsp:useBean id="billingDataBean" class="ca.openosp.BillingDataBean" scope="session"/>
+<jsp:useBean id="billingPatientDataBean" class="ca.openosp.BillingPatientDataBean" scope="session"/>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@ page import="org.oscarehr.common.model.RecycleBin" %>
-<%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RecycleBin" %>
+<%@ page import="ca.openosp.openo.commn.dao.RecycleBinDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.BillingItemBean" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
     BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
     RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);

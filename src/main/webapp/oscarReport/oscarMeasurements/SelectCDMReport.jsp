@@ -40,7 +40,7 @@
 %>
 
 <%@ page
-        import="java.util.*,oscar.oscarReport.oscarMeasurements.pageUtil.*" %>
+        import="java.util.*,ca.openosp.openo.report.oscarMeasurements.pageUtil.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

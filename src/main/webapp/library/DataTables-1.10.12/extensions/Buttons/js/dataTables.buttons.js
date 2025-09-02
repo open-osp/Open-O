@@ -1446,7 +1446,7 @@
         return this;
     });
 
-// Get data from the table for export - this is common to a number of plug-in
+// Get data from the table for export - this is commons to a number of plug-in
 // buttons so it is included in the Buttons core library
     DataTable.Api.register('buttons.exportData()', function (options) {
         if (this.context.length) {

@@ -24,32 +24,38 @@
 
 --%>
 <%@ page
-        import="oscar.oscarProvider.data.*, oscar.oscarRx.data.*,oscar.OscarProperties, oscar.oscarClinic.ClinicData, java.util.*" %>
+        import="ca.openosp.openo.providers.data.*, ca.openosp.openo.rx.data.*,ca.openosp.OscarProperties, ca.openosp.openo.clinic.ClinicData, java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
-<%! boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable(); %>
+<%@ page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.ui.servlet.ImageRenderingServlet" %>
+<%! boolean bMultisites = IsPropertiesOn.isMultisitesEnable(); %>
 
 
-<%@page import="org.oscarehr.common.dao.SiteDao" %>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@ page import="org.oscarehr.managers.FaxManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.openo.managers.FaxManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.common.model.*" %>
-<%@ page import="oscar.oscarProvider.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.PMmodule.service.ProviderManager" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.providers.data.ProSignatureData" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxProviderData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
 
 <%
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
@@ -92,7 +98,7 @@
             ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
         %>
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
             Provider provider = providerManager.getProvider(bean.getProviderNo());
             String providerFax = provider.getWorkPhone();
             if (providerFax == null) {
@@ -115,7 +121,7 @@
 
             String createAnewRx;
             if (reprint.equalsIgnoreCase("true")) {
-                bean = (oscar.oscarRx.pageUtil.RxSessionBean) session.getAttribute("tmpBeanRX");
+                bean = (RxSessionBean) session.getAttribute("tmpBeanRX");
                 createAnewRx = "window.location.href = '" + request.getContextPath() + "/oscarRx/SearchDrug.jsp'";
             } else {
                 createAnewRx = "javascript:clearPending('')";
@@ -135,7 +141,7 @@
                     if (result != null) location = result.getLocation();
                 }
 
-                oscar.oscarRx.data.RxProviderData.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+                RxProviderData.Provider rxprovider = new RxProviderData().getProvider(bean.getProviderNo());
                 ProSignatureData sig = new ProSignatureData();
                 boolean hasSig = sig.hasSignature(bean.getProviderNo());
                 String doctorName = "";
@@ -167,7 +173,7 @@
 
 
             } else if (props.getProperty("clinicSatelliteName") != null) {
-                oscar.oscarRx.data.RxProviderData.Provider rxprovider = new oscar.oscarRx.data.RxProviderData().getProvider(bean.getProviderNo());
+                RxProviderData.Provider rxprovider = new RxProviderData().getProvider(bean.getProviderNo());
                 ProSignatureData sig = new ProSignatureData();
                 boolean hasSig = sig.hasSignature(bean.getProviderNo());
                 String doctorName = "";
@@ -235,40 +241,20 @@
                 var data = "";
                 new Ajax.Request(url, {
                     method: 'post', parameters: data, onSuccess: function (transport) {
-                        updateCurrentInteractions();
+                        parent.document.getElementById('rxText').innerHTML = "";//make pending prescriptions disappear.
+                        parent.document.getElementById('searchString').focus();
                     }
                 });
-                parent.document.getElementById('rxText').innerHTML = "";//make pending prescriptions disappear.
-                parent.document.getElementById('searchString').focus();
             }
 
             function resetReRxDrugList() {
                 var url = "<c:out value="${ctx}"/>" + "/oscarRx/deleteRx.do?parameterValue=clearReRxDrugList";
                 var data = "";
                 new Ajax.Request(url, {
-                    method: 'post', parameters: data, onSuccess: function (transport) {
-                    }
+                    method: 'post', parameters: data
                 });
             }
 
-            function updateCurrentInteractions() {
-                new Ajax.Request("GetmyDrugrefInfo.do?method=findInteractingDrugList", {
-                    method: 'get', onSuccess: function (transport) {
-                        new Ajax.Request("UpdateInteractingDrugs.jsp", {
-                            method: 'get', onSuccess: function (transport) {
-                                var str = transport.responseText;
-                                str = str.replace('<script type="text/javascript">', '');
-                                str = str.replace(/<\/script>/, '');
-                                eval(str);
-                                //oscarLog("str="+str);
-                                <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">
-                                callReplacementWebService("GetmyDrugrefInfo.do?method=view", 'interactionsRxMyD');
-                                </oscar:oscarPropertiesCheck>
-                            }
-                        });
-                    }
-                });
-            }
 
             function onPrint2(method, scriptId) {
                 var useSC = false;
@@ -383,7 +369,7 @@
                             if(prefPharmacy!=null && prefPharmacy.trim()!=""){ %>
                     text += "<%=prefPharmacy%>\n"
                     <% } %>
-                    text += "****<%=Encode.forJavaScript(oscar.oscarProvider.data.ProviderData.getProviderName(bean.getProviderNo()))%>********************************************************************************\n";
+                    text += "****<%=Encode.forJavaScript(ProviderData.getProviderName(bean.getProviderNo()))%>********************************************************************************\n";
                     <% } %>
 
                     //we support pasting into orig encounter and new casemanagement
@@ -633,59 +619,8 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
 <body topmargin="0" leftmargin="0" vlink="#0000FF"
 	onload="addressSelect();printPharmacy('<%=prefPharmacyId%>');showFaxWarning();">
 
-    <!-- added by vic, hsfo -->
-    <%
-        int hsfo_patient_id = bean.getDemographicNo();
-        oscar.form.study.HSFO.HSFODAO hsfoDAO = new oscar.form.study.HSFO.HSFODAO();
-        int dx = hsfoDAO.retrievePatientDx(String.valueOf(hsfo_patient_id));
-        if (dx >= 0 && dx < 7) {
-            // dx>=0 means patient is enrolled in HSFO program
-            // dx==7 means patient has all 3 symptoms, according to hsfo requirement, stop showing the popup
-    %>
-    <script type="text/javascript" language="javascript">
-        function toggleView(form) {
-            var dxCode = (form.hsfo_Hypertension.checked ? 1 : 0) + (form.hsfo_Diabetes.checked ? 2 : 0) + (form.hsfo_Dyslipidemia.checked ? 4 : 0);
-            // send dx code to HsfoPreview.jsp so that it will be displayed and persisted there
-            document.getElementById("hsfoPop").style.display = "none";
-            document.getElementById("bodyView").style.display = "block";
-            document.getElementById("preview").src = "HsfoPreview.jsp?dxCode=" + dxCode;
-        }
-
-    </script>
-    <div id="hsfoPop"
-         style="border: ridge; background-color: ivory; width: 550px; height: 150px; position: absolute; left: 100px; top: 100px;">
-        <form name="hsfoForm">
-            <center><BR>
-                <table>
-                    <tr>
-                        <td colspan="3"><b>Please mark the corresponding symptom(s)
-                            for the enrolled patient.</b></td>
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" name="hsfo_Hypertension" value="1"
-                                <%= (dx&1)==0?"":"checked" %>> Hypertension
-                        </td>
-                        <td><input type="checkbox" name="hsfo_Diabetes" value="2"
-                                <%= (dx&2)==0?"":"checked" %>> Diabetes
-                        </td>
-                        <td><input type="checkbox" name="hsfo_Dyslipidemia" value="4"
-                                <%= (dx&4)==0?"":"checked" %>> Dyslipidemia
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" align="center">
-                            <hr>
-                            <input type="button" name="hsfo_submit" value="submit"
-                                   onclick="toggleView(this.form);"></td>
-                    </tr>
-                </table>
-            </center>
-        </form>
-    </div>
-    <div id="bodyView" style="display: none">
-                <% } else { %>
-        <div id="bodyView">
-            <% } %>
+    <!-- HSFO functionality removed -->
+    <div id="bodyView">
 
 
             <table border="0" cellpadding="0" cellspacing="0"
@@ -706,10 +641,10 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
 
                             <tr>
 				<td>
-                                    <div class="DivContentPadding"><!-- src modified by vic, hsfo -->
+                                    <div class="DivContentPadding">
 					<% if (bean.getStashSize() > 0) { %>
                                         <iframe id='preview' name='preview' width=420px height=890px
-							src="<%= dx<0?"oscarRx/Preview2.jsp?scriptId="+bean.getStashItem(0).getScript_no()+"&rePrint="+reprint+"&pharmacyId="+request.getParameter("pharmacyId"):dx==7?"HsfoPreview.jsp?dxCode=7":"about:blank" %>"
+							src="oscarRx/Preview2.jsp?scriptId=<%=bean.getStashItem(0).getScript_no()%>&rePrint=<%=reprint%>&pharmacyId=<%=request.getParameter("pharmacyId")%>"
 							align=center border=0 frameborder=0></iframe></div>
 					<% } %>
                                 </td>
@@ -919,7 +854,8 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
                                         </tr>
 
                                         <%}%>
-                                        <% if (OscarProperties.getInstance().isRxSignatureEnabled() && !OscarProperties.getInstance().getBooleanProperty("signature_tablet", "yes")) { %>
+                                        <% if (OscarProperties.getInstance().isRxSignatureEnabled()) { %>
+                                        <%-- Topaz signature pad check removed - HTML5 signature is now standard --%>
 						<% if (bean.getStashSize() == 0 || Objects.isNull(bean.getStashItem(0).getDigitalSignatureId())) { %>
                                         <tr>
                                             <td colspan=2 style="font-weight: bold"><span>Signature</span></td>
@@ -939,7 +875,7 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
                                         </tr>
                                         <%
                                             for (int i = 0; i < bean.getStashSize(); i++) {
-                                                oscar.oscarRx.data.RxPrescriptionData.Prescription rx
+                                                RxPrescriptionData.Prescription rx
                                                         = bean.getStashItem(i);
 
                                                 if (!rx.isCustom()) {

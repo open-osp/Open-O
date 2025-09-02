@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.Favorite;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.Favorite;
+import ca.openosp.openo.commn.dao.FavoriteDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class FavoriteDaoTest extends DaoTestFixtures {
 

@@ -38,12 +38,12 @@
     }
 %>
 
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LocaleUtils" %>
-<%@ page import="oscar.form.FrmRecord" %>
-<%@ page import="oscar.form.FrmRecordFactory" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LocaleUtils" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 
 <%
     String formClass = "IntakeHx";

@@ -67,7 +67,7 @@
 		<mkdir dir="${root_document}" />
 		<mkdir dir="${classes_document}" />
 
-		<!-- webapp filtering - splice version etc. into web files -->
+		<!-- webapp filtering - splice version etc. into www files -->
 		<filter token="project" value="${project}" />
 		<filter token="version" value="${version}" />
 		<filter token="date" value="${TODAY}" />
@@ -93,7 +93,7 @@
 		<delete dir="${ear}" />
 	</target>
 
-	<!-- <target name="web" depends="init">
+	<!-- <target name="www" depends="init">
   <javac 
 	 srcdir="${src_web}"
      excludes="oscar/oscarMessenger/**,oscar/form/study/**"

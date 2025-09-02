@@ -39,9 +39,11 @@
     }
 %>
 
-<%@ page import="oscar.form.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.form.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.encounter.util.EctFileUtil" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>
     <head>
@@ -59,7 +61,7 @@
                 temp = new StringBuffer(e.nextElement().toString());
                 props.setProperty(temp.toString(), request.getParameter(temp.toString()));
             }
-            oscar.oscarEncounter.util.EctFileUtil list = new oscar.oscarEncounter.util.EctFileUtil();
+            EctFileUtil list = new EctFileUtil();
 
             String projecthome = oscarVariables.getProperty("project_home");
             String path = "form/dataFiles";

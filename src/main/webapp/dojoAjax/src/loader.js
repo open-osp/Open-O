@@ -446,9 +446,9 @@ dojo.kwCompoundRequire = function (/*Object containing Arrays*/modMap) {
 // description:
 //	This method taks a "map" of arrays which one can use to optionally load dojo
 //	modules. The map is indexed by the possible dojo.hostenv.name_ values, with
-//	two additional values: "default" and "common". The items in the "default"
+//	two additional values: "default" and "commons". The items in the "default"
 //	array will be loaded if none of the other items have been choosen based on
-//	the hostenv.name_ item. The items in the "common" array will _always_ be
+//	the hostenv.name_ item. The items in the "commons" array will _always_ be
 //	loaded, regardless of which list is chosen.  Here's how it's normally
 //	called:
 //	
@@ -459,7 +459,7 @@ dojo.kwCompoundRequire = function (/*Object containing Arrays*/modMap) {
 //			"foo.test,
 //		],
 //		default: [ "foo.sample.*" ],
-//		common: [ "really.important.module.*" ]
+//		commons: [ "really.important.module.*" ]
 //	});
 
     var common = modMap["common"] || [];
@@ -519,7 +519,7 @@ dojo.provide = function (/*String*/ resourceName) {
     //
     //	For backwards compatibility reasons, in addition to registering the resource,
     //	dojo.provide() also ensures that the javascript object for the module exists.  For
-    //	example, dojo.provide("dojo.html.common"), in addition to registering that common.js
+    //	example, dojo.provide("dojo.html.commons"), in addition to registering that commons.js
     //	is a resource for the dojo.html module, will ensure that the dojo.html javascript object
     //	exists, so that calls like dojo.html.foo = function(){ ... } don't fail.
     //

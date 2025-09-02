@@ -40,11 +40,14 @@
     }
 %>
 
-<%@ page import=" oscar.form.*, java.util.Properties" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ page import=" ca.openosp.openo.form.*, java.util.Properties" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="oscar.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
 <%@ page import="java.sql.SQLException" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmBCAR2020Record" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -1881,7 +1884,7 @@
                                                         <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleDiet", "Diet/nutrition")%>
                                                         <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleExercise", "Exercise")%>
                                                         <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleFinancial", "Financial")%>
-                                                        <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleHousing", "Housing/food security")%>
+                                                        <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleHousing", "Housing/food sec")%>
                                                         <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleTransportation", "Transportation")%>
                                                         <%=((FrmBCAR2020Record) rec).createToggleOption(props, "lifestyleSafety", "Safety")%>
                                                         <tr>

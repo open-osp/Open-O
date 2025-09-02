@@ -42,9 +42,9 @@
 <%@ page import="java.io.*" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.eform.*" %>
-<%@ page import="oscar.eform.data.*" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.openo.eform.*" %>
+<%@ page import="ca.openosp.openo.eform.data.*" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <!--
 eForm Generator version 7.4 (C) Peter Hutten-Czapski 2014-2023
@@ -74,7 +74,8 @@ AGPL v2+
 and other liscences (MIT, LGPL etc) as indicated
 -->
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.eform.EFormLoader" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     boolean eformGeneratorIndivicaPrintEnabled = OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled");
@@ -1055,7 +1056,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "\tticklerToSend.priority = urgency;\n"
                 textTop += "\treturn $.ajax({\n"
                 textTop += "\t\ttype: 'POST',\n"
-                textTop += "\t\turl: '../ws/rs/tickler/add',\n"
+                textTop += "\t\turl: '../webserv/rs/tickler/add',\n"
                 textTop += "\t\tdataType:'json',\n"
                 textTop += "\t\tcontentType:'application/json',\n"
                 textTop += "\t\tdata: JSON.stringify(ticklerToSend)\n"

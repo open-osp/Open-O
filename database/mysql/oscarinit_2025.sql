@@ -869,7 +869,7 @@ ALTER TABLE emailLog ADD COLUMN internalComment BLOB DEFAULT '' AFTER chartDispl
 ALTER TABLE prescription ADD COLUMN digital_signature_id INT NULL DEFAULT NULL;
 
 --
--- Alter table structure for table security, added usingMfa and mfaSecret
+-- Alter table structure for table sec, added usingMfa and mfaSecret
 -- 
 ALTER TABLE security ADD usingMfa BOOL NOT NULL;
 ALTER TABLE security ADD mfaSecret VARCHAR(255);

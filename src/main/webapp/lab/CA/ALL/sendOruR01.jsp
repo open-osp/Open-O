@@ -40,11 +40,11 @@
 %>
 
 <!DOCTYPE html>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.oscarLab.ca.all.pageUtil.SendOruR01UIBean" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
-<%@page import="org.oscarehr.common.Gender" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.lab.ca.all.pageUtil.SendOruR01UIBean" %>
+<%@page import="ca.openosp.openo.commn.model.ProfessionalSpecialist" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.Gender" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <html>
 <head>
@@ -62,7 +62,7 @@
     <script>
         function checkRequiredFields() {
             if (jQuery("#professionalSpecialistId").val().length == 0) {
-                alert('Select a provider / specialist to send to.');
+                alert('Select a providers / specialist to send to.');
                 return (false);
             }
             if (jQuery("#clientFirstName").val().length == 0 || jQuery("#clientLastName").val().length == 0) {

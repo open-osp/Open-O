@@ -11,7 +11,7 @@
 dojo.provide("dojo.widget.IntegerTextbox");
 
 dojo.require("dojo.widget.ValidationTextbox");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 dojo.widget.defineWidget(
     "dojo.widget.IntegerTextbox",

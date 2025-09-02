@@ -25,7 +25,7 @@
 --%>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.Date" %>
-<%@page import="org.oscarehr.managers.LookupListManager" %>
+<%@page import="ca.openosp.openo.managers.LookupListManager" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
@@ -41,8 +41,8 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.SessionConstants" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%
     String curUser_no = (String) session.getAttribute("user");
     String str = null;
@@ -54,34 +54,29 @@
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page
-        import="java.util.*, oscar.*, oscar.oscarDemographic.data.ProvinceNames, oscar.oscarDemographic.pageUtil.Util, oscar.oscarWaitingList.WaitingList" %>
+        import="java.util.*, ca.openosp.*, ca.openosp.openo.demographic.data.ProvinceNames, ca.openosp.openo.demographic.pageUtil.Util, ca.openosp.openo.waitinglist.WaitingList" %>
 <%@ page
-        import="org.oscarehr.common.dao.*,org.oscarehr.common.model.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
-<%@page import="org.oscarehr.common.dao.ProfessionalSpecialistDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.WaitingListName" %>
-<%@page import="org.oscarehr.PMmodule.web.GenericIntakeEditAction" %>
-<%@page import="org.oscarehr.PMmodule.model.Program" %>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@page import="org.oscarehr.common.dao.WaitingListNameDao" %>
-<%@page import="org.oscarehr.common.dao.EFormDao" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao" %>
-<%@page import="org.oscarehr.common.model.Facility" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+        import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.managers.ProgramManager2" %>
-<%@page import="org.oscarehr.PMmodule.model.ProgramProvider" %>
+<%@page import="ca.openosp.openo.managers.ProgramManager2" %>
+<%@page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
 
-<%@page import="org.oscarehr.managers.PatientConsentManager" %>
+<%@page import="ca.openosp.openo.managers.PatientConsentManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.commn.Gender" %>
+<%@ page import="ca.openosp.openo.commn.dao.*" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.Misc" %>
 
-<jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session"/>
+<jsp:useBean id="apptMainBean" class="ca.openosp.AppointmentMainBean" scope="session"/>
 <%!
     ProfessionalSpecialistDao professionalSpecialistDao = (ProfessionalSpecialistDao) SpringUtils.getBean(ProfessionalSpecialistDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
@@ -417,12 +412,15 @@
 
 
             function checkResidentStatus() {
+                // If OSCAR program exists (ID 10034), make sure it or another program is selected
                 var rs = document.adddemographic.rsid.value;
-                if (rs != "") return true;
-                else {
-                    alert("you must choose a Residential Status");
-                    return false;
+                var oscarOption = document.querySelector('#rsid option[value="10034"]');
+                
+                if (oscarOption && rs == "") {
+                    // If OSCAR program exists but nothing selected, select OSCAR
+                    document.adddemographic.rsid.value = "10034";
                 }
+                return true;
             }
 
             function checkAllDate() {
@@ -1493,9 +1491,6 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                             <td id="emailLbl" align="right"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddrecordhtm.formEMail"/>: </b></td>
                             <td id="emailCell" align="left"><input type="text" id="email" name="email" value="">
                             </td>
-                            <td id="myOscarLbl" align="right"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddrecordhtm.formPHRUserName"/>:</b></td>
-                            <td id="myOscarCell" align="left"><input type="text" name="myOscarUserName" value="">
-                            </td>
                         </tr>
                         <tr valign="top">
                             <td id="dobLbl" align="right"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddrecordhtm.formDOB"/><span
@@ -1586,7 +1581,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
                                 <select name="sex" id="sex">
                                     <option value=""></option>
-                                    <% for (org.oscarehr.common.Gender gn : org.oscarehr.common.Gender.values()) { %>
+                                    <% for (Gender gn : Gender.values()) { %>
                                     <option value="<%=gn.name()%>" <%=((sex.toUpperCase().equals(gn.name())) ? "selected=\"selected\"" : "") %>><%=gn.getText()%>
                                     </option>
                                     <% } %>
@@ -2384,25 +2379,38 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                                         <th colspan="2" class="alignLeft">Program Admissions</th>
                                     </tr>
                                     <tr>
-                                        <td>Residential Status<span style="color:red;">:</span></td>
+                                        <td>Residential Status:</td>
                                         <td>Service Programs</td>
                                     </tr>
                                     <tr>
                                         <td>
                                             <select id="rsid" name="rps">
                                                 <%
-                                                    GenericIntakeEditAction gieat = new GenericIntakeEditAction();
-                                                    gieat.setProgramManager(pm);
-
                                                     String _pvid = loggedInInfo.getLoggedInProviderNo();
-                                                    Set<Program> pset = gieat.getActiveProviderProgramsInFacility(loggedInInfo, _pvid, loggedInInfo.getCurrentFacility().getId());
-                                                    List<Program> bedP = gieat.getBedPrograms(pset, _pvid);
-                                                    List<Program> commP = gieat.getCommunityPrograms();
-
-                                                    for (Program _p : bedP) {
+                                                    Program[] bedP = new Program[0];
+                                                    Program oscarProgram = programDao.getProgramByName("OSCAR");
+                                                    
+                                                    // Always use OSCAR program as default if it exists
+                                                    if (oscarProgram != null) {
                                                 %>
-                                                <option value="<%=_p.getId()%>" <%=("OSCAR".equals(_p.getName()) ? " selected=\"selected\" " : "")%> ><%=_p.getName()%>
-                                                </option>
+                                                <option value="<%=oscarProgram.getId()%>" selected="selected"><%=oscarProgram.getName()%></option>
+                                                <%
+                                                    }
+                                                    
+                                                    for (Program _p : bedP) {
+                                                        // Skip OSCAR program since we already added it
+                                                        if (oscarProgram != null && _p.getId().equals(oscarProgram.getId())) {
+                                                            continue;
+                                                        }
+                                                %>
+                                                <option value="<%=_p.getId()%>"><%=_p.getName()%></option>
+                                                <%
+                                                    }
+                                                    
+                                                    // If no OSCAR program and no bed programs, still need a value
+                                                    if (oscarProgram == null && bedP.length == 0) {
+                                                %>
+                                                <option value="">No programs available</option>
                                                 <%
                                                     }
                                                 %>
@@ -2411,7 +2419,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
                                         <td>
                                             <ul>
                                                 <%
-                                                    List<Program> servP = gieat.getServicePrograms(pset, _pvid);
+                                                    List<Program> servP = pm.getServicePrograms();
                                                     for (Program _p : servP) {
                                                 %>
                                                 <li>

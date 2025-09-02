@@ -43,7 +43,7 @@
 
 
 
-<%@ page import="oscar.oscarReport.oscarMeasurements.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.report.oscarMeasurements.pageUtil.*" %>
 <%@ page import="java.util.*, java.sql.*, java.text.*, java.net.*" %>
 <%
     GregorianCalendar now = new GregorianCalendar();

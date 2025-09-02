@@ -12,7 +12,7 @@ dojo.provide("dojo.rpc.JsonService");
 dojo.require("dojo.rpc.RpcService");
 dojo.require("dojo.io.*");
 dojo.require("dojo.json");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.rpc.JsonService = function (args) {
     // passing just the URL isn't terribly useful. It's expected that at

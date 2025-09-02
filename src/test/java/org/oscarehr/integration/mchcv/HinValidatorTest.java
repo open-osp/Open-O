@@ -27,6 +27,9 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 
 import ca.ontario.health.hcv.*;
+import ca.openosp.openo.integration.mchcv.HCValidationFactory;
+import ca.openosp.openo.integration.mchcv.HCValidationResult;
+import ca.openosp.openo.integration.mchcv.HCValidator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -112,7 +115,7 @@ public class HinValidatorTest {
         System.out.println(printOutput("testNOT_ON_ACTIVE_ROSTER", validationResult));
 
         assertEquals("102", validationResult.getFeeServiceResponseCode("P108"));
-        assertEquals("The FSC entered by the provider is not valid.", validationResult.getFeeServiceResponseDescription("P108"));
+        assertEquals("The FSC entered by the providers is not valid.", validationResult.getFeeServiceResponseDescription("P108"));
         assertNull(validationResult.getFeeServiceDate("P108"));
 
         assertEquals(true, isValid);

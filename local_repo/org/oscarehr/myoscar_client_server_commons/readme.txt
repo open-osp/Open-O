@@ -1,1 +1,0 @@
-The source for myoscar_client_server_commons is located on sourceforge under the myoscar project.

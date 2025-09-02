@@ -42,16 +42,16 @@
 <%@ include file="../admin/dbconnection.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.common.dao.ReportAgeSexDao" %>
-<%@page import="org.oscarehr.common.model.ReportAgeSex" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
+<%@page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicLocation" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.dao.ReportAgeSexDao" %>
+<%@page import="ca.openosp.openo.commn.model.ReportAgeSex" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%
     String user_no = (String) session.getAttribute("user");
     int nItems = 0;
@@ -165,7 +165,7 @@
                         <option value="" <%=providerview.equals("all") ? "selected" : ""%>>-------<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportAgeSex.formSelectProvider"/> ----------
                         </option>
                         <%
-                            // builds provider dropdown
+                            // builds providers dropdown
                             String proFirst = "";
                             String proLast = "";
                             String proOHIP = "";
@@ -182,7 +182,7 @@
                         <option value="<%=proOHIP%>"
                                 <%=providerview.equals(proOHIP) ? "selected" : ""%>><%=proLast%>,<%=proFirst%>
                         </option>
-                        <% } // -- end of provider dropdown %>
+                        <% } // -- end of providers dropdown %>
                     </select></div>
                 </td>
                 <td width="20%"><font color="#333333" size="2"

@@ -9,23 +9,24 @@
 
 --%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.olis.model.OLISResultNomenclature" %>
-<%@page import="org.oscarehr.olis.dao.OLISResultNomenclatureDao" %>
-<%@page import="org.oscarehr.common.model.OLISResults" %>
-<%@page import="org.oscarehr.common.dao.OLISResultsDao" %>
-<%@page import="oscar.log.LogAction" %>
-<%@page import="org.oscarehr.common.model.OscarLog" %>
+<%@page import="ca.openosp.openo.olis.model.OLISResultNomenclature" %>
+<%@page import="ca.openosp.openo.olis.dao.OLISResultNomenclatureDao" %>
+<%@page import="ca.openosp.openo.commn.model.OLISResults" %>
+<%@page import="ca.openosp.openo.commn.dao.OLISResultsDao" %>
+<%@page import="ca.openosp.openo.log.LogAction" %>
+<%@page import="ca.openosp.openo.commn.model.OscarLog" %>
 <%@page import="java.io.File" %>
-<%@page import="org.oscarehr.olis.OLISUtils" %>
-<%@page import="oscar.oscarLab.FileUploadCheck" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="oscar.oscarLab.ca.all.upload.MessageUploader" %>
-<%@page import="org.oscarehr.olis.model.OLISRequestNomenclature" %>
-<%@page import="org.oscarehr.olis.dao.OLISRequestNomenclatureDao" %>
+<%@page import="ca.openosp.openo.olis.OLISUtils" %>
+<%@page import="ca.openosp.openo.lab.FileUploadCheck" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.lab.ca.all.upload.MessageUploader" %>
+<%@page import="ca.openosp.openo.olis.model.OLISRequestNomenclature" %>
+<%@page import="ca.openosp.openo.olis.dao.OLISRequestNomenclatureDao" %>
 <%@ page language="java" contentType="text/html;" %>
-<%@page import="com.indivica.olis.queries.*,java.util.*,oscar.oscarLab.ca.all.parsers.Factory, oscar.oscarLab.ca.all.parsers.OLISHL7Handler, oscar.oscarLab.ca.all.parsers.OLISHL7Handler.OLISError, org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@ page import="org.oscarehr.olis.OLISResults2Action" %>
+<%@page import="com.indivica.olis.queries.*,java.util.*,ca.openosp.openo.lab.ca.all.parsers.Factory, ca.openosp.openo.lab.ca.all.parsers.OLISHL7Handler, ca.openosp.openo.lab.ca.all.parsers.OLISHL7Handler.OLISError, ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.openo.olis.OLISResults2Action" %>
+<%@ page import="ca.openosp.Misc" %>
 
 <%
     OLISResultsDao olisResultsDao = SpringUtils.getBean(OLISResultsDao.class);
@@ -155,7 +156,7 @@
         }
 
         function showMatch(name, uuid) {
-            popupPage(800, 1000, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&from=olis&segmentID=' + uuid + '&name=' + encodeURIComponent(name));
+            popupPage(800, 1000, '<%=request.getContextPath()%>/oscarMDS/SearchPatient.do?labType=HL7&from=olis1&segmentID=' + uuid + '&name=' + encodeURIComponent(name));
         }
 
         function updateLabDemoStatus2(uuid, demo) {
@@ -544,15 +545,15 @@
                         //		continue;
                         //	}
 
-                        String hcn = oscar.Misc.getStr(result.getHealthNum(), "").trim();
+                        String hcn = Misc.getStr(result.getHealthNum(), "").trim();
                         if (!hcn.equals("")) {
                             hcns.add(hcn);
                         }
-                        String name = oscar.Misc.getStr(result.getPatientName(), "").trim();
+                        String name = Misc.getStr(result.getPatientName(), "").trim();
                         if (!name.equals("")) {
                             names.add(name);
                         }
-                        String reportingLab = oscar.Misc.getStr(result.getReportingFacilityName(), "").trim();
+                        String reportingLab = Misc.getStr(result.getReportingFacilityName(), "").trim();
                         if (!reportingLab.equals("")) {
                             labs.add(reportingLab);
                         }
@@ -562,27 +563,27 @@
                                 categories.add(c);
                             }
                         }
-                        String performingLab = oscar.Misc.getStr(result.getPerformingFacilityNameOnly(), "").trim();
+                        String performingLab = Misc.getStr(result.getPerformingFacilityNameOnly(), "").trim();
                         if (!performingLab.equals("")) {
                             performingLabs.add(performingLab);
                         }
-                        String testRequestCode = oscar.Misc.getStr(result.getTestRequestCode(), "").trim();
+                        String testRequestCode = Misc.getStr(result.getTestRequestCode(), "").trim();
                         if (!testRequestCode.equals("")) {
                             testRequestCodes.add(testRequestCode);
                         }
-                        String abnormal = oscar.Misc.getStr(result.hasAbnormalResult() ? "true" : "false", "").trim();
+                        String abnormal = Misc.getStr(result.hasAbnormalResult() ? "true" : "false", "").trim();
                         if (!abnormal.equals("")) {
                             abnormals.add(abnormal);
                         }
 
-                        String resultStatus = oscar.Misc.getStr(result.getTestResultStatuses(), "").trim();
+                        String resultStatus = Misc.getStr(result.getTestResultStatuses(), "").trim();
                         for (String rs : resultStatus.split(",")) {
                             if (!rs.equals("")) {
                                 resultStatuses.add(rs);
                             }
                         }
 
-                        String orderStatus = oscar.Misc.getStr(result.getOrderStatus(), "").trim();
+                        String orderStatus = Misc.getStr(result.getOrderStatus(), "").trim();
                         for (String rs : orderStatus.split(",")) {
                             if (!rs.equals("")) {
                                 testRequestStatuses.add(rs);

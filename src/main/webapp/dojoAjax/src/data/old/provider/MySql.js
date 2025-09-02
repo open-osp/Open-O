@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.data.old.provider.MySql");
-dojo.require("dojo.data.old.provider.Base");
+dojo.require("dojo.data.old.providers.Base");
 
 // -------------------------------------------------------------------
 // Constructor
@@ -21,7 +21,7 @@ dojo.data.old.provider.MySql = function () {
      * on a server and and make the content records available as
      * dojo.data.old.Items.
      */
-    dojo.unimplemented('dojo.data.old.provider.MySql');
+    dojo.unimplemented('dojo.data.old.providers.MySql');
 };
 
 dojo.inherits(dojo.data.old.provider.MySql, dojo.data.old.provider.Base);

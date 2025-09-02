@@ -27,7 +27,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page
-        import="oscar.oscarRx.pageUtil.*,oscar.oscarRx.data.*,java.util.*" %>
+        import="ca.openosp.openo.rx.pageUtil.*,ca.openosp.openo.rx.data.*,java.util.*" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -91,7 +92,7 @@
                 <c:redirect url="error.html"/>
             </c:if>
         </c:if>
-        <% oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean"); %>
+        <% RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean"); %>
         <link rel="stylesheet" type="text/css" href="styles.css">
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">

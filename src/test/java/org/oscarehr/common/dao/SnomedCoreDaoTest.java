@@ -36,6 +36,6 @@ public class SnomedCoreDaoTest extends DaoTestFixtures {
 
 //	@Test
 //	public void testFindByCodingSystem() {
-//		dao.findByCodingSystem("CS");
+//		daos.findByCodingSystem("CS");
 //	}
 }

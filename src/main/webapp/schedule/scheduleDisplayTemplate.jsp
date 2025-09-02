@@ -24,15 +24,15 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.SessionConstants" %>
-<%@page import="org.oscarehr.common.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 <%@ page import="java.sql.*, java.util.*" %>
 <%@ page errorPage="/common/error.jsp" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplate" %>
-<%@page import="org.oscarehr.common.dao.ScheduleTemplateCodeDao" %>
-<%@page import="org.oscarehr.common.model.ScheduleTemplateCode" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>
+<%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateCodeDao" %>
+<%@page import="ca.openosp.openo.commn.model.ScheduleTemplateCode" %>
 <%
     ScheduleTemplateDao scheduleTemplateDao = SpringUtils.getBean(ScheduleTemplateDao.class);
     ScheduleTemplateCodeDao scheduleTemplateCodeDao = SpringUtils.getBean(ScheduleTemplateCodeDao.class);
@@ -40,7 +40,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 
-<jsp:useBean id="templateBean" class="oscar.ScheduleTemplateBean"
+<jsp:useBean id="templateBean" class="ca.openosp.ScheduleTemplateBean"
              scope="page"/>
 <jsp:useBean id="dateTimeCodeBean" class="java.util.Hashtable"
              scope="page"/>
@@ -58,7 +58,7 @@
 
     String bgcolordef = "#486ebd";
 
-    //First search for template where provider_no == provider and name is set
+    //First search for template where provider_no == providers and name is set
     if (sts.size() > 0) {
         dateTimeCodeBean.put(sts.get(0).getId().getProviderNo(), sts.get(0).getTimecode());
     } else {
@@ -95,7 +95,7 @@
                 minuteCursor = ih%60;
                 int nLen = 24*60 / ((String) dateTimeCodeBean.get(provider)).length();
                 int ratio = (hourCursor*60+minuteCursor)/nLen;
-                //hourmin = new StringBuffer((String)dateTimeCodeBean.get(((String) dateTimeCodeBean.get(provider)).substring(ratio,ratio+1)));
+                //hourmin = new StringBuffer((String)dateTimeCodeBean.get(((String) dateTimeCodeBean.get(providers)).substring(ratio,ratio+1)));
                 hourmin = new StringBuffer(hourCode.substring(ratio,ratio+1));
                 bColorHour=minuteCursor==0?true:false;
          %>

@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.lang.func");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 dojo.lang.hitch = function (/*Object*/thisObject, /*Function|String*/method) {
     // summary:

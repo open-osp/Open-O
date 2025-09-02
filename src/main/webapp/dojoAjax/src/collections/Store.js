@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.collections.Store");
-dojo.require("dojo.lang.common");
+dojo.require("dojo.lang.commons");
 
 /*	Store
  *	Designed to be a simple store of data with access methods...

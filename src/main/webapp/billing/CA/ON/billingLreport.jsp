@@ -14,8 +14,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="java.util.*,oscar.*,java.io.*,java.net.*,oscar.util.*,org.apache.commons.io.FileUtils"
+<%@ page import="java.util.*,ca.openosp.*,java.io.*,java.net.*,ca.openosp.openo.util.*,org.apache.commons.io.FileUtils"
          errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session"/>
 
 <html>

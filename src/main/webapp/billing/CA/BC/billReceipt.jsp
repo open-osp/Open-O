@@ -39,20 +39,29 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
     if (session.getValue("user") == null)
         response.sendRedirect("../logout.jsp");
 %>
-<%@page import="java.util.*, oscar.oscarDemographic.data.*" %>
-<%@page import="oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*,oscar.*,oscar.oscarClinic.*" %>
-<%@ page import="oscar.util.StringUtils" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
-<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
+<%@page import="java.util.*, ca.openosp.openo.demographic.data.*" %>
+<%@page import="ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.openo.billing.ca.bc.pageUtil.*,ca.openosp.*,ca.openosp.oscarClinic.*" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
+<%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
+<%@ page import="ca.openosp.openo.entities.BillHistory" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingBillingManager" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingViewBean" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingHistoryDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.clinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
     double totalPayments = 0;
@@ -61,8 +70,8 @@
     BillingHistoryDAO dao = new BillingHistoryDAO();
     BillingViewBean bean = (BillingViewBean) pageContext.findAttribute("billingViewBean");
     request.setAttribute("paymentTypes", bean.getPaymentTypes());
-    oscar.oscarDemographic.data.DemographicData demoData = new oscar.oscarDemographic.data.DemographicData();
-    org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getPatientNo());
+    DemographicData demoData = new DemographicData();
+    Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getPatientNo());
     List<BillingBillingManager.BillingItem> billItem = bean.getBillItem();
     BillingFormData billform = new BillingFormData();
     OscarProperties props = OscarProperties.getInstance();
@@ -494,7 +503,7 @@
                                                     String num = String.valueOf(bi.getLineNo());
                                                     List trans = dao.getBillHistory(num);
                                                     for (Iterator iter = trans.iterator(); iter.hasNext(); ) {
-                                                        oscar.entities.BillHistory item = (oscar.entities.BillHistory) iter.next();
+                                                        BillHistory item = (BillHistory) iter.next();
                                                         int paymentType = Integer.parseInt(item.getPaymentTypeId());
                                                         if (paymentType != 10) {
                                                             double amtReceived = item.getAmountReceived();

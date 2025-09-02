@@ -25,14 +25,14 @@
 --%>
 
 <%@page import="org.apache.commons.lang.StringUtils" %>
-<%@page import="org.oscarehr.PMmodule.model.VacancyTemplate" %>
-<%@page import="org.oscarehr.PMmodule.model.Criteria" %>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaType" %>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaTypeOption" %>
-<%@page import="org.oscarehr.PMmodule.service.VacancyTemplateManager" %>
-<%@page import="org.oscarehr.PMmodule.dao.CriteriaTypeDao" %>
-<%@page import="org.oscarehr.PMmodule.dao.CriteriaTypeOptionDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.model.VacancyTemplate" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Criteria" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaType" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaTypeOption" %>
+<%@page import="ca.openosp.openo.PMmodule.service.VacancyTemplateManager" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.CriteriaTypeDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.CriteriaTypeOptionDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
     CriteriaTypeDao criteriaTypeDAO = SpringUtils.getBean(CriteriaTypeDao.class);
     CriteriaTypeOptionDao criteriaTypeOptionDAO = SpringUtils.getBean(CriteriaTypeOptionDao.class);

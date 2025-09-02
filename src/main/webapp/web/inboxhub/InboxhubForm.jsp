@@ -18,16 +18,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 -->
 
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="oscar.oscarLab.ca.on.*" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
-<%@page import="org.oscarehr.util.MiscUtils,org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.apache.logging.log4j.Logger,org.oscarehr.common.dao.OscarLogDao,org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.inboxhub.query.InboxhubQuery" %>
-<%@ page import="oscar.oscarMDS.data.CategoryData" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils,org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.logging.log4j.Logger,ca.openosp.openo.commn.dao.OscarLogDao,ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.inboxhub.query.InboxhubQuery" %>
+<%@ page import="ca.openosp.openo.mds.data.CategoryData" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <fmt:setBundle basename="oscarResources"/>
@@ -556,7 +556,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
     function fetchInboxhubListData() {
         if (!hasMoreData || isFetchingData) { return; }
         isFetchingData = true; 
-        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/web/inboxhub/Inboxhub.do?method=displayInboxList";
+        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/www/inboxhub/Inboxhub.do?method=displayInboxList";
         currentFetchRequest = jQuery.ajax({
 			url: url,
 			method: 'POST',
@@ -580,7 +580,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
         if (!hasMoreData || isFetchingData) { return; }
         ShowSpin(true);
         isFetchingData = true;
-        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/web/inboxhub/Inboxhub.do?method=displayInboxView";
+        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/www/inboxhub/Inboxhub.do?method=displayInboxView";
         currentFetchRequest = jQuery.ajax({
 			url: url,
 			method: 'POST',
@@ -642,7 +642,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
     function autoCompleteProvider() {
         jQuery("#autocompleteProvider").autocomplete({
-            source: contextPath + "/provider/SearchProvider.do?method=labSearch",
+            source: contextPath + "/providers/SearchProvider.do?method=labSearch",
             minLength: 2,
             focus: function (event, ui) {
                 jQuery("#autocompleteProvider").val(ui.item.label);

@@ -13,11 +13,15 @@
     }
 %>
 
-<%@page import="oscar.OscarProperties" %>
-<%@ page import="oscar.util.*, oscar.form.*, oscar.form.data.*" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!--add for con report-->
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 
 
 <%
@@ -455,9 +459,6 @@
                         href="form/formonarpg3.jsp?demographic_no=<%=demoNo%>&formId=<%=formId%>&provNo=<%=provNo%>">AR2
                     <font size=-2>(pg.2)</font></a> |
                     <!--a href="javascript: popupFixedPage(700,950,'../decision/antenatal/antenatalplanner.jsp?demographic_no=<%--=demoNo%>&formId=<%=formId%>&provNo=<%=provNo--%>');">AR Planner</a-->
-                    <%if (((FrmONARRecord) rec).isSendToPing("" + demoNo)) { %> <a
-                            href="study/ar2ping.jsp?demographic_no=<%=demoNo%>">Send to PING</a>
-                    <% } %>
                 </td>
                 <%
                     }

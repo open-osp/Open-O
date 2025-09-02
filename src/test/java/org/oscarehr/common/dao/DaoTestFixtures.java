@@ -62,12 +62,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
 import org.oscarehr.common.dao.utils.ConfigUtils;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SpringUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class DaoTestFixtures {
@@ -100,14 +99,14 @@ public abstract class DaoTestFixtures {
 
         start = System.currentTimeMillis();
         if (SpringUtils.getBeanFactory() == null) {
-            oscar.OscarProperties p = oscar.OscarProperties.getInstance();
+            ca.openosp.OscarProperties p = ca.openosp.OscarProperties.getInstance();
             p.setProperty("db_name", ConfigUtils.getProperty("db_schema") + ConfigUtils.getProperty("db_schema_properties"));
             p.setProperty("db_username", ConfigUtils.getProperty("db_user"));
             p.setProperty("db_password", ConfigUtils.getProperty("db_password"));
             p.setProperty("db_uri", ConfigUtils.getProperty("db_url_prefix"));
             p.setProperty("db_driver", ConfigUtils.getProperty("db_driver"));
             ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext();
-            context.setConfigLocations(new String[]{"/applicationContext.xml", "/applicationContextBORN.xml"});
+            context.setConfigLocations(new String[]{"/applicationContext.xml"});
             context.refresh();
             SpringUtils.setBeanFactory(context);
         }
@@ -140,7 +139,7 @@ public abstract class DaoTestFixtures {
             }
 
             if (daoObject == null) {
-                logger.warn("Unable to find dao field of type " + clazz.getName());
+                logger.warn("Unable to find daos field of type " + clazz.getName());
                 return;
             }
 

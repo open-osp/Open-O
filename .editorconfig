@@ -1,8 +1,15 @@
-# .editorconfig
-root = true
-
-[*]
+[*.java]
 indent_style = space
 indent_size = 4
-insert_final_newline = true
-trim_trailing_whitespace = true
+ij_java_use_single_class_imports = true
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
+ij_java_imports_layout = *,|,javax.**,java.**,|,$*
+
+[*.{jsp,xml}]
+indent_style = space
+indent_size = 2
+
+[*.{js,css}]
+indent_style = space
+indent_size = 2

@@ -1,4 +1,7 @@
-<%--
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxDrugData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxCodesData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -47,19 +50,19 @@
             </c:if>
         </c:if>
         <%
-            oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+            RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
         %>
         <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
 
 
         <%
-            oscar.oscarRx.data.RxPrescriptionData rxData = new oscar.oscarRx.data.RxPrescriptionData();
-            oscar.oscarRx.data.RxDrugData drugData = new oscar.oscarRx.data.RxDrugData();
+            RxPrescriptionData rxData = new RxPrescriptionData();
+            RxDrugData drugData = new RxDrugData();
 
-            oscar.oscarRx.data.RxPrescriptionData.Favorite[] favorites = rxData.getFavorites(bean.getProviderNo());
-            oscar.oscarRx.data.RxPrescriptionData.Favorite f;
+            RxPrescriptionData.Favorite[] favorites = rxData.getFavorites(bean.getProviderNo());
+            RxPrescriptionData.Favorite f;
 
-            oscar.oscarRx.data.RxCodesData.FrequencyCode[] freq = new oscar.oscarRx.data.RxCodesData().getFrequencyCodes();
+            RxCodesData.FrequencyCode[] freq = new RxCodesData().getFrequencyCodes();
 
             int i, j;
         %>

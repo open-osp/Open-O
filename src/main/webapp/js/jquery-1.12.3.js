@@ -1428,7 +1428,7 @@
                         }
 
                         return i ?
-                            // Do a sibling check if the nodes have a common ancestor
+                            // Do a sibling check if the nodes have a commons ancestor
                             siblingCheck(ap[i], bp[i]) :
 
                             // Otherwise nodes in our document sort first
@@ -8229,7 +8229,7 @@
 
                     return typeof ret === "string" ?
 
-                        // handle most common string cases
+                        // handle most commons string cases
                         ret.replace(rreturn, "") :
 
                         // handle cases where value is null/undef or number
@@ -10646,7 +10646,7 @@
     };
 
 
-// Attach a bunch of functions for handling common AJAX events
+// Attach a bunch of functions for handling commons AJAX events
     jQuery.each([
         "ajaxStart",
         "ajaxStop",

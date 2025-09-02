@@ -21,14 +21,16 @@
     String deepcolor = "#CCCCFF", weakcolor = "#EEEEFF";
 %>
 <%@ page
-        import="java.util.*, java.sql.*, oscar.*, java.text.*, oscar.oscarDB.*,java.net.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, ca.openosp.openo.db.*,java.net.*"
         errorPage="../appointment/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandler" %>
+<%@ page import="ca.openosp.openo.db.DBPreparedHandlerParam" %>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>PATIENT NO SHOW LIST</title>
     <meta http-equiv=Expires content=-1>
-    <!--link rel="stylesheet" href="<%= request.getContextPath() %>/web.css" -->
+    <!--link rel="stylesheet" href="<%= request.getContextPath() %>/www.css" -->
     <script language="JavaScript">
         <!--
         function setfocus() {
@@ -61,19 +63,19 @@
     params[1] = new DBPreparedHandlerParam(MyDateFormat.getSysDate(edate));
 
 // get nurse name list
-    String sql = "select provider_no, last_name, first_name from provider where provider_type like 'nurse%'";
+    String sql = "select provider_no, last_name, first_name from providers where provider_type like 'nurse%'";
     ResultSet rs = db.queryResults(sql, params);
     while (rs.next()) {
-        vNurse.add(oscar.Misc.getString(rs, "last_name") + ", " + oscar.Misc.getString(rs, "first_name"));
-        vNurseNo.add(oscar.Misc.getString(rs, "provider_no"));
+        vNurse.add(ca.openosp.Misc.getString(rs, "last_name") + ", " + ca.openosp.Misc.getString(rs, "first_name"));
+        vNurseNo.add(ca.openosp.Misc.getString(rs, "provider_no"));
     }
 
 // get service code list
     sql = "select distinct(bd.diagnostic_code), dt.description from billingdetail bd, diagnosticcode dt where bd.status!='D' and bd.diagnostic_code = dt.diagnostic_code and bd.appointment_date>=? and bd.appointment_date<=? order by diagnostic_code";
     rs = db.queryResults(sql, params);
     while (rs.next()) {
-        vServiceCode.add(oscar.Misc.getString(rs, "bd.diagnostic_code"));
-        vServiceDesc.add(oscar.Misc.getString(rs, "dt.description"));
+        vServiceCode.add(ca.openosp.Misc.getString(rs, "bd.diagnostic_code"));
+        vServiceDesc.add(ca.openosp.Misc.getString(rs, "dt.description"));
     }
 
     for (int i = 0; i < vServiceCode.size(); i++) {
@@ -81,7 +83,7 @@
         sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd where b.billing_no=bd.billing_no  and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "pat" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.demographic_no))"));
+            props.setProperty(vServiceCode.get(i) + "pat" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.demographic_no))"));
         }
 
 /*
@@ -95,7 +97,7 @@
         sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd where b.billing_no=bd.billing_no  and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "vis" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.billing_no))"));
+            props.setProperty(vServiceCode.get(i) + "vis" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.billing_no))"));
         }
 
 /*
@@ -106,10 +108,10 @@
 */
 
         // get pat Physician
-        sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd, provider p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='doctor'";
+        sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd, providers p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='doctor'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "patPhy" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.demographic_no))"));
+            props.setProperty(vServiceCode.get(i) + "patPhy" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.demographic_no))"));
         }
 
 /*
@@ -120,10 +122,10 @@
 */
 
         // get vis Physician
-        sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd, provider p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='doctor'";
+        sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd, providers p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='doctor'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "visPhy" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.billing_no))"));
+            props.setProperty(vServiceCode.get(i) + "visPhy" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.billing_no))"));
         }
 
 /*
@@ -134,10 +136,10 @@
 */
 
         // get pat Resident
-        sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd, provider p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='resident'";
+        sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd, providers p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='resident'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "patRes" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.demographic_no))"));
+            props.setProperty(vServiceCode.get(i) + "patRes" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.demographic_no))"));
         }
 
 /*
@@ -148,10 +150,10 @@
 */
 
         // get vis Resident
-        sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd, provider p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='resident'";
+        sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd, providers p where b.billing_no=bd.billing_no and b.creator=p.provider_no and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D' and bd.diagnostic_code='" + vServiceCode.get(i) + "' and  p.provider_type='resident'";
         rs = db.queryResults(sql, params);
         while (rs.next()) {
-            props.setProperty(vServiceCode.get(i) + "visRes" + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.billing_no))"));
+            props.setProperty(vServiceCode.get(i) + "visRes" + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.billing_no))"));
         }
 
 /*
@@ -166,7 +168,7 @@
             sql = "select count(distinct(b.demographic_no)) from billing b, billingdetail bd  where b.billing_no=bd.billing_no and bd.diagnostic_code='" + vServiceCode.get(i) + "' and b.creator='" + vNurseNo.get(j) + "' and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D'";
             rs = db.queryResults(sql, params);
             while (rs.next()) {
-                props.setProperty(vServiceCode.get(i) + "patNurse" + j + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.demographic_no))"));
+                props.setProperty(vServiceCode.get(i) + "patNurse" + j + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.demographic_no))"));
             }
 
 /*
@@ -179,7 +181,7 @@
             sql = "select count(distinct(b.billing_no)) from billing b, billingdetail bd  where b.billing_no=bd.billing_no and bd.diagnostic_code='" + vServiceCode.get(i) + "' and b.creator='" + vNurseNo.get(j) + "' and b.billing_date>=? and b.billing_date<=? and b.status!='D' and bd.status!='D'";
             rs = db.queryResults(sql, params);
             while (rs.next()) {
-                props.setProperty(vServiceCode.get(i) + "visNurse" + j + vServiceDesc.get(i), oscar.Misc.getString(rs, "count(distinct(b.billing_no))"));
+                props.setProperty(vServiceCode.get(i) + "visNurse" + j + vServiceDesc.get(i), ca.openosp.Misc.getString(rs, "count(distinct(b.billing_no))"));
             }
 /*
 		out.println("<hr>");

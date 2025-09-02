@@ -639,7 +639,7 @@
     };
 
 
-// Basic initialisation for the buttons is common between them
+// Basic initialisation for the buttons is commons between them
     var flashButton = {
         available: function () {
             return ZeroClipboard_TableTools.hasFlash();

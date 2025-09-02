@@ -39,22 +39,25 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.common.dao.ConsultationRequestDao" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.commn.dao.ConsultationRequestDao" %>
 
-<%@ page import="oscar.oscarEncounter.pageUtil.*,java.text.*,java.util.*" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.*,java.text.*,java.util.*" %>
 <%@ page import="java.sql.ResultSet" %>
 <%@ page
-        import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty, org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+        import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.openo.commn.model.UserProperty, org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@ page import="org.oscarehr.common.model.Site" %>
-<%@ page import="org.oscarehr.common.dao.SiteDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
 
-<%@ page import="org.oscarehr.common.model.ProviderData" %>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
 
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -64,7 +67,7 @@
 
     boolean isSiteAccessPrivacy = false;
     boolean isTeamAccessPrivacy = false;
-    boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
+    boolean bMultisites = IsPropertiesOn.isMultisitesEnable();
     List<String> mgrSite = new ArrayList<String>();
 
     ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
@@ -175,8 +178,8 @@
             searchDate = "0";
         }
 
-        oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil consultUtil;
-        consultUtil = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil();
+        EctConsultationFormRequestUtil consultUtil;
+        consultUtil = new EctConsultationFormRequestUtil();
 
         if (isTeamAccessPrivacy) {
             consultUtil.estTeamsByTeam(curProvider_no);
@@ -455,8 +458,8 @@ background-color:rgb(212, 212, 254);
                                     <%} %>
                                 </tr>
                                 <%
-                                    oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil theRequests;
-                                    theRequests = new oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil();
+                                    EctViewConsultationRequestsUtil theRequests;
+                                    theRequests = new EctViewConsultationRequestsUtil();
                                     theRequests.estConsultationVecByTeam(LoggedInInfo.getLoggedInInfoFromSession(request), team, includeCompleted, startDate, endDate, orderby, desc, searchDate, offset, limit);
                                     boolean overdue;
                                     UserPropertyDAO pref = (UserPropertyDAO) WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext()).getBean(UserPropertyDAO.class);

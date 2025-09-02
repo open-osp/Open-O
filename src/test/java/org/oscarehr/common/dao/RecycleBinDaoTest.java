@@ -29,8 +29,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.EntityDataGenerator;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.common.model.RecycleBin;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.model.RecycleBin;
+import ca.openosp.openo.commn.dao.RecycleBinDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class RecycleBinDaoTest extends DaoTestFixtures {
 

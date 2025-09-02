@@ -31,7 +31,8 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.oscarehr.common.dao.utils.SchemaUtils;
-import org.oscarehr.util.SpringUtils;
+import ca.openosp.openo.commn.dao.MdsOBRDao;
+import ca.openosp.openo.utility.SpringUtils;
 
 public class MdsOBRDaoTest extends DaoTestFixtures {
 

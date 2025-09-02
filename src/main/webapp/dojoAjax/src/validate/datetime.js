@@ -9,7 +9,7 @@
 */
 
 dojo.provide("dojo.validate.datetime");
-dojo.require("dojo.validate.common");
+dojo.require("dojo.validate.commons");
 
 /**
  Validates a time value in any International format.

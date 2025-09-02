@@ -25,9 +25,9 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="oscar.oscarEncounter.pageUtil.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.pageUtil.*" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.bean.*" %>
+<%@ page import="ca.openosp.openo.encounter.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.*" %>
 <%@ page import="java.util.Vector" %>
 <%
     java.text.SimpleDateFormat sf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -24,30 +24,25 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.MiscUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="org.oscarehr.PMmodule.web.utils.UserRoleUtils" %>
-<%@ page import="org.oscarehr.util.SessionConstants" %>
-<%@ page import="java.util.*,java.net.*, oscar.util.*"
+<%@ page import="ca.openosp.openo.PMmodule.web.utils.UserRoleUtils" %>
+<%@ page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ page import="java.util.*,java.net.*, ca.openosp.openo.util.*"
          errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.util.UtilDict" %>
 
 <caisi:isModuleLoad moduleName="caisi">
     <%
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        String isOscar = request.getParameter("infirmaryView_isOscar");
-        if (session.getAttribute("infirmaryView_isOscar") == null) isOscar = "false";
-        if (isOscar != null) session.setAttribute("infirmaryView_isOscar", isOscar);
         if (request.getParameter(SessionConstants.CURRENT_PROGRAM_ID) != null) {
             session.setAttribute(SessionConstants.CURRENT_PROGRAM_ID, request.getParameter(SessionConstants.CURRENT_PROGRAM_ID));
-            org.caisi.core.web.Infirm2Action.updateCurrentProgram(request.getParameter(SessionConstants.CURRENT_PROGRAM_ID), loggedInInfo.getLoggedInProviderNo());
         }
-        session.setAttribute("infirmaryView_OscarURL", request.getRequestURL());
-
-    %><c:import url="/infirm.do?action=getSig"/>
+    %>
 </caisi:isModuleLoad>
 
 <%

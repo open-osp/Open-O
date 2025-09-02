@@ -42,7 +42,7 @@
 %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.oscarReport.reportByTemplate.*" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -65,12 +65,7 @@
             <input type="hidden" name="status" id="status" value="A"/>
             <input type="hidden" name="method" id="method" value="update"/>
 
-            <div class="control-group">
-                <label class="control-label" for="clinic.clinicName"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.k2a.clinicName"/></label>
-                <div class="controls">
-                    <input type="text" name="clinic.clinicName" id="clinic.clinicName" />
-                </div>
-            </div>
+            <!-- K2A clinic name field removed -->
             <div class="control-group">
                 <label class="control-label" for="clinic.clinicAddress"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formAddress"/></label>
                 <div class="controls">
