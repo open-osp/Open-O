@@ -988,6 +988,7 @@
 		</action>
 		<action input="/oscarRx/SearchDrug3.jsp" path="/oscarRx/UpdateScript" scope="request" parameter="parameterValue" type="oscar.oscarRx.pageUtil.RxWriteScriptAction">
 		</action>
+		<action input="/oscarRx/prescribe.jsp" path="/oscarRx/search" scope="request" parameter="method" type="oscar.oscarRx.pageUtil.RxWriteScriptAction"/>
 		<!--action input="/oscarRx/WriteScript.jsp" name="RxStashForm" path="/oscarRx/stash" scope="request" type="oscar.oscarRx.pageUtil.RxStashAction">
             <forward name="success" path="/oscarRx/WriteScript.jsp" />
         </action-->
