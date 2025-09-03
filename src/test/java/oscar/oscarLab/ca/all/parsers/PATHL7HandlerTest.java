@@ -23,29 +23,8 @@
  */
 package oscar.oscarLab.ca.all.parsers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import ca.uhn.hl7v2.HL7Exception;
+import junit.framework.Assert;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
@@ -57,8 +36,19 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import ca.uhn.hl7v2.HL7Exception;
-import junit.framework.Assert;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * AKA Excelleris BC lab handler test.
@@ -322,35 +312,59 @@ public class PATHL7HandlerTest {
 	}
 
 	@Test
+	public void testFormatDateTime() {
+		logger.info("testFormatDateTime()");
+
+		Assert.assertEquals("2025-01-01 12:34:56", PATHL7Handler.formatDateTime("20250101123456"));
+		Assert.assertEquals("2025-01-01 12:34:00", PATHL7Handler.formatDateTime("202501011234"));
+		Assert.assertEquals("2025-01-01 12:00:01", PATHL7Handler.formatDateTime("2025010112"));
+		Assert.assertEquals("2025-01-01 00:01:00", PATHL7Handler.formatDateTime("20250101"));
+		Assert.assertEquals("2025-01-01 12:34:56", PATHL7Handler.formatDateTime("2025/01/01 12:34:56"));
+		Assert.assertEquals("2025-01-01 12:34:00", PATHL7Handler.formatDateTime("2025/01/01 12:34"));
+		Assert.assertEquals("2025-01-01 00:00:00", PATHL7Handler.formatDateTime("2025/01/01"));
+		Assert.assertEquals("2025-01-01 12:34:56", PATHL7Handler.formatDateTime("01/01/2025 12:34:56"));
+		Assert.assertEquals("2025-01-01 12:34:00", PATHL7Handler.formatDateTime("01/01/2025 12:34"));
+		Assert.assertEquals("2025-01-01 00:00:00", PATHL7Handler.formatDateTime("01/01/2025"));
+		Assert.assertEquals("2025-01-01 12:34:56", PATHL7Handler.formatDateTime("01-01-2025 12:34:56"));
+		Assert.assertEquals("2025-01-01 12:34:00", PATHL7Handler.formatDateTime("01-01-2025 12:34"));
+//		Assert.assertEquals("2025-01-01 00:01:00", PATHL7Handler.formatDateTime("01-01-2025"));
+		Assert.assertEquals("2025-01-01 12:34:56", PATHL7Handler.formatDateTime("2025-01-01 12:34:56"));
+		Assert.assertEquals("2025-01-01 12:34:00", PATHL7Handler.formatDateTime("2025-01-01 12:34"));
+//		Assert.assertEquals("2025-01-01 00:01:00", PATHL7Handler.formatDateTime("2025-01-01"));
+		Assert.assertEquals("", PATHL7Handler.formatDateTime(null));
+		Assert.assertEquals("", PATHL7Handler.formatDateTime(""));
+	}
+
+	@Test
 	public void testGetMsgDate() {
 		logger.info("testGetMsgDate() " + handler.getMsgDate());
-		Assert.assertEquals( PATHL7Handler.formatDateTime( getElement("MSH.7") ), handler.getMsgDate() );
+		Assert.assertEquals(PATHL7Handler.formatDateTime(getElement("MSH.7")), handler.getMsgDate());
 	}
 
 	@Test
 	public void testGetMsgPriority() {
 		logger.info("testGetMsgPriority() " + handler.getMsgPriority());
-		Assert.assertEquals( "", handler.getMsgPriority() );
+		Assert.assertEquals("", handler.getMsgPriority());
 	}
 
 	@Test
 	public void testGetOBRCount() {
 		logger.info("testGetOBRCount() " + handler.getOBRCount());
-		Assert.assertEquals( hl7XML.getElementsByTagName( "OBR" ).getLength(), handler.getOBRCount() );
+		Assert.assertEquals(hl7XML.getElementsByTagName("OBR").getLength(), handler.getOBRCount());
 	}
 
 	@Test
 	public void testGetOBXCount() {
 
 		int obrCount = handler.getOBRCount();
-		int count = 0; 
-		for( int i = 0; i < obrCount; i++ ) {
+		int count = 0;
+		for (int i = 0; i < obrCount; i++) {
 			count += handler.getOBXCount(i);
 		}
 
-		logger.info("testGetOBXCount() " + count );
+		logger.info("testGetOBXCount() " + count);
 
-		Assert.assertEquals( hl7XML.getElementsByTagName( "OBX" ).getLength(), count );
+		Assert.assertEquals(hl7XML.getElementsByTagName("OBX").getLength(), count);
 	}
 
 //	@Test
@@ -367,20 +381,20 @@ public class PATHL7HandlerTest {
 	public void testIsOBXAbnormal() {
 
 		boolean result = Boolean.FALSE;
-		int obxCount = 0;		
-		for( int i = 0; i < handler.getOBRCount(); i++ ) {
+		int obxCount = 0;
+		for (int i = 0; i < handler.getOBRCount(); i++) {
 			obxCount = handler.getOBXCount(i);
-			for( int j = 0; j < obxCount; j++ ) {
-				 if( handler.isOBXAbnormal(i, j) ) {
-					 result = Boolean.TRUE;
-					 break;
-				 }
+			for (int j = 0; j < obxCount; j++) {
+				if (handler.isOBXAbnormal(i, j)) {
+					result = Boolean.TRUE;
+					break;
+				}
 			}
 		}
-		
-		logger.info("testIsOBXAbnormal() " + result );
 
-		ArrayList<String> labresultList = sortStringToList( getElement("OBX.8") );
+		logger.info("testIsOBXAbnormal() " + result);
+
+		ArrayList<String> labresultList = sortStringToList(getElement("OBX.8"));
 		String resultExpected = "N";
 		if( ! labresultList.get(0).isEmpty() ) {
 			for( String resultItem : labresultList ) {
