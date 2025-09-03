@@ -31,7 +31,10 @@ import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
+import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.ProviderManager2;
 import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
@@ -44,6 +47,8 @@ public class HRMModifyDocumentAction extends DispatchAction {
 	HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
 	HRMDocumentCommentDao hrmDocumentCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean(HRMDocumentCommentDao.class);
 	 private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	 private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
+	 private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	 
 	public ActionForward undefined(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
 		String method = request.getParameter("method");
@@ -171,8 +176,6 @@ public class HRMModifyDocumentAction extends DispatchAction {
 	}
 
 	public ActionForward assignProvider(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-		//Gets the Dao for incoming lab rules
-		IncomingLabRulesDao incomingLabRulesDao = SpringUtils.getBean(IncomingLabRulesDao.class);
 		String providerNo = request.getParameter("providerNo");
 		
 		if(!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "w", null)) {
@@ -181,45 +184,11 @@ public class HRMModifyDocumentAction extends DispatchAction {
 		
 
 		try {
-			HRMDocumentToProvider providerMapping = new HRMDocumentToProvider();
             Integer hrmDocumentId = Integer.valueOf(request.getParameter("reportId"));
-			providerMapping.setHrmDocumentId(hrmDocumentId);
-			providerMapping.setProviderNo(providerNo);
-			providerMapping.setSignedOff(0);
-
-			hrmDocumentToProviderDao.merge(providerMapping);
 			
-			//Gets the list of IncomingLabRules pertaining to the current provider
-			List<IncomingLabRules> incomingLabRules = incomingLabRulesDao.findCurrentByProviderNo(providerNo);
-			//If the list is not null
-			if (incomingLabRules != null) {
-				//For each labRule in the list
-				for(IncomingLabRules labRule : incomingLabRules) {
-                    if (labRule.getForwardTypeStrings().contains("HRM")) {
-                        //Creates a string of the provider number that the lab will be forwarded to
-                        String forwardProviderNumber = labRule.getFrwdProviderNo();
-                        //Checks to see if this provider is already linked to this lab
-                        HRMDocumentToProvider hrmDocumentToProvider = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, forwardProviderNumber);
-                        //If a record was not found
-                        if (hrmDocumentToProvider == null) {
-                            //Puts the information into the HRMDocumentToProvider object
-                            hrmDocumentToProvider = new HRMDocumentToProvider();
-                            hrmDocumentToProvider.setHrmDocumentId(hrmDocumentId);
-                            hrmDocumentToProvider.setProviderNo(forwardProviderNumber);
-                            hrmDocumentToProvider.setSignedOff(0);
-                            //Stores it in the table
-                            hrmDocumentToProviderDao.persist(hrmDocumentToProvider);
-                        }
-                    }
-                }
-			}
-
-			
-			//we want to remove any unmatched entries when we do a manual match like this. -1 means unclaimed in this table.
-			HRMDocumentToProvider existingUnmatched = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, "-1");
-			if(existingUnmatched != null) {
-				hrmDocumentToProviderDao.remove(existingUnmatched.getId());
-			}
+			HRMUtil.assignProviderToDocument(hrmDocumentId, providerNo);
+			HRMUtil.processIncomingLabRules(hrmDocumentId, providerNo);
+			HRMUtil.removeUnclaimedProviderMappings(hrmDocumentId);
 			
 			request.setAttribute("success", true);
 		} catch (Exception e) {
@@ -284,6 +253,19 @@ public class HRMModifyDocumentAction extends DispatchAction {
 			demographicMapping.setTimeAssigned(new Date());
 
 			hrmDocumentToDemographicDao.merge(demographicMapping);
+			
+			// Check if provider linking rules are enabled
+			LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+			if (providerManager2.viewProviderLinkingRulesPropertyStatus(loggedInInfo)) {
+				// Get the demographic's MRP
+				Provider mrp = demographicManager.getMRP(loggedInInfo, Integer.parseInt(demographicNo));
+				if (mrp != null) {
+					// Link the document to the MRP as well using assignProvider logic
+					HRMUtil.assignProviderToDocument(Integer.valueOf(hrmDocumentId), mrp.getProviderNo());
+					HRMUtil.processIncomingLabRules(Integer.valueOf(hrmDocumentId), mrp.getProviderNo());
+					HRMUtil.removeUnclaimedProviderMappings(Integer.valueOf(hrmDocumentId));
+				}
+			}
 
 			request.setAttribute("success", true);
 		} catch (Exception e) {
