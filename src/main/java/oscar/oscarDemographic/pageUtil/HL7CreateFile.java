@@ -113,7 +113,7 @@ public class HL7CreateFile {
             version = version + ".1";
         }
         
-        return "MSH|^~\\&|" + labNameType + "|||" + requisitionDate + "||ORU^R01|" + StringUtils.noNull(lab.getAccessionNumber()) + "-" + resultCount + "|P|" + version + "||||";
+        return "MSH|^~\\&|" + labNameType + "|||" + requisitionDate + "||ORU^R01|-" + StringUtils.noNull(lab.getAccessionNumber()) + "-" + resultCount + "|P|" + version + "||||";
     }
     
     private String generateNTE(LaboratoryResultsDocument.LaboratoryResults lab) {
