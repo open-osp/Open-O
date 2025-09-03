@@ -1145,7 +1145,10 @@ public final class RxWriteScriptAction extends DispatchAction {
 			}
 		}
 
-		saveDrug(request);
+		String savedScriptId = saveDrug(request);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.element("scriptId", savedScriptId);
+		response.getOutputStream().write(jsonObject.toString().getBytes());
 		return null;
 	}
 
@@ -1206,7 +1209,7 @@ public final class RxWriteScriptAction extends DispatchAction {
 		return null;
 	}
 
-	public void saveDrug(final HttpServletRequest request) throws Exception {
+	public String saveDrug(final HttpServletRequest request) throws Exception {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
 		
@@ -1297,7 +1300,7 @@ public final class RxWriteScriptAction extends DispatchAction {
         }
 		LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_PRESCRIPTION, scriptId, ip, "" + bean.getDemographicNo(), auditStr.toString());
 
-		return;
+		return scriptId;
 	}
 
 	public ActionForward checkNoStashItem(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws IOException, Exception {
