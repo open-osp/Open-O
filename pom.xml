@@ -29,9 +29,9 @@
         <!-- Slf4j Version -->
         <slf4j.version>2.0.17</slf4j.version>
         <!-- Hapi Fhir Version -->
-        <hapifhir.version>5.4.0</hapifhir.version>
+        <hapifhir.version>6.4.0</hapifhir.version>
         <!-- Apache CXF Version -->
-        <cxf.version>3.5.10</cxf.version>
+        <cxf.version>3.5.11</cxf.version>
     </properties>
 
     <repositories>
@@ -63,22 +63,22 @@
 
     <dependencyManagement>
         <dependencies>
-        <!-- JAXB dependencies for Java 21 compatibility -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
-        </dependency>
+            <!-- JAXB dependencies for Java 21 compatibility -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.3.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>2.3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>2.3.0.1</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -119,13 +119,6 @@
     </reporting>
 
     <dependencies>
-        <!-- Apache Santuario XML Security for Java -->
-        <dependency>
-            <groupId>org.apache.santuario</groupId>
-            <artifactId>xmlsec</artifactId>
-            <version>3.0.4</version>
-        </dependency>
-
         <!-- For Jasper Reports and backwards compatibility -->
         <!-- throws an compilation error when removed/commented -->
         <dependency>
@@ -149,10 +142,10 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
-                <exclusion>
+                <!-- <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-core</artifactId>
-                </exclusion>
+                </exclusion> -->
             </exclusions>
         </dependency>
 
@@ -195,11 +188,24 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <!-- commons -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
             <version>1.9.0</version>
+            <exclusions>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -209,7 +215,7 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.5</version>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
@@ -221,12 +227,19 @@
             <groupId>commons-digester</groupId>
             <artifactId>commons-digester</artifactId>
             <version>1.8</version>
+            <exclusions>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- apache commons codec -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.18.0</version>
+           <version>1.18.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -236,7 +249,34 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.17.0</version>
+            <version>3.18.0</version>
+        </dependency>
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.11.0</version>
+        </dependency>
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.11.1</version>
+        </dependency>
+        
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.14</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.6</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
@@ -265,6 +305,22 @@
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-base</artifactId>
             <version>1.0.1</version>
+            <exclusions>
+                <!-- Not being used, excluded to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>org.jdom</groupId>
+                    <artifactId>jdom</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ca.uhn.hapi</groupId>
@@ -302,6 +358,14 @@
             <version>1.0.1</version>
         </dependency>
 
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/org.jdom/jdom2 -->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6.1</version>
+        </dependency>
+
         <!-- spring -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -328,6 +392,13 @@
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-ftp</artifactId>
             <version>5.3.10.RELEASE</version>
+            <exclusions>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-net</groupId>
+                    <artifactId>commons-net</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.integration</groupId>
@@ -350,6 +421,12 @@
             <artifactId>spring-aop</artifactId>
             <version>5.3.39</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>5.8.16</version>
+        </dependency>
 
         <dependency>
             <groupId>com.onelogin</groupId>
@@ -360,15 +437,20 @@
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.santuario</groupId>
+                    <artifactId>xmlsec</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-        
+
         <!-- hibernate / sql -->
         <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
         </dependency>
+        <!-- throws a 404 error when removed/uncommented -->
         <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -458,6 +540,17 @@
             <artifactId>json-lib</artifactId>
             <version>2.4</version>
             <classifier>jdk15</classifier>
+            <exclusions>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- apache xmlrpc -->
@@ -507,6 +600,11 @@
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -575,18 +673,6 @@
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
             <version>3.1.0</version>
-        </dependency>
-
-        <!-- HttpClient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.5.6</version>
         </dependency>
 
         <!-- quartz -->
@@ -688,6 +774,15 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
                 </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -756,28 +851,31 @@
             <version>1.78.1</version>
         </dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-crypto</artifactId>
-			<version>5.8.16</version>
-		</dependency>
+        <!-- Added for axis2 1.8.0 -->
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>2.39.1</version>
+        </dependency>
 
         <!-- AXIS2 (for OLIS) -->
-        <!--
-            Suggestted to upgrade to 1.8.0 or later by GitHub Dependabot, but got
-            100+ compliation errors after upgrading, will stay at 1.5.4 now
+        <!-- 
+            Updated to 1.8.0 by GitHub Dependabot suggestion,
+            the higher version 2.0.0 will need when we migrate to jakarta 
         -->
+        <!-- https://mvnrepository.com/artifact/org.apache.axis2/axis2 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2</artifactId>
-            <version>1.5.4</version>
+            <version>1.8.0</version>
+            <type>pom</type>
         </dependency>
         <!-- Detected as "Unused dependency" but don't remove it, caused 404 error after removing -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>1.5.4</version>
+            <version>1.8.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ws.commons.schema</groupId>
@@ -787,7 +885,26 @@
                     <groupId>org.apache.neethi</groupId>
                     <artifactId>neethi</artifactId>
                 </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>org.apache.ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.axis2/axis2-adb -->
+        <dependency>
+            <groupId>org.apache.axis2</groupId>
+            <artifactId>axis2-adb</artifactId>
+            <version>1.8.0</version>
+        </dependency>
+
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/org.apache.ant/ant -->
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.15</version>
         </dependency>
 
         <!-- velocity -->
@@ -824,6 +941,11 @@
                 <exclusion>
                     <groupId>org.apache.struts</groupId>
                     <artifactId>struts-tiles</artifactId>
+                </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -878,9 +1000,60 @@
                     <groupId>com.fasterxml.woodstox</groupId>
                     <artifactId>woodstox-core</artifactId>
                 </exclusion>
+                <!-- Not being used, excluded to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-http</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.undertow</groupId>
+                    <artifactId>undertow-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
+                </exclusion>
+                <!-- Excluded this low version to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>org.codehaus.jettison</groupId>
+                    <artifactId>jettison</artifactId>
+                </exclusion>
+                <!-- 
+                    Not being used, excluded to avoid triggering security issue,
+                    these libraries are part of apache-cxf, 
+                    but excluding them won't impact our project  
+                -->
+                <exclusion>
+                    <groupId>org.apache.mina</groupId>
+                    <artifactId>mina-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-openwire-legacy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-client</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>org.apache.cxf</groupId>
-                    <artifactId>cxf-rt-transports-udp</artifactId>
+                    <artifactId>cxf-rt-rs-security-jose</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-rs-service-description</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-management</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -980,13 +1153,21 @@
         </dependency>
         
         <!-- OWASP ESAPI for ClickjackFilter -->
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/org.owasp.esapi/esapi -->
         <dependency>
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
-            <version>2.5.2.0</version>
+            <version>2.6.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- can be found in the local_repo folder -->
+        
         <dependency>
             <groupId>com.medseek.clinical.service</groupId>
             <artifactId>SSOClinicalConnect</artifactId>
@@ -1012,6 +1193,28 @@
             <artifactId>commons-exec</artifactId>
             <version>1.3</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.codehaus.jettison/jettison -->
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.5.4</version>
+        </dependency>
+
+        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
+        <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>compile</scope>
+        </dependency>
         
         <!-- Selenium test dependencies -->
         <!-- Detected as "Unused dependency" but don't remove it, it's using actually -->
@@ -1021,14 +1224,28 @@
             <artifactId>selenium-java</artifactId>
             <version>3.141.59</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Not being used, excluded to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>com.squareup.okio</groupId>
+                    <artifactId>okio</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Detected as "Unused dependency" but don't remove it, it's using actually -->
         <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <version>6.1.0</version> 
+            <scope>test</scope>   
+            <exclusions>
+                <!-- Not being used, excluded to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
@@ -1099,11 +1316,32 @@
            <artifactId>jaxws-ri</artifactId>
            <version>2.3.3</version>
            <type>pom</type>
+           <exclusions>
+                <!-- Not being used, excluded to avoid triggering security issue -->
+                <exclusion>
+                    <groupId>com.fasterxml.woodstox</groupId>
+                    <artifactId>woodstox-core</artifactId>
+                </exclusion>
+           </exclusions>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
             <version>1.3.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api -->
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.3</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- Added for Tomcat 9.0.97 -->
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -1391,7 +1629,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
-                    <skipTests>true</skipTests>
+                    <!-- DANGER: skipTests will COMPLETELY skip running tests when true even in CI. Tests will only compile, not execute. -->
+                    <skipTests>false</skipTests>
                     <excludes>
                         <exclude>**/*EDTTest.java</exclude>
                         <exclude>**/HinValidatorTest.java</exclude>

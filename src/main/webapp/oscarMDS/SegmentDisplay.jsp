@@ -168,7 +168,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                                                                     value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                                     onClick="window.print()"> <% if (demoNo != null && !demoNo.equals("") && !demoNo.equalsIgnoreCase("null")) { %>
                             <input type="button" value="Msg"
-                                   onclick="popup(700,960,'${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
+                                   onclick="popup(700,960,'${pageContext.request.contextPath}/messenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
                             <input type="button" value="Tickler"
                                    onclick="popup(450,600,'${pageContext.request.contextPath}/tickler/ForwardDemographicTickler.do?demographic_no=<%=demoNo%>','tickler')"/>
                             <% } %> <% if (request.getParameter("searchProviderNo") == null) { // we were called from e-chart %>
@@ -817,7 +817,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                                                                     value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                                     onClick="window.print()"> <% if (demoNo != null && !demoNo.equals("") && !demoNo.equalsIgnoreCase("null")) { %>
                             <input type="button" value="Msg"
-                                   onclick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
+                                   onclick="popup(700,960,'../messenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
                             <input type="button" value="Tickler"
                                    onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?demographic_no=<%=demoNo%>','tickler')"/>
                             <% } %> <% if (request.getParameter("searchProviderNo") == null) { // we were called from e-chart %>

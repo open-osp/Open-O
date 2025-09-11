@@ -28,9 +28,15 @@ package ca.openosp.openo.lab.ca.bc.PathNet.Communication;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.GetMethod;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpEntity;
+
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -44,29 +50,52 @@ public class HTTP {
     private static Logger logger = MiscUtils.getLogger();
 
     private String url;
-    private HttpClient client;
 
     public HTTP(String url) {
         this.url = url;
-        this.client = new HttpClient();
     }
 
-    public InputStream Get(String queryString) throws IOException, HttpException {
-        GetMethod method = new GetMethod(url);
-        method.setQueryString(queryString);
-        logger.error(this.client.executeMethod(method));
-        method.getResponseBodyAsString();
-        InputStream response = method.getResponseBodyAsStream();
-        method.releaseConnection();
-        return response;
+    /**
+     * Executes HTTP GET request and returns response as InputStream.
+     * 
+     * @param queryString the query string to append to the URL
+     * @return InputStream containing response body, or null if no content. 
+     *         <b>Caller must close this stream.</b>
+     * @throws IOException if the HTTP request fails
+     */
+    public InputStream Get(String queryString) throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            URIBuilder uriBuilder = new URIBuilder(url);
+            uriBuilder.setCustomQuery(queryString);
+            HttpGet get = new HttpGet(uriBuilder.build());
+
+            CloseableHttpResponse response = client.execute(get);
+            HttpEntity entity = response.getEntity();
+
+            logger.debug("Status code: " + response.getStatusLine().getStatusCode());
+
+            if (entity != null) {
+                return entity.getContent(); // caller must close this InputStream
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new IOException("HTTP GET failed", e);
+        }
     }
 
-    public String GetString(String queryString) throws IOException, HttpException {
-        GetMethod method = new GetMethod(url);
-        method.setQueryString(queryString);
-        this.client.executeMethod(method);
-        String response = method.getResponseBodyAsString();
-        method.releaseConnection();
-        return response;
+    public String GetString(String queryString) throws IOException {
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
+            URIBuilder uriBuilder = new URIBuilder(url);
+            uriBuilder.setCustomQuery(queryString);
+            HttpGet get = new HttpGet(uriBuilder.build());
+
+            try (CloseableHttpResponse response = client.execute(get)) {
+                logger.error("Status code: " + response.getStatusLine().getStatusCode());
+                return EntityUtils.toString(response.getEntity(), "UTF-8");
+            }
+        } catch (Exception e) {
+            throw new IOException("HTTP GET failed", e);
+        }
     }
 }

@@ -28,7 +28,6 @@ package ca.openosp.openo.olis;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -36,51 +35,48 @@ import java.net.SocketAddress;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
-import javax.net.SocketFactory;
-
-
-import org.apache.commons.httpclient.params.HttpConnectionParams;
-import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 
 import ca.openosp.OscarProperties;
 
+import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 
-public class OLISProtocolSocketFactory implements SecureProtocolSocketFactory {
+public class OLISProtocolSocketFactory extends SSLConnectionSocketFactory {
     SSLContext context = null;
 
     public OLISProtocolSocketFactory() throws Exception {
+        super(createSSLContext(), new String[]{"TLSv1.2"}, null, SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+    }
 
+    private static SSLContext createSSLContext() throws Exception {
         String pKeyFile = OscarProperties.getInstance().getProperty("olis_ssl_keystore").trim();
         String pKeyPassword = OscarProperties.getInstance().getProperty("olis_ssl_keystore_password").trim();
 
-
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
         KeyStore keyStore = KeyStore.getInstance("JKS");
-        InputStream keyInput = new FileInputStream(pKeyFile);
-        keyStore.load(keyInput, pKeyPassword.toCharArray());
-        keyInput.close();
+        try (InputStream keyInput = new FileInputStream(pKeyFile)) {
+            keyStore.load(keyInput, pKeyPassword.toCharArray());
+        }
         keyManagerFactory.init(keyStore, pKeyPassword.toCharArray());
 
-        context = SSLContext.getInstance("TLS");
+        SSLContext context = SSLContext.getInstance("TLS");
         context.init(keyManagerFactory.getKeyManagers(), null, new SecureRandom());
+        return context;
     }
+    
+    public Socket createSocket(final String host, final int port, final InetAddress localAddress, final int localPort, final int timeout) throws IOException {
+        SocketFactory socketFactory = context.getSocketFactory();
 
-    public Socket createSocket(final String host, final int port, final InetAddress localAddress, final int localPort, final HttpConnectionParams params) throws IOException {
-        if (params == null) {
-            throw new IllegalArgumentException("Parameters may not be null");
-        }
-        int timeout = params.getConnectionTimeout();
-        SocketFactory socketfactory = context.getSocketFactory();
-        if (timeout == 0) {
-            return socketfactory.createSocket(host, port, localAddress, localPort);
+        if (timeout <= 0) {
+            return socketFactory.createSocket(host, port, localAddress, localPort);
         } else {
-            Socket socket = socketfactory.createSocket();
-            SocketAddress localaddr = new InetSocketAddress(localAddress, localPort);
-            SocketAddress remoteaddr = new InetSocketAddress(host, port);
-            socket.bind(localaddr);
-            socket.connect(remoteaddr, timeout);
+            Socket socket = socketFactory.createSocket();
+            SocketAddress localAddr = new InetSocketAddress(localAddress, localPort);
+            SocketAddress remoteAddr = new InetSocketAddress(host, port);
+            socket.bind(localAddr);
+            socket.connect(remoteAddr, timeout);
             return socket;
         }
     }

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.Logger;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ca.openosp.openo.utility.MiscUtils;
 
 
@@ -131,7 +131,7 @@ public class Recommendation {
         }
 
         RuleBaseCreator rcb = new RuleBaseCreator();
-        Element ruleElement = rcb.getRule(ruleName, "oscar.oscarEncounter.oscarMeasurements.MeasurementInfo", list, consequence);
+        Element ruleElement = rcb.getRule(ruleName, "ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo", list, consequence);
 
 
         return ruleElement;

@@ -75,7 +75,7 @@ public class MigrateStaffAssignments {
 
     public boolean providerExists(long providerNo) throws Exception {
         Statement stmt = DbConnectionFilter.getThreadLocalDbConnection().createStatement();
-        stmt.execute("SELECT count(*) as num FROM providers where provider_no =" + providerNo);
+        stmt.execute("SELECT count(*) as num FROM provider where provider_no =" + providerNo);
         ResultSet rs = stmt.getResultSet();
         rs.next();
         long num = rs.getInt("num");

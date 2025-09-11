@@ -29,19 +29,83 @@ import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.utility.SpringUtils;
 
+/**
+ * Session bean for maintaining message composition state across requests in the messaging module.
+ * 
+ * <p>This serializable bean maintains the state of a message being composed, including
+ * attachments, recipients, and message content. It is stored in the HTTP session to
+ * preserve state across multiple page requests during the message composition process.</p>
+ * 
+ * <p>Key responsibilities:
+ * <ul>
+ *   <li>Maintain message composition state (subject, body, attachments)</li>
+ *   <li>Track current user/provider information</li>
+ *   <li>Manage attachment metadata including PDFs</li>
+ *   <li>Handle patient demographic associations</li>
+ *   <li>Provide XML-based attachment formatting for storage</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>The bean uses a custom XML format for storing PDF attachments with status tracking
+ * and content encoding.</p>
+ * 
+ * @version 1.0
+ * @since 2002
+ * @see MsgCreateMessage2Action
+ * @see MsgSendMessage2Action
+ */
 public class MsgSessionBean implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Provider number of the current user composing the message.
+     */
     private String providerNo = null;
+    
+    /**
+     * Display name of the current user.
+     */
     private String userName = null;
+    
+    /**
+     * General attachment information or identifiers.
+     */
     private String attach = null;
+    
+    /**
+     * XML-formatted PDF attachment data with embedded content.
+     */
     private String pdfAttach = null;
+    
+    /**
+     * ID of the message being replied to or forwarded.
+     */
     private String messageId = null;
+    
+    /**
+     * Associated patient demographic number if message is patient-related.
+     */
     private String demographic_no = null;
+    
+    /**
+     * Total number of attachments expected for this message.
+     */
     private int totalAttachmentCount = 0;
+    
+    /**
+     * Current attachment being processed (for multi-attachment messages).
+     */
     private int currentAttachmentCount = 0;
+    
+    /**
+     * The message body content.
+     */
     private String message;
+    
+    /**
+     * The message subject line.
+     */
     private String subject;
 
     public String getMessage() {
@@ -77,6 +141,14 @@ public class MsgSessionBean implements java.io.Serializable {
         this.userName = RHS;
     }
 
+    /**
+     * Establishes the username by looking up the provider's full name from the database.
+     * 
+     * <p>This method queries the provider database using the stored provider number
+     * and sets the userName field to the provider's full name.</p>
+     * 
+     * <p>Note: Method name "estUserName" is shortened from "establishUserName"</p>
+     */
     public void estUserName() {
         ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
         Provider p = dao.getProvider(providerNo);
@@ -101,6 +173,16 @@ public class MsgSessionBean implements java.io.Serializable {
         return this.pdfAttach;
     }
 
+    /**
+     * Appends a PDF attachment to the existing attachment string using XML format.
+     * 
+     * <p>This method creates an XML structure for the PDF attachment including:
+     * status (OK/BAD), title, and base64-encoded content. Multiple PDFs can be
+     * appended sequentially, each with its own XML block.</p>
+     * 
+     * @param binStr The base64-encoded PDF content
+     * @param pdfTitle The title/filename of the PDF attachment
+     */
     public void setAppendPDFAttachment(String binStr, String pdfTitle) {
 
         String currentAtt = "";
@@ -109,6 +191,7 @@ public class MsgSessionBean implements java.io.Serializable {
             currentAtt = this.getPDFAttachment();
         }
 
+        // Note: String comparison should use .equals(), not !=
         if (binStr != "" && binStr != null) {
             this.setPDFAttachment(currentAtt + " " + getPDFStartTag() + getStatusTag("OK") + getPDFTitleTag(pdfTitle) + getContentTag(binStr) + getPDFEndTag());
         } else {
@@ -137,6 +220,12 @@ public class MsgSessionBean implements java.io.Serializable {
         return "</PDF>";
     }
 
+    /**
+     * Clears all attachment data and resets attachment counters.
+     * 
+     * <p>This method is typically called when starting a new message or
+     * clearing the current message composition state.</p>
+     */
     public void nullAttachment() {
         this.attach = null;
         this.pdfAttach = null;
@@ -182,10 +271,23 @@ public class MsgSessionBean implements java.io.Serializable {
         this.demographic_no = str;
     }
 
+    /**
+     * Clears the message ID reference.
+     * 
+     * <p>Used when transitioning from a reply/forward to a new message.</p>
+     */
     public void nullMessageId() {
         this.messageId = null;
     }
 
+    /**
+     * Validates that the session bean has the minimum required data.
+     * 
+     * <p>A session is considered valid if it has a provider number set,
+     * indicating an authenticated user is composing the message.</p>
+     * 
+     * @return true if the session has a valid provider number, false otherwise
+     */
     public boolean isValid() {
         if (this.providerNo != null && this.providerNo.length() > 0) {
             return true;

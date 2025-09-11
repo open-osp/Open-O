@@ -310,11 +310,11 @@ public class InboxResultsRepositoryImpl implements InboxResultsRepository {
                     + "  (SELECT IF( "
                     + "	(SELECT COUNT(DISTINCT plr.lab_no) FROM hl7TextInfo aka, hl7TextInfo akb "
                     + "	  INNER JOIN providerLabRouting plr ON akb.lab_no = plr.lab_no "
-                    + "	   LEFT JOIN providers prov ON plr.provider_no = prov.provider_no "
+                    + "	   LEFT JOIN provider prov ON plr.provider_no = prov.provider_no "
                     + "	  WHERE aka.lab_no = info.lab_no AND aka.accessionNum = akb.accessionNum AND prov.status = '1') = 1, NULL, "
                     + "  (SELECT COUNT(DISTINCT plr.provider_no) FROM hl7TextInfo aka, hl7TextInfo akb "
                     + "	 INNER JOIN providerLabRouting plr ON akb.lab_no = plr.lab_no "
-                    + "	   LEFT JOIN providers prov ON plr.provider_no = prov.provider_no "
+                    + "	   LEFT JOIN provider prov ON plr.provider_no = prov.provider_no "
                     + "	 WHERE aka.lab_no = info.lab_no AND aka.accessionNum = akb.accessionNum AND plr.status = 'A' AND prov.status = '1') "
                     + "  )) AS past_acknowledge_count, IF(r.lab_id IS NOT NULL, TRUE, FALSE) as `read` ";
         } else {

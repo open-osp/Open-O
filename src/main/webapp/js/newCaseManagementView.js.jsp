@@ -216,7 +216,7 @@
         var lastImage = $(lastName);
         var expand;
         var expandPath = ctx + "/oscarEncounter/graphics/expand.gif";
-        var collapsePath = ctx + "/oscarMessenger/img/collapse.gif";
+        var collapsePath = ctx + "/messenger/img/collapse.gif";
         var transparentPath = ctx + "/images/clear.gif";
 
         for (var idx = threshold; idx < items.length; ++idx) {

@@ -100,7 +100,7 @@ public class FrmConsultantRecord extends FrmRecord {
     public String getProvName(int provider_no) throws SQLException {
 
         Properties props = new Properties();
-        String sql = "SELECT CONCAT('Dr. ', first_name, ' ', last_name) AS doc_Name FROM providers WHERE provider_no = " + provider_no;
+        String sql = "SELECT CONCAT('Dr. ', first_name, ' ', last_name) AS doc_Name FROM provider WHERE provider_no = " + provider_no;
         ResultSet rs = DBHandler.GetSQL(sql);
         if (rs.next()) {
             props.setProperty("doc_name", Misc.getString(rs, "doc_Name"));

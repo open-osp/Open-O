@@ -212,7 +212,7 @@ public final class DBPreparedHandler {
     public synchronized String getNewProviderNo() {
         try {
             String pno = Misc.getRandomNumber(6);
-            String sql = "select count(*) from providers where provider_no= '" + pno + "'";
+            String sql = "select count(*) from provider where provider_no= '" + pno + "'";
             ResultSet rs = queryResults(sql);
             while (rs.next()) {
                 if (rs.getInt(1) > 0) {

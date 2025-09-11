@@ -122,7 +122,7 @@ public class ScheduleManagerImpl implements ScheduleManager {
     public DayWorkSchedule getDayWorkSchedule(String providerNo, Calendar date) {
         // algorithm
         //----------
-        // select entries from scheduledate for the given day/providers where status = 'A' (for active?)
+        // select entries from scheduledate for the given day/provider where status = 'A' (for active?)
         // "hour" setting is the template to apply, i.e. template name
         // select entry from scheduletemplate to get the template to apply for the given day
         // timecode is a breakdown of the day into equal slots, where _ means nothing and some letter means a code in scheduletemplatecode

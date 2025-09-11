@@ -26,6 +26,7 @@
 <%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.commn.model.Allergy" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%

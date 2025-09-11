@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.tools.generic.DateTool;
 import org.apache.velocity.tools.generic.EscapeTool;
 import org.apache.velocity.tools.generic.NumberTool;
@@ -49,8 +48,6 @@ public class VelocityUtils {
         try {
             VelocityEngine velocityEngine = new VelocityEngine();
             velocityEngine.setProperty("parser.pool.size", 10);
-            velocityEngine.setProperty("runtime.log.logsystem.class", Log4JLogChute.class.getName());
-            velocityEngine.setProperty("runtime.log.logsystem.log4j.logger", logger.getName());
             velocityEngine.init();
             return velocityEngine;
         } catch (Exception var1) {

@@ -408,4 +408,99 @@ Keeping these locks in sync ensures reproducible builds and guards against tampe
 Only update when you trust the signature of the libraries. 
 mvn se.vandmo:dependency-lock-maven-plugin:lock
 
+### Debugging in Tomcat. Setup steps and usage
+
+Download Community Server Connectors in extensions.
+ Ensure its set to version - v0.26.19
+
+Add new server. 
+    use on disk - /usr/local/tomact/
+
+add make2 file in .devcontainer/development/scripts/make2 
+
+paste in.
+
+#!/usr/bin/env sh
+
+command=$1
+skip_tests=true
+
+if [ "$command" = "test" ]; then
+  skip_tests=false
+fi
+
+case $command in
+  clean)
+    mvn clean
+    ;;
+  lock)
+    mvn se.vandmo:dependency-lock-maven-plugin:lock
+    ;;
+  *)
+    mvn clean -Dmaven.test.skip=$skip_tests prepare-package war:exploded
+
+    # Assuming the pom.xml file is in the current directory
+    pom_file="pom.xml"
+
+    # This version number is the deployable war version from here: https://bitbucket.org/MagentaHealth/oscar/src/master/pom.xml
+    # <artifactId>oscar</artifactId>
+	  # <packaging>war</packaging>
+	  # <version>v24.02.0</version>
+	  # <name>OpenOSCAR</name>
+    # Extract the first occurrence of version from pom.xml
+    version=$(grep -oPm 1 '<version>\K[^<]+' "$pom_file")
+
+    # It *should* be possible to deploy that `oscar-0.0.0-SNAPSHOT` directory to Tomcat using the `oscar-0.0.0-SNAPSHOT` name,
+    # but unknown bugs prevent the app from starting up if that name is used. :man_shrugging:
+    # So, let's rename it to `oscar`. Then, our properties file in the home directory can also be called `oscar.properties`
+    # (it's already been symlinked by the setup scripts).
+    # We'll also create a symlink so that we can continue to compile into `oscar-0.0.0-SNAPSHOT`,
+    # which is where Maven expects to deposit its artifacts.
+    snapshot_src_dir='oscar-'$version
+    snapshot_dest_dir='oscar'
+
+    # Only make the link if it hasn't already been linked yet
+    if [ -d "target/$snapshot_src_dir" ] && [ ! -L "target/$snapshot_src_dir" ]; then
+      mv target/$snapshot_src_dir target/$snapshot_dest_dir
+      ln -s $snapshot_dest_dir target/$snapshot_src_dir
+    fi
+    ;;
+esac
+
+run the following commands 
+
+chmod +x ./devcontainer/development/scripts/make2 
+
+run the script. 
+
+./devcontainer/development/scripts/make2
+
+if you encounter an error 
+"/usr/bin/env: ‘sh\r’: No such file or directory
+/usr/bin/env: use -[v]S to pass options in shebang lines" 
+
+run: 
+apt-get update && apt-get install -y dos2unix
+dos2unix .devcontainer/development/scripts/make2
+
+then re-run the script. 
+
+right click the tomcat server 
+
+"add deployment" 
+
+Click: exploded
+
+Path: /workspace/target/oscar
+
+Click: select exploded deployment
+
+Right click tomcat server
+
+Publish Server 
+
+Run Debug Mode
+
+You should now be able to use breakpoints within vscode! 
+
 ## Enjoy developing with Open-OSP!

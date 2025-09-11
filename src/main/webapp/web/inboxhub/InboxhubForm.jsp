@@ -556,7 +556,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
     function fetchInboxhubListData() {
         if (!hasMoreData || isFetchingData) { return; }
         isFetchingData = true; 
-        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/www/inboxhub/Inboxhub.do?method=displayInboxList";
+        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/web/inboxhub/Inboxhub.do?method=displayInboxList";
         currentFetchRequest = jQuery.ajax({
 			url: url,
 			method: 'POST',
@@ -580,7 +580,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
         if (!hasMoreData || isFetchingData) { return; }
         ShowSpin(true);
         isFetchingData = true;
-        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/www/inboxhub/Inboxhub.do?method=displayInboxView";
+        const url = "<e:forJavaScript value='${pageContext.request.contextPath}' />/web/inboxhub/Inboxhub.do?method=displayInboxView";
         currentFetchRequest = jQuery.ajax({
 			url: url,
 			method: 'POST',

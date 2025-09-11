@@ -45,11 +45,11 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import ca.openosp.openo.commn.dao.FlowSheetUserCreatedDao;
 import ca.openosp.openo.commn.dao.FlowsheetDao;
 import ca.openosp.openo.commn.model.FlowSheetCustomization;
@@ -762,7 +762,7 @@ public class MeasurementTemplateFlowSheetConfig implements InitializingBean {
         }
 
         RuleBaseCreator rcb = new RuleBaseCreator();
-        Element ruleElement = rcb.getRule(ruleName, "oscar.oscarEncounter.oscarMeasurements.MeasurementInfo", list, consequence);
+        Element ruleElement = rcb.getRule(ruleName, "ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo", list, consequence);
 
 
         return ruleElement;

@@ -33,7 +33,8 @@ public class FrmRecordFactory {
 
     public FrmRecord factory(String which) {
 
-        String fullName = "oscar.form.Frm" + which + "Record"; // keyword - form_name get reference to the class
+        // Build the full class name from the form name (the 'which' parameter).
+        String fullName = "ca.openosp.openo.form.Frm" + which + "Record"; // keyword - form_name get reference to the class
         FrmRecord myClass = null;
 
         try {

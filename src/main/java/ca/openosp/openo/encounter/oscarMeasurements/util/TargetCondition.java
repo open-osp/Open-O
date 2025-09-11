@@ -29,7 +29,7 @@ package ca.openosp.openo.encounter.oscarMeasurements.util;
 import java.util.ArrayList;
 
 import org.apache.logging.log4j.Logger;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ca.openosp.openo.utility.MiscUtils;
 
 /**

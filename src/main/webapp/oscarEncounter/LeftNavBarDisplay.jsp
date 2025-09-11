@@ -248,12 +248,12 @@
 
             if (curNum == 0 && xpanded) {
                 imgName = "img" + request.getAttribute("navbarName") + curNum;
-                out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; " + dateColour + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
+                out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; " + dateColour + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/messenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
                 js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + request.getAttribute("navbarName") + "', '" + displayThreshold + "');");
                 js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
             } else if (j == (numToDisplay - 1) && xpanded) {
                 imgName = "img" + request.getAttribute("navbarName") + curNum;
-                out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; " + dateColour + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/oscarMessenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
+                out.println("<a href='#' onclick=\"return false;\" style='text-decoration:none; width:7px; z-index: 100; " + dateColour + " position:relative; margin: 0px; padding-bottom: 0px;  vertical-align: bottom; display: inline; float: right; clear:both;'><img id='" + imgName + "' src='" + request.getContextPath() + "/messenger/img/collapse.gif'/>&nbsp;&nbsp;</a>");
                 js.append("imgfunc['" + imgName + "'] = clickListDisplay.bindAsEventListener(obj,'" + request.getAttribute("navbarName") + "', '" + displayThreshold + "');");
                 js.append("Element.observe($('" + imgName + "'), 'click', imgfunc['" + imgName + "']);");
             } else if (j == (numToDisplay - 1) && numItems > (curNum + 1)) {

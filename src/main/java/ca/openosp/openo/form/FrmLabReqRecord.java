@@ -111,9 +111,9 @@ public class FrmLabReqRecord extends FrmRecord {
         if (!demoProvider.equals("")) {
 
             if (Integer.parseInt(demoProvider) == provNo) {
-                // from providers table
+                // from provider table
                 sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no, comments "
-                        + "FROM providers WHERE provider_no = " + provNo;
+                        + "FROM provider WHERE provider_no = " + provNo;
                 rs = DBHandler.GetSQL(sql);
 
                 if (rs.next()) {
@@ -136,8 +136,8 @@ public class FrmLabReqRecord extends FrmRecord {
                 }
                 rs.close();
             } else {
-                // from providers table
-                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no, comments FROM providers WHERE provider_no = "
+                // from provider table
+                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no, comments FROM provider WHERE provider_no = "
                         + provNo;
                 rs = DBHandler.GetSQL(sql);
 
@@ -158,8 +158,8 @@ public class FrmLabReqRecord extends FrmRecord {
                 }
                 rs.close();
 
-                // from providers table
-                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no, comments FROM providers WHERE provider_no = "
+                // from provider table
+                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no, comments FROM provider WHERE provider_no = "
                         + demoProvider;
                 rs = DBHandler.GetSQL(sql);
 

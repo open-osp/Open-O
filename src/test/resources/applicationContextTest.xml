@@ -17,9 +17,9 @@
 		load properties from additional property files; oscar.properties is
 		already loaded
 	-->
-	<!-- <bean id="hibernateTemplateTest" class="org.oscarehr.commons.daos.HibernateTemplateTest"> </bean> -->
+	<!-- <bean id="hibernateTemplateTest" class="ca.openosp.openo.commn.dao.HibernateTemplateTest"> </bean> -->
 	
-	<bean id="propertyConfigurer" class="org.oscarehr.common.OscarPropertyPlaceholderConfigurer">
+	<bean id="propertyConfigurer" class="ca.openosp.openo.commn.OscarPropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:oscar_mcmaster.properties</value>
@@ -42,9 +42,9 @@
 	<bean id="programQueueDao" class="ca.openosp.openo.PMmodule.dao.ProgramQueueDao" autowire="byName" />
 	<bean id="clientReferralDAO" class="ca.openosp.openo.PMmodule.dao.ClientReferralDAO" autowire="byName" />
 	<bean id="agencyDao" class="ca.openosp.openo.PMmodule.dao.AgencyDao" autowire="byName" />
-	<!-- bean id="admissionDao" class="org.oscarehr.commons.daos.AdmissionDao" autowire="byName" /-->
-	<bean id="providerDao" class="ca.openosp.openo.PMmodule.dao.ProviderDao" autowire="byName" />
-	<bean id="otherIdDao" class="org.oscarehr.common.dao.OtherIdDAO" autowire="byName" />
+	<!-- bean id="admissionDao" class="ca.openosp.openo.commn.dao.AdmissionDao" autowire="byName" /-->
+	<bean id="providerDao" class="ca.openosp.openo.PMmodule.dao.ProviderDaoImpl" autowire="byName" />
+	<bean id="otherIdDao" class="ca.openosp.openo.commn.dao.OtherIdDAO" autowire="byName" />
 
 	<bean id="CaseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAO" autowire="byName" />
 	<bean id="caseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAO" autowire="byName" />
@@ -53,16 +53,16 @@
 	<bean id="CaseManagementNoteExtDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteExtDAO" autowire="byName" />
 	<bean id="CaseManagementNoteLinkDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteLinkDAO" autowire="byName" />
 	<bean id="CaseManagementCPPDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementCPPDAO" autowire="byName" />
-	<!-- bean id="demoExpListDao" class="org.oscarehr.commons.daos.DemographicToExportPCDS_Dao" autowire="byName" / -->
-	<!-- bean id="diseaseRegistryPCDSDao" class="org.oscarehr.commons.daos.DiseaseRegistryPCDS_Dao" autowire="byName" / -->
+	<!-- bean id="demoExpListDao" class="ca.openosp.openo.commn.dao.DemographicToExportPCDS_Dao" autowire="byName" / -->
+	<!-- bean id="diseaseRegistryPCDSDao" class="ca.openosp.openo.commn.dao.DiseaseRegistryPCDS_Dao" autowire="byName" / -->
 	
 	
-	<bean id="AppointmentArchiveDao" class="org.oscarehr.common.dao.AppointmentArchiveDao" autowire="byName" />
-	<bean id="DxDao" class="org.oscarehr.common.dao.DxDao" autowire="byName" />
-	<bean id="CasemgmtNoteLockDao" class="org.oscarehr.common.dao.CasemgmtNoteLockDao" autowire="byName" />
+	<bean id="AppointmentArchiveDao" class="ca.openosp.openo.commn.dao.AppointmentArchiveDao" autowire="byName" />
+	<bean id="DxDao" class="ca.openosp.openo.commn.dao.DxDao" autowire="byName" />
+	<bean id="CasemgmtNoteLockDao" class="ca.openosp.openo.commn.dao.CasemgmtNoteLockDao" autowire="byName" />
 	
-	<bean id="AllergyDao" class="org.oscarehr.common.dao.AllergyMergedDemographicDao" autowire="byName" />
-	<bean id="allergyDao" class="org.oscarehr.common.dao.AllergyMergedDemographicDao" autowire="byName" />
+	<bean id="AllergyDao" class="ca.openosp.openo.commn.dao.AllergyMergedDemographicDao" autowire="byName" />
+	<bean id="allergyDao" class="ca.openosp.openo.commn.dao.AllergyMergedDemographicDao" autowire="byName" />
 	
 	<bean id="IssueDAO" class="ca.openosp.openo.casemgmt.dao.IssueDAO" autowire="byName" />
 	<bean id="secroleDao" class="ca.openosp.openo.daos.security.SecroleDao" autowire="byName"/>
@@ -74,41 +74,41 @@
 	<bean id="defaultRoleAccessDAO" class="ca.openosp.openo.PMmodule.dao.DefaultRoleAccessDAO" autowire="byName" />
 	<bean id="programClientStatusDAO" class="ca.openosp.openo.PMmodule.dao.ProgramClientStatusDAO" autowire="byName" />
 	<bean id="programTeamDAO" class="ca.openosp.openo.PMmodule.dao.ProgramTeamDAO" autowire="byName" />
-	<bean id="bedProgramDao" class="org.caisi.dao.BedProgramDao" autowire="byName" />
-	<bean id="demographicDao" class="org.oscarehr.common.dao.DemographicDao" autowire="byName" />
+	<bean id="bedProgramDao" class="ca.openosp.openo.caisi.dao.BedProgramDao" autowire="byName" />
+	<bean id="demographicDao" class="ca.openosp.openo.commn.dao.DemographicDao" autowire="byName" />
 	<bean id="secUserRoleDao" class="ca.openosp.openo.PMmodule.dao.SecUserRoleDao" autowire="byName" />
 	<bean id="programSignatureDao" class="ca.openosp.openo.PMmodule.dao.ProgramSignatureDao" autowire="byName" />
 	<bean id="programClientRestrictionDAO" class="ca.openosp.openo.PMmodule.dao.ProgramClientRestrictionDAO" autowire="byName" />
-	<bean id="UserPropertyDAO" class="org.oscarehr.common.dao.UserPropertyDAO" autowire="byName" />
-	<bean id="clinicDAO" class="org.oscarehr.common.dao.ClinicDAO" autowire="byName" />
-	<bean id="dataExportDAO" class="org.oscarehr.common.dao.DataExportDao" autowire="byName" />
-	<bean id="siteDao" class="org.oscarehr.common.dao.SiteDao" autowire="byName" />
+	<bean id="UserPropertyDAO" class="ca.openosp.openo.commn.dao.UserPropertyDAO" autowire="byName" />
+	<bean id="clinicDAO" class="ca.openosp.openo.commn.dao.ClinicDAO" autowire="byName" />
+	<bean id="dataExportDAO" class="ca.openosp.openo.commn.dao.DataExportDao" autowire="byName" />
+	<bean id="siteDao" class="ca.openosp.openo.commn.dao.SiteDao" autowire="byName" />
 	<bean id="BillingmasterDAO" class="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" autowire="byName" />
 	<bean id="BillingPreferencesDAO" class="ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO" autowire="byName" />
 	<bean id="PrivateBillTransactionDAO" class="ca.openosp.openo.billings.ca.bc.data.PrivateBillTransactionsDAO" autowire="byName" />
 	<bean id="SupServiceCodeAssocDAO" class="ca.openosp.openo.billings.ca.bc.data.SupServiceCodeAssocDAO" autowire="byName" />
-	<bean id="BillingreferralDAO" class="org.oscarehr.common.dao.BillingreferralDao" autowire="byName" />
-	<bean id="DxresearchDAO" class="org.oscarehr.common.dao.DxresearchDAO" autowire="byName" />
-	<bean id="Icd9DAO" class="org.oscarehr.common.dao.Icd9Dao" autowire="byName" />
+	<bean id="BillingreferralDAO" class="ca.openosp.openo.commn.dao.BillingreferralDao" autowire="byName" />
+	<bean id="DxresearchDAO" class="ca.openosp.openo.commn.dao.DxresearchDAO" autowire="byName" />
+	<bean id="Icd9DAO" class="ca.openosp.openo.commn.dao.Icd9Dao" autowire="byName" />
 	<bean id="defaultIssueDao" class="ca.openosp.openo.daos.DefaultIssueDao" autowire="byName" />
 	
-	<!-- <bean id="rourke2009Dao" class="oscar.form.daos.Rourke2009DAO" autowire="byName" /> -->
-	<!-- <bean id="Rourke2017Dao" class="oscar.form.daos.Rourke2017Dao" autowire="byName"/> -->
-    <!-- <bean id="FormBooleanValueDao" class="oscar.form.daos.FormBooleanValueDao" autowire="byName"/> -->
-	<!-- <bean id="ocanSubmissionLogDao" class="org.oscarehr.PMmodule.daos.OcanSubmissionLogDao" autowire="byName" /> -->
-	<!-- bean id="Perinatal2017Dao" class="oscar.form.daos.ONPerinatal2017Dao" autowire="byName"/ -->
-	<!-- bean id="Perinatal2017CommentDao" class="oscar.form.daos.ONPerinatal2017CommentDao" autowire="byName"/ -->
+	<!-- <bean id="rourke2009Dao" class="ca.openosp.openo.form.dao.Rourke2009DAO" autowire="byName" /> -->
+	<!-- <bean id="Rourke2017Dao" class="ca.openosp.openo.form.dao.Rourke2017Dao" autowire="byName"/> -->
+    <!-- <bean id="FormBooleanValueDao" class="ca.openosp.openo.form.dao.FormBooleanValueDao" autowire="byName"/> -->
+	<!-- <bean id="ocanSubmissionLogDao" class="ca.openosp.openo.PMmodule.dao.OcanSubmissionLogDao" autowire="byName" /> -->
+	<!-- bean id="Perinatal2017Dao" class="ca.openosp.openo.form.dao.ONPerinatal2017Dao" autowire="byName"/ -->
+	<!-- bean id="Perinatal2017CommentDao" class="ca.openosp.openo.form.dao.ONPerinatal2017CommentDao" autowire="byName"/ -->
 
 	<bean id="lookupDao" class="ca.openosp.openo.daos.LookupDao" autowire="byName" />
-	<!-- <bean id="documentDao" class="org.oscarehr.document.daos.DocumentMergeDemographicDAO" autowire="byName" /> -->
+	<!-- <bean id="documentDao" class="ca.openosp.openo.document.dao.DocumentMergeDemographicDAO" autowire="byName" /> -->
 	<bean id="userAccessDao" class="ca.openosp.openo.daos.security.UserAccessDao" autowire="byName" />
-	<bean id="providerInboxRoutingDAO" class="org.oscarehr.common.dao.ProviderInboxRoutingDao" autowire="byName"/>
-	<bean id="ProviderLabRoutingFavoritesDao" class="org.oscarehr.common.dao.ProviderLabRoutingFavoritesDao" autowire="byName"/>
+	<bean id="providerInboxRoutingDAO" class="ca.openosp.openo.commn.dao.ProviderInboxRoutingDao" autowire="byName"/>
+	<bean id="ProviderLabRoutingFavoritesDao" class="ca.openosp.openo.commn.dao.ProviderLabRoutingFavoritesDao" autowire="byName"/>
 
-    <bean id="queueDocumentLinkDAO" class="org.oscarehr.common.dao.QueueDocumentLinkDao" autowire="byName"/>
+    <bean id="queueDocumentLinkDAO" class="ca.openosp.openo.commn.dao.QueueDocumentLinkDao" autowire="byName"/>
 
-	<bean id="caseloadDao" class="org.oscarehr.common.dao.CaseloadDao" autowire="byName" />
-	<bean id="inboxResultsDao" class="org.oscarehr.common.dao.InboxResultsDao" autowire="byName" />
+	<bean id="caseloadDao" class="ca.openosp.openo.commn.dao.CaseloadDao" autowire="byName" />
+	<bean id="inboxResultsDao" class="ca.openosp.openo.commn.dao.InboxResultsDao" autowire="byName" />
 	
 	<!-- Dao classes that implement OscarSuperDao -->
 	<bean id="providerSuperDao" class="ca.openosp.openo.dao.ProviderDao" autowire="byName" />
@@ -118,7 +118,7 @@
     <property name="sessionFactory" ref="sessionFactory"></property>  
     </bean>  
 
-	<bean id="hibernateTestDao" class="oscar.util.HibernateTestDao">
+	<bean id="hibernateTestDao" class="ca.openosp.openo.util.HibernateTestDao">
     <property name="template" ref="template"/>
 	</bean>
 		

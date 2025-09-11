@@ -50,6 +50,29 @@ import java.util.List;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts2 Action for handling message creation and sending in the OpenO EMR messaging system.
+ * 
+ * <p>This action processes the message composition form submission, validates security permissions,
+ * and sends the message to selected recipients. It handles both local and remote providers,
+ * manages attachments, and saves messages to the database.</p>
+ * 
+ * <p>Key responsibilities include:
+ * <ul>
+ *   <li>Security validation for message write permissions</li>
+ *   <li>Processing message content, subject, and attachments</li>
+ *   <li>Managing recipient lists (local and remote providers)</li>
+ *   <li>Associating messages with patient demographics when applicable</li>
+ *   <li>Saving sent message preferences for future use</li>
+ * </ul>
+ * </p>
+ * 
+ * @version 2.0
+ * @since 2002
+ * @see MsgSessionBean
+ * @see MsgMessageData
+ * @see MessagingManagerImpl
+ */
 public class MsgCreateMessage2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -59,14 +82,34 @@ public class MsgCreateMessage2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private static MessengerDemographicManager messengerDemographicManager = SpringUtils.getBean(MessengerDemographicManager.class);
 
+    /**
+     * Main execution method that processes and sends the message.
+     * 
+     * <p>This method performs the following steps:
+     * <ol>
+     *   <li>Validates user has write permissions for messaging</li>
+     *   <li>Retrieves message data from session bean</li>
+     *   <li>Processes recipients and message content</li>
+     *   <li>Creates and sends the message to all recipients</li>
+     *   <li>Saves user preferences for future messages</li>
+     * </ol>
+     * </p>
+     * 
+     * @return SUCCESS constant for Struts navigation
+     * @throws IOException if there's an I/O error during processing
+     * @throws ServletException if there's a servlet processing error
+     * @throws SecurityException if user lacks message write permissions
+     */
     public String execute()
             throws IOException, ServletException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        // Validate security permissions
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", "w", null)) {
             throw new SecurityException("missing required sec object (_msg)");
         }
 
-        //FIXME no more sessions
+        // Retrieve message session data
+        // TODO: Remove dependency on HTTP sessions
         MsgSessionBean bean;
         bean = (MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
         String userNo = bean.getProviderNo();
@@ -77,6 +120,7 @@ public class MsgCreateMessage2Action extends ActionSupport {
         String message = this.getMessage();
         String[] providers = this.getProvider();
         String subject = this.getSubject();
+        // Clear message data from session after retrieval
         bean.setMessage(null);
         bean.setSubject(null);
 
@@ -119,7 +163,7 @@ public class MsgCreateMessage2Action extends ActionSupport {
                 || "1".equals(userPropertyDao.getProp(UserProperty.INTEGRATOR_DEMOGRAPHIC_CONSENT).getValue()))) {
             if (MessagingManagerImpl.doesContainRemoteRecipient(loggedInInfo, providerListing)
                     && !messengerDemographicManager.isPatientConsentedForIntegrator(loggedInInfo, Integer.parseInt(demographic_no))) {
-                return error("oscarMessenger.CreateMessage.patientConsentError");
+                return error("messenger.CreateMessage.patientConsentError");
             }
         }
 
@@ -127,7 +171,7 @@ public class MsgCreateMessage2Action extends ActionSupport {
          * The Integrator does not support attachments at this time.  Stop attachments from being sent externally.
          */
         if ((att != null || pdfAtt != null) && MessagingManagerImpl.doesContainRemoteRecipient(loggedInInfo, providerListing)) {
-            return error("oscarMessenger.CreateMessage.attachmentsNotPermitted");
+            return error("messenger.CreateMessage.attachmentsNotPermitted");
         }
 
         //FIXME remove these deprecated methods and use the Messenger Managers instead

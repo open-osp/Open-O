@@ -68,9 +68,9 @@ public class EctMentalHealthRecord {
             }
             rs.close();
 
-            // from providers table
+            // from provider table
             sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName "
-                    + "FROM providers WHERE provider_no = " + provNo;
+                    + "FROM provider WHERE provider_no = " + provNo;
 
             rs = DBHandler.GetSQL(sql);
 

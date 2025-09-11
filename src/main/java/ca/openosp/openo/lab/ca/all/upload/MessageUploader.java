@@ -88,17 +88,17 @@ public final class MessageUploader {
      * Insert the lab into the proper tables of the database
      */
     public static String routeReport(LoggedInInfo loggedInInfo, String serviceName, String type, String hl7Body, int fileId, RouteReportResults results) throws Exception {
-        return routeReport(loggedInInfo, serviceName, Factory.getHandler(type, hl7Body), hl7Body, fileId, results);
+        return routeReport(loggedInInfo, serviceName, Factory.getHandler(type, hl7Body), hl7Body, fileId, results, type);
     }
 
-    public static String routeReport(LoggedInInfo loggedInInfo, String serviceName, MessageHandler h, String hl7Body, int fileId, RouteReportResults results) throws Exception {
+    public static String routeReport(LoggedInInfo loggedInInfo, String serviceName, MessageHandler h, String hl7Body, int fileId, RouteReportResults results, String type) throws Exception {
 
         String retVal = "";
 
         if (h == null) {
             throw new Exception("Unabled to continue. No valid handler found.");
         }
-        String type = h.getMsgType();
+        
         String firstName = h.getFirstName();
         String lastName = h.getLastName();
         String dob = h.getDOB();
@@ -404,9 +404,9 @@ public final class MessageUploader {
                                 practitionerNum.insert(0, "0");
                             }
                         }
-                        sql = "select provider_no from providers where " + sqlSearchOn + " = '" + practitionerNum.toString() + "'" + sqlOrderByLength + sqlLimit;
+                        sql = "select provider_no from provider where " + sqlSearchOn + " = '" + practitionerNum.toString() + "'" + sqlOrderByLength + sqlLimit;
                     } else {
-                        sql = "select provider_no from providers where " + sqlSearchOn + " LIKE '" + ((String) docNums.get(i)) + "'" + sqlOrderByLength + sqlLimit;
+                        sql = "select provider_no from provider where " + sqlSearchOn + " LIKE '" + ((String) docNums.get(i)) + "'" + sqlOrderByLength + sqlLimit;
                     }
                     pstmt = conn.prepareStatement(sql);
                     ResultSet rs = pstmt.executeQuery();

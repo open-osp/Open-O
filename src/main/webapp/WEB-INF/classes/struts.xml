@@ -127,71 +127,72 @@
             <result name="ssoLoginError">/index.jsp</result>
         </action>
         <action name="login/recordLogin" class="ca.openosp.openo.login.LoginAgreement2Action"/>
-        <action name="oscarMessenger/ImportDemographic" class="ca.openosp.openo.messenger.pageUtil.ImportDemographic2Action">
-            <result name="success">/oscarMessenger/ViewMessage.do</result>
+        <action name="messenger/ImportDemographic" class="ca.openosp.openo.messenger.pageUtil.ImportDemographic2Action">
+            <result name="success">/messenger/ViewMessage.do</result>
         </action>
-        <action name="oscarMessenger/SendMessage" class="ca.openosp.openo.messenger.pageUtil.MsgSendMessage2Action">
-            <result name="success">/oscarMessenger/SentMessage.jsp</result>
+        <action name="messenger/SendMessage" class="ca.openosp.openo.messenger.pageUtil.MsgSendMessage2Action">
+            <result name="success">/messenger/SentMessage.jsp</result>
         </action>
-        <action name="oscarMessenger/CreateMessage" class="ca.openosp.openo.messenger.pageUtil.MsgCreateMessage2Action">
-            <result name="success">/oscarMessenger/SentMessage.jsp</result>
-            <result name="error">/oscarMessenger/CreateMessage.jsp</result>
+        <action name="messenger/CreateMessage" class="ca.openosp.openo.messenger.pageUtil.MsgCreateMessage2Action">
+            <result name="success">/messenger/SentMessage.jsp</result>
+            <result name="error">/messenger/CreateMessage.jsp</result>
         </action>
-        <action name="oscarMessenger/DisplayMessages" class="ca.openosp.openo.messenger.pageUtil.MsgDisplayMessages2Action">
-            <result name="success">/oscarMessenger/DisplayMessages.jsp</result>
-            <result name="demoMsg">/oscarMessenger/DisplayDemographicMessages.jsp</result>
+        <action name="messenger/DisplayMessages" class="ca.openosp.openo.messenger.pageUtil.MsgDisplayMessages2Action">
+            <result name="success">/messenger/DisplayMessages.jsp</result>
+            <result name="demoMsg">/messenger/DisplayDemographicMessages.jsp</result>
         </action>
-        <action name="oscarMessenger/SendDemoMessage" class="ca.openosp.openo.messenger.pageUtil.MsgSendDemographicMessage2Action">
-            <result name="success">/oscarMessenger/CreateMessage.jsp</result>
+        <action name="messenger/SendDemoMessage" class="ca.openosp.openo.messenger.pageUtil.MsgSendDemographicMessage2Action">
+            <result name="success">/messenger/CreateMessage.jsp</result>
         </action>
-        <action name="oscarMessenger/DisplayDemographicMessages" class="ca.openosp.openo.messenger.pageUtil.MsgDisplayDemographicMessages2Action">
-            <result name="demoMsg">/oscarMessenger/DisplayDemographicMessages.jsp</result>
+        <action name="messenger/DisplayDemographicMessages" class="ca.openosp.openo.messenger.pageUtil.MsgDisplayDemographicMessages2Action">
+            <result name="demoMsg">/messenger/DisplayDemographicMessages.jsp</result>
         </action>
-        <action name="oscarMessenger/ReDisplayMessages" class="ca.openosp.openo.messenger.pageUtil.MsgReDisplayMessages2Action">
-            <result name="success">/oscarMessenger/DisplayMessages.jsp</result>
+        <action name="messenger/ReDisplayMessages" class="ca.openosp.openo.messenger.pageUtil.MsgReDisplayMessages2Action">
+            <result name="success">/messenger/DisplayMessages.jsp</result>
         </action>
-        <action name="oscarMessenger/ViewMessage" class="ca.openosp.openo.messenger.pageUtil.MsgViewMessage2Action">
-            <result name="noRights">/oscarMessenger/DisplayMessages.jsp</result>
-            <result name="success">/oscarMessenger/ViewMessage.jsp</result>
-            <result name="viewFromEncounter">/oscarMessenger/ViewMessageFromEncounter.jsp</result>
+        <action name="messenger/ViewMessage" class="ca.openosp.openo.messenger.pageUtil.MsgViewMessage2Action">
+            <result name="noRights">/messenger/DisplayMessages.jsp</result>
+            <result name="success">/messenger/ViewMessage.jsp</result>
+            <result name="viewFromEncounter">/messenger/ViewMessageFromEncounter.jsp</result>
         </action>
-        <!--action name="oscarMessenger/ViewMessageByPosition" class="oscar.oscarMessenger.pageUtil.MsgViewMessageByPosition2Action">
-            <result name="success">/oscarMessenger/ViewMessage.do</result>
-        </action-->
-        <action name="oscarMessenger/Doc2PDF" class="ca.openosp.openo.messenger.pageUtil.MsgAttachPDF2Action">
-            <result name="success">/oscarMessenger/selfCloseAndRefreshOpener.jsp</result>
-            <result name="attaching">/oscarMessenger/generatePreviewPDF.jsp</result>
+        <!-- DEPRECATED: This action is used by the legacy encounter page (oscarEncounter/Index.jsp) -->
+        <action name="messenger/ViewMessageByPosition" class="ca.openosp.openo.messenger.pageUtil.MsgViewMessageByPosition2Action">
+            <result name="success">/messenger/ViewMessage.do</result>
         </action>
-        <action name="oscarMessenger/ProcessDoc2PDF" class="ca.openosp.openo.messenger.pageUtil.MsgDoc2PDF2Action">
-            <result name="success">/oscarMessenger/selfClose.jsp</result>
+        <action name="messenger/Doc2PDF" class="ca.openosp.openo.messenger.pageUtil.MsgAttachPDF2Action">
+            <result name="success">/messenger/selfCloseAndRefreshOpener.jsp</result>
+            <result name="attaching">/messenger/generatePreviewPDF.jsp</result>
         </action>
-        <action name="oscarMessenger/HandleMessages" class="ca.openosp.openo.messenger.pageUtil.MsgHandleMessages2Action">
-            <result name="success">/oscarMessenger/DisplayMessages.jsp</result>
-            <result name="reply">/oscarMessenger/CreateMessage.jsp</result>
+        <action name="messenger/ProcessDoc2PDF" class="ca.openosp.openo.messenger.pageUtil.MsgDoc2PDF2Action">
+            <result name="success">/messenger/selfClose.jsp</result>
         </action>
-        <action name="oscarMessenger" class="ca.openosp.openo.messenger.config.pageUtil.MsgMessengerAdmin2Action">
-            <result name="success">/oscarMessenger/config/MessengerAdmin.jsp</result>
-            <result name="failure">/oscarMessenger/config/MessengerAdmin.jsp</result>
+        <action name="messenger/HandleMessages" class="ca.openosp.openo.messenger.pageUtil.MsgHandleMessages2Action">
+            <result name="success">/messenger/DisplayMessages.jsp</result>
+            <result name="reply">/messenger/CreateMessage.jsp</result>
         </action>
-        <action name="oscarMessenger/AddGroup" class="ca.openosp.openo.messenger.config.pageUtil.MsgMessengerCreateGroup2Action">
-            <result name="success">/oscarMessenger/config/MessengerAdmin.jsp</result>
+        <action name="messenger" class="ca.openosp.openo.messenger.config.pageUtil.MsgMessengerAdmin2Action">
+            <result name="success">/messenger/config/MessengerAdmin.jsp</result>
+            <result name="failure">/messenger/config/MessengerAdmin.jsp</result>
         </action>
-        <action name="oscarMessenger/ViewAttach" class="ca.openosp.openo.messenger.pageUtil.MsgViewAttachment2Action">
-            <result name="success">/oscarMessenger/ViewAttachment.jsp</result>
+        <action name="messenger/AddGroup" class="ca.openosp.openo.messenger.config.pageUtil.MsgMessengerCreateGroup2Action">
+            <result name="success">/messenger/config/MessengerAdmin.jsp</result>
         </action>
-        <action name="oscarMessenger/ViewPDFAttach" class="ca.openosp.openo.messenger.pageUtil.MsgViewPDFAttachment2Action">
-            <result name="success">/oscarMessenger/ViewPDFAttachment.jsp</result>
+        <action name="messenger/ViewAttach" class="ca.openosp.openo.messenger.pageUtil.MsgViewAttachment2Action">
+            <result name="success">/messenger/ViewAttachment.jsp</result>
         </action>
-        <action name="oscarMessenger/ViewPDFFile" class="ca.openosp.openo.messenger.pageUtil.MsgViewPDF2Action">
-            <result name="success">/oscarMessenger/ViewPDFFile.jsp</result>
+        <action name="messenger/ViewPDFAttach" class="ca.openosp.openo.messenger.pageUtil.MsgViewPDFAttachment2Action">
+            <result name="success">/messenger/ViewPDFAttachment.jsp</result>
         </action>
-        <action name="oscarMessenger/Transfer/Proceed" class="ca.openosp.openo.messenger.pageUtil.MsgProceed2Action">
-            <result name="success">/oscarMessenger/Transfer/SearchComplete.jsp</result>
+        <action name="messenger/ViewPDFFile" class="ca.openosp.openo.messenger.pageUtil.MsgViewPDF2Action">
+            <result name="success">/messenger/ViewPDFFile.jsp</result>
         </action>
-        <action name="oscarMessenger/ClearMessage" class="ca.openosp.openo.messenger.pageUtil.MsgClearMessage2Action">
-            <result name="success">/oscarMessenger/CreateMessage.jsp</result>
+        <action name="messenger/Transfer/Proceed" class="ca.openosp.openo.messenger.pageUtil.MsgProceed2Action">
+            <result name="success">/messenger/Transfer/SearchComplete.jsp</result>
         </action>
-        <action name="oscarMessenger/WriteToEncounter" class="ca.openosp.openo.messenger.pageUtil.MsgWriteToEncounter2Action">
+        <action name="messenger/ClearMessage" class="ca.openosp.openo.messenger.pageUtil.MsgClearMessage2Action">
+            <result name="success">/messenger/CreateMessage.jsp</result>
+        </action>
+        <action name="messenger/WriteToEncounter" class="ca.openosp.openo.messenger.pageUtil.MsgWriteToEncounter2Action">
             <result name="success">/oscarEncounter/IncomingEncounter.do</result>
         </action>
         <action name="oscarRx/choosePatient" class="ca.openosp.openo.prescript.pageUtil.RxChoosePatient2Action">
@@ -665,91 +666,7 @@
 			
 			<result name="eams">/eaaps/displayEctEaaps.do</result>
         </action>
-        <action name="oscarEncounter/displayOcularProcedure" class="oscar.oscarEncounter.pageUtil.EctDisplayOcularProcedure2Action">
-            <result name="labs">/oscarEncounter/displayLabs.do</result>
-			<result name="forms">/oscarEncounter/displayForms.do</result>
-			<result name="msgs">/oscarEncounter/displayMessages.do</result>
-			<result name="eforms">/oscarEncounter/displayEForms.do</result>
-			<result name="docs">/oscarEncounter/displayDocuments.do</result>
-			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
-			<result name="tickler">/oscarEncounter/displayTickler.do</result>
-			<result name="Dx">/oscarEncounter/displayDisease.do</result>
-			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
-			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
-			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
-			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="Rx">/oscarEncounter/displayRx.do</result>
-			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
-			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
-			<result name="HRM">/oscarEncounter/displayHRM.do</result>
-			
-			<result name="eams">/eaaps/displayEctEaaps.do</result>
-        </action>
-        <action name="oscarEncounter/displaySpecsHistory" class="oscar.oscarEncounter.pageUtil.EctDisplaySpecsHistory2Action">
-            <result name="labs">/oscarEncounter/displayLabs.do</result>
-			<result name="forms">/oscarEncounter/displayForms.do</result>
-			<result name="msgs">/oscarEncounter/displayMessages.do</result>
-			<result name="eforms">/oscarEncounter/displayEForms.do</result>
-			<result name="docs">/oscarEncounter/displayDocuments.do</result>
-			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
-			<result name="tickler">/oscarEncounter/displayTickler.do</result>
-			<result name="Dx">/oscarEncounter/displayDisease.do</result>
-			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
-			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
-			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
-			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="Rx">/oscarEncounter/displayRx.do</result>
-			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
-			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
-			<result name="HRM">/oscarEncounter/displayHRM.do</result>
-			
-			<result name="eams">/eaaps/displayEctEaaps.do</result>
-        </action>
-        <action name="oscarEncounter/displayMacro" class="oscar.oscarEncounter.pageUtil.EctDisplayMacro2Action">
-            <result name="labs">/oscarEncounter/displayLabs.do</result>
-			<result name="forms">/oscarEncounter/displayForms.do</result>
-			<result name="msgs">/oscarEncounter/displayMessages.do</result>
-			<result name="eforms">/oscarEncounter/displayEForms.do</result>
-			<result name="docs">/oscarEncounter/displayDocuments.do</result>
-			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
-			<result name="tickler">/oscarEncounter/displayTickler.do</result>
-			<result name="Dx">/oscarEncounter/displayDisease.do</result>
-			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
-			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
-			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
-			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="Rx">/oscarEncounter/displayRx.do</result>
-			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
-			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
-			<result name="HRM">/oscarEncounter/displayHRM.do</result>
-			
-			<result name="eams">/eaaps/displayEctEaaps.do</result>
-        </action>
         <action name="oscarEncounter/displayAppointmentHistory" class="ca.openosp.openo.encounter.pageUtil.EctDisplayAppointmentHistory2Action">
-            <result name="labs">/oscarEncounter/displayLabs.do</result>
-			<result name="forms">/oscarEncounter/displayForms.do</result>
-			<result name="msgs">/oscarEncounter/displayMessages.do</result>
-			<result name="eforms">/oscarEncounter/displayEForms.do</result>
-			<result name="docs">/oscarEncounter/displayDocuments.do</result>
-			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
-			<result name="tickler">/oscarEncounter/displayTickler.do</result>
-			<result name="Dx">/oscarEncounter/displayDisease.do</result>
-			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
-			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
-			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
-			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="Rx">/oscarEncounter/displayRx.do</result>
-			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
-			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
-			<result name="HRM">/oscarEncounter/displayHRM.do</result>
-			
-			<result name="eams">/eaaps/displayEctEaaps.do</result>
-        </action>
-        <action name="oscarEncounter/displayConReport" class="oscar.oscarEncounter.pageUtil.EctDisplayConReport2Action">
             <result name="labs">/oscarEncounter/displayLabs.do</result>
 			<result name="forms">/oscarEncounter/displayForms.do</result>
 			<result name="msgs">/oscarEncounter/displayMessages.do</result>
@@ -940,27 +857,6 @@
         </action>
         <action name="report/printLabDaySheetAction" class="ca.openosp.openo.report.pageUtil.printLabDaySheet2Action"/>
         <action name="oscarEncounter/displayDiagrams" class="ca.openosp.openo.encounter.pageUtil.EctDisplayDiagram2Action">
-            <result name="labs">/oscarEncounter/displayLabs.do</result>
-			<result name="forms">/oscarEncounter/displayForms.do</result>
-			<result name="msgs">/oscarEncounter/displayMessages.do</result>
-			<result name="eforms">/oscarEncounter/displayEForms.do</result>
-			<result name="docs">/oscarEncounter/displayDocuments.do</result>
-			<result name="measurements">/oscarEncounter/displayMeasurements.do</result>
-			<result name="tickler">/oscarEncounter/displayTickler.do</result>
-			<result name="Dx">/oscarEncounter/displayDisease.do</result>
-			<result name="preventions">/oscarEncounter/displayPrevention.do</result>
-			<result name="consultation">/oscarEncounter/displayConsultation.do</result>
-			<result name="allergies">/oscarEncounter/displayAllergy.do</result>
-			<result name="unresolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="resolvedIssues">/oscarEncounter/displayIssues.do</result>
-			<result name="Rx">/oscarEncounter/displayRx.do</result>
-			<result name="success">/oscarEncounter/LeftNavBarDisplay.jsp</result>
-			<result name="error">/oscarEncounter/LeftNavBarError.jsp</result>
-			<result name="HRM">/oscarEncounter/displayHRM.do</result>
-			
-			<result name="eams">/eaaps/displayEctEaaps.do</result>
-        </action>
-        <action name="oscarEncounter/displayExaminationHistory" class="oscar.oscarEncounter.pageUtil.EctDisplayExaminationHistory2Action">
             <result name="labs">/oscarEncounter/displayLabs.do</result>
 			<result name="forms">/oscarEncounter/displayForms.do</result>
 			<result name="msgs">/oscarEncounter/displayMessages.do</result>
@@ -2366,7 +2262,6 @@
             <result name="showInbox">/billing/CA/ON/viewMOHFiles.jsp</result>
         </action-->
         <action name="billing/ca/on/DisplayInvoiceLogo" class="ca.openosp.openo.billing.CA.ON.util.DisplayInvoiceLogo2Action"/>
-        <action name="cvc" class="org.oscarehr.integration.born.CVCTester2Action"/>
         <action name="admin/AuditLogPurge" class="ca.openosp.openo.admin.web.AuditLogPurge2Action">
             <result name="success">/admin/auditLogPurge.jsp</result>
         </action>

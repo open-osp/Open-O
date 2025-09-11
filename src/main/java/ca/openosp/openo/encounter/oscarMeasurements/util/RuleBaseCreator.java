@@ -32,10 +32,10 @@ import java.util.List;
 import org.apache.logging.log4j.Logger;
 import org.drools.RuleBase;
 import org.drools.io.RuleBaseLoader;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import ca.openosp.openo.drools.RuleBaseFactory;
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -92,17 +92,17 @@ public class RuleBaseCreator {
         list.add(new DSCondition("getLastDateRecordedInMonths", "REBG", ">=", "3"));
         list.add(new DSCondition("getLastDateRecordedInMonths", "REBG", "<", "6"));
 
-        Element ruleElement = getRule("REBG1", "oscar.oscarEncounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
+        Element ruleElement = getRule("REBG1", "ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
         elementList.add(ruleElement);
 
         list = new ArrayList();
         list.add(new DSCondition("getLastDateRecordedInMonths", "REBG", ">", "6"));
-        ruleElement = getRule("REBG2", "oscar.oscarEncounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
+        ruleElement = getRule("REBG2", "ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
         elementList.add(ruleElement);
 
         list = new ArrayList();
         list.add(new DSCondition("getLastDateRecordedInMonths", "REBG", "==", "-1"));
-        ruleElement = getRule("REBG3", "oscar.oscarEncounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
+        ruleElement = getRule("REBG3", "ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo", list, "MiscUtils.getLogger().debug(\"REBG 1 getting called\");");
         elementList.add(ruleElement);
     }
 

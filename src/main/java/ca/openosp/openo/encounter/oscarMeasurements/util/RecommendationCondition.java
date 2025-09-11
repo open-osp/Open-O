@@ -28,7 +28,7 @@ package ca.openosp.openo.encounter.oscarMeasurements.util;
 
 import java.util.ArrayList;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Stores Conditions for target Colours

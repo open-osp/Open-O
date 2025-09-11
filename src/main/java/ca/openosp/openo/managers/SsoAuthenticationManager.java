@@ -122,7 +122,7 @@ public class SsoAuthenticationManager implements Serializable {
 
         /* add session attributes;
          * NOTE: these are the ONLY attributes we add to a session.
-         * NO providers preferences here.
+         * NO provider preferences here.
          */
         logger.debug("Setting session SSO attributes: ");
         Collection<String> keys = attributes.keySet();
@@ -169,7 +169,7 @@ public class SsoAuthenticationManager implements Serializable {
      * Null data if user does not authenticate.
      *
      * @param sessionData         new or existing hashmap
-     * @param providerInformation data of the providers profile
+     * @param providerInformation data of the provider profile
      * @return session data or NULL
      */
     private Map<String, Object> createSession(Map<String, Object> sessionData, String[] providerInformation) {
@@ -191,7 +191,7 @@ public class SsoAuthenticationManager implements Serializable {
             // this will set ONLY if the user login checks out from ssoAuthenticationManager.checkLogin(nameId)
             sessionData.put(SessionConstants.LOGGED_IN_SECURITY, getSecurity());
 
-            // providers preferences.  Let's stop putting this into session
+            // provider preferences.  Let's stop putting this into session
             setUserPreferences(sessionData, providerNo);
 
             // not sure if this is needed yet

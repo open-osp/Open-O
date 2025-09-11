@@ -87,7 +87,7 @@ public class FrmDischargeSummaryRecord extends FrmRecord {
             }
 
 
-            String sql1 = "SELECT CONCAT(CONCAT(last_name,', '),first_name) AS providerName FROM providers WHERE provider_no='" + providerNo + "'";
+            String sql1 = "SELECT CONCAT(CONCAT(last_name,', '),first_name) AS providerName FROM provider WHERE provider_no='" + providerNo + "'";
 
 
             try {

@@ -192,7 +192,7 @@
             {"pdfchartlabel", "demographicpdfchartlabel.jsp"},
             {"appt_history", "demographicappthistory.jsp"},
             {"Update Record", "demographicupdatearecord.jsp"},
-            {"linkMsg2Demo", "../oscarMessenger/msgSearchDemo.jsp"},
+            {"linkMsg2Demo", "../messenger/msgSearchDemo.jsp"},
     };
     apptMainBean.doConfigure(dbQueries, responseTargets);
 

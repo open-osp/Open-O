@@ -201,7 +201,7 @@ public class ABCDParser {
         logger.info("Init - providers Hash table");
         HashMap<String, String> htable = new HashMap<String, String>();
         try {
-            String sql = "select provider_no, ohip_no from providers where ohip_no != '' ";
+            String sql = "select provider_no, ohip_no from provider where ohip_no != '' ";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.executeQuery();
             ResultSet rs = pstmt.executeQuery();

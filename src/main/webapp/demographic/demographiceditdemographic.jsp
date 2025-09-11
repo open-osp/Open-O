@@ -1214,7 +1214,7 @@
                         <tr>
                             <td><a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popup(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographic.getDemographicNo()%>','msg')">
+                                    onClick="popup(700,960,'<%= request.getContextPath() %>/messenger/SendDemoMessage.do?demographic_no=<%=demographic.getDemographicNo()%>','msg')">
                                 <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgSendMsg"/></a></td>
                         </tr>
                         <tr>

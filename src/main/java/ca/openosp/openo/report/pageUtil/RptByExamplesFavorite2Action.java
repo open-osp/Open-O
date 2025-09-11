@@ -72,7 +72,12 @@ public class RptByExamplesFavorite2Action extends ActionSupport {
                     break;
                 }
             }
-            return "edit";
+        } else {
+            String favoriteName = this.getFavoriteName();
+            String query = this.getQuery();
+
+            String queryWithEscapeChar = StringEscapeUtils.escapeSql(query);
+            write2Database(providerNo, favoriteName, queryWithEscapeChar);
         }
 
         // Save new favorite

@@ -32,14 +32,16 @@ import java.util.Iterator;
 
 import org.apache.commons.collections.OrderedMap;
 import org.apache.commons.collections.map.LinkedMap;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.filter.ElementFilter;
-import org.jdom.input.SAXBuilder;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.input.SAXBuilder;
 
 import ca.openosp.OscarProperties;
 
@@ -67,21 +69,23 @@ public class OntarioMD {
     public Hashtable loginToOntarioMD(String username, String password, String incomingRequestor) throws Exception {
         //public ArrayList soapHttpCall(int siteCode, String userId, String passwd,		String xml) throws Exception
         Hashtable h = null;
-        PostMethod post = new PostMethod("https://www.ontariomd.ca/services/OMDAutomatedAuthentication");
-        post.setRequestHeader("SOAPAction", "");
-        post.setRequestHeader("Content-Type", "text/xml; charset=utf-8");
+        HttpPost post = new HttpPost("https://www.ontariomd.ca/services/OMDAutomatedAuthentication");
+        post.setHeader("SOAPAction", "");
+        post.setHeader("Content-Type", "text/xml; charset=utf-8");
 
         String soapMsg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body><ns1:getSession xmlns:ns1=\"urn:OMDAutomatedAuthentication\"><username>" + username + "</username><password>" + password + "</password><incomingRequestor>" + incomingRequestor + "</incomingRequestor></ns1:getSession></soap:Body></soap:Envelope> ";
 
-        RequestEntity re = new StringRequestEntity(soapMsg, "text/xml", "utf-8");
+        StringEntity entity = new StringEntity(soapMsg, "UTF-8");
+        post.setEntity(entity);
 
-        post.setRequestEntity(re);
+        try (CloseableHttpClient httpclient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpclient.execute(post)) {
 
-        HttpClient httpclient = new HttpClient();
-        // Execute request
-        try {
-            httpclient.executeMethod(post);
-            h = parseReturn(post.getResponseBodyAsStream());
+            InputStream responseStream = response.getEntity().getContent();
+            h = parseReturn(responseStream);
+
+            EntityUtils.consume(response.getEntity());
+
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         } finally {
@@ -94,12 +98,25 @@ public class OntarioMD {
     private Hashtable parseReturn(InputStream is) {
         Hashtable h = null;
         try {
-
-
+            // Create secure SAXBuilder with XXE protection
             SAXBuilder parser = new SAXBuilder();
+
+            // Security features to prevent XXE attacks
+            setFeatureSafely(parser, "http://apache.org/xml/features/disallow-doctype-decl", true);
+            setFeatureSafely(parser, "http://xml.org/sax/features/external-general-entities", false);
+            setFeatureSafely(parser, "http://xml.org/sax/features/external-parameter-entities", false);
+            setFeatureSafely(parser, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            
+            try {
+                parser.setExpandEntities(false);
+            } catch (Exception ex) {
+                MiscUtils.getLogger().error("Could not disable entity expansion: " + ex.getMessage());
+            }
             Document doc = parser.build(is);
             Element root = doc.getRootElement();
+
             h = new Hashtable();
+
             String jsessionID = g(root.getDescendants(new ElementFilter("jsessionID")));
             String ptLoginToken = g(root.getDescendants(new ElementFilter("ptLoginToken")));
             String returnCode = g(root.getDescendants(new ElementFilter("returnCode")));
@@ -112,6 +129,14 @@ public class OntarioMD {
             MiscUtils.getLogger().error("Error", e);
         }
         return h;
+    }
+
+    private void setFeatureSafely(SAXBuilder parser, String feature, boolean value) {
+        try {
+            parser.setFeature(feature, value);
+        } catch (Exception ex) {
+            MiscUtils.getLogger().warn("Could not set feature " + feature + ": " + ex.getMessage());
+        }
     }
 
     private String g(Iterator iter) {

@@ -479,7 +479,7 @@ public class CaseManagementView2Action extends ActionSupport {
             request.setAttribute("cme_js", customCmeJs);
         }
 
-        //2. Override from providers preferences?
+        //2. Override from provider preferences?
 
         //3. Override based on appointment type?
         logger.debug("VIEW Exiting " + String.valueOf(current - beginning));

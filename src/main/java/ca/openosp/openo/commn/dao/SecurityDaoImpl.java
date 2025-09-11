@@ -115,7 +115,7 @@ public class SecurityDaoImpl extends AbstractDaoImpl<Security> implements Securi
 
     @Override
     public List<Security> findByProviderSite(String providerNo) {
-        String queryStr = "select * from sec s inner join providersite p on s.provider_no = p.provider_no " +
+        String queryStr = "select * from security s inner join providersite p on s.provider_no = p.provider_no " +
                 "where p.site_id in(select site_id from providersite where provider_no=?1)";
         Query query = entityManager.createNativeQuery(queryStr, modelClass);
         query.setParameter(1, providerNo);

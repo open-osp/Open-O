@@ -685,25 +685,25 @@ Internal messaging system.
 
 | Action Name | Class Name | Description |
 |-------------|------------|-------------|
-| oscarMessenger/AddGroup | oscar.oscarMessenger.config.pageUtil.MsgMessengerCreateGroup2Action | Adds messenger groups |
-| oscarMessenger/ClearMessage | oscar.oscarMessenger.pageUtil.MsgClearMessage2Action | Clears messages |
-| oscarMessenger/CreateMessage | oscar.oscarMessenger.pageUtil.MsgCreateMessage2Action | Creates new messages |
-| oscarMessenger/DisplayDemographicMessages | oscar.oscarMessenger.pageUtil.MsgDisplayDemographicMessages2Action | Displays demographic messages |
-| oscarMessenger/DisplayMessages | oscar.oscarMessenger.pageUtil.MsgDisplayMessages2Action | Displays messages |
-| oscarMessenger/Doc2PDF | oscar.oscarMessenger.pageUtil.MsgAttachPDF2Action | Converts documents to PDF |
-| oscarMessenger/HandleMessages | oscar.oscarMessenger.pageUtil.MsgHandleMessages2Action | Handles message processing |
-| oscarMessenger/ImportDemographic | oscar.oscarMessenger.pageUtil.ImportDemographic2Action | Imports demographic data |
-| oscarMessenger | oscar.oscarMessenger.config.pageUtil.MsgMessengerAdmin2Action | Administers messenger system |
-| oscarMessenger/ProcessDoc2PDF | oscar.oscarMessenger.pageUtil.MsgDoc2PDF2Action | Processes document to PDF conversion |
-| oscarMessenger/ReDisplayMessages | oscar.oscarMessenger.pageUtil.MsgReDisplayMessages2Action | Re-displays messages |
-| oscarMessenger/SendDemoMessage | oscar.oscarMessenger.pageUtil.MsgSendDemographicMessage2Action | Sends demographic messages |
-| oscarMessenger/SendMessage | oscar.oscarMessenger.pageUtil.MsgSendMessage2Action | Sends messages |
-| oscarMessenger/Transfer/Proceed | oscar.oscarMessenger.pageUtil.MsgProceed2Action | Proceeds with message transfer |
-| oscarMessenger/ViewAttach | oscar.oscarMessenger.pageUtil.MsgViewAttachment2Action | Views message attachments |
-| oscarMessenger/ViewMessage | oscar.oscarMessenger.pageUtil.MsgViewMessage2Action | Views messages |
-| oscarMessenger/ViewPDFAttach | oscar.oscarMessenger.pageUtil.MsgViewPDFAttachment2Action | Views PDF attachments |
-| oscarMessenger/ViewPDFFile | oscar.oscarMessenger.pageUtil.MsgViewPDF2Action | Views PDF files |
-| oscarMessenger/WriteToEncounter | oscar.oscarMessenger.pageUtil.MsgWriteToEncounter2Action | Writes messages to encounters |
+| messenger/AddGroup | oscar.messenger.config.pageUtil.MsgMessengerCreateGroup2Action | Adds messenger groups |
+| messenger/ClearMessage | oscar.messenger.pageUtil.MsgClearMessage2Action | Clears messages |
+| messenger/CreateMessage | oscar.messenger.pageUtil.MsgCreateMessage2Action | Creates new messages |
+| messenger/DisplayDemographicMessages | oscar.messenger.pageUtil.MsgDisplayDemographicMessages2Action | Displays demographic messages |
+| messenger/DisplayMessages | oscar.messenger.pageUtil.MsgDisplayMessages2Action | Displays messages |
+| messenger/Doc2PDF | oscar.messenger.pageUtil.MsgAttachPDF2Action | Converts documents to PDF |
+| messenger/HandleMessages | oscar.messenger.pageUtil.MsgHandleMessages2Action | Handles message processing |
+| messenger/ImportDemographic | oscar.messenger.pageUtil.ImportDemographic2Action | Imports demographic data |
+| messenger | oscar.messenger.config.pageUtil.MsgMessengerAdmin2Action | Administers messenger system |
+| messenger/ProcessDoc2PDF | oscar.messenger.pageUtil.MsgDoc2PDF2Action | Processes document to PDF conversion |
+| messenger/ReDisplayMessages | oscar.messenger.pageUtil.MsgReDisplayMessages2Action | Re-displays messages |
+| messenger/SendDemoMessage | oscar.messenger.pageUtil.MsgSendDemographicMessage2Action | Sends demographic messages |
+| messenger/SendMessage | oscar.messenger.pageUtil.MsgSendMessage2Action | Sends messages |
+| messenger/Transfer/Proceed | oscar.messenger.pageUtil.MsgProceed2Action | Proceeds with message transfer |
+| messenger/ViewAttach | oscar.messenger.pageUtil.MsgViewAttachment2Action | Views message attachments |
+| messenger/ViewMessage | oscar.messenger.pageUtil.MsgViewMessage2Action | Views messages |
+| messenger/ViewPDFAttach | oscar.messenger.pageUtil.MsgViewPDFAttachment2Action | Views PDF attachments |
+| messenger/ViewPDFFile | oscar.messenger.pageUtil.MsgViewPDF2Action | Views PDF files |
+| messenger/WriteToEncounter | oscar.messenger.pageUtil.MsgWriteToEncounter2Action | Writes messages to encounters |
 
 ## Oscar Prevention Module
 

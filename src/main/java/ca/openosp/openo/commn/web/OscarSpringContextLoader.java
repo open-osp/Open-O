@@ -88,7 +88,7 @@ public final class OscarSpringContextLoader extends ContextLoaderListener {
         configLocations.add(CONTEXTNAME + ".xml");
 
         for (String s : moduleList) {
-            configLocations.add(CONTEXTNAME + s + ".xml");
+            configLocations.add(CONTEXTNAME + s.trim() + ".xml");
         }
 
         for (String s : configLocations) {

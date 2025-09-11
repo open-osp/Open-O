@@ -40,252 +40,193 @@ import ca.openosp.openo.commn.model.ServiceClient;
 import ca.openosp.openo.commn.model.ServiceRequestToken;
 import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.builder.api.DefaultApi10a;
-import com.github.scribejava.core.model.OAuth1AccessToken;
-import com.github.scribejava.core.model.OAuth1RequestToken;
-import com.github.scribejava.core.oauth.OAuth10aService;
+import ca.openosp.openo.webserv.oauth.AccessToken;
+import ca.openosp.openo.webserv.oauth.Client;
+// OAuth 1.0a - replaced cxf OAuthServiceException. 
+import ca.openosp.openo.webserv.oauth.OAuth1Exception;
+import ca.openosp.openo.webserv.oauth.OAuth1Permission;
+import ca.openosp.openo.webserv.oauth.RequestToken;
+import ca.openosp.openo.webserv.oauth.RequestTokenRegistration;
+import ca.openosp.openo.webserv.oauth.UserSubject;
 
-/**
- * OAuth 1.0a Data Provider using ScribeJava
- * Migrated from CXF OAuth implementation
- */
+import java.util.*;
+
 @Component
 @Transactional
 public class OscarOAuthDataProvider {
 
-    private static final Logger logger = MiscUtils.getLogger();
+    private final org.apache.logging.log4j.Logger logger = MiscUtils.getLogger();
 
-    @Autowired
-    private ServiceRequestTokenDao serviceRequestTokenDao;
-    @Autowired
-    private ServiceAccessTokenDao serviceAccessTokenDao;
-    @Autowired
-    private ServiceClientDao serviceClientDao;
-    @Value("${oauth.token.lifetime:3600}")
-    private long requestTokenLifetime;
+    @Autowired private ServiceRequestTokenDao serviceRequestTokenDao;
+    @Autowired private ServiceAccessTokenDao serviceAccessTokenDao;
+    @Autowired private ServiceClientDao serviceClientDao;
 
-    /**
-     * Generic OAuth 1.0a API for custom providers
-     */
-    private static class GenericOAuth10aApi extends DefaultApi10a {
-        private final String requestTokenUrl;
-        private final String accessTokenUrl;
-        private final String authorizationUrl;
-        
-        public GenericOAuth10aApi(String baseUrl) {
-            this.requestTokenUrl = baseUrl + "/oauth/request_token";
-            this.accessTokenUrl = baseUrl + "/oauth/access_token";
-            this.authorizationUrl = baseUrl + "/oauth/authorize";
+    public Client getClient(String consumerKey) {
+        logger.debug("getClient({})", consumerKey);
+        ServiceClient sc = serviceClientDao.findByKey(consumerKey);
+        if (sc != null) {
+            return new Client(sc.getKey(), sc.getSecret(), sc.getName(), sc.getUri());
         }
-        
-        @Override
-        public String getRequestTokenEndpoint() {
-            return requestTokenUrl;
-        }
-        
-        @Override
-        public String getAccessTokenEndpoint() {
-            return accessTokenUrl;
-        }
-        
-        @Override
-        public String getAuthorizationBaseUrl() {
-            return authorizationUrl;
-        }
+        return null;
     }
 
-    public ServiceClient getClient(String clientId) {
-        logger.debug("getClient() called");
-        return serviceClientDao.findByKey(clientId);
-    }
-
-    public OAuth1RequestToken createRequestToken(String clientKey, String callback, List<String> scopes) {
+    public RequestToken createRequestToken(RequestTokenRegistration reg) {
         logger.debug("createRequestToken() called");
-        
-        ServiceClient client = serviceClientDao.findByKey(clientKey);
-        if (client == null) {
-            throw new RuntimeException("Client not found: " + clientKey);
+        String tokenId = UUID.randomUUID().toString();
+        String tokenSecret = UUID.randomUUID().toString();
+
+        RequestToken rt = new RequestToken(reg.getClient(), tokenId, tokenSecret);
+        List<OAuth1Permission> perms = new ArrayList<>();
+        StringBuilder scopeStr = new StringBuilder();
+
+        if (reg.getScopes() != null) {
+            for (String scope : reg.getScopes()) {
+                perms.add(new OAuth1Permission(scope, scope));
+                scopeStr.append(scope).append(" ");
+            }
         }
+        rt.setScopes(perms);
+        rt.setCallback(reg.getCallback());
 
-        try {
-            // Create OAuth 1.0a service
-            OAuth10aService service = new ServiceBuilder(client.getKey())
-                    .apiSecret(client.getSecret())
-                    .callback(callback != null ? callback : "oob")
-                    .build(new GenericOAuth10aApi(client.getUri())); // Use dynamically retrieved base URL
+        ServiceRequestToken srt = new ServiceRequestToken();
+        srt.setCallback(rt.getCallback());
+        srt.setClientId(serviceClientDao.findByKey(rt.getClient().getConsumerKey()).getId());
+        srt.setDateCreated(new Date());
+        srt.setTokenId(rt.getTokenKey());
+        srt.setTokenSecret(rt.getTokenSecret());
+        srt.setScopes(scopeStr.toString().trim());
+        serviceRequestTokenDao.persist(srt);
 
-            // Get request token from ScribeJava
-            OAuth1RequestToken requestToken = service.getRequestToken();
-
-            // Store in database
-            ServiceRequestToken srt = new ServiceRequestToken();
-            srt.setCallback(callback);
-            srt.setClientId(client.getId());
-            srt.setDateCreated(new Date());
-            srt.setTokenId(requestToken.getToken());
-            srt.setTokenSecret(requestToken.getTokenSecret());
-            srt.setScopes(scopes != null ? String.join(" ", scopes) : "");
-            serviceRequestTokenDao.persist(srt);
-
-            return requestToken;
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            logger.error("Error creating request token", e);
-            throw new RuntimeException("Failed to create request token", e);
-        }
+        return rt;
     }
 
-    /**
-     * Looks up a request‐token in the DB and returns a ScribeJava object,
-     * but only if it hasn’t expired (per requestTokenLifetime seconds).
-     */
-    public OAuth1RequestToken getRequestToken(String requestTokenId) {
-        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestTokenId);
-        if (srt == null) {
-            return null;
-        }
+    public RequestToken getRequestToken(String tokenId) {
+        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(tokenId);
+        if (srt == null) return null;
 
-        long ageMillis = System.currentTimeMillis() - srt.getDateCreated().getTime();
-        // lifetime is in seconds, so convert to ms
-        if (ageMillis > (requestTokenLifetime * 1_000L)) {
-            // expired -> delete and bail
+        // expire after 1 hour
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR, -1);
+        if (srt.getDateCreated().before(cal.getTime())) {
             serviceRequestTokenDao.remove(srt);
             return null;
         }
 
-        // still valid
-        return new OAuth1RequestToken(srt.getTokenId(), srt.getTokenSecret());
+        ServiceClient sc = serviceClientDao.find(srt.getClientId());
+        Client client = new Client(sc.getKey(), sc.getSecret(), sc.getName(), sc.getUri());
+
+        RequestToken rt = new RequestToken(client, srt.getTokenId(), srt.getTokenSecret());
+        List<OAuth1Permission> perms = new ArrayList<>();
+        for (String scope : srt.getScopes().split(" ")) {
+            perms.add(new OAuth1Permission(scope, scope));
+        }
+        rt.setScopes(perms);
+        rt.setCallback(srt.getCallback());
+        rt.setVerifier(srt.getVerifier());
+
+        return rt;
     }
 
-    public String finalizeAuthorization(String requestTokenId, String providerNo) {
-        logger.debug("finalizeAuthorization() called");
-        String verifier = UUID.randomUUID().toString();
-        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestTokenId);
-        if (srt != null) {
-            srt.setVerifier(verifier);
-            srt.setProviderNo(providerNo);
-            serviceRequestTokenDao.merge(srt);
-        }
-        return verifier;
+    // public String finalizeAuthorization(Token data) throws OAuthServiceException {
+    //     logger.debug("finalizeAuthorization() called");
+    //     RequestToken requestToken = data.getToken();
+    //     requestToken.setVerifier(UUID.randomUUID().toString());
+    //     ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestToken.getTokenKey());
+    //     if (srt != null) {
+    //         srt.setVerifier(requestToken.getVerifier());
+    //         serviceRequestTokenDao.merge(srt);
+    //     }
+    //     return requestToken.getVerifier();
+    // }
+
+
+    public AccessToken createAccessToken(RequestToken requestToken) {
+        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestToken.getTokenKey());
+        if (srt == null) throw new OAuth1Exception(401, "Invalid request token");
+
+        String accessTokenId = UUID.randomUUID().toString();
+        String tokenSecret = UUID.randomUUID().toString();
+        long issuedAt = System.currentTimeMillis() / 1000;
+
+        AccessToken at = new AccessToken(requestToken.getClient(), accessTokenId, tokenSecret, 3600, issuedAt);
+        at.setSubject(new UserSubject(srt.getProviderNo(), new ArrayList<>()));
+        at.setScopes(requestToken.getScopes());
+
+        ServiceAccessToken sat = new ServiceAccessToken();
+        ServiceClient sc = serviceClientDao.findByKey(requestToken.getClient().getConsumerKey());
+        sat.setClientId(sc.getId());
+        sat.setDateCreated(new Date());
+        sat.setIssued(issuedAt);
+        sat.setLifetime(3600);
+        sat.setTokenId(accessTokenId);
+        sat.setTokenSecret(tokenSecret);
+        sat.setProviderNo(srt.getProviderNo());
+        sat.setScopes(String.join(" ", requestToken.getScopes().stream()
+            .map(OAuth1Permission::getPermission).toArray(String[]::new)));
+
+        serviceAccessTokenDao.persist(sat);
+        serviceRequestTokenDao.remove(srt);
+
+        return at;
     }
 
-    public OAuth1AccessToken createAccessToken(String requestTokenId, String verifier) {
-        logger.debug("createAccessToken() called");
-        
-        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestTokenId);
-        if (srt == null) {
-            throw new RuntimeException("Invalid request token.");
+    public AccessToken getAccessToken(String tokenId) {
+        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(tokenId);
+        if (sat == null) return null;
+
+        ServiceClient sc = serviceClientDao.find(sat.getClientId());
+        Client client = getClient(sc.getKey());
+
+        AccessToken at = new AccessToken(client, sat.getTokenId(), sat.getTokenSecret(),
+            sat.getLifetime(), sat.getIssued());
+        at.setSubject(new UserSubject(sat.getProviderNo(), new ArrayList<>()));
+
+        List<OAuth1Permission> perms = new ArrayList<>();
+        for (String scope : sat.getScopes().split(" ")) {
+            perms.add(new OAuth1Permission(scope, scope));
         }
-        
-        if (!verifier.equals(srt.getVerifier())) {
-            throw new RuntimeException("Invalid verifier.");
-        }
+        at.setScopes(perms);
 
-        try {
-            ServiceClient client = serviceClientDao.find(srt.getClientId());
-            
-            // Create OAuth 1.0a service
-            OAuth10aService service = new ServiceBuilder(client.getKey())
-                    .apiSecret(client.getSecret())
-                    .callback(srt.getCallback())
-                    .build(new GenericOAuth10aApi(client.getUri())); // Replace with actual base URL
-
-            // Create request token for exchange
-            OAuth1RequestToken requestToken = new OAuth1RequestToken(srt.getTokenId(), srt.getTokenSecret());
-            
-            // Exchange for access token
-            OAuth1AccessToken accessToken = service.getAccessToken(requestToken, verifier);
-
-            // Store in database
-            ServiceAccessToken sat = new ServiceAccessToken();
-            sat.setClientId(client.getId());
-            sat.setDateCreated(new Date());
-            sat.setIssued(System.currentTimeMillis() / 1000);
-            sat.setLifetime(3600);
-            sat.setTokenId(accessToken.getToken());
-            sat.setTokenSecret(accessToken.getTokenSecret());
-            sat.setProviderNo(srt.getProviderNo());
-            sat.setScopes(srt.getScopes());
-            serviceAccessTokenDao.persist(sat);
-            
-            // Remove request token
-            serviceRequestTokenDao.remove(srt);
-
-            return accessToken;
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            logger.error("Error creating access token", e);
-            throw new RuntimeException("Failed to create access token", e);
-        }
-    }
-
-    public OAuth1AccessToken getAccessToken(String accessTokenId) {
-        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(accessTokenId);
-        if (sat == null) {
-            throw new RuntimeException("Invalid access token.");
-        }
-        
-        return new OAuth1AccessToken(sat.getTokenId(), sat.getTokenSecret());
+        return at;
     }
 
     public void removeToken(String tokenId) {
         ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(tokenId);
-        if (srt != null) {
-            serviceRequestTokenDao.remove(srt);
-        }
+        if (srt != null) serviceRequestTokenDao.remove(srt);
+
         ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(tokenId);
-        if (sat != null) {
-            serviceAccessTokenDao.remove(sat);
-        }
+        if (sat != null) serviceAccessTokenDao.remove(sat);
     }
 
-    /**
-     * Return the secret associated with a given OAuth1 token.
-     * First checks access-tokens, then request-tokens if not found.
-     */
-    public String getTokenSecret(String tokenId) {
-        // try access‐token table
-        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(tokenId);
-        if (sat != null) {
-            return sat.getTokenSecret();
+    public String finalizeAuthorization(RequestToken requestToken) throws OAuth1Exception {
+        logger.debug("finalizeAuthorization() called");
+        // RequestToken requestToken = data.getToken(); - now passing the token directly. 
+        requestToken.setVerifier(UUID.randomUUID().toString());
+        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestToken.getTokenKey());
+        if (srt != null) {
+            srt.setVerifier(requestToken.getVerifier());
+            serviceRequestTokenDao.merge(srt);
         }
-        // fallback to request‐token table
-        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(tokenId);
+        return requestToken.getVerifier();
+    }
+ 
+
+    public String getAccessTokenSecret(String accessTokenId) {
+        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(accessTokenId);
+        return sat != null ? sat.getTokenSecret() : null;
+    }
+
+    public String getProviderNoByAccessToken(String accessTokenId) {
+        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(accessTokenId);
+        return sat != null ? sat.getProviderNo() : null;
+    }
+
+    public String getRequestTokenSecret(String requestTokenId) {
+        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(requestTokenId);
         return srt != null ? srt.getTokenSecret() : null;
     }
 
-    /**
-     * Lookup which OSCAR providerNo “owns” this token.
-     * First checks access-tokens, then request-tokens.
-     */
-    public String getProviderNoByToken(String tokenId) {
-        // try access‐token table
-        ServiceAccessToken sat = serviceAccessTokenDao.findByTokenId(tokenId);
-        if (sat != null) {
-            return sat.getProviderNo();
-        }
-        // fallback to request‐token table
-        ServiceRequestToken srt = serviceRequestTokenDao.findByTokenId(tokenId);
-        return srt != null ? srt.getProviderNo() : null;
-    }
-
-        public OAuth10aService buildService(String clientKey, String callbackUrl) {
-        ServiceClient client = getClient(clientKey);
-        ServiceBuilder builder = new ServiceBuilder(client.getKey())
-            .apiSecret(client.getSecret());
-        if (callbackUrl != null) {
-            builder.callback(callbackUrl);
-        }
-        return builder.build(new GenericOAuth10aApi(client.getUri()));
-    }
-
-    /**
-     * Retrieve the stored access token object by its ID.
-     */
-    public OAuth1AccessToken getStoredAccessToken(String tokenId) {
-        return getAccessToken(tokenId);
-    }
 }

@@ -36,10 +36,11 @@ import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.message.token.UsernameToken;
 import org.apache.wss4j.dom.validate.UsernameTokenValidator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import ca.openosp.openo.commn.dao.SecurityDao;
 import ca.openosp.openo.commn.model.Security;
 import ca.openosp.openo.utility.MiscUtils;
-import ca.openosp.openo.utility.SpringUtils;
 
 
 /**
@@ -49,7 +50,9 @@ import ca.openosp.openo.utility.SpringUtils;
  */
 public class OscarUsernameTokenValidator extends UsernameTokenValidator {
     private static final Logger logger = MiscUtils.getLogger();
-    private SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
+    
+    @Autowired
+    private SecurityDao securityDao;
 
     @Override
     protected void verifyPlaintextPassword(UsernameToken usernameToken, RequestData data) throws WSSecurityException {

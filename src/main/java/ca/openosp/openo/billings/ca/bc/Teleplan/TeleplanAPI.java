@@ -29,17 +29,26 @@ package ca.openosp.openo.billings.ca.bc.Teleplan;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.httpclient.Cookie;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
+import org.apache.http.impl.cookie.BasicClientCookie;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.entity.ContentType;
+
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -67,7 +76,8 @@ public class TeleplanAPI {
     //public String CONTACT_URL = "https://tlpt2.moh.hnet.bc.ca/TeleplanBroker";
     public String CONTACT_URL = "https://teleplan.hnet.bc.ca/TeleplanBroker";
 
-    HttpClient httpclient = null;
+    private CloseableHttpClient httpclient = null;
+    private HttpClientContext httpContext = null;
 
     /**
      * Creates a new instance of TeleplanAPI
@@ -81,68 +91,78 @@ public class TeleplanAPI {
 
     }
 
-
     private void getClient() {
         CONTACT_URL = OscarProperties.getInstance().getProperty("TELEPLAN_URL", CONTACT_URL);
-        HttpState initialState = new HttpState();
-        // Initial set of cookies can be retrieved from persistent storage and 
-        // re-created, using a persistence mechanism of choice,
-        Cookie mycookie = new Cookie("moh.hnet.bc.ca", "mycookie", "stuff", "/", null, false);        // and then added to your HTTP state instance
-        initialState.addCookie(mycookie);
 
-        // Get HTTP client instance
-        //HttpClientParams hcParams = new HttpClientParams();
-        //hcParams.setParameter("User-Agent","TeleplanPerl 1.0");
+        BasicCookieStore cookieStore = new BasicCookieStore();
+        BasicClientCookie cookie = new BasicClientCookie("mycookie", "stuff");
+        cookie.setDomain("moh.hnet.bc.ca");
+        cookie.setPath("/");
+        cookieStore.addCookie(cookie);
 
-        httpclient = new HttpClient(); //hcParams);
-        httpclient.getHttpConnectionManager().getParams().setConnectionTimeout(30000);
-        httpclient.setState(initialState);
+        httpContext = HttpClientContext.create();
+        httpContext.setCookieStore(cookieStore);
 
-        httpclient.getParams().setCookiePolicy(CookiePolicy.RFC_2109);
-        httpclient.getParams().setParameter("User-Agent", "TeleplanPerl 1.0");
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(30_000)
+                .setCookieSpec(CookieSpecs.STANDARD)
+                .build();
 
+        httpclient = HttpClients.custom()
+                .setDefaultCookieStore(cookieStore)
+                .setDefaultRequestConfig(requestConfig)
+                .setUserAgent("TeleplanPerl 1.0")
+                .build();
     }
 
-    private TeleplanResponse processRequest(String url, NameValuePair[] data) {
+    private TeleplanResponse processRequest(String url, List<NameValuePair> data) {
         TeleplanResponse tr = null;
         try {
-            PostMethod post = new PostMethod(url);
-            post.setRequestBody(data);
-            httpclient.executeMethod(post);
-
-            InputStream in = post.getResponseBodyAsStream();
-            log.debug("INPUT STREAM " + in + "\n");
-
-            tr = new TeleplanResponse();
-            tr.processResponseStream(in);
-            TeleplanResponseDAO trDAO = new TeleplanResponseDAO();
-            trDAO.save(tr);
-        } catch (Exception e) {
-            MiscUtils.getLogger().error("Error", e);
-        }
-        return tr;
-        //display(in);
-    }
-
-    private TeleplanResponse processRequest(String url, Part[] parts) {
-        TeleplanResponse tr = null;
-        try {
-            PostMethod filePost = new PostMethod(url);
-            filePost.setRequestEntity(new MultipartRequestEntity(parts, filePost.getParams()));
-            httpclient.executeMethod(filePost);
-
-            InputStream in = filePost.getResponseBodyAsStream();
-            tr = new TeleplanResponse();
-            tr.processResponseStream(in);
-            TeleplanResponseDAO trDAO = new TeleplanResponseDAO();
-            trDAO.save(tr);
-
+            HttpPost post = new HttpPost(url);
+            post.setEntity(new UrlEncodedFormEntity(data, "UTF-8"));
+            try (CloseableHttpResponse response = httpclient.execute(post)) {
+                InputStream in = response.getEntity().getContent();
+                tr = new TeleplanResponse();
+                tr.processResponseStream(in);
+                TeleplanResponseDAO trDAO = new TeleplanResponseDAO();
+                trDAO.save(tr);
+            }
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         }
         return tr;
     }
 
+    private TeleplanResponse processRequest(String url, Map<String, Object> parts) {
+        TeleplanResponse tr = null;
+        try {
+            HttpPost post = new HttpPost(url);
+
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            for (Map.Entry<String, Object> entry : parts.entrySet()) {
+                String name = entry.getKey();
+                Object value = entry.getValue();
+
+                if (value instanceof File) {
+                    builder.addBinaryBody(name, (File) value, ContentType.APPLICATION_OCTET_STREAM, ((File) value).getName());
+                } else if (value instanceof String) {
+                    builder.addTextBody(name, (String) value, ContentType.TEXT_PLAIN);
+                }
+            }
+
+            post.setEntity(builder.build());
+
+            try (CloseableHttpResponse response = httpclient.execute(post)) {
+                InputStream in = response.getEntity().getContent();
+                tr = new TeleplanResponse();
+                tr.processResponseStream(in);
+                new TeleplanResponseDAO().save(tr);
+            }
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Error", e);
+        }
+        return tr;
+    }
 
     //////////
     //-------------------------------------------------------------------------
@@ -160,15 +180,13 @@ public class TeleplanAPI {
      * "FAILURE" Password was not changed
      */
     public TeleplanResponse changePassword(String username, String password, String newPassword, String confirmPassword) {
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("username", username));
+        data.add(new BasicNameValuePair("password", password));
+        data.add(new BasicNameValuePair("new.password", newPassword));
+        data.add(new BasicNameValuePair("confirm.password", confirmPassword));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionChangePW));
 
-        NameValuePair[] data = {
-                new NameValuePair("username", username),
-                new NameValuePair("password", password),
-                new NameValuePair("new.password", newPassword),
-                new NameValuePair("confirm.password", confirmPassword),
-
-                new NameValuePair("ExternalAction", ExternalActionChangePW)
-        };
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -186,11 +204,11 @@ public class TeleplanAPI {
      * before the application will return a SUCCESS
      */
     public TeleplanResponse login(String username, String password) {
-        NameValuePair[] data = {
-                new NameValuePair("username", username),
-                new NameValuePair("password", password),
-                new NameValuePair("ExternalAction", ExternalActionLogon)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("username", username));
+        data.add(new BasicNameValuePair("password", password));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionLogon));
+
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -202,9 +220,9 @@ public class TeleplanAPI {
      * Results from TeleplanBroker are: "SUCCESS" for valid logoff
      */
     public TeleplanResponse logoff() {
-        NameValuePair[] data = {
-                new NameValuePair("ExternalAction", ExternalActionLogoff)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionLogoff));
+
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -229,14 +247,12 @@ public class TeleplanAPI {
      * "FAILURE" for problem
      */
     public TeleplanResponse getLog(String logname, String logtype) {
-        NameValuePair[] data = {
-                new NameValuePair("LOGNAME", logname),
-                new NameValuePair("LOGTYPE", logtype),
-                new NameValuePair("MODE", "DOWNLOAD"),
-                new NameValuePair("ExternalAction", ExternalActionGetLog)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("LOGNAME", logname));
+        data.add(new BasicNameValuePair("LOGTYPE", logtype));
+        data.add(new BasicNameValuePair("MODE", "DOWNLOAD")); 
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionGetLog));
         return processRequest(CONTACT_URL, data);
-
     }
     //-------------------------------------------------------------------------
 
@@ -257,9 +273,8 @@ public class TeleplanAPI {
      * The filename 001E2805.LOG would convert to 2001_5_28_G05.LOG
      */
     public TeleplanResponse getLogList() {
-        NameValuePair[] data = {
-                new NameValuePair("ExternalAction", ExternalActionGetLogList)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionGetLogList));
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -274,10 +289,9 @@ public class TeleplanAPI {
      * "FAILURE"
      */
     public TeleplanResponse getRemittance(boolean includeRemittance) {
-        NameValuePair[] data = {
-                new NameValuePair("remittance", Boolean.toString(includeRemittance)),
-                new NameValuePair("ExternalAction", ExternalActionGetRemit)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("remittance", Boolean.toString(includeRemittance)));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionGetRemit));
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -304,10 +318,9 @@ public class TeleplanAPI {
      * "FAILURE"
      */
     public TeleplanResponse getAsciiFile(String filetype) {
-        NameValuePair[] data = {
-                new NameValuePair("filechar", filetype),
-                new NameValuePair("ExternalAction", ExternalActionGetAscii)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("filechar", filetype));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionGetAscii));
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -333,10 +346,9 @@ public class TeleplanAPI {
      * "FAILURE"
      */
     public TeleplanResponse getAsciiFileMF(String filetype) {
-        NameValuePair[] data = {
-                new NameValuePair("filechar", filetype),
-                new NameValuePair("ExternalAction", ExternalActionGetAsciiMF)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("filechar", filetype));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionGetAsciiMF));
         return processRequest(CONTACT_URL, data);
     }
     //-------------------------------------------------------------------------
@@ -351,8 +363,9 @@ public class TeleplanAPI {
      * "FAILURE"
      */
     public TeleplanResponse putAsciiFile(File f) throws FileNotFoundException {
-
-        Part[] parts = {new StringPart("ExternalAction", "AputAscii"), new FilePart("submitASCII", f)};
+        Map<String, Object> parts = new HashMap<>();
+        parts.put("ExternalAction", "AputAscii");
+        parts.put("submitASCII", f);
         return processRequest(CONTACT_URL, parts);
 
 //    my ($filename) = @_;
@@ -387,7 +400,9 @@ public class TeleplanAPI {
      * "FAILURE"
      */
     public TeleplanResponse putMSPFile(File f) throws FileNotFoundException {
-        Part[] parts = {new StringPart("ExternalAction", "AputRemit"), new FilePart("submitFile", f)};
+        Map<String, Object> parts = new HashMap<>();
+        parts.put("ExternalAction", "AputRemit");
+        parts.put("submitFile", f);
         return processRequest(CONTACT_URL, parts);
 //
 //    my ($filename) = @_;
@@ -435,23 +450,19 @@ public class TeleplanAPI {
                                       String dateofserviceyyyy, String dateofservicemm, String dateofservicedd,
                                       boolean patientvisitcharge, boolean lasteyeexam, boolean patientrestriction) {
 
-
-        NameValuePair[] data = {
-                new NameValuePair("PHN", phn),
-                new NameValuePair("dateOfBirthyyyy", dateofbirthyyyy),
-                new NameValuePair("dateOfBirthmm", dateofbirthmm),
-                new NameValuePair("dateOfBirthdd", dateofbirthdd),
-                new NameValuePair("dateOfServiceyyyy", dateofserviceyyyy),
-                new NameValuePair("dateOfServicemm", dateofservicemm),
-                new NameValuePair("dateOfServicedd", dateofservicedd),
-                new NameValuePair("PatientVisitCharge", Boolean.toString(patientvisitcharge)),
-                new NameValuePair("LastEyeExam", Boolean.toString(lasteyeexam)),
-                new NameValuePair("PatientRestriction", Boolean.toString(patientrestriction)),
-                new NameValuePair("ExternalAction", ExternalActionCheckE45)
-        };
+        List<NameValuePair> data = new ArrayList<>();
+        data.add(new BasicNameValuePair("PHN", phn));
+        data.add(new BasicNameValuePair("dateOfBirthyyyy", dateofbirthyyyy));
+        data.add(new BasicNameValuePair("dateOfBirthmm", dateofbirthmm));
+        data.add(new BasicNameValuePair("dateOfBirthdd", dateofbirthdd));
+        data.add(new BasicNameValuePair("dateOfServiceyyyy", dateofserviceyyyy));
+        data.add(new BasicNameValuePair("dateOfServicemm", dateofservicemm));
+        data.add(new BasicNameValuePair("dateOfServicedd", dateofservicedd));
+        data.add(new BasicNameValuePair("PatientVisitCharge", Boolean.toString(patientvisitcharge)));
+        data.add(new BasicNameValuePair("LastEyeExam", Boolean.toString(lasteyeexam)));
+        data.add(new BasicNameValuePair("PatientRestriction", Boolean.toString(patientrestriction)));
+        data.add(new BasicNameValuePair("ExternalAction", ExternalActionCheckE45));
         return processRequest(CONTACT_URL, data);
-
-
     }
 //-------------------------------------------------------------------------
 

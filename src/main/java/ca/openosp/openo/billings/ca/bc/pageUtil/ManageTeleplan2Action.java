@@ -29,6 +29,7 @@ package ca.openosp.openo.billings.ca.bc.pageUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -159,6 +160,18 @@ public class ManageTeleplan2Action extends ActionSupport {
         log.debug("real filename " + tr.getRealFilename());
 
         File file = tr.getFile();
+        
+        // Define allowed directory (configure this based on your needs)
+        File allowedDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR"));
+       
+        // Convert to Path and normalize
+        Path filePath = file.toPath().normalize().toAbsolutePath();
+        Path allowedPath = allowedDir.toPath().normalize().toAbsolutePath();
+        
+        if (!filePath.startsWith(allowedPath)) {
+            throw new SecurityException("File access not allowed outside designated directory");
+        }
+
         BufferedReader buff = new BufferedReader(new FileReader(file));
 
         String line = null;
@@ -220,6 +233,18 @@ public class ManageTeleplan2Action extends ActionSupport {
         log.debug("real filename " + tr.getRealFilename());
 
         File file = tr.getFile();
+        
+        // Define allowed directory (configure this based on your needs)
+        File allowedDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR"));
+        
+        // Convert to Path and normalize
+        Path filePath = file.toPath().normalize().toAbsolutePath();
+        Path allowedPath = allowedDir.toPath().normalize().toAbsolutePath();
+        
+        if (!filePath.startsWith(allowedPath)) {
+            throw new SecurityException("File access not allowed outside designated directory");
+        }
+        
         BufferedReader buff = new BufferedReader(new FileReader(file));
 
         String line = null;
@@ -510,6 +535,19 @@ public class ManageTeleplan2Action extends ActionSupport {
         String realFile = tr.getRealFilename();
         if (realFile != null && !realFile.trim().equals("")) {
             File file = tr.getFile();
+            
+            // Define allowed directory (configure this based on your needs)
+            File allowedDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR"));
+            
+            // Convert to Path and normalize
+            Path filePath = file.toPath().normalize().toAbsolutePath();
+            Path allowedPath = allowedDir.toPath().normalize().toAbsolutePath();
+        
+            
+            if (!filePath.startsWith(allowedPath)) {
+                throw new SecurityException("File access not allowed outside designated directory");
+            }
+            
             BufferedReader buff = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line = null;

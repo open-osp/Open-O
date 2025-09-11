@@ -536,7 +536,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '../tickler/ticklerAdd.jsp?name=" + URLEncoder.encode(clLastName) + "%2C" + URLEncoder.encode(clFirstName) + "&chart_no=&bFirstDisp=false&demographic_no=" + demographic_no + "&messageID=null&doctor_no=" + curUser_no + "'); return false;\">T</a> ";
 
                 // add Msg button to string
-                buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '../oscarMessenger/SendDemoMessage.do?demographic_no=" + demographic_no + "'); return false;\">Msg</a> ";
+                buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '../messenger/SendDemoMessage.do?demographic_no=" + demographic_no + "'); return false;\">Msg</a> ";
 
                 entry.add(buttons);
             }
@@ -642,7 +642,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 List<Map<String, Object>> newMsgResult = caseloadDao.getCaseloadDemographicData(newMsgQuery, demographicParam);
                 if (!newMsgResult.isEmpty() && newMsgResult.get(0).get("count(*)") != null && !newMsgResult.get(0).get("count(*)").toString().equals("") && !newMsgResult.get(0).get("count(*)").toString().equals("0")) {
                     String clNewMsg = newMsgResult.get(0).get("count(*)").toString();
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../oscarMessenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographic_no + "&providerNo=" + curUser_no + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname) + "'); return false;\">" + clNewMsg + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '../messenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographic_no + "&providerNo=" + curUser_no + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname) + "'); return false;\">" + clNewMsg + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }

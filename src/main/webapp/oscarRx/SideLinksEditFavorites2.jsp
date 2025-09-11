@@ -26,6 +26,7 @@
 <%@page import="ca.openosp.openo.commn.dao.DxresearchDAO" %>
 <%@page import="ca.openosp.openo.commn.model.Dxresearch" %>
 <%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.managers.CodingSystemManager" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>

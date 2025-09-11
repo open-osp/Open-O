@@ -39,39 +39,83 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- *
- * @author unascribed
+ * Address book management class for the OpenO EMR messaging system.
+ * 
+ * <p>This class handles the retrieval and display of hierarchical address books containing
+ * healthcare providers organized in groups. It manages both local and remote address books
+ * from connected healthcare facilities, providing HTML rendering capabilities for the
+ * messaging interface.</p>
+ * 
+ * <p>Key responsibilities:
+ * <ul>
+ *   <li>Retrieving XML address book data from the database</li>
+ *   <li>Managing multiple location address books (local and remote)</li>
+ *   <li>Rendering hierarchical tree structure in HTML</li>
+ *   <li>Handling provider selection with checkboxes</li>
+ *   <li>Supporting expandable/collapsible group navigation</li>
+ * </ul>
+ * </p>
+ * 
  * @version 1.0
+ * @deprecated This class is deprecated in favor of newer messaging implementations
+ *             that provide better separation of concerns and modern UI frameworks
+ * @since 2002
+ * @see MsgAddressBookMaker
+ * @see MsgProviderData
  */
-
-
 @Deprecated
 public class MsgAddressBook {
+    /**
+     * Static counter used for generating unique IDs in HTML output.
+     */
     static int num;
+    
+    /**
+     * Vector containing provider data from the address book.
+     */
     public java.util.Vector providerList;
+    
+    /**
+     * Vector containing remote address book XML data.
+     */
     public java.util.Vector remoteaddrBook;
+    
+    /**
+     * Vector containing descriptions of remote locations.
+     */
     public java.util.Vector remoteLocationDesc;
+    
+    /**
+     * Vector containing IDs of remote locations.
+     */
     public java.util.Vector remoteLocationId;
+    
+    /**
+     * Name of the current location/facility.
+     */
     public String CurrentLocationName;
 
     /**
-     * Constructor for the address data class
+     * Constructor initializing the address book data structures.
+     * 
+     * <p>Creates empty vectors for storing provider lists, remote location
+     * descriptions, and remote location IDs.</p>
      */
     public MsgAddressBook() {
         providerList = new java.util.Vector();
         remoteLocationDesc = new java.util.Vector();
         remoteLocationId = new java.util.Vector();
-    }//---------------------------------------------------------------------------
+    }
 
     /**
-     * This function gets the xml document from the database.
-     * It also sets the current location data member string for this location.
+     * Retrieves the local address book XML from the database.
+     * 
+     * <p>This method fetches the XML address book for the current location
+     * (where current=1 in the database) and sets the CurrentLocationName
+     * field with the location description.</p>
      *
-     * @return String xml string for this location
+     * @return The XML string containing the address book data for this location,
+     *         or empty string if no current location is found
      */
     public String myAddressBook() {
         CurrentLocationName = "";
@@ -87,12 +131,18 @@ public class MsgAddressBook {
         return "";
     }
 
-    //---------------------------------------------------------------------------
-
     /**
-     * This funtion create 3 vectors with the xml address books, location ids and descriptions of the ids
+     * Retrieves address books for all active remote locations.
+     * 
+     * <p>This method populates three parallel vectors:
+     * <ul>
+     *   <li>Address book XML data</li>
+     *   <li>Location descriptions</li>
+     *   <li>Location IDs</li>
+     * </ul>
+     * These vectors maintain corresponding indices for related data.</p>
      *
-     * @return Vector the address book vector is returned.
+     * @return Vector containing XML address book strings for all active locations
      */
     public java.util.Vector remoteAddressBooks() {
         java.util.Vector vector = new java.util.Vector();
@@ -109,14 +159,26 @@ public class MsgAddressBook {
         }
         return vector;
     }
-    //---------------------------------------------------------------------------
-
-
     /**
-     * @param node
-     * @param out
-     * @param depth
-     * @param thePros
+     * Recursively renders XML address book nodes as HTML tree structure.
+     * 
+     * <p>This method generates HTML tables with expandable/collapsible groups
+     * and selectable provider checkboxes. It creates a hierarchical display
+     * with proper indentation based on depth level.</p>
+     * 
+     * <p>The generated HTML includes:
+     * <ul>
+     *   <li>Expandable group nodes with +/- icons</li>
+     *   <li>Checkboxes for individual providers</li>
+     *   <li>Proper CSS classes for styling</li>
+     *   <li>JavaScript onclick handlers for tree expansion</li>
+     * </ul>
+     * </p>
+     *
+     * @param node The current XML node to render
+     * @param out The JspWriter for HTML output
+     * @param depth Current depth in the tree hierarchy (for indentation)
+     * @param thePros Array of pre-selected provider IDs to check
      */
     public void displayNodes(Node node, JspWriter out, int depth, String[] thePros) {
         depth++;

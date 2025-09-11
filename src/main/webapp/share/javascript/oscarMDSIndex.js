@@ -1600,7 +1600,7 @@ function updateDocumentAndNext(eleId) {//save doc info
                     $('saved' + num).value = 'true';
 
                     $("msgBtn_" + num).onclick = function () {
-                        popup(700, 960, contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
+                        popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
                     };
 
                     updateDocStatusInQueue(num);
@@ -1662,7 +1662,7 @@ function updateDocument(eleId) {
                     var msgBtn = document.getElementById("msgBtn_" + num);
                     if (msgBtn) {
                         msgBtn.onclick = function () {
-                            popup(700, 960, contextpath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
+                            popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
                         };
                     }
 

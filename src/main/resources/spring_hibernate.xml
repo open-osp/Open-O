@@ -25,9 +25,9 @@
 			<!-- only *.hbm.xml will be loaded -->
 			<list>
 				<value>classpath:/ca/openosp/openo/model</value>
-				<value>classpath:/org/oscarehr/PMmodule/model</value>
-				<value>classpath:/org/oscarehr/casemgmt/model</value>
-				<value>classpath:/org/oscarehr/common/model</value>
+				<value>classpath:/ca/openosp/openo/PMmodule/model</value>
+				<value>classpath:/ca/openosp/openo/casemgmt/model</value>
+				<value>classpath:/ca/openosp/openo/commn/model</value>
 				<value>classpath:/com/quatro/model</value>
 				<value>classpath:/ca/openosp/openo/entities</value>
 			</list>
@@ -67,10 +67,10 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="mappingDirectoryLocations">
 			<list>
-				<value>classpath:/org/oscarehr/commons/model</value>
+				<value>classpath:/ca/openosp/openo/commn/model</value>
 				<value>classpath:/org/caisi/model</value>
-				<value>classpath:/org/oscarehr/PMmodule/model</value>
-				<value>classpath:/org/oscarehr/casemgmt/model</value>
+				<value>classpath:/ca/openosp/openo/PMmodule/model</value>
+				<value>classpath:/ca/openosp/openo/casemgmt/model</value>
 				<value>classpath:/com/quatro/model</value>
 				<value>classpath:/oscar/appt/status/model</value>
 				<value>classpath:/oscar/rx/model</value>

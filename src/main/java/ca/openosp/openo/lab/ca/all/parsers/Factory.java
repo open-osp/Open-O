@@ -45,9 +45,9 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import ca.openosp.openo.commn.dao.Hl7TextMessageDao;
 import ca.openosp.openo.commn.model.Hl7TextMessage;
 import ca.openosp.openo.utility.MiscUtils;
@@ -117,7 +117,7 @@ public final class Factory {
         Path labTypesPath = null;
 
         try {
-            labTypesPath = Paths.get(Factory.class.getClassLoader().getResource("oscar/oscarLab/ca/all/upload/message_config.xml").toURI());
+            labTypesPath = Paths.get(Factory.class.getClassLoader().getResource("ca/openosp/openo/lab/ca/all/parsers/message_config.xml").toURI());
         } catch (URISyntaxException e2) {
             logger.error("Could not default Message configuration file ", e2);
         }
@@ -151,15 +151,7 @@ public final class Factory {
                 msgType = element.getAttributeValue("name");
 
                 if (msgType.equalsIgnoreCase(type)) {
-                    String className = element.getAttributeValue("className");
-
-                    // in case we have dots in the handler class name (i.e. package
-                    // is specified), don't assume default package
-                    if (className.indexOf(".") != -1) {
-                        msgHandler = className;
-                    } else {
-                        msgHandler = "oscar.oscarLab.ca.all.parsers." + className;
-                    }
+                    msgHandler = element.getAttributeValue("className");
                 }
             }
 

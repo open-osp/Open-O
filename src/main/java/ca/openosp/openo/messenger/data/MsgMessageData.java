@@ -51,34 +51,111 @@ import org.w3c.dom.NodeList;
 import ca.openosp.openo.messenger.util.Msgxml;
 
 /**
- * @deprecated Use the MessagingManger
+ * Core data management class for messages in the OpenO EMR messaging system.
+ * 
+ * <p>This class handles the creation, retrieval, and management of internal messages
+ * between healthcare providers. It manages message metadata, recipient lists, attachments,
+ * and the persistence of messages to the database. The class supports both local and
+ * remote message recipients across connected healthcare facilities.</p>
+ * 
+ * <p>Key responsibilities:
+ * <ul>
+ *   <li>Creating and sending messages to multiple recipients</li>
+ *   <li>Managing message metadata (subject, date, time, attachments)</li>
+ *   <li>Handling local and remote provider recipients</li>
+ *   <li>Retrieving message history and details</li>
+ *   <li>Managing message status (new, read, deleted)</li>
+ *   <li>XML-based message serialization for remote transmission</li>
+ * </ul>
+ * </p>
+ * 
+ * @version 1.0
+ * @deprecated Use the MessagingManager for new implementations. This class is maintained
+ *             for backward compatibility but should not be used for new development.
+ * @since 2002
+ * @see MessengerGroupManager
+ * @see MessageTbl
+ * @see MessageList
  */
 @Deprecated
 public class MsgMessageData {
 
+    /**
+     * Flag indicating if remote recipients are included in the message.
+     */
     boolean areRemotes = false;
+    
+    /**
+     * Flag indicating if local recipients are included in the message.
+     */
     boolean areLocals = false;
+    
+    /**
+     * List of provider recipients for the message.
+     */
     private java.util.ArrayList<MsgProviderData> providerArrayList;
+    
+    /**
+     * ID of the current healthcare facility location.
+     */
     private int currentLocationId = 0;
 
+    /**
+     * Subject line of the message.
+     */
     private String messageSubject;
+    
+    /**
+     * Formatted date string when the message was sent.
+     */
     private String messageDate;
+    
+    /**
+     * Formatted time string when the message was sent.
+     */
     private String messageTime;
 
+    /**
+     * DAO for message table operations.
+     */
     MessageTblDao messageTblDao = SpringUtils.getBean(MessageTblDao.class);
+    
+    /**
+     * DAO for message recipient list operations.
+     */
     MessageListDao messageListDao = SpringUtils.getBean(MessageListDao.class);
+    
+    /**
+     * DAO for communication locations operations.
+     */
     OscarCommLocationsDao oscarCommLocationsDao = SpringUtils.getBean(OscarCommLocationsDao.class);
+    
+    /**
+     * Manager for messenger group operations.
+     */
     MessengerGroupManager messengerGroupManager = SpringUtils.getBean(MessengerGroupManager.class);
 
+    /**
+     * Default constructor creating an empty message data object.
+     */
     public MsgMessageData() {
     }
 
+    /**
+     * Constructor that loads message data from the database.
+     * 
+     * <p>Retrieves a message by its ID and populates the subject, date,
+     * and time fields with formatted values from the database record.</p>
+     * 
+     * @param msgID The message ID as a string to load from database
+     */
     public MsgMessageData(String msgID) {
         MessageTbl message = null;
         if (msgID != null && !msgID.isEmpty()) {
             message = messageTblDao.find(Integer.parseInt(msgID));
         }
         if (message != null) {
+            // Format date and time for display
             SimpleDateFormat date = new SimpleDateFormat("MM-dd-yyyy");
             SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss");
             this.messageSubject = message.getSubject();
@@ -87,8 +164,17 @@ public class MsgMessageData {
         }
     }
 
+    /**
+     * Gets the current facility location ID.
+     * 
+     * <p>Lazily loads the current location ID from the database if not already set.
+     * The current location is identified by current=1 in the OscarCommLocations table.</p>
+     * 
+     * @return The current location ID, or 0 if not found
+     */
     public int getCurrentLocationId() {
         if (currentLocationId == 0) {
+            // Load current location from database
             List<OscarCommLocations> oscarCommLocations = oscarCommLocationsDao.findByCurrent1(1);
             Integer oscarCommLocationsID = null;
 
@@ -103,10 +189,15 @@ public class MsgMessageData {
         return currentLocationId;
     }
 
-    /************************************************************************
-     * getDups4
-     * @param strarray is a String Array,
-     * @return turns a String Array
+    /**
+     * Removes duplicate entries from a string array.
+     * 
+     * <p>This method takes a string array that may contain duplicate values
+     * and returns a new array with only unique values. Used for cleaning up
+     * recipient lists to avoid sending duplicate messages.</p>
+     * 
+     * @param strarray The input string array potentially containing duplicates
+     * @return A new string array containing only unique values
      */
     public String[] getDups4(String[] strarray) {
         List<String> arrayList = new ArrayList<String>(Arrays.asList(strarray));
@@ -115,6 +206,16 @@ public class MsgMessageData {
         return hashSet.toArray(outputArray);
     }
 
+    /**
+     * Creates a formatted string of recipient names from a provider list.
+     * 
+     * <p>Generates a comma-separated string of provider names for display
+     * in the "Sent To" field of messages. Handles providers with missing
+     * first or last names gracefully.</p>
+     * 
+     * @param providerList ArrayList of MsgProviderData containing recipient information
+     * @return A formatted string like "John Smith, Jane Doe." with all recipients
+     */
     public String createSentToString(java.util.ArrayList<MsgProviderData> providerList) {
         StringBuilder stringBuilder = new StringBuilder("");
         String comma = "";
@@ -136,6 +237,21 @@ public class MsgMessageData {
         return stringBuilder.toString();
     }
 
+    /**
+     * Sends a basic message to multiple providers (legacy method).
+     * 
+     * <p>This simplified version creates a message without attachments or type information.
+     * It persists the message to the database and creates message list entries for each recipient.</p>
+     * 
+     * @param message The message body content
+     * @param subject The message subject line
+     * @param userName The display name of the sender
+     * @param sentToWho Formatted string of recipient names
+     * @param userNo The provider number of the sender
+     * @param providers Array of recipient provider numbers
+     * @return The generated message ID as a string
+     * @deprecated Use sendMessageReview() for full functionality including attachments
+     */
     @Deprecated
     public String sendMessage(String message, String subject, String userName, String sentToWho, String userNo, String[] providers) {
         String messageid = null;
@@ -169,6 +285,34 @@ public class MsgMessageData {
         return messageid;
     }
 
+    /**
+     * Sends a message with full support for attachments and message types.
+     * 
+     * <p>This comprehensive method handles message creation with all features including:
+     * <ul>
+     *   <li>Multiple recipient support (local and remote)</li>
+     *   <li>File attachments</li>
+     *   <li>PDF attachments with binary storage</li>
+     *   <li>Message type classification</li>
+     *   <li>Associated action links</li>
+     * </ul>
+     * </p>
+     * 
+     * <p>The method properly escapes data for SQL injection prevention and handles
+     * both local database storage and remote XML transmission.</p>
+     * 
+     * @param message The message body content
+     * @param subject The message subject line
+     * @param userName The display name of the sender
+     * @param sentToWho Formatted string of recipient names for display
+     * @param userNo The provider number of the sender
+     * @param providers ArrayList of MsgProviderData containing all recipients
+     * @param attach General attachment information
+     * @param pdfAttach PDF attachment data (base64 encoded)
+     * @param type Message type code for classification
+     * @param typeLink Associated URL or action link for the message type
+     * @return The generated message ID as a string
+     */
     public String sendMessageReview(String message, String subject, String userName, String sentToWho, String userNo, ArrayList<MsgProviderData> providers, String attach, String pdfAttach, Integer type, String typeLink) {
         MsgStringQuote str = new MsgStringQuote();
 

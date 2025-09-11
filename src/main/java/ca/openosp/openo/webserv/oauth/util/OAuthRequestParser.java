@@ -7,6 +7,32 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * File: OAuthRequestParser.java
+ *
+ * Purpose:
+ *   Utility class for extracting OAuth 1.0a parameters from HttpServletRequest
+ *   objects in a consistent way.
+ *
+ * Responsibilities:
+ *   • Detect whether a request carries OAuth1 credentials.
+ *   • Parse Authorization headers, query strings, and form parameters for
+ *     oauth_* values.
+ *   • Normalize/URL-decode values and return them in a simple map.
+ *   • Provide shortcuts for common fields like consumer key and signature.
+ *
+ * Context / Why Added:
+ *   Consolidates OAuth parameter parsing logic so that signature verification
+ *   and interceptors don’t duplicate fragile string handling.
+ *
+ * Notes:
+ *   • Prioritizes Authorization header values over query/form parameters.
+ *   • Decoding is done with UTF-8; exceptions are swallowed to avoid
+ *     blocking on malformed input.
+ *   • Utility class only; cannot be instantiated.
+ */
+
+
 public final class OAuthRequestParser {
     private OAuthRequestParser() {
         // utility class - prevents instantiation

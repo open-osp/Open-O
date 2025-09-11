@@ -77,7 +77,7 @@ public class ConsultResponseDaoImpl extends AbstractDaoImpl<ConsultationResponse
     private String getSearchQuery(ConsultationResponseSearchFilter filter, boolean selectCountOnly) {
         StringBuilder sql = new StringBuilder(
                 "select " + (selectCountOnly ? "count(*)" : "cr,sp,d,p") +
-                        " from ConsultationResponse cr , ProfessionalSpecialist sp, Demographic d left outer join d.providers p" +
+                        " from ConsultationResponse cr , ProfessionalSpecialist sp, Demographic d left outer join d.provider p" +
                         " where sp.id = cr.referringDocId and d.DemographicNo = cr.demographicNo ");
 
         if (filter.getAppointmentStartDate() != null) {

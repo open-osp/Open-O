@@ -39,8 +39,17 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public class EpsilonHandler extends CMLHandler implements MessageHandler {
+public class EpsilonHandler extends DefaultGenericHandler {
+    private ORU_R01 msg = null;
     private static Logger logger = MiscUtils.getLogger();
+
+    public String getString(String s) {
+        return s != null ? s : "";
+    }
+
+    public String formatDateTime(String s) {
+        return s;
+    }
 
     @Override
     public String getMsgType() {
@@ -378,7 +387,12 @@ public class EpsilonHandler extends CMLHandler implements MessageHandler {
 
                 for (j = 0; j < msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps(); j++) {
                     // only check the obx segment for a header if it is one that will be displayed
-                    currentHeader = super.getOBXIdentifier(i, j);//obxSeg.getObservationIdentifier().getIdentifier().toString();
+                    try {
+                        currentHeader = msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j)
+                                .getOBX().getObservationIdentifier().getIdentifier().getValue();
+                    } catch (Exception ex) {
+                        currentHeader = "";
+                    }
 
                     if (!headers.contains(currentHeader)) {
                         logger.info("Adding header: '" + currentHeader + "' to list");

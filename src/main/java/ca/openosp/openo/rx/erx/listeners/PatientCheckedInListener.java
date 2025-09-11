@@ -66,7 +66,7 @@ public class PatientCheckedInListener implements ApplicationListener<Appointment
 
             ProviderPreferenceDao providerPreferenceDao = ((ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class));
 
-            // Load providers preferences to see if we should continue
+            // Load provider preferences to see if we should continue
             ProviderPreference providerPreference = providerPreferenceDao.find(providerId);
             logger.debug("proPref " + providerPreference);
             // If the providers uses an external prescription providers, and it's enabled...

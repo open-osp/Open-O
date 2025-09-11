@@ -35,10 +35,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 import ca.openosp.openo.commn.dao.ReportTemplatesDao;
 import ca.openosp.openo.commn.model.ReportTemplates;
 import ca.openosp.openo.managers.SecurityInfoManager;

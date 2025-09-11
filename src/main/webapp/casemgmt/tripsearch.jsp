@@ -30,12 +30,15 @@
 <%@page import="java.util.Iterator" %>
 <%@page import="java.util.List" %>
 <%@page import="java.net.URLEncoder" %>
-<%@page import="org.apache.commons.httpclient.HttpClient" %>
-<%@page import="org.apache.commons.httpclient.methods.GetMethod" %>
-<%@page import="org.jdom.Document" %>
-<%@page import="org.jdom.Element" %>
-<%@page import="org.jdom.filter.ElementFilter" %>
-<%@page import="org.jdom.input.SAXBuilder" %>
+<%@ page import="org.apache.http.client.HttpClient" %>
+<%@ page import="org.apache.http.client.methods.HttpGet" %>
+<%@ page import="org.apache.http.impl.client.HttpClients" %>
+<%@ page import="org.apache.http.HttpResponse" %>
+<%@ page import="org.apache.http.util.EntityUtils" %>
+<%@page import="org.jdom2.Document" %>
+<%@page import="org.jdom2.Element" %>
+<%@page import="org.jdom2.filter.ElementFilter" %>
+<%@page import="org.jdom2.input.SAXBuilder" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="org.apache.logging.log4j.Logger" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -137,20 +140,25 @@ the trick with the latter one is to carry out a search and under each result the
     public List<HashMap<String, String>> searchTripDatabase(String searchString) throws Exception {
         Logger logger = MiscUtils.getLogger();
         List<HashMap<String, String>> h = null;
-        GetMethod post = new GetMethod("http://www.tripdatabase.com/search/xml?key=MCM001&criteria=" + URLEncoder.encode(searchString, "UTF-8"));
-
-        HttpClient httpclient = new HttpClient();
+        
+        HttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://www.tripdatabase.com/search/xml?key=MCM001&criteria=" + URLEncoder.encode(searchString, "UTF-8"));
+        
         try {
-            int result = httpclient.executeMethod(post);
-            if (result != 200) {
-                logger.debug("result " + result);
+            HttpResponse response = httpclient.execute(httpGet);
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode != 200) {
+                logger.error("HTTP request failed with status: " + statusCode);
             }
-            h = parseReturn(post.getResponseBodyAsStream());
+            
+            InputStream responseStream = response.getEntity().getContent();
+            h = parseReturn(responseStream);
         } catch (Exception e) {
-            logger.debug("searchTripDB", e);
+            logger.error("searchTripDB", e);
         } finally {
             // Release current connection to the connection pool
-            post.releaseConnection();
+            httpGet.releaseConnection();
         }
         return h;
     }

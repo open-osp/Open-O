@@ -80,12 +80,12 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- Managed Beans -->
-	<context:component-scan base-package="org.oscarehr.common.dao" />
-	<context:component-scan base-package="org.oscarehr.hospitalReportManager.dao" />
-	<context:component-scan base-package="org.oscarehr.olis.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.ON.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.BC.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.dao" />
-	<context:component-scan base-package="org.oscarehr.PMmodule.dao" />
+	<context:component-scan base-package="ca.openosp.openo.commn.dao" />
+	<context:component-scan base-package="ca.openosp.openo.hospitalReportManager.dao" />
+	<context:component-scan base-package="ca.openosp.openo.olis.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.ON.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.BC.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.dao" />
+	<context:component-scan base-package="ca.openosp.openo.PMmodule.dao" />
 
 </beans>

@@ -41,7 +41,22 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+/**
+ * Utility class providing XML document manipulation and processing functionality
+ * for the messenger system. This class offers static methods for creating,
+ * parsing, and transforming XML documents and elements.
+ * 
+ * @since 2003
+ */
 public class Msgxml {
+    
+    /**
+     * Creates a new empty XML document using the default DocumentBuilderFactory.
+     * This method provides a simple way to create a new XML document for manipulation.
+     * 
+     * @return Document a new empty XML document, or null if creation fails
+     * @since 2003
+     */
     public static Document newDocument() {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -50,19 +65,41 @@ public class Msgxml {
         }
     }
 
+    /**
+     * Adds a new XML element with the specified name to a parent node.
+     * This is a convenience method that calls addNode(parentNode, name, null).
+     * 
+     * @param parentNode Node the parent node to add the new element to
+     * @param name String the name/tag of the new element to create
+     * @return Element the newly created and added element
+     * @since 2003
+     */
     public static Element addNode(Node parentNode, String name) {
         return addNode(parentNode, name, null);
     }
 
+    /**
+     * Adds a new XML element with the specified name and text content to a parent node.
+     * Creates the element using the appropriate document context and optionally adds
+     * text content if a value is provided.
+     * 
+     * @param parentNode Node the parent node to add the new element to
+     * @param name String the name/tag of the new element to create
+     * @param value String the text content to add to the element, or null for empty element
+     * @return Element the newly created and added element
+     * @since 2003
+     */
     public static Element addNode(Node parentNode, String name, String value) {
         Element node = null;
 
+        // Create element using the appropriate document context
         if (parentNode.getNodeType() == Node.DOCUMENT_NODE) {
             node = ((Document) parentNode).createElement(name);
         } else {
             node = parentNode.getOwnerDocument().createElement(name);
         }
 
+        // Add text content if value is provided
         if (value != null) {
             node.appendChild(node.getOwnerDocument().createTextNode(value));
         }
@@ -70,13 +107,23 @@ public class Msgxml {
         return (Element) parentNode.appendChild(node);
     }
 
+    /**
+     * Converts an XML document to its string representation.
+     * Uses JAXP Transformer to serialize the document to XML text format.
+     * 
+     * @param xmlDoc Document the XML document to convert to string
+     * @return String the XML document as a string, or empty string if transformation fails
+     * @since 2003
+     */
     public static String toXML(Document xmlDoc) {
         StringWriter ret = new StringWriter();
 
+        // Set up DOM source and string result for transformation
         DOMSource src = new DOMSource(xmlDoc);
         StreamResult rslt = new StreamResult(ret);
 
         try {
+            // Transform the document to string representation
             Transformer trans = TransformerFactory.newInstance().newTransformer();
             trans.transform(src, rslt);
         } catch (Exception e) {
@@ -86,10 +133,20 @@ public class Msgxml {
         return ret.toString();
     }
 
+    /**
+     * Parses an XML string and returns the corresponding Document object.
+     * Uses DocumentBuilderFactory to parse the XML string into a DOM document.
+     * 
+     * @param xmlInput String containing XML text to parse
+     * @return Document the parsed XML document, or null if parsing fails
+     * @since 2003
+     */
     public static Document parseXML(String xmlInput) {
         try {
+            // Create input source from the XML string
             InputSource is = new InputSource(new StringReader(xmlInput));
 
+            // Parse the XML string into a Document
             Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
 
             return doc;
@@ -98,14 +155,24 @@ public class Msgxml {
         }
     }
 
+    /**
+     * Extracts all text content from an XML node and its child text nodes.
+     * Iterates through all child nodes and concatenates text from TEXT_NODE types.
+     * 
+     * @param node Node the XML node to extract text content from
+     * @return String the concatenated text content of the node, or empty string if no text
+     * @since 2003
+     */
     public static String getText(Node node) {
         String ret = "";
 
+        // Check if the node has child nodes to process
         if (node.hasChildNodes()) {
-            int i;
-            for (i = 0; i < node.getChildNodes().getLength(); i++) {
+            // Iterate through all child nodes
+            for (int i = 0; i < node.getChildNodes().getLength(); i++) {
                 Node sub = node.getChildNodes().item(i);
 
+                // Only process text nodes and concatenate their values
                 if (sub.getNodeType() == Node.TEXT_NODE) {
                     ret += sub.getNodeValue();
                 }

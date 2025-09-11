@@ -222,7 +222,7 @@ function popupPage2(varpage) {
  <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
  	<security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
      <li>
-	 <a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/oscarMessenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>')" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.messenger"/>">
+	 <a HREF="#" ONCLICK ="popupPage2('<%=request.getContextPath()%>/messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>')" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.messenger"/>">
 	 <span id="oscar_new_msg"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.msg"/></span></a>
      </li>
    	</security:oscarSec>

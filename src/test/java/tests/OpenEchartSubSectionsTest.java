@@ -1145,7 +1145,7 @@ public class OpenEchartSubSectionsTest {
             if (!windowHandle.equals(mainWindowHandle) && !windowHandle.equals(demographicSearchWindowHandle) && !windowHandle.equals(eChartWindowHandle)) {
                 messengerWindowHandle = windowHandle;
                 driver.switchTo().window(windowHandle);
-                if (driver.getCurrentUrl().contains("oscarMessenger/DisplayDemographicMessages.do")) {
+                if (driver.getCurrentUrl().contains("messenger/DisplayDemographicMessages.do")) {
                     break;
                 }
             }
@@ -1165,8 +1165,8 @@ public class OpenEchartSubSectionsTest {
         }
 
         if (!is500Error) {
-            wait.until(ExpectedConditions.urlContains("oscarMessenger/DisplayDemographicMessages.do"));
-            Assert.assertTrue(driver.getCurrentUrl().contains("oscarMessenger/DisplayDemographicMessages.do"));
+            wait.until(ExpectedConditions.urlContains("messenger/DisplayDemographicMessages.do"));
+            Assert.assertTrue(driver.getCurrentUrl().contains("messenger/DisplayDemographicMessages.do"));
             System.out.println("Messenger window opened successfully.");
         }
 

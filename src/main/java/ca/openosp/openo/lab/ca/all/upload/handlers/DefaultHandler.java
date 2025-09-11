@@ -55,11 +55,17 @@ public class DefaultHandler implements MessageHandler {
     Logger logger = MiscUtils.getLogger();
     String hl7Type = null;
 
+    public DefaultHandler() {
+        logger.warn("DefaultHandler: Created DefaultHandler instance with null hl7Type");
+    }
+
     String getHl7Type() {
+        logger.warn("DefaultHandler.getHl7Type: Returning hl7Type = " + hl7Type);
         return hl7Type;
     }
 
     public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
+        logger.info("DefaultHandler.parse: Called with serviceName=" + serviceName + ", fileName=" + fileName + ", fileId=" + fileId);
         Document xmlDoc = getXML(fileName);
 
         /*
@@ -91,8 +97,9 @@ public class DefaultHandler implements MessageHandler {
                 ArrayList<String> messages = Utilities.separateMessages(fileName);
                 for (i = 0; i < messages.size(); i++) {
                     String msg = messages.get(i);
-                    logger.info("using HL7 Type " + getHl7Type());
-                    MessageUploader.routeReport(loggedInInfo, serviceName, getHl7Type(), msg, fileId);
+                    String typeToUse = getHl7Type() != null ? getHl7Type() : serviceName;
+                    logger.info("using HL7 Type " + typeToUse + " (original: " + getHl7Type() + ", serviceName: " + serviceName + ")");
+                    MessageUploader.routeReport(loggedInInfo, serviceName, typeToUse, msg, fileId);
                 }
             } catch (Exception e) {
                 MessageUploader.clean(fileId);

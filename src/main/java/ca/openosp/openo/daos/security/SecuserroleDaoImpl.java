@@ -211,7 +211,7 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
         ;
         try {
             Secuserrole instance = (Secuserrole) session.get(
-                    "com.quatro.model.sec.Secuserrole", id);
+                    Secuserrole.class, id);
             return instance;
         } catch (RuntimeException re) {
             logger.error("get failed", re);
@@ -230,7 +230,7 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
         logger.debug("finding Secuserrole instance by example");
         try {
             List results = session.createCriteria(
-                            "com.quatro.model.sec.Secuserrole").add(
+                            Secuserrole.class).add(
                             Example.create(instance))
                     .list();
             logger.debug("find by example successful, result size: "

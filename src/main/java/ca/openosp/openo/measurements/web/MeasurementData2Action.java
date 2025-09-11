@@ -55,15 +55,71 @@ import ca.openosp.openo.util.StringUtils;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts2 action controller for measurement data operations in OpenO EMR.
+ * This 2Action class follows the modern Struts2 migration pattern and provides
+ * AJAX endpoints for measurement data retrieval, saving, and manipulation.
+ * 
+ * <p>This controller serves as the primary web interface for measurement operations including:</p>
+ * <ul>
+ *   <li><strong>Data retrieval</strong>: Getting latest values, historical data by type</li>
+ *   <li><strong>Data persistence</strong>: Saving individual measurements and batch updates</li>
+ *   <li><strong>AJAX support</strong>: JSON responses for dynamic user interfaces</li>
+ *   <li><strong>Security integration</strong>: Proper authorization and audit logging</li>
+ * </ul>
+ * 
+ * <p>The action supports multiple operation modes via the 'action' parameter:</p>
+ * <ul>
+ *   <li><code>getLatestValues</code>: Retrieve most recent measurements for a patient</li>
+ *   <li><code>saveMeasurement</code>: Save a single new measurement</li>
+ *   <li><code>saveValues</code>: Batch save multiple measurements</li>
+ *   <li><code>getDataByType</code>: Get measurement data filtered by type</li>
+ *   <li><code>getMeasurementsByType</code>: Retrieve measurements of specific types</li>
+ * </ul>
+ * 
+ * <p>Security considerations:</p>
+ * <ul>
+ *   <li>All operations require proper user authentication via {@link LoggedInInfo}</li>
+ *   <li>Patient data access is validated through {@link SecurityInfoManager}</li>
+ *   <li>Input validation and escaping prevents XSS and injection attacks</li>
+ * </ul>
+ * 
+ * @since 2006
+ * @see Measurement
+ * @see MeasurementDao
+ * @see ca.openosp.openo.managers.MeasurementManager
+ */
 public class MeasurementData2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
 
+    /** DAO for measurement database operations. */
     private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
+    
+    /** DAO for appointment-related operations. */
     OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
+    
+    /** Security manager for authorization and audit logging. */
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    /**
+     * Main action execution method that routes requests based on the 'action' parameter.
+     * This method implements the method-based 2Action pattern for handling multiple
+     * related operations within a single action class.
+     * 
+     * <p>Supported action parameter values:</p>
+     * <ul>
+     *   <li><code>getLatestValues</code> - Default operation, gets latest measurement values</li>
+     *   <li><code>saveMeasurement</code> - Saves a single measurement</li>
+     *   <li><code>saveValues</code> - Batch saves multiple measurements</li>
+     *   <li><code>getDataByType</code> - Gets measurement data filtered by type</li>
+     *   <li><code>getMeasurementsByType</code> - Gets measurements of specific types</li>
+     * </ul>
+     * 
+     * @return String Struts2 result string for response handling
+     * @throws Exception if there's an error during request processing
+     */
     public String execute() throws Exception {
         String method = request.getParameter("action");
         if ("getLatestValues".equals(method)) {

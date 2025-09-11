@@ -24,6 +24,12 @@
 
 --%>
 
+<%--
+    DEPRECATED: This is the legacy encounter page.
+    It is displayed for users who are not enabled for the new encounter page (Index2.jsp).
+    The selection logic is in ca.openosp.openo.encounter.pageUtil.EctIncomingEncounter2Action.java
+--%>
+
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
@@ -624,7 +630,7 @@
             function popUpMsg(vheight, vwidth, msgPosition) {
 
 
-                var page = "<rewrite:reWrite jspPage="../oscarMessenger/ViewMessageByPosition.do"/>?from=encounter&orderBy=!date&demographic_no=<%=demoNo%>&messagePosition=" + msgPosition;
+                var page = "<rewrite:reWrite jspPage="../messenger/ViewMessageByPosition.do"/>?from=encounter&orderBy=!date&demographic_no=<%=demoNo%>&messagePosition=" + msgPosition;
                 windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
                 var popup = window.open(page, "<fmt:setBundle basename="oscarResources"/><fmt:message key="global.oscarRx"/>", windowprops);
                 if (popup != null) {
@@ -1021,9 +1027,9 @@
                         <input type="hidden" name="casetoEncounter" value="true">
                         </caisi:isModuleLoad>
                         <tr class="Header">
-                            <td style="font-weight: bold">oscarMessenger <a
+                            <td style="font-weight: bold">messenger <a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popup(700,960,'${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')">Send
+                                    onClick="popup(700,960,'${pageContext.request.contextPath}/messenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')">Send
                                 Msg</a></td>
                         </tr>
                         <tr>
@@ -1049,7 +1055,7 @@
         <tr>
             <td><a href=#
                    onClick='popupOscarRx(600,900,"<rewrite:reWrite
-                           jspPage="../oscarMessenger/DisplayDemographicMessages.do"/>?orderby=date&boxType=3&demographic_no=<%=demoNo%>&providerNo=<%=provNo%>&userName=<%=providerName%>"); return false;'>
+                           jspPage="../messenger/DisplayDemographicMessages.do"/>?orderby=date&boxType=3&demographic_no=<%=demoNo%>&providerNo=<%=provNo%>&userName=<%=providerName%>"); return false;'>
                 -All Messages-</a></td>
         </tr>
         <!-- <tr><td>&nbsp;</td></tr> -->

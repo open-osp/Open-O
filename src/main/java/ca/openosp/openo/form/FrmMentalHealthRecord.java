@@ -89,9 +89,9 @@ public class FrmMentalHealthRecord extends FrmRecord {
         ResultSet rs = null;
         String sql = null;
 
-        // from providers table
+        // from provider table
         sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName "
-                + "FROM providers WHERE provider_no = " + provNo;
+                + "FROM provider WHERE provider_no = " + provNo;
         rs = DBHandler.GetSQL(sql);
         if (rs.next()) {
             props.setProperty("c_referredBy", Misc.getString(rs, "provName"));

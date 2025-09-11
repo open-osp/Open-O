@@ -33,7 +33,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.httpclient.HttpException;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import org.w3c.dom.Document;
@@ -146,15 +145,28 @@ public class Connection {
 
     public Document CreateDocument(InputStream input) throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+
+        // Disable external entities
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        
+        // Disable XInclude
+        factory.setXIncludeAware(false);
+        
+        // Disable expansion of entity references
+        factory.setExpandEntityReferences(false);
+
         DocumentBuilder builder = factory.newDocumentBuilder();
         return builder.parse(input);
     }
 
-    private InputStream CreateInputStream(String queryString) throws HttpException, IOException {
+    private InputStream CreateInputStream(String queryString) throws IOException {
         return this.http.Get(queryString);
     }
 
-    private String CreateString(String queryString) throws HttpException, IOException {
+    private String CreateString(String queryString) throws IOException {
         return this.http.GetString(queryString);
     }
 }

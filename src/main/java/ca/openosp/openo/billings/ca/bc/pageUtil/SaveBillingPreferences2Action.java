@@ -176,7 +176,7 @@ public class SaveBillingPreferences2Action
     private String formCode;
     private String description;
 
-    //Default billing providers preference
+    //Default billing provider preference
     private String defaultBillingProvider;
 
     //Default Teleplan service location (visittype)

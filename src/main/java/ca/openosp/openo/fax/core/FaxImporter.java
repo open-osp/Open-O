@@ -31,7 +31,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpStatus;
+import org.apache.http.HttpStatus;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

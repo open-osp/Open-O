@@ -910,7 +910,7 @@
                                                     String eURL = "../oscarEncounter/IncomingEncounter.do?providerNo=" + providerNo + "&appointmentNo=&demographicNo=" + demographicID + "&curProviderNo=&reason=" + java.net.URLEncoder.encode("Document Notes", "UTF-8") + "&encType=" + java.net.URLEncoder.encode("encounter without client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(provider.getFullName(), "UTF-8") + "&curDate=" + UtilDateUtilities.getToday("yyyy-MM-dd") + "&appointmentDate=&startTime=&status=";
                                                 %>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Msg"
-                                                       onclick="popup(700,960,'../oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
+                                                       onclick="popup(700,960,'../messenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Tickler"
                                                        onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>&providerNo=<%=providerNo%>','tickler')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="eChart"

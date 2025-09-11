@@ -27,7 +27,7 @@
 <%@ page
         import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*" %>
 <%@ page
-        import="org.jdom.Element,ca.openosp.openo.encounter.oscarMeasurements.data.*,org.jdom.output.Format,org.jdom.output.XMLOutputter,ca.openosp.openo.encounter.oscarMeasurements.util.*,java.io.*" %>
+        import="org.jdom2.Element,ca.openosp.openo.encounter.oscarMeasurements.data.*,org.jdom2.output.Format,org.jdom2.output.XMLOutputter,ca.openosp.openo.encounter.oscarMeasurements.util.*,java.io.*" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.FlowSheetCustomization" %>

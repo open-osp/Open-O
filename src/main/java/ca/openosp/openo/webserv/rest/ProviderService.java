@@ -417,7 +417,7 @@ public class ProviderService extends AbstractServiceImpl {
                 String pn = h.getProviderNo();
                 providerList.add(Integer.valueOf(pn));
             } catch (
-                    Exception e) {/*empty*/} /*No need to do anything. Just want to avoid a NumberFormatException from providers numbers with alphanumeric Characters*/
+                    Exception e) {/*empty*/} /*No need to do anything. Just want to avoid a NumberFormatException from provider numbers with alphanumeric Characters*/
         }
 
         String suggestProviderNo = "";

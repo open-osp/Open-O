@@ -12,6 +12,7 @@
 #   - develop/bullfrog
 #   - develop/coyote
 #   - develop/dolphin
+#   - develop/dogfish
 #
 # Key Jobs:
 # - build: 
@@ -38,6 +39,7 @@ on:
       - develop/bullfrog
       - develop/coyote
       - develop/dolphin
+      - develop/dogfish
 
 jobs:
   build:
@@ -68,13 +70,13 @@ jobs:
           compose-file: ".devcontainer/docker-compose.yml"
       
       - name: Generate make file
-        run: docker exec devcontainer-open-o-1 .devcontainer/development/scripts/make lock
+        run: docker exec openo-tomcat-dev .devcontainer/development/scripts/make lock
       
       - name: Build project
-        run: docker exec devcontainer-open-o-1 .devcontainer/development/scripts/make install
+        run: docker exec openo-tomcat-dev .devcontainer/development/scripts/make install
 
       - name: Run unit tests & build JSP files
-        run: docker exec devcontainer-open-o-1 mvn package -Pjspc
+        run: docker exec openo-tomcat-dev mvn package -Pjspc
 
   lint:
     runs-on: ubuntu-latest
@@ -104,4 +106,4 @@ jobs:
           compose-file: ".devcontainer/docker-compose.yml"
           
       - name: Run Maven Checkstyle plugin
-        run: docker exec devcontainer-open-o-1 mvn checkstyle:checkstyle
+        run: docker exec openo-tomcat-dev mvn checkstyle:checkstyle

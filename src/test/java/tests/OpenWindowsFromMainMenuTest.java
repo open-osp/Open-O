@@ -354,8 +354,8 @@ public class OpenWindowsFromMainMenuTest {
         }
 
         if (!is500Error) {
-            wait.until(ExpectedConditions.urlContains("oscarMessenger/DisplayMessages.do"));
-            Assert.assertTrue(driver.getCurrentUrl().contains("oscarMessenger/DisplayMessages.do"));
+            wait.until(ExpectedConditions.urlContains("messenger/DisplayMessages.do"));
+            Assert.assertTrue(driver.getCurrentUrl().contains("messenger/DisplayMessages.do"));
             System.out.println("Msg window opened successfully.");
         }
 

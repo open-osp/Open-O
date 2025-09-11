@@ -35,9 +35,9 @@
 package ca.openosp.openo.lab.ca.all.upload;
 
 import org.apache.logging.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.lab.ca.all.upload.handlers.DefaultHandler;
 import ca.openosp.openo.lab.ca.all.upload.handlers.MessageHandler;
@@ -61,11 +61,14 @@ public final class HandlerClassFactory {
         String msgType;
         String msgHandler = "";
 
+        logger.info("HandlerClassFactory.getHandler: Getting handler for type: " + type);
+        
         if (type == null || type.equals("")) {
             logger.debug("Type not specified using Default Handler");
             return (new DefaultHandler());
         }
-        try (InputStream is = HandlerClassFactory.class.getClassLoader().getResourceAsStream("oscar/oscarLab/ca/all/upload/message_config.xml")) {
+        try (InputStream is = HandlerClassFactory.class.getClassLoader().getResourceAsStream("ca/openosp/openo/lab/ca/all/upload/message_config.xml")) {
+            logger.info("HandlerClassFactory.getHandler: Loading config from ca/openosp/openo/lab/ca/all/upload/message_config.xml, stream is: " + (is != null ? "valid" : "null"));
 
             SAXBuilder parser = new SAXBuilder();
             doc = parser.build(is);
@@ -73,30 +76,38 @@ public final class HandlerClassFactory {
 
             @SuppressWarnings("unchecked")
             List items = root.getChildren();
+            logger.info("HandlerClassFactory.getHandler: Found " + items.size() + " handler configs");
             for (int i = 0; i < items.size(); i++) {
                 Element e = (Element) items.get(i);
                 msgType = e.getAttributeValue("name");
                 String className = e.getAttributeValue("className");
-                if (msgType.equals(type) && (className.indexOf(".") == -1))
-                    msgHandler = "oscar.oscarLab.ca.all.upload.handlers." + e.getAttributeValue("className");
-                if (msgType.equals(type) && (className.indexOf(".") != -1))
+                logger.debug("HandlerClassFactory.getHandler: Checking handler - name: " + msgType + ", className: " + className + ", looking for: " + type);
+                if (msgType.equals(type) && (className.indexOf(".") == -1)) {
+                    msgHandler = "ca.openosp.openo.lab.ca.all.upload.handlers." + e.getAttributeValue("className");
+                    logger.info("HandlerClassFactory.getHandler: Found matching handler for " + type + ", will use class: " + msgHandler);
+                }
+                if (msgType.equals(type) && (className.indexOf(".") != -1)) {
                     msgHandler = className;
+                    logger.info("HandlerClassFactory.getHandler: Found matching handler for " + type + ", will use fully qualified class: " + msgHandler);
+                }
             }
         } catch (Exception e) {
             logger.error("Could not parse config file", e);
         }
         // create and return the message handler
         if (msgHandler.equals("")) {
+            logger.warn("HandlerClassFactory.getHandler: No handler found for type '" + type + "', using DefaultHandler");
             return (new DefaultHandler());
         } else {
             try {
+                logger.info("HandlerClassFactory.getHandler: Attempting to create handler class: " + msgHandler);
                 @SuppressWarnings("unchecked")
                 Class classRef = Class.forName(msgHandler);
                 MessageHandler mh = (MessageHandler) classRef.newInstance();
-                logger.debug("Message handler '" + msgHandler + "' created successfully");
+                logger.info("HandlerClassFactory.getHandler: Message handler '" + msgHandler + "' created successfully");
                 return (mh);
             } catch (Exception e) {
-                logger.error("Could not create message handler: " + msgHandler + ", Using default message handler instead", e);
+                logger.error("HandlerClassFactory.getHandler: Could not create message handler: " + msgHandler + ", Using default message handler instead", e);
                 return (new DefaultHandler());
             }
         }

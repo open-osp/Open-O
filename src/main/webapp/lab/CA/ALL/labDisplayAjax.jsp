@@ -254,11 +254,11 @@
                         } else if (action == 'msgLab') {
                             demoid = json.demoId;
                             if (demoid != null && demoid.length > 0)
-                                window.popup(700, 960, contextPath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
+                                window.popup(700, 960, contextPath + '/messenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
                         } else if (action == 'msgLabRecall') {
                             demoid = json.demoId;
                             if (demoid != null && demoid.length > 0)
-                                window.popup(700, 980, contextPath + '/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
+                                window.popup(700, 980, contextPath + '/messenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
                             window.popup(450, 600, contextPath + '/tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid + '<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall', 'ticklerRecall');
                         } else if (action == 'ticklerLab') {
                             demoid = json.demoId;

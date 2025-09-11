@@ -28,8 +28,8 @@ package ca.openosp.openo.db;
 
 import java.util.List;
 
-import org.jdom.Document;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.output.XMLOutputter;
 import ca.openosp.openo.commn.dao.TableModificationDao;
 import ca.openosp.openo.commn.model.ProviderLabRoutingModel;
 import ca.openosp.openo.commn.model.TableModification;

@@ -47,58 +47,159 @@ import ca.openosp.openo.messenger.data.MsgDisplayMessage;
 import ca.openosp.openo.util.ConversionUtils;
 
 /**
+ * JavaBean for managing and displaying message lists in the messaging interface.
+ * 
+ * <p>This bean serves as the data model for the message listing pages (inbox, sent items,
+ * deleted messages). It manages the retrieval, filtering, and organization of messages
+ * for display in a tabular format. The bean maintains separate vectors for each message
+ * attribute (ID, status, date, sender, subject, attachments) to support the JSP display
+ * requirements.</p>
+ * 
+ * <p>Key functionality:</p>
+ * <ul>
+ *   <li>Retrieves messages for a specific provider from the database</li>
+ *   <li>Supports different message views: inbox, sent items, deleted</li>
+ *   <li>Provides search/filter capabilities across message fields</li>
+ *   <li>Maintains message position for navigation</li>
+ *   <li>Handles attachment indicators</li>
+ * </ul>
+ * 
+ * <p>The bean uses parallel vectors to store message attributes, where the same index
+ * across all vectors represents attributes of the same message. This design pattern,
+ * while not ideal by modern standards, was common in early JSP/Servlet applications.</p>
+ * 
+ * <p>Security considerations:</p>
+ * <ul>
+ *   <li>Basic SQL injection prevention in filter methods</li>
+ *   <li>Provider-specific message isolation</li>
+ * </ul>
+ * 
  * @deprecated Use org.oscarehr.managers.MessagingManager and JPA model.
+ *             This class uses outdated patterns and should be replaced with
+ *             modern service-oriented architecture.
+ * @version 1.0
+ * @since 2003
+ * @see MsgDisplayMessages2Action
+ * @see MessageListDao
+ * @see MessageTblDao
  */
 @Deprecated
 public class MsgDisplayMessagesBean implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Provider number identifying whose messages to display.
+     */
     private String providerNo;
+    
+    /**
+     * Vector of message IDs in display order.
+     */
     private Vector<String> messageid;
+    
+    /**
+     * Vector of message positions for navigation.
+     */
     private Vector<String> messagePosition;
+    
+    /**
+     * Vector of message statuses ("new", "read", "del").
+     */
     private Vector<String> status;
+    
+    /**
+     * Vector of message dates in display format.
+     */
     private Vector<String> date;
+    
+    /**
+     * Vector of message times.
+     * Note: Variable name "ime" appears to be a typo for "time".
+     */
     private Vector<String> ime;
+    
+    /**
+     * Vector of sender names or identifiers.
+     */
     private Vector<String> sentby;
+    
+    /**
+     * Vector of message subjects.
+     */
     private Vector<String> subject;
+    
+    /**
+     * Vector of attachment indicators ("1" if has attachments, "0" otherwise).
+     */
     private Vector<String> attach;
 
+    /**
+     * Current location ID for multi-location support.
+     * Defaults to "0" and is lazily loaded from database.
+     */
     private String currentLocationId = "0";
 
-    /*
-     * edit 2006-0811-01 by wreby
+    /**
+     * Search filter string for message filtering.
+     * Added in 2006 to support message search functionality.
      */
     private String filter;
 
-    //Just sets the filter keyword after ensuring that the user is not trying to
-    // insert any stray single quotes, since that is the escape character in SQL
+    /**
+     * Sets the search filter for message filtering.
+     * 
+     * <p>This method attempts to prevent SQL injection by replacing single quotes,
+     * though the implementation has a bug - replaceAll() returns a new string
+     * rather than modifying in place, so the sanitization doesn't actually work.</p>
+     * 
+     * @param filter String search filter to apply, null to clear filter
+     */
     public void setFilter(String filter) {
         if (filter == null || filter.equals("")) {
             this.filter = null;
         } else {
-            //get rid of the stray single quotes, since that is the SQL escape character
+            // BUG: This line doesn't actually sanitize the filter
+            // replaceAll() returns a new string, it doesn't modify in place
+            // Should be: filter = filter.replaceAll("'", "''");
             filter.replaceAll("'", "''");
             this.filter = filter;
         }
     }
 
+    /**
+     * Clears the current search filter.
+     */
     public void clearFilter() {
         filter = null;
     }
 
+    /**
+     * Gets the current search filter.
+     * 
+     * @return String the current filter, empty string if null
+     */
     public String getFilter() {
         if (filter == null) {
             filter = "";
         }
-
         return filter;
     }
 
+    /**
+     * Generates SQL WHERE clause fragment for search filtering.
+     * 
+     * <p>Creates a SQL condition that searches for the filter string
+     * across multiple specified columns using LIKE operators.</p>
+     * 
+     * @param colsToSearch String[] array of column names to search
+     * @return String SQL WHERE clause fragment, empty if no filter
+     */
     public String getSQLSearchFilter(String[] colsToSearch) {
         if (filter == null || colsToSearch.length == 0) {
             return "";
         } else {
+            // Build OR condition across all specified columns
             String search = " and (";
             int numOfCols = colsToSearch.length;
             for (int i = 0; i < numOfCols - 1; i++) {
@@ -109,13 +210,25 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         }
     }
 
-    // end edit 2006-08011-01 by wreby
-
+    /**
+     * Gets the vector of attachment indicators.
+     * 
+     * @return Vector<String> attachment indicators for each message
+     */
     public Vector<String> getAttach() {
         return attach;
     }
 
+    /**
+     * Gets the current location ID for multi-location support.
+     * 
+     * <p>Lazily loads the location ID from the database on first access.
+     * Uses string comparison with == which is a bug - should use .equals().</p>
+     * 
+     * @return String the current location ID
+     */
     public String getCurrentLocationId() {
+        // BUG: Should use .equals() not == for string comparison
         if (currentLocationId == "0") {
             OscarCommLocationsDao oscarCommLocationsDao = SpringUtils.getBean(OscarCommLocationsDao.class);
             List<OscarCommLocations> oscarCommLocations = oscarCommLocationsDao.findByCurrent1(1);
@@ -133,19 +246,21 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * Used to set message ids to be viewed on the DisplayMessages.jsp
+     * Sets the message IDs to be displayed.
      *
-     * @param messageid Vector, Contains all the messageids to be displayed
+     * @param messageid Vector<String> containing all the message IDs to be displayed
      */
     public void setMessageid(Vector<String> messageid) {
         this.messageid = messageid;
     }
 
     /**
-     * calls getMessageIDS and getInfo which are used to fill the Vectors
-     * with the Message headers for the current providers No
+     * Gets the message IDs for the inbox view.
+     * 
+     * <p>Calls getMessageIDs() and getInfo() to populate all vectors
+     * with message headers for the current provider.</p>
      *
-     * @return Vector, Contains the messageids for use on the DisplayMessage.jsp
+     * @return Vector<String> containing the message IDs for display
      */
     public Vector<String> getMessageid() {
         getMessageIDs();
@@ -154,6 +269,13 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return this.messageid;
     }
 
+    /**
+     * Gets the message IDs for deleted messages view.
+     * 
+     * <p>Retrieves deleted messages and establishes the deleted inbox view.</p>
+     * 
+     * @return Vector<String> containing deleted message IDs
+     */
     public Vector<String> getDelMessageid() {
         getDeletedMessageIDs();
         getInfo();
@@ -161,6 +283,13 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return this.messageid;
     }
 
+    /**
+     * Gets the message IDs for sent messages view.
+     * 
+     * <p>Retrieves sent messages and establishes the sent items view.</p>
+     * 
+     * @return Vector<String> containing sent message IDs
+     */
     public Vector<String> getSentMessageid() {
         getSentMessageIDs();
         estSentItemsInbox();
@@ -168,19 +297,21 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * Used to set the Status vector. either read, new, del
+     * Sets the status vector for messages.
      *
-     * @param status Vector, Strings either read , new or del
+     * @param status Vector<String> containing status strings ("read", "new", or "del")
      */
     public void setStatus(Vector<String> status) {
         this.status = status;
     }
 
     /**
-     * Will check to see if the status has already been set, if not it will intialize the
-     * Vectors of this Bean with getMessageIDs and get Info
+     * Gets the status vector for messages.
+     * 
+     * <p>Lazily initializes the vectors if not already populated by calling
+     * getMessageIDs() and getInfo().</p>
      *
-     * @return Vector Strings either read, new or del
+     * @return Vector<String> containing status strings ("read", "new", or "del")
      */
     public Vector<String> getStatus() {
         if (status == null) {
@@ -190,15 +321,21 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return this.status;
     }
 
+    /**
+     * Sets the date vector for messages.
+     * 
+     * @param date Vector<String> containing formatted date strings
+     */
     public void setDate(Vector<String> date) {
         this.date = date;
     }
 
     /**
-     * Will check to see if the date has already been set, if not it will intialize the
-     * Vectors of this Bean with getMessageIDs and get Info
+     * Gets the date vector for messages.
+     * 
+     * <p>Lazily initializes the vectors if not already populated.</p>
      *
-     * @return Vector Strings either read, new or del
+     * @return Vector<String> containing formatted date strings
      */
     public Vector<String> getDate() {
         if (date == null) {
@@ -209,19 +346,20 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * used to set the sentby Vector
+     * Sets the sentby vector for messages.
      *
-     * @param sentby Vector contains Strings of who sent the message
+     * @param sentby Vector<String> containing sender names
      */
     public void setSentby(Vector<String> sentby) {
         this.sentby = sentby;
     }
 
     /**
-     * Will check to see if the sentby has already been set, if not it will intialize the
-     * Vectors of this Bean with getMessageIDs and get Info
+     * Gets the sentby vector for messages.
+     * 
+     * <p>Lazily initializes the vectors if not already populated.</p>
      *
-     * @return Vector Strings either read, new or del
+     * @return Vector<String> containing sender names
      */
     public Vector<String> getSentby() {
         if (sentby == null) {
@@ -232,19 +370,20 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * used to set the subject Vector of the messages
+     * Sets the subject vector for messages.
      *
-     * @param subject Vector, contains Strings of subjects
+     * @param subject Vector<String> containing message subjects
      */
     public void setSubject(Vector<String> subject) {
         this.subject = subject;
     }
 
     /**
-     * Will check to see if the subject has already been set, if not it will intialize the
-     * Vectors of this Bean with getMessageIDs and get Info
+     * Gets the subject vector for messages.
+     * 
+     * <p>Lazily initializes the vectors if not already populated.</p>
      *
-     * @return Vector Strings either read, new or del
+     * @return Vector<String> containing message subjects
      */
     public Vector<String> getSubject() {
         if (subject == null) {
@@ -255,9 +394,9 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * Used to set the providerNo that will determine what this bean will fill itself with
+     * Sets the provider number whose messages will be displayed.
      *
-     * @param providerNo String, providers No
+     * @param providerNo String the provider's identification number
      */
     public void setProviderNo(String providerNo) {
 
@@ -265,17 +404,23 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     }
 
     /**
-     * gets the current providers No
+     * Gets the current provider's number.
      *
-     * @return the providers no
+     * @return String the provider's identification number
      */
     public String getProviderNo() {
         return this.providerNo;
     }
 
     /**
-     * This method uses the ProviderNo and searches for messages for this providerNo
-     * in the messagelisttbl
+     * Retrieves message IDs from the database for the current provider.
+     * 
+     * <p>This method queries the messagelisttbl table to find all messages
+     * associated with the current provider and location. It populates the
+     * messageid, status, and messagePosition vectors with the retrieved data.</p>
+     * 
+     * <p>The method filters out deleted messages and only retrieves messages
+     * for the current location ID.</p>
      */
     void getMessageIDs() {
         String providerNo = this.getProviderNo();
@@ -294,6 +439,25 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         }
     }
 
+    /**
+     * Generates SQL ORDER BY clause based on the specified ordering.
+     * 
+     * <p>Supports ordering by various fields with optional descending order.
+     * A '!' prefix on the order string indicates descending order.</p>
+     * 
+     * <p>Supported order fields:</p>
+     * <ul>
+     *   <li>status - Message status</li>
+     *   <li>from - Sender name</li>
+     *   <li>subject - Message subject</li>
+     *   <li>date - Message date</li>
+     *   <li>sentto - Recipients</li>
+     *   <li>linked - Linked status</li>
+     * </ul>
+     * 
+     * @param order String the field to order by, with optional '!' prefix for descending
+     * @return String the SQL ORDER BY clause
+     */
     public String getOrderBy(String order) {
         String orderBy = null;
         if (order == null) {
@@ -322,6 +486,17 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return orderBy;
     }
 
+    /**
+     * Establishes the inbox view with pagination and ordering.
+     * 
+     * <p>Retrieves messages for the inbox view, excluding deleted messages.
+     * Supports pagination with 25 messages per page and custom ordering.
+     * Also applies any active search filters.</p>
+     * 
+     * @param orderby String the field to order results by
+     * @param page int the page number (1-based)
+     * @return Vector<MsgDisplayMessage> collection of messages for display
+     */
     public Vector<MsgDisplayMessage> estInbox(String orderby, int page) {
         String providerNo = this.getProviderNo();
         Vector<MsgDisplayMessage> msg = new Vector<MsgDisplayMessage>();
@@ -392,11 +567,28 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return msg;
     }
 
+    /**
+     * Establishes demographic inbox with default parameters.
+     * 
+     * <p>Convenience method that calls estDemographicInbox with null ordering
+     * and demographic number.</p>
+     * 
+     * @return Vector<MsgDisplayMessage> collection of messages
+     */
     public Vector<MsgDisplayMessage> estDemographicInbox() {
         return estDemographicInbox(null, null);
     }
 
-    //INBOX
+    /**
+     * Establishes inbox view for a specific demographic (patient).
+     * 
+     * <p>Retrieves all messages linked to a specific patient demographic.
+     * Used to display messages associated with a patient's medical record.</p>
+     * 
+     * @param orderby String the field to order results by
+     * @param demographic_no String the patient's demographic number
+     * @return Vector<MsgDisplayMessage> collection of messages for the demographic
+     */
     public Vector<MsgDisplayMessage> estDemographicInbox(String orderby, String demographic_no) {
         Vector<MsgDisplayMessage> msg = new Vector<MsgDisplayMessage>();
         int index = 0;
@@ -469,10 +661,27 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return msg;
     }
 
+    /**
+     * Establishes the deleted inbox view with default parameters.
+     * 
+     * <p>Convenience method that calls estDeletedInbox with default ordering
+     * and first page.</p>
+     * 
+     * @return Vector<MsgDisplayMessage> collection of deleted messages
+     */
     public Vector<MsgDisplayMessage> estDeletedInbox() {
         return estDeletedInbox(null, 1);
     }
 
+    /**
+     * Gets the total count of messages of a specific type.
+     * 
+     * <p>Counts messages for the current provider and location,
+     * applying any active filters.</p>
+     * 
+     * @param type int the message type to count
+     * @return int the total number of messages
+     */
     public int getTotalMessages(int type) {
         String providerNo = this.getProviderNo();
         MessageListDao messageListDao = SpringUtils.getBean(MessageListDao.class);
@@ -482,6 +691,17 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         return total;
     }
 
+    /**
+     * Establishes the deleted inbox view with pagination and ordering.
+     * 
+     * <p>Retrieves deleted messages for display. Similar to estInbox but
+     * filters for messages with 'del' status. Supports pagination with
+     * 25 messages per page.</p>
+     * 
+     * @param orderby String the field to order results by
+     * @param page int the page number (1-based)
+     * @return Vector<MsgDisplayMessage> collection of deleted messages
+     */
     public Vector<MsgDisplayMessage> estDeletedInbox(String orderby, int page) {
 
         String providerNo = this.getProviderNo();
@@ -556,6 +776,12 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
      * This method uses the ProviderNo and searches for messages for this providerNo
      * in the messagelisttbl
      */
+    /**
+     * Retrieves deleted message IDs for the current provider.
+     * 
+     * <p>Similar to getMessageIDs() but filters for messages with 'del' status.
+     * Populates the messageid, status, and messagePosition vectors.</p>
+     */
     void getDeletedMessageIDs() {
         String providerNo = this.getProviderNo();
         messageid = new Vector<String>();
@@ -574,6 +800,13 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
     /**
      * This method uses the ProviderNo and searches for messages for this providerNo
      * in the messagelisttbl
+     */
+    /**
+     * Retrieves sent message IDs for the current provider.
+     * 
+     * <p>Queries the messagetbl directly to find messages sent by the current
+     * provider. Populates the messageid, status, and messagePosition vectors
+     * with sent messages.</p>
      */
     void getSentMessageIDs() {
         String providerNo = this.getProviderNo();
@@ -597,10 +830,25 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
         }
     }
 
+    /**
+     * Establishes sent items view with default parameters.
+     * 
+     * @return Vector<MsgDisplayMessage> collection of sent messages
+     */
     public Vector<MsgDisplayMessage> estSentItemsInbox() {
         return estSentItemsInbox(null, 1);
     }
 
+    /**
+     * Establishes sent items view with pagination and ordering.
+     * 
+     * <p>Retrieves messages sent by the current provider. Supports pagination
+     * with 25 messages per page and custom ordering.</p>
+     * 
+     * @param orderby String the field to order results by  
+     * @param page int the page number (1-based)
+     * @return Vector<MsgDisplayMessage> collection of sent messages
+     */
     public Vector<MsgDisplayMessage> estSentItemsInbox(String orderby, int page) {
 
         String providerNo = this.getProviderNo();
@@ -674,6 +922,16 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
      * This method uses the Vector initialized by getMessageIDs and fills the Vectors with
      * the Message header Info
      */
+    /**
+     * Populates message detail vectors from database.
+     * 
+     * <p>Retrieves detailed information for all messages in the messageid vector.
+     * Populates the date, sentby, subject, and attach vectors with corresponding
+     * data from the messagetbl table.</p>
+     * 
+     * <p>This method is typically called after getMessageIDs() to fill in the
+     * message details for display.</p>
+     */
     void getInfo() {
 
         sentby = new Vector<String>();
@@ -712,6 +970,16 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
      * Formats a database formatted date string into an Oscar formatted date string.
      *
      * @throws ParseException
+     */
+    /**
+     * Formats a date string for display.
+     * 
+     * <p>Converts database date format (yyyy-MM-dd HH:mm:ss) to display
+     * format (yyyy-MM-dd). Returns "N/A" if the date is null.</p>
+     * 
+     * @param thedate String the date string to format
+     * @return String the formatted date or "N/A" if null
+     * @throws ParseException if the date string cannot be parsed
      */
     private String formatDate(String thedate) throws ParseException {
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(thedate);

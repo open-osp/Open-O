@@ -30,6 +30,8 @@ tmp/
 /hs_err_pid*.log
 /release
 *.venv
+__pycache__/
+/scripts/ai_cli_automation_tools/output/
 .env
 /.smarttomcat/
 .editorconfig

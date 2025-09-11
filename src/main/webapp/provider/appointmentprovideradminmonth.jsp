@@ -72,9 +72,9 @@
 //multisite ends =====================
 %>
 
-<!--oscarMessenger Code block -->
+<!--messenger Code block -->
 <%@ taglib uri="/WEB-INF/msg-tag.tld" prefix="oscarmessage" %>
-<!--/oscarMessenger Code block -->
+<!--/messenger Code block -->
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -358,7 +358,7 @@
             }
 
 
-            //<!--oscarMessenger code block-->
+            //<!--messenger code block-->
             function popupOscarRx(vheight, vwidth, varpage) { //open a new popup window
                 var page = varpage;
                 windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
@@ -370,7 +370,7 @@
                 }
             }
 
-            //<!--/oscarMessenger code block -->
+            //<!--/messenger code block -->
 
 
             function selectprovider(s) {
@@ -972,7 +972,7 @@
                         popupOscarRx(600, 1024, '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/>');
                         return false;  //run code for 'L'ab
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.msgShortcut"/> :
-                        popupOscarRx(600, 1024, '../oscarMessenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
+                        popupOscarRx(600, 1024, '../messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for 'M'essage
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.monthShortcut"/> :
                         window.open("providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=month&dboperation=searchappointmentmonth", "_self");

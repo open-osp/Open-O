@@ -908,12 +908,12 @@ request.setAttribute("missingTests", missingTests);
                                 console.log("Sending message about lab. Demoid: " + demoid);
                                 demoid = json.demoId;
                                 if (demoid != null && demoid.length > 0) {
-                                    window.popup(700, 960, '${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
+                                    window.popup(700, 960, '${pageContext.request.contextPath}/messenger/SendDemoMessage.do?demographic_no=' + demoid, 'msg');
                                 }
                             } else if (action === 'msgLabRecall') {
                                 demoid = json.demoId;
                                 if (demoid != null && demoid.length > 0) {
-                                    window.popup(700, 980, '${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
+                                    window.popup(700, 980, '${pageContext.request.contextPath}/messenger/SendDemoMessage.do?demographic_no=' + demoid + "&recall", 'msgRecall');
                                     window.popup(450, 600, '${pageContext.request.contextPath}/tickler/ForwardDemographicTickler.do?docType=HL7&docId=' + labid + '&demographic_no=' + demoid + '<%=ticklerAssignee%>&priority=<%=recallTicklerPriority%>&recall', 'ticklerRecall');
                                 }
                             } else if (action === 'ticklerLab') {

@@ -149,7 +149,7 @@ public class RptDemographicQueryBuilder {
 
         stringBuffer.append(" from demographic d ");
         if (getprovider) {
-            stringBuffer.append(", providers p");
+            stringBuffer.append(", provider p");
         }
         int yStyle = 0;
         try {

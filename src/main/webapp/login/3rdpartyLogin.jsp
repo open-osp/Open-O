@@ -25,6 +25,9 @@
     Migrated from Apache CXF to ScribeJava OAuth1 implementation.
 --%>
 
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="com.github.scribejava.core.model.OAuth1RequestToken" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.login.OAuthSessionMerger" %>
@@ -35,28 +38,60 @@
 <%@ page import="ca.openosp.openo.login.OOBAuthorizationResponse" %>
 
 <%
-    // Determine if user already logged in to OSCAR
-    boolean loggedIn = false;
-    if (session.getAttribute("user") != null) {
-        loggedIn = OAuthSessionMerger.mergeSession(request);
+    // --- Make variables visible to the whole JSP ---
+    OAuthData oauthData = (OAuthData) request.getAttribute("oauthData");
+    if (oauthData == null) {
+        // also check alternate key used elsewhere during the migration
+        oauthData = (OAuthData) request.getAttribute("oauthauthorizationdata");
+    }
+    if (oauthData == null) {
+        oauthData = (OAuthData) session.getAttribute("oauthData");
+        if (oauthData == null) {
+            oauthData = (OAuthData) session.getAttribute("oauthauthorizationdata");
+        }
     }
 
-    // Retrieve OAuth1 flow data set by your controller
-    OAuthData oauthData = (OAuthData) request.getAttribute("oauthData");
     OOBAuthorizationResponse oauthOobResponse =
         (OOBAuthorizationResponse) request.getAttribute("oobauthorizationresponse");
+    if (oauthOobResponse == null) {
+        oauthOobResponse = (OOBAuthorizationResponse) session.getAttribute("oobauthorizationresponse");
+    }
 
-    LoggedInInfo loggedInInfo =
-        LoggedInInfo.getLoggedInInfoFromSession(request);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+    boolean loggedIn = (session.getAttribute("user") != null) && (loggedInInfo != null);
+
+    // Try to merge only if we think we're logged in
+    if (loggedIn) {
+        boolean didMerge = OAuthSessionMerger.mergeSession(request);
+        if (!didMerge) {
+            loggedIn = false;
+        }
+    }
+    request.setAttribute("loggedIn", loggedIn);
+
+    String providerName = "";
+    if (loggedInInfo != null && loggedInInfo.getLoggedInProvider() != null) {
+        providerName = loggedInInfo.getLoggedInProvider().getFormattedName();
+    }
+    request.setAttribute("providerName", providerName);
+
+    if (oauthData != null) {
+        request.setAttribute("oauthData", oauthData);
+    }
+    if (oauthOobResponse != null) {
+        request.setAttribute("oauthOobResponse", oauthOobResponse);
+    }
 %>
+
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Login and Authorize 3rd Party Application</title>
-    <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet">
-    <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet">
     <style type="text/css">
         body {
             padding-top: 40px;
@@ -84,44 +119,89 @@
             padding: 7px 9px;
         }
     </style>
-    <script src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
     <script>
-        function deny() {
-            $("#oauthDecision").val('deny');
-            $("#scopeForm").submit();
-        }
-        function submitCredentials() {
-            $.post('<%=request.getContextPath()%>/login.do;jsessionid=<%=session.getId()%>',
-                {
-                    username: $('#username').val(),
-                    password: $('#password').val(),
-                    pin:      $('#pin').val(),
-                    ajaxResponse: 'true',
-                    invalidate_session: 'false',
-                    oauth_token: '<%= oauthData != null ? oauthData.getOauthToken() : "" %>'
-                },
-                function(data) {
-                    if (data.success) {
-                        $('#login_div').hide();
-                        $('#scope_div').show();
-                        $('#loggedin_div').show();
-                        $('#providerName').text(data.providerName);
-                    } else {
-                        $('#login_error').show().find('span span').text(data.error);
+        // tiny DOM helpers
+        const el = (id) => document.getElementById(id);
+        const show = (id) => { const n = el(id); if (n) n.style.display = ""; };
+        const hide = (id) => { const n = el(id); if (n) n.style.display = "none"; };
+        const setText = (id, txt) => { const n = el(id); if (n) n.textContent = txt; };
+
+        // expose to inline onclick handlers
+        window.deny = () => {
+            const decision = el("oauthDecision");
+            const form = el("scopeForm");
+            if (decision) decision.value = "deny";
+            if (form) form.submit();
+        };
+
+        window.submitCredentials = async () => {
+            const username = el("username")?.value || "";
+            const password = el("password")?.value || "";
+            const pin      = el("pin")?.value || "";
+            const oauthToken = el("oauth_token")?.value || "";
+
+            const loginUrl = "${pageContext.request.contextPath}/login.do;jsessionid=${pageContext.session.id}";
+
+            const formData = new URLSearchParams();
+            formData.set("username", username);
+            formData.set("password", password);
+            formData.set("pin", pin);
+            formData.set("ajaxResponse", "true");
+            formData.set("invalidate_session", "false");
+            formData.set("oauth_token", oauthToken);
+
+            try {
+                const res = await fetch(loginUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+                    body: formData.toString(),
+                    credentials: "same-origin"
+                });
+
+                const data = await res.json();
+
+                if (data && data.success) {
+                    hide("login_div");
+                    show("scope_div");
+                    show("loggedin_div");
+                    setText("providerName", data.providerName || "");
+                } else {
+                    const msg = (data && data.error) ? data.error : "Login failed.";
+                    const err = el("login_error");
+                    if (err) {
+                        err.style.display = "";
+                        const span = err.querySelector("span span");
+                        if (span) span.textContent = msg;
                     }
-                }, 'json');
-        }
-        $(document).ready(function() {
-            if (loggedIn) {
-                $('#login_div').hide();
-                $('#scope_div').show();
-                $('#loggedin_div').show();
-                $('#providerName').text(
-                    loggedInInfo.getLoggedInProvider().getFormattedName()
-                );
+                }
+                } catch (e) {
+                    const err = el("login_error");
+                    if (err) {
+                        err.style.display = "";
+                        const span = err.querySelector("span span");
+                        if (span) span.textContent = "Network error. Please try again.";
+                    }
             }
-            if (oauthOobResponse != null) {
-                $('#login_div').hide();
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const loggedIn = ${loggedIn};
+            const hasOauthOobResponse = ${not empty oauthOobResponse};
+            const safeProviderName = '${e:forJavaScript(providerName)}';
+
+            if (loggedIn) {
+                hide("login_div");
+                show("scope_div");
+                show("loggedin_div");
+                setText("providerName", safeProviderName);
+            } else {
+                show("login_div");
+                hide("scope_div");
+                hide("loggedin_div");
+            }
+
+            if (hasOauthOobResponse) {
+                hide("login_div");
             }
         });
     </script>
@@ -131,7 +211,7 @@
     <div class="row">
         <div class="span5">
             <div style="margin-top:25px;">
-                <img src="<%=request.getContextPath()%>/images/OSCAR-LOGO.gif"
+                <img src="${pageContext.request.contextPath}/images/OSCAR-LOGO.gif"
                      width="450" height="274" alt="OSCAR Logo">
                 <p>
                     <font size="-1" face="Verdana, Arial, Helvetica, sans-serif">
@@ -171,58 +251,61 @@
 
             <!-- Out‐of‐band Verifier Display -->
             <div id="oob_div">
-                <% if (oauthOobResponse != null) { %>
-                    <h5>
-                        Request token <%= oauthOobResponse.getRequestToken() %>
-                        has verifier <%= oauthOobResponse.getVerifier() %>
-                    </h5>
-                <% } %>
+            <c:if test="${not empty oauthOobResponse}">
+                <h5>
+                    Request token <e:forHtmlContent value='${oauthOobResponse.requestToken}' />
+                    has verifier <e:forHtmlContent value='${oauthOobResponse.verifier}' />
+                </h5>
+            </c:if>
             </div>
 
             <!-- OAuth Scope Approval -->
             <div id="loggedin_div">
-                <% if (oauthData != null) { %>
+                <c:if test="${not empty oauthData}">
                     <form class="form-signin">
                         <h2 class="form-signin-heading">Welcome</h2>
                         <h4><span id="providerName"></span></h4>
                     </form>
                     <h5>
                         The 3rd party application
-                        "<%= oauthData.getApplicationName() %>"
+                        &quot;<e:forHtmlContent value='${oauthData.applicationName}' />&quot;
                         is requesting access to your OSCAR account.<br>
-                        URL: <%= oauthData.getApplicationURI() %>.
+                        URL: <e:forHtmlContent value='${oauthData.applicationURI}' />.
                     </h5>
                     <h5>Permissions requested:</h5>
                     <form id="scopeForm" method="post"
-                          action="<%= oauthData.getReplyTo() %>;jsessionid=<%=session.getId()%>">
-                        <% for (String perm : oauthData.getPermissions()) { %>
+                        action="${e:forHtmlAttribute(oauthData.replyTo)};jsessionid=${pageContext.session.id}">
+                        <c:forEach var="perm" items="${oauthData.permissions}">
                             <div class="control group">
-                                <div class="controls">
-                                    <label class="checkbox">
-                                        <input type="checkbox" checked readonly>
-                                        <%= perm %>
-                                        <% if (perm.trim().isEmpty()) { %>
-                                            <em>(no description)</em>
-                                        <% } %>
-                                    </label>
-                                </div>
+                            <div class="controls">
+                                <label class="checkbox">
+                                <input type="checkbox" checked="checked" disabled="disabled">
+                                <e:forHtmlContent value='${perm}' />
+                                <c:if test="${empty fn:trim(perm)}">
+                                    <em>(no description)</em>
+                                </c:if>
+                                </label>
                             </div>
-                        <% } %>
+                            </div>
+                        </c:forEach>
+
                         <input type="hidden" name="session_authenticity_token"
-                               value="<%= oauthData.getAuthenticityToken() %>"/>
+                                value="<e:forHtmlAttribute value='${oauthData.authenticityToken}' />"/>
+
                         <input type="hidden" name="oauth_token" id="oauth_token"
-                               value="<%= oauthData.getOauthToken() %>"/>
-                        <input type="hidden" name="oauthDecision" id="oauthDecision"
-                               value="allow"/>
+                                value="<e:forHtmlAttribute value='${oauthData.oauthToken}' />"/>
+
+                        <input type="hidden" name="oauthDecision" id="oauthDecision" value="allow"/>
+
                         <button type="submit" class="btn btn-primary">
-                            Authorize <%= oauthData.getApplicationName() %>
+                            Authorize <e:forHtmlContent value='${oauthData.applicationName}' />
                         </button>
-                        <button type="button" class="btn btn-danger"
-                                onclick="deny();">
+
+                        <button type="button" class="btn btn-danger" onclick="deny();">
                             Cancel
                         </button>
                     </form>
-                <% } %>
+                </c:if>
             </div>
 
         </div>

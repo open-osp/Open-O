@@ -108,7 +108,7 @@ public class ViewWCB2Action extends ActionSupport {
 
                 //Retrieve providers ohip number and payee number
 
-                List lstResults = SqlUtils.getQueryResultsList("select ohip_no,billing_no from providers where provider_no = " + providerNo);
+                List lstResults = SqlUtils.getQueryResultsList("select ohip_no,billing_no from provider where provider_no = " + providerNo);
                 if (lstResults != null) {
                     String[] providerData = (String[]) lstResults.get(0);
                     this.setW_pracno(providerData[0]);

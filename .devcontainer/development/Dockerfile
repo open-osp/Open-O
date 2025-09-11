@@ -53,6 +53,9 @@ RUN go install github.com/dburkart/javadoc2md/cmd/javadoc2md@latest
 # Install Claude Code CLI and Docusaurus
 RUN npm install -g @anthropic-ai/claude-code @docusaurus/core @docusaurus/preset-classic
 
+# Install Gemini CLI.
+RUN npm install -g @google/gemini-cli
+
 # Install pipx and Aider AI coding assistant
 RUN apt-get update && apt-get install -y pipx && \
     pipx install aider-chat && \

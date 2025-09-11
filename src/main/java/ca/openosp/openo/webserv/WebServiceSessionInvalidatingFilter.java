@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
  * Our www services are inherently stateless so we want to prevent excessive session object build up. This is caused because
  * the oscar permissions system sets credentials into the session space upon authentication.
  */
-// @WebFilter(urlPatterns={"/webserv/*"})
+// @WebFilter(urlPatterns={"/ws/*"})
 public class WebServiceSessionInvalidatingFilter implements javax.servlet.Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -56,7 +56,7 @@ public class WebServiceSessionInvalidatingFilter implements javax.servlet.Filter
             String requestURL = request.getRequestURL().toString();
 
             //don't apply to REST calls, we want those to be available to the www interface without losing session
-            if (requestURL.indexOf("/webserv/rs/") == -1 && requestURL.indexOf("/webserv/oauth/") == -1 && requestURL.indexOf("/webserv/services/") == -1) {
+            if (requestURL.indexOf("/ws/rs/") == -1 && requestURL.indexOf("/ws/oauth/") == -1 && requestURL.indexOf("/ws/services/") == -1) {
                 HttpSession session = request.getSession(false);
                 if (session != null) session.invalidate();
             }

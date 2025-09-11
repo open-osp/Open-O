@@ -138,7 +138,7 @@ public final class LoginCheckLogin {
     /**
      * Overload method for authentication without PIN code.
      * It does not matter if the PIN code is set as required in
-     * the providers profile.
+     * the provider profile.
      *
      * @param user_name
      * @param password

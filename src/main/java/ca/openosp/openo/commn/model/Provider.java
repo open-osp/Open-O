@@ -31,7 +31,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 /**
- * This is the object class that relates to the providers table. Any customizations belong here.
+ * This is the object class that relates to the provider table. Any customizations belong here.
  */
 public class Provider extends AbstractModel<String> implements Comparable<Provider> {
 

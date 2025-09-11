@@ -30,7 +30,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Oscar Provider DAO implementation created to extract database access code
- * from providers related JSP files. This class contains only actual sql
+ * from provider related JSP files. This class contains only actual sql
  * queries and row mappers.
  *
  * @author Eugene Petruhin
@@ -56,14 +56,14 @@ public class ProviderDao extends OscarSuperDao {
 
             {"search_form", "select * from form where form_no=? "}, //new?delete
 
-            {"searchloginteam", "select provider_no, last_name, first_name from providers where (provider_no=? || team=(select team from providers where provider_no=?)) and status='1' order by last_name"},
-            {"searchprovider", "select provider_no, last_name, first_name from providers where provider_type='doctor' and status='1' order by last_name"},
+            {"searchloginteam", "select provider_no, last_name, first_name from provider where (provider_no=? || team=(select team from provider where provider_no=?)) and status='1' order by last_name"},
+            {"searchprovider", "select provider_no, last_name, first_name from provider where provider_type='doctor' and status='1' order by last_name"},
             {"search_scheduleholiday", "select * from scheduleholiday where sdate > ?"},
             {"search_scheduledate_datep", "select * from scheduledate where sdate between ? and ? and status = 'A' order by sdate"},
             {"search_scheduledate_singlep", "select * from scheduledate where sdate between ? and ? and provider_no=? and status = 'A' order by sdate"},
             {"search_scheduledate_single", "select * from scheduledate where sdate=? and provider_no=? and status = 'A'"},
-            {"search_signed_confidentiality", "select signed_confidentiality from providers where provider_no = ?"},
-            {"search_scheduledate_teamp", "select * from scheduledate where sdate between ? and ? and status = 'A' and provider_no in (select distinct provider_no from providers where team=(select team from providers where provider_no=?) || provider_no=?) order by sdate"},
+            {"search_signed_confidentiality", "select signed_confidentiality from provider where provider_no = ?"},
+            {"search_scheduledate_teamp", "select * from scheduledate where sdate between ? and ? and status = 'A' and provider_no in (select distinct provider_no from provider where team=(select team from provider where provider_no=?) || provider_no=?) order by sdate"},
 
             {"search_appttimecode", "select scheduledate.provider_no, scheduletemplate.timecode, scheduledate.sdate from scheduletemplate, scheduledate where scheduletemplate.name=scheduledate.hour and scheduledate.sdate=? and  scheduledate.provider_no=? and scheduledate.status = 'A' and (scheduletemplate.provider_no=scheduledate.provider_no or scheduletemplate.provider_no='Public') order by scheduledate.sdate"},
             {"search_timecode", "select * from scheduletemplatecode order by code"},
@@ -71,7 +71,7 @@ public class ProviderDao extends OscarSuperDao {
             {"search_numgrpscheduledate", "select count(scheduledate.provider_no) from mygroup, scheduledate where mygroup_no = ? and scheduledate.sdate=? and mygroup.provider_no=scheduledate.provider_no and scheduledate.available = '1'  and scheduledate.status = 'A'"},
 
 
-            {"search_provider", "select provider_no, last_name, first_name from providers where last_name like ? and first_name like ? order by last_name"},
+            {"search_provider", "select provider_no, last_name, first_name from provider where last_name like ? and first_name like ? order by last_name"},
             {"search_providersgroup", "select mygroup_no, last_name, first_name from mygroup where last_name like ? and first_name like ? order by last_name, first_name, mygroup_no"},
             //multi-site query, schedule day view page
             {"site_searchmygroupcount", "select count(provider_no) from mygroup where mygroup_no=?  and provider_no in (select ps.provider_no from providersite ps inner join site s on ps.site_id = s.site_id where s.name = ?)"},

@@ -1,3 +1,4 @@
+// src/main/java/org/oscarehr/app/OAuth1Utils.java
 //CHECKSTYLE:OFF
 /**
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
@@ -24,9 +25,7 @@
  */
 package ca.openosp.openo.app;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.logging.log4j.Logger;
@@ -34,118 +33,30 @@ import ca.openosp.openo.commn.model.AppDefinition;
 import ca.openosp.openo.commn.model.AppUser;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.github.scribejava.core.model.Verb;
-
-import ca.openosp.openo.log.LogAction;
 
 /**
- * REST helpers that perform OAuth1-protected calls and audit them.
- * Provides static wrappers for backward compatibility.
+ * Deprecated shim for legacy OAuth1 outbound helpers.
+ * The Scribe-based client flow has been removed; these methods now
+ * log and return null to preserve binary compatibility.
  */
-@Component
-public class OAuth1Utils {
+@Deprecated
+public final class OAuth1Utils {
     private static final Logger logger = MiscUtils.getLogger();
     private static final JSONProvider<Object> jsonProvider = new JSONProvider<>();
-    private static OAuth1Utils self;
 
-    private final OAuth1Executor executor;
-
-    @Autowired
-    public OAuth1Utils(OAuth1Executor executor) {
-        this.executor = executor;
+    static {
+        // keep previous CXF consumer behavior for callers that still pass this around
         jsonProvider.setDropRootElement(true);
-        self = this;
     }
 
+    private OAuth1Utils() {}
 
-    // --- internal instance methods ---
-    private String doGet(
-        LoggedInInfo info,
-        AppDefinition app,
-        AppUser user,
-        String requestURI,
-        String baseRequestURI
-    ) {
-        try {
-            var resp = executor.execute(app, user, Verb.GET, requestURI, null);
-            int code = resp.getCode();
-            if (code < 200 || code >= 300) {
-                logger.warn("GET {} -> status {} (baseURI={})", requestURI, code, baseRequestURI);
-            }
-            String body = resp.getBody();
-            LogAction.addLog(
-                info,
-                "oauth1.GET, AppId=" + app.getId() + ", AppUser=" + user.getId(),
-                baseRequestURI,
-                "AppUser=" + user.getId(),
-                null,
-                body
-            );
-            return body;
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            logger.error("Error during GET to {}", requestURI, e);
-        }
-        return null;
+    /** Provide a CXF JSONProvider (legacy callers expect this). */
+    public static List<Object> getProviderK2A() {
+        return List.of(jsonProvider);
     }
 
-    private String doPost(
-        LoggedInInfo info,
-        AppDefinition app,
-        AppUser user,
-        String requestURI,
-        String baseRequestURI,
-        Object payload
-    ) {
-        try {
-            var resp = executor.execute(app, user, Verb.POST, requestURI, payload);
-            String body = resp.getBody();
-            LogAction.addLog(
-                info,
-                "oauth1.POST, AppId=" + app.getId() + ", AppUser=" + user.getId(),
-                baseRequestURI,
-                "AppUser=" + user.getId(),
-                null,
-                body
-            );
-            return body;
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            logger.error("Error during POST to {}", requestURI, e);
-        }
-        return null;
-    }
-
-    private void doDelete(
-        LoggedInInfo info,
-        AppDefinition app,
-        AppUser user,
-        String requestURI,
-        String auditURI
-    ) {
-        try {
-            var resp = executor.execute(app, user, Verb.DELETE, requestURI, null);
-            int code = resp.getCode();
-            String body = resp.getBody();
-            logger.info("DELETE {} -> {}: {}", requestURI, code, body);
-            if (code < 200 || code >= 300) {
-                logger.error("DELETE request failed (status={}): {}", code, body);
-            }
-            LogAction.addLog(
-                info,
-                "oauth1.DELETE, AppId=" + app.getId() + ", AppUser=" + user.getId(),
-                auditURI,
-                "AppUser=" + user.getId(),
-                null,
-                body
-            );
-        } catch (IOException | InterruptedException | ExecutionException e) {
-            logger.error("Error during DELETE to {}", requestURI, e);
-        }
-    }
-
-    // --- static wrappers for backward compatibility ---
+    // --- static wrappers preserved for compatibility ---
 
     public static String getOAuthGetResponse(
         LoggedInInfo info,
@@ -154,7 +65,8 @@ public class OAuth1Utils {
         String requestURI,
         String baseRequestURI
     ) {
-        return self.doGet(info, app, user, requestURI, baseRequestURI);
+        logger.warn("OAuth1Utils.getOAuthGetResponse called, but OAuth1 client is disabled. URI={}", requestURI);
+        return null;
     }
 
     public static String getOAuthPostResponse(
@@ -166,7 +78,8 @@ public class OAuth1Utils {
         List<Object> providers,
         Object payload
     ) {
-        return self.doPost(info, app, user, requestURI, baseRequestURI, payload);
+        logger.warn("OAuth1Utils.getOAuthPostResponse called, but OAuth1 client is disabled. URI={}", requestURI);
+        return null;
     }
 
     public static void getOAuthDeleteResponse(
@@ -175,7 +88,6 @@ public class OAuth1Utils {
         String requestURI,
         String auditURI
     ) {
-        // legacy delete had no info param
-        self.doDelete(null, app, user, requestURI, auditURI);
+        logger.warn("OAuth1Utils.getOAuthDeleteResponse called, but OAuth1 client is disabled. URI={}", requestURI);
     }
 }

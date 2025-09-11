@@ -103,7 +103,7 @@
     function popUpMsg(vheight, vwidth, msgPosition) {
 
 
-        var page = "<%=session.getAttribute("casemgmt_oscar_baseurl")%>" + "/oscarMessenger/ViewMessageByPosition.do?from=encounter&orderBy=!date&demographic_no=<%=bean.demographicNo%>&messagePosition=" + msgPosition;
+        var page = "<%=session.getAttribute("casemgmt_oscar_baseurl")%>" + "/messenger/ViewMessageByPosition.do?from=encounter&orderBy=!date&demographic_no=<%=bean.demographicNo%>&messagePosition=" + msgPosition;
         windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
         var popup = window.open(page, "", windowprops);
         if (popup != null) {
@@ -384,7 +384,7 @@
 
             <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
                 <tr style="background-color:#BBBBBB;">
-                    <td>oscarMessenger</td>
+                    <td>messenger</td>
                 </tr>
                 <!-- select message -->
                 <tr>
@@ -403,7 +403,7 @@
                 <tr>
                     <td>
                         <a href="javascript:void(0)"
-                           onClick="popupPage('<%=bsurl%>/oscarMessenger/SendDemoMessage.do?orderby=date&boxType=3&demographic_no=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&userName=<%=bean.userName%>'); return false;">New
+                           onClick="popupPage('<%=bsurl%>/messenger/SendDemoMessage.do?orderby=date&boxType=3&demographic_no=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&userName=<%=bean.userName%>'); return false;">New
                             Messages</a>
                     </td>
                 </tr>
@@ -412,7 +412,7 @@
                 <tr>
                     <td>
                         <a href="javascript:void(0)"
-                           onClick="popupPage('<%=bsurl%>/oscarMessenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&userName=<%=bean.userName%>'); return false;">-All
+                           onClick="popupPage('<%=bsurl%>/messenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=<%=bean.demographicNo%>&providerNo=<%=bean.providerNo%>&userName=<%=bean.userName%>'); return false;">-All
                             Messages-</a>
                     </td>
                 </tr>

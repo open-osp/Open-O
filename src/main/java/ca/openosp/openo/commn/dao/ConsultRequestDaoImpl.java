@@ -78,7 +78,7 @@ public class ConsultRequestDaoImpl extends AbstractDaoImpl<ConsultationRequest> 
                 "select " + (selectCountOnly ? "count(*)" : "cr") +
                         " from ConsultationRequest cr left outer join cr.professionalSpecialist specialist, ConsultationServices cs, Demographic d"
                         +
-                        " left outer join d.providers p where d.DemographicNo = cr.demographicId and cs.id = cr.serviceId ");
+                        " left outer join d.provider p where d.DemographicNo = cr.demographicId and cs.id = cr.serviceId ");
         
         if (StringUtils.isNotBlank(consultationQuery.getProviderNo())) {
             sql.append("and cr.providerNo = '" + StringEscapeUtils.escapeSql(consultationQuery.getProviderNo()) + "' ");
@@ -175,7 +175,7 @@ public class ConsultRequestDaoImpl extends AbstractDaoImpl<ConsultationRequest> 
                 "select " + (selectCountOnly ? "count(*)" : "cr,specialist,cs,d,p") +
                         " from ConsultationRequest cr left outer join cr.professionalSpecialist specialist, ConsultationServices cs, Demographic d"
                         +
-                        " left outer join d.providers p where d.DemographicNo = cr.demographicId and cs.id = cr.serviceId ");
+                        " left outer join d.provider p where d.DemographicNo = cr.demographicId and cs.id = cr.serviceId ");
 
         if (filter.getAppointmentStartDate() != null) {
             sql.append("and cr.appointmentDate >=  '"

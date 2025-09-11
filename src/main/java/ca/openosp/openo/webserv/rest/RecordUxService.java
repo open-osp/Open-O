@@ -192,11 +192,11 @@ public class RecordUxService extends AbstractServiceImpl {
         }
 
         if (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.oscarMsg", "r", null)) {
-            morelist.add(new MenuItemTo1(idCounter++, "Messenger", "../oscarMessenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographicNo));
+            morelist.add(new MenuItemTo1(idCounter++, "Messenger", "../messenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographicNo));
         }
 
         if (securityInfoManager.hasPrivilege(loggedInInfo, "_newCasemgmt.oscarMsg", "r", null)) {
-            morelist.add(new MenuItemTo1(idCounter++, "Create Message", "../oscarMessenger/SendDemoMessage.do?demographic_no=" + demographicNo));
+            morelist.add(new MenuItemTo1(idCounter++, "Create Message", "../messenger/SendDemoMessage.do?demographic_no=" + demographicNo));
         }
         // Requires EctSession bean to open the window.  I think it's best to just redo measurements in a better interface in the record with angular
         //if(checkPermissions("_newCasemgmt.measurements", roleName)){

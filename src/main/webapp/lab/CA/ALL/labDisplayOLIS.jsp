@@ -632,7 +632,7 @@
                             <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> " onClick="printPDF()">
                             <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null")) { %>
                             <input type="button" value="Msg"
-                                   onclick="popup(700,960,'${pageContext.request.contextPath}/oscarMessenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
+                                   onclick="popup(700,960,'${pageContext.request.contextPath}/messenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
                             <input type="button" value="Tickler"
                                    onclick="popup(450,600,'${pageContext.request.contextPath}/tickler/ForwardDemographicTickler.do?docType=HL7&docId=<%= segmentID %>&demographic_no=<%=demographicID%>','tickler')"/>
                             <% } %>

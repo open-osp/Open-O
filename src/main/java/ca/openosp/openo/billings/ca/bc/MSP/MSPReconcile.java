@@ -1618,7 +1618,7 @@ public class MSPReconcile {
         }
         if (providerNo != null && !providerNo.trim().equalsIgnoreCase("all")) {
             if (MSPReconcile.REP_PAYREF.equals(repType)) {
-                String[] row = SqlUtils.getRow("select ohip_no from providers where provider_no = " + providerNo);
+                String[] row = SqlUtils.getRow("select ohip_no from provider where provider_no = " + providerNo);
                 if (row != null && row.length > 0) {
                     String ohip_no = row[0];
                     criteriaQry += " and t_practitionerno = '" + ohip_no + "'";
@@ -1777,7 +1777,7 @@ public class MSPReconcile {
                 "from teleplanS00 ts00\n" +
                 "join billingmaster bm on ts00.t_officeno = bm.billingmaster_no\n" +
                 "join billing b on bm.billing_no = b.billing_no\n" +
-                "join providers p on p.ohip_no= ts00.t_practitionerno\n" +
+                "join provider p on p.ohip_no= ts00.t_practitionerno\n" +
                 "where ts00.s21_id = " + s21Id + "\n" +
                 "and ts00.t_practitionerno != '' \n" +
                 "and ts00.t_payeeno = '" + payeeNo + "'\n" +

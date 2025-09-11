@@ -695,7 +695,7 @@
                 b = true;
             }
             if (b) {
-                var url = '../oscarMessenger/SendDemoMessage.do?' + 'demographic_no=' + dn;
+                var url = '../messenger/SendDemoMessage.do?' + 'demographic_no=' + dn;
                 popup(width, height, url, 'msg');
             }
         }

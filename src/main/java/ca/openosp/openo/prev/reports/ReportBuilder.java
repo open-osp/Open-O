@@ -605,7 +605,7 @@ public class ReportBuilder {
         logger.debug("in buildQuery " + frm);
 
 
-        StringBuilder stringBuffer = new StringBuilder("select demographic_no from demographic d "); // had , providers p / but i don't think i meed that
+        StringBuilder stringBuffer = new StringBuilder("select demographic_no from demographic d "); // had , provider p / but i don't think i meed that
 
         Integer ageStyle = null;
         try {
@@ -637,7 +637,7 @@ public class ReportBuilder {
             asofDate = "'" + formatter.format(frm.getAgeAsOf()) + "'";
         }
 
-        // is this needed ??? oscar.oscarMessenger.util.MsgStringQuote s = new oscar.oscarMessenger.util.MsgStringQuote();
+        // is this needed ??? oscar.messenger.util.MsgStringQuote s = new oscar.messenger.util.MsgStringQuote();
 
         boolean theWhereFlag = true;
         boolean theFirstFlag = true;

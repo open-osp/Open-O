@@ -407,7 +407,7 @@
 <div id="hrmdoc_<%=hrmReportId%>">
     <div id="buttonBox">
         <input type="button" id="msgBtn_<%=hrmReportId%>" value="Msg"
-               onclick="popupPatient(700,960,'<%= request.getContextPath() %>/oscarMessenger/SendDemoMessage.do?demographic_no=','msg', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>/>
+               onclick="popupPatient(700,960,'<%= request.getContextPath() %>/messenger/SendDemoMessage.do?demographic_no=','msg', '<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>/>
         <input type="button" id="mainTickler_<%=hrmReportId%>" value="Tickler"
                onClick="popupPatient(710, 1024,'<%= request.getContextPath() %>/tickler/ForwardDemographicTickler.do?docType=HRM&docId=<%=hrmReportId%>&demographic_no=', 'Tickler','<%=hrmReportId%>','<%=demographicNo %>')" <%=btnDisabled %>>
         <input type="button" id="mainEchart_<%=hrmReportId%>"

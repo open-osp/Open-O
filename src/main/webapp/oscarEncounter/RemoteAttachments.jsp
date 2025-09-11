@@ -112,7 +112,7 @@
                     String prov = bean.getDemographicNo();
                     String demog = bean.providerNo;
                 %> <a
-                    href="javascript:popupSendAttach(700,960,'../oscarMessenger/Transfer/SelectItems.jsp?val1=<%=demog%>&val2=<%=prov%>')"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.RemoteAttachments.msgSendEDoc"/></a></td>
+                    href="javascript:popupSendAttach(700,960,'../messenger/Transfer/SelectItems.jsp?val1=<%=demog%>&val2=<%=prov%>')"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.RemoteAttachments.msgSendEDoc"/></a></td>
             <td class="MainTableRightColumn">
                 <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.RemoteAttachments.msgDemogAtt"/></h2>
                 <table border="0" width="80%" cellspacing="1">

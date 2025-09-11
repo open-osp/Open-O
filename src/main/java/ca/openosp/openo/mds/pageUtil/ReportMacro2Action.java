@@ -99,7 +99,7 @@ public class ReportMacro2Action extends ActionSupport {
             }
         } else {
             result.put("success", false);
-            result.put("error", "No macros defined in providers preferences");
+            result.put("error", "No macros defined in provider preferences");
             result.write(response.getWriter());
             return null;
         }

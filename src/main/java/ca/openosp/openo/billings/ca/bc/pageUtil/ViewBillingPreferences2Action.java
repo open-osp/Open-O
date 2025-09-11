@@ -117,7 +117,7 @@ public class ViewBillingPreferences2Action
         }
         servletRequest.setAttribute("billingProviderList", providerList);
 
-        // Check for a per-providers property and if none set it to CLINICDEFAULT
+        // Check for a per-provider property and if none set it to CLINICDEFAULT
         List<Property> defaultServiceLocationPropertyList = propertyDao.findByNameAndProvider(Property.PROPERTY_KEY.bc_default_service_location, this.getProviderNo());
         if (!defaultServiceLocationPropertyList.isEmpty()) {
             this.setDefaultServiceLocation(defaultServiceLocationPropertyList.get(0).getValue());
@@ -159,7 +159,7 @@ public class ViewBillingPreferences2Action
     private String formCode;
     private String description;
 
-    //Default billing providers preference
+    //Default billing provider preference
     private String defaultBillingProvider;
 
     //Default Teleplan service location (visittype)

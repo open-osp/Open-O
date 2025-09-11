@@ -2942,7 +2942,7 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
 
         orderBy = " ORDER BY " + orderBy;
         return "select " + select
-            + " from demographic d left join providers p on d.provider_no = p.provider_no left join demographic_merged dm on d.demographic_no = dm.demographic_no where "
+            + " from demographic d left join provider p on d.provider_no = p.provider_no left join demographic_merged dm on d.demographic_no = dm.demographic_no where "
             + fieldname + " " + regularexp + " :keyword " + ptstatusexp + domainRestriction + orderBy;
     }
 

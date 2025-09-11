@@ -145,7 +145,7 @@ public class ProviderDataDaoImpl extends AbstractDaoImpl<ProviderData> implement
     @Override
     public List<ProviderData> findByProviderSite(String providerNo) {
 
-        String queryStr = "select * from providers p inner join providersite s on s.provider_no = p.provider_no "
+        String queryStr = "select * from provider p inner join providersite s on s.provider_no = p.provider_no "
                 + " where s.site_id in (select site_id from providersite where provider_no=?1)";
 
 
@@ -177,8 +177,8 @@ public class ProviderDataDaoImpl extends AbstractDaoImpl<ProviderData> implement
     @Override
     public List<ProviderData> findByProviderTeam(String providerNo) {
 
-        String queryStr = "select * from providers p  " +
-                "where team in (select team from providers where team is not null and team <> '' and provider_no=?1)";
+        String queryStr = "select * from provider p  " +
+                "where team in (select team from provider where team is not null and team <> '' and provider_no=?1)";
 
         Query query = entityManager.createNativeQuery(queryStr, modelClass);
         query.setParameter(1, providerNo);

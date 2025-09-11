@@ -76,9 +76,9 @@ public class FrmMentalHealthForm1Record extends FrmRecord {
         if (!demoProvider.equals("")) {
 
             if (demoProvider.equals(provNo)) {
-                // from providers table
+                // from provider table
                 sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no "
-                        + "FROM providers WHERE provider_no = '" + provNo + "'";
+                        + "FROM provider WHERE provider_no = '" + provNo + "'";
                 rs = DBHandler.GetSQL(sql);
 
                 if (rs.next()) {
@@ -89,8 +89,8 @@ public class FrmMentalHealthForm1Record extends FrmRecord {
                 }
                 rs.close();
             } else {
-                // from providers table
-                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no FROM providers WHERE provider_no = '"
+                // from provider table
+                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no FROM provider WHERE provider_no = '"
                         + provNo + "'";
                 rs = DBHandler.GetSQL(sql);
 
@@ -102,8 +102,8 @@ public class FrmMentalHealthForm1Record extends FrmRecord {
                 }
                 rs.close();
 
-                // from providers table
-                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no FROM providers WHERE provider_no = "
+                // from provider table
+                sql = "SELECT CONCAT(last_name, ', ', first_name) AS provName, ohip_no FROM provider WHERE provider_no = "
                         + demoProvider;
                 rs = DBHandler.GetSQL(sql);
 
