@@ -56,6 +56,7 @@ public class EFormBase {
     protected boolean patientIndependent=false;
     protected String roleType;
     private Document document;
+    private String realPath;
 
     protected ArrayList<String> updateFields = new ArrayList<String>();
 
@@ -213,12 +214,20 @@ public class EFormBase {
             /*
              * use the ConvertToEdoc utilities for consistent use of the JSoup parser.
              */
-            this.document = ConvertToEdoc.getDocument(this.formHtml);
+            this.document = ConvertToEdoc.getDocument(this.formHtml, this.realPath);
         }
         if(this.document == null) {
             MiscUtils.getLogger().error("There was a problem while parsing this eForm into a JSoup DOM. Exception needed?");
         }
         return document;
     }
+   
+    public String getRealPath() {
+        return realPath;
+    }
+    
+    public void setRealPath(String realPath) {
+        this.realPath = realPath;
+    }    
 
 }
