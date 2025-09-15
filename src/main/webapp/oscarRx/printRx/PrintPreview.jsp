@@ -231,21 +231,6 @@
                                         </button>
                                     </div>
                                 </c:if>
-
-                                <button type="button"
-                                        class="btn btn-outline-success mb-2"
-                                        onClick="resetStash('<c:out
-                                                value="${ctx}"/>', '${myDrugRefEnabled}' === 'yes' ? 'true' : 'false');
-                                                resetReRxDrugList('<c:out value="${ctx}"/>');
-                                                closeRxPreviewBootstrapModal();">
-                                    <bean:message key="ViewScript.msgCreateNewRx"/>
-                                </button>
-
-                                <button type="button"
-                                        class="btn btn-outline-secondary mb-3"
-                                        onClick="parent.window.close();">
-                                    <bean:message key="ViewScript.msgBackToOscar"/>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -289,6 +274,27 @@
                                     </c:if>
                                 </c:forEach>
                             </ul>
+                        </div>
+                    </div>
+
+                    <div class="container p-0">
+                        <div class="row">
+                            <div class="col">
+                                <button type="button"
+                                        class="btn btn-outline-success"
+                                        onClick="resetStash('<c:out
+                                                value="${ctx}"/>', '${myDrugRefEnabled}' === 'yes' ? 'true' : 'false');
+                                                resetReRxDrugList('<c:out value="${ctx}"/>');
+                                                closeRxPreviewBootstrapModal();">
+                                    <bean:message key="ViewScript.msgCreateNewRx"/>
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-outline-secondary ms-3"
+                                        onClick="parent.window.close();">
+                                    <bean:message key="ViewScript.msgBackToOscar"/>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
