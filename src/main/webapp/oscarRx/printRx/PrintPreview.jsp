@@ -160,7 +160,7 @@
 
                             <div class="d-grid gap-2">
                                 <button type="button"
-                                        class="btn btn-success mb-2 btn-lg"
+                                        class="btn btn-success mb-2"
                                         onClick="printIframe();">
                                     <bean:message key="ViewScript.msgPrint"/>
                                 </button>
