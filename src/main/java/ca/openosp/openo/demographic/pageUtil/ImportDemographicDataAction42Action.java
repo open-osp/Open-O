@@ -391,11 +391,36 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
      */
     private Path unzipFile(Path zipFilePath) throws IOException {
         Path directoryPath = zipFilePath.getParent();
+        // Get canonical path of the target directory to prevent path traversal
+        String canonicalTargetPath = directoryPath.toFile().getCanonicalPath();
+        
         byte[] buffer = new byte[1024];
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
-                File newFile = Paths.get(directoryPath.toString(), zipEntry.getName()).toFile();
+                String entryName = zipEntry.getName();
+                
+                // Sanitize the entry name to prevent path traversal
+                // Remove any leading slashes and normalize the path
+                entryName = entryName.replaceAll("^[/\\\\]+", "");
+                
+                // Skip entries that contain path traversal sequences
+                if (entryName.contains("..") || entryName.contains("/..") || entryName.contains("\\..")) {
+                    logger.error("Skipping potentially malicious zip entry: " + entryName);
+                    zipEntry = zis.getNextEntry();
+                    continue;
+                }
+                
+                File newFile = Paths.get(directoryPath.toString(), entryName).toFile();
+                
+                // Validate that the file will be extracted within the target directory
+                String canonicalFilePath = newFile.getCanonicalPath();
+                if (!canonicalFilePath.startsWith(canonicalTargetPath + File.separator)) {
+                    logger.error("Path is not in the correct directory: " + entryName);
+                    zipEntry = zis.getNextEntry();
+                    continue;
+                }
+                
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
                         throw new IOException("Failed to create directory " + newFile);

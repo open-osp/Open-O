@@ -31,7 +31,11 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.appointment.search.FilterDefinition;
 import ca.openosp.openo.appointment.search.Provider;
-
+import ca.openosp.openo.appointment.search.filters.ExistingAppointmentFilter;
+import ca.openosp.openo.appointment.search.filters.FutureApptFilter;
+import ca.openosp.openo.appointment.search.filters.MultiUnitFilter;
+import ca.openosp.openo.appointment.search.filters.OpenAccessFilter;
+import ca.openosp.openo.appointment.search.filters.SufficientContiguousTimeFilter;
 import ca.openosp.openo.utility.MiscUtils;
 
 
@@ -120,17 +124,17 @@ public class BookingProviderTransfer {
         providerTransfer.filters = new ArrayList<FilterDefinitionTransfer>();
         if (provider.getFilter() != null) {
             for (FilterDefinition f : provider.getFilter()) {
-                if ("org.oscarehr.appointment.search.filters.FutureApptFilter".equals(f.getFilterClassName())) {
+                if (FutureApptFilter.class.getName().equals(f.getFilterClassName())) {
                     providerTransfer.filterFAF = true;
                     providerTransfer.filterFAFbuffer = Integer.parseInt(f.getParams().get("buffer"));
-                } else if ("org.oscarehr.appointment.search.filters.ExistingAppointmentFilter".equals(f.getFilterClassName())) {
+                } else if (ExistingAppointmentFilter.class.getName().equals(f.getFilterClassName())) {
                     providerTransfer.filterEAF = true;
-                } else if ("org.oscarehr.appointment.search.filters.MultiUnitFilter".equals(f.getFilterClassName())) {
+                } else if (MultiUnitFilter.class.getName().equals(f.getFilterClassName())) {
                     providerTransfer.filterMUF = true;
-                } else if ("org.oscarehr.appointment.search.filters.OpenAccessFilter".equals(f.getFilterClassName())) {
+                } else if (OpenAccessFilter.class.getName().equals(f.getFilterClassName())) {
                     providerTransfer.filterOAF = true;
                     providerTransfer.filterOAFCodes = f.getParams().get("codes");
-                } else if ("org.oscarehr.appointment.search.filters.SufficientContiguousTimeFilter".equals(f.getFilterClassName())) {
+                } else if (SufficientContiguousTimeFilter.class.getName().equals(f.getFilterClassName())) {
                     providerTransfer.filterSCTF = true;
                 }
             }

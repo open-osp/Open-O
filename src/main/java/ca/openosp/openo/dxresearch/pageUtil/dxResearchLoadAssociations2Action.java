@@ -168,6 +168,13 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
             return ERROR;
         }
 
+        // Validate that the file is a valid uploaded file and prevent path traversal
+        if (!isValidUploadedFile(file)) {
+            MiscUtils.getLogger().error("SECURITY WARNING: Invalid file path detected for file upload");
+            addActionError("Invalid file upload.");
+            return ERROR;
+        }
+
         String[][] data = ExcelCSVParser.parse(new FileReader(file));
 
         int rowsInserted = 0;
@@ -235,6 +242,45 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
     private void checkPrivilege(HttpServletRequest request, String privilege) {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_dxresearch", privilege, null)) {
             throw new RuntimeException("missing required sec object (_dxresearch)");
+        }
+    }
+
+    /**
+     * Validates that the uploaded file is within the expected temporary directory
+     * and prevents path traversal attacks.
+     * 
+     * @param uploadedFile the file to validate
+     * @return true if the file is valid, false otherwise
+     */
+    private boolean isValidUploadedFile(File uploadedFile) {
+        if (uploadedFile == null) {
+            return false;
+        }
+
+        try {
+            // Get the canonical path to resolve any symbolic links or relative paths
+            String canonicalPath = uploadedFile.getCanonicalPath();
+            
+            // Struts2 uploads files to the system temp directory or servlet container's work directory
+            String tempDir = System.getProperty("java.io.tmpdir");
+            File tempDirectory = new File(tempDir);
+            String tempCanonicalPath = tempDirectory.getCanonicalPath();
+            
+            // Also check the servlet container's work directory
+            File workDir = (File) ServletActionContext.getServletContext().getAttribute("javax.servlet.context.tempdir");
+            String workCanonicalPath = workDir != null ? workDir.getCanonicalPath() : null;
+            
+            // The uploaded file must be within one of the expected temporary directories
+            boolean inTempDir = canonicalPath.startsWith(tempCanonicalPath + File.separator);
+            boolean inWorkDir = workCanonicalPath != null && canonicalPath.startsWith(workCanonicalPath + File.separator);
+            
+            // Additionally verify the file exists and is a regular file (not a directory or special file)
+            boolean isRegularFile = uploadedFile.exists() && uploadedFile.isFile();
+            
+            return isRegularFile && (inTempDir || inWorkDir);
+        } catch (IOException e) {
+            MiscUtils.getLogger().error("Error validating uploaded file path", e);
+            return false;
         }
     }
 

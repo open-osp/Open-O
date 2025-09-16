@@ -27,7 +27,6 @@ package ca.openosp.openo.app;
 
 import java.util.List;
 
-import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.AppDefinition;
 import ca.openosp.openo.commn.model.AppUser;
@@ -42,18 +41,19 @@ import ca.openosp.openo.utility.MiscUtils;
 @Deprecated
 public final class OAuth1Utils {
     private static final Logger logger = MiscUtils.getLogger();
-    private static final JSONProvider<Object> jsonProvider = new JSONProvider<>();
 
     static {
         // keep previous CXF consumer behavior for callers that still pass this around
-        jsonProvider.setDropRootElement(true);
+        logger.warn("OAuth1Utils is deprecated.");
     }
 
     private OAuth1Utils() {}
 
     /** Provide a CXF JSONProvider (legacy callers expect this). */
     public static List<Object> getProviderK2A() {
-        return List.of(jsonProvider);
+        // return Collections.singletonList(new JSONProvider<Object>());
+        logger.warn("OAuth1Utils.getProviderK2A called.");
+        return null;
     }
 
     // --- static wrappers preserved for compatibility ---
@@ -65,7 +65,7 @@ public final class OAuth1Utils {
         String requestURI,
         String baseRequestURI
     ) {
-        logger.warn("OAuth1Utils.getOAuthGetResponse called, but OAuth1 client is disabled. URI={}", requestURI);
+        logger.warn("OAuth1Utils.getOAuthGetResponse called. URI={}", requestURI);
         return null;
     }
 
@@ -78,7 +78,7 @@ public final class OAuth1Utils {
         List<Object> providers,
         Object payload
     ) {
-        logger.warn("OAuth1Utils.getOAuthPostResponse called, but OAuth1 client is disabled. URI={}", requestURI);
+        logger.warn("OAuth1Utils.getOAuthPostResponse called. URI={}", requestURI);
         return null;
     }
 
@@ -88,6 +88,6 @@ public final class OAuth1Utils {
         String requestURI,
         String auditURI
     ) {
-        logger.warn("OAuth1Utils.getOAuthDeleteResponse called, but OAuth1 client is disabled. URI={}", requestURI);
+        logger.warn("OAuth1Utils.getOAuthDeleteResponse called. URI={}", requestURI);
     }
 }

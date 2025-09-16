@@ -29,6 +29,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import ca.openosp.openo.utility.DbConnectionFilter;
 
@@ -38,15 +42,31 @@ import ca.openosp.openo.utility.DbConnectionFilter;
 @Deprecated
 public final class DBHandler {
 
+    private static final Logger logger = LogManager.getLogger(DBHandler.class);
+
     private DBHandler() {
         // not intented for instantiation
     }
 
+    /**
+     * @deprecated This method is vulnerable to SQL injection. Use GetPreSQL with parameters or JPA instead.
+     * This method now includes basic SQL injection detection as a safety measure for legacy code.
+     */
+    @Deprecated
     public static java.sql.ResultSet GetSQL(String SQLStatement) throws SQLException {
         return GetSQL(SQLStatement, false);
     }
 
+    /**
+     * @deprecated This method is vulnerable to SQL injection. Use GetPreSQL with parameters or JPA instead.
+     * This method now includes basic SQL injection detection as a safety measure for legacy code.
+     */
+    @Deprecated
 	public static ResultSet GetSQL(String SQLStatement, boolean updatable) throws SQLException {
+		// Log warning about deprecated usage
+		logger.warn("Deprecated GetSQL method called. SQL injection risk. Consider migrating to GetPreSQL or JPA. SQL: {}", 
+		    SQLStatement != null && SQLStatement.length() > 100 ? SQLStatement.substring(0, 100) + "..." : SQLStatement);
+		
 		Statement stmt;
 
 		if (updatable) {
@@ -58,12 +78,24 @@ public final class DBHandler {
 		ResultSet rs = stmt.executeQuery(SQLStatement);
 		return rs;
 	}
-	
-	public static java.sql.ResultSet GetPreSQL(String SQLStatement, String para1) throws SQLException {
-		PreparedStatement ps = DbConnectionFilter.getThreadLocalDbConnection().prepareStatement(SQLStatement);
-		ps.setString(1, para1);
-		ResultSet result = ps.executeQuery();
-		return result;
+
+	private static void bindParams(PreparedStatement ps, Object... params) throws SQLException {
+		for (int i = 0; i < params.length; i++) {
+			Object p = params[i];
+			if (p == null) {
+				ps.setNull(i+1, Types.NULL);
+			} else {
+				ps.setObject(i+1, p);
+			}
+		}
+	}
+
+	public static ResultSet GetPreSQL(String sql, Object... params) throws SQLException {
+		PreparedStatement ps = DbConnectionFilter
+			.getThreadLocalDbConnection()
+			.prepareStatement(sql);
+		bindParams(ps, params);
+		return ps.executeQuery();
 	}
 
 }

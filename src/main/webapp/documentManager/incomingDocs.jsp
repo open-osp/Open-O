@@ -1149,7 +1149,7 @@
         </tr>
         <script type="text/javascript">
             YAHOO.example.BasicRemote = function () {
-                var url = "<%= request.getContextPath()%>/providers/SearchProvider.do";
+                var url = "<%= request.getContextPath()%>/provider/SearchProvider.do";
                 var oDS = new YAHOO.util.XHRDataSource(url, {
                     connMethodPost: true,
                     connXhrMode: 'ignoreStaleResponses'

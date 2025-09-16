@@ -222,8 +222,13 @@ public class RptInitializePatientsMetGuidelineCDMReport2Action extends ActionSup
                             Integer demographicNo = (Integer) o[0];
                             Date maxDateEntered = (Date) o[1];
 
-                            String sql = "SELECT dataField FROM measurements WHERE dateEntered = '" + ConversionUtils.toDateString(maxDateEntered) + "' AND demographicNo = '" + demographicNo + "' AND type='" + measurementType + "' AND measuringInstruction='" + mInstrc + "' AND dataField" + aboveBelow + "'" + guideline + "'";
-                            List<Object[]> rs = fDao.runNativeQuery(sql);
+                            String sql = "SELECT dataField FROM measurements WHERE dateEntered = :dateEntered AND demographicNo = :demographicNo AND type = :measurementType AND measuringInstruction = :measuringInstruction AND dataField" + aboveBelow + ":guideline";
+                            List<Object[]> rs = fDao.runParameterizedNativeQuery(sql, 
+                                "dateEntered", ConversionUtils.toDateString(maxDateEntered),
+                                "demographicNo", demographicNo,
+                                "measurementType", measurementType,
+                                "measuringInstruction", mInstrc,
+                                "guideline", guideline);
 
                             if (!rs.isEmpty()) {
                                 nbMetGL++;
@@ -297,9 +302,12 @@ public class RptInitializePatientsMetGuidelineCDMReport2Action extends ActionSup
                     Integer demographicNo = (Integer) o[0];
                     Date maxDateEntered = (Date) o[1];
 
-                    String sql = "SELECT dataField FROM measurements WHERE dateEntered = '" + ConversionUtils.toDateString(maxDateEntered) + "' AND demographicNo = '"
-                            + demographicNo + "' AND type='" + measurementType + "' AND dataField" + aboveBelow + "'" + guideline + "'";
-                    List<Object[]> rs = fDao.runNativeQuery(sql);
+                    String sql = "SELECT dataField FROM measurements WHERE dateEntered = :dateEntered AND demographicNo = :demographicNo AND type = :measurementType AND dataField" + aboveBelow + ":guideline";
+                    List<Object[]> rs = fDao.runParameterizedNativeQuery(sql,
+                        "dateEntered", ConversionUtils.toDateString(maxDateEntered),
+                        "demographicNo", demographicNo,
+                        "measurementType", measurementType,
+                        "guideline", guideline);
                     if (!rs.isEmpty()) {
                         nbMetGL++;
                     }

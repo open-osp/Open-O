@@ -1418,12 +1418,31 @@
 
             // https://jqueryvalidation.org/url-method/
             url: function (value, element) {
-
-                // Copyright (c) 2010-2013 Diego Perini, MIT licensed
-                // https://gist.github.com/dperini/729294
-                // see also https://mathiasbynens.be/demo/url-regex
-                // modified to allow protocol-relative URLs
-                return this.optional(element) || /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(value);
+                // Simplified URL validation to prevent ReDoS vulnerability
+                // Uses browser's URL constructor for robust validation
+                if (this.optional(element)) {
+                    return true;
+                }
+                
+                // Allow protocol-relative URLs
+                var urlToTest = value;
+                if (value.indexOf('//') === 0) {
+                    urlToTest = 'http:' + value;
+                }
+                
+                // Basic protocol check
+                if (!/^(https?|ftp):\/\//i.test(urlToTest)) {
+                    return false;
+                }
+                
+                // Use the browser's URL constructor for robust validation
+                try {
+                    new URL(urlToTest);
+                    return true;
+                } catch (e) {
+                    // If URL constructor fails, it's not a valid URL
+                    return false;
+                }
             },
 
             // https://jqueryvalidation.org/date-method/

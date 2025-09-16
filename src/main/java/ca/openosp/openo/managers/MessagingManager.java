@@ -44,7 +44,7 @@ public interface MessagingManager {
 
     /*
      * PREFERRED METHOD
-     * Get the entire inbox for the logged-in providers only.
+     * Get the entire inbox for the logged-in provider only.
      * Results can be reduced by specifying the message status and/or a result limit.
      * @param loggedInInfo
      * @param providerNo
@@ -101,7 +101,7 @@ public interface MessagingManager {
     public Long setMessageStatus(LoggedInInfo loggedInInfo, MessageList messageList, String status);
 
     /**
-     * Set the message opened by this local providers from new to read. Matching providers numbers from
+     * Set the message opened by this local provider from new to read. Matching provider numbers from
      * remote locations will be ignored.
      *
      * @param loggedInInfo

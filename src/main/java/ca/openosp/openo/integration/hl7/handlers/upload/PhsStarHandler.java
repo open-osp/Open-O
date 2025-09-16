@@ -27,11 +27,14 @@
 package ca.openosp.openo.integration.hl7.handlers.upload;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.OscarProperties;
 
 import ca.openosp.openo.lab.ca.all.upload.MessageUploader;
 import ca.openosp.openo.lab.ca.all.upload.handlers.MessageHandler;
@@ -45,8 +48,35 @@ public class PhsStarHandler implements MessageHandler {
         logger.info("received PHS/STAR message");
 
         ca.openosp.openo.integration.hl7.handlers.PhsStarHandler handler = new ca.openosp.openo.integration.hl7.handlers.PhsStarHandler();
+        BufferedReader in = null;
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            // Validate the file path to prevent path traversal attacks
+            File file = new File(fileName);
+            
+            // Get the canonical path to resolve any relative path components
+            String canonicalPath = file.getCanonicalPath();
+            
+            // Ensure the file exists and is a regular file
+            if (!file.exists() || !file.isFile()) {
+                logger.error("File does not exist or is not a regular file: " + fileName);
+                MessageUploader.clean(fileId);
+                throw new IOException("Invalid file: " + fileName);
+            }
+            
+            // Additional validation: ensure the file is within the expected document directory
+            OscarProperties props = OscarProperties.getInstance();
+            String documentDir = props.getProperty("DOCUMENT_DIR");
+            if (documentDir != null && !documentDir.isEmpty()) {
+                File docDir = new File(documentDir).getCanonicalFile();
+                if (!canonicalPath.startsWith(docDir.getCanonicalPath() + File.separator)) {
+                    logger.error("Attempted to access file outside document directory: " + canonicalPath);
+                    MessageUploader.clean(fileId);
+                    throw new SecurityException("Access denied: file outside permitted directory");
+                }
+            }
+            
+            // Use the validated file object instead of creating FileReader with raw path
+            in = new BufferedReader(new FileReader(file));
             String line = null;
             StringBuilder sb = new StringBuilder();
             while ((line = in.readLine()) != null) {
@@ -56,10 +86,22 @@ public class PhsStarHandler implements MessageHandler {
             handler.init(sb.toString());
 
             return ("success");
+        } catch (SecurityException e) {
+            logger.error("Security violation: " + e.getMessage());
+            MessageUploader.clean(fileId);
+            throw e;
         } catch (Exception e) {
             logger.error("Unexpected error.", e);
             MessageUploader.clean(fileId);
             throw (new RuntimeException(e));
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    logger.warn("Failed to close BufferedReader", e);
+                }
+            }
         }
 
     }

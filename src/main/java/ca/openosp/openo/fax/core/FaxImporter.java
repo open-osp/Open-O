@@ -149,7 +149,7 @@ public class FaxImporter {
                             // to fully complete. If NULL, the file will not be deleted from the Host server.
                             if (fileName != null) {
 
-                                // set the new fax into providers lab routing for tracking it's route.
+                                // set the new fax into provider lab routing for tracking it's route.
                                 providerRouting(Integer.parseInt(edoc.getDocId()));
 
                                 // delete the fax on the sever.
@@ -333,7 +333,7 @@ public class FaxImporter {
 
         Integer id = providerLabRouting.getId();
         if (id == null || id < 1) {
-            log.warn("Failed to add Fax document id " + providerLabRouting.getLabNo() + " to providers lab routing.");
+            log.warn("Failed to add Fax document id " + providerLabRouting.getLabNo() + " to provider lab routing.");
         }
     }
 

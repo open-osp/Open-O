@@ -116,6 +116,9 @@ if (typeof dojo == "undefined") {
     };
 
     function dj_eval(_15) {
+        // Security: Wrapper function for eval with logging
+        // This should only be used for trusted code, never user input
+        console.warn('[SECURITY WARNING] dj_eval called - ensure no user input is passed');
         return dj_global.eval ? dj_global.eval(_15) : eval(_15);
     }
 
@@ -342,7 +345,7 @@ if (typeof dojo == "undefined") {
     };
     dojo.hostenv.callLoaded = function () {
         if (typeof setTimeout == "object") {
-            setTimeout("dojo.hostenv.loaded();", 0);
+            setTimeout(function() { dojo.hostenv.loaded(); }, 0);
         } else {
             dojo.hostenv.loaded();
         }
@@ -662,10 +665,26 @@ if (typeof window != "undefined") {
                     var sp = _a2[x].split("=");
                     if ((sp[0].length > 9) && (sp[0].substr(0, 9) == "djConfig.")) {
                         var opt = sp[0].substr(9);
-                        try {
-                            djConfig[opt] = eval(sp[1]);
-                        } catch (e) {
-                            djConfig[opt] = sp[1];
+                        var value = sp[1];
+                        
+                        // Security fix: Safe type conversion without eval
+                        if (value === "true") {
+                            djConfig[opt] = true;
+                        } else if (value === "false") {
+                            djConfig[opt] = false;
+                        } else if (value === "null") {
+                            djConfig[opt] = null;
+                        } else if (value === "undefined") {
+                            djConfig[opt] = undefined;
+                        } else if (/^-?\d+$/.test(value)) {
+                            // Integer number
+                            djConfig[opt] = parseInt(value, 10);
+                        } else if (/^-?\d*\.?\d+$/.test(value)) {
+                            // Floating point number
+                            djConfig[opt] = parseFloat(value);
+                        } else {
+                            // Keep as string (already safe)
+                            djConfig[opt] = value;
                         }
                     }
                 }
@@ -5240,7 +5259,9 @@ dojo.widget.attachTemplateNodes = function (_488, _489, _48a) {
         }, this);
         var _4a7 = _490.getAttribute(this.onBuildProperty);
         if (_4a7) {
-            eval("var node = baseNode; var widget = targetObj; " + _4a7);
+            // Security fix: Use function constructor with controlled scope instead of eval
+            var func = new Function('node', 'widget', _4a7);
+            func.call(this, baseNode, targetObj);
         }
     }
 };
@@ -8008,7 +8029,20 @@ dojo.string.escapeRegExp = function (str) {
     return str.replace(/\\/gm, "\\\\").replace(/([\f\b\n\t\r[\^$|?*+(){}])/gm, "\\$1");
 };
 dojo.string.escapeJavaScript = function (str) {
-    return str.replace(/(["'\f\b\n\t\r])/gm, "\\$1");
+    // First escape backslashes to prevent re-interpretation
+    str = str.replace(/\\/g, "\\\\");
+    // Then escape quotes
+    str = str.replace(/"/g, "\\\"");
+    str = str.replace(/'/g, "\\'");
+    // Then escape control characters
+    str = str.replace(/\f/g, "\\f");
+    str = str.replace(/\b/g, "\\b");
+    str = str.replace(/\n/g, "\\n");
+    str = str.replace(/\t/g, "\\t");
+    str = str.replace(/\r/g, "\\r");
+    // Escape other potentially dangerous characters
+    str = str.replace(/\//g, "\\/");
+    return str;
 };
 dojo.string.escapeString = function (str) {
     return ("\"" + str.replace(/(["\\])/g, "\\$1") + "\"").replace(/[\f]/g, "\\f").replace(/[\b]/g, "\\b").replace(/[\n]/g, "\\n").replace(/[\t]/g, "\\t").replace(/[\r]/g, "\\r");
@@ -8135,14 +8169,19 @@ dojo.undo.browser = {
                 }
             }
             this.changingUrl = true;
-            setTimeout("window.location.href = '" + hash + "'; dojo.undo.browser.changingUrl = false;", 1);
+            setTimeout(function() {
+                window.location.href = hash;
+                dojo.undo.browser.changingUrl = false;
+            }, 1);
             this.bookmarkAnchor.href = hash;
             if (dojo.render.html.ie) {
                 url = this._loadIframeHistory();
                 var _78c = args["back"] || args["backButton"] || args["handle"];
                 var tcb = function (_78e) {
                     if (window.location.hash != "") {
-                        setTimeout("window.location.href = '" + hash + "';", 1);
+                        setTimeout(function() {
+                            window.location.href = hash;
+                        }, 1);
                     }
                     _78c.apply(this, [_78e]);
                 };
@@ -8180,7 +8219,9 @@ dojo.undo.browser = {
             } else {
                 if (dojo.render.html.moz) {
                     if (!this.locationTimer) {
-                        this.locationTimer = setInterval("dojo.undo.browser.checkLocation();", 200);
+                        this.locationTimer = setInterval(function() {
+                            dojo.undo.browser.checkLocation();
+                        }, 200);
                     }
                 }
             }
@@ -8558,7 +8599,9 @@ if (!dj_undef("window")) {
         this.inFlightTimer = null;
         this.startWatchingInFlight = function () {
             if (!this.inFlightTimer) {
-                this.inFlightTimer = setTimeout("dojo.io.XMLHTTPTransport.watchInFlight();", 10);
+                this.inFlightTimer = setTimeout(function() {
+                    dojo.io.XMLHTTPTransport.watchInFlight();
+                }, 10);
             }
         };
         this.watchInFlight = function () {
@@ -8603,7 +8646,9 @@ if (!dj_undef("window")) {
                 this.inFlightTimer = null;
                 return;
             }
-            this.inFlightTimer = setTimeout("dojo.io.XMLHTTPTransport.watchInFlight();", 10);
+            this.inFlightTimer = setTimeout(function() {
+                dojo.io.XMLHTTPTransport.watchInFlight();
+            }, 10);
         };
         var _7e9 = dojo.hostenv.getXmlhttpObject() ? true : false;
         this.canHandle = function (_7ea) {

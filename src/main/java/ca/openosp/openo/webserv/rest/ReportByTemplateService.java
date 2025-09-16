@@ -24,7 +24,9 @@
  */
 package ca.openosp.openo.webserv.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.commn.dao.AppDefinitionDao;
 import ca.openosp.openo.commn.dao.AppUserDao;
@@ -33,6 +35,7 @@ import ca.openosp.openo.managers.SecurityInfoManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/reportByTemplate")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ReportByTemplateService extends AbstractServiceImpl {
     @Autowired
     private SecurityInfoManager securityInfoManager;

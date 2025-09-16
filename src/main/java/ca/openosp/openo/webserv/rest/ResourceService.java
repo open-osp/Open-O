@@ -27,10 +27,12 @@ package ca.openosp.openo.webserv.rest;
 import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.logging.log4j.Logger;
 
@@ -50,6 +52,7 @@ import ca.openosp.openo.prevention.PreventionDS;
 
 
 @Path("/resources")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ResourceService extends AbstractServiceImpl {
     private static final Logger logger = MiscUtils.getLogger();
 

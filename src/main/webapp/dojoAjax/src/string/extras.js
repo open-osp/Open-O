@@ -142,13 +142,13 @@ dojo.string.escapeRegExp = function (/*string*/str) {
     return str.replace(/\\/gm, "\\\\").replace(/([\f\b\n\t\r[\^$|?*+(){}])/gm, "\\$1"); // string
 }
 
-//FIXME: should this one also escape backslash?
 dojo.string.escapeJavaScript = function (/*string*/str) {
 //summary:
-//	Adds escape sequences for single and double quotes as well
+//	Adds escape sequences for backslash, single and double quotes as well
 //	as non-visible characters in JavaScript string literal expressions
 
-    return str.replace(/(["'\f\b\n\t\r])/gm, "\\$1"); // string
+    // Escape backslash first to avoid double-escaping other escape sequences
+    return str.replace(/\\/gm, "\\\\").replace(/(["'\f\b\n\t\r])/gm, "\\$1"); // string
 }
 
 //FIXME: looks a lot like escapeJavaScript, just adds quotes? deprecate one?

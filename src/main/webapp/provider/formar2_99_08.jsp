@@ -261,7 +261,7 @@
                                                                                                     value="0"> <input
                         type="hidden" name="cmd" value="">
                     <%
-                        String newFormURL = "../providers/providercontrol.jsp?";
+                        String newFormURL = "../provider/providercontrol.jsp?";
                         if (request.getParameter("demographic_no") != null)
                             newFormURL += "demographic_no=" + request.getParameter("demographic_no");
                         if (request.getParameter("appointment_no") != null)

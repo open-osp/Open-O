@@ -237,8 +237,31 @@ public final class ImageRenderingServlet extends HttpServlet {
             FileInputStream fileInputStream = null;
             try {
                 String signatureRequestId = request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY);
+                
+                // Validate signatureRequestId to prevent path traversal
+                if (signatureRequestId == null || signatureRequestId.isEmpty()) {
+                    throw new IllegalArgumentException("Invalid signature request ID");
+                }
+                
+                // Reject any path traversal attempts
+                if (signatureRequestId.contains("..") || signatureRequestId.contains("/") || 
+                    signatureRequestId.contains("\\") || signatureRequestId.contains(File.separator)) {
+                    logger.warn("SECURITY WARNING: Path traversal attempt detected in signature request ID: {}", signatureRequestId);
+                    throw new IllegalArgumentException("Invalid signature request ID");
+                }
+                
                 String tempFilePath = DigitalSignatureUtils.getTempFilePath(signatureRequestId);
-                fileInputStream = new FileInputStream(tempFilePath);
+                
+                // Additional validation: ensure the resolved path is within the temp directory
+                File tempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();
+                File targetFile = new File(tempFilePath).getCanonicalFile();
+                
+                if (!targetFile.getCanonicalPath().startsWith(tempDir.getCanonicalPath() + File.separator)) {
+                    logger.warn("SECURITY WARNING: Attempt to access file outside temp directory: {}", tempFilePath);
+                    throw new IllegalArgumentException("Invalid file path");
+                }
+                
+                fileInputStream = new FileInputStream(targetFile);
                 byte[] imageBytes = new byte[1024 * 256];
                 fileInputStream.read(imageBytes);
                 renderImage(response, imageBytes, "jpeg");

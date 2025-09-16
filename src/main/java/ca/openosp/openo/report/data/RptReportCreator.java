@@ -106,9 +106,18 @@ public final class RptReportCreator {
     public static String getWhereValueClause(String value, Vector vec) {
         String ret = "";
         for (int i = 0; i < 100; i++) {
-            if (value.matches("[^\\{\\}\\$]*\\$\\{[^\\{\\}]+\\}.*")) {
-
-                value = value.replaceFirst("\\$\\{[^\\{\\}]+\\}", (vec.get(i) == null ? "" : ((String) vec.get(i))));
+            // Use indexOf to check for template variables to avoid potential ReDoS
+            int startIdx = value.indexOf("${");
+            if (startIdx >= 0) {
+                int endIdx = value.indexOf("}", startIdx);
+                if (endIdx > startIdx + 2) {
+                    // Found a complete ${...} pattern
+                    String replacement = (i < vec.size() && vec.get(i) != null) ? (String) vec.get(i) : "";
+                    value = value.substring(0, startIdx) + replacement + value.substring(endIdx + 1);
+                } else {
+                    ret = value;
+                    break;
+                }
             } else {
                 ret = value;
                 break;
@@ -127,15 +136,26 @@ public final class RptReportCreator {
     // get ${var} vars inside the string
     public static Vector getVarVec(String value) {
         Vector ret = new Vector();
-        // if no ${}, return original string
-        if (!value.matches(".*\\$\\{.*\\}.*"))
+        
+        // Quick exit - no templates possible
+        if (!value.contains("${")) {
             return ret;
-        String[] var = value.split("[^\\{\\}\\$]*\\$\\{|\\}[^\\{\\}\\$]*");
-        for (int i = 0; i < var.length; i++) {
-
-            if ("".equals(var[i]))
-                continue;
-            ret.add(var[i]);
+        }
+        
+        int pos = 0;
+        while (pos < value.length()) {
+            int startIdx = value.indexOf("${", pos);
+            if (startIdx == -1) break;
+            
+            int endIdx = value.indexOf("}", startIdx + 2);
+            if (endIdx == -1) break;
+            
+            String varName = value.substring(startIdx + 2, endIdx);
+            if (!varName.isEmpty()) {
+                ret.add(varName);
+            }
+            
+            pos = endIdx + 1;
         }
 
         return ret;

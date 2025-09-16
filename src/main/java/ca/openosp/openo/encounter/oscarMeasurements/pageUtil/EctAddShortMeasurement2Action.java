@@ -27,6 +27,7 @@
 package ca.openosp.openo.encounter.oscarMeasurements.pageUtil;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,7 +77,17 @@ public class EctAddShortMeasurement2Action extends ActionSupport {
             FollowupManagement fup = new FollowupManagement();
             MiscUtils.getLogger().debug("followUpType:" + followUpType + " followUpValue: " + followUpValue + " demos:" + demos + " providerNo:" + providerNo + " comment:" + comment);
             fup.markFollowupProcedure(followUpType, followUpValue, demos, providerNo, new Date(), comment);
-            response.getWriter().print("id=" + id + "&followupValue=" + followUpValue + "&Date=" + UtilDateUtilities.DateToString(new Date()));
+            
+            response.setContentType("text/plain; charset=UTF-8");
+
+            // Properly encode user input to prevent XSS vulnerability
+            String encodedId = URLEncoder.encode(id != null ? id : "", "UTF-8");
+            String encodedFollowupValue = URLEncoder.encode(followUpValue != null ? followUpValue : "", "UTF-8");
+            String encodedDate = URLEncoder.encode(UtilDateUtilities.DateToString(new Date()), "UTF-8");
+            
+            response.getWriter().print("id=" + encodedId + 
+                                      "&followupValue=" + encodedFollowupValue + 
+                                      "&Date=" + encodedDate);
         }
         return null;
     }

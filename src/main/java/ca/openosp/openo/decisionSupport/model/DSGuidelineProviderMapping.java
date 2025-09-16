@@ -24,11 +24,6 @@
  */
 
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ca.openosp.openo.decisionSupport.model;
 
 import javax.persistence.Column;
@@ -41,7 +36,23 @@ import javax.persistence.Table;
 import ca.openosp.openo.commn.model.AbstractModel;
 
 /**
+ * Entity representing the association between healthcare providers and clinical decision support guidelines.
+ * <p>
+ * DSGuidelineProviderMapping maintains the many-to-many relationship between providers and guidelines,
+ * allowing the system to determine which clinical decision support rules should be active for
+ * specific healthcare providers. This enables personalized clinical decision support based on
+ * provider preferences, specialty, or organizational policies.
+ * </p>
+ * <p>
+ * Each mapping associates a provider (identified by provider number) with a specific guideline
+ * (identified by UUID), enabling fine-grained control over which decision support rules are
+ * presented to different healthcare providers during patient encounters.
+ * </p>
+ *
  * @author apavel
+ * @since 2009-07-06
+ * @see DSGuideline for guideline definitions
+ * @see ca.openosp.openo.commn.model.Provider for provider information
  */
 @Entity
 @Table(name = "dsGuidelineProviderMap")
@@ -58,16 +69,32 @@ public class DSGuidelineProviderMapping extends AbstractModel<Integer> {
     @Column(name = "guideline_uuid", length = 60, nullable = false)
     private String guidelineUUID;
 
+    /**
+     * Default constructor for DSGuidelineProviderMapping.
+     */
     public DSGuidelineProviderMapping() {
-
     }
 
+    /**
+     * Constructs a new provider-guideline mapping with specified identifiers.
+     *
+     * @param guidelineUUID String UUID identifying the clinical guideline
+     * @param providerNo String provider number identifying the healthcare provider
+     */
     public DSGuidelineProviderMapping(String guidelineUUID, String providerNo) {
         this.guidelineUUID = guidelineUUID;
         this.providerNo = providerNo;
     }
 
-    @Override  //must have same hashcode, but oh well
+    /**
+     * Determines equality based on provider number and guideline UUID.
+     * Two mappings are considered equal if they associate the same provider
+     * with the same guideline.
+     *
+     * @param object2 Object to compare against this mapping
+     * @return boolean true if mappings have the same provider and guideline identifiers
+     */
+    @Override
     public boolean equals(Object object2) {
         DSGuidelineProviderMapping mapping2 = (DSGuidelineProviderMapping) object2;
         if (mapping2.getProviderNo().equals(this.getProviderNo()) && mapping2.getGuidelineUUID().equals(this.getGuidelineUUID())) {
@@ -77,42 +104,54 @@ public class DSGuidelineProviderMapping extends AbstractModel<Integer> {
     }
 
     /**
-     * @return the id
+     * Gets the unique identifier for this mapping record.
+     *
+     * @return Integer database ID for this provider-guideline mapping
      */
     public Integer getId() {
         return id;
     }
 
     /**
-     * @param id the id to set
+     * Sets the unique identifier for this mapping record.
+     *
+     * @param id Integer database ID for this mapping
      */
     public void setId(Integer id) {
         this.id = id;
     }
 
     /**
-     * @return the providerNo
+     * Gets the provider number identifying the healthcare provider.
+     *
+     * @return String provider number from the provider system
      */
     public String getProviderNo() {
         return providerNo;
     }
 
     /**
-     * @param providerNo the providerNo to set
+     * Sets the provider number identifying the healthcare provider.
+     *
+     * @param providerNo String provider number from the provider system
      */
     public void setProviderNo(String providerNo) {
         this.providerNo = providerNo;
     }
 
     /**
-     * @return the guidelineUUID
+     * Gets the UUID identifying the clinical decision support guideline.
+     *
+     * @return String UUID of the associated guideline
      */
     public String getGuidelineUUID() {
         return guidelineUUID;
     }
 
     /**
-     * @param guidelineUUID the guidelineUUID to set
+     * Sets the UUID identifying the clinical decision support guideline.
+     *
+     * @param guidelineUUID String UUID of the guideline to associate
      */
     public void setGuidelineUUID(String guidelineUUID) {
         this.guidelineUUID = guidelineUUID;

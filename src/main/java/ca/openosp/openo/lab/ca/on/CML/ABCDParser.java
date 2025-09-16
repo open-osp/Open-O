@@ -108,13 +108,13 @@ public class ABCDParser {
         String providerNo = htable.get(docNum);
 
         if (providerNo == null || providerNo.equals("null")) {
-            logger.info("Could not find providers " + docNum + " now trying providers " + docNum.substring(0, (docNum.length() - 1)) + "  for lab: " + labId);
+            logger.info("Could not find provider " + docNum + " now trying provider " + docNum.substring(0, (docNum.length() - 1)) + "  for lab: " + labId);
             providerNo = htable.get(docNum.substring(0, (docNum.length() - 1)));
 
         }
 
         if (providerNo == null || providerNo.equals("null")) {
-            logger.info("Could not find providers " + docNum.substring(0, (docNum.length() - 1)) + "either  for lab: " + labId);
+            logger.info("Could not find provider " + docNum.substring(0, (docNum.length() - 1)) + "either  for lab: " + labId);
             logger.info("Setting Provider No to 0");
             providerNo = "0";
 
@@ -198,7 +198,7 @@ public class ABCDParser {
 
 
     private HashMap<String, String> getProviderHash(Connection conn) {
-        logger.info("Init - providers Hash table");
+        logger.info("Init - provider Hash table");
         HashMap<String, String> htable = new HashMap<String, String>();
         try {
             String sql = "select provider_no, ohip_no from provider where ohip_no != '' ";
@@ -209,10 +209,10 @@ public class ABCDParser {
             while (rs.next()) {
                 String key = Misc.getString(rs, "ohip_no");
                 String value = Misc.getString(rs, "provider_no");
-                logger.info("Possible providers HashMap key " + key + " lab " + value);
+                logger.info("Possible provider HashMap key " + key + " lab " + value);
                 if (key != null && value != null && !key.equals("null") && !value.equals("null")) {
                     htable.put(key, value);
-                    logger.info("Adding  to providers HashMap key " + key + " lab " + value);
+                    logger.info("Adding  to provider HashMap key " + key + " lab " + value);
                 }
             }
             pstmt.close();

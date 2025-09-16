@@ -33,9 +33,10 @@ import ca.uhn.fhir.parser.IParser;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-
-
+import java.io.File;
 import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -48,6 +49,7 @@ import org.hl7.fhir.dstu3.model.CommunicationRequest;
 
 import org.hl7.fhir.dstu3.model.Reference;
 
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.dao.ProviderInboxRoutingDao;
 
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -76,7 +78,36 @@ public class FHIRCommunicationRequestHandler implements MessageHandler {
         IParser parser = fhirContext.newJsonParser();
         BufferedReader in = null;
         try {
-            in = new BufferedReader(new FileReader(fileName));
+            // Validate and canonicalize the file path to prevent path traversal attacks
+            // Get the base document directory from configuration
+            String baseDocDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            if (baseDocDir == null || baseDocDir.isEmpty()) {
+                logger.error("DOCUMENT_DIR not configured");
+                return null;
+            }
+            
+            // Normalize and validate the base directory
+            Path basePath = Paths.get(baseDocDir).normalize().toAbsolutePath();
+            
+            // Normalize and validate the input file path
+            Path targetPath = Paths.get(fileName).normalize().toAbsolutePath();
+            
+            // Ensure the target file is within the allowed base directory
+            if (!targetPath.startsWith(basePath)) {
+                logger.error("Path traversal attempt detected: " + fileName);
+                return null;
+            }
+            
+            // Verify the file exists and is a regular file
+            File targetFile = targetPath.toFile();
+            if (!targetFile.exists() || !targetFile.isFile()) {
+                logger.error("File does not exist or is not a regular file: " + targetPath);
+                return null;
+            }
+            
+            // Use the validated canonical path
+            String validatedFilePath = targetFile.getCanonicalPath();
+            in = new BufferedReader(new FileReader(validatedFilePath));
 
             CommunicationRequest communicationRequest = parser.parseResource(CommunicationRequest.class, in);
             List<Reference> refs = communicationRequest.getRecipient();

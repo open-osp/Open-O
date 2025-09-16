@@ -1310,13 +1310,13 @@
         let addr, ph, fx;
 
         <% if (consultUtil.letterheadAddress != null) { %>
-        addr = '<%= Encode.forHtmlContent(consultUtil.letterheadAddress).replace('\n', ' ') %>';
+        addr = '<%= Encode.forHtmlContent(consultUtil.letterheadAddress).replaceAll("\\n", " ") %>';
         <%} else {%>
         addr = '<%=Encode.forHtmlContent(clinic.getClinicAddress()) + " " + Encode.forHtmlContent(clinic.getClinicCity()) + " " + Encode.forHtmlContent(clinic.getClinicProvince()) + " " + Encode.forHtmlContent(clinic.getClinicPostal()) %>';
         <%}%>
 
         <% if(consultUtil.letterheadPhone != null) { %>
-        ph = '<%=Encode.forHtmlContent(consultUtil.letterheadAddress).replace('\n', ' ')%>';
+        ph = '<%=Encode.forHtmlContent(consultUtil.letterheadPhone).replaceAll("\\n", " ")%>';
         <%} else { %>
         ph = '<%=Encode.forHtmlContent(clinic.getClinicPhone())%>';
         <% }%>
@@ -2439,7 +2439,7 @@ if (userAgent != null) {
                                             <input type="hidden" name="letterheadPhone" id="letterheadPhone"
                                                    value="<%=Encode.forHtmlAttribute(consultUtil.letterheadPhone) %>"/>
                                             <span id="letterheadPhoneSpan">
-										<%=consultUtil.letterheadPhone%>
+										<%=Encode.forHtmlContent(consultUtil.letterheadPhone)%>
 									</span>
                                             <% } else { %>
                                             <input type="hidden" name="letterheadPhone" id="letterheadPhone"

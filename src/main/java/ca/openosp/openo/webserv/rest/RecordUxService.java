@@ -74,6 +74,7 @@ import net.sf.json.JSONObject;
 
 @Path("/recordUX/")
 @Component("recordUxService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class RecordUxService extends AbstractServiceImpl {
     private static final Logger logger = MiscUtils.getLogger();
 

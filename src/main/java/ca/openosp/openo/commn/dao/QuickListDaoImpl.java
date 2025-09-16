@@ -36,10 +36,14 @@ import javax.persistence.Query;
 
 import ca.openosp.openo.commn.NativeSql;
 import ca.openosp.openo.commn.model.QuickList;
+import ca.openosp.openo.utility.MiscUtils;
+
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class QuickListDaoImpl extends AbstractDaoImpl<QuickList> implements QuickListDao {
+    private static final Logger logger = MiscUtils.getLogger();
 
     public QuickListDaoImpl() {
         super(QuickList.class);
@@ -88,15 +92,30 @@ public class QuickListDaoImpl extends AbstractDaoImpl<QuickList> implements Quic
     @Override
     public List<Object[]> findResearchCodeAndCodingSystemDescriptionByCodingSystem(String codingSystem, String quickListName) {
         try {
-            // Cannot set parameter to table column name ("c."+ codingSystem).
+            // Validate codingSystem to prevent SQL injection - only allow known valid table names
+            if (codingSystem == null || codingSystem.isEmpty()) {
+                logger.error("no coding system provided");
+                return new ArrayList<Object[]>();
+            }
+            
+            // Validate codingSystem against allowed values to prevent SQL injection
+            // Using the same enum validation as in getDescription() method
+            try {
+                // This will throw IllegalArgumentException if codingSystem is not valid
+                AbstractCodeSystemDaoImpl.codingSystem.valueOf(codingSystem);
+            } catch (IllegalArgumentException e) {
+                logger.error("Invalid coding system provided: " + codingSystem);
+                return new ArrayList<>();
+            }
+            
+            // Build SQL with validated table name and parameterized values for user input
             String sql = "Select q.dxResearchCode, c.description FROM quickList q, " + codingSystem 
-                       + " c where q.codingSystem = '" + codingSystem 
-                       + "' and q.quickListName= '" + quickListName + "' AND c." + codingSystem
+                       + " c where q.codingSystem = ?1"
+                       + " and q.quickListName = ?2 AND c." + codingSystem
                        + " = q.dxResearchCode order by c.description";
             Query query = entityManager.createNativeQuery(sql);
-            //query.setParameter(1, codingSystem);
-            //query.setParameter(2, codingSystem);
-            //query.setParameter(3, quickListName);
+            query.setParameter(1, codingSystem);
+            query.setParameter(2, quickListName);
             return query.getResultList();
         } catch (Exception e) {
             // TODO replace when test ignores are merged

@@ -57,7 +57,7 @@ import org.springframework.stereotype.Component;
 
 import ca.openosp.openo.documentManager.EDocUtil;
 
-@WebService
+@WebService(targetNamespace = "http://ws.oscarehr.org/")
 @Component
 @GZIP(threshold = AbstractWs.GZIP_THRESHOLD)
 public class BookingWs extends AbstractWs {

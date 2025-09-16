@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,9 @@ public class printLabDaySheet2Action extends ActionSupport {
     HttpServletResponse response = ServletActionContext.getResponse();
 
     private static Logger logger = MiscUtils.getLogger();
+    
+    // Whitelist pattern for allowed XML style files - alphanumeric, dash, underscore only, must end with .xml
+    private static final Pattern ALLOWED_XML_STYLE_PATTERN = Pattern.compile("^[a-zA-Z0-9_-]+\\.xml$");
 
     public printLabDaySheet2Action() {
     }
@@ -78,9 +82,25 @@ public class printLabDaySheet2Action extends ActionSupport {
 
         if (ins == null) {
             try {
-
+                // Validate xmlStyleFile parameter to prevent path injection
+                if (xmlStyleFile == null || xmlStyleFile.isEmpty()) {
+                    // Use default file if parameter is not provided
+                    xmlStyleFile = "labDaySheet.xml";
+                } else {
+                    // Remove any path traversal sequences
+                    xmlStyleFile = xmlStyleFile.replaceAll("\\.\\.", "");
+                    xmlStyleFile = xmlStyleFile.replaceAll("[\\\\/]", "");
+                    
+                    // Validate against whitelist pattern
+                    if (!ALLOWED_XML_STYLE_PATTERN.matcher(xmlStyleFile).matches()) {
+                        logger.error("Invalid xmlStyle parameter: " + xmlStyleFile);
+                        // Fall back to default file for security
+                        xmlStyleFile = "labDaySheet.xml";
+                    }
+                }
+                
                 ins = getClass().getResourceAsStream("/oscar/oscarReport/pageUtil/" + xmlStyleFile);
-                logger.debug("loading from : /oscar/oscarReport/pageUtil/labDaySheet.xml " + ins);
+                logger.debug("loading from : /oscar/oscarReport/pageUtil/" + xmlStyleFile + " " + ins);
             } catch (Exception ex1) {
                 MiscUtils.getLogger().error("Error", ex1);
             }

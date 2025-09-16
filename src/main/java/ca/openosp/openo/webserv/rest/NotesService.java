@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -104,6 +105,7 @@ import ca.openosp.openo.encounter.pageUtil.EctSessionBean;
 
 @Path("/notes")
 @Component("notesService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class NotesService extends AbstractServiceImpl {
 
     public static String cppCodes[] = {"OMeds", "SocHistory", "MedHistory", "Concerns", "FamHistory", "Reminders", "RiskFactors", "OcularMedication", "TicklerNote"};
@@ -143,7 +145,7 @@ public class NotesService extends AbstractServiceImpl {
         LoggedInInfo loggedInInfo = getLoggedInInfo();
         logger.debug("The config " + jsonobject.toString());
 
-        HttpSession se = loggedInInfo.getSession();
+        HttpSession se = getHttpServletRequest().getSession();
         if (se.getAttribute("userrole") == null) {
             logger.error("An Error needs to be added to the returned result, remove this when fixed");
             return returnResult;

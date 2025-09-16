@@ -315,7 +315,7 @@ public class EmailManager {
      * Converts a list of EmailLog arrays into a list of EmailStatusResult DTOs.
      * This method facilitates easy transfer of data to the UI layer.
      *
-     * @param resultList The list of EmailLog arrays containing email log data, demographic name, and providers name.
+     * @param resultList The list of EmailLog arrays containing email log data, demographic name, and provider name.
      * @return List of EmailStatusResult DTOs representing email status information.
      */
     private List<EmailStatusResult> retriveEmailStatusResultList(List<EmailLog> resultList) {

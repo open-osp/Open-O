@@ -81,7 +81,7 @@ public class SecurityInfoManagerImpl implements SecurityInfoManager {
     }
 
     /**
-     * Checks to see if this providers has the privilege to the sec object being
+     * Checks to see if this provider has the privilege to the sec object being
      * requested.
      * <p>
      * The way it's coded now

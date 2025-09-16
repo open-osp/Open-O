@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -75,6 +76,7 @@ import org.springframework.stereotype.Component;
 @Component("ProviderService")
 @Path("/providerService/")
 @Produces("application/xml")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ProviderService extends AbstractServiceImpl {
 
     private static final Logger logger = MiscUtils.getLogger();

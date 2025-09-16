@@ -14,10 +14,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.PatientLabRoutingDao;
 import ca.openosp.openo.commn.model.PatientLabRouting;
@@ -39,6 +41,8 @@ public class OLISAddToInbox2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    // UUID validation pattern to prevent path injection
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$");
 
     static Logger logger = MiscUtils.getLogger();
 
@@ -59,13 +63,40 @@ public class OLISAddToInbox2Action extends ActionSupport {
             doAck = true;
         }
 
-        String fileLocation = System.getProperty("java.io.tmpdir") + "/olis_" + uuidToAdd + ".response";
-        File file = new File(fileLocation);
+        // Validate UUID to prevent path injection attacks
+        if (uuidToAdd == null || !UUID_PATTERN.matcher(uuidToAdd).matches()) {
+            logger.error("Invalid UUID provided: " + uuidToAdd);
+            request.setAttribute("result", "Error");
+            return "ajax";
+        }
+
+        // Use secure file path construction with FilenameUtils
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        String fileName = "olis_" + uuidToAdd + ".response";
+        File tempDirectory = new File(tmpDir);
+        File file = new File(tempDirectory, FilenameUtils.getName(fileName));
+        
+        // Ensure the file is within the temp directory (canonical path check)
+        String fileLocation;
+        try {
+            fileLocation = file.getCanonicalPath();
+            String canonicalTmpDir = tempDirectory.getCanonicalPath();
+            if (!fileLocation.startsWith(canonicalTmpDir + File.separator)) {
+                logger.error("Attempted path traversal detected for UUID: " + uuidToAdd);
+                request.setAttribute("result", "Error");
+                return "ajax";
+            }
+        } catch (IOException e) {
+            logger.error("Error validating file path for UUID: " + uuidToAdd, e);
+            request.setAttribute("result", "Error");
+            return "ajax";
+        }
+        
         OLISHL7Handler msgHandler = (OLISHL7Handler) HandlerClassFactory.getHandler("OLIS_HL7");
 
         InputStream is = null;
         try {
-            is = new FileInputStream(fileLocation);
+            is = new FileInputStream(file);
             int check = FileUploadCheck.addFile(file.getName(), is, providerNo);
 
             if (check != FileUploadCheck.UNSUCCESSFUL_SAVE) {

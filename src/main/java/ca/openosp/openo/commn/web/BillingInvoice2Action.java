@@ -80,14 +80,40 @@ public class BillingInvoice2Action extends ActionSupport {
 
 
         if (invoiceNo != null) {
-            response.setContentType("application/pdf"); // octet-stream
-            response.setHeader("Content-Disposition", "attachment; filename=\"BillingInvoice" + invoiceNo + "_" + UtilDateUtilities.getToday("yyyy-MM-dd.hh.mm.ss") + ".pdf\"");
-            boolean bResult = processPrintPDF(Integer.parseInt(invoiceNo), request.getLocale(), response.getOutputStream());
-            if (bResult) {
-                actionResult = "success";
+            // Sanitize invoiceNo to prevent HTTP Response Splitting
+            // Remove any characters that could be used to inject headers
+            String sanitizedInvoiceNo = sanitizeInvoiceNumber(invoiceNo);
+
+            // Check if we have a valid invoice number after sanitization
+            if (sanitizedInvoiceNo.isEmpty()) {
+                MiscUtils.getLogger().error("Invalid invoice number - no digits found: " + invoiceNo);
+                return "error";  // or handle appropriately
+            }
+
+            try {
+                int invoiceId = Integer.parseInt(sanitizedInvoiceNo);
+
+                response.setContentType("application/pdf"); // octet-stream
+                response.setHeader("Content-Disposition", "attachment; filename=\"BillingInvoice" + sanitizedInvoiceNo + "_" + UtilDateUtilities.getToday("yyyy-MM-dd.hh.mm.ss") + ".pdf\"");
+                
+                boolean bResult = processPrintPDF(invoiceId, request.getLocale(), response.getOutputStream());
+                
+                if (bResult) {
+                    actionResult = "success";
+                }
+            } catch (NumberFormatException e) {
+                MiscUtils.getLogger().error("Invoice number too large or invalid: " + sanitizedInvoiceNo, e);
+                return "error";
             }
         }
         return actionResult;
+    }
+
+    private String sanitizeInvoiceNumber(String input) {
+        if (input == null) return "";
+    
+        // Remove all non-digits for invoice numbers
+        return input.replaceAll("[^0-9]", "").trim();
     }
 
     public String getListPrintPDF() throws IOException {

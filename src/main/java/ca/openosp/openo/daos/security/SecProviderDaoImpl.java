@@ -86,7 +86,7 @@ public class SecProviderDaoImpl extends HibernateDaoSupport implements SecProvid
         logger.debug("getting Provider instance with id: " + id);
         try {
             SecProvider instance = (SecProvider) this.getHibernateTemplate().get(
-                    "com.quatro.model.sec.SecProvider", id);
+                    SecProvider.class, id);
             return instance;
         } catch (RuntimeException re) {
             logger.error("get failed", re);
@@ -117,7 +117,7 @@ public class SecProviderDaoImpl extends HibernateDaoSupport implements SecProvid
         Session session = currentSession();
         try {
             List results = session.createCriteria(
-                            "com.quatro.model.sec.SecProvider").add(
+                            SecProvider.class).add(
                             Example.create(instance))
                     .list();
             logger.debug("find by example successful, result size: "

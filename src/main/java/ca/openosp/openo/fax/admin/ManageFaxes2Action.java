@@ -68,6 +68,7 @@ import ca.openosp.openo.utility.SpringUtils;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.form.JSONUtil;
+import ca.openosp.OscarProperties;
 
 public class ManageFaxes2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -224,12 +225,20 @@ public class ManageFaxes2Action extends ActionSupport {
          */
         if (faxFilePath != null && !faxFilePath.isEmpty()) {
             if (showAs != null && showAs.equals("image")) {
+                // When showing as image, use the fax manager which handles path validation
                 outfile = faxManager.getFaxPreviewImage(loggedInInfo, faxFilePath, page);
-                response.setContentType("image/pnsg");
-                response.setHeader("Content-Disposition", "attachment;filename=" + outfile.getFileName().toString());
+                if (outfile != null) {
+                    response.setContentType("image/png");
+                    // Sanitize filename to prevent HTTP response splitting
+                    String sanitizedFilename = sanitizeHeaderValue(outfile.getFileName().toString());
+                    response.setHeader("Content-Disposition", "attachment;filename=" + sanitizedFilename);
+                }
             } else {
-                outfile = Paths.get(faxFilePath);
-                response.setContentType("application/pdf");
+                // When showing as PDF, validate the path before using it
+                outfile = validateAndSanitizePath(faxFilePath);
+                if (outfile != null) {
+                    response.setContentType("application/pdf");
+                }
             }
         }
 
@@ -244,8 +253,112 @@ public class ManageFaxes2Action extends ActionSupport {
                 }
                 outs.flush();
             } catch (IOException e) {
-                log.error("Error", e);
+                log.error("Error serving file", e);
             }
+        }
+    }
+
+    /**
+     * Sanitizes a header value to prevent HTTP response splitting attacks.
+     * Removes or replaces any control characters that could be used to inject 
+     * additional HTTP headers.
+     * 
+     * @param value The header value to sanitize
+     * @return The sanitized header value
+     */
+    private String sanitizeHeaderValue(String value) {
+        if (value == null) {
+            return "";
+        }
+        
+        // Remove all control characters including CR (\r) and LF (\n)
+        // This prevents HTTP response splitting attacks
+        // Also remove other control characters that could cause issues
+        String sanitized = value.replaceAll("[\r\n\u0000-\u001F\u007F-\u009F]", "");
+        
+        // Ensure the filename is not empty after sanitization
+        if (sanitized.trim().isEmpty()) {
+            return "document";
+        }
+        
+        return sanitized;
+    }
+    
+    /**
+     * Validates and sanitizes a file path to prevent path traversal attacks.
+     * Ensures the file is within the allowed document or temp directories.
+     * 
+     * @param filePath The file path to validate
+     * @return The validated absolute path, or null if invalid
+     */
+    private Path validateAndSanitizePath(String filePath) {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            log.error("Invalid file path: null or empty");
+            return null;
+        }
+        
+        // Get the allowed base directories for documents and temp files
+        String baseDocumentDir = OscarProperties.getInstance().getProperty("BASE_DOCUMENT_DIR");
+        String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+        String tmpDir = OscarProperties.getInstance().getProperty("TMP_DIR");
+        
+        // Build list of allowed directories
+        List<Path> allowedDirs = new ArrayList<>();
+        
+        // Add document directory
+        if (documentDir != null && !documentDir.trim().isEmpty()) {
+            allowedDirs.add(Paths.get(documentDir).normalize().toAbsolutePath());
+        } else if (baseDocumentDir != null && !baseDocumentDir.trim().isEmpty()) {
+            allowedDirs.add(Paths.get(baseDocumentDir, "document").normalize().toAbsolutePath());
+        }
+        
+        // Add temp directory if configured
+        if (tmpDir != null && !tmpDir.trim().isEmpty()) {
+            allowedDirs.add(Paths.get(tmpDir).normalize().toAbsolutePath());
+        }
+        
+        // Add default system temp directory as a fallback for fax files
+        allowedDirs.add(Paths.get(System.getProperty("java.io.tmpdir")).normalize().toAbsolutePath());
+        
+        if (allowedDirs.isEmpty()) {
+            log.error("No allowed directories configured in properties");
+            return null;
+        }
+        
+        try {
+            // Create path from user input and normalize it
+            Path inputPath = Paths.get(filePath);
+            Path normalizedPath = inputPath.normalize().toAbsolutePath();
+            
+            // Check if the normalized path starts with any allowed directory
+            boolean isAllowed = false;
+            for (Path allowedDir : allowedDirs) {
+                if (normalizedPath.startsWith(allowedDir)) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+            
+            if (!isAllowed) {
+                log.error("Path traversal attempt detected: " + filePath);
+                throw new SecurityException("Access denied: Invalid file path");
+            }
+            
+            // Additional validation - ensure file exists and is a regular file
+            if (!Files.exists(normalizedPath)) {
+                log.warn("File does not exist: " + filePath);
+                return null;
+            }
+            
+            if (!Files.isRegularFile(normalizedPath)) {
+                log.error("Path is not a regular file: " + filePath);
+                return null;
+            }
+            
+            return normalizedPath;
+        } catch (Exception e) {
+            log.error("Error validating file path: " + filePath, e);
+            return null;
         }
     }
 

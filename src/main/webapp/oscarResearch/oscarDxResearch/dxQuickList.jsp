@@ -84,10 +84,10 @@ Required Parameters to plug-in:
 <script type="text/javascript">
     function changeList(quickList, demographicNo, providerNo) {
         location.href = 'setupDxResearch.do?demographicNo='
-            + demographicNo
+            + encodeURIComponent(demographicNo)
             + '&quickList='
-            + quickList.value
+            + encodeURIComponent(quickList.value)
             + '&providerNo='
-            + providerNo;
+            + encodeURIComponent(providerNo);
     }
 </script>

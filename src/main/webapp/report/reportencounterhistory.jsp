@@ -47,6 +47,7 @@
 <%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
     EncounterDao encounterDao = SpringUtils.getBean(EncounterDao.class);
@@ -101,7 +102,7 @@
                         }
                 %>
                 <xml id="xml_list<%=i%>">
-                    <encounter><%=content%>
+                    <encounter><%=Encode.forXml(content)%>
                     </encounter>
                 </xml>
                 <% if (firstEnc) {
@@ -175,7 +176,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><b>Reason:</b><%=subject.substring(2).replace('|', ' ')%><br>
+                        <td colspan="2"><b>Reason:</b><%=Encode.forHtml(subject.substring(2).replaceAll("\\|", " "))%><br>
                             <b>Content:</b>
                             <div datafld='xml_content'>
                         </td>

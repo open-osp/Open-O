@@ -86,7 +86,7 @@ $.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
 
     if (condition === 'equal'
         && iFini !== iFini
-        && new RegExp('^' + inputLow + '\.*$', 'i').test(datofini)) {
+        && new RegExp('^' + inputLow.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '.*$', 'i').test(datofini)) {
         return true;
     } else if (condition === 'equal' && parseFloat(iFini) == parseFloat(datofini)) {
         return true;

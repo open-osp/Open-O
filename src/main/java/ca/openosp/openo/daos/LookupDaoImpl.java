@@ -581,15 +581,23 @@ public class LookupDaoImpl extends HibernateDaoSupport implements LookupDao {
             String newTreeCode = newCd.getCodeTree();
             String newCsv = newCd.getCodecsv();
 
-            String sql = "update lst_orgcd set fullcode =replace(fullcode,'" + oldFullCode + "','" + newFullCode + "')"
-                    + ",codetree =replace(codetree,'" + oldTreeCode + "','" + newTreeCode + "')"
-                    + ",codecsv =replace(codecsv,'" + oldCsv + "','" + newCsv + "')" + " where codecsv like '" + oldCsv
-                    + "_%'";
+            String sql = "update lst_orgcd set fullcode = replace(fullcode, :oldFullCode, :newFullCode), "
+                    + "codetree = replace(codetree, :oldTreeCode, :newTreeCode), "
+                    + "codecsv = replace(codecsv, :oldCsv, :newCsv) "
+                    + "where codecsv like :oldCsvPattern";
 
             // Session session = getSession();
             Session session = sessionFactory.getCurrentSession();
             try {
-                session.createSQLQuery(sql).executeUpdate();
+                session.createSQLQuery(sql)
+                    .setParameter("oldFullCode", oldFullCode)
+                    .setParameter("newFullCode", newFullCode)
+                    .setParameter("oldTreeCode", oldTreeCode)
+                    .setParameter("newTreeCode", newTreeCode)
+                    .setParameter("oldCsv", oldCsv)
+                    .setParameter("newCsv", newCsv)
+                    .setParameter("oldCsvPattern", oldCsv + "_%")
+                    .executeUpdate();
             } finally {
                 // this.releaseSession(session);
                 session.close();

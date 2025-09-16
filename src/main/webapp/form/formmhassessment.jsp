@@ -105,7 +105,7 @@
                 var ret = numvalidate();
                 //if(ret==true) {
                 //ret = confirm("Do you wish to save this form and view the print preview?");
-                popupFixedPage(650, 850, '../providers/notice.htm');
+                popupFixedPage(650, 850, '../provider/notice.htm');
                 document.forms[0].action = "form/formmhassessmentprint.jsp";
                 document.forms[0].target = "planner";
                 document.forms[0].submit();

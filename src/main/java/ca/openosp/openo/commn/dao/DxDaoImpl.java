@@ -77,14 +77,21 @@ public class DxDaoImpl extends AbstractDaoImpl<DxAssociation> implements DxDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Object[]> findCodingSystemDescription(String codingSystem, String code) {
+        // Validate codingSystem to prevent SQL injection - only allow alphanumeric and underscore
+        if (codingSystem == null || !codingSystem.matches("^[a-zA-Z0-9_]+$")) {
+            MiscUtils.getLogger().warn("Invalid coding system name: " + codingSystem);
+            return new ArrayList<Object[]>();
+        }
+
         try {
+            // Use parameterized query for the code value, table/column names must be validated
             String sql = "SELECT " + codingSystem + ", description FROM " + codingSystem + " WHERE " + codingSystem
-                    + " = :code";
+                    + " = ?1";
             Query query = entityManager.createNativeQuery(sql);
-            query.setParameter("code", code);
+            query.setParameter(1, code);
             return query.getResultList();
         } catch (Exception e) {
-            // TODO Add exclude to the test instead when it's merged
+            MiscUtils.getLogger().error("Error querying coding system: " + codingSystem, e);
             return new ArrayList<Object[]>();
         }
     }
@@ -94,24 +101,45 @@ public class DxDaoImpl extends AbstractDaoImpl<DxAssociation> implements DxDao {
     @SuppressWarnings("unchecked")
     public List<Object[]> findCodingSystemDescription(String codingSystem, String[] keywords) {
         try {
-            boolean flag = false;
-            StringBuilder buf = new StringBuilder("select " + codingSystem + ", description from " + codingSystem);
-
-            for (String keyword : keywords) {
-                if (keyword == null || keyword.trim().equals("")) {
-                    continue;
-                }
-                if (!flag) {
-                    buf.append(" where ");
-                }
-                if (flag) {
-                    buf.append(" or ");
-                }
-                buf.append(" " + codingSystem + " like '%" + keyword + "%' or description like '%" + keyword + "%' ");
-                flag = true;
+            // Validate codingSystem to prevent SQL injection - only allow alphanumeric and underscore
+            if (codingSystem == null || !codingSystem.matches("^[a-zA-Z0-9_]+$")) {
+                MiscUtils.getLogger().warn("Invalid coding system name: " + codingSystem);
+                return new ArrayList<Object[]>();
             }
-
+            
+            // Filter out empty keywords
+            List<String> validKeywords = new ArrayList<>();
+            for (String keyword : keywords) {
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    validKeywords.add(keyword.trim());
+                }
+            }
+            
+            if (validKeywords.isEmpty()) {
+                return new ArrayList<Object[]>();
+            }
+            
+            // Build parameterized query
+            StringBuilder buf = new StringBuilder("select " + codingSystem + ", description from " + codingSystem + " where ");
+            List<String> conditions = new ArrayList<>();
+            
+            for (int i = 0; i < validKeywords.size(); i++) {
+                int paramIndex = i * 2 + 1;
+                conditions.add("(" + codingSystem + " like ?" + paramIndex + " or description like ?" + (paramIndex + 1) + ")");
+            }
+            
+            buf.append(String.join(" or ", conditions));
+            
             Query query = entityManager.createNativeQuery(buf.toString());
+            
+            // Set parameters
+            int paramIndex = 1;
+            for (String keyword : validKeywords) {
+                String likePattern = "%" + keyword + "%";
+                query.setParameter(paramIndex++, likePattern);
+                query.setParameter(paramIndex++, likePattern);
+            }
+            
             return query.getResultList();
         } catch (Exception e) {
             MiscUtils.getLogger().error("error", e);
@@ -124,13 +152,21 @@ public class DxDaoImpl extends AbstractDaoImpl<DxAssociation> implements DxDao {
     @Override
     public String getCodeDescription(String codingSystem, String code) {
         String desc = "";
-        StringBuilder buf = new StringBuilder("select description from " + codingSystem + " where " + codingSystem + "='"
-                + code + "'");
+        
+        // Validate codingSystem to prevent SQL injection - only allow alphanumeric and underscore
+        if (codingSystem == null || !codingSystem.matches("^[a-zA-Z0-9_]+$")) {
+            MiscUtils.getLogger().warn("Invalid coding system name: " + codingSystem);
+            return desc;
+        }
+        
+        // Use parameterized query for the code value
+        String sql = "select description from " + codingSystem + " where " + codingSystem + "=?1";
         try {
-            Query query = entityManager.createNativeQuery(buf.toString());
+            Query query = entityManager.createNativeQuery(sql);
+            query.setParameter(1, code);
             desc = (String) query.getSingleResult();
         } catch (Exception e) {
-            MiscUtils.getLogger().error("error " + buf, e);
+            MiscUtils.getLogger().error("error executing query for codingSystem: " + codingSystem, e);
         }
         return desc;
     }

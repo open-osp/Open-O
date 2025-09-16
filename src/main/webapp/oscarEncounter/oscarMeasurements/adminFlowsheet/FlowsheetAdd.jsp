@@ -257,7 +257,7 @@
 
 
         YAHOO.example.BasicRemote = function () {
-            var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
+            var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
             var oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponses'});
             oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;
             oDS.responseSchema = {

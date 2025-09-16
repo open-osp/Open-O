@@ -1267,14 +1267,6 @@
     "optional" : false,
     "integrity" : "sha512:+ppatR+X4s1jtcHLF3W2Ox7cAZeu28wOirMRbf4n1HNlhl0k7vrxm2SFVLYPGh7OE+MZLRV8MZNEqXrVUcYoxA=="
   }, {
-    "groupId" : "javax.ws.rs",
-    "artifactId" : "jsr311-api",
-    "version" : "1.1.1",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:7t5Iykww/iUWBjbK0n/FcyExVD1nxZZ2KC5P0GjlbC4nIXHJBI3WtbwLDIiL28Oqj5wRfJfkLZMJzwSdC/iUuw=="
-  }, {
     "groupId" : "javax.xml.bind",
     "artifactId" : "jaxb-api",
     "version" : "2.3.1",
@@ -1747,14 +1739,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:fH0FmigPwjl60ALVvW21s4sFAepXDXDUjhkiaXbvLVsE3n7NjEt1X8fUd1oGOv4wU3JZXnbXnEpIakr5OKCTPw=="
-  }, {
-    "groupId" : "org.apache.cxf",
-    "artifactId" : "cxf-rt-rs-extension-providers",
-    "version" : "3.5.11",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:+hoh9DdnNvtSWjmNTKq1eRJ18xgZyy6uGr8ZHbc9WyPdwOudhGM4NPpNC4+cDk2jQVw5qAXq+l7BGOH+S54dPg=="
   }, {
     "groupId" : "org.apache.cxf",
     "artifactId" : "cxf-rt-rs-extension-search",

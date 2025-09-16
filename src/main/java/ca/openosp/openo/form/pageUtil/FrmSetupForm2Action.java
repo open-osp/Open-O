@@ -28,10 +28,13 @@ package ca.openosp.openo.form.pageUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +48,7 @@ import ca.openosp.openo.commn.dao.MeasurementDao;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.Measurement;
 import ca.openosp.openo.managers.SecurityInfoManager;
+import ca.openosp.openo.utility.DbConnectionFilter;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
@@ -77,6 +81,9 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
     private String _dateFormat = "yyyy-MM-dd";
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    
+    // Pattern to validate form names - only alphanumeric characters and underscores allowed
+    private static final Pattern VALID_FORM_NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]+$");
 
     public String execute() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -115,6 +122,14 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
         String ongoingConcern = chartBean.ongoingConcerns;
         String formName = request.getParameter("formName");
+        
+        // Validate formName to prevent path traversal attacks
+        if (formName == null || !isValidFormName(formName)) {
+            MiscUtils.getLogger().warn("Invalid form name attempted: " + formName);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid form name");
+            return NONE;
+        }
+        
         String today = UtilDateUtilities.DateToString(new Date(), _dateFormat);
         String visitCod = UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd");
 
@@ -141,6 +156,7 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
         try {
             MiscUtils.getLogger().debug("formId=" + formId + "opening " + formName + ".xml");
+            // formName already validated above, safe to use in resource path
             InputStream is = getClass().getResourceAsStream("/../../form/" + formName + ".xml");
             Vector measurementTypes = EctFindMeasurementTypeUtil.checkMeasurmentTypes(is, formName);
             EctMeasurementTypesBean mt;
@@ -254,6 +270,7 @@ public final class FrmSetupForm2Action extends ActionSupport {
             MiscUtils.getLogger().debug("This file must be placed at www/form");
             MiscUtils.getLogger().error("Error", e);
         }
+        // formName already validated above, safe to use in redirect URL
         response.sendRedirect(contextPath + "/form/form" + formName + ".jsp");
         return NONE;
     }
@@ -298,9 +315,21 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
             if (formId != null) {
                 if (Integer.parseInt(formId) > 0) {
+                    // Validate formName to prevent SQL injection
+                    if (!isValidFormName(formName)) {
+                        MiscUtils.getLogger().warn("Invalid form name in getFormRecord: " + formName);
+                        return null;
+                    }
+                    
+                    // Using parameterized values for formId and demographicNo
+                    // Note: Table name cannot be parameterized, but formName is validated above
+                    String sql = "SELECT * FROM form" + formName + " WHERE ID=? AND demographic_no=?";
+                    Connection connection = DbConnectionFilter.getThreadLocalDbConnection();
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ps.setInt(1, Integer.parseInt(formId));
+                    ps.setInt(2, Integer.parseInt(demographicNo));
+                    ResultSet rs = ps.executeQuery();
 
-                    String sql = "SELECT * FROM form" + formName + " WHERE ID='" + formId + "' AND demographic_no='" + demographicNo + "'";
-                    ResultSet rs = DBHandler.GetSQL(sql);
                     if (rs.next()) {
                         ResultSetMetaData md = rs.getMetaData();
                         for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -371,18 +400,29 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
     private Properties convertName(String formName) {
         Properties osdsf = new Properties();
+        
+        // Validate formName before using it in file path
+        if (!isValidFormName(formName)) {
+            MiscUtils.getLogger().warn("Invalid form name in convertName: " + formName);
+            return osdsf;
+        }
+        
         InputStream is = getClass().getResourceAsStream("/../../form/" + formName + "FromOsdsf.properties");
         try {
-            osdsf.load(is);
+            if (is != null) {
+                osdsf.load(is);
+            }
         } catch (Exception e) {
             MiscUtils.getLogger().debug("Error, file " + formName + ".properties not found.");
-        }
-
-        try {
-            is.close();
-        } catch (IOException e) {
-            MiscUtils.getLogger().debug("IO error.");
-            MiscUtils.getLogger().error("Error", e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    MiscUtils.getLogger().debug("IO error.");
+                    MiscUtils.getLogger().error("Error", e);
+                }
+            }
         }
         return osdsf;
     }
@@ -404,5 +444,26 @@ public final class FrmSetupForm2Action extends ActionSupport {
 
     public Object getValue(String key) {
         return values.get(key);
+    }
+    
+    /**
+     * Validates that a form name contains only safe characters to prevent path traversal attacks.
+     * Only allows alphanumeric characters and underscores.
+     * 
+     * @param formName The form name to validate
+     * @return true if the form name is valid, false otherwise
+     */
+    private boolean isValidFormName(String formName) {
+        if (formName == null || formName.isEmpty()) {
+            return false;
+        }
+        
+        // Check for path traversal attempts
+        if (formName.contains("..") || formName.contains("/") || formName.contains("\\")) {
+            return false;
+        }
+        
+        // Only allow alphanumeric characters and underscores
+        return VALID_FORM_NAME_PATTERN.matcher(formName).matches();
     }
 }

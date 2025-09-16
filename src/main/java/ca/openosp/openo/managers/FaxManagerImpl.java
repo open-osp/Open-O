@@ -495,7 +495,7 @@ public class FaxManagerImpl implements FaxManager {
      */
     @Override
     public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath, int pageNumber) {
-        String file = EDocUtil.resovePath(filePath);
+        String file = EDocUtil.resolvePath(filePath);
         return getFaxPreviewImage(loggedInInfo, Paths.get(file), pageNumber);
     }
 
@@ -506,7 +506,7 @@ public class FaxManagerImpl implements FaxManager {
      */
     @Override
     public Path getFaxPreviewImage(LoggedInInfo loggedInInfo, String filePath) {
-        String file = EDocUtil.resovePath(filePath);
+        String file = EDocUtil.resolvePath(filePath);
         return getFaxPreviewImage(loggedInInfo, Paths.get(file), 1);
     }
 
@@ -690,7 +690,7 @@ public class FaxManagerImpl implements FaxManager {
             reSentFaxJob.setJobId(null);
             reSentFaxJob.setOscarUser(loggedInInfo.getLoggedInProviderNo());
             reSentFaxJob.setStatus(STATUS.WAITING);
-            reSentFaxJob.setStatusString("Fax RE-SENT by providers " + loggedInInfo.getLoggedInProviderNo());
+            reSentFaxJob.setStatusString("Fax RE-SENT by provider " + loggedInInfo.getLoggedInProviderNo());
 
             /*
              * adapt the Fax queue and logs accordingly.
@@ -702,7 +702,7 @@ public class FaxManagerImpl implements FaxManager {
              */
             if (reSent != null) {
                 faxJob.setStatus(STATUS.RESENT);
-                faxJob.setStatusString("Fax RE-SENT as fax id " + reSent.getId() + " by providers " + loggedInInfo.getLoggedInProviderNo());
+                faxJob.setStatusString("Fax RE-SENT as fax id " + reSent.getId() + " by provider " + loggedInInfo.getLoggedInProviderNo());
                 saveFaxJob(loggedInInfo, faxJob);
                 success = true;
             }

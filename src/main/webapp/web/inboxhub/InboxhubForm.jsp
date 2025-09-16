@@ -642,7 +642,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 
     function autoCompleteProvider() {
         jQuery("#autocompleteProvider").autocomplete({
-            source: contextPath + "/providers/SearchProvider.do?method=labSearch",
+            source: contextPath + "/provider/SearchProvider.do?method=labSearch",
             minLength: 2,
             focus: function (event, ui) {
                 jQuery("#autocompleteProvider").val(ui.item.label);

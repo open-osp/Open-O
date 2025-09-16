@@ -586,6 +586,10 @@
             if ((options = arguments[i]) != null)
                 // Extend the base object
                 for (var name in options) {
+                    // Prevent prototype pollution by blocking dangerous property names
+                    if (name === "__proto__" || name === "constructor" || name === "prototype")
+                        continue;
+                    
                     var src = target[name], copy = options[name];
 
                     // Prevent never-ending loop

@@ -24,6 +24,7 @@
  */
 package ca.openosp.openo.webserv.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -31,6 +32,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.commn.dao.PharmacyInfoDao;
 import ca.openosp.openo.commn.model.PharmacyInfo;
@@ -47,6 +49,7 @@ import org.springframework.stereotype.Component;
  */
 @Path("/pharmacies/")
 @Component("pharmacyService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class PharmacyService extends AbstractServiceImpl {
 
     @Autowired

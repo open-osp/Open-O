@@ -30,6 +30,7 @@
 <%@page import="ca.openosp.openo.commn.dao.EncounterDao" %>
 <%@page import="ca.openosp.openo.commn.model.Encounter" %>
 <%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%
     EncounterDao encounterDao = SpringUtils.getBean(EncounterDao.class);
 %>
@@ -75,7 +76,7 @@
                     }
                 %>
                 <xml id="xml_list">
-                    <encounter><%=content%>
+                    <encounter><%=Encode.forXml(content)%>
                     </encounter>
                 </xml>
                 <table width="100%" border="1" datasrc='#xml_list'>
@@ -133,8 +134,8 @@
                 <table width="100%" cellspacing="0" cellpadding="2" border="1"
                        datasrc='#xml_list'>
                     <tr>
-                        <td><%=encounter_date%> <%=encounter_time%><br>
-                            <b>Reason:</b><%=subject.substring(2).replace('|', ' ')%><br>
+                        <td><%=Encode.forHtml(encounter_date)%> <%=Encode.forHtml(encounter_time)%><br>
+                            <b>Reason:</b><%=Encode.forHtml(subject.substring(2).replaceAll("\\|", " "))%><br>
                             <b>Content:</b>
                             <div datafld='xml_content'>
                         </td>

@@ -24,29 +24,70 @@
  */
 
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ca.openosp.openo.decisionSupport.model;
 
 /**
+ * Exception thrown when errors occur during parsing of clinical decision support guideline XML configurations.
+ * <p>
+ * DecisionSupportParseException is a specialized exception for handling XML parsing errors
+ * when loading and configuring clinical decision support guidelines. This exception provides
+ * specific context about which guideline failed to parse and what parsing error occurred.
+ * </p>
+ * <p>
+ * Common scenarios that trigger this exception include:
+ * </p>
+ * <ul>
+ * <li>Malformed XML structure in guideline definitions</li>
+ * <li>Missing required attributes or elements in guideline XML</li>
+ * <li>Invalid condition types, operators, or consequence types</li>
+ * <li>Unrecognized parameter class names or identifiers</li>
+ * <li>XML schema validation failures for guideline structure</li>
+ * </ul>
+ *
  * @author apavel
+ * @since 2009-07-06
+ * @see DecisionSupportException for general guideline evaluation errors
+ * @see DSGuidelineFactory for XML parsing that may throw this exception
+ * @see DSGuideline for guideline XML structure requirements
  */
 public class DecisionSupportParseException extends DecisionSupportException {
+
+    /**
+     * Constructs a new DecisionSupportParseException for a specific guideline with a detailed message.
+     *
+     * @param guidelineTitle String identifying the guideline that failed to parse
+     * @param message String describing the specific parsing error that occurred
+     */
     public DecisionSupportParseException(String guidelineTitle, String message) {
         super("Error parsing decision support guideline titled '" + guidelineTitle + "'.  " + message);
     }
 
+    /**
+     * Constructs a new DecisionSupportParseException for a specific guideline with a detailed message and cause.
+     *
+     * @param guidelineTitle String identifying the guideline that failed to parse
+     * @param message String describing the specific parsing error that occurred
+     * @param e Throwable that caused this parsing exception to be thrown
+     */
     public DecisionSupportParseException(String guidelineTitle, String message, Throwable e) {
         super("Error parsing decision support guideline titled '" + guidelineTitle + "'.  " + message, e);
     }
 
+    /**
+     * Constructs a new DecisionSupportParseException with a general parsing error message.
+     *
+     * @param message String describing the parsing error that occurred
+     */
     public DecisionSupportParseException(String message) {
         super("Error parsing decision support guideline. " + message);
     }
 
+    /**
+     * Constructs a new DecisionSupportParseException with a message and cause.
+     *
+     * @param message String describing the parsing error that occurred
+     * @param e Throwable that caused this parsing exception to be thrown
+     */
     public DecisionSupportParseException(String message, Throwable e) {
         super(message, e);
     }

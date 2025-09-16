@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
+
 import ca.openosp.OscarProperties;
 
 /**
@@ -63,7 +65,43 @@ public class LoginResourceAction extends HttpServlet {
         String contentType = null;
 
         if (logoImage != null) {
-            image = new File(images, URLDecoder.decode(logoImage, "UTF-8"));
+            // Decode the path and extract just the filename without any directory components
+            String decodedPath = URLDecoder.decode(logoImage, "UTF-8");
+            
+            // Remove leading slash if present
+            if (decodedPath.startsWith("/")) {
+                decodedPath = decodedPath.substring(1);
+            }
+            
+            // Use FilenameUtils.getName to extract just the filename, removing any path components
+            String sanitizedFilename = FilenameUtils.getName(decodedPath);
+            
+            // Reject empty or invalid filenames
+            if (sanitizedFilename == null || sanitizedFilename.isEmpty() || 
+                sanitizedFilename.contains("..") || sanitizedFilename.contains("/") || 
+                sanitizedFilename.contains("\\")) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid resource path");
+                return;
+            }
+            
+            // Construct the file using the sanitized filename only (no user input in path)
+            image = new File(images, sanitizedFilename);
+            
+            // Validate using canonical path to prevent any remaining path traversal attempts
+            try {
+                File imagesDir = new File(images);
+                String canonicalImagesPath = imagesDir.getCanonicalPath();
+                String canonicalImagePath = image.getCanonicalPath();
+                
+                // Ensure the resolved path is within the expected directory
+                if (!canonicalImagePath.startsWith(canonicalImagesPath + File.separator)) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid resource path");
+                    return;
+                }
+            } catch (IOException e) {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing request");
+                return;
+            }
         }
 
         // Get content type by filename.        

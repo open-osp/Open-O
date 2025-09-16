@@ -172,12 +172,16 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
         String fileName = request.getParameter("fileName");
         String description = request.getParameter("description");
 
-        String path = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-        if (!path.endsWith(File.separator)) {
-            path = path + File.separator;
+        // Validate and sanitize the file path to prevent path traversal attacks
+        Path validatedPath = validateDocumentPath(fileName);
+        if (validatedPath == null) {
+            logger.error("Invalid file path requested: " + fileName);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
         }
 
-        request.setAttribute("imagePath", path + fileName);
+        String fullPath = validatedPath.toString();
+        request.setAttribute("imagePath", fullPath);
         request.setAttribute("imageTitle", description);
 
         if (Objects.equals(isImage, "true")) {
@@ -189,8 +193,7 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
                 logger.error("An error occurred while creating the pdf of the image: " + e.getMessage(), e);
             }
         } else if (Objects.equals(isPDF, "true")) {
-            Path eDocPDFPath = Paths.get(path + fileName);
-            generateResponse(response, getBase64(eDocPDFPath));
+            generateResponse(response, getBase64(validatedPath));
         }
     }
 
@@ -294,6 +297,65 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
             return getBase64(Files.readAllBytes(pdfPath));
         } catch (IOException e) {
             logger.error("An error occurred while processing the PDF file: " + e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * Validates and sanitizes a document file path to prevent path traversal attacks.
+     * Ensures the file is within the configured DOCUMENT_DIR directory.
+     * 
+     * @param fileName The file name to validate
+     * @return The validated absolute path, or null if invalid
+     */
+    private Path validateDocumentPath(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            logger.error("Invalid file name: null or empty");
+            return null;
+        }
+
+        // Reject any file name containing path traversal sequences
+        if (fileName.contains("..") || fileName.contains(File.separator) || fileName.contains("/") || fileName.contains("\\")) {
+            logger.error("Path traversal attempt detected in file name: " + fileName);
+            return null;
+        }
+
+        try {
+            // Get the configured document directory
+            String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            if (documentDir == null || documentDir.trim().isEmpty()) {
+                logger.error("DOCUMENT_DIR not configured in properties");
+                return null;
+            }
+
+            // Create the base directory path and normalize it
+            Path baseDir = Paths.get(documentDir).normalize().toAbsolutePath();
+            
+            // Create the full path by combining base directory with file name
+            // Since we've already validated that fileName contains no path separators,
+            // this is safe
+            Path filePath = baseDir.resolve(fileName).normalize().toAbsolutePath();
+            
+            // Verify the resolved path is still within the base directory
+            if (!filePath.startsWith(baseDir)) {
+                logger.error("Path traversal attempt: resolved path escapes base directory");
+                return null;
+            }
+            
+            // Verify the file exists and is a regular file
+            if (!Files.exists(filePath)) {
+                logger.warn("Document file does not exist: " + fileName);
+                return null;
+            }
+            
+            if (!Files.isRegularFile(filePath)) {
+                logger.error("Path is not a regular file: " + fileName);
+                return null;
+            }
+            
+            return filePath;
+        } catch (Exception e) {
+            logger.error("Error validating document path for file: " + fileName, e);
             return null;
         }
     }

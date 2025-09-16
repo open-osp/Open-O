@@ -76,7 +76,7 @@ public class DiseaseRegistryHandler {
         logger.info(
                 "Added code (" + icd9code +
                         ") to disease registry for patient (" + demographicNo + ")" +
-                        " with providers no (" + providerNo + ")"
+                        " with provider no (" + providerNo + ")"
         );
         return dx.getId();
     }

@@ -3428,6 +3428,24 @@ public class DemographicExportAction42Action extends ActionSupport {
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
+        
+        try {
+            // Disable external entities to prevent XXE attacks
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            
+            // Disable XInclude
+            factory.setXIncludeAware(false);
+            
+            // enabled expansion of entity references
+            factory.setExpandEntityReferences(true);
+        } catch (ParserConfigurationException e) {
+            logger.error("Failed to configure XML parser security features", e);
+            return false;
+        }
+        
         DocumentBuilder builder = null;
         try {
             builder = factory.newDocumentBuilder();

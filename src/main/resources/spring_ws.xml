@@ -246,11 +246,40 @@
     <alias name="oscarOAuthDataProvider" alias="oauthProvider"/>
 
 
-    <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
+	<!-- 
+		Switched from Jettison (org.codehaus.jettison) to FasterXML Jackson 
+		for JSON handling in CXF JAX-RS providers. 
+		This ensures better compatibility and consistency of REST API 
+		request/response serialization and deserialization. 
+		Also excluded cxf-rt-rs-extension-providers to avoid Jettison being pulled in transitively.
+	-->
+    <!-- <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
         <property name="dropRootElement" value="true"/>
         <property name="serializeAsArray" value="true"/>
         <property name="arrayKeys" ref="jsonKeys"/>
         <property name="dropCollectionWrapperElement" value="true"/>
+    </bean> -->
+
+	<!-- Jackson 2 ObjectMapper -->
+    <bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+        <!-- <property name="serializationInclusion">
+            <util:constant static-field="com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL"/>
+        </property> -->
+
+        <!-- If you rely on JAXB-style annotations (@XmlRootElement, etc.) -->
+        <!-- This lets Jackson 2 understand them -->
+        <property name="annotationIntrospector">
+            <bean class="com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector">
+                <constructor-arg>
+                    <bean class="com.fasterxml.jackson.databind.type.TypeFactory" factory-method="defaultInstance"/>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Jackson 2 JAX-RS provider -->
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
+        <property name="mapper" ref="jacksonObjectMapper"/>
     </bean>
 
     <!-- =========================================================

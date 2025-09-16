@@ -100,7 +100,7 @@ public class TicklersDaoImpl extends AbstractDaoImpl<Tickler> implements Tickler
         if (StringUtils.isNotBlank(ticklerQuery.getKeyword())) {
             sql.append("and (");
             sql.append("t.demographicNo like '%" + ticklerQuery.getKeyword() + "%' ");
-            sql.append("or t.providers like '%" + ticklerQuery.getKeyword() + "%' ");
+            sql.append("or t.provider like '%" + ticklerQuery.getKeyword() + "%' ");
             sql.append("or t.message like '%" + ticklerQuery.getKeyword() + "%' ");
             sql.append("or t.creator like '%" + ticklerQuery.getKeyword() + "%' ");
             sql.append("or t.taskAssignedTo like '%" + ticklerQuery.getKeyword() + "%' ");
@@ -125,7 +125,7 @@ public class TicklersDaoImpl extends AbstractDaoImpl<Tickler> implements Tickler
                 }
 
                 if (StringUtils.isNotBlank(ticklerQuery.getProviderNo())) {
-                    sql.append("and t.providers = '" + ticklerQuery.getProviderNo() + "' ");
+                    sql.append("and t.provider = '" + ticklerQuery.getProviderNo() + "' ");
                 }
 
                 if (ticklerQuery.getProviders() != null && ticklerQuery.getProviders().length > 0) {
@@ -164,7 +164,7 @@ public class TicklersDaoImpl extends AbstractDaoImpl<Tickler> implements Tickler
             } else if (orderby.equals("serviceDate")) {
                 sql.append(" order by t.serviceDate " + sort);
             } else if (orderby.equals("demographicName")) {
-                sql.append(" order by t.providers " + sort);
+                sql.append(" order by t.provider " + sort);
             } else if (orderby.equals("updateDate")) {
                 sql.append(" order by t.updateDate " + sort);
             } else if (orderby.equals("providerName")) {

@@ -86,7 +86,7 @@
         $(function () {
 
             $("#autocompleteprov").autocomplete({
-                source: "<%= request.getContextPath() %>/providers/SearchProvider.do?method=labSearch",
+                source: "<%= request.getContextPath() %>/provider/SearchProvider.do?method=labSearch",
                 minLength: 2,
                 focus: function (event, ui) {
                     $("#autocompleteprov").val(ui.item.label);

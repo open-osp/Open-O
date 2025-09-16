@@ -39,6 +39,7 @@ import ca.openosp.openo.prescript.data.RxPrescriptionData;
 import ca.openosp.openo.prescript.util.RxUtil;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,7 @@ import java.util.List;
 @Path("/rxlookup")
 @Component("rxLookupService")
 @Produces("application/xml")
+@Consumes(MediaType.APPLICATION_JSON)
 public class RxLookupService extends AbstractServiceImpl {
 
     private static Logger logger = MiscUtils.getLogger();

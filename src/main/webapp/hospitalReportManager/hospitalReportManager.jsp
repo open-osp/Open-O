@@ -226,7 +226,7 @@
         </p>
         <form enctype="multipart/form-data" action="<%=request.getContextPath() %>/hospitalReportManager/UploadLab.do"
               method="post" onsubmit="return validateForm()">
-            Upload HRM reports from your computer: <input type="file" id="fileInput" name="importFile" multiple
+            Upload HRM reports from your computer: <input type="file" id="fileInput" name="uploads" multiple
                                                           onChange="getFileList(event)"/>
             <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
                   style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img

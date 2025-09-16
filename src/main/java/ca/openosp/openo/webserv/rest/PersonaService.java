@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -74,6 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Path("/persona")
+@Consumes(MediaType.APPLICATION_JSON)
 public class PersonaService extends AbstractServiceImpl {
     protected Logger logger = MiscUtils.getLogger();
 
@@ -215,7 +217,7 @@ public class PersonaService extends AbstractServiceImpl {
         int idCounter = 0;
 
         MenuTo1 menu = new MenuTo1()
-                .add(idCounter++, bundle.getString("navbar.menu.schedule"), null, "../providers/providercontrol.jsp")
+                .add(idCounter++, bundle.getString("navbar.menu.schedule"), null, "../provider/providercontrol.jsp")
                 .add(idCounter++, bundle.getString("navbar.menu.inbox"), null, "../documentManager/inboxManage.do?method=prepareForIndexPage", "inbox");
 
         if (!consultationManager.isConsultResponseEnabled()) {

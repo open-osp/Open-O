@@ -1,4 +1,5 @@
-<%@ page import="ca.openosp.OscarProperties" %><%--
+<%@ page import="ca.openosp.OscarProperties" %>
+<%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -449,6 +450,19 @@
 
 <script type="text/javascript">
     var ctx = "${ ctx }";
+    
+    // HTML entity encoding function to prevent XSS
+    function escapeHtml(text) {
+        if (!text) return '';
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
 
     $(document).ready(function () {
 
@@ -508,8 +522,16 @@
                 return;
             }
 
-            var inputValue = name + " " + fax;
-            var submitValue = "'name':'" + name + "','fax':'" + fax + "'";
+            // For display
+            var inputValue = escapeHtml(name + " " + fax);
+            
+            // For the data format the server expects
+            // First escape single quotes in the actual values to prevent breaking the format
+            var safeName = name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            var safeFax = fax.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            
+            // Build the format the server expects
+            var submitValue = "'name':'" + safeName + "','fax':'" + safeFax + "'";
 
             $("#fax-additional-recipients").append(
                 '<div class="row">\

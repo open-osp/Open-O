@@ -24,10 +24,12 @@
  */
 package ca.openosp.openo.webserv.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.managers.BillingManager;
 import ca.openosp.openo.webserv.rest.conversion.ServiceTypeConverter;
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ca.openosp.OscarProperties;
 
 @Path("/billing")
+@Consumes(MediaType.APPLICATION_JSON)
 public class BillingService extends AbstractServiceImpl {
 
     @Autowired

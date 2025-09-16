@@ -95,6 +95,7 @@ import org.w3c.dom.Document;
 
 @Path("/schedule")
 @Component("scheduleService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ScheduleService extends AbstractServiceImpl {
 
     Logger logger = MiscUtils.getLogger();

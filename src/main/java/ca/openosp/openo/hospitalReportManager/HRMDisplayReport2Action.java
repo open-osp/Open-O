@@ -10,38 +10,53 @@
 
 package ca.openosp.openo.hospitalReportManager;
 
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentToProviderDao;
 import ca.openosp.openo.hospitalReportManager.model.HRMDocumentToProvider;
+import ca.openosp.openo.hospitalReportManager.model.HRMReportCriteria;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
-
 import ca.openosp.openo.utility.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.opensymphony.xwork2.ModelDriven;
 import org.apache.struts2.ServletActionContext;
 
-public class HRMDisplayReport2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
+public class HRMDisplayReport2Action extends ActionSupport implements ModelDriven<HRMReportCriteria> {
 
+    // Model object holds all request parameters
+    private HRMReportCriteria criteria = new HRMReportCriteria();
 
-    private static HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
+    @Override
+    public HRMReportCriteria getModel() {
+        return criteria;
+    }
+
+    // --- Existing service/dao wiring ---
+    private static HRMDocumentToProviderDao hrmDocumentToProviderDao =
+            (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    @Override
     public String execute() {
+        HttpServletRequest request = ServletActionContext.getRequest();
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null)) {
+        // check privilege
+        if (!securityInfoManager.hasPrivilege(
+                LoggedInInfo.getLoggedInInfoFromSession(request),
+                "_hrm", "r", null)) {
             throw new SecurityException("missing required sec object (_hrm)");
         }
+
+        // ModelDriven automatically exposes criteria object to JSP via value stack
+        // For legacy JSP compatibility, also expose as request attributes
+        request.setAttribute("criteria", criteria);
 
         return "display";
     }
 
     public static HRMDocumentToProvider getHRMDocumentFromProvider(String providerNo, Integer hrmDocumentId) {
-        return (hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, providerNo));
+        return hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, providerNo);
     }
 }

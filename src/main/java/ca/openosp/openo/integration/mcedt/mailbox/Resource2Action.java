@@ -71,7 +71,14 @@ public class Resource2Action extends ActionSupport {
         Date endDate = new Date();
         if (startDate != null && endDate != null) {
             ActionUtils.moveOhipToOutBox(startDate, endDate);
-            ActionUtils.moveObecToOutBox(startDate, endDate);
+            
+            /*
+             * The method ActionUtils.moveObecToOutBox is slow with many files in 'OscarDocument/oscar/document/'.
+             * To optimize, we will move OBEC files during generation rather than during MCEDT mailbox opening.
+             * See ObecData.writeFile() for details on the updated process.
+             */
+            // ActionUtils.moveObecToOutBox(startDate,endDate);
+
             ActionUtils.setOutboxTimestamp(endDate);
         }
         ActionUtils.setUploadResourceId(request, new BigInteger("-1"));

@@ -227,8 +227,8 @@
             //
 
             var s = '' + value;
-            s = s.replace("\r\n", "\n");
-            s = s.replace("\r", "");
+            s = s.replace(/\r\n/g, "\n");
+            s = s.replace(/\r/g, "");
             var lines = s.split("\n");
 
 

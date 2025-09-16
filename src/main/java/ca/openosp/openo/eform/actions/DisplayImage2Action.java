@@ -167,10 +167,38 @@ public class DisplayImage2Action extends ActionSupport {
             throw new Exception("Could not open file " + file.getName() + " wrong file extension, ", e);
         }
         response.setContentType(contentType);
-        response.setHeader("Content-disposition", "inline; filename=" + fileName);
+        response.setHeader("Content-disposition", "inline; filename=\"" + sanitizeHeaderValue(fileName) + "\"");
 
         InputStream fileStream = new FileInputStream(file);
         return new StreamData(fileStream, contentType);
+    }
+
+    /**
+     * Sanitizes a header value to prevent HTTP response splitting attacks.
+     * Removes all control characters including CR (\r) and LF (\n) that could
+     * be used to inject additional headers or split the HTTP response.
+     * 
+     * @param value The header value to sanitize
+     * @return The sanitized header value safe for use in HTTP headers
+     */
+    private String sanitizeHeaderValue(String value) {
+        if (value == null) {
+            return "";
+        }
+        
+        // Remove all control characters including CR (\r) and LF (\n)
+        // This prevents HTTP response splitting attacks
+        // Also remove other control characters that could cause issues
+        String sanitized = value
+            .replaceAll("[\r\n\u0000-\u001F\u007F-\u009F]", "")  // Control chars
+            .replaceAll("[\"';]", "");  // Quotes and semicolons
+
+        // Ensure the filename is not empty after sanitization
+        if (sanitized.trim().isEmpty()) {
+            return "image";
+        }
+        
+        return sanitized;
     }
 
     /**

@@ -303,7 +303,7 @@ public class TicklerManagerImpl implements TicklerManager {
                 continue;
             }
 
-            // load up the program_provider entry to get the role for this providers in the
+            // load up the program_provider entry to get the role for this provider in the
             // tickler's program
             ppList = programProviderDAO.getProgramProviderByProviderProgramId(providerNo, Long.valueOf(programId));
             if (ppList == null || ppList.isEmpty()) {

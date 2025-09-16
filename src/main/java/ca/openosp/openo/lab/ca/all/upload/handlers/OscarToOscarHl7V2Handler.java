@@ -27,12 +27,16 @@
 package ca.openosp.openo.lab.ca.all.upload.handlers;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.OscarToOscarUtils;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.OscarProperties;
 
 import ca.openosp.openo.lab.ca.all.upload.MessageUploader;
 import ca.openosp.openo.lab.ca.all.upload.handlers.OscarToOscarHl7V2.AdtA09Handler;
@@ -45,7 +49,15 @@ public class OscarToOscarHl7V2Handler implements MessageHandler {
     public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 
         try {
-            byte[] dataBytes = FileUtils.readFileToByteArray(new File(fileName));
+            // Validate and sanitize the file path to prevent path traversal attacks
+            File validatedFile = validateFilePath(fileName);
+            if (validatedFile == null) {
+                logger.error("Invalid file path provided: " + fileName);
+                MessageUploader.clean(fileId);
+                return null;
+            }
+            
+            byte[] dataBytes = FileUtils.readFileToByteArray(validatedFile);
             String dataString = new String(dataBytes, MiscUtils.DEFAULT_UTF8_ENCODING);
             logger.debug("Incoming HL7 Message : \n" + dataString);
 
@@ -62,6 +74,68 @@ public class OscarToOscarHl7V2Handler implements MessageHandler {
             logger.error("Unexpected error.", e);
             MessageUploader.clean(fileId);
             throw (new RuntimeException(e));
+        }
+    }
+    
+    /**
+     * Validates that the provided file path is within the allowed document directory
+     * and does not contain path traversal attempts.
+     * 
+     * @param fileName the file path to validate
+     * @return a validated File object if the path is safe, null otherwise
+     */
+    private File validateFilePath(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            logger.error("File name is null or empty");
+            return null;
+        }
+        
+        try {
+            // Get the base document directory from configuration
+            String baseDocDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            if (baseDocDir == null || baseDocDir.isEmpty()) {
+                logger.error("DOCUMENT_DIR not configured");
+                return null;
+            }
+            
+            // Normalize and resolve the base directory path
+            Path basePath = Paths.get(baseDocDir).toAbsolutePath().normalize();
+            
+            // Create the file object and get its canonical path
+            File inputFile = new File(fileName);
+            File canonicalFile = inputFile.getCanonicalFile();
+            Path filePath = canonicalFile.toPath().toAbsolutePath().normalize();
+            
+            // Check if the file path is within the allowed base directory
+            if (!filePath.startsWith(basePath)) {
+                logger.error("File path is outside allowed directory. Base: " + basePath + ", File: " + filePath);
+                return null;
+            }
+            
+            // Check if the file exists and is readable
+            if (!canonicalFile.exists()) {
+                logger.error("File does not exist: " + canonicalFile.getAbsolutePath());
+                return null;
+            }
+            
+            if (!canonicalFile.canRead()) {
+                logger.error("File is not readable: " + canonicalFile.getAbsolutePath());
+                return null;
+            }
+            
+            if (!canonicalFile.isFile()) {
+                logger.error("Path is not a regular file: " + canonicalFile.getAbsolutePath());
+                return null;
+            }
+            
+            return canonicalFile;
+            
+        } catch (IOException e) {
+            logger.error("Error validating file path: " + fileName, e);
+            return null;
+        } catch (Exception e) {
+            logger.error("Unexpected error validating file path: " + fileName, e);
+            return null;
         }
     }
 }

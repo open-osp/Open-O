@@ -109,6 +109,7 @@ import ca.openosp.openo.waitinglist.util.WLWaitingListUtil;
  */
 @Path("/demographics")
 @Component("demographicService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class DemographicService extends AbstractServiceImpl {
 
     private enum IncludeType {

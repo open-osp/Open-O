@@ -38,6 +38,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 
+// Imported for class names.
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.fhir.util.TerserUtil;
+
 public final class DynamicHapiLoaderUtils {
 
     private static final Logger logger = MiscUtils.getLogger();
@@ -68,11 +75,11 @@ public final class DynamicHapiLoaderUtils {
     private static void initialise() throws ClassNotFoundException, SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         hackedHapiClassLoader = getHackedUrlClassLoader();
 
-        hackedPipedParserClass = hackedHapiClassLoader.loadClass("ca.uhn.hl7v2.parser.PipeParser");
-        hackedMessageClass = hackedHapiClassLoader.loadClass("ca.uhn.hl7v2.model.Message");
-        hackedSegmentClass = hackedHapiClassLoader.loadClass("ca.uhn.hl7v2.model.Segment");
-        hackedTerserClass = hackedHapiClassLoader.loadClass("ca.uhn.hl7v2.util.Terser");
-        hackedTerserUtilsClass = hackedHapiClassLoader.loadClass("TerserUtils");
+        hackedPipedParserClass = hackedHapiClassLoader.loadClass(PipeParser.class.getName());
+        hackedMessageClass = hackedHapiClassLoader.loadClass(Message.class.getName());
+        hackedSegmentClass = hackedHapiClassLoader.loadClass(Segment.class.getName());
+        hackedTerserClass = hackedHapiClassLoader.loadClass(Terser.class.getName());
+        hackedTerserUtilsClass = hackedHapiClassLoader.loadClass(TerserUtil.class.getName());
 
         hackedParseMethod = hackedPipedParserClass.getMethod("parse", String.class);
         hackedEncodeMethod = hackedPipedParserClass.getMethod("encode", hackedMessageClass);

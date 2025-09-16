@@ -75,7 +75,13 @@
 
         function deleteTest(id) {
             var testId = jQuery("input[name='test_" + id + ".id']").val();
-            jQuery("form[name='testForm']").append("<input type=\"hidden\" name=\"test.delete\" value=\"" + testId + "\"/>");
+            // Create the hidden input element safely to prevent XSS
+            var hiddenInput = jQuery("<input>").attr({
+                type: "hidden",
+                name: "test.delete",
+                value: testId
+            });
+            jQuery("form[name='testForm']").append(hiddenInput);
             jQuery("#test_" + id).remove();
 
         }

@@ -72,7 +72,8 @@ public class ExportResults2Action extends ActionSupport {
         if (indicatorName == null || indicatorName.isEmpty()) {
             indicatorName = "indicator_data-" + System.currentTimeMillis() + ".csv";
         } else {
-            indicatorName = indicatorName + System.currentTimeMillis() + ".csv";
+            String baseName = sanitizeBaseFilename(indicatorName);
+            indicatorName = baseName + "-" + System.currentTimeMillis() + ".csv";
         }
 
         if (csvFile != null) {
@@ -102,4 +103,36 @@ public class ExportResults2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Sanitizes a value to be used in an HTTP header to prevent response splitting attacks.
+     * Removes all control characters including carriage return and line feed.
+     * 
+     * @param value The value to sanitize
+     * @return The sanitized header value safe for use in HTTP headers
+     */
+    private String sanitizeBaseFilename(String filename) {
+        if (filename == null || filename.trim().isEmpty()) {
+            return "indicator_data";
+        }
+        
+        // Remove dangerous characters
+        String sanitized = filename
+            .replaceAll("[\r\n\u0000-\u001F\u007F-\u009F]", "")  // Control characters
+            .replaceAll("[\"\\\\;]", "")  // Quotes, backslashes, semicolons
+            .replaceAll("[/\\*?<>|:]", "_")  // File system reserved characters
+            .replaceAll("\\.csv$", "")  // Remove .csv if already present
+            .trim();
+        
+        // Ensure not empty after sanitization
+        if (sanitized.isEmpty()) {
+            return "indicator_data";
+        }
+        
+        // Limit length (leaving room for timestamp and .csv)
+        if (sanitized.length() > 100) {
+            sanitized = sanitized.substring(0, 100);
+        }
+        
+        return sanitized;
+    }
 }

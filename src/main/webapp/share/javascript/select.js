@@ -22,6 +22,18 @@
 // SEE CHANGELOG FOR A COMPLETE CHANGES OVERVIEW
 // VERSION 0.3
 
+// HTML escaping function to prevent XSS vulnerabilities
+function escapeHTML(str) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+    return String(str).replace(/[&<>"']/g, m => map[m]);
+}
+
 Autocompleter.SelectBox = Class.create();
 
 Autocompleter.SelectBox.prototype = Object.extend(new Autocompleter.Base(), {
@@ -64,16 +76,22 @@ Autocompleter.SelectBox.prototype = Object.extend(new Autocompleter.Base(), {
 	const nodes = Array.from(optionList);
 
 	for(let i=0; i < nodes.length; i++){
-            this.selectOptions.push("<li id=\"" + nodes[i].value + "\">" + nodes[i].innerHTML + '</li>');
-            if (nodes[i].getAttribute("selected")) this.element.value = nodes[i].innerHTML;
+            // Escape HTML to prevent XSS vulnerabilities
+            const optionText = nodes[i].innerHTML ? escapeHTML(nodes[i].innerHTML) : '';
+            const optionValue = nodes[i].value ? escapeHTML(nodes[i].value) : '';
+            
+            this.selectOptions.push("<li id=\"" + optionValue + "\">" + optionText + '</li>');
+            if (nodes[i].getAttribute("selected")) this.element.value = nodes[i].textContent || nodes[i].innerText || '';
 
-            if (this.options.debug) alert('option ' + nodes[i].innerHTML + ' added to ' + this.update.id);
+            if (this.options.debug) alert('option ' + (nodes[i].textContent || nodes[i].innerText || '') + ' added to ' + this.update.id);
         }
 
 	this.element.addEventListener("click", this.activate.bind(this));
 
 	if (selectElement.selectedIndex >= 0) {
-		this.element.value = selectElement.options[selectElement.selectedIndex].innerHTML;
+		// Use textContent to avoid XSS vulnerabilities
+		const selectedOption = selectElement.options[selectElement.selectedIndex];
+		this.element.value = selectedOption.textContent || selectedOption.innerText || '';
 	}
 
 	const self = this;

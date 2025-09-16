@@ -94,7 +94,7 @@ public class DocumentManagerImpl implements DocumentManager {
 
     public Document getDocument(LoggedInInfo loggedInInfo, Integer id) {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         Document result = documentDao.find(id);
@@ -121,7 +121,7 @@ public class DocumentManagerImpl implements DocumentManager {
     public CtlDocument getCtlDocumentByDocumentId(LoggedInInfo loggedInInfo, Integer documentId) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         CtlDocument result = ctlDocumentDao.getCtrlDocument(documentId);
@@ -140,7 +140,7 @@ public class DocumentManagerImpl implements DocumentManager {
      * @param loggedInInfo  The logged in info of the current user
      * @param document      Document to create
      * @param demographicNo The demographic number to save the document to
-     * @param providerNo    The optional providers number to route the document to
+     * @param providerNo    The optional provider number to route the document to
      * @param documentData  The document byte data
      * @return Document record from the database once it has been created
      * @throws IOException If actions related to getting document data fail
@@ -148,7 +148,7 @@ public class DocumentManagerImpl implements DocumentManager {
     public Document createDocument(LoggedInInfo loggedInInfo, Document document, Integer demographicNo, String providerNo, byte[] documentData) throws IOException {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "w", "")) {
-            throw new RuntimeException("Write Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Write Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -188,7 +188,7 @@ public class DocumentManagerImpl implements DocumentManager {
     public List<Document> getDocumentsUpdateAfterDate(LoggedInInfo loggedInInfo, Date updatedAfterThisDateExclusive, int itemsToReturn) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         List<Document> results = documentDao.findByUpdateDate(updatedAfterThisDateExclusive, itemsToReturn);
@@ -212,7 +212,7 @@ public class DocumentManagerImpl implements DocumentManager {
     public List<Document> getDocumentsByProgramProviderDemographicDate(LoggedInInfo loggedInInfo, Integer programId, String providerNo, Integer demographicId, Calendar updatedAfterThisDateExclusive, int itemsToReturn) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "r", "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         List<Document> results = documentDao.findByProgramProviderDemographicUpdateDate(programId, providerNo, demographicId, updatedAfterThisDateExclusive.getTime(), itemsToReturn);
@@ -229,7 +229,7 @@ public class DocumentManagerImpl implements DocumentManager {
 
     public Integer saveDocument(LoggedInInfo loggedInInfo, Document document, CtlDocument ctlDocument) {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "w", "")) {
-            throw new RuntimeException("Write Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Write Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         Integer savedId = null;
@@ -265,7 +265,7 @@ public class DocumentManagerImpl implements DocumentManager {
         ctlDocument.setStatus(String.valueOf(document.getStatus()));
         ctlDocumentDao.persist(ctlDocument);
 
-        // Saves the patient and providers lab routings if the provided numbers are valid
+        // Saves the patient and provider lab routings if the provided numbers are valid
         if (demographicNo > 0) {
             PatientLabRouting patientLabRouting = new PatientLabRouting(document.getId(), "DOC", demographicNo);
             patientLabRoutingDao.persist(patientLabRouting);
@@ -297,7 +297,7 @@ public class DocumentManagerImpl implements DocumentManager {
     public void moveDocument(LoggedInInfo loggedInInfo, Document document, String fromPath, String toPath) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "x", "")) {
-            throw new RuntimeException("Read and Write Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read and Write Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         // move the PDF from the temp location to Oscar's document directory.
@@ -491,7 +491,7 @@ public class DocumentManagerImpl implements DocumentManager {
 
 	public Integer addDocumentToQueue(LoggedInInfo loggedInInfo, Integer documentId, Integer queueId) {
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", "w", "")) {
-			throw new RuntimeException("Write Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+			throw new RuntimeException("Write Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
 		}
 
 		if (queueId != null && queueId > 0) {

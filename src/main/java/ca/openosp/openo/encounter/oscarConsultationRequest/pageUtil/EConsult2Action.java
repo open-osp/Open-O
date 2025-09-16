@@ -32,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +51,10 @@ public class EConsult2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    // Pattern to validate task parameter - allows alphanumeric, underscore, hyphen, and forward slash
+    private static final Pattern VALID_TASK_PATTERN = Pattern.compile("^[a-zA-Z0-9_\\-/]+$");
+    // Maximum length for task parameter to prevent excessive input
+    private static final int MAX_TASK_LENGTH = 100;
 
     private final OscarProperties oscarProperties = OscarProperties.getInstance();
     private final String frontendEconsultUrl = oscarProperties.getProperty("frontendEconsultUrl");
@@ -79,6 +84,13 @@ public class EConsult2Action extends ActionSupport {
 
         String demographicNo = request.getParameter("demographicNo");
         String task = request.getParameter("task");
+        
+        // Validate task parameter to prevent URL injection
+        if (!isValidTask(task)) {
+            MiscUtils.getLogger().error("Invalid task parameter provided: " + task);
+            return "error";
+        }
+        
         StringBuilder stringBuilder = new StringBuilder(frontendEconsultUrl);
 
         if (!frontendEconsultUrl.endsWith(File.separator)) {
@@ -87,11 +99,18 @@ public class EConsult2Action extends ActionSupport {
 
         setLoginId(stringBuilder, request);
 
-        // Add the method
-        stringBuilder.append(task);
+        // Add the validated task
+        if (task != null && !task.isEmpty()) {
+            stringBuilder.append(task);
+        }
 
         // method parameters.
         if (demographicNo != null && !demographicNo.isEmpty()) {
+            // Validate demographicNo to ensure it's numeric
+            if (!demographicNo.matches("^\\d+$")) {
+                MiscUtils.getLogger().error("Invalid demographicNo parameter: " + demographicNo);
+                return "error";
+            }
             stringBuilder.append(String.format("?%1$s=%2$s", "patient_id", demographicNo));
         }
 
@@ -188,6 +207,44 @@ public class EConsult2Action extends ActionSupport {
         } catch (UnsupportedEncodingException e) {
             MiscUtils.getLogger().error("There was a problem with construction of the login ids " + stringBuilder.toString(), e);
         }
+    }
+    
+    /**
+     * Validates the task parameter to prevent URL injection attacks
+     * 
+     * @param task The task parameter from the request
+     * @return true if the task is valid, false otherwise
+     */
+    private boolean isValidTask(String task) {
+        // Allow null or empty tasks (will be handled later)
+        if (task == null || task.isEmpty()) {
+            return true;
+        }
+        
+        // Check length constraint
+        if (task.length() > MAX_TASK_LENGTH) {
+            return false;
+        }
+        
+        // Check if task matches the allowed pattern
+        // This prevents URL injection by restricting to safe characters
+        if (!VALID_TASK_PATTERN.matcher(task).matches()) {
+            return false;
+        }
+        
+        // Prevent path traversal attacks
+        if (task.contains("..") || task.contains("//") || task.contains("\\")) {
+            return false;
+        }
+        
+        // Prevent protocol injection (http://, https://, javascript:, etc.)
+        String lowerTask = task.toLowerCase();
+        if (lowerTask.contains("://") || lowerTask.startsWith("javascript:") 
+            || lowerTask.startsWith("data:") || lowerTask.startsWith("vbscript:")) {
+            return false;
+        }
+        
+        return true;
     }
 
 

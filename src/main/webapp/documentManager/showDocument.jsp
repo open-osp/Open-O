@@ -779,7 +779,7 @@
     jQuery(setupDemoAutoCompletion());
 
     function setupProviderAutoCompletion() {
-        var url = "${pageContext.servletContext.contextPath}/providers/SearchProvider.do?method=labSearch";
+        var url = "${pageContext.servletContext.contextPath}/provider/SearchProvider.do?method=labSearch";
 
         jQuery("#autocompleteprov<%=docId%>").autocomplete({
             source: url,

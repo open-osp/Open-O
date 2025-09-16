@@ -44,11 +44,32 @@ public final class EFormViewForPdfGenerationServlet extends HttpServlet {
         if (!"127.0.0.1".equals(remoteAddress)) {
             logger.warn("Unauthorised request made to EFormViewForPdfGenerationServlet from address : " + remoteAddress);
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return; // Critical: stop execution for non-localhost requests
         }
 
+        // Add security headers to prevent browser rendering
+        response.setHeader("X-Content-Type-Options", "nosniff");
+        response.setHeader("Content-Security-Policy", "default-src 'none'");
+        
         boolean prepareForFax = "true".equals(request.getParameter("prepareForFax"));
         String id = request.getParameter("fdid");
         String providerId = request.getParameter("providerId");
+        
+        // Validate required parameters
+        if (id == null || id.trim().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing required parameter: fdid");
+            return;
+        }
+        
+        // Validate id is a valid integer
+        int formDataId;
+        try {
+            formDataId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter: fdid must be a valid number");
+            return;
+        }
+        
         EForm eForm = new EForm(id);
         eForm.setSignatureCode(request.getContextPath(), request.getHeader("User-Agent"), eForm.getDemographicNo(), providerId);
         eForm.setContextPath(request.getContextPath());
@@ -56,7 +77,7 @@ public final class EFormViewForPdfGenerationServlet extends HttpServlet {
 
 
         EFormValueDao efvDao = (EFormValueDao) SpringUtils.getBean(EFormValueDao.class);
-        List<EFormValue> eFormValues = efvDao.findByFormDataId(Integer.parseInt(id));
+        List<EFormValue> eFormValues = efvDao.findByFormDataId(formDataId);
         for (EFormValue value : eFormValues) {
             if (value.getVarName().equals("Letter")) {
                 String html = value.getVarValue();

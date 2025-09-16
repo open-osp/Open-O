@@ -27,11 +27,14 @@ package ca.openosp.openo.lab.ca.all.upload.handlers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.Logger;
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import org.w3c.dom.Document;
@@ -71,8 +75,10 @@ public class IHAPOIHandler implements MessageHandler {
         StringBuilder result = new StringBuilder(FAILED + messageId + ",");
 
         try {
-
-            is = new FileInputStream(fileName);
+            // Validate the file path to prevent path traversal attacks
+            File file = validateAndGetFile(fileName);
+            
+            is = new FileInputStream(file);
             hl7BodyMap = parse(is);
             Iterator<String> keySetIterator = null;
 
@@ -231,6 +237,58 @@ public class IHAPOIHandler implements MessageHandler {
         }
 
         return messageId;
+    }
+    
+    /**
+     * Validates and returns a File object for the given fileName.
+     * Prevents path traversal attacks by ensuring the file is within the allowed document directory.
+     * 
+     * @param fileName the file path to validate
+     * @return a validated File object
+     * @throws IOException if the file path is invalid or attempts path traversal
+     */
+    private File validateAndGetFile(String fileName) throws IOException {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("File name cannot be null or empty");
+        }
+        
+        // Get the base directory for documents
+        OscarProperties props = OscarProperties.getInstance();
+        String documentDir = props.getProperty("DOCUMENT_DIR");
+        
+        if (documentDir == null || documentDir.isEmpty()) {
+            // If DOCUMENT_DIR is not configured, use system temp directory as fallback
+            documentDir = System.getProperty("java.io.tmpdir");
+        }
+        
+        // Normalize the base directory path
+        Path basePath = Paths.get(documentDir).toAbsolutePath().normalize();
+        
+        // Create File object and get its canonical path
+        File file = new File(fileName);
+        Path filePath = file.toPath().toAbsolutePath().normalize();
+        
+        // Check if the file is within the allowed base directory or its subdirectories
+        // Allow files that are already in the document directory or temp directory
+        if (!filePath.startsWith(basePath)) {
+            // Also check if it's in the temp directory (for temporary uploads)
+            Path tempPath = Paths.get(System.getProperty("java.io.tmpdir")).toAbsolutePath().normalize();
+            if (!filePath.startsWith(tempPath)) {
+                logger.error("Path traversal attempt detected: " + fileName);
+                throw new IllegalArgumentException("Invalid file path - access denied");
+            }
+        }
+        
+        // Ensure the file exists and is readable
+        if (!file.exists()) {
+            throw new IOException("File not found: " + fileName);
+        }
+        
+        if (!file.canRead()) {
+            throw new IOException("File cannot be read: " + fileName);
+        }
+        
+        return file;
     }
 
 }

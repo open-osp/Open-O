@@ -513,7 +513,7 @@ public class RxManagerImpl implements RxManager {
     /**
      * Gets a list of the providers's favorite drugs.
      *
-     * @param pid the providers id.
+     * @param pid the provider id.
      * @return a list of favorite drugs, empty list if no favorites.
      */
     @Override
@@ -527,7 +527,7 @@ public class RxManagerImpl implements RxManager {
     }
 
     /**
-     * Adds a new favorite prescription to the providers record.
+     * Adds a new favorite prescription to the provider record.
      *
      * @param f the favorite to add.
      * @return true if added, false otherwise

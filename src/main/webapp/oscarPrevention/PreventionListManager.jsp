@@ -27,6 +27,7 @@
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="java.util.*" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -114,11 +115,11 @@
                 prevName = h.get("name");
                 prevDesc = h.get("desc");
         %>
-        <tr class="prevention-item" id="<%=prevId%>" prevention-data="<%=prevName%>">
+        <tr class="prevention-item" id="<%=Encode.forHtmlAttribute(prevId)%>" prevention-data="<%=Encode.forHtmlAttribute(prevName)%>">
             <td class="item-active" title="Available on master list"></td>
-            <td><%=prevName%>
+            <td><%=Encode.forHtml(prevName)%>
             </td>
-            <td><%=prevDesc%>
+            <td><%=Encode.forHtml(prevDesc)%>
             </td>
         </tr>
 
@@ -158,7 +159,7 @@
 
 
 <!-- property value from database: hidden-->
-<input type="hidden" name="property-bin" id="property-bin" style="width:1200px" value="<%=customPreventionItems%>">
+<input type="hidden" name="property-bin" id="property-bin" style="width:1200px" value="<%=Encode.forHtmlAttribute(customPreventionItems)%>">
 
 
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
@@ -256,11 +257,12 @@
             $('#modalItems').html("<h5>Hide the following prevention(s):</h5>");
             if (n > 1) {
                 for (i = 0; i < n; i++) {
-
-                    $('#modalItems').append(preventions[i] + "<br>");
+                    var item = $('<div></div>').text(preventions[i]);
+                    $('#modalItems').append(item);
                 }
             } else {
-                $('#modalItems').append(bin.val() + "<br>");
+                var item = $('<div></div>').text(bin.val());
+                $('#modalItems').append(item);
             }
         } else {
             $('#modalItems').html("Make all preventions available.");

@@ -85,6 +85,7 @@ import java.util.List;
  */
 @Path("/measurements")
 @Component("measurementService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class MeasurementService extends AbstractServiceImpl {
     /** Security manager for OAuth authentication and authorization. */
     @Autowired

@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 public class LabUpload2Action extends ActionSupport {
@@ -70,10 +72,36 @@ public class LabUpload2Action extends ActionSupport {
         if (key != null && keyToMatch != null && keyToMatch.equals(key)) {
 
             try {
+                // Validate the uploaded file to prevent path traversal attacks
+                if (importFile == null) {
+                    outcome = "accessDenied";
+                    request.setAttribute("outcome", outcome);
+                    return SUCCESS;
+                }
+                
+                // Get canonical path to resolve any relative path components and detect path traversal
+                String canonicalPath = importFile.getCanonicalPath();
+                
+                // Verify the file is within the temp directory where Struts2 stores uploaded files
+                String tempDir = System.getProperty("java.io.tmpdir");
+                if (tempDir != null) {
+                    File tempDirFile = new File(tempDir);
+                    String tempDirCanonical = tempDirFile.getCanonicalPath();
+                    
+                    // Check if the file is within the temp directory
+                    if (!canonicalPath.startsWith(tempDirCanonical + File.separator)) {
+                        _logger.error("Attempted path traversal attack detected for file: " + canonicalPath);
+                        outcome = "accessDenied";
+                        request.setAttribute("outcome", outcome);
+                        return SUCCESS;
+                    }
+                }
 
                 MiscUtils.getLogger().debug("Lab Upload content type = " + importFile.getName());
                 InputStream is = Files.newInputStream(importFile.toPath());
-                filename = importFile.getName();
+                
+                // Sanitize the filename to prevent any path injection in the filename itself
+                filename = sanitizeFileName(importFile.getName());
 
                 String localFileName = saveFile(is, filename);
                 is.close();
@@ -81,7 +109,26 @@ public class LabUpload2Action extends ActionSupport {
 
                 boolean fileUploadedSuccessfully = false;
                 if (localFileName != null) {
-                    InputStream fis = new FileInputStream(localFileName);
+                    // Validate the localFileName path before using it
+                    File localFile = new File(localFileName);
+                    String localCanonicalPath = localFile.getCanonicalPath();
+                    
+                    // Verify the file exists and is within the document directory
+                    OscarProperties props = OscarProperties.getInstance();
+                    String documentDir = props.getProperty("DOCUMENT_DIR");
+                    if (documentDir != null) {
+                        File docDirFile = new File(documentDir);
+                        String docDirCanonical = docDirFile.getCanonicalPath();
+                        
+                        if (!localCanonicalPath.startsWith(docDirCanonical + File.separator)) {
+                            _logger.error("Attempted path traversal in localFileName: " + localCanonicalPath);
+                            outcome = "accessDenied";
+                            request.setAttribute("outcome", outcome);
+                            return SUCCESS;
+                        }
+                    }
+                    
+                    InputStream fis = new FileInputStream(localFile);
                     int check = FileUploadCheck.UNSUCCESSFUL_SAVE;
                     try {
                         check = FileUploadCheck.addFile(filename, fis, proNo);
@@ -95,7 +142,7 @@ public class LabUpload2Action extends ActionSupport {
                     MiscUtils.getLogger().debug("Was file uploaded successfully ?" + fileUploadedSuccessfully);
                     fis.close();
                     if (check != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        BufferedReader in = new BufferedReader(new FileReader(localFileName));
+                        BufferedReader in = new BufferedReader(new FileReader(localFile));
                         ABCDParser abc = new ABCDParser();
                         abc.parse(in);
 
@@ -142,11 +189,33 @@ public class LabUpload2Action extends ActionSupport {
 
             if (!place.endsWith("/"))
                 place = new StringBuilder(place).insert(place.length(), "/").toString();
-            retVal = place + "LabUpload." + filename + "." + (new Date()).getTime();
+            
+            // Validate the document directory path
+            File docDir = new File(place);
+            String docDirCanonical = docDir.getCanonicalPath();
+            
+            // The filename is already sanitized, but double-check it doesn't contain path separators
+            if (filename.contains("/") || filename.contains("\\") || filename.contains("..")) {
+                MiscUtils.getLogger().error("Invalid filename after sanitization: " + filename);
+                return null;
+            }
+            
+            // Construct the target file path safely
+            String targetFileName = "LabUpload." + filename + "." + (new Date()).getTime();
+            File targetFile = new File(docDir, targetFileName);
+            String targetCanonicalPath = targetFile.getCanonicalPath();
+            
+            // Ensure the target file is within the document directory
+            if (!targetCanonicalPath.startsWith(docDirCanonical + File.separator)) {
+                MiscUtils.getLogger().error("Path traversal attempt in saveFile: " + targetCanonicalPath);
+                return null;
+            }
+            
+            retVal = targetCanonicalPath;
             MiscUtils.getLogger().debug(retVal);
 
             //write the  file to the file specified
-            OutputStream bos = new FileOutputStream(retVal);
+            OutputStream bos = new FileOutputStream(targetFile);
             int bytesRead = 0;
             while ((bytesRead = stream.read()) != -1) {
                 bos.write(bytesRead);
@@ -159,11 +228,11 @@ public class LabUpload2Action extends ActionSupport {
 
             MiscUtils.getLogger().debug("File not found");
             MiscUtils.getLogger().error("Error", fnfe);
-            return retVal;
+            return null;
 
         } catch (IOException ioe) {
             MiscUtils.getLogger().error("Error", ioe);
-            return retVal;
+            return null;
         }
         return retVal;
     }
@@ -176,5 +245,37 @@ public class LabUpload2Action extends ActionSupport {
 
     public void setImportFile(File importFile) {
         this.importFile = importFile;
+    }
+    
+    /**
+     * Sanitize a filename to prevent path traversal attacks.
+     * Removes any path components and dangerous characters.
+     * 
+     * @param fileName the filename to sanitize
+     * @return sanitized filename safe for use
+     */
+    private String sanitizeFileName(String fileName) {
+        if (fileName == null) {
+            return "";
+        }
+        
+        // First, get just the filename component (removes any path)
+        Path path = Paths.get(fileName);
+        String baseName = path.getFileName() != null ? path.getFileName().toString() : "";
+        
+        // Remove any remaining path traversal sequences or special characters
+        // that could be used maliciously
+        baseName = baseName.replaceAll("\\.\\.", "")  // Remove ..
+                          .replaceAll("[\\\\/]", "")   // Remove any slashes
+                          .replaceAll("\\$", "")        // Remove $
+                          .replaceAll("~", "");         // Remove ~
+        
+        // Additional validation - ensure the filename is not empty after sanitization
+        if (baseName.trim().isEmpty()) {
+            _logger.warn("Filename became empty after sanitization: " + fileName);
+            return "invalid_filename";
+        }
+        
+        return baseName;
     }
 }

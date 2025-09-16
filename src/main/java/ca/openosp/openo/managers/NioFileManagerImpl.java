@@ -76,15 +76,56 @@ public class NioFileManagerImpl implements NioFileManager {
     public Path hasCacheVersion2(LoggedInInfo loggedInInfo, String filename, Integer pageNum) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.READ, "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
-        if (filename.contains(File.separator)) {
-            filename.replace(File.separator, "");
+        // Validate input parameters
+        if (filename == null || filename.trim().isEmpty()) {
+            log.error("Invalid filename provided: null or empty");
+            return null;
+        }
+        
+        if (pageNum == null || pageNum < 1) {
+            log.error("Invalid page number provided: " + pageNum);
+            return null;
+        }
+
+        // Sanitize the filename to prevent path traversal
+        String sanitizedFilename = sanitizeFileName(filename);
+        
+        // Additional validation after sanitization
+        if (sanitizedFilename.isEmpty() || "invalid_filename".equals(sanitizedFilename)) {
+            log.error("Filename failed sanitization: " + filename);
+            return null;
         }
 
         Path documentCacheDir = getDocumentCacheDirectory(loggedInInfo);
-        Path outfile = Paths.get(documentCacheDir.toString(), filename + "_" + pageNum + ".png");
+        Path normalizedCacheDir = documentCacheDir.normalize().toAbsolutePath();
+        
+        // Construct the cache filename securely
+        String cacheFileName = sanitizedFilename + "_" + pageNum + ".png";
+        
+        // Validate the cache filename doesn't contain any path separators
+        if (cacheFileName.contains("/") || cacheFileName.contains("\\") || cacheFileName.contains("..")) {
+            log.error("Invalid characters in cache filename: " + cacheFileName);
+            return null;
+        }
+        
+        // Safely construct the path using resolve() with the sanitized filename
+        Path outfile = normalizedCacheDir.resolve(cacheFileName);
+        outfile = outfile.normalize().toAbsolutePath();
+        
+        // Verify the file is within the cache directory (defense in depth)
+        if (!outfile.startsWith(normalizedCacheDir)) {
+            log.error("Path traversal attempt detected in hasCacheVersion2: " + filename);
+            return null;
+        }
+        
+        // Additional check: ensure the resolved path is not a directory
+        if (Files.exists(outfile) && Files.isDirectory(outfile)) {
+            log.error("Resolved path is a directory, not a file: " + outfile);
+            return null;
+        }
 
         if (!Files.exists(outfile)) {
             outfile = null;
@@ -95,7 +136,7 @@ public class NioFileManagerImpl implements NioFileManager {
     public Path getDocumentCacheDirectory(LoggedInInfo loggedInInfo) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.READ, "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
         Path cacheDir = Paths.get(BASE_DOCUMENT_DIR, context.getContextPath(), DOCUMENT_CACHE_DIRECTORY);
@@ -119,22 +160,66 @@ public class NioFileManagerImpl implements NioFileManager {
     public Path createCacheVersion2(LoggedInInfo loggedInInfo, String sourceDirectory, String filename, Integer pageNum) {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.WRITE, "")) {
-            throw new RuntimeException("Read Access Denied _edoc for providers " + loggedInInfo.getLoggedInProviderNo());
+            throw new RuntimeException("Read Access Denied _edoc for provider " + loggedInInfo.getLoggedInProviderNo());
         }
 
-        if (filename.contains(File.separator)) {
-            filename.replace(File.separator, "");
-        }
+        // Sanitize the filename to prevent path traversal
+        String sanitizedFilename = sanitizeFileName(filename);
 
-        Path cacheFilePath = hasCacheVersion2(loggedInInfo, filename, pageNum);
+        Path cacheFilePath = hasCacheVersion2(loggedInInfo, sanitizedFilename, pageNum);
 
         /*
          * create a new cache file if an existing cache file is not returned.
          */
         if (cacheFilePath == null) {
-            Path sourceFile = Paths.get(sourceDirectory, filename);
+            // Validate source directory input
+            if (sourceDirectory == null || sourceDirectory.trim().isEmpty()) {
+                log.error("Invalid source directory: null or empty");
+                return null;
+            }
+            
+            // Define the allowed base directory for documents
+            Path baseDocumentPath = Paths.get(BASE_DOCUMENT_DIR).normalize().toAbsolutePath();
+            
+            // Validate and normalize the source directory - ensure it's within the allowed base path
+            Path normalizedSourceDir;
+            try {
+                normalizedSourceDir = Paths.get(sourceDirectory).normalize().toAbsolutePath();
+                
+                // Ensure the source directory is within the allowed base document directory
+                if (!normalizedSourceDir.startsWith(baseDocumentPath)) {
+                    log.error("Source directory is outside allowed base path: " + sourceDirectory);
+                    return null;
+                }
+                
+                // Verify the source directory exists and is actually a directory
+                if (!Files.exists(normalizedSourceDir) || !Files.isDirectory(normalizedSourceDir)) {
+                    log.error("Source directory does not exist or is not a directory: " + sourceDirectory);
+                    return null;
+                }
+            } catch (Exception e) {
+                log.error("Invalid source directory path: " + sourceDirectory, e);
+                return null;
+            }
+            
+            Path sourceFile = normalizedSourceDir.resolve(sanitizedFilename).normalize().toAbsolutePath();
+            
+            // Ensure source file is within the source directory
+            if (!sourceFile.startsWith(normalizedSourceDir)) {
+                log.error("Path traversal attempt in source file: " + filename);
+                return null;
+            }
+            
             Path documentCacheDir = getDocumentCacheDirectory(loggedInInfo);
-            cacheFilePath = Paths.get(documentCacheDir.toString(), filename + "_" + pageNum + ".png");
+            Path normalizedCacheDir = documentCacheDir.normalize().toAbsolutePath();
+            cacheFilePath = normalizedCacheDir.resolve(sanitizedFilename + "_" + pageNum + ".png");
+            cacheFilePath = cacheFilePath.normalize().toAbsolutePath();
+            
+            // Verify the cache file path is within the cache directory
+            if (!cacheFilePath.startsWith(normalizedCacheDir)) {
+                log.error("Path traversal attempt in cache file creation: " + filename);
+                return null;
+            }
 
             PdfDecoder decode_pdf = new PdfDecoder(true);
             FontMappings.setFontReplacements();
@@ -168,16 +253,80 @@ public class NioFileManagerImpl implements NioFileManager {
      */
     public final boolean removeCacheVersion(LoggedInInfo loggedInInfo, final String fileName) {
 
-        Path documentCacheDir = getDocumentCacheDirectory(loggedInInfo);
-        Path cacheFilePath = Paths.get(fileName);
-        cacheFilePath = Paths.get(documentCacheDir.toString(), cacheFilePath.getFileName().toString());
+        // Validate input to prevent null pointer exceptions
+        if (fileName == null || fileName.trim().isEmpty()) {
+            log.error("Invalid fileName provided: null or empty");
+            return false;
+        }
 
+        // Sanitize the filename - remove any path traversal attempts
+        String sanitizedFileName = sanitizeFileName(fileName);
+        
+        Path documentCacheDir = getDocumentCacheDirectory(loggedInInfo);
+        
         try {
-            return Files.deleteIfExists(cacheFilePath);
+            // Get the normalized cache directory first
+            Path normalizedCacheDir = documentCacheDir.normalize().toAbsolutePath();
+            
+            // Construct the file path safely using only the filename part
+            // This prevents absolute paths or path traversal sequences from being used
+            Path cacheFilePath = normalizedCacheDir.resolve(sanitizedFileName);
+            
+            // Normalize the constructed path
+            Path normalizedPath = cacheFilePath.normalize().toAbsolutePath();
+            
+            // Double-check that the file is within the cache directory after normalization
+            if (!normalizedPath.startsWith(normalizedCacheDir)) {
+                log.error("Attempt to delete file outside of cache directory: " + fileName);
+                throw new SecurityException("Path traversal attempt detected");
+            }
+            
+            // Additional check - ensure we're not deleting directories
+            if (Files.isDirectory(normalizedPath)) {
+                log.error("Attempt to delete a directory instead of a file: " + fileName);
+                return false;
+            }
+            
+            return Files.deleteIfExists(normalizedPath);
+        } catch (SecurityException e) {
+            log.error("Security violation while attempting to delete cache file: " + fileName, e);
+            throw e; // Re-throw security exceptions
         } catch (IOException e) {
             log.error("Error while deleting temp cache image file " + fileName, e);
         }
         return false;
+    }
+    
+    /**
+     * Sanitize filename to prevent path traversal attacks.
+     * Removes any directory separators and path traversal sequences.
+     *
+     * @param fileName the filename to sanitize
+     * @return sanitized filename with only the base name
+     */
+    private String sanitizeFileName(String fileName) {
+        if (fileName == null) {
+            return "";
+        }
+        
+        // First, get just the filename component (removes any path)
+        Path path = Paths.get(fileName);
+        String baseName = path.getFileName() != null ? path.getFileName().toString() : "";
+        
+        // Remove any remaining path traversal sequences or special characters
+        // that could be used maliciously
+        baseName = baseName.replaceAll("\\.\\.", "")  // Remove ..
+                          .replaceAll("[\\\\/]", "")   // Remove any slashes
+                          .replaceAll("\\$", "")        // Remove $
+                          .replaceAll("~", "");         // Remove ~
+        
+        // Additional validation - ensure the filename is not empty after sanitization
+        if (baseName.trim().isEmpty()) {
+            log.warn("Filename became empty after sanitization: " + fileName);
+            return "invalid_filename";
+        }
+        
+        return baseName;
     }
 
     /**
@@ -211,9 +360,40 @@ public class NioFileManagerImpl implements NioFileManager {
      * @param fileName
      */
     public final boolean deleteTempFile(final String fileName) {
-        Path tempfile = Paths.get(fileName);
         try {
+            // Get the system temp directory as the base directory
+            Path systemTempDir = Paths.get(System.getProperty("java.io.tmpdir")).toRealPath().normalize();
+            
+            // Parse and normalize the provided file path
+            Path tempfile = Paths.get(fileName).normalize().toAbsolutePath();
+            
+            // Resolve to real path to handle symlinks
+            if (Files.exists(tempfile)) {
+                tempfile = tempfile.toRealPath();
+            }
+            
+            // Validate that the file is within the system temp directory
+            if (!tempfile.startsWith(systemTempDir)) {
+                log.error("Attempt to delete file outside of temp directory: " + fileName);
+                throw new SecurityException("Path traversal attempt detected");
+            }
+            
+            // Additional check: ensure the file is actually a temporary file created by this system
+            // Check if it's in one of our known temp subdirectories
+            String filePathStr = tempfile.toString();
+            boolean isValidTempFile = filePathStr.contains(TEMP_PDF_DIRECTORY) || 
+                                     filePathStr.contains(DEFAULT_GENERIC_TEMP) ||
+                                     tempfile.getParent().equals(systemTempDir);
+            
+            if (!isValidTempFile) {
+                log.error("Attempt to delete non-temporary file: " + fileName);
+                return false;
+            }
+            
             return Files.deleteIfExists(tempfile);
+        } catch (SecurityException e) {
+            log.error("Security violation while attempting to delete file: " + fileName, e);
+            throw e; // Re-throw security exceptions
         } catch (IOException e) {
             log.error("Error while deleting temp cache image file " + fileName, e);
         }
@@ -227,7 +407,18 @@ public class NioFileManagerImpl implements NioFileManager {
      * Filename string in File out
      */
     public File getOscarDocument(String fileName) {
-        Path oscarDocument = Paths.get(getDocumentDirectory(), fileName);
+        // Sanitize the filename to prevent path traversal
+        String sanitizedFileName = sanitizeFileName(fileName);
+        
+        Path documentDir = Paths.get(getDocumentDirectory()).normalize().toAbsolutePath();
+        Path oscarDocument = documentDir.resolve(sanitizedFileName).normalize().toAbsolutePath();
+        
+        // Ensure the file is within the document directory
+        if (!oscarDocument.startsWith(documentDir)) {
+            log.error("Path traversal attempt in getOscarDocument: " + fileName);
+            throw new SecurityException("Path traversal attempt detected");
+        }
+        
         return oscarDocument.toFile();
     }
 
@@ -244,18 +435,39 @@ public class NioFileManagerImpl implements NioFileManager {
      * This method deletes the temporary file after successful copy
      */
     public String copyFileToOscarDocuments(String tempFilePath) {
-        String destinationDir = getDocumentDirectory();
-        File tempFile = new File(tempFilePath);
-        Path destinationFilePath = Paths.get(destinationDir, tempFile.getName());
         try {
-            Files.copy(tempFile.toPath(), destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
-            if (Files.exists(destinationFilePath)) {
-                deleteTempFile(tempFile.toPath().toString());
+            // Normalize and validate the source file path
+            Path sourcePath = Paths.get(tempFilePath).normalize().toAbsolutePath();
+            
+            // Verify source file exists and is a regular file
+            if (!Files.exists(sourcePath) || !Files.isRegularFile(sourcePath)) {
+                log.error("Source file does not exist or is not a regular file: " + tempFilePath);
+                return null;
             }
+            
+            // Get just the filename and sanitize it
+            String fileName = sourcePath.getFileName().toString();
+            String sanitizedFileName = sanitizeFileName(fileName);
+            
+            // Get and validate destination directory
+            Path destinationDir = Paths.get(getDocumentDirectory()).normalize().toAbsolutePath();
+            Path destinationFilePath = destinationDir.resolve(sanitizedFileName).normalize().toAbsolutePath();
+            
+            // Ensure destination is within the document directory
+            if (!destinationFilePath.startsWith(destinationDir)) {
+                log.error("Path traversal attempt in copyFileToOscarDocuments: " + tempFilePath);
+                throw new SecurityException("Path traversal attempt detected");
+            }
+            
+            Files.copy(sourcePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
+            if (Files.exists(destinationFilePath)) {
+                deleteTempFile(sourcePath.toString());
+            }
+            return destinationFilePath.toString();
         } catch (IOException e) {
             log.error("An error occurred while moving the PDF file", e);
+            return null;
         }
-        return destinationFilePath.toString();
     }
 
     /**
@@ -266,7 +478,7 @@ public class NioFileManagerImpl implements NioFileManager {
      */
     private String getDocumentDirectory() {
         String document_dir = DOCUMENT_DIRECTORY;
-        if (!Files.isDirectory(Paths.get(document_dir))) {
+        if (document_dir == null || !Files.isDirectory(Paths.get(document_dir))) {
             document_dir = String.valueOf(Paths.get(BASE_DOCUMENT_DIR, "document"));
         }
         return document_dir;

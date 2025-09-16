@@ -25,35 +25,61 @@
 package ca.openosp.openo.decisionSupport.model;
 
 /**
+ * Represents a parameter definition used in decision support guidelines for dynamic class instantiation.
+ * <p>
+ * DSParameter defines named parameters that can be referenced within decision support guidelines
+ * to create instances of specific Java classes. This enables guidelines to dynamically work with
+ * different data types and objects during evaluation without hardcoding class dependencies.
+ * </p>
+ * <p>
+ * Parameters are typically defined in guideline XML with an identifier (alias) and a fully-qualified
+ * class name, allowing the rules engine to instantiate the appropriate objects during guideline evaluation.
+ * </p>
+ *
  * @author rjonasz
+ * @since 2006-12-16
+ * @see DSGuideline for guideline composition using parameters
+ * @see DSGuidelineFactory for parameter parsing from XML
  */
 public class DSParameter {
     private String strClass;
     private String strAlias;
 
     /**
-     * @return the strClass
+     * Gets the fully-qualified Java class name for this parameter.
+     * This class name is used by the rules engine to dynamically instantiate
+     * objects during guideline evaluation.
+     *
+     * @return String containing the complete class name (e.g., "java.util.ArrayList")
      */
     public String getStrClass() {
         return strClass;
     }
 
     /**
-     * @param strClass the strClass to set
+     * Sets the fully-qualified Java class name for this parameter.
+     *
+     * @param strClass String containing the complete Java class name for instantiation
      */
     public void setStrClass(String strClass) {
         this.strClass = strClass;
     }
 
     /**
-     * @return the strAlias
+     * Gets the alias identifier for this parameter.
+     * The alias serves as a symbolic name that can be referenced within
+     * guideline logic to refer to instances of the associated class.
+     *
+     * @return String identifier used to reference this parameter in guidelines
      */
     public String getStrAlias() {
         return strAlias;
     }
 
     /**
-     * @param strAlias the strAlias to set
+     * Sets the alias identifier for this parameter.
+     *
+     * @param strAlias String identifier for referencing this parameter in guideline logic
      */
     public void setStrAlias(String strAlias) {
         this.strAlias = strAlias;

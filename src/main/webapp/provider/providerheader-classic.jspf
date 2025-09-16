@@ -133,7 +133,7 @@ function popupPage2(varpage) {
 	}
 
 	function refreshTabAlerts(id) {
-	var url = "../providers/tabAlertsRefresh.jsp";
+	var url = "../provider/tabAlertsRefresh.jsp";
 	var pars = "id=" + id;
 
 	var myAjax = new Ajax.Updater(id, url, {method: 'get', parameters: pars});

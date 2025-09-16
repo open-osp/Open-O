@@ -202,7 +202,7 @@ public class EctIncomingEncounter2Action extends ActionSupport {
                 String[] issueIds = defaultIssueDao.findAllDefaultIssueIds();
                 for (String id : issueIds) {
                     Issue issue = issueDao.getIssue(Long.valueOf(id));
-                    // judge current providers can access this issue
+                    // judge current provider can access this issue
                     if (!issueIdSet.contains(Long.parseLong(id))) {
                         continue;
                     }

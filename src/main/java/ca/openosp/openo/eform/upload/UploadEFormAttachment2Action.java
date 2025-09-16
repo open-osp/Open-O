@@ -43,6 +43,7 @@ import ca.openosp.openo.utility.SpringUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
+import org.owasp.encoder.Encode;
 
 public class UploadEFormAttachment2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -86,7 +87,7 @@ public class UploadEFormAttachment2Action extends ActionSupport {
             ctlDocumentDao.persist(ctlDocument);
 
 
-            String successMsg = "<div id=\"status\">success</div> <div id=\"message\">Uploaded Successfully</div> <div id=\"fileName\">" + docFileName + "</div> <div id=\"docId\">" + document.getId() + "</div>";
+            String successMsg = "<div id=\"status\">success</div> <div id=\"message\">Uploaded Successfully</div> <div id=\"fileName\">" + Encode.forHtml(docFileName) + "</div> <div id=\"docId\">" + document.getId() + "</div>";
             response.getOutputStream().write(successMsg.getBytes());
             response.getOutputStream().flush();
             response.getOutputStream().close();

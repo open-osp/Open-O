@@ -165,7 +165,7 @@ public class BulkPatientDashboard2Action extends ActionSupport {
         String subject = "Bulk addition to disease registry report.";
         String message = "Added ICD9 code {" + icd9code +
                 "} to disease registry for patient demographic_no {" + patientIdsJson + "}" +
-                " with providers no {" + providerNo + "}";
+                " with provider no {" + providerNo + "}";
 
         messageHandler.notifyProvider(subject, message, providerNo, null); //patientIdList);
         String mrp = getMRP(loggedInInfo);

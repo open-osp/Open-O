@@ -34,11 +34,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -72,6 +74,7 @@ import ca.openosp.openo.encounter.data.EctFormData;
  */
 @Path("/forms")
 @Component("formsService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class FormsService extends AbstractServiceImpl {
     Logger logger = MiscUtils.getLogger();
 

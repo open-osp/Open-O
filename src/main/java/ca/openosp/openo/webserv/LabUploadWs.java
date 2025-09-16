@@ -50,7 +50,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 
-@WebService
+@WebService(targetNamespace = "http://ws.oscarehr.org/")
 @Component
 @GZIP(threshold = AbstractWs.GZIP_THRESHOLD)
 public class LabUploadWs extends AbstractWs {
@@ -211,7 +211,7 @@ public class LabUploadWs extends AbstractWs {
     public String uploadPDF(@WebParam(name = "file_name") String fileName,
                             @WebParam(name = "contents") byte[] contents,
                             @WebParam(name = "oscar_provider_no") String oscarProviderNo) {
-        logger.error("uploadPDF called file name " + fileName + " providers " + oscarProviderNo + " contnets " + contents);
+        logger.error("uploadPDF called file name " + fileName + " provider " + oscarProviderNo + " contnets " + contents);
         String returnMessageHandler = "{\"success\":0,\"message\":\"\"}";
 
         try (ByteArrayInputStream is = new ByteArrayInputStream(contents)) {
@@ -257,7 +257,18 @@ public class LabUploadWs extends AbstractWs {
         String ipAddr = request.getRemoteAddr();
 
 
-        File labFolder = new File(labFolderPath);
+        // Validate filename before any processing
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid filename: filename cannot be null or empty");
+        }
+        
+        // Check for path traversal sequences early
+        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+            throw new IllegalArgumentException("Invalid filename: contains path traversal characters");
+        }
+        
+        // Canonicalize the lab folder path to establish safe base directory
+        File labFolder = new File(labFolderPath).getCanonicalFile();
 
         if (!labFolder.exists()) {
             if (!labFolder.mkdir()) {
@@ -265,19 +276,37 @@ public class LabUploadWs extends AbstractWs {
             }
         }
 
-        // Use same naming convention as manually uploaded labs, but place in the labs folder
-        fileName = "LabUpload." + fileName.replaceAll(".enc", "") + "." + (new Date()).getTime();
-        String labFilePath = labFolderPath + "/" + fileName;
+        // Sanitize the filename - remove any remaining dangerous characters
+        String sanitizedFileName = fileName.replaceAll("[^a-zA-Z0-9._-]", "_");  // Allow only safe characters
+        
+        // Ensure the filename is not empty after sanitization
+        if (sanitizedFileName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid filename: filename contains only invalid characters");
+        }
+
+        // Use same naming convention as manually uploaded labs
+        sanitizedFileName = "LabUpload." + sanitizedFileName.replaceAll("\\.enc$", "") + "." + (new Date()).getTime();
+        
+        // Create the file using canonical paths for security
+        File labFile = new File(labFolder, sanitizedFileName).getCanonicalFile();
+        
+        // Verify the canonical path is within the lab folder (defense in depth)
+        // Use File.separator to ensure proper path comparison
+        if (!labFile.getPath().startsWith(labFolder.getPath() + File.separator) && 
+            !labFile.getPath().equals(labFolder.getPath())) {
+            throw new SecurityException("Invalid file path: attempted directory traversal");
+        }
 
         // Save a copy of the lab locally. This is done to mimic the manual lab
         // upload process.
-        FileUtils.writeStringToFile(new File(labFilePath), labContent);
+        FileUtils.writeStringToFile(labFile, labContent);
 
         // Upload lab info and hash to DB to check for duplicates
-        FileInputStream is = new FileInputStream(labFilePath);
-        int checkFileUploadedSuccessfully = FileUploadCheck.addFile(fileName, is, oscarProviderNo);
+        FileInputStream is = new FileInputStream(labFile);
+        int checkFileUploadedSuccessfully = FileUploadCheck.addFile(sanitizedFileName, is, oscarProviderNo);
         is.close();
         if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
+            String labFilePath = labFile.getPath();  // Use the canonical file path
             logger.info("filePath" + labFilePath);
             logger.info("Type :" + labType.name());
             MessageHandler msgHandler = HandlerClassFactory.getHandler(labType.name());
@@ -291,11 +320,11 @@ public class LabUploadWs extends AbstractWs {
                     checkFileUploadedSuccessfully,
                     ipAddr
             )) == null) {
-                throw new ParseException("Failed to parse lab: " + fileName + " of type: " + labType.name(), 0);
+                throw new ParseException("Failed to parse lab: " + sanitizedFileName + " of type: " + labType.name(), 0);
             }
 
         } else {
-            throw new SQLException("Failed insert lab into DB (Likely duplicate lab): " + fileName + " of type: " + labType.name());
+            throw new SQLException("Failed insert lab into DB (Likely duplicate lab): " + sanitizedFileName + " of type: " + labType.name());
         }
 
         // This will always contain one line, so let's just remove the newline characters

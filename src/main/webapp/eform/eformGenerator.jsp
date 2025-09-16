@@ -383,8 +383,15 @@ and other liscences (MIT, LGPL etc) as indicated
                 }
                 //adds InputName as list item in InputList
                 var ListItem = document.createElement("li");
-                var txt = "<input name='InputChecklist' type='checkbox' id='" + InputName + "' value ='" + InputName + "'>" + InputName;
-                ListItem.innerHTML = txt;
+                // Fix XSS vulnerability: Create checkbox element properly instead of using innerHTML
+                var checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.name = "InputChecklist";
+                checkbox.id = InputName;
+                checkbox.value = InputName;
+                ListItem.appendChild(checkbox);
+                // Add the label text safely using createTextNode
+                ListItem.appendChild(document.createTextNode(InputName));
                 InputList.appendChild(ListItem);
             }
             //if (document.getElementById('AddSignatureClassic').checked){
@@ -402,7 +409,8 @@ and other liscences (MIT, LGPL etc) as indicated
             var ListItem = document.createElement("li");
             ListItem.setAttribute('name', 'UserSignatureListItem');
             var UserSignature = UserName + '|' + FileName;
-            ListItem.innerHTML = UserSignature;
+            // Fix XSS vulnerability: Use textContent instead of innerHTML to prevent HTML injection
+            ListItem.textContent = UserSignature;
             UserSignatureList.appendChild(ListItem);
         }
 
@@ -1163,7 +1171,8 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "//autoloading signature images\n"
                 textTop += "ImgArray.push(\n\t&quot;anonymous|BNK.png&quot;"
                 for (i = 0; i < List.length; i++) {
-                    textTop += ",\n\t&quot;" + List[i].innerHTML.trim() + "&quot;"
+                    // Use textContent instead of innerHTML to prevent potential XSS
+                    textTop += ",\n\t&quot;" + List[i].textContent.trim() + "&quot;"
                 }
                 textTop += "\n\t);\n\n"
                 textTop += "function SignForm(){\n"

@@ -82,6 +82,7 @@ import java.util.List;
 @Path("/rx")
 @Component("rxWebService")
 @Produces("application/xml")
+@Consumes(MediaType.APPLICATION_JSON)
 public class RxWebService extends AbstractServiceImpl {
 
     private static Logger logger = MiscUtils.getLogger();

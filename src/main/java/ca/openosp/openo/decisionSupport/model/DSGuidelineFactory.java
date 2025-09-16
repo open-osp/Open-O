@@ -24,11 +24,6 @@
  */
 
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ca.openosp.openo.decisionSupport.model;
 
 import java.io.IOException;
@@ -49,11 +44,69 @@ import ca.openosp.openo.decisionSupport.model.impl.drools.DSGuidelineDrools;
 import ca.openosp.openo.utility.MiscUtils;
 
 /**
+ * Factory class for creating and parsing clinical decision support guidelines from XML configuration.
+ * <p>
+ * DSGuidelineFactory provides the primary mechanism for converting XML-based guideline definitions
+ * into executable DSGuideline objects. It parses complex XML structures containing clinical conditions,
+ * consequences, and parameters to create fully-configured guideline instances.
+ * </p>
+ * <p>
+ * The factory supports parsing of:
+ * </p>
+ * <ul>
+ * <li>Guideline metadata (title, author, version, dates)</li>
+ * <li>Parameter definitions with class mappings</li>
+ * <li>Clinical conditions with various operators and value types</li>
+ * <li>Consequences including warnings and executable actions</li>
+ * <li>Complex condition expressions with multiple values and operators</li>
+ * </ul>
+ * <p>
+ * Example XML structure:
+ * <pre>
+ * &lt;guideline title="Diabetes Management"&gt;
+ *   &lt;conditions&gt;
+ *     &lt;condition type="dxcodes" any="icd9:250,icd10:E11"/&gt;
+ *     &lt;condition type="age" any="&gt;=18 y"/&gt;
+ *   &lt;/conditions&gt;
+ *   &lt;consequence&gt;
+ *     &lt;warning&gt;Consider HbA1c monitoring&lt;/warning&gt;
+ *   &lt;/consequence&gt;
+ * &lt;/guideline&gt;
+ * </pre>
+ *
  * @author apavel
+ * @since 2009-07-06
+ * @see DSGuideline for guideline structure and evaluation
+ * @see DSCondition for condition parsing and evaluation
+ * @see DSConsequence for consequence creation
+ * @see DSGuidelineDrools for Drools-based implementation
  */
 public class DSGuidelineFactory {
     private static Logger _log = MiscUtils.getLogger();
 
+    /**
+     * Creates a complete DSGuideline object from XML configuration string.
+     * <p>
+     * Parses a complete XML guideline definition and creates a fully-configured
+     * DSGuideline instance with all conditions, consequences, and parameters.
+     * The XML must conform to the expected guideline schema structure.
+     * </p>
+     * <p>
+     * The parsing process includes:
+     * </p>
+     * <ul>
+     * <li>Extracting guideline metadata (title, author, version)</li>
+     * <li>Parsing parameter definitions for dynamic class instantiation</li>
+     * <li>Creating condition objects with operators and value lists</li>
+     * <li>Building consequence objects for warnings and actions</li>
+     * <li>Validating all XML elements and attributes</li>
+     * </ul>
+     *
+     * @param xml String containing the complete XML guideline definition
+     * @return DSGuideline fully-configured guideline object ready for evaluation
+     * @throws DecisionSupportParseException if XML is invalid, malformed, or contains unrecognized elements
+     * @see DSGuideline for the resulting guideline object structure
+     */
     public DSGuideline createGuidelineFromXml(String xml) throws DecisionSupportParseException {
         if (xml == null || xml.equals("")) throw new DecisionSupportParseException("Xml not set");
         SAXBuilder parser = new SAXBuilder();
@@ -196,15 +249,22 @@ public class DSGuidelineFactory {
         dsGuideline.setConsequences(dsConsequences);
         dsGuideline.setXml(xml);
         dsGuideline.setParsed(true);
-        //populate consequence here
         return dsGuideline;
     }
 
+    /**
+     * Creates a blank DSGuideline instance with default configuration.
+     * <p>
+     * Returns a new DSGuidelineDrools instance that can be manually configured
+     * or used as a template for guideline creation. This method is primarily used
+     * internally by the factory for creating guideline instances during XML parsing.
+     * </p>
+     *
+     * @return DSGuideline blank guideline instance ready for configuration
+     * @see DSGuidelineDrools for the default implementation
+     */
     public DSGuideline createBlankGuideline() {
         DSGuidelineDrools newGuideline = new DSGuidelineDrools();
-        //newGuideline.setEngine("drools");
         return newGuideline;
     }
-
-    //i.e. valueString = icd9:4439,icd9:4438,icd10:E11,icd10:E12
 }

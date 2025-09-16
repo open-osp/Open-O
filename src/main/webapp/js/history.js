@@ -855,7 +855,7 @@
                         iframe["lfirst"] = 1;
                         pushState(iframe["storage"], title, currentHref, 0, 1);
                     }
-                    content[2] = 'parent.location.hash="' + urlObject._special.replace(/"/g, '\\"') + '";';
+                    content[2] = 'parent.location.hash="' + urlObject._special.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '";';
                     i.open();
                     i.write(content.join(""));
                     i.close();

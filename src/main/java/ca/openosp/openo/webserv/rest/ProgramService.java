@@ -30,10 +30,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.tools.ant.util.DateUtils;
@@ -48,6 +50,7 @@ import ca.openosp.openo.webserv.rest.to.model.ProgramTo1;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/program")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ProgramService extends AbstractServiceImpl {
 
 

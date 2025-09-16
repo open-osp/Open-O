@@ -152,7 +152,7 @@ public class EctDisplayContacts2Action extends EctDisplayAction {
                 if ("true".equalsIgnoreCase(healthCareTeamEnabled)) {
 
                     if (contact.getType() == DemographicContact.TYPE_PROVIDER) {
-                        url = "alert('Edit internal providers from the providers menu');return false;";
+                        url = "alert('Edit internal provider from the provider menu');return false;";
                     } else {
                         url = "popupPage(650,500,'" + hash + "','" +
                                 request.getContextPath() +

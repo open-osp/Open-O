@@ -46,7 +46,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
@@ -62,7 +61,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.ProfessionalSpecialist;
 import ca.openosp.openo.commn.model.Provider;
-import ca.openosp.openo.utility.CxfClientUtilsOld;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -117,7 +115,7 @@ public final class SendingUtils {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(multipartEntity);
 
-        HttpClient httpClient = getTrustAllHttpClient();
+        HttpClient httpClient = getSecureHttpClient();
         httpClient.getParams().setParameter("http.connection.timeout", CONNECTION_TIME_OUT);
         HttpResponse httpResponse = httpClient.execute(httpPost);
         int statusCode = httpResponse.getStatusLine().getStatusCode();
@@ -125,29 +123,37 @@ public final class SendingUtils {
         return (statusCode);
     }
 
-    private static HttpClient getTrustAllHttpClient() {
+    /**
+     * Creates an HttpClient with proper certificate validation.
+     * Previous implementation was vulnerable to man-in-the-middle attacks (CWE-295).
+     * For environments requiring self-signed certificates, configure proper trust stores instead.
+     */
+    private static HttpClient getSecureHttpClient() {
         try {
+            // Use default SSL context with proper certificate validation
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            TrustManager[] temp = new TrustManager[1];
-            temp[0] = new CxfClientUtilsOld.TrustAllManager();
-            sslContext.init(null, temp, null);
+            // Initialize with null key managers and trust managers to use default certificate validation
+            sslContext.init(null, null, new java.security.SecureRandom());
 
-            SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext);
-            sslSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            // Create SSL socket factory with proper hostname verification
+            SSLSocketFactory sslSocketFactory = new SSLSocketFactory(sslContext, 
+                SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
 
             HttpClient httpClient = new DefaultHttpClient();
             ClientConnectionManager connectionManager = httpClient.getConnectionManager();
             SchemeRegistry schemeRegistry = connectionManager.getSchemeRegistry();
             schemeRegistry.register(new Scheme("https", sslSocketFactory, 443));
+            
+            logger.info("Using secure SSL configuration with proper certificate validation for HL7 sending");
             return (new DefaultHttpClient(connectionManager, httpClient.getParams()));
         } catch (Exception e) {
-            logger.error("Unexpected error", e);
+            logger.error("Unexpected error creating secure HTTP client", e);
             return (null);
         }
     }
 
     private static byte[] encryptEncryptionKey(SecretKey senderSecretKey, PublicKey receiverOscarKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        Cipher cipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, receiverOscarKey);
         return (cipher.doFinal(senderSecretKey.getEncoded()));
     }

@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.itextpdf.text.*;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.printing.FontSettings;
 import ca.openosp.openo.commn.printing.PdfWriterFactory;
@@ -303,6 +304,25 @@ public class EFormPDFServlet extends HttpServlet {
 
     protected Properties getCfgProp(String cfgFilename) {
         Properties ret = new Properties();
+        
+        // Additional validation at file access point
+        if (cfgFilename == null || cfgFilename.isEmpty()) {
+            log.warn("Invalid config filename: null or empty");
+            return ret;
+        }
+        
+        // Final safety check - ensure no path traversal characters remain
+        if (cfgFilename.contains("..") || cfgFilename.contains("/") || cfgFilename.contains("\\")) {
+            log.warn("Potential path traversal attempt blocked: " + cfgFilename);
+            return ret;
+        }
+        
+        // Validate filename format - should only be alphanumeric with dots, dashes, underscores
+        if (!cfgFilename.matches("^[a-zA-Z0-9._-]+$")) {
+            log.warn("Invalid filename format: " + cfgFilename);
+            return ret;
+        }
+        
         String propFilename = OscarProperties.getInstance().getEformImageDirectory() + "/" + cfgFilename;
         InputStream is = null;
 
@@ -389,8 +409,29 @@ public class EFormPDFServlet extends HttpServlet {
             } else {
                 graphicCfg[idx] = new Properties[cfgGraphicFileNo];
                 for (int idx2 = 0; idx2 < cfgGraphicFileNo; ++idx2) {
-                    cfgGraphicFile[idx2] += ".txt";
-                    graphicCfg[idx][idx2] = getCfgProp(cfgGraphicFile[idx2]);
+                    // Sanitize user input to prevent path traversal
+                    String userInput = cfgGraphicFile[idx2];
+                    String safeFilename = null;
+                    
+                    if (userInput != null && !userInput.isEmpty()) {
+                        // Extract just the filename, removing any path components
+                        String cleanName = FilenameUtils.getName(userInput);
+                        
+                        if (cleanName != null && !cleanName.isEmpty()) {
+                            // Additional sanitization - remove dangerous patterns
+                            cleanName = cleanName.replaceAll("\\.\\.", "")
+                                                .replaceAll("[/\\\\]", "")
+                                                .replaceAll("[^a-zA-Z0-9._-]", "");
+                            
+                            // Only proceed if we have a valid name after cleaning
+                            if (!cleanName.isEmpty()) {
+                                safeFilename = cleanName + ".txt";
+                            }
+                        }
+                    }
+                    
+                    // Use sanitized filename or empty string
+                    graphicCfg[idx][idx2] = getCfgProp(safeFilename != null ? safeFilename : "");
                 }
             }
         }

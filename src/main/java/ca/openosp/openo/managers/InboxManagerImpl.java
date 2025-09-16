@@ -178,7 +178,7 @@ public class InboxManagerImpl implements InboxManager {
                     else if (queueIdInt == Queue.DEFAULT_QUEUE_ID && documentResultsDao.isSentToValidProvider(docid) && documentResultsDao.isSentToProvider(docid, searchProviderNo) && isSegmentIDUnique(validlabdocs, data)) {
                         validlabdocs.add(data);
                     }
-                    // if doc setn to non-default queue and valid providers, check if providers is in the queue or equal to the providers
+                    // if doc setn to non-default queue and valid providers, check if provider is in the queue or equal to the providers
                     else if (queueIdInt != Queue.DEFAULT_QUEUE_ID && documentResultsDao.isSentToValidProvider(docid)) {
                         Vector<Object> vec = OscarRoleObjectPrivilege.getPrivilegeProp("_queue." + queueid);
                         if (OscarRoleObjectPrivilege.checkPrivilege(roleName, (Properties) vec.get(0), (Vector) vec.get(1)) || documentResultsDao.isSentToProvider(docid, searchProviderNo)) {
@@ -188,7 +188,7 @@ public class InboxManagerImpl implements InboxManager {
                             }
                         }
                     }
-                    // if doc sent to non default queue and no valid providers, check if providers is in the non default queue
+                    // if doc sent to non default queue and no valid providers, check if provider is in the non default queue
                     else if (!queueid.equals(Queue.DEFAULT_QUEUE_ID) && !documentResultsDao.isSentToValidProvider(docid)) {
                         Vector<Object> vec = OscarRoleObjectPrivilege.getPrivilegeProp("_queue." + queueid);
                         if (OscarRoleObjectPrivilege.checkPrivilege(roleName, (Properties) vec.get(0), (Vector) vec.get(1))) {

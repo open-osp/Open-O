@@ -39,6 +39,7 @@ import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -92,6 +93,9 @@ public class PATHL7Handler implements MessageHandler {
 
         } catch (IllegalArgumentException e) {
             logger.error("Invalid file name: " + fileName, e);
+            return null;
+        } catch (ParserConfigurationException e) {
+            logger.error("Failed to configure XML parser", e);
             return null;
         } catch (Exception e) {
             logger.error("Could not parse PATHL7 message", e);

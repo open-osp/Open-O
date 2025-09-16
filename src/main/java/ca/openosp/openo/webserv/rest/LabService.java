@@ -37,6 +37,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -65,6 +66,7 @@ import ca.openosp.openo.lab.ca.all.util.Utilities;
 
 @Path("/labs")
 @Component("labService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class LabService extends AbstractServiceImpl {
 	private static Logger logger = MiscUtils.getLogger();
 
@@ -98,7 +100,7 @@ public class LabService extends AbstractServiceImpl {
 
 		String type = labT.getType();
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, "")) {
-			logger.error("Write Access Denied _lab for providers {}", loggedInInfo.getLoggedInProviderNo());
+			logger.error("Write Access Denied _lab for provider {}", loggedInInfo.getLoggedInProviderNo());
 			return Response.status(Response.Status.FORBIDDEN).entity(createResponseMap(labT.getFileName(), "Failed", "Access Denied", null, type)).build();
 		}
 

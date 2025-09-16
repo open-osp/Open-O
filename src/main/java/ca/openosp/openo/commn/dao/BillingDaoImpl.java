@@ -257,78 +257,88 @@ public class BillingDaoImpl extends AbstractDaoImpl<Billing> implements BillingD
     @Override
     @NativeSql({"billing", "providers", "billingmaster"})
     public List<Object[]> findByManyThings(String statusType, String providerNo, String startDate, String endDate, String demoNo, boolean excludeWCB, boolean excludeMSP, boolean excludePrivate, boolean exludeICBC) {
-        String providerQuery = "";
-        String startDateQuery = "";
-        String endDateQuery = "";
-        String demoQuery = "";
-        String billingType = "";
-        String altJoin = "";
+        StringBuilder queryBuilder = new StringBuilder();
+        Map<String, Object> params = new HashMap<>();
+        int paramCounter = 1;
 
-        //  Map s00Map = getS00Map();
+        // Base query
+        queryBuilder.append(" select b.billing_no, b.demographic_no, b.demographic_name, b.update_date, b.billingtype,");
+        queryBuilder.append(" b.status, b.apptProvider_no, b.appointment_no, b.billing_date, b.billing_time, bm.billingstatus, ");
+        queryBuilder.append(" bm.bill_amount, bm.billing_code, bm.dx_code1, bm.dx_code2, bm.dx_code3,");
+        queryBuilder.append(" b.provider_no, b.visitdate, b.visittype, bm.billingmaster_no, p.first_name, p.last_name,COALESCE(bm.billing_unit,'')");
+        queryBuilder.append(" from billing b left join provider p on p.provider_no = b.provider_no");
+        queryBuilder.append(", billingmaster bm where b.billing_no= bm.billing_no");
+
+        // Status type clause
+        if ("?".equals(statusType)) {
+            queryBuilder.append(" and bm.billingstatus in (?").append(paramCounter).append(", ?").append(paramCounter + 1).append(", ?").append(paramCounter + 2).append(")");
+            params.put(String.valueOf(paramCounter++), MSPReconcile.PAIDWITHEXP);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.REJECTED);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.HELD);
+        } else if ("$".equals(statusType)) {
+            queryBuilder.append(" and bm.billingstatus in (?").append(paramCounter).append(", ?").append(paramCounter + 1).append(", ?").append(paramCounter + 2).append(")");
+            params.put(String.valueOf(paramCounter++), MSPReconcile.PAIDWITHEXP);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.PAIDPRIVATE);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.SETTLED);
+        } else if (statusType != null) {
+            queryBuilder.append(" and bm.billingstatus like ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), statusType);
+        }
+
+        // Provider clause
         if (providerNo != null && !providerNo.trim().equalsIgnoreCase("all")) {
-            providerQuery = " and b.provider_no = '" + providerNo + "'";
+            queryBuilder.append(" and b.provider_no = ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), providerNo);
         }
 
+        // Start date clause
         if (startDate != null && !startDate.trim().equalsIgnoreCase("")) {
-            startDateQuery = " and ( to_days(service_date) >= to_days('" + startDate +
-                    "')) ";
+            queryBuilder.append(" and ( to_days(service_date) >= to_days(?").append(paramCounter).append("))");
+            params.put(String.valueOf(paramCounter++), startDate);
         }
 
+        // End date clause
         if (endDate != null && !endDate.trim().equalsIgnoreCase("")) {
-            endDateQuery = " and ( to_days(service_date) <= to_days('" + endDate +
-                    "')) ";
-        }
-        if (demoNo != null && !demoNo.trim().equalsIgnoreCase("")) {
-            demoQuery = " and b.demographic_no = '" + demoNo + "' ";
+            queryBuilder.append(" and ( to_days(service_date) <= to_days(?").append(paramCounter).append("))");
+            params.put(String.valueOf(paramCounter++), endDate);
         }
 
+        // Demographic clause
+        if (demoNo != null && !demoNo.trim().equalsIgnoreCase("")) {
+            queryBuilder.append(" and b.demographic_no = ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), demoNo);
+        }
+
+        // Billing type exclusions
         if (excludeWCB) {
-            billingType += " and b.billingType != '" + MSPReconcile.BILLTYPE_WCB + "'";
+            queryBuilder.append(" and b.billingType != ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.BILLTYPE_WCB);
         }
 
         if (excludeMSP) {
-            billingType += " and b.billingType != '" + MSPReconcile.BILLTYPE_MSP + "'";
+            queryBuilder.append(" and b.billingType != ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.BILLTYPE_MSP);
         }
 
         if (excludePrivate) {
-            billingType += " and b.billingType != '" + MSPReconcile.BILLTYPE_PRI + "'";
+            queryBuilder.append(" and b.billingType != ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.BILLTYPE_PRI);
         }
 
         if (exludeICBC) {
-            billingType += " and b.billingType != '" + MSPReconcile.BILLTYPE_ICBC + "'";
+            queryBuilder.append(" and b.billingType != ?").append(paramCounter);
+            params.put(String.valueOf(paramCounter++), MSPReconcile.BILLTYPE_ICBC);
         }
 
-        String statusTypeClause = " and bm.billingstatus";
-        if ("?".equals(statusType) || "$".equals(statusType)) {
-            if ("?".equals(statusType)) {
-                statusTypeClause += " in ('" + MSPReconcile.PAIDWITHEXP + "','" + MSPReconcile.REJECTED +
-                        "','" + MSPReconcile.HELD + "')";
-            } else if ("$".equals(statusType)) {
-                statusTypeClause += " in ('" + MSPReconcile.PAIDWITHEXP + "','" +
-                        MSPReconcile.PAIDPRIVATE +
-                        "','" + MSPReconcile.SETTLED + "')";
-            }
-        } else {
-            statusTypeClause += " like '" + statusType + "'";
+        queryBuilder.append(" order by b.billing_date desc");
+
+        Query query = entityManager.createNativeQuery(queryBuilder.toString());
+        
+        // Set all parameters
+        for (Map.Entry<String, Object> param : params.entrySet()) {
+            query.setParameter(Integer.parseInt(param.getKey()), param.getValue());
         }
-        //
-        String p = " select b.billing_no, b.demographic_no, b.demographic_name, b.update_date, b.billingtype,"
-                + " b.status, b.apptProvider_no,b.appointment_no, b.billing_date,b.billing_time, bm.billingstatus, "
-                +
-                " bm.bill_amount, bm.billing_code, bm.dx_code1, bm.dx_code2, bm.dx_code3,"
-                +
-                " b.provider_no, b.visitdate, b.visittype,bm.billingmaster_no,p.first_name,p.last_name,COALESCE(bm.billing_unit,'') from billing b left join provider p on p.provider_no = b.provider_no "
-                + (altJoin.equals("") ? ", billingmaster bm where b.billing_no= bm.billing_no " : altJoin)
-
-                + statusTypeClause
-                + providerQuery
-                + startDateQuery
-                + endDateQuery
-                + demoQuery
-                + billingType
-                + " order by b.billing_date desc";
-
-        Query query = entityManager.createNativeQuery(p);
+        
         return query.getResultList();
     }
 

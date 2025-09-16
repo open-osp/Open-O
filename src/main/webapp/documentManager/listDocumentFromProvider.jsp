@@ -354,7 +354,7 @@
                                                                     </script-->
                                         <script type="text/javascript">
                                             YAHOO.example.BasicRemote = function () {
-                                                var url = "../providers/SearchProvider.do";
+                                                var url = "../provider/SearchProvider.do";
                                                 var oDS = new YAHOO.util.XHRDataSource(url, {
                                                     connMethodPost: true,
                                                     connXhrMode: 'ignoreStaleResponses'

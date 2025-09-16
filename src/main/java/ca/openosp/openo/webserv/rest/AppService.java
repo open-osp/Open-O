@@ -36,9 +36,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.managers.AppManager;
@@ -48,6 +50,7 @@ import ca.openosp.openo.webserv.rest.to.model.AppDefinitionTo1;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/app")
+@Consumes(MediaType.APPLICATION_JSON)
 public class AppService extends AbstractServiceImpl {
     protected Logger logger = MiscUtils.getLogger();
 

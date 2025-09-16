@@ -441,17 +441,26 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
     @Override
     public Collection<CaseManagementNote> findNotesByDemographicAndIssueCode(Integer demographic_no,
                                                                              String[] issueCodes) {
-        String issueCodeList = null;
-        if (issueCodes != null && issueCodes.length > 0)
-            issueCodeList = SqlUtils.constructInClauseForStatements(issueCodes, true);
-
-        String sqlCommand = "select distinct casemgmt_note.note_id from issue,casemgmt_issue,casemgmt_issue_notes,casemgmt_note where casemgmt_issue.issue_id=issue.issue_id and casemgmt_issue.demographic_no='"
-                + demographic_no + "' " + (issueCodeList != null ? "and issue.code in " + issueCodeList : "")
-                + " and casemgmt_issue_notes.id=casemgmt_issue.id and casemgmt_issue_notes.note_id=casemgmt_note.note_id";
         Session session = currentSession();
         List<CaseManagementNote> notes = new ArrayList<CaseManagementNote>();
         try {
-            SQLQuery query = session.createSQLQuery(sqlCommand);
+            StringBuilder sqlCommand = new StringBuilder(
+                "select distinct casemgmt_note.note_id from issue,casemgmt_issue,casemgmt_issue_notes,casemgmt_note " +
+                "where casemgmt_issue.issue_id=issue.issue_id and casemgmt_issue.demographic_no=:demographicNo ");
+            
+            if (issueCodes != null && issueCodes.length > 0) {
+                sqlCommand.append("and issue.code in (:issueCodes) ");
+            }
+            
+            sqlCommand.append("and casemgmt_issue_notes.id=casemgmt_issue.id and casemgmt_issue_notes.note_id=casemgmt_note.note_id");
+            
+            SQLQuery query = session.createSQLQuery(sqlCommand.toString());
+            query.setParameter("demographicNo", demographic_no);
+            
+            if (issueCodes != null && issueCodes.length > 0) {
+                query.setParameterList("issueCodes", issueCodes);
+            }
+            
             @SuppressWarnings("unchecked")
             List<Integer> ids = query.list();
             for (Integer id : ids)
@@ -603,8 +612,11 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
         Session session = currentSession();
         try {
             SQLQuery query = session.createSQLQuery(
-                    "select casemgmt_issue.id from casemgmt_issue_notes,casemgmt_issue,issue   where issue.issue_id=casemgmt_issue.issue_id and casemgmt_issue.id=casemgmt_issue_notes.id and demographic_no="
-                            + demographicId + " and issue.code='" + issueCode + "'");
+                    "select casemgmt_issue.id from casemgmt_issue_notes,casemgmt_issue,issue " +
+                    "where issue.issue_id=casemgmt_issue.issue_id and casemgmt_issue.id=casemgmt_issue_notes.id " +
+                    "and demographic_no=:demographicId and issue.code=:issueCode");
+            query.setParameter("demographicId", demographicId);
+            query.setParameter("issueCode", issueCode);
             List results = query.list();
             // log.info("haveIssue - DAO - # of results = " + results.size());
             if (results.size() > 0)
@@ -627,15 +639,17 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
         try {
             c = DbConnectionFilter.getThreadLocalDbConnection();
             String sqlCommand = "select count(distinct uuid) from casemgmt_note where provider_no = ?1 and observation_date >= ?2 and observation_date <= ?3";
-            PreparedStatement ps = c.prepareStatement(sqlCommand);
-            ps.setString(1, providerNo);
-            ps.setTimestamp(2, new Timestamp(startDate.getTime()));
-            ps.setTimestamp(3, new Timestamp(endDate.getTime()));
+            try (PreparedStatement ps = c.prepareStatement(sqlCommand)) {
+                ps.setString(1, providerNo);
+                ps.setTimestamp(2, new Timestamp(startDate.getTime()));
+                ps.setTimestamp(3, new Timestamp(endDate.getTime()));
 
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-
-            ret = rs.getInt(1);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        ret = rs.getInt(1);
+                    }
+                }
+            }
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
         }
@@ -650,33 +664,43 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
         Connection c = null;
         try {
             c = DbConnectionFilter.getThreadLocalDbConnection();
-            String sql = "select issue_id from issue where code = '" + issueCode + "' ";
-            log.debug(sql);
-            PreparedStatement ps = c.prepareStatement(sql);
-            // ps.setString(1, issueCode);
-            ResultSet rs = ps.executeQuery(sql);
-            String id = null;
-            if (rs.next()) {
-                id = rs.getString("issue_id");
-            } else {
-                log.debug("Could not find issueCode " + issueCode);
-                return 0;
+
+            // Step 1: Get issue_id from issue code
+            String getIssueIdSql = "SELECT issue_id FROM issue WHERE code = ?";
+            log.debug(getIssueIdSql);
+
+            String issueId = null;
+            try (PreparedStatement ps1 = c.prepareStatement(getIssueIdSql)) {
+                ps1.setString(1, issueCode);
+            
+                try (ResultSet rs1 = ps1.executeQuery()) {
+                    if (rs1.next()) {
+                        issueId = rs1.getString("issue_id");
+                    } else {
+                        log.debug("Could not find issueCode: " + issueCode);
+                        return 0;
+                    }
+                }
             }
 
-            log.debug("issue Code " + issueCode + " id :" + id);
+            log.debug("issue Code " + issueCode + " id :" + issueId);
 
-            String sqlCommand = "select count(distinct uuid) from casemgmt_issue c, casemgmt_issue_notes cin, casemgmt_note cn where c.issue_id = ?1 and c.id = cin.id and cin.note_id = cn.note_id and cn.provider_no = ?2  and observation_date >= ?3 and observation_date <= ?4";
+            String sqlCommand = "select count(distinct uuid) from casemgmt_issue c, casemgmt_issue_notes cin, casemgmt_note cn where c.issue_id = ? and c.id = cin.id and cin.note_id = cn.note_id and cn.provider_no = ?  and observation_date >= ? and observation_date <= ?";
+            
             log.debug(sqlCommand);
-            ps = c.prepareStatement(sqlCommand);
-            ps.setString(1, id);
-            ps.setString(2, providerNo);
-            ps.setTimestamp(3, new Timestamp(startDate.getTime()));
-            ps.setTimestamp(4, new Timestamp(endDate.getTime()));
 
-            rs = ps.executeQuery();
-            rs.next();
-
-            ret = rs.getInt(1);
+            try (PreparedStatement ps2 = c.prepareStatement(sqlCommand)) {
+                ps2.setString(1, issueId);
+                ps2.setString(2, providerNo);
+                ps2.setTimestamp(3, new Timestamp(startDate.getTime()));
+                ps2.setTimestamp(4, new Timestamp(endDate.getTime()));
+                
+                try (ResultSet rs2 = ps2.executeQuery()) {
+                    if (rs2.next()) {
+                        return rs2.getInt(1);
+                    }
+                }
+            }
         } catch (Exception e) {
             log.error("Error counting notes for issue :" + issueCode, e);
         }

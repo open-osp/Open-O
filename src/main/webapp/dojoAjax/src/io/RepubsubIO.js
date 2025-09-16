@@ -1,6 +1,31 @@
 //	Copyright (c) 2004 Friendster Inc., Licensed under the Academic Free
 //	License version 2.0 or later 
 
+function parseValue(value) {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    if (value === "null") return null;
+    if (value === "undefined") return undefined;
+    
+    // Check if it's a number
+    if (value !== "" && !isNaN(value) && isFinite(value)) {
+        return Number(value);
+    }
+    
+    // Try JSON for objects/arrays
+    if ((value[0] === '{' && value[value.length - 1] === '}') ||
+        (value[0] === '[' && value[value.length - 1] === ']')) {
+        try {
+            return JSON.parse(value);
+        } catch (e) {
+            // Fall through to string
+        }
+    }
+    
+    // Default to string
+    return value;
+}
+
 dojo.require("dojo.event.*");
 dojo.require("dojo.io.BrowserIO");
 
@@ -106,11 +131,10 @@ dojo.io.repubsub = new function () {
             var opts = [];
             for (var x in pairs) {
                 var sp = pairs[x].split("=");
-                // FIXME: is this eval dangerous?
-                try {
-                    opts[sp[0]] = eval(sp[1]);
-                } catch (e) {
-                    opts[sp[0]] = sp[1];
+                // Security fix: Remove dangerous eval() call
+                // Parse the value safely without code execution
+                if (sp[0] && sp[1]) {
+                    opts[sp[0]] = parseValue(sp[1]);
                 }
             }
             return opts;

@@ -27,18 +27,19 @@
  */
 package ca.openosp.openo.commn.dao;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.ConsultationResponse;
+import ca.openosp.openo.consultations.ConsultationRequestSearchFilter;
 import ca.openosp.openo.consultations.ConsultationResponseSearchFilter;
-import ca.openosp.openo.consultations.ConsultationResponseSearchFilter.SORTMODE;
 import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.stereotype.Repository;
 
@@ -55,6 +56,7 @@ public class ConsultResponseDaoImpl extends AbstractDaoImpl<ConsultationResponse
         logger.debug("sql=" + sql);
 
         Query query = entityManager.createQuery(sql);
+        setQueryParameters(query, filter);
         
         Long count = this.getCountResult(query);
 
@@ -68,6 +70,7 @@ public class ConsultResponseDaoImpl extends AbstractDaoImpl<ConsultationResponse
         logger.debug("sql=" + sql);
 
         Query query = entityManager.createQuery(sql);
+        setQueryParameters(query, filter);
         
         query.setFirstResult(filter.getStartIndex());
         query.setMaxResults(filter.getNumToReturn());
@@ -81,72 +84,144 @@ public class ConsultResponseDaoImpl extends AbstractDaoImpl<ConsultationResponse
                         " where sp.id = cr.referringDocId and d.DemographicNo = cr.demographicNo ");
 
         if (filter.getAppointmentStartDate() != null) {
-            sql.append("and cr.appointmentDate >=  '" + FastDateFormat.getInstance("yyyy-MM-dd").format(filter.getAppointmentStartDate()) + "' ");
+            sql.append("and cr.appointmentDate >= :appointmentStartDate ");
         }
         if (filter.getAppointmentEndDate() != null) {
-            sql.append("and cr.appointmentDate <=  '" + DateFormatUtils.ISO_DATE_FORMAT.format(filter.getAppointmentEndDate()) + " 23:59:59' ");
+            sql.append("and cr.appointmentDate <= :appointmentEndDate ");
         }
         if (filter.getReferralStartDate() != null) {
-            sql.append("and cr.referralDate >=  '" + DateFormatUtils.ISO_DATE_FORMAT.format(filter.getReferralStartDate()) + "' ");
+            sql.append("and cr.referralDate >= :referralStartDate ");
         }
         if (filter.getReferralEndDate() != null) {
-            sql.append("and cr.referralDate <=  '" + DateFormatUtils.ISO_DATE_FORMAT.format(filter.getReferralEndDate()) + " 23:59:59' ");
+            sql.append("and cr.referralDate <= :referralEndDate ");
         }
         if (filter.getResponseStartDate() != null) {
-            sql.append("and cr.responseDate >=  '" + DateFormatUtils.ISO_DATE_FORMAT.format(filter.getResponseStartDate()) + "' ");
+            sql.append("and cr.responseDate >= :responseStartDate ");
         }
         if (filter.getResponseEndDate() != null) {
-            sql.append("and cr.responseDate <=  '" + DateFormatUtils.ISO_DATE_FORMAT.format(filter.getResponseEndDate()) + " 23:59:59' ");
+            sql.append("and cr.responseDate <= :responseEndDate ");
         }
         if (filter.getStatus() != null) {
-            sql.append("and cr.status = '" + filter.getStatus() + "' ");
+            sql.append("and cr.status = :status ");
         } else {
             sql.append("and cr.status!=4 and cr.status!=5 ");
         }
         if (StringUtils.isNotBlank(filter.getTeam())) {
-            sql.append("and cr.sendTo = '" + StringEscapeUtils.escapeSql(filter.getTeam()) + "' ");
+            sql.append("and cr.sendTo = :team ");
         }
         if (StringUtils.isNotBlank(filter.getUrgency())) {
-            sql.append("and cr.urgency = '" + StringEscapeUtils.escapeSql(filter.getUrgency()) + "' ");
+            sql.append("and cr.urgency = :urgency ");
         }
         if (filter.getDemographicNo() != null && filter.getDemographicNo() > 0) {
-            sql.append("and cr.demographicNo = " + filter.getDemographicNo() + " ");
+            sql.append("and cr.demographicNo = :demographicNo ");
         }
         if (filter.getMrpNo() != null && filter.getMrpNo() > 0) {
-            sql.append("and d.ProviderNo = '" + filter.getMrpNo() + "' ");
+            sql.append("and d.ProviderNo = :mrpNo ");
         }
 
-        String orderBy = "cr.referralDate";
-        String orderDir = "desc";
-
-        if (filter.getSortDir() != null) {
-            orderDir = filter.getSortDir().toString();
+        // Apply safe ORDER BY clause construction
+        String orderByClause = getSafeOrderByClause(filter);
+        if (!selectCountOnly && orderByClause != null) {
+            sql.append(" ORDER BY ").append(orderByClause);
         }
-        if (SORTMODE.AppointmentDate.equals(filter.getSortMode())) {
-            orderBy = "cr.appointmentDate " + orderDir + ",cr.appointmentTime " + orderDir;
-        } else if (SORTMODE.Demographic.equals(filter.getSortMode())) {
-            orderBy = "d.LastName " + orderDir + ",d.FirstName " + orderDir;
-        } else if (SORTMODE.ReferringDoctor.equals(filter.getSortMode())) {
-            orderBy = "sp.lastName " + orderDir + ",sp.firstName " + orderDir;
-        } else if (SORTMODE.Team.equals(filter.getSortMode())) {
-            orderBy = "cr.sendTo " + orderDir;
-        } else if (SORTMODE.Status.equals(filter.getSortMode())) {
-            orderBy = "cr.status " + orderDir;
-        } else if (SORTMODE.Provider.equals(filter.getSortMode())) {
-            orderBy = "p.LastName " + orderDir + ",p.FirstName " + orderDir;
-        } else if (SORTMODE.FollowUpDate.equals(filter.getSortMode())) {
-            orderBy = "cr.followUpDate " + orderDir;
-        } else if (SORTMODE.ReferralDate.equals(filter.getSortMode())) {
-            orderBy = "cr.referralDate " + orderDir;
-        } else if (SORTMODE.ResponseDate.equals(filter.getSortMode())) {
-            orderBy = "cr.responseDate " + orderDir;
-        } else if (SORTMODE.Urgency.equals(filter.getSortMode())) {
-            orderBy = "cr.urgency " + orderDir;
-        }
-
-        orderBy = " ORDER BY " + orderBy;
-        sql.append(orderBy);
 
         return sql.toString();
+    }
+    
+    private void setQueryParameters(Query query, ConsultationResponseSearchFilter filter) {
+        if (filter.getAppointmentStartDate() != null) {
+            query.setParameter("appointmentStartDate", filter.getAppointmentStartDate());
+        }
+        if (filter.getAppointmentEndDate() != null) {
+            query.setParameter("appointmentEndDate", setCalender(filter.getAppointmentEndDate()).getTime());
+        }
+        if (filter.getReferralStartDate() != null) {
+            query.setParameter("referralStartDate",filter.getReferralStartDate());
+        }
+        if (filter.getReferralEndDate() != null) {
+            query.setParameter("referralEndDate", setCalender(filter.getReferralEndDate()).getTime());
+        }
+        if (filter.getResponseStartDate() != null) {
+            query.setParameter("responseStartDate",filter.getResponseStartDate());
+        }
+        if (filter.getResponseEndDate() != null) {
+            query.setParameter("responseEndDate", setCalender(filter.getResponseEndDate()).getTime());
+        }
+        if (filter.getStatus() != null) {
+            query.setParameter("status", String.valueOf(filter.getStatus()));
+        }
+        if (StringUtils.isNotBlank(filter.getTeam())) {
+            query.setParameter("team", filter.getTeam());
+        }
+        if (StringUtils.isNotBlank(filter.getUrgency())) {
+            query.setParameter("urgency", filter.getUrgency());
+        }
+        if (filter.getDemographicNo() != null && filter.getDemographicNo() > 0) {
+            query.setParameter("demographicNo", filter.getDemographicNo());
+        }
+        if (filter.getMrpNo() != null && filter.getMrpNo() > 0) {
+            query.setParameter("mrpNo", filter.getMrpNo());
+        }
+    }
+    
+    private String getSafeOrderDirection(Object sortDir) {
+        if (sortDir != null) {
+            String dir = sortDir.toString().toLowerCase();
+            if ("asc".equals(dir)) {
+                return "asc";
+            }
+        }
+        return "desc";
+    }
+    
+    /**
+     * Constructs a safe ORDER BY clause using a whitelist approach to prevent SQL injection.
+     * Only allows predefined field combinations based on the SORTMODE enum.
+     * 
+     * @param filter the consultation response search filter
+     * @return a safe ORDER BY clause string, or null if no sorting is needed
+     */
+    private String getSafeOrderByClause(ConsultationResponseSearchFilter filter) {
+        String orderDir = getSafeOrderDirection(filter.getSortDir());
+        
+        // Use whitelist approach - only allow predefined field combinations
+        if (filter.getSortMode() == null) {
+            return "cr.referralDate " + orderDir;
+        }
+        
+        switch (filter.getSortMode()) {
+            case AppointmentDate:
+                return "cr.appointmentDate " + orderDir + ",cr.appointmentTime " + orderDir;
+            case Demographic:
+                return "d.LastName " + orderDir + ",d.FirstName " + orderDir;
+            case ReferringDoctor:
+                return "sp.lastName " + orderDir + ",sp.firstName " + orderDir;
+            case Team:
+                return "cr.sendTo " + orderDir;
+            case Status:
+                return "cr.status " + orderDir;
+            case Provider:
+                return "p.LastName " + orderDir + ",p.FirstName " + orderDir;
+            case FollowUpDate:
+                return "cr.followUpDate " + orderDir;
+            case ReferralDate:
+                return "cr.referralDate " + orderDir;
+            case ResponseDate:
+                return "cr.responseDate " + orderDir;
+            case Urgency:
+                return "cr.urgency " + orderDir;
+            default:
+                // Default to referral date if unknown sort mode
+                return "cr.referralDate " + orderDir;
+        }
+    }
+
+    private Calendar setCalender(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal;
     }
 }

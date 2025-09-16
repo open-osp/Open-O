@@ -212,15 +212,15 @@ public final class DBPreparedHandler {
     public synchronized String getNewProviderNo() {
         try {
             String pno = Misc.getRandomNumber(6);
-            String sql = "select count(*) from provider where provider_no= '" + pno + "'";
-            ResultSet rs = queryResults(sql);
+            String sql = "select count(*) from provider where provider_no= ?";
+            ResultSet rs = queryResults(sql, pno);
             while (rs.next()) {
                 if (rs.getInt(1) > 0) {
                     do {
                         pno = Misc.getRandomNumber(6);
                     } while (pno != null && pno.startsWith("0"));
-                    sql = "select count(*) from prvider where provider_no= '" + pno + "'";
-                    rs = queryResults(sql);
+                    sql = "select count(*) from provider where provider_no= ?";
+                    rs = queryResults(sql, pno);
                 }
             }
             return pno;

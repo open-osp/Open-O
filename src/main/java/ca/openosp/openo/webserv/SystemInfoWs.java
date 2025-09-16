@@ -35,7 +35,7 @@ import org.apache.cxf.annotations.GZIP;
 import ca.openosp.openo.commn.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Component;
 
-@WebService
+@WebService(targetNamespace = "http://ws.oscarehr.org/")
 @Component
 @GZIP(threshold = AbstractWs.GZIP_THRESHOLD)
 public class SystemInfoWs extends AbstractWs {

@@ -185,7 +185,7 @@ public class BpmhForm2Handler {
             getBpmhFormBean().setFormDate(getFormHistory().getFormCreated());
             getBpmhFormBean().setFormId(getFormHistory().getId() + "");
             getBpmhFormBean().setEditDate(getFormHistory().getFormEdited());
-            // providers is implicitly set from form table.
+            // provider is implicitly set from form table.
             formBeanProvider = getProviderDao().getProvider(getFormHistory().getProviderNo() + "");
             familyDrName = getFormHistory().getFamilyDrName();
             familyDrPhone = getFormHistory().getFamilyDrPhone();

@@ -54,11 +54,15 @@
 <%@ page import="ca.openosp.openo.hospitalReportManager.HRMReport" %>
 <%@ page import="ca.openosp.openo.hospitalReportManager.model.*" %>
 <%@ page import="ca.openosp.openo.hospitalReportManager.dao.*" %>
+<%@ page import="ca.openosp.openo.hospitalReportManager.model.HRMReportCriteria" %>
 <!DOCTYPE html>
 
 <%
     Integer hrmReportId = Integer.parseInt(request.getParameter("id"));
-    boolean isListView = Boolean.parseBoolean(request.getParameter("isListView"));
+    // Access ModelDriven criteria object from request attributes
+    HRMReportCriteria criteria =
+        (ca.openosp.openo.hospitalReportManager.model.HRMReportCriteria) request.getAttribute("criteria");
+    boolean isListView = criteria != null && criteria.getListView() != null ? criteria.getListView() : false;
     String hrmReportTime = "";
     Integer hrmDuplicateNum = null;
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -906,7 +910,7 @@
         jQuery(setupHrmDemoAutoCompletion(<%=hrmReportId%>, <%=csrfTokenJs%>));
 
         YAHOO.example.BasicRemote = function () {
-            var url = "<%= request.getContextPath() %>/providers/SearchProvider.do";
+            var url = "<%= request.getContextPath() %>/provider/SearchProvider.do";
             var oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponses'});
             oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
             // Define the schema of the delimited resultsTEST, PATIENT(1985-06-15)

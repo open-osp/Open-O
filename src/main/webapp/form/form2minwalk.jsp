@@ -81,10 +81,10 @@
 
         function checkBeforeSave() {
             var distance = document.forms[0].elements[6].value;
-            var re1 = new RegExp('^[0-9][0-9][0-9][0-9][\.][0-9]$');
-            var re2 = new RegExp('^[0-9][0-9][0-9][\.][0-9]$');
-            var re3 = new RegExp('^[0-9][0-9][\.][0-9]$');
-            var re4 = new RegExp('^[0-9][\.][0-9]$');
+            var re1 = new RegExp('^[0-9][0-9][0-9][0-9]\\.[0-9]$');
+            var re2 = new RegExp('^[0-9][0-9][0-9]\\.[0-9]$');
+            var re3 = new RegExp('^[0-9][0-9]\\.[0-9]$');
+            var re4 = new RegExp('^[0-9]\\.[0-9]$');
             var match1 = document.forms[0].elements[6].value.match(re1);
             var match2 = document.forms[0].elements[6].value.match(re2);
             var match3 = document.forms[0].elements[6].value.match(re3);

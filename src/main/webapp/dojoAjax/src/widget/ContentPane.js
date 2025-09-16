@@ -421,7 +421,8 @@ dojo.widget.defineWidget(
                 /************** <title> ***********/
                     // khtml is picky about dom faults, you can't attach a <style> or <title> node as child of body
                     // must go into head, so we need to cut out those tags
-                var regex = /<title[^>]*>([\s\S]*?)<\/title>/i;
+                // Fixed regex to properly match title tags with variations in spacing and case
+                var regex = /<title[^>]*>([\s\S]*?)<\/title\s*>/gi;
                 while (match = regex.exec(s)) {
                     titles.push(match[1]);
                     s = s.substring(0, match.index) + s.substr(match.index + match[0].length);
@@ -475,7 +476,8 @@ dojo.widget.defineWidget(
                 }
 
                 /****************  cut out all <style> and <link rel="stylesheet" href=".."> **************/
-                regex = /(?:<(style)[^>]*>([\s\S]*?)<\/style>|<link ([^>]*rel=['"]?stylesheet['"]?[^>]*)>)/i;
+                // Fixed regex to properly match style tags with variations in spacing and case
+                regex = /(?:<(style)[^>]*>([\s\S]*?)<\/style\s*>|<link ([^>]*rel=['"]?stylesheet['"]?[^>]*)>)/gi;
                 while (match = regex.exec(s)) {
                     if (match[1] && match[1].toLowerCase() == "style") {
                         styles.push(dojo.html.fixPathsInCssText(match[2], url));
@@ -487,7 +489,9 @@ dojo.widget.defineWidget(
                 ;
 
                 /***************** cut out all <script> tags, push them into scripts array ***************/
-                var regex = /<script([^>]*)>([\s\S]*?)<\/script>/i;
+                // Fixed regex to properly match script tags with variations in spacing and case
+                // Handles cases like </script >, </SCRIPT>, etc.
+                var regex = /<script([^>]*)>([\s\S]*?)<\/script(?:\s[^>]*)?>/gi;
                 var regexSrc = /src=(['"]?)([^"']*)\1/i;
                 var regexDojoJs = /.*(\bdojo\b\.js(?:\.uncompressed\.js)?)$/;
                 var regexInvalid = /(?:var )?\bdjConfig\b(?:[\s]*=[\s]*\{[^}]+\}|\.[\w]*[\s]*=[\s]*[^;\n]*)?;?|dojo\.hostenv\.writeIncludes\(\s*\);?/g;
@@ -528,7 +532,8 @@ dojo.widget.defineWidget(
 
                 /********* extract content *********/
                 if (this.extractContent) {
-                    match = s.match(/<body[^>]*>\s*([\s\S]+)\s*<\/body>/im);
+                    // Fixed regex to properly match body tags with variations in spacing
+                    match = s.match(/<body[^>]*>\s*([\s\S]+?)\s*<\/body\s*>/im);
                     if (match) {
                         s = match[1];
                     }

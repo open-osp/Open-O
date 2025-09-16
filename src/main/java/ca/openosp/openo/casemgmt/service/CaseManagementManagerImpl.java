@@ -914,7 +914,8 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         String description;
 
         description = issue.getIssue().getDescription();
-        Pattern pattern = Pattern.compile("^" + description + "$", Pattern.MULTILINE);
+        // Escape user input to prevent regex injection attacks
+        Pattern pattern = Pattern.compile("^" + Pattern.quote(description) + "$", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(ongoing);
 
         if (matcher.find()) {
@@ -944,11 +945,13 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         String ongoing = cpp.getOngoingConcerns();
         String newOngoing;
 
-        Pattern pattern = Pattern.compile("^" + origIssueDesc + "$", Pattern.MULTILINE);
+        // Escape user input to prevent regex injection attacks
+        Pattern pattern = Pattern.compile("^" + Pattern.quote(origIssueDesc) + "$", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(ongoing);
 
         if (matcher.find()) {
-            newOngoing = matcher.replaceFirst(newIssueDesc);
+            // Use Matcher.quoteReplacement to escape special characters in replacement string
+            newOngoing = matcher.replaceFirst(Matcher.quoteReplacement(newIssueDesc));
             cpp.setOngoingConcerns(newOngoing);
             caseManagementCPPDAO.saveCPP(cpp);
 

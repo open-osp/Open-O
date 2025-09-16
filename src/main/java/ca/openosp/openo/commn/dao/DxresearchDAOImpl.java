@@ -408,10 +408,24 @@ public class DxresearchDAOImpl extends AbstractDaoImpl<Dxresearch> implements Dx
 
     @NativeSql
     public List<Object[]> findResearchAndCodingSystemByDemographicAndCondingSystem(String codingSystem, String demographicNo) {
+        // Validate codingSystem against allowed values to prevent SQL injection
+        // Using the same enum validation as in getDescription() method
+        try {
+            // This will throw IllegalArgumentException if codingSystem is not valid
+            AbstractCodeSystemDaoImpl.codingSystem.valueOf(codingSystem);
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid coding system provided: " + codingSystem);
+            return new ArrayList<>();
+        }
+        
+        // Now that codingSystem is validated, we can safely use it for table/column names
+        // Use parameterized query for demographicNo to prevent SQL injection
         String sql = "select d.start_date, d.update_date, c.description, c." + codingSystem + ", d.dxresearch_no, d.status,d.providerNo from dxresearch d, " + codingSystem + " c " +
-                "where d.dxresearch_code=c." + codingSystem + " and d.status<>'D' and d.demographic_no ='" + demographicNo + "' and d.coding_system = '" + codingSystem + "'"
+                "where d.dxresearch_code=c." + codingSystem + " and d.status<>'D' and d.demographic_no = ?1 and d.coding_system = ?2"
                 + " order by d.start_date desc, d.update_date desc";
         Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, demographicNo);
+        query.setParameter(2, codingSystem);
         return query.getResultList();
     }
 

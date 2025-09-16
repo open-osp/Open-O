@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -56,6 +57,7 @@ import org.springframework.stereotype.Component;
 
 @Path("/jobs")
 @Component("oscarJobService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class OscarJobService extends AbstractServiceImpl {
 
     Logger logger = MiscUtils.getLogger();
@@ -152,7 +154,7 @@ public class OscarJobService extends AbstractServiceImpl {
         job.setEnabled("on".equals(params.getFirst("job.enabled")) ? true : false);
         job.setName(params.getFirst("job.name"));
         job.setOscarJobTypeId(Integer.parseInt(params.getFirst("job.oscarJobTypeId")));
-        job.setProviderNo(params.getFirst("job.providers"));
+        job.setProviderNo(params.getFirst("job.provider"));
         job.setUpdated(new Date());
 
         OscarJob result = null;

@@ -239,7 +239,7 @@ public class AddPrevention2Action extends ActionSupport {
 
         PreventionManager prvMgr = (PreventionManager) SpringUtils.getBean(PreventionManager.class);
         prvMgr.removePrevention(demographic_no);
-        MiscUtils.getLogger().debug("Given " + given + " prevDate " + prevDate + " providerName " + providerName + " providers " + providerNo);
+        MiscUtils.getLogger().debug("Given " + given + " prevDate " + prevDate + " providerName " + providerName + " provider " + providerNo);
 
 
         if (submitToDhir) {

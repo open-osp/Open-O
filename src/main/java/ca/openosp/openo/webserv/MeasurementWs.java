@@ -41,7 +41,7 @@ import ca.openosp.openo.webserv.transfer_objects.MeasurementTransfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@WebService
+@WebService(targetNamespace = "http://ws.oscarehr.org/")
 @Component
 @GZIP(threshold = AbstractWs.GZIP_THRESHOLD)
 public class MeasurementWs extends AbstractWs {

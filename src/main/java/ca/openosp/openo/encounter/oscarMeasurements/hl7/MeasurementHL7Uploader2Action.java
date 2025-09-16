@@ -195,9 +195,9 @@ public class MeasurementHL7Uploader2Action extends ActionSupport {
             logger.error("Failed to parse HL7 ORU_R01 messages:\n" + hl7msg, e);
             response.setStatus(HttpStatus.SC_BAD_REQUEST);
             try {
-                response.getWriter().println("Invalid HL7 ORU_R01 format/request: " + e.getMessage());
+                response.getWriter().println("Invalid HL7 ORU_R01 format/request");
             } catch (IOException e1) {
-                // TODO Auto-generated catch blockMiscUtils.getLogger().error("Error", e1);
+                logger.error("Failed to write to response", e1);
             }
             return null;
         }

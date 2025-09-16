@@ -166,7 +166,7 @@
                 var name = document.getElementById('searchString').value;
                 if (isEmpty() == true) {
                     name = name.toUpperCase();
-                    window.location = "addReaction.do?ID=0&type=0&name=" + name;
+                    window.location = "addReaction.do?ID=0&type=0&name=" + encodeURIComponent(name);
                 }
             }
 

@@ -31,6 +31,7 @@
 <%@page import="ca.openosp.openo.commn.model.Provider" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -88,7 +89,10 @@
             }
 
             function selectprovider(s) {
-                self.location.href = "scheduletemplateapplying.jsp?provider_no=" + s.options[s.selectedIndex].value + "&provider_name=" + urlencode(s.options[s.selectedIndex].text);
+                // Safely encode the provider number and name for URL parameters
+                var providerNo = encodeURIComponent(s.options[s.selectedIndex].value);
+                var providerName = encodeURIComponent(s.options[s.selectedIndex].text);
+                self.location.href = "scheduletemplateapplying.jsp?provider_no=" + providerNo + "&provider_name=" + providerName;
             }
 
             function urlencode(str) {
@@ -116,7 +120,10 @@
 
             function go() {
                 var s = document.schedule.providerid.value;
-                var u = 'scheduleedittemplate.jsp?providerid=' + s + '&providername=' + urlencode(document.schedule.providerid.options[document.schedule.providerid.selectedIndex].text);
+                // Safely encode the provider ID and name for URL parameters
+                var providerId = encodeURIComponent(s);
+                var providerName = encodeURIComponent(document.schedule.providerid.options[document.schedule.providerid.selectedIndex].text);
+                var u = 'scheduleedittemplate.jsp?providerid=' + providerId + '&providername=' + providerName;
                 popupPage(390, 700, u);
             }
 
@@ -191,7 +198,7 @@
 
                                         for (Provider p : providers) {
                                     %>
-                                    <option value="<%=p.getProviderNo()%>"><%=p.getFormattedName()%>
+                                    <option value="<%=Encode.forHtmlAttribute(p.getProviderNo())%>"><%=Encode.forHtml(p.getFormattedName())%>
                                     </option>
 
                                     <% } %>
@@ -233,7 +240,7 @@
                                     <%
                                         for (Provider p : providers) {
                                     %>
-                                    <option value="<%=p.getProviderNo()%>"><%=p.getFormattedName()%>
+                                    <option value="<%=Encode.forHtmlAttribute(p.getProviderNo())%>"><%=Encode.forHtml(p.getFormattedName())%>
                                     </option>
 
                                     <% } %>

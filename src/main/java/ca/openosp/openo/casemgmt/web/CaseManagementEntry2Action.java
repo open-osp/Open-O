@@ -2017,7 +2017,13 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         String chain = request.getParameter("chain");
 
         if (chain != null && !chain.equals("")) {
-            response.sendRedirect(chain);
+            // Validate the redirect URL to prevent open redirect vulnerability
+            if (isValidInternalRedirect(chain, request)) {
+                response.sendRedirect(chain);
+            } else {
+                logger.warn("Attempted redirect to invalid URL: " + chain);
+                // Fall through to return "windowClose" without redirect
+            }
         }
 
         return "windowClose";
@@ -3771,6 +3777,71 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
     public void setReloadUrl(String reloadUrl) {
         this.reloadUrl = reloadUrl;
+    }
+
+    /**
+     * Validates that a redirect URL is safe and points to an internal application URL.
+     * This prevents open redirect vulnerabilities.
+     * 
+     * @param url The URL to validate
+     * @param request The HTTP request object for context
+     * @return true if the URL is safe for redirect, false otherwise
+     */
+    private boolean isValidInternalRedirect(String url, HttpServletRequest request) {
+        if (url == null || url.trim().isEmpty()) {
+            return false;
+        }
+
+        // Remove any leading/trailing whitespace
+        url = url.trim();
+
+        // Check for relative URLs (safe)
+        if (url.startsWith("/") && !url.startsWith("//")) {
+            // Ensure it doesn't contain protocol-relative URLs
+            return !url.contains("://");
+        }
+
+        // Check if URL starts with the application's context path
+        String contextPath = request.getContextPath();
+        if (!contextPath.isEmpty() && url.startsWith(contextPath + "/")) {
+            return true;
+        }
+
+        // Check for absolute URLs - must match the current server
+        try {
+            // Parse the URL to check if it's absolute
+            if (url.contains("://")) {
+                // Get the current server URL components
+                String scheme = request.getScheme();
+                String serverName = request.getServerName();
+                int serverPort = request.getServerPort();
+                
+                // Build the expected server prefix
+                StringBuilder expectedPrefix = new StringBuilder();
+                expectedPrefix.append(scheme).append("://").append(serverName);
+                
+                // Add port if it's not the default for the scheme
+                if ((scheme.equals("http") && serverPort != 80) || 
+                    (scheme.equals("https") && serverPort != 443)) {
+                    expectedPrefix.append(":").append(serverPort);
+                }
+                
+                // Check if the URL starts with our server prefix
+                if (url.startsWith(expectedPrefix.toString() + "/") ||
+                    url.startsWith(expectedPrefix.toString() + contextPath + "/")) {
+                    return true;
+                }
+                
+                // Reject any other absolute URLs
+                return false;
+            }
+        } catch (Exception e) {
+            logger.error("Error validating redirect URL: " + url, e);
+            return false;
+        }
+
+        // Default to rejecting unknown patterns
+        return false;
     }
 
 }

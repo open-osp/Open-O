@@ -64,7 +64,7 @@ public class InboxResultsRepositoryImpl implements InboxResultsRepository {
      * Gets a list of items in the inbox based on the supplied parameters
      *
      * @param loggedInProvider     The currently logged in providers
-     * @param providerNumber       The providers number to search items for, empty string will return items for all providers, 0 will return all unmatched items
+     * @param providerNumber       The provider number to search items for, empty string will return items for all providers, 0 will return all unmatched items
      * @param firstName            String containing a demographic first name
      * @param lastName             String containing a demographic last name
      * @param hin                  String containing a demographic HIN
@@ -171,7 +171,7 @@ public class InboxResultsRepositoryImpl implements InboxResultsRepository {
                                    String startDate, String endDate, String status, String abnormalStatus, InboxQueryParameters.MatchedStatus matchedStatus, Boolean getCounts, Boolean getDemographicCounts, Map<String, String> whereValues) {
         String whereSql = getDocumentsWhereSql(loggedInProviderNo, providerNumber, firstName, lastName, hin, startDate, endDate, status, abnormalStatus, matchedStatus, whereValues);
 
-        // Add providers lab routing only if relevant to search parameters
+        // Add provider lab routing only if relevant to search parameters
         boolean addProviderJoin = !providerNumber.isEmpty() || !status.equals("L");
 
         String select;
@@ -434,7 +434,7 @@ public class InboxResultsRepositoryImpl implements InboxResultsRepository {
             whereValues.put("labProviderNumber", providerNumber);
         }
 
-        // Add providers lab routing if status is specified, if no providers specified find labs with at least one plr entry for that lab
+        // Add provider lab routing if status is specified, if no providers specified find labs with at least one plr entry for that lab
         if (!status.equals("L")) {
             whereSql += whereSql.isEmpty() ? " WHERE" : " AND";
             whereSql += " plr.status = :labStatus";

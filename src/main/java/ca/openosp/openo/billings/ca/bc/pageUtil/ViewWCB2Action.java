@@ -106,7 +106,7 @@ public class ViewWCB2Action extends ActionSupport {
                 this.setW_city(demographic.getCity());
                 this.setInjuryLocations(data.getInjuryLocationList());
 
-                //Retrieve providers ohip number and payee number
+                //Retrieve provider ohip number and payee number
 
                 List lstResults = SqlUtils.getQueryResultsList("select ohip_no,billing_no from provider where provider_no = " + providerNo);
                 if (lstResults != null) {

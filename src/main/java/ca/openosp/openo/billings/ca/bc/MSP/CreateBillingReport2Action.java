@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletOutputStream;
@@ -286,15 +287,32 @@ public class CreateBillingReport2Action extends ActionSupport {
      */
     public void cfgHeader(HttpServletResponse response, String docName,
                           String docType) {
-        String mimeType = "application/octet-stream";
-        if (docType.equals("pdf")) {
-            mimeType = "application/pdf";
-        } else if (docType.equals("csv")) {
-            mimeType = "application/csv";
-        }
+        Map<String, String> allowedTypes = Map.of(
+            "pdf", "application/pdf",
+            "csv", "application/csv"
+        );
+
+        // Sanitize and validate docType
+        String sanitizedDocType = sanitizeHeaderValue(docType);
+        String mimeType = allowedTypes.getOrDefault(
+            sanitizedDocType.toLowerCase(), 
+            "application/octet-stream"
+        );
+
+        // Sanitize docName
+        String sanitizedDocName = sanitizeHeaderValue(docName);
+        
         response.setContentType(mimeType);
         response.setHeader("Content-Disposition",
-                "attachment;filename=" + docName + "." + docType);
+                "attachment; filename=\"" + sanitizedDocName + "." + sanitizedDocType + "\"");
+    }
+
+    private String sanitizeHeaderValue(String input) {
+        if (input == null) return "";
+    
+        // Remove all control characters including CR, LF, and null bytes
+        // Also remove quotes and semicolons that could break header parsing
+        return input.replaceAll("[\r\n\0]|[\\p{Cntrl}]|[\"';]", "").trim();
     }
 
 

@@ -37,6 +37,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
+
 import ca.openosp.openo.commn.dao.MeasurementCSSLocationDao;
 import ca.openosp.openo.commn.model.MeasurementCSSLocation;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -93,35 +95,59 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
         boolean isAdded = true;
 
         try {
-            // Check if the file already exists in the database
-            List<MeasurementCSSLocation> locs = dao.findByLocation(fileName);
+            // Validate and sanitize the filename first
+            if (fileName == null || fileName.trim().isEmpty()) {
+                throw new IllegalArgumentException("fileName cannot be null or empty");
+            }
+            
+            // Sanitize filename to prevent path traversal - extract just the filename without any path
+            String sanitizedFileName = FilenameUtils.getName(fileName);
+            
+            // Additional validation: ensure no directory traversal characters
+            if (sanitizedFileName.contains("..") || sanitizedFileName.contains("/") || sanitizedFileName.contains("\\")) {
+                MiscUtils.getLogger().error("Attempted path traversal detected in filename: " + fileName);
+                throw new SecurityException("Invalid filename - path traversal detected");
+            }
+            
+            // Check if the file already exists in the database using sanitized filename
+            List<MeasurementCSSLocation> locs = dao.findByLocation(sanitizedFileName);
             if (!locs.isEmpty()) {
                 return false;
             }
 
             // Retrieve the target directory from properties
             String uploadPath = OscarProperties.getInstance().getProperty("oscarMeasurement_css_upload_path");
-
-            Path path = Paths.get(uploadPath);
-            Files.createDirectories(path);
-
-            // Ensure the path ends with a slash
-            if (!uploadPath.endsWith("/")) {
-                uploadPath += "/";
+            
+            if (uploadPath == null || uploadPath.trim().isEmpty()) {
+                throw new IllegalArgumentException("Upload path not configured");
             }
 
-            // Build the full path for the file
-            String destinationPath = uploadPath + fileName;
-
-            if (fileName == null || fileName.trim().isEmpty()) {
-                throw new IllegalArgumentException("fileName cannot be null or empty");
+            // Create the upload directory if it doesn't exist
+            File uploadDir = new File(uploadPath);
+            uploadDir.mkdirs();
+            
+            // Create the destination file using sanitized filename
+            File destinationFile = new File(uploadDir, sanitizedFileName);
+            
+            // Validate that the canonical path is within the upload directory
+            String canonicalDestPath = destinationFile.getCanonicalPath();
+            String canonicalUploadPath = uploadDir.getCanonicalPath();
+            
+            if (!canonicalDestPath.startsWith(canonicalUploadPath)) {
+                MiscUtils.getLogger().error("Path traversal attempt blocked - destination outside upload directory: " + fileName);
+                throw new SecurityException("Invalid file destination - path traversal detected");
             }
 
-            // Write the file to the destination
-            Files.copy(new FileInputStream(file), Paths.get(destinationPath));
+            // Write the file to the validated destination
+            try (FileInputStream fis = new FileInputStream(file)) {
+                Files.copy(fis, destinationFile.toPath());
+            }
 
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error saving file", e);
+            isAdded = false;
+        } catch (SecurityException e) {
+            MiscUtils.getLogger().error("Security error saving file", e);
             isAdded = false;
         }
 
@@ -134,8 +160,11 @@ public class EctAddMeasurementStyleSheet2Action extends ActionSupport {
      * @param fileName - the filename to store
      */
     private void write2Database(String fileName) {
+        // Sanitize the filename before storing in database
+        String sanitizedFileName = FilenameUtils.getName(fileName);
+        
         MeasurementCSSLocation m = new MeasurementCSSLocation();
-        m.setLocation(fileName);
+        m.setLocation(sanitizedFileName);
         dao.persist(m);
     }
 

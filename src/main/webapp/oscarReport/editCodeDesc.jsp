@@ -42,10 +42,7 @@
 
 
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/jquery.autocomplete.css"/>
-        <script src="http://www.google.com/jsapi"></script>
-        <script>
-            google.load("jquery", "1");
-        </script>
+        <script src="<%= request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
         <script src="<%= request.getContextPath() %>/js/jquery.autocomplete.js"></script>
 
         <style>

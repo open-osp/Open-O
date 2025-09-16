@@ -66,7 +66,7 @@ public class BillHistory {
     }
 
     /**
-     * Sets the number of the providers who is responsible for initiating this audit event
+     * Sets the number of the provider who is responsible for initiating this audit event
      *
      * @param practitioner_no String
      */

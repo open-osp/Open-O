@@ -1145,9 +1145,21 @@ public class EFormUtil {
         Matcher m = getAttributeMatcher(key, htmlTag, startsWith);
         if (m == null) return null;
 
+        // With the new regex pattern:
+        // Group 0: Full match (attribute with optional value)
+        // Group 1: Attribute name
+        // Group 2: =value part (optional, including =)
+        // Group 3: Just the value (optional, without = and quotes)
         String value = m.group();
-        int keysplit = m.group().indexOf("=");
-        if (!startsWith && keysplit >= 0) value = m.group().substring(keysplit + 1, m.group().length());
+        if (!startsWith && m.group(3) != null) {
+            // Return just the value part without quotes
+            value = m.group(3);
+            // Remove quotes if present
+            if ((value.startsWith("\"") && value.endsWith("\"")) || 
+                (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.substring(1, value.length() - 1);
+            }
+        }
 
         return value.trim();
     }
@@ -1291,14 +1303,17 @@ public class EFormUtil {
         Matcher m_return = null;
         if (StringUtils.isBlank(key) || StringUtils.isBlank(htmlTag)) return m_return;
 
-        Pattern p = Pattern.compile("\\b[^\\s'\"=>]+[ ]*=[ ]*\"[^\"]*\"|\\b[^\\s'\"=>]+[ ]*=[ ]*'[^']*'|\\b[^\\s'\"=>]+[ ]*=[ ]*[^ >]*|\\b[^\\s>]+", Pattern.CASE_INSENSITIVE);
+        // Fixed ReDoS vulnerability by removing word boundaries and simplifying the regex
+        // This pattern matches HTML attributes in a safer way without polynomial complexity
+        Pattern p = Pattern.compile("([a-zA-Z][a-zA-Z0-9_:-]*)(\\s*=\\s*(\"[^\"]*\"|'[^']*'|[^\\s>]+))?", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(htmlTag);
 
         while (m.find()) {
-            int keysplit = m.group().indexOf("=");
-            if (keysplit < 0) keysplit = m.group().length();
-
-            String keypart = m.group().substring(0, keysplit).trim().toLowerCase();
+            // Group 1 contains the attribute name
+            String keypart = m.group(1);
+            if (keypart == null) continue;
+            
+            keypart = keypart.trim().toLowerCase();
             key = key.trim().toLowerCase();
             if ((keypart.equals(key)) || (startsWith && keypart.startsWith(key))) {
                 m_return = m;
@@ -1395,7 +1410,10 @@ public class EFormUtil {
             nwHtml += html.substring(pointer, m.start());
             String formTag = m.group();
             pointer += m.start() + formTag.length();
-            p = Pattern.compile("\\baction[ ]*=[ ]*\"[^>\"]*\"|\\b[a-zA-Z]+[ ]*=[ ]*'[^>']*'|\\b[a-zA-Z]+[ ]*=[^ >]*", Pattern.CASE_INSENSITIVE);
+            // Fixed ReDoS vulnerability by using possessive quantifiers and atomic groups
+            // This regex removes action and other attributes from form tags
+            // Using possessive quantifiers (++) and atomic groups to prevent catastrophic backtracking
+            p = Pattern.compile("(?:action\\s*+=\\s*+\"[^>\"]*+\"|action\\s*+=\\s*+'[^>']*+'|action\\s*+=\\s*+[^\\s>]++|[a-zA-Z]++\\s*+=\\s*+\"[^>\"]*+\"|[a-zA-Z]++\\s*+=\\s*+'[^>']*+'|[a-zA-Z]++\\s*+=\\s*+[^\\s>]++)", Pattern.CASE_INSENSITIVE);
             m = p.matcher(formTag);
             nwHtml += m.replaceAll("");
         }

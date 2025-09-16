@@ -201,7 +201,14 @@
                     }
                 }
             }
-            var $io = $('<iframe id="' + id + '" name="' + id + '" src="' + s.iframeSrc + '" onload="window[\'_\'+this.id]()" />');
+            // Create iframe element using jQuery methods to prevent XSS
+            var $io = $('<iframe>').attr({
+                id: id,
+                name: id,
+                src: s.iframeSrc
+            }).on('load', function() {
+                window['_' + this.id]();
+            });
             var io = $io[0];
 
             $io.css({position: 'absolute', top: '-1000px', left: '-1000px'});
@@ -295,9 +302,13 @@
                 try {
                     if (s.extraData) {
                         for (var n in s.extraData) {
-                            extraInputs.push(
-                                $('<input type="hidden" name="' + n + '" value="' + s.extraData[n] + '" />')
-                                    .appendTo(form)[0]);
+                            // Create input element using jQuery methods to prevent XSS
+                            var $input = $('<input>').attr({
+                                type: 'hidden',
+                                name: n,
+                                value: s.extraData[n]
+                            });
+                            extraInputs.push($input.appendTo(form)[0]);
                         }
                     }
 

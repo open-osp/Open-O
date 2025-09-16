@@ -71,6 +71,41 @@ public class OruR01Upload2Action extends ActionSupport {
         try {
             File formFile = form.getUploadFile();
             LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+            
+            // Validate file before processing
+            if (formFile == null) {
+                throw new IllegalArgumentException("No file provided");
+            }
+            
+            // Get canonical path to resolve any path traversal attempts
+            String canonicalPath = formFile.getCanonicalPath();
+            
+            // Verify it's a regular file (not directory or symlink)
+            if (!formFile.exists()) {
+                throw new IllegalArgumentException("File does not exist");
+            }
+            
+            if (!formFile.isFile()) {
+                throw new SecurityException("Path is not a regular file");
+            }
+            
+            // Ensure file is readable
+            if (!formFile.canRead()) {
+                throw new SecurityException("File is not readable");
+            }
+            
+            // For Struts2 uploads, the file should be in the temporary directory
+            // Get the expected temp directory from servlet context
+            File tempDir = (File) ServletActionContext.getServletContext().getAttribute("javax.servlet.context.tempdir");
+            if (tempDir != null) {
+                String tempDirPath = tempDir.getCanonicalPath();
+                // Ensure the file is within the temp directory
+                if (!canonicalPath.startsWith(tempDirPath + File.separator) && 
+                    !canonicalPath.equals(tempDirPath)) {
+                    logger.error("Attempted path traversal detected - file outside temp directory: " + canonicalPath);
+                    throw new SecurityException("Access denied: file outside permitted directory");
+                }
+            }
 
             Demographic demographic = getDemographicObject(form);
 
@@ -78,6 +113,7 @@ public class OruR01Upload2Action extends ActionSupport {
             observationData.subject = form.getSubject();
             observationData.textMessage = form.getTextMessage();
             observationData.binaryDataFileName = formFile.getName();
+            // Now safe to read the file after validation
             observationData.binaryData = Files.readAllBytes(formFile.toPath());
 
             Provider sendingProvider = loggedInInfo.getLoggedInProvider();

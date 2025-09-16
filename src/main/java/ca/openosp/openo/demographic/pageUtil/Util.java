@@ -50,6 +50,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlCalendar;
 import ca.openosp.openo.casemgmt.model.CaseManagementNote;
@@ -63,6 +65,7 @@ import ca.openosp.openo.prevention.PreventionDisplayConfig;
 import ca.openosp.openo.providers.data.ProviderData;
 import ca.openosp.openo.util.StringUtils;
 import ca.openosp.openo.util.UtilDateUtilities;
+import ca.openosp.OscarProperties;
 
 /**
  * @author Ronnie
@@ -169,14 +172,65 @@ public class Util {
     }
 
     static public boolean cleanFile(String filename, String dirname) {
-        dirname = fixDirName(dirname);
-        File f = new File(dirname + filename);
-        return cleanFile(f);
+        try {
+            // Validate path to prevent directory traversal attacks
+            dirname = fixDirName(dirname);
+            
+            // Extract just the base filename, removing any directory components
+            String safeFileName = FilenameUtils.getName(filename);
+            if (!StringUtils.filled(safeFileName)) {
+                logger.error("Error! Invalid filename after sanitization");
+                return false;
+            }
+            
+            // Create the base directory and get its canonical path
+            File baseDir = new File(dirname);
+            String canonicalBaseDir = baseDir.getCanonicalPath();
+            
+            // Create the target file and get its canonical path
+            File f = new File(baseDir, safeFileName);
+            String canonicalFilePath = f.getCanonicalPath();
+            
+            // Validate that the resolved path is within the allowed directory
+            if (!canonicalFilePath.startsWith(canonicalBaseDir + File.separator)) {
+                logger.error("Error! Attempted path traversal attack detected for file: " + filename);
+                return false;
+            }
+            
+            return cleanFile(f);
+        } catch (IOException e) {
+            logger.error("Error validating file path for deletion", e);
+            return false;
+        }
     }
 
     static public boolean cleanFile(String filename) {
-        File f = new File(filename);
-        return cleanFile(f);
+        try {
+            // Validate path to prevent directory traversal attacks
+            File f = new File(filename);
+            
+            // Get the canonical path to resolve any symbolic links or relative paths
+            String canonicalPath = f.getCanonicalPath();
+            
+            // Additional check: ensure file is within application's working directory or temp directory
+            String workingDir = System.getProperty("user.dir");
+            String tempDir = System.getProperty("java.io.tmpdir");
+            
+            if (!canonicalPath.startsWith(workingDir) && !canonicalPath.startsWith(tempDir)) {
+                // If not in working or temp directory, check if it's in a configured document directory
+                OscarProperties props = OscarProperties.getInstance();
+                String docDir = props.getProperty("DOCUMENT_DIR");
+                if (docDir != null && !canonicalPath.startsWith(new File(docDir).getCanonicalPath())) {
+                    logger.error("Error! File is outside allowed directories: " + canonicalPath);
+                    return false;
+                }
+            }
+            
+            return cleanFile(f);
+        } catch (IOException e) {
+            logger.error("Error validating file path for deletion", e);
+            return false;
+        }
     }
 
     static public boolean cleanFile(File file) {
@@ -206,9 +260,40 @@ public class Util {
             dirName = fixDirName(dirName);
             if (rsp == null) return;
 
+            // Validate filename to prevent path traversal attacks
+            // Extract just the base filename, removing any directory components
+            String safeFileName = FilenameUtils.getName(fileName);
+            
+            // If the filename is empty or null after sanitization, reject the request
+            if (safeFileName == null || safeFileName.trim().isEmpty()) {
+                logger.error("Invalid filename provided: " + fileName);
+                return;
+            }
+            
+            // Create the file object with the sanitized filename
+            File documentDir = new File(dirName);
+            File requestedFile = new File(documentDir, safeFileName);
+            
+            // Get canonical paths to detect path traversal attempts
+            String canonicalDocDir = documentDir.getCanonicalPath();
+            String canonicalRequestedPath = requestedFile.getCanonicalPath();
+            
+            // Ensure the requested file is within the allowed directory
+            if (!canonicalRequestedPath.startsWith(canonicalDocDir + File.separator) && 
+                !canonicalRequestedPath.equals(canonicalDocDir)) {
+                logger.error("Path traversal attempt detected for file: " + fileName);
+                return;
+            }
+            
+            // Verify the file exists and is readable
+            if (!requestedFile.exists() || !requestedFile.isFile() || !requestedFile.canRead()) {
+                logger.error("File not found or not accessible: " + safeFileName);
+                return;
+            }
+
             rsp.setContentType("application/octet-stream");
-            rsp.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-            InputStream in = new FileInputStream(dirName + fileName);
+            rsp.setHeader("Content-Disposition", "attachment; filename=\"" + sanitizeHeaderValue(safeFileName) + "\"");
+            InputStream in = new FileInputStream(requestedFile);
             OutputStream out = rsp.getOutputStream();
             byte[] buf = new byte[1024];
             int len;
@@ -220,6 +305,32 @@ public class Util {
         } catch (IOException ex) {
             logger.error("Error", ex);
         }
+    }
+    
+    /**
+     * Sanitizes a value to be safely used in HTTP headers.
+     * Removes all control characters including CR and LF to prevent HTTP response splitting attacks.
+     * This prevents attackers from injecting additional headers or splitting the HTTP response.
+     * 
+     * @param value The header value to sanitize
+     * @return The sanitized header value safe for use in HTTP headers
+     */
+    private static String sanitizeHeaderValue(String value) {
+        if (value == null) {
+            return "";
+        }
+        
+        // Remove all control characters including CR (\r) and LF (\n)
+        // This prevents HTTP response splitting attacks
+        // Also remove other control characters that could cause issues
+        String sanitized = value.replaceAll("[\r\n\u0000-\u001F\u007F-\u009F]", "");
+        
+        // Ensure the filename is not empty after sanitization
+        if (sanitized.trim().isEmpty()) {
+            return "file";
+        }
+        
+        return sanitized;
     }
 
     static public String fixDirName(String dirName) {
@@ -366,9 +477,28 @@ public class Util {
             if (!checkDir(dirName)) {
                 return false;
             }
+            
+            // Sanitize zipFileName to prevent path traversal
+            zipFileName = sanitizeFileName(zipFileName);
+            if (!StringUtils.filled(zipFileName)) {
+                logger.error("Error! Invalid zip filename after sanitization");
+                return false;
+            }
+            
             dirName = fixDirName(dirName);
+            
+            // Create the output file with proper path validation
+            File outputDir = new File(dirName).getCanonicalFile();
+            File outputFile = new File(outputDir, zipFileName).getCanonicalFile();
+            
+            // Verify the output file is within the intended directory
+            if (!outputFile.getParentFile().equals(outputDir)) {
+                logger.error("Error! Zip file path traversal attempt detected: " + zipFileName);
+                return false;
+            }
+            
             byte[] buf = new byte[1024];
-            ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(dirName + zipFileName));
+            ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(outputFile));
             for (File f : files) {
                 if (f == null) continue;
 
@@ -410,9 +540,28 @@ public class Util {
             if (!checkDir(dirName)) {
                 return false;
             }
+            
+            // Sanitize zipFileName to prevent path traversal
+            zipFileName = sanitizeFileName(zipFileName);
+            if (!StringUtils.filled(zipFileName)) {
+                logger.error("Error! Invalid zip filename after sanitization");
+                return false;
+            }
+            
             dirName = fixDirName(dirName);
+            
+            // Create the output file with proper path validation
+            File outputDir = new File(dirName).getCanonicalFile();
+            File outputFile = new File(outputDir, zipFileName).getCanonicalFile();
+            
+            // Verify the output file is within the intended directory
+            if (!outputFile.getParentFile().equals(outputDir)) {
+                logger.error("Error! Zip file path traversal attempt detected: " + zipFileName);
+                return false;
+            }
+            
             byte[] buf = new byte[1024];
-            ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(dirName + zipFileName));
+            ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(outputFile));
             Map<String, Boolean> dirMap = new HashMap<String, Boolean>();
             for (String dir : dirs) {
                 dirMap.put(dir, true);
@@ -646,5 +795,44 @@ public class Util {
         s = s.replace(tag, " ");
 
         return s;
+    }
+    
+    /**
+     * Sanitizes a filename to prevent path traversal attacks.
+     * Removes any path separators and parent directory references.
+     * 
+     * @param fileName The filename to sanitize
+     * @return The sanitized filename, or empty string if the input is invalid
+     */
+    private static String sanitizeFileName(String fileName) {
+        if (!StringUtils.filled(fileName)) {
+            return "";
+        }
+        
+        // Remove any path separators and parent directory references
+        String sanitized = fileName.replaceAll("[/\\\\]", "_")  // Replace forward and back slashes
+                                   .replaceAll("\\.\\./", "_")     // Replace ../ sequences
+                                   .replaceAll("\\.\\.", "_");      // Replace .. sequences
+        
+        // Remove any leading dots to prevent hidden files
+        while (sanitized.startsWith(".")) {
+            sanitized = sanitized.substring(1);
+        }
+        
+        // Ensure the filename has a valid extension for zip files
+        if (!sanitized.toLowerCase().endsWith(".zip")) {
+            // If no .zip extension, add it
+            if (!sanitized.contains(".")) {
+                sanitized = sanitized + ".zip";
+            }
+        }
+        
+        // Final validation - ensure no path traversal characters remain
+        if (sanitized.contains("..") || sanitized.contains("/") || sanitized.contains("\\")) {
+            logger.error("Invalid filename after sanitization: " + fileName);
+            return "";
+        }
+        
+        return sanitized;
     }
 }

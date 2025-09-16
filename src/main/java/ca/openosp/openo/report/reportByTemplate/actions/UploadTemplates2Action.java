@@ -63,12 +63,48 @@ public class UploadTemplates2Action extends ActionSupport {
         String action = request.getParameter("action");
         String message = "Error: Improper request - Action param missing";
         String xml = "";
-        try {
-            byte[] bytes = Files.readAllBytes(templateFile.toPath());
-            xml = new String(bytes);
-        } catch (IOException ioe) {
-            message = "Exception: File Not Found";
-            MiscUtils.getLogger().error("Error", ioe);
+        
+        // Validate the uploaded file to prevent path traversal attacks
+        if (templateFile != null) {
+            try {
+                // Ensure the file is within the temp directory created by Struts2
+                // Get canonical path to resolve any relative path components
+                String canonicalPath = templateFile.getCanonicalPath();
+                
+                // Get the system temp directory where Struts2 stores uploaded files
+                String tempDir = System.getProperty("java.io.tmpdir");
+                if (tempDir != null) {
+                    File tempDirFile = new File(tempDir);
+                    String tempDirCanonical = tempDirFile.getCanonicalPath();
+                    
+                    // Verify the file is within the temp directory
+                    if (!canonicalPath.startsWith(tempDirCanonical + File.separator)) {
+                        MiscUtils.getLogger().error("Attempted path traversal attack detected for file: " + canonicalPath);
+                        message = "Error: Invalid file upload";
+                        request.setAttribute("message", message);
+                        request.setAttribute("action", action);
+                        return SUCCESS;
+                    }
+                }
+                
+                // Additional validation: ensure the file exists and is a regular file
+                if (!templateFile.exists() || !templateFile.isFile()) {
+                    MiscUtils.getLogger().error("Invalid file upload: File does not exist or is not a regular file");
+                    message = "Error: Invalid file upload";
+                    request.setAttribute("message", message);
+                    request.setAttribute("action", action);
+                    return SUCCESS;
+                }
+                
+                // Read the file content
+                byte[] bytes = Files.readAllBytes(templateFile.toPath());
+                xml = new String(bytes);
+            } catch (IOException ioe) {
+                message = "Exception: File Not Found";
+                MiscUtils.getLogger().error("Error reading uploaded file", ioe);
+            }
+        } else {
+            message = "Error: No file uploaded";
         }
         ReportManager reportManager = new ReportManager();
         if (action.equals("add")) {

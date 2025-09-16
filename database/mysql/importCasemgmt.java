@@ -106,13 +106,13 @@ public class importCasemgmt {
                         }                        
                         
                         System.out.println("Checking for additional providers to add");
-                        sql = "select provider_no from providers where provider_no = '000000'";
+                        sql = "select provider_no from provider where provider_no = '000000'";
                         rs1 = stmt.executeQuery(sql);
                         
                         if( !rs1.next() ) {
                             rs1.close();
                             System.out.println("Creating dummy providers to sign imported notes");
-                            stmt.executeUpdate("INSERT INTO providers (provider_no, last_name, first_name, provider_type, specialty, team, sex, dob, address, phone, work_phone, ohip_no, rma_no," +
+                            stmt.executeUpdate("INSERT INTO provider (provider_no, last_name, first_name, provider_type, specialty, team, sex, dob, address, phone, work_phone, ohip_no, rma_no," +
                                     "billing_no, hso_no, status, comments, provider_activity) " +
                                     "VALUES ('000000','doe','doctor','doctor','','','','0001-01-01','','','','','','','','1','','')");
                             stmt.executeUpdate("insert into `secUserRole` (provider_no, role_name, orgcd, activeyn) values('000000', 'doctor', 'R0000001', 1)");

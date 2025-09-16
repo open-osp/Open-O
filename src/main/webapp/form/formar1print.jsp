@@ -140,7 +140,7 @@
     ff(55, 175, 20, 20, "<%= props.getProperty("pg1_baFP", "").equals("")?"":"X" %>");
     ff(90, 175, 20, 20, "<%= props.getProperty("pg1_baMidwife", "").equals("")?"":"X" %>");
     ff(10, 195, 200, 20, "<%= UtilMisc.JSEscape(props.getProperty("c_ba", "")) %>");
-    ff(150, 175, 200, 100, "<%= UtilMisc.JSEscape(props.getProperty("pg1_famPhys", "")).replace('\r', ' ') %>");
+    ff(150, 175, 200, 100, "<%= UtilMisc.JSEscape(props.getProperty("pg1_famPhys", "")).replace("\\r", " ") %>");
     ff(324, 175, 20, 20, "<%= props.getProperty("pg1_ncPed", "").equals("")?"":"X" %>");
     ff(365, 175, 20, 20, "<%= props.getProperty("pg1_ncFP", "").equals("")?"":"X" %>");
     ff(400, 175, 20, 20, "<%= props.getProperty("pg1_ncMidwife", "").equals("")?"":"X" %>");

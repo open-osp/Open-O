@@ -40,6 +40,7 @@ import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import ca.openosp.openo.utility.MiscUtils;
 
 public class DocumentUploadServlet extends HttpServlet {
@@ -60,15 +61,57 @@ public class DocumentUploadServlet extends HttpServlet {
         String providedFilename = request.getParameter("filename");
         if (providedFilename != null) {
             providedFilename = URLDecoder.decode(providedFilename, "UTF-8");
-            File documentDirectory = new File(foldername);
-            File providedFile = new File(inboxFolder, providedFilename);
-            if (!providedFile.exists()) {
-                providedFile = new File(archiveFolder, providedFilename);
+            
+            // Validate and sanitize the filename to prevent path traversal
+            String sanitizedFilename = FilenameUtils.getName(providedFilename);
+            if (sanitizedFilename == null || sanitizedFilename.isEmpty()) {
+                MiscUtils.getLogger().error("Invalid filename provided: " + providedFilename);
+                return;
             }
+            
+            File documentDirectory = new File(foldername);
+            File inboxDir = new File(inboxFolder);
+            File archiveDir = new File(archiveFolder);
+            
+            // Use sanitized filename to construct safe file paths
+            File providedFile = new File(inboxDir, sanitizedFilename);
+            
+            try {
+                // Validate that the file is within the inbox directory using canonical paths
+                String canonicalInboxPath = inboxDir.getCanonicalPath();
+                String canonicalFilePath = providedFile.getCanonicalPath();
+                
+                if (!canonicalFilePath.startsWith(canonicalInboxPath + File.separator)) {
+                    MiscUtils.getLogger().error("File does not reside in the inbox path: " + providedFilename);
+                    return;
+                }
+                
+                // If file doesn't exist in inbox, check archive
+                if (!providedFile.exists()) {
+                    providedFile = new File(archiveDir, sanitizedFilename);
 
-            FileUtils.copyFileToDirectory(providedFile, documentDirectory);
-
-            fileheader = providedFilename;
+                    String canonicalArchivePath = archiveDir.getCanonicalPath();
+                    canonicalFilePath = providedFile.getCanonicalPath();
+                    
+                    if (!canonicalFilePath.startsWith(canonicalArchivePath + File.separator)) {
+                        MiscUtils.getLogger().error("File does not reside in the archive path: " + providedFilename);
+                        return;
+                    }
+                }
+                
+                // Verify the file exists before copying
+                if (!providedFile.exists()) {
+                    MiscUtils.getLogger().error("File not found: " + sanitizedFilename);
+                    return;
+                }
+                
+                FileUtils.copyFileToDirectory(providedFile, documentDirectory);
+                fileheader = sanitizedFilename;
+                
+            } catch (IOException e) {
+                MiscUtils.getLogger().error("Error processing file: " + sanitizedFilename, e);
+                return;
+            }
         } else {
 
             DiskFileUpload upload = new DiskFileUpload();
@@ -86,11 +129,38 @@ public class DocumentUploadServlet extends HttpServlet {
                     } else {
                         String pathName = item.getName();
                         String[] fullFile = pathName.split("[/|\\\\]");
-                        File savedFile = new File(foldername, fullFile[fullFile.length - 1]);
-                        fileheader = fullFile[fullFile.length - 1];
-                        item.write(savedFile);
-                        if (OscarProperties.getInstance().isPropertyActive("moh_file_management_enabled")) {
-                            FileUtils.copyFileToDirectory(savedFile, new File(inboxFolder));
+                        String uploadedFilename = fullFile[fullFile.length - 1];
+                        
+                        // Sanitize the uploaded filename to prevent path traversal
+                        String sanitizedUploadedFilename = FilenameUtils.getName(uploadedFilename);
+                        if (sanitizedUploadedFilename == null || sanitizedUploadedFilename.isEmpty()) {
+                            MiscUtils.getLogger().error("Invalid uploaded filename: " + uploadedFilename);
+                            continue; // Skip this file
+                        }
+                        
+                        File documentDir = new File(foldername);
+                        File savedFile = new File(documentDir, sanitizedUploadedFilename);
+                        
+                        try {
+                            // Validate that the saved file will be within the document directory
+                            String canonicalDocPath = documentDir.getCanonicalPath();
+                            String canonicalSavedPath = savedFile.getCanonicalPath();
+                            
+                            if (!canonicalSavedPath.startsWith(canonicalDocPath + File.separator)) {
+                                MiscUtils.getLogger().error("File does not start with document path: " + uploadedFilename);
+                                continue; // Skip this file
+                            }
+                            
+                            fileheader = sanitizedUploadedFilename;
+                            item.write(savedFile);
+                            
+                            if (OscarProperties.getInstance().isPropertyActive("moh_file_management_enabled")) {
+                                File inboxDir = new File(inboxFolder);
+                                FileUtils.copyFileToDirectory(savedFile, inboxDir);
+                            }
+                        } catch (IOException e) {
+                            MiscUtils.getLogger().error("Error validating file path for: " + sanitizedUploadedFilename, e);
+                            continue; // Skip this file
                         }
                     }
                 }

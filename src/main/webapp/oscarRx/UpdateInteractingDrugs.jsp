@@ -28,6 +28,7 @@
 <%@page import="java.util.*" %>
 <%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -61,11 +62,10 @@
 
     var errorMsg = "Failed";
     //oscarLog("errorMsg="+errorMsg);
-    var interactStr = '<%=interactingDrugList%>';
-    var randomIds = '<%=allRandomIdInStash%>';
-    //clear all warnings
-    randomIds = randomIds.replace(/\[/, "");
-    randomIds = randomIds.replace(/\]/, "");
+    var interactStr = '<%=Encode.forJavaScript(interactingDrugList != null ? interactingDrugList : "")%>';
+    var randomIds = '<%=Encode.forJavaScript(allRandomIdInStash != null ? allRandomIdInStash.toString() : "")%>';
+    //clear all warnings - remove all bracket characters
+    randomIds = randomIds.replace(/[\[\]]/g, "");
     if (randomIds.length > 0) {
         var randomIdArr = randomIds.split(",");
         for (var h = 0; h < randomIdArr.length; h++) {
@@ -108,7 +108,7 @@
                 var effectStr = interactionData[0];
                 var evidenceStr = interactionData[1];
                 var drugName = interactionData[2];
-                var htmlStr = "<span title='" + drugName + "'><strong>" + significance + "</strong>: " + getEffect(effectStr) + ": " + drugName + " " + getEvidence(evidenceStr) + "</span>";
+                var htmlStr = "<span title='" + (drugName ? drugName.replace(/'/g, "&#39;").replace(/"/g, "&quot;") : "") + "'><strong>" + significance + "</strong>: " + getEffect(effectStr) + ": " + (drugName ? drugName.replace(/</g, "&lt;").replace(/>/g, "&gt;") : "") + " " + getEvidence(evidenceStr) + "</span>";
                 id = id.replace(/\s/g, "");
                 if (document.getElementById(id) != null) {
                     document.getElementById(id).style.display = "inline";
@@ -159,11 +159,10 @@
 
     var errorMsg = "Failed";
     //oscarLog("errorMsg="+errorMsg);
-    var interactStr = '<%=interactingDrugList%>';
-    var randomIds = '<%=allRandomIdInStash%>';
-    //clear all warnings
-    randomIds = randomIds.replace(/\[/, "");
-    randomIds = randomIds.replace(/\]/, "");
+    var interactStr = '<%=Encode.forJavaScript(interactingDrugList != null ? interactingDrugList : "")%>';
+    var randomIds = '<%=Encode.forJavaScript(allRandomIdInStash != null ? allRandomIdInStash.toString() : "")%>';
+    //clear all warnings - remove all bracket characters
+    randomIds = randomIds.replace(/[\[\]]/g, "");
     if (randomIds.length > 0) {
         var randomIdArr = randomIds.split(",");
         for (var h = 0; h < randomIdArr.length; h++) {
@@ -194,7 +193,7 @@
                 var arr2 = str.split("=");
                 var id = arr2[0];
                 var title = arr2[1];
-                var htmlStr = "<a title='" + title + "'>&nbsp;&nbsp;</a>";
+                var htmlStr = "<a title='" + (title ? title.replace(/'/g, "&#39;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;") : "") + "'>&nbsp;&nbsp;</a>";
                 id = id.replace(/\s/g, "");
                 $(id).show();
                 $(id).update(htmlStr);

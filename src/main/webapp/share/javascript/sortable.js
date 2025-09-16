@@ -105,10 +105,14 @@ function ts_resortTable(lnk, clid) {
     }
     if (itm == "") return;
     sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/\.-][a-zA-z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
+    if (itm.match(/^\d\d[\/\.-][a-zA-Z][a-zA-Z][a-zA-Z][\/\.-]\d\d\d\d$/)) sortfn = ts_sort_date;
     if (itm.match(/^\d\d[\/\.-]\d\d[\/\.-]\d\d\d{2}?$/)) sortfn = ts_sort_date;
     if (itm.match(/^-?[£$Û¢Ž]\d/)) sortfn = ts_sort_numeric;
-    if (itm.match(/^-?(\d+[,\.]?)+(E[-+][\d]+)?%?$/)) sortfn = ts_sort_numeric;
+    // Fixed ReDoS vulnerability - replaced nested quantifiers with non-backtracking pattern
+    // Matches numbers with optional thousands separators, scientific notation, and percentages
+    // Examples: 123, 1,234.56, -123.45, 1.23E+10, 45.67%, -1,234.56E-5%
+    if (itm.match(/^-?\d{1,3}(,\d{3})*(\.\d+)?(E[-+]\d+)?%?$/) || 
+        itm.match(/^-?\d+(\.\d+)?(E[-+]\d+)?%?$/)) sortfn = ts_sort_numeric;
     SORT_COLUMN_INDEX = column;
     var firstRow = new Array();
     var newRows = new Array();

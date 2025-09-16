@@ -592,7 +592,7 @@ public class HRM2Action extends ActionSupport {
             limitToProvider = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
         }
 
-        List<HrmLog> logs = hrmLogDao.query(Integer.parseInt(start), Integer.parseInt(length), StringEscapeUtils.escapeSql(orderBy), StringEscapeUtils.escapeSql(orderingColumnDirection), limitToProvider);
+        List<HrmLog> logs = hrmLogDao.query(Integer.parseInt(start), Integer.parseInt(length), orderBy, orderingColumnDirection, limitToProvider);
 
         JSONArray data = new JSONArray();
 

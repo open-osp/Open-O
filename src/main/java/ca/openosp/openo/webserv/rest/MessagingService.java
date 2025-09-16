@@ -26,10 +26,12 @@ package ca.openosp.openo.webserv.rest;
 
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.commn.model.MessageList;
 import ca.openosp.openo.commn.model.Provider;
@@ -41,6 +43,7 @@ import org.springframework.stereotype.Component;
 
 @Path("/messaging")
 @Component("messagingService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class MessagingService extends AbstractServiceImpl {
 
     @Autowired

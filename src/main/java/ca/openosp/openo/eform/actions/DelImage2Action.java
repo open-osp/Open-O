@@ -27,12 +27,18 @@
 package ca.openosp.openo.eform.actions;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
+
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import ca.openosp.OscarProperties;
@@ -54,9 +60,47 @@ public class DelImage2Action extends ActionSupport {
         }
 
         String imgname = request.getParameter("filename");
+        
+        // Validate input parameter
+        if (imgname == null || imgname.trim().isEmpty()) {
+            return ERROR;
+        }
+        
+        // Use FilenameUtils.getName to extract just the filename, removing any path components
+        String sanitizedFilename = FilenameUtils.getName(imgname);
+        
         String imgpath = OscarProperties.getInstance().getEformImageDirectory();
-        File image = new File(imgpath + "/" + imgname);
-        image.delete();
+        
+        // Construct the file using the base directory and sanitized filename only
+        File imageDir = new File(imgpath);
+        File image = new File(imageDir, sanitizedFilename);
+        
+        try {
+            // Validate using canonical path to prevent any remaining path traversal attempts
+            String canonicalImageDirPath = imageDir.getCanonicalPath();
+            String canonicalImagePath = image.getCanonicalPath();
+            
+            // Ensure the resolved path is within the expected directory
+            if (!canonicalImagePath.startsWith(canonicalImageDirPath + File.separator)) {
+                return ERROR;
+            }
+            
+            // Only delete if the file exists and is a regular file (not a directory)
+            if (image.exists() && image.isFile()) {
+                try {
+                    Path imagePath = image.toPath();
+                    Files.delete(imagePath); 
+                } catch (IOException e) {
+                    MiscUtils.getLogger().error("Error deleting the image file: " + imgpath, e);
+                    return ERROR;
+                }
+            }
+            
+        } catch (IOException e) {
+            // Log error if needed, but don't expose details to user
+            return ERROR;
+        }
+        
         return SUCCESS;
     }
 

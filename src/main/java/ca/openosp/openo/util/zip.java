@@ -106,18 +106,50 @@ public class zip {
 
         try {
             ZipFile zipfile = new ZipFile(fullpath);
+            
+            // Get canonical path of the target directory to prevent path traversal
+            File targetDir = new File(dirName);
+            String canonicalTargetPath = targetDir.getCanonicalPath();
 
             entries = zipfile.entries();
             while (entries.hasMoreElements()) {
                 entry = entries.nextElement();
                 String zName = entry.getName();
+                
+                // Sanitize the entry name to prevent path traversal
+                // Remove any leading slashes and normalize the path
+                zName = zName.replaceAll("^[/\\\\]+", "");
+                
+                // Skip entries that contain path traversal sequences
+                if (zName.contains("..") || zName.contains("/..") || zName.contains("\\..")) {
+                    logger.error("Skipping potentially malicious zip entry: " + zName);
+                    continue;
+                }
+                
                 is = new BufferedInputStream(zipfile.getInputStream(entry));
                 int count;
                 byte data[] = new byte[BUFFER];
                 if (!zName.substring(zName.length() - 4).equalsIgnoreCase(".zip")) {
                     zName = zName + ".xml";
                 }
-                File z = new File(dirName + zName);
+                
+                // Create the target file and validate it's within the target directory
+                File z = new File(dirName, zName);
+                String canonicalFilePath = z.getCanonicalPath();
+                
+                // Ensure the file will be extracted within the target directory
+                if (!canonicalFilePath.startsWith(canonicalTargetPath)) {
+                    logger.error("Path traversal attempt detected for entry: " + entry.getName());
+                    is.close();
+                    continue;
+                }
+                
+                // Create parent directories if they don't exist
+                File parentDir = z.getParentFile();
+                if (parentDir != null && !parentDir.exists()) {
+                    parentDir.mkdirs();
+                }
+                
                 FileOutputStream fos = new FileOutputStream(z);
                 dest = new BufferedOutputStream(fos, BUFFER);
                 while ((count = is.read(data, 0, BUFFER)) != -1) {

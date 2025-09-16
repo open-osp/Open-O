@@ -94,10 +94,26 @@ public class GenericDownload extends HttpServlet {
         if (contentType != null) {
             setContentType = contentType;
         }
+        
+        // Security validation: prevent path traversal attacks
+        if (filename == null || filename.contains("..") || filename.contains("/") || filename.contains("\\")) {
+            throw new IllegalArgumentException("Invalid filename");
+        }
+        
+        // Sanitize filename to prevent HTTP response splitting
+        // Remove any CR (\r), LF (\n), and other control characters that could be used for header injection
+        String sanitizedFilename = filename.replaceAll("[\r\n]", "").replaceAll("[\\p{Cntrl}]", "");
+        
         res.setContentType(setContentType);
-        res.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
-        File directory = new File(dir);
-        File curfile = new File(directory, filename);
+        res.setHeader("Content-Disposition", "attachment;filename=\"" + sanitizedFilename + "\"");
+        File directory = new File(dir).getCanonicalFile();
+        File curfile = new File(directory, sanitizedFilename).getCanonicalFile();
+        
+        // Ensure the resolved file is within the intended directory
+        if (!curfile.getCanonicalPath().startsWith(directory.getCanonicalPath() + File.separator)) {
+            throw new SecurityException("Access denied: attempted to access file outside permitted directory");
+        }
+        
         FileInputStream fis = new FileInputStream(curfile);
         int bufferSize;
         byte[] buffer = new byte[BUFFER_SIZE];

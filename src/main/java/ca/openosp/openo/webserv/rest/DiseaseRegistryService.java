@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import ca.openosp.openo.casemgmt.dao.IssueDAO;
@@ -47,6 +48,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import ca.openosp.openo.log.LogAction;
 
 @Path("/dxRegisty")
+@Consumes(MediaType.APPLICATION_JSON)
 public class DiseaseRegistryService extends AbstractServiceImpl {
 
     @Autowired

@@ -31,15 +31,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
 import ca.openosp.openo.messenger.data.MsgMessageData;
+
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSProcessableByteArray;
@@ -65,7 +71,6 @@ import ca.openosp.openo.olis.OLISProtocolSocketFactory;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
-import org.xml.sax.InputSource;
 
 import ca.openosp.openo.olis1.queries.Query;
 
@@ -85,6 +90,8 @@ public class Driver {
     private static OscarLogDao logDao = (OscarLogDao) SpringUtils.getBean(OscarLogDao.class);
     //	private static OLISResultsDao olisResultsDao = SpringUtils.getBean(OLISResultsDao.class);
     private static OLISQueryLogDao olisQueryLogDao = SpringUtils.getBean(OLISQueryLogDao.class);
+
+    private static final Logger logger = MiscUtils.getLogger();
 
 
     public static String submitOLISQuery(LoggedInInfo loggedInInfo, HttpServletRequest request, Query query) {
@@ -199,16 +206,45 @@ public class Driver {
         olisResponse = olisResponse.replaceAll("<Errors", "<Errors xmlns=\"\" ");
 
         try {
-            DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            // Create DocumentBuilderFactory with XXE prevention
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+
+            try {
+                // Disable external entities
+                dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+                dbf.setXIncludeAware(false);
+                dbf.setExpandEntityReferences(false);
+
+            } catch (ParserConfigurationException e) {
+                // FAIL SECURELY - don't process XML if we can't secure it
+                logger.error("Failed to configure XXE prevention: {}", e.getMessage());
+                throw new SecurityException("Cannot securely configure XML parser", e);
+            }
+
+            dbf.newDocumentBuilder();
+            
+            // Create SchemaFactory with XXE prevention
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             Source schemaFile = new StreamSource(new File(OscarProperties.getInstance().getProperty("olis_response_schema")));
             factory.newSchema(schemaFile);
 
             JAXBContext jc = JAXBContext.newInstance("ca.ssha._2005.hial");
             Unmarshaller u = jc.createUnmarshaller();
+            
+            // Create secure XMLInputFactory for JAXB unmarshalling
+            XMLInputFactory xif = XMLInputFactory.newInstance();
+            xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+            xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+            XMLStreamReader xsr = xif.createXMLStreamReader(new StringReader(olisResponse));
+            
             @SuppressWarnings("unchecked")
-            Response root = ((JAXBElement<Response>) u.unmarshal(new InputSource(new StringReader(olisResponse)))).getValue();
+            Response root = ((JAXBElement<Response>) u.unmarshal(xsr)).getValue();
 
             if (root.getErrors() != null) {
                 List<String> errorStringList = new LinkedList<String>();

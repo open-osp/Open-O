@@ -151,7 +151,15 @@ public final class Factory {
                 msgType = element.getAttributeValue("name");
 
                 if (msgType.equalsIgnoreCase(type)) {
-                    msgHandler = element.getAttributeValue("className");
+                    String className = element.getAttributeValue("className");
+
+                    // in case we have dots in the handler class name (i.e. package
+                    // is specified), don't assume default package
+                    if (className.indexOf(".") != -1) {
+                        msgHandler = className;
+                    } else {
+                        msgHandler = "ca.openosp.openo.lab.ca.all.parsers." + className;
+                    }
                 }
             }
 

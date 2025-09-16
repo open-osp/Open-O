@@ -75,7 +75,8 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
                 return NONE;
             } else {
                 if (getData(loggedInInfo, file1FileName, "DOCUMENT_DIR", request)) {
-                    return filename.startsWith("L") ? "outside" : SUCCESS;
+                    String sanitized = sanitizeFileName(file1FileName);
+                    return (sanitized.startsWith("L")) ? "outside" : SUCCESS;
                 }
                 else {
                     addActionError(getText("errors.incorrectFileFormat"));
@@ -86,9 +87,11 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             }
         } else {
             if (getData(loggedInInfo, filename, "ONEDT_INBOX", request)) {
-                return filename.startsWith("L") ? "outside":SUCCESS;
+                String sanitized = sanitizeFileName(filename);
+                return (sanitized.startsWith("L")) ? "outside" : SUCCESS;
             } else if (getData(loggedInInfo, filename, "ONEDT_ARCHIVE", request)) {
-                return filename.startsWith("L") ? "outside":SUCCESS;
+                String sanitized = sanitizeFileName(filename);
+                return (sanitized.startsWith("L")) ? "outside" : SUCCESS;
             } else {
                 addActionError(getText("errors.incorrectFileFormat"));
 
@@ -109,18 +112,48 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
         boolean isAdded = true;
 
         try {
-            OscarProperties props = OscarProperties.getInstance();
-
-            // 获取目标目录
-            String place = props.getProperty("DOCUMENT_DIR");
-            if (!place.endsWith("/")) {
-                place = place + "/";
+            // Sanitize the filename to prevent path traversal
+            String sanitizedFileName = sanitizeFileName(fileName);
+            if (sanitizedFileName == null || sanitizedFileName.isEmpty()) {
+                MiscUtils.getLogger().error("Invalid filename provided: " + fileName);
+                return false;
             }
 
-            retVal = place + fileName;
+            OscarProperties props = OscarProperties.getInstance();
+
+            // Get target directory
+            String place = props.getProperty("DOCUMENT_DIR");
+            if (place == null || place.trim().isEmpty()) {
+                MiscUtils.getLogger().error("DOCUMENT_DIR property is not configured");
+                return false;
+            }
+            
+            // Validate and canonicalize the base directory path first
+            File placeDir;
+            try {
+                placeDir = new File(place).getCanonicalFile();
+                // Ensure the directory exists and is actually a directory
+                if (!placeDir.exists() || !placeDir.isDirectory()) {
+                    MiscUtils.getLogger().error("DOCUMENT_DIR does not exist or is not a directory: " + place);
+                    return false;
+                }
+            } catch (IOException e) {
+                MiscUtils.getLogger().error("Invalid DOCUMENT_DIR path: " + place, e);
+                return false;
+            }
+            
+            // Now safely construct the destination file path
+            File destFile = new File(placeDir, sanitizedFileName).getCanonicalFile();
+            
+            // Validate that the destination is within the allowed directory
+            if (!destFile.getCanonicalPath().startsWith(placeDir.getCanonicalPath() + File.separator)) {
+                MiscUtils.getLogger().error("Path does not start with document path: " + sanitizedFileName);
+                return false;
+            }
+
+            retVal = destFile.getPath();
             MiscUtils.getLogger().debug(retVal);
 
-            File destFile = new File(retVal);
             try (InputStream stream = new FileInputStream(file);
                  OutputStream bos = new FileOutputStream(destFile)) {
                 byte[] buffer = new byte[2048];
@@ -131,10 +164,34 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             }
 
             String inboxDir = props.getProperty("ONEDT_INBOX");
-            if (!inboxDir.endsWith("/")) {
-                inboxDir = inboxDir + "/";
+            if (inboxDir == null || inboxDir.trim().isEmpty()) {
+                MiscUtils.getLogger().error("ONEDT_INBOX property is not configured");
+                return false;
             }
-            File inboxFile = new File(inboxDir, fileName);
+            
+            // Validate and canonicalize the inbox directory path
+            File inboxDirFile;
+            try {
+                inboxDirFile = new File(inboxDir).getCanonicalFile();
+                // Ensure the directory exists and is actually a directory
+                if (!inboxDirFile.exists() || !inboxDirFile.isDirectory()) {
+                    MiscUtils.getLogger().error("ONEDT_INBOX does not exist or is not a directory: " + inboxDir);
+                    return false;
+                }
+            } catch (IOException e) {
+                MiscUtils.getLogger().error("Invalid ONEDT_INBOX path: " + inboxDir, e);
+                return false;
+            }
+            
+            // Now safely construct the inbox file path
+            File inboxFile = new File(inboxDirFile, sanitizedFileName).getCanonicalFile();
+            
+            // Validate that the inbox file is within the allowed directory
+            if (!inboxFile.getCanonicalPath().startsWith(inboxDirFile.getCanonicalPath() + File.separator)) {
+                MiscUtils.getLogger().error("Path does not start with inbox: " + sanitizedFileName);
+                return false;
+            }
+            
             org.apache.commons.io.FileUtils.copyFile(destFile, inboxFile);
         } catch (FileNotFoundException e) {
             MiscUtils.getLogger().error("File not found", e);
@@ -160,6 +217,13 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
         boolean isGot = false;
 
         try {
+            // Sanitize the filename to prevent path traversal
+            String sanitizedFileName = sanitizeFileName(fileName);
+            if (sanitizedFileName == null || sanitizedFileName.isEmpty()) {
+                MiscUtils.getLogger().error("Invalid filename provided: " + fileName);
+                return false;
+            }
+
             OscarProperties props = OscarProperties.getInstance();
             String filepath = props.getProperty(pathDir);
             boolean bNewBilling = "true".equals(props.getProperty("isNewONbilling", ""));
@@ -169,13 +233,12 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             }
 
             File safeDir = new File(filepath).getCanonicalFile();
-            File inputFile = new File(filepath, fileName).getCanonicalFile();
+            File inputFile = new File(safeDir, sanitizedFileName).getCanonicalFile();
 
-            String safeDirPath = safeDir.getPath() + File.separator;
-            String filePath = inputFile.getPath();
-
-            if (!filePath.startsWith(safeDirPath)) {
-                throw new IllegalArgumentException("File path is outside allowed directory: " + filePath);
+            // Validate that the file is within the allowed directory
+            if (!inputFile.getCanonicalPath().startsWith(safeDir.getCanonicalPath() + File.separator)) {
+                MiscUtils.getLogger().error("File path is not in the correct directory: " + sanitizedFileName);
+                throw new IllegalArgumentException("File path is outside allowed directory");
             }
 
             FileInputStream file = new FileInputStream(inputFile);
@@ -184,30 +247,30 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
             ArrayList<String> messages = new ArrayList<String>();
             String ReportName = "";
 
-            if (fileName.substring(0, 1).compareTo("E") == 0 || fileName.substring(0, 1).compareTo("F") == 0) {
+            if (sanitizedFileName.substring(0, 1).compareTo("E") == 0 || sanitizedFileName.substring(0, 1).compareTo("F") == 0) {
                 ReportName = "Claims Error Report";
-                BillingClaimsErrorReportBeanHandler hd = generateReportE(file, bNewBilling, fileName);
+                BillingClaimsErrorReportBeanHandler hd = generateReportE(file, bNewBilling, sanitizedFileName);
                 request.setAttribute("claimsErrors", hd);
                 isGot = hd.verdict;
-            } else if (fileName.substring(0, 1).compareTo("B") == 0) {
+            } else if (sanitizedFileName.substring(0, 1).compareTo("B") == 0) {
                 ReportName = "Claim Batch Acknowledgement Report";
                 BillingClaimBatchAcknowledgementReportBeanHandler hd = generateReportB(file);
                 request.setAttribute("batchAcks", hd);
                 isGot = hd.verdict;
-            } else if (fileName.substring(0, 1).compareTo("X") == 0) {
+            } else if (sanitizedFileName.substring(0, 1).compareTo("X") == 0) {
                 ReportName = "Claim File Rejection Report";
                 messages = generateReportX(file);
                 request.setAttribute("messages", messages);
                 isGot = reportXIsGenerated;
-            } else if (fileName.substring(0, 1).compareTo("R") == 0) {
+            } else if (sanitizedFileName.substring(0, 1).compareTo("R") == 0) {
                 ReportName = "EDT OBEC Output Specification";
                 BillingEDTOBECOutputSpecificationBeanHandler hd = generateReportR(loggedInInfo, file);
                 request.setAttribute("outputSpecs", hd);
                 isGot = hd.verdict;
-            } else if (fileName.substring(0, 1).compareTo("L") == 0) {
+            } else if (sanitizedFileName.substring(0, 1).compareTo("L") == 0) {
                 ReportName = "OUTSIDE USE REPORT";
                 request.setAttribute("backupfilepath", filepath);
-                request.setAttribute("filename", fileName);
+                request.setAttribute("filename", sanitizedFileName);
                 isGot = true;
             }
 
@@ -388,5 +451,65 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+    
+    /**
+     * Sanitizes a filename to prevent path traversal attacks.
+     * Removes any path components and dangerous characters from the filename.
+     * 
+     * @param fileName the filename to sanitize
+     * @return sanitized filename safe for filesystem operations, or null if invalid
+     */
+    private static String sanitizeFileName(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return null;
+        }
+
+        // First normalize Unicode to prevent homoglyph attacks
+        // This converts characters to their canonical form
+        String normalized = java.text.Normalizer.normalize(fileName, java.text.Normalizer.Form.NFKC);
+    
+        // URL decode to catch encoded traversal attempts like %2e%2e
+        String decoded = normalized;
+        try {
+            // Decode multiple times to catch double-encoding
+            for (int i = 0; i < 3; i++) {
+                String temp = java.net.URLDecoder.decode(decoded, "UTF-8");
+                if (temp.equals(decoded)) {
+                    break; // No more encoding layers
+                }
+                decoded = temp;
+            }
+        } catch (Exception e) {
+            // If decoding fails, reject the filename
+            return null;
+        }
+    
+        // First, extract just the filename (remove any path components)
+        String baseName = new File(decoded).getName();
+        
+        // Remove dangerous characters and sequences in a single pass
+        // Using character class for efficiency
+            String sanitized = baseName
+                // Remove path traversal sequences (including Unicode variations)
+                .replaceAll("\\.\\.+[/\\\\]?", "")
+                // Remove control characters (U+0000 to U+001F and U+007F to U+009F)
+                .replaceAll("[\\p{Cntrl}]", "")
+                // Remove format characters that could be used for tricks
+                .replaceAll("[\\p{Cf}]", "")
+                // Remove traditional dangerous file system characters
+                .replaceAll("[\\\\/:*?\"<>|~$]", "")
+                // Remove zero-width characters that could hide malicious content
+                .replaceAll("[\\u200B-\\u200F\\u202A-\\u202E\\uFEFF]", "");
+
+        // Trim the result
+        sanitized = sanitized.trim();
+        
+        // Ensure we still have a valid filename after sanitization
+        if (sanitized.trim().isEmpty()) {
+            return null;
+        }
+        
+        return sanitized;
     }
 }

@@ -35,7 +35,7 @@
 package ca.openosp.openo.lab.ca.all.upload.handlers;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +50,7 @@ import org.w3c.dom.NodeList;
 
 import ca.openosp.openo.lab.ca.all.upload.MessageUploader;
 import ca.openosp.openo.lab.ca.all.util.Utilities;
+import ca.openosp.OscarProperties;
 
 public class DefaultHandler implements MessageHandler {
     Logger logger = MiscUtils.getLogger();
@@ -116,13 +117,39 @@ public class DefaultHandler implements MessageHandler {
      */
     private Document getXML(String fileName) {
         try {
+            // Validate the file path to prevent path traversal attacks
+            File file = new File(fileName);
+            
+            // Get the canonical path to resolve any relative path components
+            String canonicalPath = file.getCanonicalPath();
+            
+            // Ensure the file exists and is a regular file
+            if (!file.exists() || !file.isFile()) {
+                logger.error("File does not exist or is not a regular file: " + fileName);
+                return null;
+            }
+            
+            // Additional validation: ensure the file is within the expected document directory
+            OscarProperties props = OscarProperties.getInstance();
+            String documentDir = props.getProperty("DOCUMENT_DIR");
+            if (documentDir != null && !documentDir.isEmpty()) {
+                File docDir = new File(documentDir).getCanonicalFile();
+                if (!canonicalPath.startsWith(docDir.getCanonicalPath() + File.separator)) {
+                    logger.error("Attempted to access file outside document directory: " + canonicalPath);
+                    throw new SecurityException("Access denied: file outside permitted directory");
+                }
+            }
+            
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setValidating(false);
-            Document doc = factory.newDocumentBuilder().parse(new FileInputStream(fileName));
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            // Use the validated file object instead of creating a new FileInputStream with the raw path
+            Document doc = factory.newDocumentBuilder().parse(file);
             return (doc);
 
             // Ignore exceptions and return false
         } catch (Exception e) {
+            logger.error("Error parsing XML file: " + fileName, e);
             return (null);
         }
     }
@@ -130,8 +157,28 @@ public class DefaultHandler implements MessageHandler {
 
     //TODO: Dont think this needs to be in this class.  Better as a util method
     public String readTextFile(String fullPathFilename) throws IOException {
+        // Validate the file path to prevent path traversal attacks
+        File file = new File(fullPathFilename);
+        String canonicalPath = file.getCanonicalPath();
+        
+        // Ensure the file exists and is a regular file
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("File does not exist or is not a regular file: " + fullPathFilename);
+        }
+        
+        // Additional validation: ensure the file is within the expected document directory
+        OscarProperties props = OscarProperties.getInstance();
+        String documentDir = props.getProperty("DOCUMENT_DIR");
+        if (documentDir != null && !documentDir.isEmpty()) {
+            File docDir = new File(documentDir).getCanonicalFile();
+            if (!canonicalPath.startsWith(docDir.getCanonicalPath() + File.separator)) {
+                throw new SecurityException("Access denied: file outside permitted directory");
+            }
+        }
+        
         StringBuilder sb = new StringBuilder(1024);
-        BufferedReader reader = new BufferedReader(new FileReader(fullPathFilename));
+        // Use the validated file object instead of the raw path
+        BufferedReader reader = new BufferedReader(new FileReader(file));
 
         char[] chars = new char[1024];
         int numRead = 0;

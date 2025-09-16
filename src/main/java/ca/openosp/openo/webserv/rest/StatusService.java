@@ -24,15 +24,18 @@
  */
 package ca.openosp.openo.webserv.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.PMmodule.service.ProviderManager;
 import ca.openosp.openo.webserv.rest.to.GenericRESTResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/status")
+@Consumes(MediaType.APPLICATION_JSON)
 public class StatusService extends AbstractServiceImpl {
 
     @Autowired

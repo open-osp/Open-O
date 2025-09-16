@@ -339,7 +339,9 @@
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.1/jquery.serializejson.min.js"></script>
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.serializeJSON/3.2.1/jquery.serializejson.min.js"
+        integrity="sha512-Br5bdkAjeKASBYCbM5qNfb5DB7tGLX3OSwYlDQxKKPNPWmKEcChhEpk7kIEhFLUjTxw0FdGkB/uJNEzbfYFxWkA=="
+        crossorigin="anonymous"></script>
 <script type="text/javascript"
         src="${pageContext.request.contextPath}/library/bootstrap2-datepicker/bootstrap-datepicker.js"></script>
 

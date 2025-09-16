@@ -29,10 +29,13 @@ import ca.openosp.openo.util.UtilDateUtilities;
 import ca.openosp.openo.utility.MiscUtils;
 import com.itextpdf.text.pdf.PdfReader;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.ProviderInboxRoutingDao;
@@ -63,6 +66,45 @@ public class PDFHandler implements MessageHandler {
         } else {
             int fileNameIdx = fileName.lastIndexOf("/");
             fileName = fileName.substring(fileNameIdx + 1);
+        }
+        
+        // Validate and canonicalize the file path to prevent path traversal attacks
+        try {
+            // Get the base document directory from configuration
+            String baseDocDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            if (baseDocDir == null || baseDocDir.isEmpty()) {
+                logger.error("DOCUMENT_DIR not configured");
+                return null;
+            }
+            
+            // Normalize and validate the base directory
+            Path basePath = Paths.get(baseDocDir).normalize().toAbsolutePath();
+            
+            // Normalize and validate the file path
+            Path targetPath = Paths.get(filePath).normalize().toAbsolutePath();
+            
+            // Ensure the target file is within the allowed base directory
+            if (!targetPath.startsWith(basePath)) {
+                logger.error("Path traversal attempt detected: " + filePath);
+                return null;
+            }
+            
+            // Verify the file exists and is a regular file
+            File targetFile = targetPath.toFile();
+            if (!targetFile.exists() || !targetFile.isFile()) {
+                logger.error("File does not exist or is not a regular file: " + targetPath);
+                return null;
+            }
+            
+            // Use the validated canonical path
+            filePath = targetFile.getCanonicalPath();
+            
+        } catch (IOException e) {
+            logger.error("Error validating file path: " + filePath, e);
+            return null;
+        } catch (Exception e) {
+            logger.error("Unexpected error validating file path: " + filePath, e);
+            return null;
         }
 
         EDoc newDoc = new EDoc("", "", fileName, "", providerNo, providerNo, "", 'A',

@@ -82,7 +82,7 @@
     String[] param = new String[3];
 
     String originalPage = request.getParameter("originalpage") != null ? request.getParameter("originalpage") : "schedule";
-    String originalPagePath = "../providers/providercontrol.jsp";
+    String originalPagePath = "../provider/providercontrol.jsp";
 
     if (originalPage.equals("waitingList")) {
         originalPagePath = "../oscarWaitingList/DisplayWaitingList.jsp";

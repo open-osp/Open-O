@@ -166,11 +166,23 @@ dojo.uuid.TimeBasedGenerator = new function () {
         // summary:
         //   Returns a randomly generated 8-character string of hex digits.
 
-        // FIXME: This probably isn't a very high quality random number.
-
-        // Make random32bitNumber be a randomly generated floating point number
-        // between 0 and (4,294,967,296 - 1), inclusive.
-        var random32bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 32));
+        // Use cryptographically secure random number generation
+        var random32bitNumber;
+        if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+            // Use Web Crypto API for secure random generation
+            var array = new Uint32Array(1);
+            window.crypto.getRandomValues(array);
+            random32bitNumber = array[0];
+        } else if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+            // Support for other environments with crypto.getRandomValues
+            var array = new Uint32Array(1);
+            crypto.getRandomValues(array);
+            random32bitNumber = array[0];
+        } else {
+            // Fallback to Math.random() only if crypto API is not available
+            // This maintains backwards compatibility but should be avoided in production
+            random32bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 32));
+        }
 
         var eightCharacterString = random32bitNumber.toString(HEX_RADIX);
         while (eightCharacterString.length < 8) {
@@ -196,7 +208,25 @@ dojo.uuid.TimeBasedGenerator = new function () {
             } else {
                 if (!_uuidPseudoNodeString) {
                     var pseudoNodeIndicatorBit = 0x8000;
-                    var random15bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 15));
+                    var random15bitNumber;
+                    
+                    // Use cryptographically secure random number generation
+                    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+                        // Use Web Crypto API for secure random generation
+                        var array = new Uint16Array(1);
+                        window.crypto.getRandomValues(array);
+                        random15bitNumber = array[0] & 0x7FFF; // Mask to get 15 bits
+                    } else if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+                        // Support for other environments with crypto.getRandomValues
+                        var array = new Uint16Array(1);
+                        crypto.getRandomValues(array);
+                        random15bitNumber = array[0] & 0x7FFF; // Mask to get 15 bits
+                    } else {
+                        // Fallback to Math.random() only if crypto API is not available
+                        // This maintains backwards compatibility but should be avoided in production
+                        random15bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 15));
+                    }
+                    
                     var leftmost4HexCharacters = (pseudoNodeIndicatorBit | random15bitNumber).toString(HEX_RADIX);
                     _uuidPseudoNodeString = leftmost4HexCharacters + _generateRandomEightCharacterHexString();
                 }
@@ -205,7 +235,25 @@ dojo.uuid.TimeBasedGenerator = new function () {
         }
         if (!_uuidClockSeqString) {
             var variantCodeForDCEUuids = 0x8000; // 10--------------, i.e. uses only first two of 16 bits.
-            var random14bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 14));
+            var random14bitNumber;
+            
+            // Use cryptographically secure random number generation
+            if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+                // Use Web Crypto API for secure random generation
+                var array = new Uint16Array(1);
+                window.crypto.getRandomValues(array);
+                random14bitNumber = array[0] & 0x3FFF; // Mask to get 14 bits
+            } else if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+                // Support for other environments with crypto.getRandomValues
+                var array = new Uint16Array(1);
+                crypto.getRandomValues(array);
+                random14bitNumber = array[0] & 0x3FFF; // Mask to get 14 bits
+            } else {
+                // Fallback to Math.random() only if crypto API is not available
+                // This maintains backwards compatibility but should be avoided in production
+                random14bitNumber = Math.floor((Math.random() % 1) * Math.pow(2, 14));
+            }
+            
             _uuidClockSeqString = (variantCodeForDCEUuids | random14bitNumber).toString(HEX_RADIX);
         }
 

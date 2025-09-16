@@ -6,6 +6,7 @@ import ca.openosp.openo.eform.EFormUtil;
 import ca.openosp.openo.encounter.data.EctFormData;
 
 import org.apache.logging.log4j.Logger;
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.model.EFormData;
 import ca.openosp.openo.commn.model.enumerator.DocumentType;
 import ca.openosp.openo.documentManager.DocumentAttachmentManager;
@@ -119,20 +120,68 @@ public class DocumentPreview2Action extends ActionSupport {
 
     public void renderPDF() {
         String pdfPathString = StringUtils.isNullOrEmpty(request.getParameter("pdfPath")) ? "" : request.getParameter("pdfPath");
+        
+        if (pdfPathString.isEmpty()) {
+            logger.error("Empty PDF path provided");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        
+        // Validate the PDF path to prevent path traversal attacks
         Path pdfPath = Paths.get(pdfPathString);
-        response.setContentType("application/pdf");
-        try (InputStream inputStream = Files.newInputStream(pdfPath);
-             BufferedInputStream bfis = new BufferedInputStream(inputStream);
-             ServletOutputStream outs = response.getOutputStream()) {
-
-            int data;
-            while ((data = bfis.read()) != -1) {
-                outs.write(data);
+        
+        try {
+            // Get the canonical path to resolve any path traversal attempts
+            Path canonicalPdfPath = pdfPath.toRealPath();
+            
+            // Define allowed directories based on OSCAR configuration
+            String[] allowedBasePaths = {
+                OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
+                OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/"),
+                OscarProperties.getInstance().getProperty("eform_image", "/var/lib/OscarDocument/eform/images/"),
+                System.getProperty("java.io.tmpdir")
+            };
+            
+            boolean isValidPath = false;
+            for (String basePath : allowedBasePaths) {
+                if (basePath != null && !basePath.isEmpty()) {
+                    Path baseCanonicalPath = Paths.get(basePath).toRealPath();
+                    if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
+                        isValidPath = true;
+                        break;
+                    }
+                }
             }
+            
+            if (!isValidPath) {
+                logger.error("Access denied: Path traversal attempt detected for path: " + pdfPathString);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+            
+            // Additional check: ensure the file exists and is a regular file
+            if (!Files.exists(canonicalPdfPath) || !Files.isRegularFile(canonicalPdfPath)) {
+                logger.error("PDF file not found or is not a regular file: " + pdfPathString);
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
+            // Serve the validated PDF file
+            response.setContentType("application/pdf");
+            try (InputStream inputStream = Files.newInputStream(canonicalPdfPath);
+                 BufferedInputStream bfis = new BufferedInputStream(inputStream);
+                 ServletOutputStream outs = response.getOutputStream()) {
 
-            outs.flush();
+                int data;
+                while ((data = bfis.read()) != -1) {
+                    outs.write(data);
+                }
+
+                outs.flush();
+            }
         } catch (IOException e) {
-            logger.error("Error", e);
+            logger.error("Error processing PDF file: " + pdfPathString, e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

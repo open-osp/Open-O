@@ -11,6 +11,28 @@ import javax.xml.namespace.QName;
 import ca.openosp.openo.ckd.CKDConfig;
 import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
 
+/**
+ * XMLBeans implementation class for the {@link CKDConfig} interface.
+ *
+ * This class provides the concrete implementation for managing comprehensive CKD
+ * (Chronic Kidney Disease) configuration data within OpenO EMR. It serves as the
+ * main container for all CKD-related configuration elements including diagnosis codes,
+ * blood pressure settings, medical history, drugs, and exclusion criteria.
+ *
+ * The implementation handles XML serialization and deserialization of complex CKD
+ * configuration documents within the "http://www.oscarmcmaster.org/ckd" namespace,
+ * providing thread-safe access to all nested configuration elements.
+ *
+ * Key configuration elements managed:
+ * - Diagnosis codes (DxCodes) for CKD identification
+ * - Blood pressure (Bp) thresholds and monitoring criteria
+ * - Medical history (Hx) including issues and search text patterns
+ * - Drug/medication (Drugs) lists and interactions
+ * - Exclusion (Excludes) criteria for patient filtering
+ *
+ * @see CKDConfig
+ * @since 2010-01-01
+ */
 public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
 {
     private static final long serialVersionUID = 1L;
@@ -20,10 +42,20 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
     private static final QName DRUGS$6;
     private static final QName EXCLUDES$8;
     
+    /**
+     * Constructs a new CKDConfigImpl instance with the specified schema type.
+     *
+     * @param sType the SchemaType that defines the XML schema structure for this CKD configuration
+     */
     public CKDConfigImpl(final SchemaType sType) {
         super(sType);
     }
     
+    /**
+     * Retrieves the diagnosis codes configuration for CKD identification.
+     *
+     * @return DxCodes the diagnosis codes configuration, or null if not set
+     */
     public DxCodes getDxCodes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -36,6 +68,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Sets the diagnosis codes configuration for CKD identification.
+     *
+     * @param dxCodes DxCodes the diagnosis codes configuration to set
+     */
     public void setDxCodes(final DxCodes dxCodes) {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -48,6 +85,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Creates and adds a new diagnosis codes configuration element.
+     *
+     * @return DxCodes the newly created diagnosis codes configuration
+     */
     public DxCodes addNewDxCodes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -57,6 +99,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Retrieves the blood pressure configuration for CKD monitoring.
+     *
+     * @return Bp the blood pressure configuration, or null if not set
+     */
     public Bp getBp() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -69,6 +116,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Sets the blood pressure configuration for CKD monitoring.
+     *
+     * @param bp Bp the blood pressure configuration to set
+     */
     public void setBp(final Bp bp) {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -81,6 +133,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Creates and adds a new blood pressure configuration element.
+     *
+     * @return Bp the newly created blood pressure configuration
+     */
     public Bp addNewBp() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -90,6 +147,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Retrieves the medical history configuration for CKD management.
+     *
+     * @return Hx the medical history configuration, or null if not set
+     */
     public Hx getHx() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -102,6 +164,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Sets the medical history configuration for CKD management.
+     *
+     * @param hx Hx the medical history configuration to set
+     */
     public void setHx(final Hx hx) {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -114,6 +181,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Creates and adds a new medical history configuration element.
+     *
+     * @return Hx the newly created medical history configuration
+     */
     public Hx addNewHx() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -123,6 +195,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Retrieves the drugs configuration for CKD medication management.
+     *
+     * @return Drugs the drugs configuration, or null if not set
+     */
     public Drugs getDrugs() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -135,6 +212,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Checks if the drugs configuration is set.
+     *
+     * @return boolean true if drugs configuration exists, false otherwise
+     */
     public boolean isSetDrugs() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -142,6 +224,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Sets the drugs configuration for CKD medication management.
+     *
+     * @param drugs Drugs the drugs configuration to set
+     */
     public void setDrugs(final Drugs drugs) {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -154,6 +241,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Creates and adds a new drugs configuration element.
+     *
+     * @return Drugs the newly created drugs configuration
+     */
     public Drugs addNewDrugs() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -163,6 +255,9 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Removes the drugs configuration element.
+     */
     public void unsetDrugs() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -170,6 +265,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Retrieves the exclusion criteria configuration for CKD patient filtering.
+     *
+     * @return Excludes the exclusion criteria configuration, or null if not set
+     */
     public Excludes getExcludes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -182,6 +282,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Checks if the exclusion criteria configuration is set.
+     *
+     * @return boolean true if exclusion criteria configuration exists, false otherwise
+     */
     public boolean isSetExcludes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -189,6 +294,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Sets the exclusion criteria configuration for CKD patient filtering.
+     *
+     * @param excludes Excludes the exclusion criteria configuration to set
+     */
     public void setExcludes(final Excludes excludes) {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -201,6 +311,11 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Creates and adds a new exclusion criteria configuration element.
+     *
+     * @return Excludes the newly created exclusion criteria configuration
+     */
     public Excludes addNewExcludes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -210,6 +325,9 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
         }
     }
     
+    /**
+     * Removes the exclusion criteria configuration element.
+     */
     public void unsetExcludes() {
         synchronized (this.monitor()) {
             this.check_orphaned();
@@ -218,6 +336,7 @@ public class CKDConfigImpl extends XmlComplexContentImpl implements CKDConfig
     }
     
     static {
+        // Initialize QName constants for XML element identification within CKD namespace
         DXCODES$0 = new QName("http://www.oscarmcmaster.org/ckd", "dx-codes");
         BP$2 = new QName("http://www.oscarmcmaster.org/ckd", "bp");
         HX$4 = new QName("http://www.oscarmcmaster.org/ckd", "hx");

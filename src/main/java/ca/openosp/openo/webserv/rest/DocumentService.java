@@ -55,6 +55,7 @@ import java.util.Map;
 @Service
 @Path("/document")
 @Component("documentService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class DocumentService extends AbstractServiceImpl {
     private static Logger logger = MiscUtils.getLogger();
 
@@ -107,7 +108,7 @@ public class DocumentService extends AbstractServiceImpl {
 
         // Validate access
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_edoc", SecurityInfoManager.WRITE, "")) {
-            logger.error("Write Access Denied _edoc for providers {}", loggedInInfo.getLoggedInProviderNo());
+            logger.error("Write Access Denied _edoc for provider {}", loggedInInfo.getLoggedInProviderNo());
             return Response.status(Response.Status.FORBIDDEN).entity(createResponseMap(documentTo1.getFileName(), "Failed", "Access Denied")).build();
         }
 

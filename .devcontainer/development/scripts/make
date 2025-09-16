@@ -13,9 +13,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Function to handle the build and deploy logic
 # Takes a single argument ($1) which is a boolean indicating whether to run tests.
 # Takes a second argument ($2) which is a boolean indicating whether to compile JSPs.
+# Takes a third argument ($3) which is a boolean indicating whether to enable dev mode.
 build_and_deploy() {
   run_tests="$1"
   compile_jsps="$2"
+  dev_mode="$3"
 
   # Stop the Catalina server by calling the `server` script located in the same directory as this script.
   "$SCRIPT_DIR/server" stop
@@ -39,10 +41,15 @@ build_and_deploy() {
     jsp_profile="-Pjspc"
   fi
   
+  dev_mode_flag=""
+  if [ "$dev_mode" = true ]; then
+    dev_mode_flag="-Dstruts.devMode=true"
+  fi
+  
   if [ "$run_tests" = true ]; then
-    mvn clean -T 1C package war:exploded $jsp_profile
+    mvn clean -T 1C package war:exploded $jsp_profile $dev_mode_flag
   else
-    mvn clean -Dmaven.test.skip=true -T 1C package war:exploded $jsp_profile
+    mvn clean -Dmaven.test.skip=true -T 1C package war:exploded $jsp_profile $dev_mode_flag
   fi
 
   # Extract the version from the pom.xml file.
@@ -172,20 +179,22 @@ print_help() {
       echo "Usage: make [command] [flags]"
       echo ""
       echo "Commands:"
-      echo "  clean                           Clean the project and remove the target directory."
-      echo "  install [--run-tests] [--jspc]  Build and deploy the project. Run unit tests if --run-tests is specified."
-      echo "                                  Compile JSPs if --jspc is specified."
-      echo "  jspc                            Compile JSPs only (no deployment)."
-      echo "  docs                            Generate all documentation and build static site for production."
-      echo "  docs-serve                      Start Docusaurus development server (http://localhost:3000)."
-      echo "  lock                            Update the dependency lock file."
-      echo "  help                            Display this help message."
+      echo "  clean                                         Clean the project and remove the target directory."
+      echo "  install [--run-tests] [--jspc] [--dev-mode]   Build and deploy the project. Run unit tests if --run-tests is specified."
+      echo "                                                Compile JSPs if --jspc is specified."
+      echo "                                                Enable Struts dev mode if --dev-mode is specified."
+      echo "  jspc                                          Compile JSPs only (no deployment)."
+      echo "  docs                                          Generate all documentation and build static site for production."
+      echo "  docs-serve                                    Start Docusaurus development server (http://localhost:3000)."
+      echo "  lock                                          Update the dependency lock file."
+      echo "  help                                          Display this help message."
 }
 
 # Default behavior is to skip tests unless --run-tests is explicitly provided.
 # Default behavior is to skip JSP compilation unless --jspc is explicitly provided.
 run_tests=false
 compile_jsps=false
+dev_mode=false
 
 # If no arguments are provided, display usage instructions and exit.
 if [ $# -eq 0 ]; then
@@ -214,6 +223,10 @@ for arg in "$@"; do
             compile_jsps=true
             shift
             ;;
+          --dev-mode)
+            dev_mode=true
+            shift
+            ;;
           *)
             echo "Unknown flag: $1"
             print_help
@@ -222,7 +235,7 @@ for arg in "$@"; do
         esac
       done
       # Run the build and deploy process, passing in whether or not to run tests and compile JSPs.
-      build_and_deploy "$run_tests" "$compile_jsps"
+      build_and_deploy "$run_tests" "$compile_jsps" "$dev_mode"
       ;;
     jspc)
       # Compile JSPs only without deployment.

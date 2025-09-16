@@ -13,6 +13,7 @@ package ca.openosp.openo.documentManager.actions;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -81,16 +82,16 @@ public class DocumentUpload2Action extends ActionSupport {
                 map.put("error", 4);
                 throw new FileNotFoundException();
             } else {
-
                 String queueId = request.getParameter("queue");
                 String destFolder = request.getParameter("destFolder");
 
-                File f = new File(IncomingDocUtil.getAndCreateIncomingDocumentFilePathName(queueId, destFolder, fileName));
+                // Sanitize filename to prevent path traversal
+                String sanitizedFileName = sanitizeFileNameForIncomingDocs(fileName);
+                File f = new File(IncomingDocUtil.getAndCreateIncomingDocumentFilePathName(queueId, destFolder, sanitizedFileName));
                 if (f.exists()) {
                     map.put("error", fileName + " " + props.getString("dms.documentUpload.alreadyExists"));
-
                 } else {
-                    boolean success = writeToIncomingDocs(docFile, queueId, destFolder, fileName);
+                    boolean success = writeToIncomingDocs(docFile, queueId, destFolder, sanitizedFileName);
                     if (!success) {
                         map.put("error", "Failed to write file. Please contact administrator");
                         MiscUtils.getLogger().error("Failed to write file to " + destFolder);
@@ -99,6 +100,7 @@ public class DocumentUpload2Action extends ActionSupport {
                         map.put("size", docFile.length());
                     }
                 }
+
                 request.getSession().setAttribute("preferredQueue", queueId);
                 if (docFile != null) {
                     docFile.delete();
@@ -215,22 +217,79 @@ public class DocumentUpload2Action extends ActionSupport {
     }
 
     private boolean writeToIncomingDocs(File docFile, String queueId, String PdfDir, String fileName) {
+        // Validate inputs to prevent path traversal attacks
+        // Note: These validations are redundant as inputs are already validated before calling this method,
+        // but we keep them for defense in depth
+        if (queueId == null || PdfDir == null || fileName == null) {
+            logger.error("Invalid parameters provided for writeToIncomingDocs");
+            return false;
+        }
 
+        // The filename should already be sanitized by the caller, but validate again for defense in depth
+        // Check that filename doesn't contain path traversal sequences
+        if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
+            logger.error("Filename contains invalid path characters");
+            return false;
+        }
+        
         String parentPath = IncomingDocUtil.getIncomingDocumentFilePath(queueId, PdfDir);
         if (!new File(parentPath).exists()) {
             return false;
         }
 
         String savePath = IncomingDocUtil.getAndCreateIncomingDocumentFilePathName(queueId, PdfDir, fileName);
+            
+        // Write the file
         try (InputStream fis = Files.newInputStream(docFile.toPath());
-             FileOutputStream fos = new FileOutputStream(savePath)) {
+                FileOutputStream fos = new FileOutputStream(savePath)) {
             IOUtils.copy(fis, fos);
-        } catch (Exception e) {
-            logger.debug(e.toString());
+        } catch (IOException e) {
+            logger.error("Error writing file to incoming docs", e);
             return false;
         }
 
         return true;
+    }
+    
+    /**
+     * Sanitizes a filename for use in incoming documents to prevent path traversal attacks.
+     * 
+     * @param fileName the original filename
+     * @return sanitized filename safe for filesystem operations
+     */
+    private String sanitizeFileNameForIncomingDocs(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return null;
+        }
+        
+        // Get just the filename component (removes any path)
+        File file = new File(fileName);
+        String baseName = file.getName();
+        
+        // Remove any path traversal sequences and dangerous characters
+        baseName = baseName.replaceAll("\\.\\.", "")  // Remove ..
+                          .replaceAll("[\\\\/]", "")   // Remove any slashes
+                          .replaceAll("\\$", "")        // Remove $
+                          .replaceAll("~", "")          // Remove ~
+                          .replaceAll(":", "")          // Remove colons
+                          .replaceAll("\\|", "")        // Remove pipes
+                          .replaceAll("<", "")          // Remove less than
+                          .replaceAll(">", "")          // Remove greater than
+                          .replaceAll("\"", "")         // Remove quotes
+                          .replaceAll("\\*", "")        // Remove asterisks
+                          .replaceAll("\\?", "");       // Remove question marks
+        
+        // Ensure the filename ends with .pdf (case insensitive)
+        if (!baseName.toLowerCase().endsWith(".pdf")) {
+            return null;
+        }
+        
+        // Additional validation - ensure the filename is not empty after sanitization
+        if (baseName.trim().isEmpty() || baseName.equals(".pdf")) {
+            return null;
+        }
+        
+        return baseName;
     }
 
     public String setUploadDestination() {

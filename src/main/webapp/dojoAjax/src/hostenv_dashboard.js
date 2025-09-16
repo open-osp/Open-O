@@ -24,7 +24,7 @@ dojo.hostenv.getXmlhttpObject = function (/*Object*/ kwArgs) {
             return curl;
         } else if (kwArgs.method && kwArgs.method.toUpperCase() == "HEAD") {
             return new dojo.hostenv.CurlRequest;
-        } else if (kwArgs.headers && kwArgs.header.referer) {
+        } else if (kwArgs.headers && kwArgs.headers.referer) {
             return new dojo.hostenv.CurlRequest;
         }
     }
@@ -181,12 +181,12 @@ dojo.hostenv.CurlRequest._formatCall = function (query, url) {
     var call = ["/usr/bin/curl"];
     for (var key in query) {
         if (query[key] != "") {
-            call.push("-" + key + " '" + query[key].replace(/'/g, "\'") + "'");
+            call.push("-" + key + " '" + query[key].replace(/'/g, "'\\\\''") + "'");
         } else {
             call.push("-" + key);
         }
     }
-    call.push("'" + url.replace(/'/g, "\'") + "'");
+    call.push("'" + url.replace(/'/g, "'\\\\''") + "'");
     return call.join(" ");
 }
 

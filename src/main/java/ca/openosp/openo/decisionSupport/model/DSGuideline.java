@@ -134,12 +134,61 @@ public abstract class DSGuideline extends AbstractModel<Integer> {
         this.consequences = consequences;
     }
 
+    /**
+     * Evaluates this clinical guideline against a patient's data and returns applicable consequences.
+     * <p>
+     * This abstract method must be implemented by concrete guideline implementations to provide
+     * the core evaluation logic. The method examines patient demographics, clinical history,
+     * medications, and other relevant data against the guideline's conditions.
+     * </p>
+     *
+     * @param loggedInInfo LoggedInInfo session information for the evaluating provider
+     * @param demographicNo String patient identifier for data retrieval
+     * @return List of DSConsequence objects representing triggered clinical recommendations or warnings, null if no conditions match
+     * @throws DecisionSupportException if evaluation fails due to data access or logic errors
+     * @see DSConsequence for consequence types and handling
+     */
     public abstract List<DSConsequence> evaluate(LoggedInInfo loggedInInfo, String demographicNo) throws DecisionSupportException;
 
+    /**
+     * Evaluates this clinical guideline with provider-specific context and returns applicable consequences.
+     *
+     * @param loggedInInfo LoggedInInfo session information for the evaluating provider
+     * @param demographicNo String patient identifier for data retrieval
+     * @param providerNo String provider identifier for provider-specific evaluation context
+     * @return List of DSConsequence objects representing triggered clinical recommendations or warnings, null if no conditions match
+     * @throws DecisionSupportException if evaluation fails due to data access or logic errors
+     */
     public abstract List<DSConsequence> evaluate(LoggedInInfo loggedInInfo, String demographicNo, String providerNo) throws DecisionSupportException;
 
+    /**
+     * Evaluates this clinical guideline with dynamic arguments and returns applicable consequences.
+     * <p>
+     * This method provides the most flexible evaluation interface, allowing dynamic arguments
+     * to be passed for specialized guideline logic that requires runtime parameters.
+     * </p>
+     *
+     * @param loggedInInfo LoggedInInfo session information for the evaluating provider
+     * @param demographicNo String patient identifier for data retrieval
+     * @param providerNo String provider identifier for provider-specific evaluation context
+     * @param dynamicArgs List of Object parameters for specialized evaluation logic
+     * @return List of DSConsequence objects representing triggered clinical recommendations or warnings, null if no conditions match
+     * @throws DecisionSupportException if evaluation fails due to data access or logic errors
+     */
     public abstract List<DSConsequence> evaluate(LoggedInInfo loggedInInfo, String demographicNo, String providerNo, List<Object> dynamicArgs) throws DecisionSupportException;
 
+    /**
+     * Evaluates this guideline and returns a simple boolean indicating if any conditions were met.
+     * <p>
+     * This is a convenience method that performs standard evaluation and returns true
+     * if any consequences were generated, false otherwise.
+     * </p>
+     *
+     * @param loggedInInfo LoggedInInfo session information for the evaluating provider
+     * @param demographicNo String patient identifier for data retrieval
+     * @return boolean true if the guideline conditions are met, false otherwise
+     * @throws DecisionSupportException if evaluation fails due to data access or logic errors
+     */
     public boolean evaluateBoolean(LoggedInInfo loggedInInfo, String demographicNo) throws DecisionSupportException {
         if (evaluate(loggedInInfo, demographicNo) == null) return false;
         return true;

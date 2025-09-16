@@ -25,7 +25,10 @@
 package ca.openosp.openo.commn.dao.forms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -235,4 +238,28 @@ public class FormsDao {
         return query.getSingleResult();
     }
 
+    /**
+     * Executes a parameterized native SQL query with named parameters.
+     * Parameters should be passed as alternating name-value pairs.
+     * 
+     * @param sql The SQL query with named parameters (e.g., :paramName)
+     * @param params Alternating parameter names and values (name1, value1, name2, value2, ...)
+     * @return List of Object arrays containing the query results
+     * @throws IllegalArgumentException if params array has odd length
+     */
+    public List<Object[]> runParameterizedNativeQuery(String sql, Object... params) {
+        if (params.length % 2 != 0) {
+            throw new IllegalArgumentException("Parameters must be provided in name-value pairs");
+        }
+        
+        Query query = entityManager.createNativeQuery(sql);
+        
+        for (int i = 0; i < params.length; i += 2) {
+            String paramName = (String) params[i];
+            Object paramValue = params[i + 1];
+            query.setParameter(paramName, paramValue);
+        }
+        
+        return query.getResultList();
+    }
 }

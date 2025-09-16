@@ -24,9 +24,9 @@
 
             var update = function () {
 
-                var val = this.value.replace(/</g, '&lt;')
+                var val = this.value.replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
                     .replace(/>/g, '&gt;')
-                    .replace(/&/g, '&amp;')
                     .replace(/\n/g, '<br/>');
 
                 shadow.html(val);

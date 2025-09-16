@@ -32,6 +32,7 @@
         <hapifhir.version>6.4.0</hapifhir.version>
         <!-- Apache CXF Version -->
         <cxf.version>3.5.11</cxf.version>
+        <struts.devMode>false</struts.devMode>
     </properties>
 
     <repositories>
@@ -857,6 +858,13 @@
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>2.39.1</version>
+            <!-- Exclude it to avoid conflict with the apache.cxf's jakarta.ws.rs-api -->
+            <exclusions>
+                <exclusion>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- AXIS2 (for OLIS) -->
@@ -889,6 +897,11 @@
                 <exclusion>
                     <groupId>org.apache.ant</groupId>
                     <artifactId>ant</artifactId>
+                </exclusion>
+                <!-- Exclude old JAX-RS API to avoid conflict with jakarta.ws.rs -->
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1055,6 +1068,17 @@
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-rt-management</artifactId>
                 </exclusion>
+                <!-- 
+                    Switched from Jettison (org.codehaus.jettison) to FasterXML Jackson 
+                    for JSON handling in CXF JAX-RS providers. 
+                    This ensures better compatibility and consistency of REST API 
+                    request/response serialization and deserialization. 
+                    Also excluded cxf-rt-rs-extension-providers to avoid Jettison being pulled in transitively.
+                -->
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-rs-extension-providers</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -1065,6 +1089,17 @@
                 <exclusion>
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>woodstox-core-asl</artifactId>
+                </exclusion>
+                <!-- 
+                    Switched from Jettison (org.codehaus.jettison) to FasterXML Jackson 
+                    for JSON handling in CXF JAX-RS providers. 
+                    This ensures better compatibility and consistency of REST API 
+                    request/response serialization and deserialization. 
+                    Also excluded cxf-rt-rs-extension-providers to avoid Jettison being pulled in transitively.
+                -->
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-rs-extension-providers</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -1083,11 +1118,18 @@
             <artifactId>cxf-rt-rs-client</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <dependency>
+        <!-- 
+            Switched from Jettison (org.codehaus.jettison) to FasterXML Jackson 
+            for JSON handling in CXF JAX-RS providers. 
+            This ensures better compatibility and consistency of REST API 
+            request/response serialization and deserialization. 
+            Also excluded cxf-rt-rs-extension-providers to avoid Jettison being pulled in transitively.
+        -->
+        <!-- <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-extension-providers</artifactId>
             <version>${cxf.version}</version>
-        </dependency>
+        </dependency> -->
 
         <!-- ScribeJava OAuth 1.0a dependencies. Added after apache cxf was bumped to version 3.5.10 and lost support. -->
         <dependency>
@@ -1510,6 +1552,11 @@
                     <webResources>
                         <resource>
                             <directory>src/main/webapp</directory>
+                        </resource>
+                        <resource>
+                            <directory>src/main/webapp/WEB-INF/classes</directory>
+                            <filtering>true</filtering>
+                            <targetPath>WEB-INF/classes</targetPath>
                         </resource>
                     </webResources>
                 </configuration>

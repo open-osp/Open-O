@@ -103,7 +103,7 @@
             if (ret == true) {
 
                 //ret = confirm("Do you wish to save this form and view the print preview?");
-                //popupFixedPage(650,850,'../providers/notice.htm');
+                //popupFixedPage(650,850,'../provider/notice.htm');
                 temp = document.forms[0].action;
 
                 if (pdf) {

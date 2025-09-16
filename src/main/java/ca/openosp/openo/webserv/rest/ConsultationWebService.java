@@ -106,6 +106,7 @@ import ca.openosp.openo.util.ConversionUtils;
 
 @Path("/consults")
 @Component("consultationWebService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class ConsultationWebService extends AbstractServiceImpl {
 
     Pattern namePtrn = Pattern.compile("sorting\\[(\\w+)\\]");

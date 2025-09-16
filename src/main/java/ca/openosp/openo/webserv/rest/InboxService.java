@@ -28,10 +28,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 
 import ca.openosp.openo.commn.dao.ProviderLabRoutingDao;
 import ca.openosp.openo.inbox.InboxManagerQuery;
@@ -48,6 +50,7 @@ import ca.openosp.openo.lab.ca.on.LabResultData;
 
 @Path("/inbox")
 @Component("inboxService")
+@Consumes(MediaType.APPLICATION_JSON)
 public class InboxService extends AbstractServiceImpl {
 
     @Autowired

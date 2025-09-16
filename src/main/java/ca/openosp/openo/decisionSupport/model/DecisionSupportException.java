@@ -24,21 +24,48 @@
  */
 
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ca.openosp.openo.decisionSupport.model;
 
 /**
+ * Exception thrown when errors occur during clinical decision support guideline evaluation or execution.
+ * <p>
+ * DecisionSupportException represents runtime errors that occur during the evaluation of clinical
+ * decision support guidelines, such as data access failures, configuration errors, or evaluation
+ * logic problems. This exception provides context for debugging guideline execution issues.
+ * </p>
+ * <p>
+ * Common scenarios that trigger this exception include:
+ * </p>
+ * <ul>
+ * <li>Patient data access failures during condition evaluation</li>
+ * <li>Invalid or missing clinical data required for guideline logic</li>
+ * <li>Unimplemented evaluation methods for specific condition operators</li>
+ * <li>Database connectivity issues when accessing patient records</li>
+ * <li>Configuration errors in guideline evaluation parameters</li>
+ * </ul>
+ *
  * @author apavel
+ * @since 2009-07-06
+ * @see DecisionSupportParseException for XML parsing-specific errors
+ * @see DSGuideline for guideline evaluation that may throw this exception
  */
 public class DecisionSupportException extends Exception {
+
+    /**
+     * Constructs a new DecisionSupportException with the specified detail message and cause.
+     *
+     * @param message String describing the specific error that occurred during guideline evaluation
+     * @param e Throwable that caused this exception to be thrown
+     */
     public DecisionSupportException(String message, Throwable e) {
         super(message, e);
     }
 
+    /**
+     * Constructs a new DecisionSupportException with the specified detail message.
+     *
+     * @param message String describing the specific error that occurred during guideline evaluation
+     */
     public DecisionSupportException(String message) {
         super(message);
     }

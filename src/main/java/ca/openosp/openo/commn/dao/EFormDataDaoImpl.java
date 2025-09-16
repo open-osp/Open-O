@@ -125,11 +125,11 @@ public class EFormDataDaoImpl extends AbstractDaoImpl<EFormData> implements EFor
 
     @Override
     public List<EFormData> findByDemographicIdCurrentAttachedToConsult(String consultationId) {
-        String sql = "SELECT * FROM eform_data e JOIN consultdocs cd ON e.fdid = cd.document_no WHERE e.patient_independent = false AND cd.requestId = '"
-                + consultationId +
-                "'AND cd.docType = 'E' AND cd.deleted IS NULL " +
+        String sql = "SELECT * FROM eform_data e JOIN consultdocs cd ON e.fdid = cd.document_no WHERE e.patient_independent = false AND cd.requestId = ?1 "
+                + "AND cd.docType = 'E' AND cd.deleted IS NULL " +
                 "ORDER BY e.form_date DESC, e.form_time DESC";
         Query query = entityManager.createNativeQuery(sql, modelClass);
+        query.setParameter(1, consultationId);
 
         return query.getResultList();
     }
@@ -141,10 +141,11 @@ public class EFormDataDaoImpl extends AbstractDaoImpl<EFormData> implements EFor
         }
 
         String sql = "SELECT * FROM eform_data e where e.patient_independent = false " +
-                "AND e.fdid IN (SELECT cd.document_no FROM EFormDocs cd WHERE cd.fdid = '" + fdid
-                + "' AND cd.docType = 'E' AND cd.deleted IS NULL) " +
+                "AND e.fdid IN (SELECT cd.document_no FROM EFormDocs cd WHERE cd.fdid = ?1 " +
+                "AND cd.docType = 'E' AND cd.deleted IS NULL) " +
                 "ORDER BY e.form_date DESC, e.form_time DESC";
         Query query = entityManager.createNativeQuery(sql, modelClass);
+        query.setParameter(1, fdid);
 
         return query.getResultList();
     }

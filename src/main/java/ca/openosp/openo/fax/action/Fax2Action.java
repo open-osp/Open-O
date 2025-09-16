@@ -45,14 +45,18 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.commons.io.FilenameUtils;
+import ca.openosp.OscarProperties;
 
 public class Fax2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -167,12 +171,67 @@ public class Fax2Action extends ActionSupport {
          */
         if (faxFilePath != null && !faxFilePath.isEmpty()) {
             if (showAs != null && showAs.equals("image")) {
+                // The faxManager.getFaxPreviewImage method already handles path validation
                 outfile = faxManager.getFaxPreviewImage(loggedInInfo, faxFilePath, page);
-                response.setContentType("image/pnsg");
-                response.setHeader("Content-Disposition", "attachment;filename=" + outfile.getFileName().toString());
+                if (outfile != null && outfile.getFileName() != null) {
+                    response.setContentType("image/png");
+                    String sanitizedFilename = FilenameUtils.getName(outfile.getFileName().toString());
+                    // Encode filename to prevent HTTP response splitting by removing any control characters
+                    String encodedFilename = URLEncoder.encode(sanitizedFilename, StandardCharsets.UTF_8)
+                            .replaceAll("\\+", "%20"); // Replace + with %20 for spaces in filenames
+                    response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
+                }
             } else {
-                outfile = Paths.get(faxFilePath);
-                response.setContentType("application/pdf");
+                // Validate and sanitize the file path to prevent path traversal
+                try {
+                    // Extract just the filename component, removing any path traversal attempts
+                    String sanitizedFilename = FilenameUtils.getName(faxFilePath);
+                    if (sanitizedFilename == null || sanitizedFilename.isEmpty()) {
+                        logger.error("Invalid or empty filename provided");
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid filename");
+                        return;
+                    }
+                    
+                    // Get the document directory from configuration
+                    String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+                    if (documentDir == null || documentDir.isEmpty()) {
+                        // Fall back to temp directory if DOCUMENT_DIR is not configured
+                        documentDir = System.getProperty("java.io.tmpdir");
+                    }
+                    
+                    // Construct the file path safely using canonical path validation
+                    File baseDir = new File(documentDir);
+                    File targetFile = new File(baseDir, sanitizedFilename);
+                    
+                    // Validate that the canonical path is within the expected directory
+                    String baseDirCanonical = baseDir.getCanonicalPath();
+                    String targetFileCanonical = targetFile.getCanonicalPath();
+                    
+                    if (!targetFileCanonical.startsWith(baseDirCanonical + File.separator) && 
+                        !targetFileCanonical.equals(baseDirCanonical)) {
+                        logger.error("Path traversal attempt detected: " + faxFilePath);
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file path");
+                        return;
+                    }
+                    
+                    // Check if the file exists and is readable
+                    if (!targetFile.exists() || !targetFile.isFile() || !targetFile.canRead()) {
+                        logger.error("File not found or not readable: " + sanitizedFilename);
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
+                        return;
+                    }
+                    
+                    outfile = targetFile.toPath();
+                    response.setContentType("application/pdf");
+                } catch (IOException e) {
+                    logger.error("Error processing file path", e);
+                    try {
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing file");
+                    } catch (IOException ex) {
+                        logger.error("Error sending error response", ex);
+                    }
+                    return;
+                }
             }
         }
 
@@ -187,7 +246,7 @@ public class Fax2Action extends ActionSupport {
                 }
                 outs.flush();
             } catch (IOException e) {
-                //log.error("Error", e);
+                logger.error("Error reading or writing file", e);
             }
         }
     }

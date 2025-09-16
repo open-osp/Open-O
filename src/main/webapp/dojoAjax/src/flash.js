@@ -1022,15 +1022,24 @@ dojo.flash.Communicator.prototype = {
         data = data.replace(/</g, "&lt;");
         data = data.replace(/>/g, "&gt;");
 
-        // transforming \ into \\ doesn't work; just use a custom encoding
-        data = data.replace("\\", "&custom_backslash;&custom_backslash;");
-
-        data = data.replace(/\n/g, "\\n");
-        data = data.replace(/\r/g, "\\r");
-        data = data.replace(/\f/g, "\\f");
-        data = data.replace(/\0/g, "\\0"); // null character
-        data = data.replace(/\'/g, "\\\'");
-        data = data.replace(/\"/g, '\\\"');
+        // Replace backslashes with custom encoding for Flash compatibility
+        // This must be done BEFORE escaping other special characters to avoid double-encoding
+        // Using global flag /g ensures ALL occurrences are replaced, not just the first one
+        data = data.replace(/\\/g, "&custom_backslash;");
+        
+        // Now escape other special characters and meta-characters in a single step
+        // This blanket replacement covers newlines, carriage returns, form feeds, nulls, single and double quotes
+        data = data.replace(/[\n\r\f\0'"]/g, function (c) {
+            switch (c) {
+                case '\n': return "\\n";
+                case '\r': return "\\r";
+                case '\f': return "\\f";
+                case '\0': return "\\0";
+                case "'":  return "\\'";
+                case '"':  return '\\"';
+                default:   return c;
+            }
+        });
 
         return data;
     },
@@ -1050,13 +1059,26 @@ dojo.flash.Communicator.prototype = {
         // that are being used in the string itself
         data = data.replace(/\&custom_lt\;/g, "<");
         data = data.replace(/\&custom_gt\;/g, ">");
+        
+        // First decode our custom backslash encoding back to backslashes
+        data = data.replace(/\&custom_backslash\;/g, "\\");
 
         // Unfortunately, Flash returns us our String with special characters
         // like newlines broken into seperate characters. So if \n represents
         // a new line, Flash returns it as "\" and "n". This means the character
         // is _not_ a newline. This forces us to eval() the string to cause
         // escaped characters to turn into their real special character values.
-        data = eval('"' + data + '"');
+        // Using JSON.parse is safer than eval when available
+        if (typeof JSON !== 'undefined' && JSON.parse) {
+            try {
+                data = JSON.parse('"' + data + '"');
+            } catch (e) {
+                // Fallback to eval if JSON.parse fails
+                data = eval('"' + data + '"');
+            }
+        } else {
+            data = eval('"' + data + '"');
+        }
 
         return data;
     },
