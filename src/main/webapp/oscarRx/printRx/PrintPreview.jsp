@@ -194,7 +194,7 @@
                                         </select>
 
                                         <button type="button"
-                                                class="btn btn-outline-info mb-2 w-100"
+                                                class="btn btn-secondary mb-2 w-100"
                                                 id="faxButton"
                                                 onClick="sendFax(${param.scriptId},
                                                     ${requestScope.signatureRequestId},
@@ -208,7 +208,7 @@
                                         </button>
 
                                         <button type="button"
-                                                class="btn btn-outline-info mb-3 w-100"
+                                                class="btn btn-secondary mb-3 w-100"
                                                 id="faxPasteButton"
                                                 onClick="faxPasteToParent('${ctx}',
                                                     ${requestScope.rxPasteAsterisk},
