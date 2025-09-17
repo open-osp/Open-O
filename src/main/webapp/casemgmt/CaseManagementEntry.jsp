@@ -58,7 +58,7 @@
 	<%
         
         String demographicNo = request.getParameter("demographicNo");
-        String sessionFrmName = "caseManagementEntryForm" + demographicNo;
+        String sessionFrmName = "caseManagementEntryForm";
         org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean form=(org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean) session.getAttribute(sessionFrmName);
         request.setAttribute("caseManagementEntryForm", form);
         

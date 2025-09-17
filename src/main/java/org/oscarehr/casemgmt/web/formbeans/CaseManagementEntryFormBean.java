@@ -82,7 +82,7 @@ public class CaseManagementEntryFormBean extends ActionForm  implements java.io.
         public void reset(ActionMapping mapping, javax.servlet.http.HttpServletRequest request) {
             String strDemo;
             if( (strDemo = request.getParameter("demographicNo")) != null) {                
-                String sessionName = "caseManagementEntryForm" + strDemo;
+                String sessionName = "caseManagementEntryForm";
                 CaseManagementEntryFormBean sessionFrm = (CaseManagementEntryFormBean)request.getSession().getAttribute(sessionName);
                 if( sessionFrm != null ) {
                     this.issueCheckList = sessionFrm.getIssueCheckList();

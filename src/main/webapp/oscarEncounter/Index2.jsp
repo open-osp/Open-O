@@ -130,8 +130,6 @@ You have no rights to access the data!
             EctProgram prgrmMgr = new EctProgram(session);
             session.setAttribute("case_program_id", prgrmMgr.getProgram(bean.providerNo));
             session.setAttribute("casemgmt_oscar_baseurl",request.getContextPath());
-            String strBeanName = "casemgmt_oscar_bean" + bean.getDemographicNo();
-            session.setAttribute(strBeanName, bean);
             session.setAttribute("casemgmt_bean_flag", "true");
                     String hrefurl=request.getContextPath()+"/casemgmt/forward.jsp?action=view&demographicNo="+bean.demographicNo+"&providerNo="+bean.providerNo+"&providerName="+URLEncoder.encode(bean.userName)+"&appointmentNo="+request.getParameter("appointmentNo")+"&reason=" + URLEncoder.encode(request.getParameter("reason")==null?"":request.getParameter("reason")) + "&appointmentDate="+request.getParameter("appointmentDate")+"&start_time="+request.getParameter("startTime")+ "&apptProvider=" + request.getParameter("apptProvider_no")+"&providerview="+ request.getParameter("providerview") +
                     "&msgType="+request.getParameter("msgType")+"&OscarMsgTypeLink="+request.getParameter("OscarMsgTypeLink")+"&noteId="+request.getParameter("noteId")+(request.getParameter("noteId") != null ? "&forceNote=true" :"");
@@ -156,8 +154,6 @@ You have no rights to access the data!
 <caisi:isModuleLoad moduleName="caisi">
 	<%
 session.setAttribute("casemgmt_oscar_baseurl",request.getContextPath());
-String strBeanName = "casemgmt_oscar_bean" + bean.getDemographicNo();
-session.setAttribute(strBeanName, bean);
 session.setAttribute("casemgmt_oscar_bean", bean);
 session.setAttribute("casemgmt_bean_flag", "true");
 String hrefurl=request.getContextPath()+"/casemgmt/forward.jsp?action=view&demographicNo="+bean.demographicNo+"&providerNo="+bean.providerNo+"&providerName="+bean.userName;

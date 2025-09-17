@@ -55,7 +55,7 @@
 	String[] ids = request.getParameterValues("group_client_id");
 	
 	String totalAnonymous = request.getParameter("num_anonymous");
-	String frmName = "caseManagementEntryForm" + demographicNo;
+	String frmName = "caseManagementEntryForm";
 	CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean)session.getAttribute(frmName);
 
 	if(cform != null) {

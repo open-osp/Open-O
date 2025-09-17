@@ -1166,8 +1166,7 @@ public class NotesService extends AbstractServiceImpl {
 		
 
 		logger.debug("Get Note for editing");
-		String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-		EctSessionBean bean = (EctSessionBean) loggedInInfo.getSession().getAttribute(strBeanName);
+		EctSessionBean bean = (EctSessionBean) loggedInInfo.getSession().getAttribute("EctSessionBean");
 		String encType = getString(jsonobject,"encType");
 		
 		logger.debug("Encounter Type : "+encType);

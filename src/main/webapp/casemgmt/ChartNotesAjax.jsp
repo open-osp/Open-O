@@ -102,9 +102,8 @@ if (pId == null) {
 }
 
 String demographicNo = request.getParameter("demographicNo");
-oscar.oscarEncounter.pageUtil.EctSessionBean bean = null;
-String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute(strBeanName)) == null)
+oscar.oscarEncounter.pageUtil.EctSessionBean bean;
+if ((bean = (oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute("EctSessionBean")) == null)
 {
 	response.sendRedirect("error.jsp");
 	return;
@@ -129,7 +128,7 @@ SimpleDateFormat jsfmt = new SimpleDateFormat("MMM dd, yyyy");
 Date dToday = new Date();
 String strToday = jsfmt.format(dToday);
 
-String frmName = "caseManagementEntryForm" + demographicNo;
+String frmName = "caseManagementEntryForm";
 CaseManagementEntryFormBean cform = (CaseManagementEntryFormBean)session.getAttribute(frmName);
 
 if (request.getParameter("caseManagementEntryForm") == null)
@@ -141,7 +140,7 @@ Integer offset = Integer.parseInt(request.getParameter("offset"));
 int maxId = 0;
 
 //We determine the lock status of the note
-CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("casemgmtNoteLock"+demographicNo);
+CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("casemgmtNoteLock");
 %>
 
 <c:if test="${not empty notesToDisplay}">
@@ -560,7 +559,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "');";
 							url = url + "return false;";
 
 							String editUrl = "window.open('/oscar/annotation/annotation.jsp?display=Documents&amp;table_id=" + dispDocNo + "&amp;demo=" + demographicNo + "','anwin','width=400,height=500');";
@@ -591,7 +590,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "');";
 							url = url + "return false;";
 						 	%>
 			                <div class="view-links" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">

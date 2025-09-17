@@ -60,14 +60,21 @@ public class ConsultationRequestDaoImpl extends AbstractDaoImpl<ConsultationRequ
 		return((BigInteger)query.getSingleResult()).intValue();
 	}
 
-        public List<ConsultationRequest> getConsults(Integer demoNo) {
-            StringBuilder sql = new StringBuilder("select cr from ConsultationRequest cr, Demographic d, Provider p where d.DemographicNo = cr.demographicId and p.ProviderNo = cr.providerNo and cr.demographicId = ?1");
-            Query query = entityManager.createQuery(sql.toString());
-            query.setParameter(1, demoNo);
-            
-            List<ConsultationRequest> results = query.getResultList();
-            return results;
-        }
+    public List<ConsultationRequest> getConsults(Integer demoNo) {
+        String sql = "SELECT cr " +
+                    "FROM ConsultationRequest cr " +
+                    "LEFT JOIN cr.professionalSpecialist specialist " + 
+                    "LEFT JOIN Demographic d on cr.demographicId = d.DemographicNo " + 
+                    "LEFT JOIN Provider p on d.ProviderNo = p.ProviderNo " + 
+                    "WHERE cr.demographicId = :demoNo"; 
+    
+        // Create the query and set the parameter
+        Query query = entityManager.createQuery(sql.toString());
+        query.setParameter("demoNo", demoNo);
+    
+        List<ConsultationRequest> results = query.getResultList();
+        return results;
+    }
 
         
         public List<ConsultationRequest> getConsults(String team, boolean showCompleted, Date startDate, Date endDate, String orderby, String desc, String searchDate, Integer offset, Integer limit) {

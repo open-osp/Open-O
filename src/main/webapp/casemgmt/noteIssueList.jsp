@@ -55,7 +55,7 @@
 	String noteIndex = "";
 	String encSelect = "encTypeSelect";
 	String demoNo = request.getParameter("demographicNo");
-	String caseMgmtEntryFrm = "caseManagementEntryForm" + demoNo;
+	String caseMgmtEntryFrm = "caseManagementEntryForm";
 	CaseManagementEntryFormBean frm = (CaseManagementEntryFormBean)request.getAttribute("caseManagementEntryForm");
 	if (frm == null)
 	{

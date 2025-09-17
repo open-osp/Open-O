@@ -15,8 +15,8 @@ and VS-Code.
 
 1. **Clone the repository if not already done:**
    ```bash
-   git clone https://github.com/MagentaHealth/open-osp.git
-   cd open-osp
+   git clone https://github.com/open-osp/Open-O.git
+   cd Open-O
    ```
 
 2. **Confirm port availability:**
@@ -47,7 +47,8 @@ Once you've built it for the first time, a subsequent full build should take abo
 minutes on Windows, as we'll have managed to cache a bunch of Maven compilation artifacts.
 
    ```zsh
-   make
+   /scripts/make clean
+   /scripts/make install
    ```
 
 Once the compilation is successful, a `target/oscar` directory full of artifacts will be created. This is a so-called "
