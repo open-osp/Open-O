@@ -817,9 +817,9 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                                                                     value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                                     onClick="window.print()"> <% if (demoNo != null && !demoNo.equals("") && !demoNo.equalsIgnoreCase("null")) { %>
                             <input type="button" value="Msg"
-                                   onclick="popup(700,960,'../messenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
+                                   onclick="popup(700,960,'<%=request.getContextPath()%>/messenger/SendDemoMessage.do?demographic_no=<%=demoNo%>','msg')"/>
                             <input type="button" value="Tickler"
-                                   onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?demographic_no=<%=demoNo%>','tickler')"/>
+                                   onclick="popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?demographic_no=<%=demoNo%>','tickler')"/>
                             <% } %> <% if (request.getParameter("searchProviderNo") == null) { // we were called from e-chart %>
                             <input type="button"
                                    value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "

@@ -65,7 +65,7 @@
             $(document).ready(function () {
                 $('#libraryTable').DataTable({
                     serverSide: true,
-                    ajax: "../hospitalReportManager/hrm.do?method=viewLog",
+                    ajax: "<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=viewLog",
                     searching: false,
                     "dom": '<"top"i>rt<"bottom"lp><"clear">',
                     "language": {"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.i18nLanguagecode"/>.json"},
@@ -91,7 +91,7 @@
             function showDetailedLogs(id) {
                 $.ajax({
                     type: "GET",
-                    url: '../hospitalReportManager/hrm.do?method=getDetailedLog&id=' + id,
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=getDetailedLog&id=' + id,
                     dataType: 'json',
                     async: true,
                     success: function (data) {

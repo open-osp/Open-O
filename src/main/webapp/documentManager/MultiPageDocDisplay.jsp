@@ -567,7 +567,7 @@
                                                     if (isFile) {
                                                         var type = 'DOC';
                                                         if (type) {
-                                                            var url = '../oscarMDS/FileLabs.do';
+                                                            var url = '<%=request.getContextPath()%>/oscarMDS/FileLabs.do';
                                                             var data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
                                                             new Ajax.Request(url, {
                                                                 method: 'post',
@@ -593,7 +593,7 @@
                                             } else {
                                                 if (confirm('Send to Most Responsible Provider?')) {
                                                     var type = 'DOC';
-                                                    var url = "../oscarMDS/SendMRP.do";
+                                                    var url = "<%=request.getContextPath()%>/oscarMDS/SendMRP.do";
                                                     var data = 'demoId=' + demoId + '&docLabType=' + type + '&docLabId=' + doclabid;
                                                     new Ajax.Request(url, {
                                                         method: 'post',
@@ -626,7 +626,7 @@
                                             if ($("autocompletedemo<%=docId%>") && $("autocomplete_choices<%=docId%>")) {
                                                 oscarLog('in basic remote');
                                                 //var oDS = new YAHOO.util.XHRDataSource("http://localhost:8080/drugref2/test4.jsp");
-                                                var url = "../demographic/SearchDemographic.do";
+                                                var url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do";
                                                 var oDS = new YAHOO.util.XHRDataSource(url, {
                                                     connMethodPost: true,
                                                     connXhrMode: 'ignoreStaleResponses'
@@ -689,7 +689,7 @@
                                                 return false;
                                             }
                                             //save doc info
-                                            var url = "../documentManager/ManageDocument.do",
+                                            var url = "<%=request.getContextPath()%>/documentManager/ManageDocument.do",
                                                 data = $(eleId).serialize(true);
                                             new Ajax.Request(url, {
                                                 method: 'post', parameters: data, onSuccess: function (transport) {
@@ -907,12 +907,12 @@
                                                        value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                        onClick="popup(700,960,'<%=url2%>','file download')">
                                                 <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !demographicID.equals("-1")) {
-                                                    String eURL = "../oscarEncounter/IncomingEncounter.do?providerNo=" + providerNo + "&appointmentNo=&demographicNo=" + demographicID + "&curProviderNo=&reason=" + java.net.URLEncoder.encode("Document Notes", "UTF-8") + "&encType=" + java.net.URLEncoder.encode("encounter without client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(provider.getFullName(), "UTF-8") + "&curDate=" + UtilDateUtilities.getToday("yyyy-MM-dd") + "&appointmentDate=&startTime=&status=";
+                                                    String eURL = request.getContextPath() + "/oscarEncounter/IncomingEncounter.do?providerNo=" + providerNo + "&appointmentNo=&demographicNo=" + demographicID + "&curProviderNo=&reason=" + java.net.URLEncoder.encode("Document Notes", "UTF-8") + "&encType=" + java.net.URLEncoder.encode("encounter without client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(provider.getFullName(), "UTF-8") + "&curDate=" + UtilDateUtilities.getToday("yyyy-MM-dd") + "&appointmentDate=&startTime=&status=";
                                                 %>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Msg"
-                                                       onclick="popup(700,960,'../messenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
+                                                       onclick="popup(700,960,'<%=request.getContextPath()%>/messenger/SendDemoMessage.do?demographic_no=<%=demographicID%>','msg')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="Tickler"
-                                                       onclick="popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>&providerNo=<%=providerNo%>','tickler')"/>
+                                                       onclick="popup(450,600,'<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=DOC&docId=<%=docId%>&demographic_no=<%=demographicID%>&providerNo=<%=providerNo%>','tickler')"/>
                                                 <input type="button" tabindex="<%=tabindex++%>" value="eChart"
                                                        onclick="popup(710,1024,'<%=eURL%>','encounter')"/>
                                                 <%

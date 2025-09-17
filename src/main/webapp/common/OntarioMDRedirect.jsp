@@ -38,7 +38,7 @@
 
     String uname = "";
     if (username == null || password == null) {
-        response.sendRedirect("../setProviderStaleDate.do?method=viewOntarioMDId");
+        response.sendRedirect(request.getContextPath() + "/setProviderStaleDate.do?method=viewOntarioMDId");
         return;
     }
 

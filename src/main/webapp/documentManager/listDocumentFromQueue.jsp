@@ -224,12 +224,11 @@
                                         <div id="autocomplete_choices<%=currentDocId%>" class="autocomplete"></div>
 
                                         <script type="text/javascript">       <%-- testDemocomp2.jsp    --%>
-                                        //new Ajax.Autocompleter("autocompletedemo<%=currentDocId%>", "autocomplete_choices<%=currentDocId%>", "../demographic/SearchDemographic.do", {minChars: 3, afterUpdateElement: saveDemoId});
 
 
                                         YAHOO.example.BasicRemote = function () {
                                             //var oDS = new YAHOO.util.XHRDataSource("http://localhost:8080/drugref2/test4.jsp");
-                                            var url = "../demographic/SearchDemographic.do";
+                                            var url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do";
                                             var oDS = new YAHOO.util.XHRDataSource(url, {
                                                 connMethodPost: true,
                                                 connXhrMode: 'ignoreStaleResponses'

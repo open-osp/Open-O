@@ -1086,7 +1086,7 @@ request.setAttribute("missingTests", missingTests);
 <script>
     //first check to see if lab is linked, if it is, we can send the demographicNo to the macro
     function runMacro(name, formid, closeOnSuccess) {
-        var url = '../../../documentManager/inboxManage.do';
+        var url = '<%=request.getContextPath()%>/documentManager/inboxManage.do';
         var data = 'method=isLabLinkedToDemographic&labid=<%= Encode.forJavaScript(segmentID) %>';
         new Ajax.Request(url, {
             method: 'post', parameters: data, onSuccess: function (transport) {
@@ -1175,7 +1175,7 @@ request.setAttribute("missingTests", missingTests);
     </form>
 
     <form name="TDISLabelForm_<%= Encode.forHtmlAttribute(segmentID) %>" method='POST'
-          action="../../../lab/CA/ALL/createLabelTDIS.do">
+          action="<%=request.getContextPath()%>/lab/CA/ALL/createLabelTDIS.do">
         <input type="hidden" id="labNum_<%= Encode.forHtmlAttribute(segmentID) %>" name="lab_no" value="<%=lab_no%>">
         <input type="hidden" id="label_<%= Encode.forHtmlAttribute(segmentID) %>" name="label" value="<%=label%>">
     </form>

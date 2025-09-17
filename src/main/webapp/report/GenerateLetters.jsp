@@ -129,7 +129,7 @@
                 var comment = prompt('Are you sure you want to added this to patients record \n\nAdd Comment Below ', '');
                 if (comment != null) {
                     var params = "id=" + idval + "&followupType=" + followUpType + "&followupValue=" + procedure + "&demos=" + demographic + "&message=" + comment;
-                    var url = "../oscarMeasurement/AddShortMeasurement.do";
+                    var url = "<%=request.getContextPath()%>/oscarMeasurement/AddShortMeasurement.do";
 
                     new Ajax.Request(url, {
                         method: 'get',
@@ -282,7 +282,7 @@
     <script type="text/javascript">
         // Calendar.setup( { inputField : "asofDate", ifFormat : "%Y-%m-%d", showsTime :false, button : "date", singleClick : true, step : 1 } );
         function genEnvelopes(form) {
-            window.location = "../report/GenerateEnvelopes.do?" + Form.serialize('listDemographic');
+            window.location = "<%=request.getContextPath()%>/report/GenerateEnvelopes.do?" + Form.serialize('listDemographic');
         }
 
     </script>

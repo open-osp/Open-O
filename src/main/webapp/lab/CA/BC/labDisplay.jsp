@@ -101,7 +101,7 @@
                                                                                         value="<%= request.getParameter("providerNo") %>"/>
 </form>
 <form name="acknowledgeForm" method="post"
-      action="../../../oscarMDS/UpdateStatus.do">
+      action="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do">
 
     <table width="100%" height="100%" border="0" cellspacing="0"
            cellpadding="0">

@@ -1451,7 +1451,7 @@
                                         <!--hr style="border-bottom: 0pt solid #888888; background-color: #888888;"-->
                                         <td valign="top">
                                             <div class="RowTop"><a href=#
-                                                                   onClick="popupPage(700,960,'allergy','../oscarRx/showAllergy.do?demographicNo=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.allergies"/></a>:&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;
+                                                                   onClick="popupPage(700,960,'allergy','<%=request.getContextPath()%>/oscarRx/showAllergy.do?demographicNo=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.allergies"/></a>:&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp&nbsp;&nbsp;
                                             </div>
                                             <div class="presBox" id="allergyBox">
                                                 <ul>
@@ -1477,7 +1477,7 @@
                                                     <td>
                                                         <div class="RowTop">
                                                             <div class="RowTop"><a href=#
-                                                                                   onClick="popupPage(700,1027,'Rx','../oscarRx/choosePatient.do?providerNo=<%=bean.providerNo%>&demographicNo=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.prescriptions"/></a></div>
+                                                                                   onClick="popupPage(700,1027,'Rx','<%=request.getContextPath()%>/oscarRx/choosePatient.do?providerNo=<%=bean.providerNo%>&demographicNo=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.prescriptions"/></a></div>
                                                         </div>
                                                     </td>
                                                     <td align=right>

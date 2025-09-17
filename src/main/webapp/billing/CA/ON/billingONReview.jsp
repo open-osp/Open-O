@@ -1311,7 +1311,7 @@
 
     function addToDiseaseRegistry() {
         if (validateItems()) {
-            var url = "../../../oscarResearch/dxresearch/dxResearch.do";
+            var url = "<%=request.getContextPath()%>/oscarResearch/dxresearch/dxResearch.do";
             //var data = Form.serialize(dxForm);
             data = jQuery('#dxForm').serialize();
             //new Ajax.Updater('dxListing',url, {method: 'post',postBody: data,asynchronous:true,onComplete: getNewCurrentDxCodeList});

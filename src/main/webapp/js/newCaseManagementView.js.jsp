@@ -3680,7 +3680,7 @@ function autoSave(async) {
             }
         }//else{
         var noteId = document.forms["caseManagementEntryForm"].noteId.value;
-        var url = '../PMmodule/ClientSearch2.do?programId=' + programId + '&noteId=' + noteId + '&method=attachForm&demographicNo=' + demographicNo;
+        var url = '<%=request.getContextPath()%>/PMmodule/ClientSearch2.do?programId=' + programId + '&noteId=' + noteId + '&method=attachForm&demographicNo=' + demographicNo;
         popupPage(600, 700, 'group', url);
         //}
     }

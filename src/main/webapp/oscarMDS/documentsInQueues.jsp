@@ -695,7 +695,7 @@
                 b = true;
             }
             if (b) {
-                var url = '../messenger/SendDemoMessage.do?' + 'demographic_no=' + dn;
+                var url = '<%=request.getContextPath()%>/messenger/SendDemoMessage.do?' + 'demographic_no=' + dn;
                 popup(width, height, url, 'msg');
             }
         }
@@ -706,7 +706,7 @@
             if (dn == -1 || saved == 'false') {
                 alert('Please link document with a patient');
             } else {
-                var url = "../tickler/ForwardDemographicTickler.do?docType=DOC&demographic_no=" + dn + "&docId=" + docid;
+                var url = "<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=DOC&demographic_no=" + dn + "&docId=" + docid;
                 popup(width, height, url, 'Tickler');
             }
         }
@@ -770,7 +770,7 @@
                 }
             }
             if (aBoxIsChecked) {
-                document.reassignForm.action = '../oscarMDS/FileLabs.do';
+                document.reassignForm.action = '<%=request.getContextPath()%>/oscarMDS/FileLabs.do';
                 document.reassignForm.submit();
             }
         }
@@ -2073,7 +2073,7 @@
 
         function updateDocStatusInQueue(docid) {//change status of queue document link row to I=inactive
             //console.log('in updateDocStatusInQueue, docid '+docid);
-            var url = "../documentManager/inboxManage.do", data = "docid=" + docid + "&method=updateDocStatusInQueue";
+            var url = "<%=request.getContextPath()%>/documentManager/inboxManage.do", data = "docid=" + docid + "&method=updateDocStatusInQueue";
             new Ajax.Request(url, {
                 method: 'post', parameters: data, onSuccess: function (transport) {
                 }
@@ -2083,7 +2083,7 @@
         }
 
         function updateDocument(eleId, isNext) {//save doc info
-            var url = "../documentManager/ManageDocument.do", data = $(eleId).serialize(true);
+            var url = "<%=request.getContextPath()%>/documentManager/ManageDocument.do", data = $(eleId).serialize(true);
             new Ajax.Request(url, {
                 method: 'post', parameters: data, onSuccess: function (transport) {
                     var json = transport.responseText.evalJSON();
@@ -2181,7 +2181,7 @@
                     if (isFile) {
                         var type = 'DOC';
                         if (type) {
-                            var url = '../oscarMDS/FileLabs.do';
+                            var url = '<%=request.getContextPath()%>/oscarMDS/FileLabs.do';
                             var data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
                             new Ajax.Request(url, {
                                 method: 'post', parameters: data, onSuccess: function (transport) {
@@ -2203,7 +2203,7 @@
 
                     var type = 'DOC';
                     if (type) {
-                        var url = '../oscarMDS/FileLabs.do';
+                        var url = '<%=request.getContextPath()%>/oscarMDS/FileLabs.do';
                         var data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
                         new Ajax.Request(url, {
                             method: 'post', parameters: data, onSuccess: function (transport) {
@@ -2238,7 +2238,7 @@
             if (labs.lastIndexOf(",") == labs.length - 1) {
                 labs = labs.substring(0, labs.length - 1);
             }
-            var url = '../documentManager/inboxManage.do?';
+            var url = '<%=request.getContextPath()%>/documentManager/inboxManage.do?';
             var data = 'method=previewPatientDocLab&demog=' + pid + '&docs=' + docs + '&labs=' + labs + '&providerNo=' + providerNo + '&searchProviderNo=' + searchProviderNo + '&ackStatus=' + ackStatus;
             url = url + data;
             var windowprops = "height=800,width=800,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=600,screenY=200,top=0,left=0";

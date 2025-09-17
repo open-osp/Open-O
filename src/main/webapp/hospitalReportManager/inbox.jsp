@@ -217,7 +217,7 @@
                                 <div class="row">
                                     <label for="hrm_file">HRM XML File: </label>
                                     <input id="hrm_file" type="file" name="hrm_file"
-                                           data-url="../hospitalReportManager/hrm.do?method=uploadReport">
+                                           data-url="<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=uploadReport">
                                 </div>
 
 

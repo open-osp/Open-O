@@ -1076,7 +1076,7 @@
                                                                     </a>
                                                                     <a href="#"
                                                                        title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.rxChangeProfileViewMessage"/>"
-                                                                       onclick="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxProfileView');"
+                                                                       onclick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewRxProfileView');"
                                                                        style="color:red;text-decoration:none">
                                                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.rxChangeProfileView"/>
                                                                     </a>

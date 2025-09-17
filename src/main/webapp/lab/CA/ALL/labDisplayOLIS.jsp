@@ -605,7 +605,7 @@
     <input type="hidden" name="labType<%= segmentID %>HL7" value="imNotNull"/>
     <input type="hidden" name="providerNo" value="<%= providerNo %>"/>
 </form>
-<form name="acknowledgeForm" method="post" action="../../../oscarMDS/UpdateStatus.do">
+<form name="acknowledgeForm" method="post" action="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do">
     <input type="hidden" name="originalSegmentID" value="<%=originalSegmentID%>"/>
     <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>

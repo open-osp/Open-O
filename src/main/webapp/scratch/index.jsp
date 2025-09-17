@@ -111,7 +111,7 @@
 
             ///this function submits the data to the action using ajax. OnComplete the function followUp will be called
             function checkScratch() {
-                var url = "../Scratch.do";
+                var url = "<%=request.getContextPath()%>/Scratch.do";
                 var data = Form.serialize('scratch');
                 new Ajax.Request(url, {
                     method: 'post',
@@ -204,7 +204,7 @@
                 if (id == "showVersion") {
                     return;
                 }
-                var url = "../Scratch.do?method=showVersion&id=" + id;
+                var url = "<%=request.getContextPath()%>/Scratch.do?method=showVersion&id=" + id;
                 var win = window.open(url, "scratchPadVersion", "width=755,height=1024,toolbar=no, scrollbars=yes");
                 win.focus();
             }

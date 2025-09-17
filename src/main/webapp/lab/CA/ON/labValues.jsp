@@ -157,7 +157,7 @@
 
 <%} else {%>
 <div class="container">
-    <form name="acknowledgeForm" method="post" action="../../../oscarMDS/UpdateStatus.do">
+    <form name="acknowledgeForm" method="post" action="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do">
 
         <table>
             <tr>

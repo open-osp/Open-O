@@ -279,7 +279,7 @@
         };
 
         function changeProviderAndQueue() {
-            upload_url = "../documentManager/addEditDocument.do?method=html5MultiUpload&queue=" + $('queue').value + "&providers=" + $('provider').value;
+            upload_url = "<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=" + $('queue').value + "&providers=" + $('provider').value;
 
         }
 
@@ -359,7 +359,7 @@
     </div>
     <div class="form">
         <form id="noswfupload_form" method="post"
-              action="../documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&provider=<%=provider%>"
+              action="<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&provider=<%=provider%>"
               enctype="multipart/form-data">
             <div>
                 <input type="file" name="filedata"/>

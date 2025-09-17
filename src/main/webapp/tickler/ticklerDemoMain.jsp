@@ -145,7 +145,7 @@
 
                 //is there an existing note?
                 jQuery.ajax({
-                    url: '../CaseManagementEntry.do',
+                    url: '<%=request.getContextPath()%>/CaseManagementEntry.do',
                     data: {method: "ticklerGetNote", ticklerNo: jQuery('#tickler_note_ticklerNo').val()},
                     async: false,
                     dataType: 'json',
@@ -154,7 +154,7 @@
                             jQuery("#tickler_note_noteId").val(data.noteId);
                             jQuery("#tickler_note").val(data.note);
                             jQuery("#tickler_note_revision").html(data.revision);
-                            jQuery("#tickler_note_revision_url").attr('onclick', 'window.open(\'../CaseManagementEntry.do?method=notehistory&noteId=' + data.noteId + '\');return false;');
+                            jQuery("#tickler_note_revision_url").attr('onclick', 'window.open(\'<%=request.getContextPath()%>/CaseManagementEntry.do?method=notehistory&noteId=' + data.noteId + '\');return false;');
                             jQuery("#tickler_note_editor").html(data.editor);
                             jQuery("#tickler_note_obsDate").html(data.obsDate);
                         }
@@ -174,7 +174,7 @@
             function saveNoteDialog() {
                 //alert('not yet implemented');
                 jQuery.ajax({
-                    url: '../CaseManagementEntry.do',
+                    url: '<%=request.getContextPath()%>/CaseManagementEntry.do',
                     data: {
                         method: "ticklerSaveNote",
                         noteId: jQuery("#tickler_note_noteId").val(),
@@ -958,11 +958,11 @@
                                 <%
                                 } else if (LabResultData.isDocument(type)) {
                                 %>
-                                <a href="javascript:reportWindow('../documentManager/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
+                                <a href="javascript:reportWindow('<%=request.getContextPath()%>/documentManager/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')">ATT</a>
                                 <%
                                 } else if (LabResultData.isHRM(type)) {
                                 %>
-                                <a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=tl.getTableId()%>')">ATT</a>
+                                <a href="javascript:reportWindow('<%=request.getContextPath()%>/hospitalReportManager/Display.do?id=<%=tl.getTableId()%>')">ATT</a>
                                 <%
                                 } else {
                                 %>

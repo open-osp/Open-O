@@ -223,7 +223,7 @@
                 nNo++;
                 sAmountclaim = rs.getString("amountclaim");
                 sAmountpay = rs.getString("amountpay");
-                String strT = "<a href=# onClick='popupPage(700,720, \"../../../billing/CA/BC/billingView.do?billing_no="
+                String strT = "<a href=# onClick='popupPage(700,720, \"" + request.getContextPath() + "/billing/CA/BC/billingView.do?billing_no="
                         + rs.getString("billing_no") + "&dboperation=search_bill&hotclick=0\"); return false;' >"
                         + rs.getString("billing_no") + "</a>";
                 prop.setProperty("No", "" + nNo);
@@ -247,7 +247,7 @@
                 fAmountpay = fAmountpay + Float.parseFloat(rs.getString("amountpay"));
                 sAmountpay = "" + Math.round(fAmountpay * 100) / 100.00;
                 //hin = rs.getString("hin");
-                String strT = "<a href=# onClick='popupPage(700,720, \"../../../billing/CA/BC/billingView.do?billing_no="
+                String strT = "<a href=# onClick='popupPage(700,720, \"" + request.getContextPath() + "/billing/CA/BC/billingView.do?billing_no="
                         + rs.getString("billing_no") + "&dboperation=search_bill&hotclick=0\"); return false;' >"
                         + rs.getString("billing_no") + "</a>";
                 prop.setProperty("No", "" + nNo);
@@ -319,7 +319,7 @@
             else if (reason.compareTo("B") == 0) reason = "Sent OHIP";
 
             prop.setProperty("Description", reason + "(" + note + ")");
-            String tempStr = "<a href=# onClick='popupPage(700,720, \"../../../billing/CA/BC/billingView.do?billing_no="
+            String tempStr = "<a href=# onClick='popupPage(700,720, \""+ request.getContextPath() + "/billing/CA/BC/billingView.do?billing_no="
                     + rs.getString("billing_no") + "&dboperation=search_bill&hotclick=0\"); return false;' title='"
                     + reason + "'>" + rs.getString("billing_no") + "</a>";
             prop.setProperty("Billing No", tempStr);

@@ -51,7 +51,7 @@
                 return false;
             }
 
-            var url = "../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=request.getParameter("providerNo")%>";
+            var url = "<%=request.getContextPath()%>/documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=request.getParameter("providerNo")%>";
             if ($("#provfind").val().trim() != "") {
                 url += "&searchProviderNo=" + $("#provfind").val().trim();
             } else {

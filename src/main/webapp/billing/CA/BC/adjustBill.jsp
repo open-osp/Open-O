@@ -539,7 +539,7 @@
 
                 <%if (BillType.equals("A") || BillType.equals("P")) {%>
                 <a href="#"
-                   onClick="popupPage(800,800, '../../../billing/CA/BC/billingView.do?billing_no=<%=request.getAttribute("invoiceNo")%>&receipt=yes')">View
+                   onClick="popupPage(800,800, '<%=request.getContextPath()%>/billing/CA/BC/billingView.do?billing_no=<%=request.getAttribute("invoiceNo")%>&receipt=yes')">View
                     Invoice</a>
                 <%}%>
             </td>

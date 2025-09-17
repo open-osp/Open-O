@@ -1076,7 +1076,7 @@
 
                                     <br/>
                                     <a href="javascript:void(0);" onclick="return !showMenu('2', event);"
-                                       onmouseover="callEligibilityWebService('../billing/CA/BC/ManageTeleplan.do','returnTeleplanMsg');"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnCheckElig"/></a>
+                                       onmouseover="callEligibilityWebService('<%=request.getContextPath()%>/billing/CA/BC/ManageTeleplan.do','returnTeleplanMsg');"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnCheckElig"/></a>
                                     <div id='menu2' class='menu' onclick='event.cancelBubble = true;'
                                          style="width:350px;">
                                         <span id="search_spinner"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgLoading"/></span>
@@ -1239,13 +1239,13 @@
                         <tr>
                             <td><a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popupPage(700,1000,'../form/forwardshortcutname.do?formname=AR1&demographic_no=<%=request.getParameter("demographic_no")%>');">AR1</a>
+                                    onClick="popupPage(700,1000,'<%=request.getContextPath()%>/form/forwardshortcutname.do?formname=AR1&demographic_no=<%=request.getParameter("demographic_no")%>');">AR1</a>
                             </td>
                         </tr>
                         <tr>
                             <td><a
                                     href="javascript: function myFunction() {return false; }"
-                                    onClick="popupPage(700,1000,'../form/forwardshortcutname.do?formname=AR2&demographic_no=<%=request.getParameter("demographic_no")%>');">AR2</a>
+                                    onClick="popupPage(700,1000,'<%=request.getContextPath()%>/form/forwardshortcutname.do?formname=AR2&demographic_no=<%=request.getParameter("demographic_no")%>');">AR2</a>
                             </td>
                         </tr>
                         <% } %>
@@ -1257,7 +1257,7 @@
                                 <td>
 
                                     <a href="#"
-                                       onClick="window.open('../mod/docmgmtComp/DocList.do?method=list&&demographic_no=<%=demographic_no %>','_blank','resizable=yes,status=yes,scrollbars=yes');return false;">Inbox
+                                       onClick="window.open('<%=request.getContextPath()%>/mod/docmgmtComp/DocList.do?method=list&&demographic_no=<%=demographic_no %>','_blank','resizable=yes,status=yes,scrollbars=yes');return false;">Inbox
                                         Manager</a><br>
                                 </td>
                             </tr>

@@ -156,7 +156,7 @@
 
             window.onload = function () {
                 var settings = {
-                    upload_url: "../documentManager/addEditDocument.do;jsessionid=<%=request.getRequestedSessionId()%>", 	// Relative to the SWF file
+                    upload_url: "<%=request.getContextPath()%>/documentManager/addEditDocument.do;jsessionid=<%=request.getRequestedSessionId()%>", 	// Relative to the SWF file
                     file_post_name: "filedata",
                     post_params: {"method": "multifast"},
                     use_query_string: true,
@@ -428,7 +428,7 @@
             <td class="MainTableRightColumn" colspan="2" valign="top">
 
 
-                <form id="form1" action="../documentManager/addEditDocument.do" method="post"
+                <form id="form1" action="<%=request.getContextPath()%>/documentManager/addEditDocument.do" method="post"
                       enctype="multipart/form-data"><label for="provider"
                                                            class="fields">Send to Provider:</label> <select
                         onchange="javascript:addProviderToPost(this);" id="providerDrop"

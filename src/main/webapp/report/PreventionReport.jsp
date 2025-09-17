@@ -814,7 +814,7 @@
                     params.demos = demoarr;
                     params.message = comment;
                     $http({
-                        url: "../oscarMeasurement/AddShortMeasurement.do",
+                        url: "<%=request.getContextPath()%>/oscarMeasurement/AddShortMeasurement.do",
                         method: "GET",
                         params: params
                     }).then(function (data, status, headers, config) {

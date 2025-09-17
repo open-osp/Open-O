@@ -554,7 +554,7 @@
                 </td>
                 <td>
                     <%if ("Pri".equals(b.billingtype)) {%>
-                    <a href="javascript:popupPage(800,800, '../../../billing/CA/BC/billingView.do?billing_no=<%=b.billing_no%>&receipt=yes')"><%=b.billing_no%>
+                    <a href="javascript:popupPage(800,800, '<%=request.getContextPath()%>/billing/CA/BC/billingView.do?billing_no=<%=b.billing_no%>&receipt=yes')"><%=b.billing_no%>
                     </a>
                     <%
                     } else {

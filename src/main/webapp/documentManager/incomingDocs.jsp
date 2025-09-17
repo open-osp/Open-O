@@ -1236,7 +1236,7 @@
             YAHOO.example.BasicRemote = function () {
                 if ($("autocompletedemo") && $("autocomplete_choices")) {
 
-                    var url = "../demographic/SearchDemographic.do";
+                    var url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do";
                     var oDS = new YAHOO.util.XHRDataSource(url, {
                         connMethodPost: true,
                         connXhrMode: 'ignoreStaleResponses'

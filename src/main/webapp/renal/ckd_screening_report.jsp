@@ -74,7 +74,7 @@
         <script>
             function createTickler(id) {
                 jQuery.ajax({
-                    url: '../renal/SendTickler.do?method=sendtickler&demographic_no=' + id,
+                    url: '<%=request.getContextPath()%>/renal/SendTickler.do?method=sendtickler&demographic_no=' + id,
                     async: false,
                     success: function (data) {
                         alert('tickler sent');
@@ -83,7 +83,7 @@
             }
 
             function generateLetter(demographicNo) {
-                window.open('../renal/Renal.do?method=generatePatientLetter&demographic_no=' + demographicNo);
+                window.open('<%=request.getContextPath()%>/renal/Renal.do?method=generatePatientLetter&demographic_no=' + demographicNo);
             }
 
             /*
@@ -92,13 +92,13 @@
             */
             // function generateLetterAndEmail(demographicNo) {
 
-            // 	jQuery.ajax({url:'../renal/Renal.do?method=sendPatientLetterAsEmail&demographic_no='+demographicNo,async:false, dataType:'json', success:function(data) {
+            // 	jQuery.ajax({url:'<%=request.getContextPath()%>/renal/Renal.do?method=sendPatientLetterAsEmail&demographic_no='+demographicNo,async:false, dataType:'json', success:function(data) {
             // 		if(data.success == 'true')
             // 		  alert('email sent');
             // 		else
             // 			alert(data.error);
             // 	}});
-            // 	//window.open('../renal/Renal.do?method=generatePatientLetter&demographic_no='+demographicNo);
+            // 	//window.open('<%=request.getContextPath()%>/renal/Renal.do?method=generatePatientLetter&demographic_no='+demographicNo);
             // }
 
             function generateLabReq(demographicNo) {

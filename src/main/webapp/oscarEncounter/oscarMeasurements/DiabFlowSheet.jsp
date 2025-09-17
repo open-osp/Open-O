@@ -41,7 +41,6 @@
 
 <%
     if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
-    //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
     if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
     String project = request.getContextPath();
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -985,7 +984,7 @@
 
                         String onclick = "";
                         if (!differentInstr) {
-                            onclick = "onclick=\"popup(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=" + demographic_no + "&type=" + h2.get("measurement_type") + "');\"";
+                            onclick = "onclick=\"popup(600,1000,'" + request.getContextPath() + "/oscarEncounter/GraphMeasurements.do?demographic_no=" + demographic_no + "&type=" + h2.get("measurement_type") + "');\"";
                         }
                 %>
                 <span  <%=onclick %> class="inlinesparkline" values="
@@ -1029,7 +1028,7 @@
 
                         String onclick = "";
                         if (!differentInstr) {
-                            onclick = "onclick=\"popup(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=" + demographic_no + "&type=" + h2.get("measurement_type") + "');\"";
+                            onclick = "onclick=\"popup(600,1000,'" + request.getContextPath() + "/oscarEncounter/GraphMeasurements.do?demographic_no=" + demographic_no + "&type=" + h2.get("measurement_type") + "');\"";
                         }
 
                         List<String> first = new ArrayList<String>();

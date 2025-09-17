@@ -969,16 +969,16 @@
                         return false;
                     }
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.labShortcut"/> :
-                        popupOscarRx(600, 1024, '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/>');
+                        popupOscarRx(600, 1024, '<%=request.getContextPath()%>/documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=curUser_no%>', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/>');
                         return false;  //run code for 'L'ab
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.msgShortcut"/> :
-                        popupOscarRx(600, 1024, '../messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
+                        popupOscarRx(600, 1024, '<%=request.getContextPath()%>/messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for 'M'essage
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.monthShortcut"/> :
                         window.open("providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=month&dboperation=searchappointmentmonth", "_self");
                         return false;  //run code for Mo'n'th
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.conShortcut"/> :
-                        popupOscarRx(625, 1024, '../oscarEncounter/IncomingConsultation.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
+                        popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/IncomingConsultation.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for c'O'nsultation
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.reportShortcut"/> :
                         popupOscarRx(650, 1024, '../report/reportindex.jsp', 'reportPage');

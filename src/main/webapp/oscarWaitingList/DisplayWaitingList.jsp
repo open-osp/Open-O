@@ -233,7 +233,7 @@
         function goToPage() {
             document.forms[0].waitingListId.value =
                 document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
-            window.location = "../oscarWaitingList/SetupDisplayWaitingList.do?waitingListId=" +
+            window.location = "<%=request.getContextPath()%>/oscarWaitingList/SetupDisplayWaitingList.do?waitingListId=" +
                 document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
         }
 
@@ -241,7 +241,7 @@
             document.forms[0].waitingListId.value =
                 document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value;
 
-            var redirectPage = "../oscarWaitingList/WLEditWaitingListNameAction.do?waitingListId=" +
+            var redirectPage = "<%=request.getContextPath()%>/oscarWaitingList/WLEditWaitingListNameAction.do?waitingListId=" +
                 document.forms[0].selectedWL.options[document.forms[0].selectedWL.selectedIndex].value + "&edit=Y";
             popupDemographicPage(redirectPage);
         }
@@ -296,7 +296,7 @@
         function updateWaitingList(waitingListId, ctr) {
             document.forms[0].waitingListId.value = waitingListId;
             document.forms[0].update.value = "Y";
-            document.forms[0].action = "../oscarWaitingList/SetupDisplayWaitingList.do#anchor_" + ctr;
+            document.forms[0].action = "<%=request.getContextPath()%>/oscarWaitingList/SetupDisplayWaitingList.do#anchor_" + ctr;
             document.forms[0].submit();
         }
 

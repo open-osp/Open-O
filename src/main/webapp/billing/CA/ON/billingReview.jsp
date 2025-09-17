@@ -1119,7 +1119,7 @@
 
     function addToDiseaseRegistry() {
         if (validateItems()) {
-            var url = "../../../oscarResearch/dxresearch/dxResearch.do";
+            var url = "<%=request.getContextPath()%>/oscarResearch/dxresearch/dxResearch.do";
             var data = Form.serialize(dxForm);
             //alert ( data);
             new Ajax.Updater('dxListing', url, {

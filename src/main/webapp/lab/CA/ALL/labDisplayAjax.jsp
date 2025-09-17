@@ -221,7 +221,7 @@
     }
 
     printPDF = function (doclabid) {
-        document.forms['acknowledgeForm_' + doclabid].action = "../lab/CA/ALL/PrintPDF.do";
+        document.forms['acknowledgeForm_' + doclabid].action = "<%=request.getContextPath()%>/lab/CA/ALL/PrintPDF.do";
         document.forms['acknowledgeForm_' + doclabid].submit();
     }
 

@@ -121,7 +121,7 @@
     }
 
     function cme_client(programId, clientId) {
-        popup("caseManagement" + clientId, "../oscarEncounter/IncomingEncounter.do?case_program_id=" + programId + "&demographicNo=" + clientId + "&status=B");
+        popup("caseManagement" + clientId, "<%=request.getContextPath()%>/oscarEncounter/IncomingEncounter.do?case_program_id=" + programId + "&demographicNo=" + clientId + "&status=B");
     }
 
 
@@ -299,7 +299,7 @@
                     String url = request.getContextPath() + "/eform/efmshowform_data.jsp?fdid= " + curform.get("fdid") + "&appointment=" + demographic_no;
                     if (ppd.isThisProgramInProgramDomain(curUser_no, Integer.valueOf(programId))) {
 
-                        String eURL = "../oscarEncounter/IncomingEncounter.do?programId=" + programId + "&providerNo=" + curUser_no + "&appointmentNo=" + rsAppointNO + "&demographicNo=" + demographic_no + "&curProviderNo=" + curUser_no + "&reason=" + java.net.URLEncoder.encode(reason) + "&encType=" + java.net.URLEncoder.encode("face to face encounter with client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(userfirstname + " " + userlastname) + "&curDate=null&appointmentDate=null&startTime=0:0" + "&status=" + status + "&source=cm";
+                        String eURL = request.getContextPath() + "/oscarEncounter/IncomingEncounter.do?programId=" + programId + "&providerNo=" + curUser_no + "&appointmentNo=" + rsAppointNO + "&demographicNo=" + demographic_no + "&curProviderNo=" + curUser_no + "&reason=" + java.net.URLEncoder.encode(reason) + "&encType=" + java.net.URLEncoder.encode("face to face encounter with client", "UTF-8") + "&userName=" + java.net.URLEncoder.encode(userfirstname + " " + userlastname) + "&curDate=null&appointmentDate=null&startTime=0:0" + "&status=" + status + "&source=cm";
         %>
         <a href=#
            onClick="popupPage(710, 1024,'<%=eURL%>');return false;"

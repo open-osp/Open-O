@@ -209,7 +209,7 @@
 </form>
 <br/>
 <c:if test="${requestScope.clients != null}">
-    <form method="post" name="mergeform" action="../admin/MergeRecords.do">
+    <form method="post" name="mergeform" action="<%=request.getContextPath()%>/admin/MergeRecords.do">
         <display:table class="simple" cellspacing="2" cellpadding="3"
                        id="client" name="clients" export="false" pagesize="10"
                        requestURI="/PMmodule/ClientSearch2.do">

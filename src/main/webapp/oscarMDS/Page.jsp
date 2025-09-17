@@ -367,7 +367,7 @@
                                     duplicateLabIds.append(duplicateLabId);
                                 }
                             %>
-                            <a href="javascript:reportWindow('../hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=demoName%>&duplicateLabIds=<%=duplicateLabIds.toString()%>&isListView=<%=isListView%>',850,1020)"><%=labRead%><%=result.getPatientName()%>
+                            <a href="javascript:reportWindow('<%=request.getContextPath()%>/hospitalReportManager/Display.do?id=<%=segmentID%>&segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>&demoName=<%=demoName%>&duplicateLabIds=<%=duplicateLabIds.toString()%>&isListView=<%=isListView%>',850,1020)"><%=labRead%><%=result.getPatientName()%>
                             </a>
                             <% } else {%>
                             <a href="javascript:parent.reportWindow('<%=request.getContextPath()%>/lab/CA/BC/labDisplay.jsp?segmentID=<%=segmentID%>&providerNo=<%=providerNo%>&searchProviderNo=<%=searchProviderNo%>&status=<%=status%>')"><%=labRead%><%=StringEscapeUtils.escapeJavaScript(result.getPatientName())%>

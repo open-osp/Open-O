@@ -40,7 +40,7 @@
 
             function deleteImg(image) {
                 if (confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.imgDelete"/>")) {
-                    document.location = "../eform/deleteImage.do?filename=" + image;
+                    document.location = "<%=request.getContextPath()%>/eform/deleteImage.do?filename=" + image;
                 }
             }
         </script>

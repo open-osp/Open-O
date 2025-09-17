@@ -397,7 +397,7 @@
         }
 
         function AddTickler() {
-            popup(450, 600, '../tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=<%=demographicID%>', 'tickler');
+            popup(450, 600, '<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=<%=demographicID%>', 'tickler');
         }
 
         function DocAnnotation() {

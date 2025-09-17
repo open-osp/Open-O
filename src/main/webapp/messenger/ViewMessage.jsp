@@ -659,11 +659,11 @@
 
                                                         %>
                                                         <a href="javascript:void(0)"
-                                                           onclick="popupViewAttach(700,960,'../oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=session.getAttribute("providerNo")%>
+                                                           onclick="popupViewAttach(700,960,'<%=request.getContextPath()%>/oscarEncounter/IncomingEncounter.do?demographicNo=${ demographic.key }&curProviderNo=<%=session.getAttribute("providerNo")%>
                                                                    <%=params%>');return false;">E</a>
                                                         <%} %>
 
-                                                        <a href="javascript:popupViewAttach(700,960,'../oscarRx/choosePatient.do?providerNo=<%=session.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
+                                                        <a href="javascript:popupViewAttach(700,960,'<%=request.getContextPath()%>/oscarRx/choosePatient.do?providerNo=<%=session.getAttribute("providerNo")%>&demographicNo=${ demographic.key }')">Rx</a>
 
 
 

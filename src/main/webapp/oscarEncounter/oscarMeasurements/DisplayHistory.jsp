@@ -239,7 +239,7 @@
                             <c:if test="${not empty data.canPlot}">
                                 <td><input type="button" name="Button" class="btn DoNotPrint"
                                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
-                                           onClick="javascript: popupPage(600,1000,'../../oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=
+                                           onClick="javascript: popupPage(600,1000,'<%=request.getContextPath()%>/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=
                                                ${type}')">
                                 </td>
                             </c:if>

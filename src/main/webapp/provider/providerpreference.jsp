@@ -535,7 +535,7 @@
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultSex');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDefaultSex"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewDefaultSex');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDefaultSex"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
@@ -549,7 +549,7 @@
                             <% String br = OscarProperties.getInstance().getProperty("billregion");
                                 if (br.equals("BC")) { %>
                             <a href=#
-                               onClick="popupPage(900,500,'../billing/CA/BC/viewBillingPreferencesAction.do?providerNo=<%=providerNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnBillPreference"/></a>
+                               onClick="popupPage(900,500,'<%=request.getContextPath()%>/billing/CA/BC/viewBillingPreferencesAction.do?providerNo=<%=providerNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnBillPreference"/></a>
                             <% } else { %>
                             <a href=# onClick="showHideBillPref();return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnBillPreference"/></a>
                             <% } %>
@@ -609,97 +609,97 @@
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxPageSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetRxPageSize"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewRxPageSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetRxPageSize"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewUseRx3');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetRx3"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewUseRx3');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetRx3"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewCppSingleLine');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetCppSingleLine"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewCppSingleLine');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetCppSingleLine"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewShowPatientDOB');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetShowPatientDOB"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewShowPatientDOB');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetShowPatientDOB"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewDefaultQuantity');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.SetDefaultPrescriptionQuantity"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewDefaultQuantity');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.SetDefaultPrescriptionQuantity"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditStaleDate"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=view&provider_no=<%=providerNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditStaleDate"/></a></td>
                 </tr>
 
 
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestCuffOffDate');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultationCutoffTimePeriod"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewConsultationRequestCuffOffDate');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultationCutoffTimePeriod"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultationRequestTeamWarning');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultationTeam"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewConsultationRequestTeamWarning');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultationTeam"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewWorkLoadManagement');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetWorkLoadManagement"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewWorkLoadManagement');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetWorkLoadManagement"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewConsultPasteFmt');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultPasteFmt"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewConsultPasteFmt');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetConsultPasteFmt"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewFavouriteEformGroup');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEformGroup"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewFavouriteEformGroup');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEformGroup"/></a></td>
                 </tr>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewHCType');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetHCType"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewHCType');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetHCType"/></a></td>
                 </tr>
                 <% if (OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")) {%>
                 <tr>
                     <td align="center"><a href=#
-                                          onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewOntarioMDId');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetmyOntarioMD"/></a></td>
+                                          onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewOntarioMDId');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetmyOntarioMD"/></a></td>
                 </tr>
                 <%}%>
             </oscar:oscarPropertiesCheck>
 
             <tr>
-                <td align="center"><a href=# onClick="popupPage(400,860,'../provider/CppPreferences.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.cppPrefs"/></a></td>
+                <td align="center"><a href=# onClick="popupPage(400,860,'<%=request.getContextPath()%>/provider/CppPreferences.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.cppPrefs"/></a></td>
             </tr>
 
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(400,860,'../provider/OlisPreferences.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.olisPrefs"/></a></td>
+                                      onClick="popupPage(400,860,'<%=request.getContextPath()%>/provider/OlisPreferences.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.olisPrefs"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewCommentLab');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnDisableAckCommentLab"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewCommentLab');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnDisableAckCommentLab"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewLabRecall');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnLabRecallSettings"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewLabRecall');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnLabRecallSettings"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewEncounterWindowSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditDefaultEncounterWindowSize"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewEncounterWindowSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditDefaultEncounterWindowSize"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewQuickChartSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditDefaultQuickChartSize"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewQuickChartSize');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditDefaultQuickChartSize"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInDocumentReport');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEDocBrowserInDocumentReport"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewEDocBrowserInDocumentReport');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEDocBrowserInDocumentReport"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewEDocBrowserInMasterFile');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEDocBrowserInMasterFile"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewEDocBrowserInMasterFile');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetEDocBrowserInMasterFile"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewPatientNameLength');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditSetPatientNameLength"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewPatientNameLength');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditSetPatientNameLength"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
@@ -710,14 +710,14 @@
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewDisplayDocumentAs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDisplayDocumentAs"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewDisplayDocumentAs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDisplayDocumentAs"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=#
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewAppointmentCardPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditSetAppointmentCardPrefs"/></a></td>
+                                      onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewAppointmentCardPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditSetAppointmentCardPrefs"/></a></td>
             </tr>
 
             <oscar:oscarPropertiesCheck property="util.erx.enabled" value="true">
@@ -799,25 +799,25 @@
         </oscar:oscarPropertiesCheck>
         <tr>
             <td align="center"><a href=#
-                                  onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewDashboardPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewDashboardPrefs"/></a></td>
+                                  onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewDashboardPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewDashboardPrefs"/></a></td>
         </tr>
         <tr>
             <td align="center"><a href=#
-                                  onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewPreventionPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewPreventionPrefs"/></a></td>
-        </tr>
-
-        <tr>
-            <td align="center"><a href=#
-                                  onClick="popupPage(230,860,'../setProviderStaleDate.do?method=viewClinicalConnectPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewClinicalConnectPrefs"/></a></td>
+                                  onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewPreventionPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewPreventionPrefs"/></a></td>
         </tr>
 
         <tr>
             <td align="center"><a href=#
-                                  onClick="popupPage(700,860,'../setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewLabMacroPrefs"/></a></td>
+                                  onClick="popupPage(230,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewClinicalConnectPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewClinicalConnectPrefs"/></a></td>
+        </tr>
+
+        <tr>
+            <td align="center"><a href=#
+                                  onClick="popupPage(700,860,'<%=request.getContextPath()%>/setProviderStaleDate.do?method=viewLabMacroPrefs');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewLabMacroPrefs"/></a></td>
         </tr>
         <tr>
             <td align="center"><a href=#
-                                  onClick="popupPage(280,730,'../setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewTicklerPreferences"/></a></td>
+                                  onClick="popupPage(280,730,'<%=request.getContextPath()%>/setTicklerPreferences.do?method=viewTicklerTaskAssignee');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnViewTicklerPreferences"/></a></td>
         </tr>
         </table>
     </FORM>

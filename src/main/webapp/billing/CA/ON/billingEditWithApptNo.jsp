@@ -153,7 +153,7 @@
         rs2 = dao.getActiveBillingItemByCh1Id(ConversionUtils.fromIntString(billNo));
     }
 
-    String action_str = "../../../billing.do?billRegion=" + URLEncoder.encode(prov) + "&billForm=" + URLEncoder.encode(billForm) + "&hotclick=" + URLEncoder.encode(hotclick) + "&appointment_no=" + appointment_no + "&demographic_name=" + URLEncoder.encode(name) + "&status=" + status + "&demographic_no=" + demographic_no + "&providerview=" + providerview + "&user_no=" + curUser_no + "&apptProvider_no=" + apptProvider_no + "&appointment_date=" + appointment_date + "&start_time=" + start_time + "&bNewForm=1";
+    String action_str = request.getContextPath() + "/billing.do?billRegion=" + URLEncoder.encode(prov) + "&billForm=" + URLEncoder.encode(billForm) + "&hotclick=" + URLEncoder.encode(hotclick) + "&appointment_no=" + appointment_no + "&demographic_name=" + URLEncoder.encode(name) + "&status=" + status + "&demographic_no=" + demographic_no + "&providerview=" + providerview + "&user_no=" + curUser_no + "&apptProvider_no=" + apptProvider_no + "&appointment_date=" + appointment_date + "&start_time=" + start_time + "&bNewForm=1";
 
     if (status.substring(0, 1).compareTo("B") == 0) {
 %>

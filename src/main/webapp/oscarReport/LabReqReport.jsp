@@ -228,7 +228,7 @@
                                         %>
                                         <tr>
                                             <td class="fieldBox" bgcolor="#deddff"><a href=#
-                                                                                      onclick="javascript:rs('new','../documentManager/documentGetFile.jsp?document=<%=demoLetter.docfileName%>&type=active&doc_no=<%=demoLetter.document_no%>', 480,480,1)"><%=demoLetter.docdesc%>
+                                                                                      onclick="javascript:rs('new','<%=request.getContextPath()%>/documentManager/documentGetFile.jsp?document=<%=demoLetter.docfileName%>&type=active&doc_no=<%=demoLetter.document_no%>', 480,480,1)"><%=demoLetter.docdesc%>
                                             </a>
                                             </td>
                                             <td class="fieldBox" bgcolor="#deddff"><%=demoLetter.docDate.toString()%>

@@ -78,7 +78,7 @@
             }
 
             function openEditSpecialist(specId) {
-                popupOscarRx(625, 1024, '../oscarEncounter/EditSpecialists.do?specId=' + specId);
+                popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/EditSpecialists.do?specId=' + specId);
             }
 
             function checkUncheck(referralId) {

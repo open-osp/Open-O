@@ -910,7 +910,7 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
                                     <li>
                                         <a HREF="#"
-                                           ONCLICK="popupOscarRx(600,1024,'../messenger/DisplayMessages.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(loggedInInfo1.getLoggedInProvider().getFirstName()+" "+loggedInInfo1.getLoggedInProvider().getLastName())%>')"
+                                           ONCLICK="popupOscarRx(600,1024,'<%=request.getContextPath()%>/messenger/DisplayMessages.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(loggedInInfo1.getLoggedInProvider().getFirstName()+" "+loggedInInfo1.getLoggedInProvider().getLastName())%>')"
                                            title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.messenger"/>">
                                             <span id="oscar_new_msg"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.msg"/></span></a>
                                     </li>
@@ -920,7 +920,7 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r">
                                     <li id="con">
                                         <a HREF="#"
-                                           ONCLICK="popupOscarRx(625,1024,'../oscarEncounter/IncomingConsultation.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(loggedInInfo1.getLoggedInProvider().getFirstName()+" "+loggedInInfo1.getLoggedInProvider().getLastName())%>')"
+                                           ONCLICK="popupOscarRx(625,1024,'<%=request.getContextPath()%>/oscarEncounter/IncomingConsultation.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(loggedInInfo1.getLoggedInProvider().getFirstName()+" "+loggedInInfo1.getLoggedInProvider().getLastName())%>')"
                                            title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewConReq"/>">
                                             <span id="oscar_aged_consults"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.con"/></span></a>
                                     </li>
@@ -931,7 +931,7 @@
                                 if ("on".equalsIgnoreCase(prov) && !hide_eConsult) {
                             %>
                             <li id="econ">
-                                <a href="#" onclick="popupOscarRx(625, 1024, '../oscarEncounter/econsult.do')"
+                                <a href="#" onclick="popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/econsult.do')"
                                    title="eConsult">
                                     <span>eConsult</span></a>
                             </li>
@@ -939,7 +939,7 @@
                             <%if (!OscarProperties.getInstance().getProperty("clinicalConnect.CMS.url", "").isEmpty()) { %>
                             <li id="clinical_connect">
                                 <a href="#"
-                                   onclick="popupOscarRx(625, 1024, '../clinicalConnectEHRViewer.do?method=launchNonPatientContext')"
+                                   onclick="popupOscarRx(625, 1024, '<%=request.getContextPath()%>/clinicalConnectEHRViewer.do?method=launchNonPatientContext')"
                                    title="clinical connect EHR viewer">
                                     <span>ClinicalConnect</span></a>
                             </li>
@@ -967,7 +967,7 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r">
                                     <li id="ref">
                                         <a href="#"
-                                           onclick="popupPage(550,800,'../admin/ManageBillingReferral.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.manageReferrals"/></a>
+                                           onclick="popupPage(550,800,'<%=request.getContextPath()%>/admin/ManageBillingReferral.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.manageReferrals"/></a>
                                     </li>
                                 </security:oscarSec>
                             </oscar:oscarPropertiesCheck>
@@ -2044,7 +2044,7 @@
                                                         <!-- doctor code block 3 -->
                                                         <% if (!isWeekView) { %>
 
-                                                        <% String eURL = "../oscarEncounter/IncomingEncounter.do?providerNo="
+                                                        <% String eURL = request.getContextPath() + "/oscarEncounter/IncomingEncounter.do?providerNo="
                                                                 + loggedInInfo1.getLoggedInProviderNo() + "&appointmentNo="
                                                                 + appointment.getId()
                                                                 + "&demographicNo="
@@ -2083,7 +2083,7 @@
                                                                 if (status.indexOf('B') == -1) {
                                                             %>
                                                             &#124; <a href=#
-                                                                      onClick='popupPage(755,1200, "../billing.do?billRegion=<%=URLEncoder.encode(prov)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=<%=URLEncoder.encode("")%>&appointment_no=<%=appointment.getId()%>&demographic_name=<%=URLEncoder.encode(name)%>&status=<%=status%>&demographic_no=<%=demographic_no%>&providerview=<%=curProvider_no[nProvider]%>&user_no=<%=loggedInInfo1.getLoggedInProviderNo()%>&apptProvider_no=<%=curProvider_no[nProvider]%>&xml_provider=<%=curProvider_no[nProvider]%>&appointment_date=<%=year+"-"+month+"-"+day%>&start_time=<%=start_time%>&bNewForm=1");return false;'
+                                                                      onClick='popupPage(755,1200, "<%=request.getContextPath()%>/billing.do?billRegion=<%=URLEncoder.encode(prov)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=<%=URLEncoder.encode("")%>&appointment_no=<%=appointment.getId()%>&demographic_name=<%=URLEncoder.encode(name)%>&status=<%=status%>&demographic_no=<%=demographic_no%>&providerview=<%=curProvider_no[nProvider]%>&user_no=<%=loggedInInfo1.getLoggedInProviderNo()%>&apptProvider_no=<%=curProvider_no[nProvider]%>&xml_provider=<%=curProvider_no[nProvider]%>&appointment_date=<%=year+"-"+month+"-"+day%>&start_time=<%=start_time%>&bNewForm=1");return false;'
                                                                       title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.billingtag"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.btnB"/></a>
                                                             <%
                                                             } else {
@@ -2119,7 +2119,7 @@
 
                                                         <c:if test="${doctorLinkRights}">
                                                             &#124; <a href=#
-                                                                      onClick="popupWithApptNo(700,1027,'../oscarRx/choosePatient.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&demographicNo=<%=demographic_no%>','rx',<%=appointment.getId()%>)"
+                                                                      onClick="popupWithApptNo(700,1027,'<%=request.getContextPath()%>/oscarRx/choosePatient.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&demographicNo=<%=demographic_no%>','rx',<%=appointment.getId()%>)"
                                                                       title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.prescriptions"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.rx"/>
                                                         </a>
 
@@ -2284,16 +2284,16 @@
                         return false;
                     }
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.labShortcut"/> :
-                        popupOscarRx(600, 1024, '../documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/>');
+                        popupOscarRx(600, 1024, '<%=request.getContextPath()%>/documentManager/inboxManage.do?method=prepareForIndexPage&providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>', '<fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/>');
                         return false;  //run code for 'L'ab
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.msgShortcut"/> :
-                        popupOscarRx(600, 1024, '../messenger/DisplayMessages.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
+                        popupOscarRx(600, 1024, '<%=request.getContextPath()%>/messenger/DisplayMessages.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for 'M'essage
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.monthShortcut"/> :
                         window.open("providercontrol.jsp?year=<%=year%>&month=<%=month%>&day=1<%=viewString%>&displaymode=month&dboperation=searchappointmentmonth", "_self");
                         return false;  //run code for Mo'n'th
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.conShortcut"/> :
-                        popupOscarRx(625, 1024, '../oscarEncounter/IncomingConsultation.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
+                        popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/IncomingConsultation.do?providerNo=<%=loggedInInfo1.getLoggedInProviderNo()%>&userName=<%=URLEncoder.encode(userfirstname+" "+userlastname)%>');
                         return false;  //run code for c'O'nsultation
                     case <fmt:setBundle basename="oscarResources"/><fmt:message key="global.reportShortcut"/> :
                         popupOscarRx(650, 1024, '../report/reportindex.jsp', 'reportPage');

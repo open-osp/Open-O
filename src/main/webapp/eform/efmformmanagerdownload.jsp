@@ -76,7 +76,7 @@
             <td><%=ht.get("created_at")%>
             </td>
             <td valign="middle">
-                <form action="../eform/manageEForm.do" method="POST">
+                <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST">
                     <input type="hidden" name="method"
                            value="importEFormFromRemote"/>
                     <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
@@ -117,7 +117,7 @@
             </tr>
         </table>
 
-        <form action="../eform/manageEForm.do" method="POST">
+        <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST">
             <input type="hidden" name="method" value="importEFormFromRemote"/>
             <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
             <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.btnLoadEform"/>"/>

@@ -100,7 +100,7 @@
                         var data = params.queryList;
 
                         jQuery.ajax({
-                            url: "../OutcomesDashboard.do?method=refreshIndicators",
+                            url: "<%=request.getContextPath()%>/OutcomesDashboard.do?method=refreshIndicators",
                             type: 'POST',
                             async: true,
                             data: 'data=' + btoa(JSON.stringify(params)),

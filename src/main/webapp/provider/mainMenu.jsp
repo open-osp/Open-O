@@ -187,7 +187,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r">
                                 <li>
                                     <a HREF="#"
-                                       ONCLICK="popupOscarRx(600,1024,'../messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(loggedInInfo.getLoggedInProvider().getFirstName()+" "+loggedInInfo.getLoggedInProvider().getLastName())%>')"
+                                       ONCLICK="popupOscarRx(600,1024,'<%=request.getContextPath()%>/messenger/DisplayMessages.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(loggedInInfo.getLoggedInProvider().getFirstName()+" "+loggedInInfo.getLoggedInProvider().getLastName())%>')"
                                        title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.messenger"/>">
                                         <span id="oscar_new_msg"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.msg"/></span></a>
                                 </li>
@@ -197,7 +197,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r">
                                 <li id="con">
                                     <a HREF="#"
-                                       ONCLICK="popupOscarRx(625,1024,'../oscarEncounter/IncomingConsultation.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(loggedInInfo.getLoggedInProvider().getFirstName()+" "+loggedInInfo.getLoggedInProvider().getLastName())%>')"
+                                       ONCLICK="popupOscarRx(625,1024,'<%=request.getContextPath()%>/oscarEncounter/IncomingConsultation.do?providerNo=<%=curUser_no%>&userName=<%=URLEncoder.encode(loggedInInfo.getLoggedInProvider().getFirstName()+" "+loggedInInfo.getLoggedInProvider().getLastName())%>')"
                                        title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewConReq"/>">
                                         <span id="oscar_aged_consults"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.con"/></span></a>
                                 </li>
@@ -208,7 +208,7 @@
                             if ("on".equalsIgnoreCase(prov) && !hide_eConsult) {
                         %>
                         <li id="econ">
-                            <a href="#" onclick="popupOscarRx(625, 1024, '../oscarEncounter/econsult.do')"
+                            <a href="#" onclick="popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/econsult.do')"
                                title="eConsult">
                                 <span>eConsult</span></a>
                         </li>
@@ -216,7 +216,7 @@
                         <%if (!StringUtils.isEmpty(OscarProperties.getInstance().getProperty("clinicalConnect.CMS.url", ""))) { %>
                         <li id="clinical_connect">
                             <a href="#"
-                               onclick="popupOscarRx(625, 1024, '../clinicalConnectEHRViewer.do?method=launchNonPatientContext')"
+                               onclick="popupOscarRx(625, 1024, '<%=request.getContextPath()%>/clinicalConnectEHRViewer.do?method=launchNonPatientContext')"
                                title="clinical connect EHR viewer">
                                 <span>ClinicalConnect</span></a>
                         </li>
@@ -243,7 +243,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r">
                                 <li id="ref">
                                     <a href="#"
-                                       onclick="popupPage(550,800,'../admin/ManageBillingReferral.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.manageReferrals"/></a>
+                                       onclick="popupPage(550,800,'<%=request.getContextPath()%>/admin/ManageBillingReferral.do');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.manageReferrals"/></a>
                                 </li>
                             </security:oscarSec>
                         </oscar:oscarPropertiesCheck>

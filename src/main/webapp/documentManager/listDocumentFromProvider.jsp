@@ -225,7 +225,7 @@
 
                                             YAHOO.example.BasicRemote = function () {
                                                 //var oDS = new YAHOO.util.XHRDataSource("http://localhost:8080/drugref2/test4.jsp");
-                                                var url = "../demographic/SearchDemographic.do";
+                                                var url = "<%=request.getContextPath()%>/demographic/SearchDemographic.do";
                                                 var oDS = new YAHOO.util.XHRDataSource(url, {
                                                     connMethodPost: true,
                                                     connXhrMode: 'ignoreStaleResponses'
@@ -354,7 +354,7 @@
                                                                     </script-->
                                         <script type="text/javascript">
                                             YAHOO.example.BasicRemote = function () {
-                                                var url = "../provider/SearchProvider.do";
+                                                var url = "<%=request.getContextPath()%>/provider/SearchProvider.do";
                                                 var oDS = new YAHOO.util.XHRDataSource(url, {
                                                     connMethodPost: true,
                                                     connXhrMode: 'ignoreStaleResponses'

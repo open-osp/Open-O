@@ -545,7 +545,7 @@
                 const monthOfBirth = jQuery("#month_of_birth").val();
                 const dayOfBirth = jQuery("#date_of_birth").val();
                 jQuery.ajaxSetup({async: false});
-                let findDuplicate = jQuery.post("../demographicSupport.do?method=checkForDuplicates&lastName=" + lastName + "&firstName=" + firstName + "&yearOfBirth=" + yearOfBirth + "&monthOfBirth=" + monthOfBirth + "&dayOfBirth=" + dayOfBirth);
+                let findDuplicate = jQuery.post("<%=request.getContextPath()%>/demographicSupport.do?method=checkForDuplicates&lastName=" + lastName + "&firstName=" + firstName + "&yearOfBirth=" + yearOfBirth + "&monthOfBirth=" + monthOfBirth + "&dayOfBirth=" + dayOfBirth);
                 findDuplicate.success(function (data) {
                     if (data.hasDuplicates) {
                         console.log(data);
@@ -618,7 +618,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
                 jQuery.ajax({
                     type: "POST",
-                    url: '../demographicSupport.do',
+                    url: '<%=request.getContextPath()%>/demographicSupport.do',
                     data: 'method=getCountryAndProvinceCodes',
                     dataType: 'json',
                     success: function (data) {
@@ -644,7 +644,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
                 jQuery.ajax({
                     type: "POST",
-                    url: '../demographicSupport.do',
+                    url: '<%=request.getContextPath()%>/demographicSupport.do',
                     data: 'method=getCountryAndProvinceCodes',
                     dataType: 'json',
                     success: function (data) {
@@ -679,7 +679,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
                 jQuery.ajax({
                     type: "POST",
-                    url: '../demographicSupport.do',
+                    url: '<%=request.getContextPath()%>/demographicSupport.do',
                     data: 'method=getCountryAndProvinceCodes&country=' + country,
                     dataType: 'json',
                     success: function (data) {
@@ -706,7 +706,7 @@ if("true".equals(OscarProperties.getInstance().getProperty("iso3166.2.enabled","
 
                 jQuery.ajax({
                     type: "POST",
-                    url: '../demographicSupport.do',
+                    url: '<%=request.getContextPath()%>/demographicSupport.do',
                     data: 'method=getCountryAndProvinceCodes&country=' + country,
                     dataType: 'json',
                     success: function (data) {

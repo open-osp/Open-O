@@ -150,7 +150,7 @@
                                                                                         value="<%= request.getParameter("providerNo") %>"/>
 </form>
 <form name="acknowledgeForm" method="post"
-      action="../../../oscarMDS/UpdateStatus.do">
+      action="<%=request.getContextPath()%>/oscarMDS/UpdateStatus.do">
 
     <table width="100%" height="100%" border="0" cellspacing="0"
            cellpadding="0">
@@ -631,7 +631,7 @@
                                                                     value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                                     onClick="window.print()"> <% if (lab.getDemographicNo() != null && !lab.getDemographicNo().equals("") && !lab.getDemographicNo().equalsIgnoreCase("null")) { %>
                             <input type="button" value="Msg"
-                                   onclick="popup(700,960,'../../../messenger/SendDemoMessage.do?demographic_no=<%=lab.getDemographicNo()%>','msg')"/>
+                                   onclick="popup(700,960,'<%=request.getContextPath()%>/messenger/SendDemoMessage.do?demographic_no=<%=lab.getDemographicNo()%>','msg')"/>
                             <input type="button" value="Tickler"
                                    onclick="popup(450,600,'${pageContext.request.contextPath}/tickler/ForwardDemographicTickler.do?demographic_no=<%=lab.getDemographicNo()%>','tickler')"/>
                             <% } %> <% if (request.getParameter("searchProviderNo") != null) { // we were called from e-chart %>

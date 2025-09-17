@@ -82,7 +82,7 @@
             function loadValues() {
                 $.ajax({
                     type: "GET",
-                    url: '../hospitalReportManager/hrm.do?method=getConfigurationDetails',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=getConfigurationDetails',
                     dataType: 'json',
                     async: true,
                     success: function (data) {
@@ -102,7 +102,7 @@
             function saveValues() {
                 $.ajax({
                     type: "POST",
-                    url: '../hospitalReportManager/hrm.do?method=saveConfigurationDetails',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=saveConfigurationDetails',
                     data: {
                         hostname: $("#hostname").val(),
                         port: $("#port").val(),
@@ -201,7 +201,7 @@
                                     <td>
                                         <label for="private_key">Private Key: </label>
                                         <input id="private_key" type="file" name="privateKeyFile"
-                                               data-url="../hospitalReportManager/hrm.do?method=uploadPrivateKey">
+                                               data-url="<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=uploadPrivateKey">
                                         <div id="private_key_info">
                                             <p><b>Current File:</b><span id="private_key_info_current_file"
                                                                          style="color:red">None</span>

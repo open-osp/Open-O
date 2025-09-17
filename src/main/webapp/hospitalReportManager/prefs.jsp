@@ -62,7 +62,7 @@
             function loadConfidentialityStatement() {
                 $.ajax({
                     type: "GET",
-                    url: '../hospitalReportManager/hrm.do?method=getConfidentialityStatement',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=getConfidentialityStatement',
                     dataType: 'json',
                     async: true,
                     success: function (data) {
@@ -74,7 +74,7 @@
             function saveConfidentialityStatement() {
                 $.ajax({
                     type: "POST",
-                    url: '../hospitalReportManager/hrm.do?method=saveConfidentialityStatement',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=saveConfidentialityStatement',
                     data: {
                         value: $("#confidentialityStatement").val()
                     },
@@ -89,7 +89,7 @@
             function addToOutageList() {
                 $.ajax({
                     type: "POST",
-                    url: '../hospitalReportManager/hrm.do?method=addToOutageList',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=addToOutageList',
                     dataType: 'json',
                     async: true,
                     success: function (data) {

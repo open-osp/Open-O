@@ -644,7 +644,7 @@
 
 
             function deleteCall() {
-                var url = "../oscarPrevention/AddPrevention.do";
+                var url = "<%=request.getContextPath()%>/oscarPrevention/AddPrevention.do";
                 var data = Form.serialize('deleteForm');
                 console.log("deleteCall " + data);
                 new Ajax.Request(url, {
