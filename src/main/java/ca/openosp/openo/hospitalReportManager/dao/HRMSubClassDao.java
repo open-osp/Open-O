@@ -13,6 +13,7 @@ package ca.openosp.openo.hospitalReportManager.dao;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import ca.openosp.openo.commn.dao.AbstractDaoImpl;
 import ca.openosp.openo.hospitalReportManager.model.HRMSubClass;
@@ -78,37 +79,55 @@ public class HRMSubClassDao extends AbstractDaoImpl<HRMSubClass> {
     }
 
     public HRMSubClass findSubClassMapping(String className, String subClassName, String subClassMnemonic, String sendingFacilityId) {
-        String sql = null;
-        if (subClassMnemonic != null) {
-            sql = "select x from " + this.modelClass.getName() + " x where x.className=? and x.subClassName=? and x.sendingFacilityId=? and x.subClassMnemonic=?";
-        } else {
-            sql = "select x from " + this.modelClass.getName() + " x where x.className=? and x.subClassName=? and x.sendingFacilityId=?";
-        }
-        Query query = entityManager.createQuery(sql);
-        query.setParameter(1, className);
-        query.setParameter(2, subClassName);
-        query.setParameter(3, sendingFacilityId);
+        StringBuilder sql = new StringBuilder("select x from HRMSubClass x where x.className = :cls and x.subClassName = :sub and x.sendingFacilityId = :sf");
 
         if (subClassMnemonic != null) {
-            query.setParameter(4, subClassMnemonic);
+            sql.append(" and x.subClassMnemonic = :mn");
         }
 
-        return getSingleResultOrNull(query);
+        TypedQuery<HRMSubClass> q = entityManager.createQuery(sql.toString(), HRMSubClass.class)
+                .setParameter("cls", className)
+                .setParameter("sub", subClassName)
+                .setParameter("sf", sendingFacilityId);
+
+        if (subClassMnemonic != null) {
+            q.setParameter("mn", subClassMnemonic);
+        }
+
+        q.setMaxResults(1);
+        List<HRMSubClass> results = q.getResultList();
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    private HRMSubClass findSubClassMappingIgnoreFacility(String className, String subClassName, String subClassMnemonic) {
+        StringBuilder sql = new StringBuilder("select x from HRMSubClass x where x.className = :cls and x.subClassName = :sub");
+
+        if (subClassMnemonic != null) {
+            sql.append(" and x.subClassMnemonic = :mn");
+        }
+
+        TypedQuery<HRMSubClass> q = entityManager.createQuery(sql.toString(), HRMSubClass.class)
+                .setParameter("cls", className)
+                .setParameter("sub", subClassName);
+
+        if (subClassMnemonic != null) {
+            q.setParameter("mn", subClassMnemonic);
+        }
+
+        q.setMaxResults(1);
+        List<HRMSubClass> results = q.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 
     public HRMSubClass findApplicableSubClassMapping(String className, String subClassName, String subClassMnemonic, String sendingFacilityId) {
-        HRMSubClass mapping = null;
-        try {
-            mapping = findSubClassMapping(className, subClassName, subClassMnemonic, sendingFacilityId);
-        } catch (Exception e) {
-            // Didn't find one... try a wildcard search
-            try {
-                mapping = findSubClassMapping(className, subClassName, subClassMnemonic, "*");
-            } catch (Exception e2) {
-                // Didn't find one that way either
-                mapping = null;
-            }
+        // First try exact match with facilityId
+        HRMSubClass mapping = findSubClassMapping(className, subClassName, subClassMnemonic, sendingFacilityId);
+
+        // If none, fall back to wildcard (ignore facility)
+        if (mapping == null) {
+            mapping = findSubClassMappingIgnoreFacility(className, subClassName, subClassMnemonic);
         }
+
         return mapping;
     }
 

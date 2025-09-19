@@ -43,33 +43,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%
-    DBPreparedHandler dbObj = new DBPreparedHandler();
-    // select providers list
-    Properties prop = new Properties();
-    String sql = "select u.*, p.first_name, p.last_name from secUserRole u, providers p ";
+    try {
+        DBPreparedHandler dbObj = new DBPreparedHandler();
+        // select provider list
+        Properties prop = new Properties();
+        String sql = "select u.*, p.first_name, p.last_name from secUserRole u, provider p ";
 
-    sql += "where u.provider_no=p.provider_no  order by p.first_name, p.last_name";
+        sql += "where u.provider_no=p.provider_no  order by p.first_name, p.last_name";
 
-    ResultSet rs = dbObj.queryResults(sql);
+        ResultSet rs = dbObj.queryResults(sql);
 
-    while (rs.next()) {
-        prop = new Properties();
+        while (rs.next()) {
+            prop = new Properties();
 
-        prop.setProperty("providerNo", Misc.getString(rs, "provider_no"));
-        prop.setProperty("firstName", Misc.getString(rs, "first_name"));
-        prop.setProperty("lastName", Misc.getString(rs, "last_name"));
+            prop.setProperty("providerNo", Misc.getString(rs, "provider_no"));
+            prop.setProperty("firstName", Misc.getString(rs, "first_name"));
+            prop.setProperty("lastName", Misc.getString(rs, "last_name"));
 
-        String roleName = Misc.getString(rs, "role_name");
+            String roleName = Misc.getString(rs, "role_name");
 
-        for (int i = 0; i < ROLE.length; i++) {
-            if (ROLE[i].equals(roleName)) {
-                VEC_PROVIDER[i].add(prop);
+            for (int i = 0; i < ROLE.length; i++) {
+                if (ROLE[i].equals(roleName)) {
+                    VEC_PROVIDER[i].add(prop);
+                }
             }
-        }
 
-        if (Misc.getString(rs, "provider_no").equals(providerNo))
-            providerName = Misc.getString(rs, "first_name") + " " + Misc.getString(rs, "last_name");
-    }
+            if (Misc.getString(rs, "provider_no").equals(providerNo))
+                providerName = Misc.getString(rs, "first_name") + " " + Misc.getString(rs, "last_name");
+        }
 %>
 <%@page import="ca.openosp.openo.db.DBPreparedHandler" %>
 
@@ -102,7 +103,7 @@
                 if (document.myform.codeType.value == "" || document.myform.startDate.value == "" || document.myform.endDate.value == ""
                     || (document.myform.providerNoDoctor.value == "" && document.myform.providerNoResident.value == ""
                         && document.myform.providerNoNP.value == "" && document.myform.providerNoSW.value == "")) {
-                    alert("Please select the codeType/period/providers item(s) from the drop down list before query.");
+                    alert("Please select the codeType/period/provider item(s) from the drop down list before query.");
                     return false;
                 } else {
                     return true;
@@ -196,7 +197,6 @@
         </table>
     </form>
     <%
-        try {
             if (request.getParameter("submit") != null && providerNo != null) {
                 // set dx/serviceCode mode
                 boolean bDx = true;
@@ -910,6 +910,7 @@
         // Log the error to the console
         System.err.println("JSP Processing Error:");
         e.printStackTrace(System.err);
+        request.getRequestDispatcher("/error.jsp").forward(request, response);
         return;
     }
     %>

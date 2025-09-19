@@ -25,14 +25,16 @@
 --%>
 
 <%
-
     String user_no = (String) session.getAttribute("user");
+    String folderPath = pageContext.getServletContext().getRealPath("/decision/annualreview/");
+
+    if (folderPath == null) {
+        throw new NullPointerException("Cannot resolve real path for /decision/annualreview/ - check deployment configuration");
+    }
 %>
 <%@ page import="java.util.*, java.sql.*, java.io.*, ca.openosp.*"
          errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.SxmlMisc" %>
-<%@ page import="ca.openosp.OscarProperties" %>
-<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>
 <head>
@@ -54,10 +56,10 @@
       topmargin="0" leftmargin="1" rightmargin="1">
 <form name="checklistedit" action="riskedit.jsp" method="POST">
     <%
-        char sep = oscarVariables.getProperty("file_separator").toCharArray()[0];
+    try {
         String str = null;
         if (request.getParameter("submit") != null && request.getParameter("submit").compareTo(" Save ") == 0) {
-            FileWriter inf = new FileWriter(".." + sep + "webapps" + sep + oscarVariables.getProperty("project_home") + sep + "decision" + sep + "annualreview" + sep + "desannualreviewplannerrisk.xml");
+            FileWriter inf = new FileWriter(folderPath + "desannualreviewplannerrisk.xml");
             try {
                 str = request.getParameter("checklist");
                 str = SxmlMisc.replaceString(str, " & ", " &amp; ");
@@ -87,27 +89,29 @@
                     face="Times New Roman, Times, serif"> <textarea
                     name="checklist" cols="100" rows="30" style="width: 100%">
 <%
-    //		try {
-    File file = new File(".." + sep + "webapps" + sep + oscarVariables.getProperty("project_home") + sep + "decision" + sep + "annualreview" + sep + "desannualreviewplannerrisk.xml");
-    if (!file.isFile() || !file.canRead()) {
-        throw new IOException();
-    }
-    RandomAccessFile raf = new RandomAccessFile(file, "r");
-    try {
-        String aline = ""; //, temp="";
-        while (true) {
-            aline = raf.readLine();
-            if (aline != null) {
-                //					aline="<pre>" + aline + "</pre>"  ;
-                out.println(aline);
-            } else {
-                break;
-            }
+        File file = new File(folderPath + "desannualreviewplannerrisk.xml");
+        if (!file.isFile() || !file.canRead()) {
+            throw new IOException();
         }
-    } finally {
-        raf.close();
+        RandomAccessFile raf = new RandomAccessFile(file, "r");
+        try {
+            String aline = ""; //, temp="";
+            while (true) {
+                aline = raf.readLine();
+                if (aline != null) {
+                    //					aline="<pre>" + aline + "</pre>"  ;
+                    out.println(aline);
+                } else {
+                    break;
+                }
+            }
+        } finally {
+            raf.close();
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.out.println("Error: " + e.getMessage());
     }
-//		} catch(IOException e) {}
 %>
 </textarea> </font></td>
         </tr>

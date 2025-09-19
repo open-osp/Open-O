@@ -2412,7 +2412,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("preventionISPAWarningProperty", prop2);
         request.setAttribute("preventionNonISPAWarningProperty", prop3);
 
-        request.setAttribute("providertitle", "providers.preventionPrefs.title");
+        request.setAttribute("providertitle", "provider.preventionPrefs.title");
         request.setAttribute("providermsgPrefs", "provider.preventionPrefs.msgPrefs"); //=Preferences
         request.setAttribute("providerbtnSubmit", "provider.preventionPrefs.btnSubmit"); //=Save
         request.setAttribute("providerbtnCancel", "provider.preventionPrefs.btnCancel"); //=Cancel
@@ -2479,7 +2479,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("preventionISPAWarningProperty", prop2);
         request.setAttribute("preventionNonISPAWarningProperty", prop3);
 
-        request.setAttribute("providertitle", "providers.preventionPrefs.title");
+        request.setAttribute("providertitle", "provider.preventionPrefs.title");
         request.setAttribute("providermsgPrefs", "provider.preventionPrefs.msgPrefs"); //=Preferences
         request.setAttribute("providerbtnClose", "provider.preventionPrefs.btnClose"); //=Close
 

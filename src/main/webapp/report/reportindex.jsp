@@ -40,18 +40,23 @@
 %>
 
 <%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@ page import="ca.openosp.openo.utility.SessionConstants" %>
 <%
     String country = request.getLocale().getCountry();
 
     ProviderPreference providerPreference = (ProviderPreference) session.getAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE);
     String curUser_no = (String) session.getAttribute("user");
-    String mygroupno = providerPreference.getMyGroupNo();
+    String mygroupno = "";
+    if (providerPreference != null) {
+        mygroupno = providerPreference.getMyGroupNo();
+    }
     mygroupno = StringUtils.trimToEmpty(mygroupno);
     String billingRegion = (ca.openosp.OscarProperties.getInstance()).getProperty("billregion");
 %>
 <%@ page
         import="java.util.*, ca.openosp.*, java.sql.*, java.text.*, java.net.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <jsp:useBean id="reportMainBean" class="ca.openosp.AppointmentMainBean"
              scope="session"/>
 <% if (!reportMainBean.getBDoConfigure()) { %>
@@ -59,14 +64,13 @@
 <% } %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 
 <%
-
-
     boolean isSiteAccessPrivacy = false;
     boolean isTeamAccessPrivacy = false;
     String provider_dboperation = "search_provider";
@@ -86,6 +90,7 @@
     %>
 
 </security:oscarSec>
+
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -109,7 +114,7 @@
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/caisi_report_tools.js"></script>
 
 
-        <script language="JavaScript">
+        <script type="text/javascript">
             <!--
             function setfocus() {
                 this.focus();
@@ -254,7 +259,7 @@
         </script>
     </head>
     <body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-          topmargin="0" leftmargin="0" rightmargin="0">
+          topmargin="0" leftmargin="0" rightmargin="0"> 
     <%
         GregorianCalendar now = new GregorianCalendar();
         GregorianCalendar cal = (GregorianCalendar) now.clone();
@@ -329,6 +334,7 @@
                 <td><select name="provider_no">
                     <%
                         ResultSet rsgroup = reportMainBean.queryResults(mygroup_dboperation);
+
                         while (rsgroup.next()) {
                             if (isTeamAccessPrivacy)
                                 continue;    //skip mygroup display if user have TeamAccessPrivacy
@@ -640,7 +646,7 @@
                         cal.add(cal.DATE, 0);
                         String NoShowEDate = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DATE);
                     %> <fmt:setBundle basename="oscarResources"/><fmt:message key="report.reportindex.msgStart"/>: <input name="nsdate" type="input" size="8"
-                                                                                 id="NoShowDate" <%=NoShowEDate%>> <a
+                                                                                 id="NoShowDate" value="<%=NoShowEDate%>"> <a
                         HREF="#"
                         onClick="popupPage(310,430,'../share/CalendarPopup.jsp?urlfrom=../report/reportindex.jsp&year=<%=now.get(Calendar.YEAR)%>&month=<%=now.get(Calendar.MONTH)+1%>&param=<%=URLEncoder.encode("&formdatebox=document.getElementsByName('nsdate')[0].value")%>')"><img
                         title=Calendar " src="<%= request.getContextPath() %>/images/cal.gif" alt="Calendar" border="0"><a>
@@ -738,11 +744,6 @@
                 <td></td>
                 <td></td>
                 <td></td>
-            </tr>
-            <tr>
-                <td width="2"><%=j%>
-                    <%j++;%>
-                </td>
             </tr>
 
             <tr>

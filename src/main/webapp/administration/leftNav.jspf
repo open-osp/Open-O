@@ -932,24 +932,6 @@ String curProvider_no = (String)session.getAttribute("user");
 </oscar:oscarPropertiesCheck>
 <!-- #Hamilton Public Health END-->
 
-
- <oscar:oscarPropertiesCheck property="billregion" value="ON">
-	<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">
-				<div class="accordion-heading">
-				<a class="accordion-toggle" data-toggle="collapse" data-parent="#adminNav" href="#collapseSixteen">
-				<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.updates"/>
-				<i class="icon-chevron-right"></i>
-				</a>
-				</div>
-				<div id="collapseSixteen" class="accordion-body collapse">
-				<div class="accordion-inner">
-						
-				</ul>
-				</div>
-				</div>
-	</security:oscarSec>
-</oscar:oscarPropertiesCheck>
-
 		</div> <!-- ACCORDION GROUP END -->	
 		</div> <!-- ACCORDION END -->
 	

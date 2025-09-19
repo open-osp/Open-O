@@ -26,7 +26,7 @@
 
 <%
     if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
-    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String userroleName = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -150,105 +150,140 @@
 
                     <table id="tblDiscs" class="table table-condensed table-striped">
                         <thead>
-                        <tr>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingType"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingProvider"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingMeasuringInstruction"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingData"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingComments"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingObservationDate"/>
-                            </th>
-                            <th class="Header"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDateEntered"/>
-                            </th>
-                            <security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-                                <th class="Header DoNotPrint"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>
+                            <tr>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingType"/>
                                 </th>
-                            </security:oscarSec>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:forEach var="data" items="${measurementsData.measurementsDataVector}" varStatus="ctr">
-                            <c:choose>
-                                <c:when test="${not empty data.remoteFacility}">
-                                    <tr class="data" style="background-color:#ffcccc">
-                                </c:when>
-                                <c:otherwise>
-                                    <tr class="data">
-                                </c:otherwise>
-                            </c:choose>
-
-                            <td>
-                                <a title="${data.typeDescription}">${data.type}</a>
-                            </td>
-
-                            <td>
-                                    ${data.providerFirstName} ${data.providerLastName}
-                                <c:if test="${not empty data.remoteFacility}">
-                                    <br/><span style="color:#990000"> @: ${data.remoteFacility}</span>
-                                </c:if>
-                            </td>
-
-                            <td>
-                                <c:choose>
-                                    <c:when test="${data.measuringInstrc == 'NULL'}">&nbsp;</c:when>
-                                    <c:otherwise>${data.measuringInstrc}</c:otherwise>
-                                </c:choose>
-                            </td>
-
-                            <td title="data">${data.dataField}</td>
-                            <td title="comments">${data.comments}</td>
-                            <td title="observed date"><fmt:formatDate value="${data.dateObservedAsDate}" pattern="yyyy-MM-dd"/></td>
-                            <td title="entered date"><fmt:formatDate value="${data.dateEnteredAsDate}" pattern="yyyy-MM-dd"/></td>
-
-                            <security:oscarSec roleName="${roleName$}" objectName="_flowsheet" rights="w">
-                                <td class="DoNotPrint">
-                                    <c:if test="${empty data.remoteFacility}">
-                                        <input type="checkbox" name="deleteCheckbox" value="${data.id}">
-                                    </c:if>
-                                </td>
-                            </security:oscarSec>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingProvider"/>
+                                </th>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingMeasuringInstruction"/>
+                                </th>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingData"/>
+                                </th>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingComments"/>
+                                </th>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingObservationDate"/>
+                                </th>
+                                <th class="Header">
+                                    <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDateEntered"/>
+                                </th>
+                                <!-- Delete column shown only if user has rights -->
+                                <security:oscarSec roleName="<%=userroleName%>" objectName="_flowsheet" rights="w">
+                                    <th class="Header DoNotPrint">
+                                        <fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>
+                                    </th>
+                                </security:oscarSec>
                             </tr>
-                        </c:forEach>
+                        </thead>
 
+                        <tbody>
+                            <c:forEach var="data" items="${measurementsData.measurementsDataVector}" varStatus="ctr">
+
+                                <!-- Open the row once, add optional background color if remoteFacility is present -->
+                                <tr class="data" style="${not empty data.remoteFacility ? 'background-color:#ffcccc;' : ''}">
+                                    <!-- Type -->
+                                    <td>
+                                        <a title="${data.typeDescription}">${data.type}</a>
+                                    </td>
+
+                                    <!-- Provider + optional remote facility tag -->
+                                    <td>
+                                        ${data.providerFirstName} ${data.providerLastName}
+                                        <c:if test="${not empty data.remoteFacility}">
+                                            <br/><span style="color:#990000"> @: ${data.remoteFacility}</span>
+                                        </c:if>
+                                    </td>
+
+                                    <!-- Measuring Instruction -->
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${data.measuringInstrc == 'NULL'}">&nbsp;</c:when>
+                                            <c:otherwise>${data.measuringInstrc}</c:otherwise>
+                                        </c:choose>
+                                    </td>
+
+                                    <!-- Data Field -->
+                                    <td title="data">${data.dataField}</td>
+
+                                    <!-- Comments -->
+                                    <td title="comments">${data.comments}</td>
+
+                                    <!-- Observation Date -->
+                                    <td title="observed date">
+                                        <fmt:formatDate value="${data.dateObservedAsDate}" pattern="yyyy-MM-dd"/>
+                                    </td>
+
+                                    <!-- Date Entered -->
+                                    <td title="entered date">
+                                        <fmt:formatDate value="${data.dateEnteredAsDate}" pattern="yyyy-MM-dd"/>
+                                    </td>
+
+                                    <!-- Delete Checkbox (only render if user has rights & not remote data) -->
+                                    <security:oscarSec roleName="<%=userroleName%>" objectName="_flowsheet" rights="w">
+                                        <td class="DoNotPrint">
+                                            <c:if test="${empty data.remoteFacility}">
+                                                <input type="checkbox" name="deleteCheckbox" value="${data.id}">
+                                            </c:if>
+                                        </td>
+                                    </security:oscarSec>
+
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
             <tr>
                 <td>
                     <table>
                         <tr>
-                            <td><input type="button" name="Button" class="btn DoNotPrint"
-                                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>"
-                                       onClick="javascript: popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupHistoryIndex.do')"></td>
-                            <td><input type="button" name="Button" class="btn DoNotPrint"
-                                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/>"
-                                       onClick="window.print()"></td>
-                            <td><input type="button" name="Button" class="btn DoNotPrint"
-                                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>"
-                                       onClick="window.close()"></td>
-                            <security:oscarSec roleName="<%=roleName$%>" objectName="_flowsheet" rights="w">
-                                <td><input type="button" name="Button" class="btn DoNotPrint"
-                                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
-                                           onclick="submit();"></td>
+                            <!-- Old Measurements Index button -->
+                            <td>
+                                <input type="button" name="Button" class="btn DoNotPrint"
+                                    value="<fmt:message key="oscarEncounter.oscarMeasurements.oldmesurementindex"/>"
+                                    onclick="javascript: popupPage(300,800,'oscarEncounter/oscarMeasurements/SetupHistoryIndex.do')">
+                            </td>
+
+                            <!-- Print button -->
+                            <td>
+                                <input type="button" name="Button" class="btn DoNotPrint"
+                                    value="<fmt:message key="global.btnPrint"/>"
+                                    onclick="window.print()">
+                            </td>
+
+                            <!-- Close button -->
+                            <td>
+                                <input type="button" name="Button" class="btn DoNotPrint"
+                                    value="<fmt:message key="global.btnClose"/>"
+                                    onclick="window.close()">
+                            </td>
+
+                            <!-- Delete button (only show if user has rights AND there is at least one row) -->
+                            <security:oscarSec roleName="<%=userroleName%>" objectName="_flowsheet" rights="w">
+                                <c:if test="${not empty measurementsData.measurementsDataVector}">
+                                    <td>
+                                        <input type="button" name="Button" class="btn DoNotPrint"
+                                            value="<fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.headingDelete"/>"
+                                            onclick="submit();">
+                                    </td>
+                                </c:if>
                             </security:oscarSec>
+
+                            <!-- Plot button (same as before) -->
                             <c:if test="${not empty data.canPlot}">
-                                <td><input type="button" name="Button" class="btn DoNotPrint"
-                                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
-                                           onClick="javascript: popupPage(600,1000,'<%=request.getContextPath()%>/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=
-                                               ${type}')">
+                                <td>
+                                    <input type="button" name="Button" class="btn DoNotPrint"
+                                        value="<fmt:message key="oscarEncounter.oscarMeasurements.displayHistory.plot"/>"
+                                        onclick="javascript: popupPage(600,1000,'<%=request.getContextPath()%>/oscarEncounter/GraphMeasurements.do?demographic_no=<%=demo%>&type=${type}')">
                                 </td>
                             </c:if>
                         </tr>
                     </table>
-
                 </td>
             </tr>
-            </tbody>
         </table>
         <c:if test="${not empty type}">
             <input type="hidden" name="type" value="${type}">

@@ -240,7 +240,7 @@ for arg in "$@"; do
     jspc)
       # Compile JSPs only without deployment.
       echo "Compiling JSPs..."
-      mvn compile -Pjspc
+      mvn package -Pjspc
       ;;
     docs)
       # Generate all documentation and build static site.
