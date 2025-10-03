@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@ page errorPage="error.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 

@@ -204,7 +204,7 @@
                                     face="Verdana, Arial, Helvetica, sans-serif" size="1"
                                     color="#000000"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.batchbilling.billingProvider"/></font>
                             </td>
-                            <td width="50%"><select name="provider">
+                            <td width="50%"><select name="providers">
                                 <option value=""
                                         <%=request.getParameter("creator").equals("") ? "selected" : ""%>>Select
                                     Provider

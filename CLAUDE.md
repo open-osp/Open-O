@@ -5,8 +5,7 @@
 ## Core Context 
 
 **Domain**: Canadian healthcare EMR system with multi-jurisdictional compliance (BC, ON, generic)
-**Stack**: Java 21, Spring 5.3.39, Maven 3, Tomcat 9.0.97, MariaDB/MySQL  
-**Architecture**: Multi-layered healthcare web application with complex medical database schema
+**Stack**: Java 21, Spring 5.3.39, Hibernate 5.x, Maven 3, Tomcat 9.0.97, MariaDB/MySQL  
 **Regulatory**: HIPAA/PIPEDA compliance REQUIRED - PHI protection is CRITICAL
 
 ## Essential Commands
@@ -14,24 +13,19 @@
 ```bash
 # Development Workflow
 make clean                    # Clean project and remove deployed app
-make install                  # Build and deploy without tests  
-make install --run-tests      # Build, test, and deploy
+make install                  # Build and deploy without tests
+make install --run-tests      # Build, test, and deploy (all tests)
+make install --run-modern-tests     # Build and run only modern tests (JUnit 5)
+make install --run-legacy-tests     # Build and run only legacy tests (JUnit 4)
+make install --run-unit-tests       # Build and run only modern unit tests
+make install --run-integration-tests # Build and run only modern integration tests
 server start/stop/restart     # Tomcat management
 server log                    # Tail application logs
-
-# Maven Operations
-mvn clean compile            # Build Java project
-mvn test                     # Run test suite
-mvn package                  # Create WAR file
 
 # Database & Environment
 db-connect                   # Connect to MariaDB as root
 debug-on / debug-off         # Toggle DEBUG/INFO logging levels
 
-# AI Development Tools
-claude                       # Claude Code CLI
-aider                        # AI pair programming
-aider --model claude-3-5-sonnet-20241022
 gh pr create                 # GitHub pull request creation
 ```
 
@@ -41,94 +35,7 @@ gh pr create                 # GitHub pull request creation
 - Use `Encode.forHtml()`, `Encode.forJavaScript()` for ALL user inputs
 - Parameterized queries ONLY - never string concatenation
 - ALL actions MUST include `SecurityInfoManager.hasPrivilege()` checks
-- CodeQL security scanning must pass
 - PHI (Patient Health Information) must NEVER be logged or exposed
-
-## CSRF Protection Requirements (OWASP CSRF Guard 4.5.0)
-
-**CRITICAL**: OpenO uses OWASP CSRF Guard 4.5.0 with custom filters. Forms loaded dynamically via AJAX require special handling.
-
-### Form Requirements
-All POST/PUT/DELETE forms MUST have:
-```html
-<form action="/path" method="post" name="formName" id="formId">
-```
-
-### Dynamic Content Pattern
-**CRITICAL**: Forms loaded via AJAX after page init won't have CSRF tokens automatically!
-
-CSRF Guard 4.5.0 provides global variables:
-- `window.CSRF_TOKEN_NAME` = "CSRF-TOKEN" (field name)
-- `window.CSRF_TOKEN_VALUE` = actual token value
-
-```javascript
-// WRONG - Will cause 403 Forbidden
-$('#container').html(ajaxResponseHtml);
-
-// CORRECT - Manually add token to dynamically loaded forms
-$('#container').html(ajaxResponseHtml);
-setTimeout(function() {
-    if (window.CSRF_TOKEN_NAME && window.CSRF_TOKEN_VALUE) {
-        $('form').each(function() {
-            if ($(this).find('input[name="' + window.CSRF_TOKEN_NAME + '"]').length === 0) {
-                $('<input>').attr({
-                    type: 'hidden',
-                    name: window.CSRF_TOKEN_NAME,
-                    value: window.CSRF_TOKEN_VALUE
-                }).appendTo(this);
-            }
-        });
-    }
-}, 100);
-```
-
-### Common CSRF Issues
-- **403 on form submit**: Check if form was loaded dynamically
-- **Missing token**: Form needs `method="post"` and `name` attributes
-- **AJAX forms**: Must call `injectTokens()` after DOM insertion
-- **Token in URL**: Never use `window.location` with parameters - use `postNavigate()` function instead
-
-### URL Parameter Protection Pattern (November 2024 Update)
-**CRITICAL**: CSRF tokens must NEVER appear in URLs. Use POST for navigation with parameters:
-
-```javascript
-// WRONG - Exposes CSRF token in URL
-window.location.href = 'page.jsp?id=' + id;
-
-// CORRECT - Uses POST to prevent token exposure
-function postNavigate(url, params) {
-    var form = document.createElement('form');
-    form.method = 'POST';
-    form.action = url;
-    
-    for (var key in params) {
-        if (params.hasOwnProperty(key)) {
-            var field = document.createElement('input');
-            field.type = 'hidden';
-            field.name = key;
-            field.value = params[key];
-            form.appendChild(field);
-        }
-    }
-    
-    // Add CSRF token if available
-    if (window.CSRF_TOKEN_NAME && window.CSRF_TOKEN_VALUE) {
-        var csrfField = document.createElement('input');
-        csrfField.type = 'hidden';
-        csrfField.name = window.CSRF_TOKEN_NAME;
-        csrfField.value = window.CSRF_TOKEN_VALUE;
-        form.appendChild(csrfField);
-    }
-    
-    document.body.appendChild(form);
-    form.submit();
-}
-
-// Usage
-postNavigate('page.jsp', {id: '123', action: 'edit'});
-```
-
-**Full Documentation**: See `/workspace/docs/csrf-protection.md` for complete CSRF implementation details
 
 ## Package Structure (2025 Migration)
 
@@ -137,6 +44,7 @@ postNavigate('page.jsp', {id: '123', action: 'edit'});
 - **DAO Classes**: `ca.openosp.openo.commn.dao.*` (note: "commn" not "common")
 - **Models**: `ca.openosp.openo.commn.model.*`
 - **Exception**: `ProviderDao` at `ca.openosp.openo.dao.ProviderDao`
+- **Test Utilities**: Remain at `org.oscarehr.common.dao.*` for backward compatibility
 
 ## Struts2 Migration Pattern ("2Action")
 
@@ -180,13 +88,123 @@ public class Example2Action extends ActionSupport {
 
 **DevContainer Environment**:
 - Docker-based development with debugging on port 8000
-- AI tools available: Claude Code CLI, Aider, GitHub CLI, Docusaurus
 - Custom terminal with tool reminders on bash startup
 
 **Build & Deploy Cycle**:
 1. `make clean` → `make install --run-tests` → `server log`
 2. For quick iterations: `make install` (skips tests)
 3. Debug logging: `debug-on` → `server restart` → `debug-off`
+
+## Modern Test Framework (JUnit 5)
+**Key Features**:
+- **Parallel Structure**: `src/test-modern/` separate from legacy `src/test/`
+- **Zero Impact**: Legacy tests unchanged, both suites run automatically
+- **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
+- **Spring Integration**: Full Spring context with transaction support
+- **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
+- **Documentation**: Complete guide at `docs/modern-test-framework-complete.md`
+
+### Test Organization Standards
+
+Tests use hierarchical tagging for filtering:
+- **Required Tags**: `@Tag("integration")`, `@Tag("dao")` (test type & layer)
+- **CRUD Tags**: `@Tag("create")`, `@Tag("read")`, `@Tag("update")`, `@Tag("delete")`
+- **Extended Tags**: `@Tag("query")`, `@Tag("search")`, `@Tag("filter")`, `@Tag("aggregate")`
+
+**Running Tagged Tests:**
+```bash
+mvn test -Dgroups="unit"           # Unit tests only
+mvn test -Dgroups="integration"    # Integration tests only
+mvn test -Dgroups="create,update"  # Specific operations
+```
+
+### BDD Test Naming Convention
+
+Modern tests use BDD (Behavior-Driven Development) naming for clarity:
+
+**Patterns**:
+1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
+2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
+3. `should<ExpectedBehavior>` - Simple assertions
+
+**Examples**:
+```java
+void shouldReturnTickler_whenValidIdProvided()
+void findActiveByDemographicNo_multipleStatuses_returnsOnlyActive()
+void shouldLoadSpringContext()
+```
+
+**Benefits**: Self-documenting, clear failure messages, searchable
+
+### Critical Dependency Resolution Patterns
+
+**SpringUtils Anti-Pattern Resolution**:
+The codebase uses static `SpringUtils.getBean()` throughout. Modern tests handle this via reflection in `OpenOTestBase`:
+```java
+@BeforeEach
+void setUpSpringUtils() throws Exception {
+    // CRITICAL: Field is "beanFactory" not "applicationContext"
+    Field contextField = SpringUtils.class.getDeclaredField("beanFactory");
+    contextField.setAccessible(true);
+    contextField.set(null, applicationContext);
+}
+```
+
+**Mixed Hibernate/JPA Configuration**:
+- **Challenge**: Legacy uses both `.hbm.xml` files AND `@Entity` annotations
+- **Solution**: Dual configuration in test context
+```xml
+<!-- Hibernate for XML mappings -->
+<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <property name="mappingResources">
+        <list>
+            <value>ca/openosp/openo/commn/model/Provider.hbm.xml</value>
+            <value>ca/openosp/openo/commn/model/Demographic.hbm.xml</value>
+        </list>
+    </property>
+</bean>
+
+<!-- JPA for annotations -->
+<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="persistenceUnitName" value="testPersistenceUnit" />
+</bean>
+```
+
+**Manual Bean Definitions Required**:
+- **Issue**: DAOs use SpringUtils in constructors causing circular dependencies
+- **Solution**: Define beans manually in test context, not via component scanning
+```xml
+<!-- Manual DAO definitions to avoid SpringUtils initialization issues -->
+<bean id="ticklerDao" class="ca.openosp.openo.commn.dao.TicklerDaoImpl" autowire="byName" />
+<bean id="oscarLogDao" class="ca.openosp.openo.commn.dao.OscarLogDaoImpl" autowire="byName" />
+```
+
+**Entity Discovery Pattern**:
+- **Problem**: Entities discovered at runtime cause missing dependencies (e.g., `lst_gender` table)
+- **Solution**: Explicitly list entities in `persistence.xml`, no scanning
+```xml
+<persistence-unit name="testPersistenceUnit">
+    <class>ca.openosp.openo.commn.model.Tickler</class>
+    <class>ca.openosp.openo.commn.model.OscarLog</class>
+    <!-- Explicitly list each entity -->
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+</persistence-unit>
+```
+
+**Security Mock Pattern**:
+- **Issue**: All operations require SecurityInfoManager privilege checks
+- **Solution**: MockSecurityInfoManager that always returns true
+```xml
+<bean id="securityInfoManager" class="ca.openosp.openo.test.mocks.MockSecurityInfoManager" />
+```
+
+**Writing Tests - CRITICAL**:
+When asked to write tests, you MUST:
+1. **First examine the actual interface/class** being tested
+2. **Only test methods that actually exist** in the codebase
+3. **Never invent or assume method names** - verify they exist
+4. **Extend OpenOTestBase** for Spring context handling
+5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager
 
 ## Code Quality Standards
 
@@ -232,7 +250,6 @@ private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
 - **Teleplan**: BC MSP billing system with specialized upload/download
 - **MCEDT**: Medical Certificate Electronic Data Transfer
 - **DrugRef**: Drug reference database integration
-- **MyOSCAR**: Patient portal integration
 
 **Medical Forms Integration**:
 - **Rourke Growth Charts**: Multiple versions (2006, 2009, 2017, 2020) for pediatric care
@@ -295,27 +312,64 @@ Multiple modular application contexts:
 - **Inter-EMR**: Data sharing via Integrator system across multiple OSCAR installations
 - **Provincial Billing**: Direct integration with Teleplan (BC MSP) and other systems
 
-## Recent Development Context (2025)
-
-### Encounter Window Modernization (September 2025)
-**COMPLETED**: Major refactoring of the encounter window interface
-- **Bootstrap 5 Migration**: Upgraded to Bootstrap 5.3.0 from CDN for modern UI patterns
-- **Vanilla JavaScript**: Replaced jQuery dependencies with vanilla JS where possible
-- **CSRF Protection**: Fixed critical issues with dynamically loaded forms via AJAX
-- **Note Layout Fix**: Corrected note entry positioning to remain at bottom of scrollable area
-- **Window Sizing**: Implemented content-based auto-sizing instead of full-screen maximization
-
 ### Major Namespace Migration (August 2025)
 **CRITICAL**: Completed migration `org.oscarehr.*` / `oscar.*` → `ca.openosp.openo.*`
-- **DAO Classes**: `ca.openosp.openo.commn.dao.*` (note: "commn" not "common")
-- **Models**: `ca.openosp.openo.commn.model.*`
-- **Special Case**: `ProviderDao` at `ca.openosp.openo.dao.ProviderDao`
-- **Test Utilities**: Remain at `org.oscarehr.common.dao.*` for backward compatibility
+- **When writing new code**: Always use `ca.openosp.openo.*` package structure
+- **When referencing existing code**: May encounter both old and new package names in comments/documentation
+- **Import statements**: Update all imports to use new namespace structure
+- **Git history**: Many files show as "renamed" due to this migration
+
+#### **Package Migration Details**
+- **Primary Migration**: `org.oscarehr.common.*` → `ca.openosp.openo.commn.*` (note: intentionally "commn" not "common")
+- **DAO Classes**: All DAO interfaces moved to `ca.openosp.openo.commn.dao.*`
+- **Model Classes**: Entity models moved to `ca.openosp.openo.commn.model.*`
+- **Special Cases**:
+  - `ProviderDao` specifically located at `ca.openosp.openo.dao.ProviderDao` (not in commn.dao)
+  - Forms DAOs at `ca.openosp.openo.commn.dao.forms.*`
+- **Test Utilities**: Test framework classes remain at `org.oscarehr.common.dao.*` (e.g., `EntityDataGenerator`, `SchemaUtils`)
+
+#### **Import Management Patterns**
+When fixing compilation errors after package refactoring:
+- **Main Source Code**: Use systematic find/replace operations for bulk import updates
+- **Test Files**: Manually add missing DAO imports following the pattern:
+  ```java
+  import ca.openosp.openo.commn.model.EntityName;
+  import ca.openosp.openo.commn.dao.EntityNameDao;
+  import ca.openosp.openo.utility.SpringUtils;
+  ```
+- **Batch Processing**: Use MultiEdit tool for efficient bulk import fixes across multiple files
+- **Verification**: Always read files before applying edits to understand the context
+
+### Mandatory Security Practices (CodeQL Integration)
+- **OWASP Encoder**: Use `Encode.forHtml()`, `Encode.forJavaScript()` for all user inputs in JSPs
+- **SQL Injection Prevention**: Use parameterized queries, never string concatenation
+- **File Upload Security**: Implement filename validation for all uploads
+- **XSS Prevention**: All JSP outputs must be encoded
+- **CodeQL Compliance**: Code must pass GitHub CodeQL security scanning
 
 ### Active Code Cleanup (2025)
 - **Modules Removed**: MyDrugRef, BORN integration, HealthSafety, legacy email notifications
+
+### Code Maintenance Approach
+- **Active cleanup**: Project aggressively removes unused code and dependencies
+- **Recently removed**: MyDrugRef, BORN integration, HealthSafety, legacy email notifications
+- **Assumption**: Don't assume legacy features still exist - check current codebase
 - **Philosophy**: Reduce attack surface by removing unused functionality
-- **Security Focus**: CodeQL integration with mandatory security scanning
+
+### Development Environment Context
+- **DevContainer primary**: Development done in Docker containers with debugging enabled
+- **Debug port**: 8000 for remote debugging
+- **Database**: Hibernate schema validation disabled - manual migration control
+- **Logging**: Enhanced logging in development environment with `debug-on`/`debug-off` aliases
+- **Custom Terminal**: Welcome message displays all available tools and shortcuts on bash startup
+
+### DevContainer Custom Scripts
+Located in `/scripts` directory within the container (copied from `.devcontainer/development/scripts/`):
+make lock                     # Update Maven dependency lock file
+- **Process**: Stops Tomcat → Builds WAR → Creates symlink → Starts Tomcat
+- **Configuration**: Auto-creates `over_ride_config.properties` from template
+- **Parallel builds**: Uses `-T 1C` for faster Maven builds
+- **Deployment**: Handles versioned WAR directories with symlinks to `/usr/local/tomcat/webapps/oscar`
 
 ## Architecture Patterns
 
@@ -423,25 +477,7 @@ if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(re
 - No changes required to existing JSP forms and links
 - Seamless user experience during migration
 
-#### **Migration Benefits**
-
-**1. Risk Mitigation**
-- Incremental migration reduces risk of breaking changes
-- Both frameworks run simultaneously
-- Easy rollback capability if issues arise
-
-**2. Team Productivity** 
-- Developers can work on both legacy and new actions
-- No need to stop feature development during migration
-- Clear naming convention prevents confusion
-
-**3. Maintenance Efficiency**
-- Clear identification of migrated vs. legacy actions
-- Consistent patterns for new development
-- Simplified testing and debugging
-
 #### **Best Practices for 2Action Development**
-
 **1. Security First**
 - Always include security privilege checks
 - Use appropriate security objects for healthcare data
@@ -501,42 +537,20 @@ This migration pattern allows OpenO EMR to modernize incrementally while maintai
 ### Docker Setup
 - Development environment runs in Docker containers
 - Tomcat container with Java 21 and debugging enabled
-- MariaDB container for database
+- MariaDB database container
 - Maven repository caching for faster builds
 - Port 8080 for web application, 3306 for database
 
 ### IDE Configuration
 - VS Code with Java extension pack
 - Remote development in Docker container
-- Maven integration for dependency management
 - Debugging support on port 8000
-
-## REST API Architecture
-
-### OAuth 1.0a Authentication
-- Healthcare provider context with facility-specific credentials
-- Per-facility service endpoints with WS-Security for inter-facility communication
-- Token-based authentication for patient portal integration
-
-### Core API Services (25+ endpoints)
-- **DemographicService**: Patient demographics with HIN (Health Insurance Number) management
-- **ScheduleService**: Appointment scheduling with reason codes and billing types  
-- **PrescriptionService**: Medication management with ATC codes and interaction checking
-- **LabService**: Laboratory results with HL7 integration
-- **PreventionService**: Immunization tracking with provincial schedules
-- **ConsultationWebService**: Referral management and specialist communication
-- **DocumentService**: Medical document management with privacy statement injection
-
-### SOAP Web Services
-- CXF-based services for healthcare system integration
-- Inter-EMR data sharing via Integrator system
-- Province-specific billing system integration (Teleplan for BC MSP)
 
 ## Database Schema Patterns
 
 ### Core Healthcare Tables
 - **demographic**: 50+ fields including HIN, rostering status, multiple addresses
-- **allergies**: Drug/non-drug allergies with severity, reaction tracking, regional identifiers  
+- **allergies**: Drug/non-drug allergies with severity, reaction tracking, regional identifiers
 - **appointment**: Scheduling with reason codes, billing types, status tracking
 - **casemgmt_note**: Clinical notes with encryption support and issue-based organization
 - **prevention**: Immunization/prevention tracking with configurable schedules
@@ -564,107 +578,6 @@ This migration pattern allows OpenO EMR to modernize incrementally while maintai
 - **E-forms**: Electronic form management with digital signature support
 - **Privacy Compliance**: Automatic privacy statement injection on all documents
 - **Document Categories**: Configurable types with clinical workflow integration
-
-## Recent Development Context (2025)
-
-### Major Namespace Migration (August 2025)
-- **CRITICAL**: Project completed major namespace migration `org.oscarehr.*` / `oscar.*` → `ca.openosp.openo.*`
-- **When writing new code**: Always use `ca.openosp.openo.*` package structure
-- **When referencing existing code**: May encounter both old and new package names in comments/documentation
-- **Import statements**: Update all imports to use new namespace structure
-- **Git history**: Many files show as "renamed" due to this migration
-
-#### **Package Migration Details**
-- **Primary Migration**: `org.oscarehr.common.*` → `ca.openosp.openo.commn.*` (note: intentionally "commn" not "common")
-- **DAO Classes**: All DAO interfaces moved to `ca.openosp.openo.commn.dao.*`
-- **Model Classes**: Entity models moved to `ca.openosp.openo.commn.model.*`
-- **Special Cases**: 
-  - `ProviderDao` specifically located at `ca.openosp.openo.dao.ProviderDao` (not in commn.dao)
-  - Forms DAOs at `ca.openosp.openo.commn.dao.forms.*`
-- **Test Utilities**: Test framework classes remain at `org.oscarehr.common.dao.*` (e.g., `EntityDataGenerator`, `SchemaUtils`)
-
-#### **Import Management Patterns**
-When fixing compilation errors after package refactoring:
-- **Main Source Code**: Use systematic find/replace operations for bulk import updates
-- **Test Files**: Manually add missing DAO imports following the pattern:
-  ```java
-  import ca.openosp.openo.commn.model.EntityName;
-  import ca.openosp.openo.commn.dao.EntityNameDao;
-  import ca.openosp.openo.utility.SpringUtils;
-  ```
-- **Batch Processing**: Use MultiEdit tool for efficient bulk import fixes across multiple files
-- **Verification**: Always read files before applying edits to understand the context
-
-### Mandatory Security Practices (CodeQL Integration)
-- **OWASP Encoder**: Use `Encode.forHtml()`, `Encode.forJavaScript()` for all user inputs in JSPs
-- **SQL Injection Prevention**: Use parameterized queries, never string concatenation
-- **File Upload Security**: Implement filename validation for all uploads
-- **XSS Prevention**: All JSP outputs must be encoded
-- **CodeQL Compliance**: Code must pass GitHub CodeQL security scanning
-
-### OAuth Implementation (Migration in Progress)
-- **Current migration**: Moving from CXF OAuth2 to ScribeJava OAuth1.0a
-- **New classes**: Use `OscarOAuthDataProvider`, `OAuth1Executor`, `OAuth1Utils`
-- **Services affected**: ProviderService, ConsentService migrated to new OAuth
-- **Pattern**: Enhanced error handling and logging for OAuth flows
-
-### Code Maintenance Approach
-- **Active cleanup**: Project aggressively removes unused code and dependencies
-- **Recently removed**: MyDrugRef, BORN integration, HealthSafety, legacy email notifications
-- **Assumption**: Don't assume legacy features still exist - check current codebase
-- **Philosophy**: Reduce attack surface by removing unused functionality
-
-### Development Environment Context
-- **DevContainer primary**: Development done in Docker containers with debugging enabled
-- **Debug port**: 8000 for remote debugging
-- **Database**: Hibernate schema validation disabled - manual migration control
-- **Logging**: Enhanced logging in development environment with `debug-on`/`debug-off` aliases
-- **AI Tools Available**: Claude Code CLI, Aider AI pair programming, GitHub CLI, Docusaurus
-- **Custom Terminal**: Welcome message displays all available tools and shortcuts on bash startup
-
-### DevContainer Custom Scripts
-Located in `/scripts` directory within the container (copied from `.devcontainer/development/scripts/`):
-
-#### **Build and Deploy Script (`make`)**
-```bash
-make clean                    # Clean project and remove deployed app
-make install                  # Build and deploy without tests
-make install --run-tests      # Build, test, and deploy
-make lock                     # Update Maven dependency lock file
-make help                     # Show usage instructions
-```
-- **Process**: Stops Tomcat → Builds WAR → Creates symlink → Starts Tomcat  
-- **Configuration**: Auto-creates `over_ride_config.properties` from template
-- **Parallel builds**: Uses `-T 1C` for faster Maven builds
-- **Deployment**: Handles versioned WAR directories with symlinks to `/usr/local/tomcat/webapps/oscar`
-
-#### **Tomcat Management Script (`server`)**
-```bash
-server start                  # Start Tomcat and save PID
-server stop                   # Stop Tomcat and kill process  
-server restart                # Stop and start Tomcat
-server log                    # Tail Tomcat logs (catalina.out)
-```
-- **PID Management**: Saves Tomcat process ID to `/tomcat.pid` for reliable stop/restart
-- **Process Control**: Uses both `catalina.sh` and direct PID kill for clean shutdowns
-- **Log Access**: Direct access to Tomcat logs via `server log` command
-
-### Development Workflow with Custom Scripts
-```bash
-# Full development cycle
-make clean                    # Clean previous build
-make install --run-tests      # Build with tests and deploy
-server log                    # Monitor application startup
-
-# Quick rebuild without tests  
-make install                  # Fast rebuild and deploy
-server restart                # Restart if needed
-
-# Debug logging control
-debug-on                      # Enable DEBUG level logging
-server restart                # Restart to apply logging changes
-debug-off                     # Return to INFO level logging
-```
 
 ## Database Schema & Migration System
 
@@ -716,6 +629,45 @@ billing: diagnostic_codes, provincial_billing_integration
 - Seeded with medical forms (Rourke charts, BCAR) and reference data
 
 ---
+
+## Issue Management & Automation
+
+### Automated Issue Lifecycle
+When a PR is merged that references an issue (using keywords like `fixes #123`, `closes #456`, `resolves #789`):
+1. **Automatic notification** - Issue reporter is @mentioned with request to verify the fix
+2. **Status tracking** - Issue gets `status: pending-verification` label
+3. **Verification response** - If reporter comments "verified" or "fixed", issue auto-closes with `status: verified-fixed`
+4. **Failed fix detection** - If reporter says "not fixed" or "still broken", adds `status: fix-failed` label
+
+**Automated Status Labels:**
+- `status: pending-verification` - Fix has been merged, awaiting reporter confirmation
+- `status: verified-fixed` - Reporter confirmed the fix works
+- `status: fix-failed` - Reporter confirmed the fix doesn't work
+
+### Issue Labeling Standards
+
+**Every issue should have at minimum:**
+1. **Type label** (required) - What kind of issue is it?
+   - `type: bug` - Something isn't working as expected
+   - `type: feature` - New feature or request
+   - `type: documentation` - Documentation improvements
+   - `type: maintenance` - Code refactoring, dependency updates
+   - `type: regression` - Something that used to work but is broken
+   - `type: security` - Security related issue
+   - `type: test` - Test improvements or additions
+
+2. **Priority label** (required) - How urgent is it?
+   - `priority: critical` - Must be fixed ASAP (production broken)
+   - `priority: high` - Stalls work on the project or its dependents
+   - `priority: medium` - Not blocking but should be addressed soon
+   - `priority: low` - Nice to have but not urgent
+
+3. **Status label** (as needed) - Current state
+   - `status: needs-triage` - Needs maintainer review
+   - `status: confirmed` - Issue has been reproduced
+
+4. **Additional labels** (optional):
+   - **Special labels**: `blocker`, `good first issue`, `help wanted`, `dependencies`
 
 ## Commit Standards & Quick Reference
 
@@ -771,7 +723,7 @@ src/main/webapp/WEB-INF/Owasp.CsrfGuard.properties # CSRF Guard configuration
 src/main/webapp/WEB-INF/csrfguard.js               # Client-side token injection
 src/main/java/ca/openosp/openo/app/CSRFPreservingFilter.java    # Custom CSRF filter
 src/main/java/ca/openosp/openo/app/CsrfJavaScriptInjectionFilter.java # JS injection
-docs/csrf-protection.md                            # Complete CSRF documentation
+
 ```
 
 ### Healthcare Domain Examples
@@ -796,10 +748,9 @@ src/main/java/ca/openosp/openo/fhir/                               # FHIR implem
 # Study These 2Action Implementations
 src/main/java/ca/openosp/openo/tickler/pageUtil/AddTickler2Action.java      # Simple execute pattern
 src/main/java/ca/openosp/openo/caseload/CaseloadContent2Action.java         # Method-based routing
-src/main/java/ca/openosp/openo/encounter/pageUtil/EctDisplay*2Action.java   # Inheritance pattern
-
+src/main/java/ca/openosp/openo/encounter/pageUtil/EctDisplay*2Action.java   
 # Base Classes for 2Actions
-src/main/java/ca/openosp/openo/encounter/pageUtil/EctDisplayAction.java     # Base class example
+src/main/java/ca/openosp/openo/encounter/pageUtil/EctDisplayAction.java    
 ```
 
 ### Spring Integration Patterns
@@ -821,9 +772,103 @@ database/mysql/SnomedCore/snomedinit.sql         # Medical terminology integrati
 
 ### Testing Patterns
 ```bash
-# Test Implementation Examples (for understanding patterns)
-src/test/java/ca/openosp/openo/                   # Test structure examples
+# Modern Test Framework (JUnit 5) - ACTIVE AND RECOMMENDED
+src/test-modern/java/ca/openosp/openo/            # Modern JUnit 5 tests
+src/test-modern/resources/                        # Modern test configurations
+docs/modern-test-framework-complete.md            # Complete test framework documentation
+
+# Legacy Test Examples (JUnit 4) - for reference only
+src/test/java/ca/openosp/openo/                   # Legacy test structure
 src/test/resources/over_ride_config.properties    # Test configuration template
+```
+
+#### Modern Test Framework - Critical Guidelines
+**IMPORTANT**: When writing tests, ALWAYS:
+1. **Examine the actual code first** - Read the DAO/Manager interfaces to see what methods actually exist
+2. **Test real methods only** - Never make up methods that don't exist in the codebase
+3. **Use actual method signatures** - Match the exact parameters and return types
+4. **Extend OpenOTestBase** - Handles SpringUtils anti-pattern and Spring context
+5. **Follow BDD naming strictly**:
+   - Method: `should<Action>_when<Condition>` (camelCase, ONE underscore)
+   - @DisplayName: lowercase "should" + natural language description
+   - NO "test" prefix, NO test numbers, NO multiple underscores
+6. **Check DAO interfaces** - Look at `*Dao.java` files to see available methods before writing tests
+
+Example of proper test development workflow:
+```java
+// 1. First, check the actual DAO interface:
+// src/main/java/ca/openosp/openo/commn/dao/TicklerDao.java
+public interface TicklerDao extends AbstractDao<Tickler> {
+    public Tickler find(Integer id);  // <-- Real method to test
+    public List<Tickler> findActiveByDemographicNo(Integer demoNo); // <-- Real method
+    // ... other actual methods
+}
+
+// 2. Then write BDD-style tests for these ACTUAL methods:
+@Test
+@DisplayName("should return tickler when valid ID is provided")
+void shouldReturnTickler_whenValidIdProvided() {
+    // Given
+    Tickler saved = createAndSaveTickler();
+
+    // When
+    Tickler found = ticklerDao.find(saved.getId()); // Testing real method
+
+    // Then
+    assertThat(found).isNotNull();
+    assertThat(found).isEqualTo(saved);
+}
+
+3. Add negative test cases
+```
+
+#### BDD Test Writing Quick Reference
+```java
+// ✅ CORRECT BDD Test Structure
+@Test
+@DisplayName("should perform expected behavior when condition is met")  // lowercase "should"
+void shouldPerformExpectedBehavior_whenConditionIsMet() {  // camelCase with ONE underscore
+    // Given - set up test data
+    TestData data = createTestData();
+
+    // When - perform the action being tested
+    Result result = systemUnderTest.performAction(data);
+
+    // Then - verify the expected outcome
+    assertThat(result).isNotNull();
+    assertThat(result.getValue()).isEqualTo(expected);
+}
+
+```
+
+**Test Execution Commands:**
+```bash
+# Run all modern tests
+mvn test                          # Runs modern tests first, then legacy
+
+# Run all integration tests for a DAO component
+mvn test -Dtest=TicklerDao*IntegrationTest  # All TicklerDao integration tests
+
+# Run specific operation tests
+mvn test -Dtest=TicklerDaoFindIntegrationTest      # Just find operations
+mvn test -Dtest=TicklerDaoWriteIntegrationTest     # Just write operations
+
+# Run by test type (using tags)
+mvn test -Dgroups="unit"                # Fast unit tests only
+mvn test -Dgroups="integration"         # Integration tests only
+
+# Run tests by tags
+mvn test -Dgroups="tickler,read"        # All read operations for tickler
+mvn test -Dgroups="create,update"       # All create and update operations
+mvn test -Dgroups="aggregate"           # All aggregation operations
+
+# Build with tests
+make install --run-tests          # Includes modern tests automatically
+```
+
+**Parallel Execution for Multi-File Tests:**
+```bash
+mvn test -T 4C                    # 4 threads per CPU core for parallel execution
 ```
 
 ### Development Environment References
@@ -839,7 +884,6 @@ src/test/resources/over_ride_config.properties    # Test configuration template
 ### Documentation & Architecture
 ```bash
 # Project Documentation
-docs/csrf-protection.md                           # CSRF protection implementation & troubleshooting
 docs/encounter-window-architecture.md             # Encounter window & AJAX patterns
 docs/Password_System.md                           # Security architecture details
 docs/struts-actions-detailed.md                   # Action mapping documentation

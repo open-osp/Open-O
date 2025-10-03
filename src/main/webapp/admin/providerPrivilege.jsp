@@ -41,7 +41,7 @@
 %>
 
 
-<%@ page errorPage="../errorpage.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.BatchUpdateException" %>
 <%@ page import="java.sql.*" %>

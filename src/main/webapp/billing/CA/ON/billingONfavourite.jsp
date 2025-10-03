@@ -25,7 +25,7 @@
     String user_no = (String) session.getAttribute("user");
 
 %>
-<%@ page errorPage="${pageContext.request.contextPath}/appointment/errorpage.jsp"
+<%@ page errorPage="/errorpage.jsp"
          import="java.util.*,java.sql.*,ca.openosp.*,java.text.*,java.net.*" %>
 <%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingPageUtil" %>
 <%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>

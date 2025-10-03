@@ -40,7 +40,6 @@
 %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.util.*" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
@@ -263,7 +262,7 @@
 
                                                     <!-- 分层显示不同类型过敏分类 -->
                                                     <c:if test="${!flatResults}">
-                                                        <c:forEach var="type" items="${[8, 10, 13, 11, 12, 14]}">
+                                                        <c:forEach var="type" items="${['8', '10', '13', '11', '12', '14']}">
                                                             <c:if test="${not empty allergyResults[type]}">
                                                                 <div class="DivContentSectionHead">
                                                                     <a href="javascript:void(0)" onclick="toggleSection('${type}');return false;">

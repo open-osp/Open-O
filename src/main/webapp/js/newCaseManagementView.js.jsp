@@ -3467,6 +3467,18 @@ function autoSave(async) {
         if ($F("printRx") == "true")
             printInfo("imgPrintRx", "printRx");
 
+        // Clear date fields
+        if ($("printStartDate"))
+            $("printStartDate").value = "";
+        if ($("printEndDate"))
+            $("printEndDate").value = "";
+
+        // Uncheck radio buttons
+        if ($("printopDates"))
+            $("printopDates").checked = false;
+        if ($("printopAllNotes"))
+            $("printopAllNotes").checked = false;
+
         return false;
 
     }

@@ -69,7 +69,29 @@ public class EntityDataGenerator {
             }
 
             if (f[i].getType() == String.class) {
-                f[i].set(model, f[i].getName() + ((int) (Math.random() * 10000)));
+                String fieldName = f[i].getName();
+                String value;
+
+                // Handle special fields that have known constraints
+                if ("sex".equalsIgnoreCase(fieldName)) {
+                    // Valid values: M, F, X (Intersex), U (Undisclosed)
+                    String[] validSexValues = {"M", "F", "X", "U"};
+                    value = validSexValues[(int) (Math.random() * validSexValues.length)];
+                } else if ("ver".equalsIgnoreCase(fieldName)) {
+                    value = "ON"; // Ontario version code
+                } else if ("hc_type".equalsIgnoreCase(fieldName) || "hcType".equalsIgnoreCase(fieldName)) {
+                    value = "ON"; // Ontario health card type
+                } else if ("province".equalsIgnoreCase(fieldName)) {
+                    value = "ON";
+                } else if ("roster_status".equalsIgnoreCase(fieldName) || "rosterStatus".equalsIgnoreCase(fieldName)) {
+                    value = "RO";
+                } else if ("patient_status".equalsIgnoreCase(fieldName) || "patientStatus".equalsIgnoreCase(fieldName)) {
+                    value = "AC";
+                } else {
+                    // For other string fields, generate a shorter value to avoid constraint violations
+                    value = fieldName.substring(0, Math.min(3, fieldName.length())) + ((int) (Math.random() * 100));
+                }
+                f[i].set(model, value);
             } else if (f[i].getType() == int.class || f[i].getType() == Integer.class) {
                 f[i].set(model, (int) (Math.random() * 10000));
             } else if (f[i].getType() == long.class || f[i].getType() == Long.class) {

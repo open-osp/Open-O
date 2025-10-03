@@ -28,6 +28,7 @@ import ca.openosp.OscarProperties;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.model.ProgramProvider;
@@ -75,7 +76,7 @@ public class DocumentUpload2Action extends ActionSupport {
         if (docFile == null) {
             map.put("error", 4);
         } else if (destination != null && destination.equals("incomingDocs")) {
-            String fileName = docFile.getName();
+            String fileName = this.filedataFileName;
             if (!fileName.toLowerCase().endsWith(".pdf")) {
                 map.put("error", props.getString("dms.documentUpload.onlyPdf"));
             } else if (docFile.length() == 0) {
@@ -110,7 +111,7 @@ public class DocumentUpload2Action extends ActionSupport {
             }
         } else {
             int numberOfPages = 0;
-            String fileName = MiscUtils.sanitizeFileName(docFile.getName());
+            String fileName = MiscUtils.sanitizeFileName(this.filedataFileName);
             String user = (String) request.getSession().getAttribute("user");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             EDoc newDoc = new EDoc("", "", fileName, "", user, user, this.getSource(), 'A',
@@ -188,7 +189,7 @@ public class DocumentUpload2Action extends ActionSupport {
     }
 
     /**
-     * Writes an uploaded file to disk
+     * Writes an uploaded file to disk with canonical path validation
      *
      * @param docFile  the uploaded file
      * @param fileName the name for the file on disk
@@ -199,7 +200,25 @@ public class DocumentUpload2Action extends ActionSupport {
         FileOutputStream fos = null;
         try {
             fis = Files.newInputStream(docFile.toPath());
-            String savePath = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + "/" + fileName;
+            String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+            if (!documentDir.endsWith(File.separator)) {
+                documentDir += File.separator;
+            }
+            String savePath = documentDir + fileName;
+
+            // Validate the canonical path to ensure file ends up in the intended destination
+            File baseDir = new File(documentDir);
+            String canonicalBase = baseDir.getCanonicalPath();
+
+            File destinationFile = new File(savePath);
+            String canonicalDest = destinationFile.getCanonicalPath();
+
+            // Ensure the canonical path is within the allowed directory
+            if (!canonicalDest.startsWith(canonicalBase + File.separator) &&
+                !canonicalDest.equals(canonicalBase)) {
+                throw new SecurityException("Destination file is outside allowed directory");
+            }
+
             fos = new FileOutputStream(savePath);
             byte[] buf = new byte[128 * 1024];
             int i = 0;
@@ -207,7 +226,8 @@ public class DocumentUpload2Action extends ActionSupport {
                 fos.write(buf, 0, i);
             }
         } catch (Exception e) {
-            logger.debug(e.toString());
+            logger.error("Error writing local file", e);
+            throw e;
         } finally {
             if (fis != null)
                 fis.close();
@@ -217,28 +237,49 @@ public class DocumentUpload2Action extends ActionSupport {
     }
 
     private boolean writeToIncomingDocs(File docFile, String queueId, String PdfDir, String fileName) {
-        // Validate inputs to prevent path traversal attacks
-        // Note: These validations are redundant as inputs are already validated before calling this method,
-        // but we keep them for defense in depth
         if (queueId == null || PdfDir == null || fileName == null) {
             logger.error("Invalid parameters provided for writeToIncomingDocs");
             return false;
         }
 
-        // The filename should already be sanitized by the caller, but validate again for defense in depth
         // Check that filename doesn't contain path traversal sequences
         if (fileName.contains("..") || fileName.contains("/") || fileName.contains("\\")) {
             logger.error("Filename contains invalid path characters");
             return false;
         }
-        
+
         String parentPath = IncomingDocUtil.getIncomingDocumentFilePath(queueId, PdfDir);
         if (!new File(parentPath).exists()) {
             return false;
         }
 
         String savePath = IncomingDocUtil.getAndCreateIncomingDocumentFilePathName(queueId, PdfDir, fileName);
-            
+
+        // Validate the canonical path to ensure file ends up in the intended destination
+        try {
+            String incomingDocDir = OscarProperties.getInstance().getProperty("INCOMINGDOCUMENT_DIR");
+            if (incomingDocDir == null || incomingDocDir.isEmpty()) {
+                logger.error("INCOMINGDOCUMENT_DIR not configured");
+                return false;
+            }
+
+            File baseDir = new File(incomingDocDir);
+            String canonicalBase = baseDir.getCanonicalPath();
+
+            File destinationFile = new File(savePath);
+            String canonicalDest = destinationFile.getCanonicalPath();
+
+            // Ensure the canonical path is within the allowed directory
+            if (!canonicalDest.startsWith(canonicalBase + File.separator) &&
+                !canonicalDest.equals(canonicalBase)) {
+                logger.error("Destination file is outside allowed directory: " + canonicalDest);
+                return false;
+            }
+        } catch (IOException e) {
+            logger.error("Error validating canonical path", e);
+            return false;
+        }
+
         // Write the file
         try (InputStream fis = Files.newInputStream(docFile.toPath());
                 FileOutputStream fos = new FileOutputStream(savePath)) {
@@ -253,7 +294,8 @@ public class DocumentUpload2Action extends ActionSupport {
     
     /**
      * Sanitizes a filename for use in incoming documents to prevent path traversal attacks.
-     * 
+     * Uses Apache Commons IO FilenameUtils for robust path traversal prevention.
+     *
      * @param fileName the original filename
      * @return sanitized filename safe for filesystem operations
      */
@@ -261,34 +303,24 @@ public class DocumentUpload2Action extends ActionSupport {
         if (fileName == null || fileName.trim().isEmpty()) {
             return null;
         }
-        
-        // Get just the filename component (removes any path)
-        File file = new File(fileName);
-        String baseName = file.getName();
-        
-        // Remove any path traversal sequences and dangerous characters
-        baseName = baseName.replaceAll("\\.\\.", "")  // Remove ..
-                          .replaceAll("[\\\\/]", "")   // Remove any slashes
-                          .replaceAll("\\$", "")        // Remove $
-                          .replaceAll("~", "")          // Remove ~
-                          .replaceAll(":", "")          // Remove colons
-                          .replaceAll("\\|", "")        // Remove pipes
-                          .replaceAll("<", "")          // Remove less than
-                          .replaceAll(">", "")          // Remove greater than
-                          .replaceAll("\"", "")         // Remove quotes
-                          .replaceAll("\\*", "")        // Remove asterisks
-                          .replaceAll("\\?", "");       // Remove question marks
-        
-        // Ensure the filename ends with .pdf (case insensitive)
-        if (!baseName.toLowerCase().endsWith(".pdf")) {
+
+        String baseName = FilenameUtils.getName(fileName);
+
+        // Ensure baseName doesn't contain any path separators
+        if (baseName.contains("/") || baseName.contains("\\") || baseName.contains("..")) {
             return null;
         }
-        
-        // Additional validation - ensure the filename is not empty after sanitization
-        if (baseName.trim().isEmpty() || baseName.equals(".pdf")) {
+
+        // Reject filenames starting with . (hidden files)
+        if (baseName.startsWith(".")) {
             return null;
         }
-        
+
+        // Ensure baseName is not empty and ends with .pdf
+        if (baseName.trim().isEmpty() || !baseName.toLowerCase().endsWith(".pdf") || baseName.equals(".pdf")) {
+            return null;
+        }
+
         return baseName;
     }
 
@@ -343,6 +375,8 @@ public class DocumentUpload2Action extends ActionSupport {
     private File docFile;
 
     private File filedata;
+    private String filedataFileName;
+    private String filedataContentType;
 
     private String docPublic = "";
     private String mode = "";
@@ -479,5 +513,21 @@ public class DocumentUpload2Action extends ActionSupport {
 
     public void setFiledata(File Filedata) {
         this.filedata = Filedata;
+    }
+
+    public String getFiledataFileName() {
+        return filedataFileName;
+    }
+
+    public void setFiledataFileName(String filedataFileName) {
+        this.filedataFileName = filedataFileName;
+    }
+
+    public String getFiledataContentType() {
+        return filedataContentType;
+    }
+
+    public void setFiledataContentType(String filedataContentType) {
+        this.filedataContentType = filedataContentType;
     }
 }

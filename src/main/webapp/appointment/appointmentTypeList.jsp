@@ -34,7 +34,7 @@
         sError = "Error: " + request.getParameter("err");
 %>
 
-<%@ page errorPage="../errorpage.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="ca.openosp.openo.util.*" %>

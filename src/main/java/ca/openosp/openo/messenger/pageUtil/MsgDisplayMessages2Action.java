@@ -178,9 +178,14 @@ public class MsgDisplayMessages2Action extends ActionSupport {
             MsgDisplayMessagesBean displayMsgBean = (MsgDisplayMessagesBean) request.getSession().getAttribute("DisplayMessagesBeanId");
             displayMsgBean.clearFilter();
             
-        } else if (request.getParameter("btnDelete") != null) {
-            // Process bulk message deletion
+        } else if (request.getParameter("btnDelete") != null) {            
+            // Quick return if messageNo is null (no message is selected for deletion)
+            if (messageNo == null) {
+                MiscUtils.getLogger().info("No messages selected, returning back to page");
+                return findForward;
+            }
 
+            // Process bulk message deletion
             providerNo = bean.getProviderNo();
             MessageListDao dao = SpringUtils.getBean(MessageListDao.class);
             

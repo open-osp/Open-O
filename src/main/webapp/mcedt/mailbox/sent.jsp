@@ -27,7 +27,7 @@
     KAI Innovations Inc.
     KAIInnovations.com
 --%>
-<%@ page errorPage="../error.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <!DOCTYPE html>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

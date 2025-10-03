@@ -133,7 +133,7 @@
             <td width="220"><b><font face="Arial, Helvetica, sans-serif"
                                      size="2" color="#003366">Select provider </font></b></td>
             <td width="254"><b><font face="Arial, Helvetica, sans-serif"
-                                     size="2" color="#003366"> <select name="provider">
+                                     size="2" color="#003366"> <select name="providers">
                 <option value="all">All Providers</option>
                 <% String proFirst = "";
                     String proLast = "";

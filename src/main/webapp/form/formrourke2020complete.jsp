@@ -285,7 +285,6 @@
         }
 
         function onPrintAll() {
-
             document.forms["frmP1"].action = "<%= request.getContextPath() %>/form/formname.do?__title=Rourke+Baby+Report&__cfgfile=Rourke2020printCfgPg1&__cfgfile=Rourke2020printCfgPg2&__cfgfile=Rourke2020printCfgPg3&__cfgfile=Rourke2020printCfgPg4&__template=Rourke2020";
             document.forms["frmP1"].action += "&submit=printAllJasperReport";
             document.forms["frmP1"].target = "_blank";
@@ -737,7 +736,7 @@
     </style>
 </head>
 <body onload="init()">
-<form styleId="frmP1" action="${pageContext.request.contextPath}/form/formname.do" method="post">
+<form id="frmP1" name="frmP1" action="${pageContext.request.contextPath}/form/formname.do" method="post">
     <div id="rourke2020-tabs">
         <ul id="tab-list">
             <li><a href="#tab-cp1">Page I</a></li>

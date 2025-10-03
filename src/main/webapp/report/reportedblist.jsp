@@ -52,7 +52,7 @@
     if (request.getParameter("endDate") != null) endDate = request.getParameter("endDate");
 %>
 <%@ page import="java.util.*, java.sql.*, ca.openosp.*"
-         errorPage="../errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="providerNameBean" class="ca.openosp.Dict" scope="page"/>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>

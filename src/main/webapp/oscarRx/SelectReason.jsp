@@ -147,16 +147,6 @@
             function toggleArchiveMenu(id) {
                 $('#' + id).toggle();
             }
-
-            $(document).ready(function () {
-                $("#saveRxReason").click(function (event) {
-                    event.preventDefault();
-                    $("#rxReasonForm").submit();
-                    opener.location.reload();
-                    window.close();
-                })
-
-            })
         </script>
     </head>
 
@@ -220,7 +210,7 @@
                 <span style="color:red;"><%=request.getAttribute("message") %></span>
                 <%} %>
 
-                <form action="RxReason.do" method="post" id="rxReasonForm">
+                <form action="${pageContext.request.contextPath}/oscarRx/RxReason.do" method="post" id="rxReasonForm">
 
                     <fieldset>
                         <input type="hidden" name="method" value="addDrugReason"/>
@@ -228,16 +218,6 @@
                         <input type="hidden" name="drugId" value="<%=drugIdStr%>"/>
 
                         <legend>Assign Indication</legend>
-
-                            <%-- 	Replaced with Dx Code Search template.
-
-                                        <label for="codingSystem" >Disease Code System</label>
-                                         <select name="codingSystem" id="codingSystem" >
-                                            <option value="icd9">icd9</option>
-                                            option value="limitUse">Limited Use</option
-                                        </select>
-
-                                        <label for="codeTxt" >Indication</label><input type="text" name="code" id="codeTxt" /> --%>
 
                         <input type="hidden" name="code" id="codeTxt"/>
                         <jsp:include page="/oscarResearch/oscarDxResearch/dxJSONCodeSearch.jsp">
@@ -325,7 +305,7 @@
                                         <td colspan="7">
                                             <div>
 
-                                                <form action="RxReason.do" method="post">
+                                                <form action="${pageContext.request.contextPath}/oscarRx/RxReason.do" method="post">
                                                     <fieldset>
                                                         <legend>Archive Coding
                                                             System: <%=drugReason.getCodingSystem() %>

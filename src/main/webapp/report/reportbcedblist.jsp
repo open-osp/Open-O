@@ -28,7 +28,7 @@
     if (request.getParameter("endDate") != null) endDate = request.getParameter("endDate");
 %>
 
-<%@ page import="java.util.*, java.sql.*" errorPage="../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*" errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="providerNameBean" class="java.util.Properties" scope="page"/>
 

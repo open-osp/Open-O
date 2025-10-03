@@ -136,7 +136,7 @@
             <button id="cancel" type="reset" class="cancel">Cancel upload</button>
             <br>
             <span>
-				<input type="hidden" id="provider" name="provider" value="<%=provider%>"/>
+				<input type="hidden" id="provider" name="providers" value="<%=provider%>"/>
 				<input type="hidden" id="queue" name="queue" value="<%=queueId%>"/>
                                 <input type="hidden" id="destination" name="destination" value="<%=destination%>"/>
                                 <input type="hidden" id="destFolder" name="destFolder" value="<%=destFolder%>"/>

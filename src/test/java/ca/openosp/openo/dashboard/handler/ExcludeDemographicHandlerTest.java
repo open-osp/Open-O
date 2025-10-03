@@ -24,16 +24,16 @@
 
 package ca.openosp.openo.dashboard.handler;
 
-import ca.openosp.openo.dashboard.handler.ExcludeDemographicHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import ca.openosp.openo.commn.dao.DaoTestFixtures;
 import ca.openosp.openo.commn.dao.DemographicDao;
 import ca.openosp.openo.commn.dao.utils.EntityDataGenerator;
 import ca.openosp.openo.commn.dao.utils.SchemaUtils;
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.utility.LoggedInInfo;
-//import ca.openosp.openo.util.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import static org.junit.Assert.*;
@@ -41,11 +41,9 @@ import static org.junit.Assert.*;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-//import org.apache.logging.log4j.Logger;
 
-public class ExcludeDemographicHandlerTest {
+public class ExcludeDemographicHandlerTest extends DaoTestFixtures {
 
-    //	private static Logger logger = MiscUtils.getLogger();
     private static DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
     private static ExcludeDemographicHandler excludeDemographicHandler;
     private static String indicatorName;
@@ -55,7 +53,7 @@ public class ExcludeDemographicHandlerTest {
     static List<Integer> demoNos = new ArrayList<Integer>();
 
     @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    public static void setUpBeforeClass() throws Exception {       
         SchemaUtils.restoreTable("demographic", "lst_gender", "admission", "demographic_merged",
                 "program", "health_safety", "provider", "providersite", "site", "program_team",
                 "log", "Facility", "demographicExt");

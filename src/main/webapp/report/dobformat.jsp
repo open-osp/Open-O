@@ -43,7 +43,7 @@
 
 %>
 <%@ page import="java.util.*, java.sql.*,java.io.*, ca.openosp.openo.util.*, java.text.*, java.net.*,sun.misc.*"
-         errorPage="../appointment/errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>

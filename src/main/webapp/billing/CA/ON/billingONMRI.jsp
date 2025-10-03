@@ -252,7 +252,7 @@
 
             <div class="span4">
                 Select Provider<br>
-                <select name="provider" onchange="setBillingCenter(this.value);">
+                <select name="providers" onchange="setBillingCenter(this.value);">
                     <%
                         List providerStr;
 

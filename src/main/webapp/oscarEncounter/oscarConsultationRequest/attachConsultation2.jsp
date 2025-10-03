@@ -69,7 +69,7 @@
     String requestId = request.getParameter("requestId");
     String providerNo = request.getParameter("provNo");
 
-    if (demoNo == null && requestId == null) response.sendRedirect("../error.jsp");
+    if (demoNo == null && requestId == null) request.getRequestDispatcher("/errorpage.jsp").forward(request, response);
 
     if (demoNo == null || demoNo.equals("null")) {
 

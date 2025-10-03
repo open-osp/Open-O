@@ -110,14 +110,11 @@ public class AddEditDocument2Action extends ActionSupport {
             newDoc.setProgramId(pp.getProgramId().intValue());
         }
 
-        fileName = MiscUtils.sanitizeFileName(newDoc.getFileName());
         // save local file;
         if (this.getDocFile().length() == 0) {
-            //errors.put("uploaderror", "documentManager.error.uploadError");
             response.setHeader("oscar_error", props.getString("dms.addDocument.errorZeroSize"));
             response.sendError(500, props.getString("dms.addDocument.errorZeroSize"));
             return null;
-            //throw new FileNotFoundException();
         }
         File file = writeLocalFile(Files.newInputStream(this.getDocFile().toPath()), fileName);// write file to local dir
 
@@ -127,7 +124,6 @@ public class AddEditDocument2Action extends ActionSupport {
             return null;
         }
 
-        //newDoc.setContentType(this.getDocFile().getContentType());
         if (fileName.endsWith(".PDF") || fileName.endsWith(".pdf")) {
             newDoc.setContentType("application/pdf");
             // get number of pages when document is pdf;
@@ -251,8 +247,8 @@ public class AddEditDocument2Action extends ActionSupport {
                 errors.put("uploaderror", "dms.error.uploadError");
                 throw new FileNotFoundException();
             }
-            // original file name
-            String fileName1 = this.docFileFileName;
+            // sanitize the original file name first
+            String fileName1 = MiscUtils.sanitizeFileName(this.docFileFileName);
 
             EDoc newDoc = new EDoc(this.getDocDesc(), this.getDocType(), fileName1, "", this.getDocCreator(), this.getResponsibleId(), this.getSource(), 'A', this.getObservationDate(), "", "", this.getFunction(), this.getFunctionId());
             newDoc.setDocPublic(this.getDocPublic());
@@ -260,8 +256,8 @@ public class AddEditDocument2Action extends ActionSupport {
             newDoc.setAppointmentNo(Integer.parseInt(this.getAppointmentNo()));
             newDoc.setDocClass(this.getDocClass());
             newDoc.setDocSubClass(this.getDocSubClass());
-            // new file name with date attached
-            String fileName2 = MiscUtils.sanitizeFileName(newDoc.getFileName());
+            // get the filename with timestamp prefix from EDoc (after preliminary processing)
+            String fileName2 = newDoc.getFileName();
 
             // save local file
             File file = writeLocalFile(Files.newInputStream(docFile.toPath()), fileName2);
@@ -394,7 +390,7 @@ public class AddEditDocument2Action extends ActionSupport {
             {
                 File docFile = this.getDocFile();
                 if (docFile != null && docFile.exists()) {
-                    fileName = this.docFileFileName;
+                    fileName = MiscUtils.sanitizeFileName(this.docFileFileName);
                     updateFileContent = true; // set update to true
                 }
             }

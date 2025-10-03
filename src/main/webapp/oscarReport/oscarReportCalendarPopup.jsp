@@ -29,7 +29,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <%
     //to prepare calendar display  
     String type = request.getParameter("type");

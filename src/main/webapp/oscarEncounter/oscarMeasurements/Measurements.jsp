@@ -37,7 +37,8 @@
 <%@ page import="ca.openosp.openo.managers.MeasurementManager" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-    String demo = (String) request.getAttribute("demographicNo"); //bean.getDemographicNo();
+    String demo = request.getParameter("demographicNo"); //bean.getDemographicNo();
+    request.setAttribute("demo", demo);
 
     MeasurementManager measurementManager = SpringUtils.getBean(MeasurementManager.class);
     String groupName = (String) request.getAttribute("groupName");
@@ -143,7 +144,7 @@
         </script>
     </head>
     <body class="BodyStyle" onload="window.focus();">
-    <form action="${pageContext.request.contextPath}/oscarEncounter/Measurements.do" method="post" styleId="theForm">
+    <form action="${pageContext.request.contextPath}/oscarEncounter/Measurements.do" method="post" id="theForm" name="theForm">
         <c:if test="${not empty css}">
             <link rel="stylesheet" type="text/css" href="${css}">
         </c:if>
@@ -223,8 +224,8 @@
                                                             </td>
                                                             <td>
                                                                 <c:set var="attributeName" value="mInstrcs${ctr.index}" />
-                                                                <c:forEach var="mInstrc" items="${pageContext.request.getAttribute(attributeName).measuringInstructionList}">
-                                                                    <input type="radio" name="value(inputMInstrc-${ctr.index})" value="${mInstrc.measuringInstrc}" checked />
+                                                                <c:forEach var="mInstrc" items="${sessionScope[attributeName].measuringInstructionList}">
+                                                                    <input type="radio" name="inputMInstrc-${ctr.index}" value="${mInstrc.measuringInstrc}" checked />
                                                                     ${mInstrc.measuringInstrc}<br>
                                                                 </c:forEach>
                                                             </td>
@@ -233,16 +234,16 @@
                                                                 <c:when test="${measurementType.measuringInstrc.startsWith('Choose radio')}">
                                                                     <td>
                                                                         <c:forEach var="option" items="${fn:split(measurementType.measuringInstrc.substring(12), ',')}">
-                                                                            <input type="radio" name="value(inputValue-${ctr.index})" value="${fn:trim(option)}"> ${fn:trim(option)}&nbsp;
+                                                                            <input type="radio" name="inputValue-${ctr.index}" value="${fn:trim(option)}"> ${fn:trim(option)}&nbsp;
                                                                         </c:forEach>
                                                                     </td>
                                                                 </c:when>
                                                                 <c:otherwise>
-                                                                    <td><input type="text" class="input-small" name="value(inputValue-${ctr.index})" id="inputValue-${ctr.index}"/></td>
+                                                                    <td><input type="text" class="input-small" name="inputValue-${ctr.index}" id="inputValue-${ctr.index}"/></td>
                                                                 </c:otherwise>
                                                             </c:choose>
 
-                                                            <td><input type="text" class="input-medium" name="value(date-${ctr.index})" id="date-${ctr.index}"/></td>
+                                                            <td><input type="text" class="input-medium" name="date-${ctr.index}" id="date-${ctr.index}"/></td>
                                                             <script>
                                                                 Calendar.setup({
                                                                     inputField: "date-${ctr.index}",
@@ -251,11 +252,11 @@
                                                                 });
                                                             </script>
 
-                                                            <td><input type="text" class="input-large" name="value(comments-${ctr.index})" id="comments-${ctr.index}"/></td>
+                                                            <td><input type="text" class="input-large" name="comments-${ctr.index}" id="comments-${ctr.index}"/></td>
                                                             <td>
-                                                                <input type="hidden" name="value(inputType-${ctr.index})" value="${measurementType.type}"/>
-                                                                <input type="hidden" name="value(inputTypeDisplayName-${ctr.index})" value="${measurementType.typeDisplayName}"/>
-                                                                <input type="hidden" name="value(validation-${ctr.index})" value="${measurementType.validation}"/>
+                                                                <input type="hidden" name="inputType-${ctr.index}" value="${measurementType.type}"/>
+                                                                <input type="hidden" name="inputTypeDisplayName-${ctr.index}" value="${measurementType.typeDisplayName}"/>
+                                                                <input type="hidden" name="validation-${ctr.index}" value="${measurementType.validation}"/>
                                                             </td>
                                                         </tr>
 
@@ -275,17 +276,17 @@
                                                         </c:if>
                                                     </c:forEach>
 
-                                                    <input type="hidden" name="value(numType)" value="${fn:length(measurementTypes.measurementTypeVector)}"/>
-                                                    <input type="hidden" name="value(groupName)" value="${groupName}"/>
-                                                    <input type="hidden" name="value(parentChanged)" value="false"/>
-                                                    <input type="hidden" name="value(demographicNo)" value="${demo}"/>
+                                                    <input type="hidden" name="numType" value="${fn:length(measurementTypes.measurementTypeVector)}"/>
+                                                    <input type="hidden" name="groupName" value="${groupName}"/>
+                                                    <input type="hidden" name="parentChanged" value="false"/>
+                                                    <input type="hidden" name="demographicNo" value="${demo}"/>
                                                     <input type="hidden" name="demographic_no" value="${demo}"/>
 
                                                     <c:if test="${not empty css}">
-                                                        <input type="hidden" name="value(css)" value="${css}"/>
+                                                        <input type="hidden" name="css" value="${css}"/>
                                                     </c:if>
                                                     <c:if test="${empty css}">
-                                                        <input type="hidden" name="value(css)" value=""/>
+                                                        <input type="hidden" name="css" value=""/>
                                                     </c:if>
 
                                                 </table>

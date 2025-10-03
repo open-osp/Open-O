@@ -116,7 +116,8 @@ public class DxDaoImpl extends AbstractDaoImpl<DxAssociation> implements DxDao {
             }
             
             if (validKeywords.isEmpty()) {
-                return new ArrayList<Object[]>();
+                Query query = entityManager.createNativeQuery("select " + codingSystem + ", description from " + codingSystem);
+                return query.getResultList();
             }
             
             // Build parameterized query

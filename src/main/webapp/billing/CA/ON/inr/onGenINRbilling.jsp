@@ -21,7 +21,7 @@
     String user_no = (String) session.getAttribute("user");
 %>
 <%@ page import="java.util.*,java.sql.*,ca.openosp.openo.util.*,ca.openosp.*,ca.openosp.openo.billing.ca.on.data.*"
-         errorPage="../../../errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 
 <%@page import="ca.openosp.openo.billing.CA.model.BillingInr" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>

@@ -463,7 +463,7 @@
                     <tr bgcolor="#DFDFEA">
                         <td width="19%"><font
                                 face="Verdana, Arial, Helvetica, sans-serif" size="1"
-                                color="#000000">Billing Provider <select name="provider">
+                                color="#000000">Billing Provider <select name="providers">
                             <option value=""
                                     <%=request.getParameter("mrp").equals("") ? "selected" : ""%>>Select
                                 Provider

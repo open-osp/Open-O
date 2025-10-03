@@ -25,7 +25,7 @@
 --%>
 <!DOCTYPE html>
 
-<%@ page errorPage="error.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

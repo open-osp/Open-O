@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -48,6 +47,7 @@ public final class EctSetupDisplayHistory2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    private EctMeasurementsDataBeanHandler measurementsData;
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
@@ -64,23 +64,24 @@ public final class EctSetupDisplayHistory2Action extends ActionSupport {
         request.getSession().setAttribute("EctSessionBean", bean);
         String type = request.getParameter("type");
         MiscUtils.getLogger().debug("Type: " + type);
-        EctMeasurementsDataBeanHandler hd = null;
         if (bean != null) {
             Integer demo = Integer.valueOf(bean.getDemographicNo());
             request.setAttribute("demographicNo", demo);
             if (type != null) {
-                hd = new EctMeasurementsDataBeanHandler(demo, type);
+                measurementsData = new EctMeasurementsDataBeanHandler(demo, type);
                 if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
-                    List<EctMeasurementsDataBean> measures = (List<EctMeasurementsDataBean>) hd.getMeasurementsDataVector();
+                    List<EctMeasurementsDataBean> measures = (List<EctMeasurementsDataBean>) measurementsData.getMeasurementsDataVector();
                     EctMeasurementsDataBeanHandler.addRemoteMeasurements(loggedInInfo, measures, type, demo);
                 }
                 request.setAttribute("type", type);
             }
-            HttpSession session = request.getSession();
-            session.setAttribute("measurementsData", hd);
         } else {
             MiscUtils.getLogger().debug("cannot get the EctSessionBean");
         }
         return "continue";
+    }
+
+    public EctMeasurementsDataBeanHandler getMeasurementsData() {
+        return measurementsData;
     }
 }

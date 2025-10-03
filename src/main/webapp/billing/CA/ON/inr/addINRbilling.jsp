@@ -161,7 +161,7 @@
                             <td width="29%"><font
                                     face="Verdana, Arial, Helvetica, sans-serif" size="1"
                                     color="#000000">Billing Provider</font></td>
-                            <td width="50%"><select name="provider">
+                            <td width="50%"><select name="providers">
                                 <option value=""
                                         <%=request.getParameter("creator").equals("") ? "selected" : ""%>>Select
                                     Provider

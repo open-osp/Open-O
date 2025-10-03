@@ -25,7 +25,7 @@
 
 
 <%@ include file="/casemgmt/taglibs.jsp" %>
-<%@ page errorPage="/casemgmt/error.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
 <%

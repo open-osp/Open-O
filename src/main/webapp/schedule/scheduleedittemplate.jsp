@@ -29,7 +29,7 @@
 %>
 <%@ page
         import="java.util.*, java.net.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

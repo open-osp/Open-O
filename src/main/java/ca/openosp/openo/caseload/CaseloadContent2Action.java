@@ -268,8 +268,8 @@ public class CaseloadContent2Action extends ActionSupport {
                 clSearchParams[5] = caseloadDx;
                 clSearchParams[6] = facilityId.toString();
             } else if (!StringUtils.isNullOrEmpty(caseloadRoster)) {
-                // no dx filter
-                clSearchQuery = "search_allpg_provdemo_dxfilter";
+                // filter on roster status
+                clSearchQuery = "search_allpg_provdemo_rofilter";
                 clSearchParams = new String[6];
                 clSearchParams[0] = caseloadProv;
                 clSearchParams[1] = caseloadProv;
@@ -279,7 +279,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 clSearchParams[5] = facilityId.toString();
             } else if (!StringUtils.isNullOrEmpty(caseloadDx)) {
                 // filter on dx
-                clSearchQuery = "search_allpg_provdemo_rofilter";
+                clSearchQuery = "search_allpg_provdemo_dxfilter";
                 clSearchParams = new String[6];
                 clSearchParams[0] = caseloadProv;
                 clSearchParams[1] = caseloadProv;
@@ -338,7 +338,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 clSearchParams[5] = caseloadDx;
                 clSearchParams[6] = caseloadProgram;
             } else if (!StringUtils.isNullOrEmpty(caseloadRoster)) {
-                // no dx filter
+                // filter on roster status
                 clSearchQuery = "search_provdemo_rofilter";
                 clSearchParams = new String[6];
                 clSearchParams[0] = caseloadProv;

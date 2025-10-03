@@ -38,15 +38,19 @@ import ca.openosp.openo.dashboard.handler.IndicatorTemplateXML;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanFactory;
+
+import ca.openosp.openo.commn.dao.DaoTestFixtures;
 import ca.openosp.openo.dashboard.display.beans.GraphPlot;
 import ca.openosp.openo.dashboard.query.Parameter;
 import ca.openosp.openo.dashboard.query.RangeInterface;
+import ca.openosp.openo.utility.SpringUtils;
 
 /**
  * Cannot automate this test because the EntityManager is called
  * through spring utils.
  */
-public class IndicatorQueryHandlerTest {
+public class IndicatorQueryHandlerTest extends DaoTestFixtures {
 
     private static String query = "SELECT COUNT(fin.patient) AS \"DM Patients\", IF ( COUNT(fin.patient) > 0, "
             + "ROUND( SUM( CASE WHEN fin.a1c > 2 THEN 1 ELSE 0 END ) * 100 / COUNT(fin.patient) , 1 ), 0) AS \"HbA1c (%)\", "
@@ -73,7 +77,6 @@ public class IndicatorQueryHandlerTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-
         URL url = Thread.currentThread().getContextClassLoader().getResource("indicatorXMLTemplates/diabetes_hba1c_in_range_test.xml");
         byte[] byteArray = null;
         InputStream is = null;

@@ -84,7 +84,7 @@
     String requestId = request.getParameter("requestId");
     String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-    if (demoNo == null) response.sendRedirect("../error.jsp");
+    if (demoNo == null) request.getRequestDispatcher("/errorpage.jsp").forward(request, response);
 
     EFormAttachDocs docsUtil = new EFormAttachDocs(requestId);
 

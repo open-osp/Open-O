@@ -24,7 +24,7 @@
 %>
 <%@ page
         import="ca.openosp.openo.billing.ca.on.data.*, java.sql.*, ca.openosp.*, java.net.*"
-        errorPage="../errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingErrorRepImpl" %>
 <%
     String id = request.getParameter("id");

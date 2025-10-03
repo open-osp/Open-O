@@ -42,7 +42,7 @@
 <%@page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
 <%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
-<%@page errorPage="../provider/errorpage.jsp" %>
+<%@page errorPage="/errorpage.jsp" %>
 <%@ page
         import="java.util.*, ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.CML.*,ca.openosp.openo.lab.LabRequestReportLink,ca.openosp.openo.db.*,java.sql.*,ca.openosp.openo.log.*,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.casemgmt.service.CaseManagementManager,ca.openosp.openo.casemgmt.model.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

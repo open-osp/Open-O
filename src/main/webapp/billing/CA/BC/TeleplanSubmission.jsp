@@ -171,7 +171,7 @@
                class="form-inline">
 
         Select provider
-        <select name="provider">
+        <select name="providers">
             <option value="all">All Providers</option>
             <%
                 ProviderData pd = new ProviderData();

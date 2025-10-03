@@ -29,7 +29,7 @@
     String demographic_no = (String) session.getAttribute("demo_no");
 %>
 <%@ page import="java.util.*, java.sql.*, ca.openosp.*,java.net.*"
-         errorPage="../errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>

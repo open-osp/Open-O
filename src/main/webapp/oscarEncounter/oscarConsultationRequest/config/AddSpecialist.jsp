@@ -26,6 +26,7 @@
 
 <%@page import="ca.openosp.openo.commn.dao.EFormDao" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -258,60 +259,60 @@
                                     <input type="hidden" name="specId" id="specId" value="<%=specId%>"/>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.firstName"/></td>
-                                        <td><input type="text" name="firstName"/></td>
+                                        <td><input type="text" name="firstName" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.firstName}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.lastName"/></td>
-                                        <td><input type="text" name="lastName"/></td>
+                                        <td><input type="text" name="lastName" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.lastName}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.professionalLetters"/>
                                         </td>
-                                        <td><input type="text" name="proLetters"/></td>
+                                        <td><input type="text" name="proLetters" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.proLetters}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.address"/>
                                         </td>
                                         <td><textarea name="address" cols="30"
-                                                           rows="3"></textarea> <%=oscarVariables.getProperty("consultation_comments", "") %>
+                                                           rows="3"><e:forHtmlContent value='${EctConAddSpecialistForm.address}'/></textarea> <%=oscarVariables.getProperty("consultation_comments", "") %>
                                         </td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.EditSpecialists.Annotation"/>
                                         </td>
-                                        <td colspan="4"><textarea name="annotation" cols="30" rows="3"></textarea>
+                                        <td colspan="4"><textarea name="annotation" cols="30" rows="3"><e:forHtmlContent value='${EctConAddSpecialistForm.annotation}'/></textarea>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.phone"/>
                                         </td>
-                                        <td><input type="text" name="phone"/></td>
+                                        <td><input type="text" name="phone" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.phone}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.fax"/>
                                         </td>
-                                        <td colspan="4"><input type="text" name="fax"/></td>
+                                        <td colspan="4"><input type="text" name="fax" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.fax}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.privatePhoneNumber"/></td>
-                                        <td><input type="text" name="privatePhoneNumber"/></td>
+                                        <td><input type="text" name="privatePhoneNumber" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.privatePhoneNumber}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.cellPhoneNumber"/></td>
-                                        <td colspan="4"><input type="text" name="cellPhoneNumber"/></td>
+                                        <td colspan="4"><input type="text" name="cellPhoneNumber" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.cellPhoneNumber}'/>"/></td>
                                     </tr>
 
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.pagerNumber"/></td>
-                                        <td><input type="text" name="pagerNumber"/></td>
+                                        <td><input type="text" name="pagerNumber" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.pagerNumber}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.salutation"/></td>
                                         <td colspan="4">
                                             <select name="salutation">
-                                                <option value=""><fmt:message key="demographic.demographiceditdemographic.msgNotSet"/></option>
-                                                <option value="Dr."><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgDr"/></option>
-                                                <option value="Mr."><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMr"/></option>
-                                                <option value="Mrs."><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMrs"/></option>
-                                                <option value="Miss"><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMiss"/></option>
-                                                <option value="Ms."><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMs"/></option>
+                                                <option value="" ${EctConAddSpecialistForm.salutation == '' ? 'selected' : ''}><fmt:message key="demographic.demographiceditdemographic.msgNotSet"/></option>
+                                                <option value="Dr." ${EctConAddSpecialistForm.salutation == 'Dr.' ? 'selected' : ''}><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgDr"/></option>
+                                                <option value="Mr." ${EctConAddSpecialistForm.salutation == 'Mr.' ? 'selected' : ''}><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMr"/></option>
+                                                <option value="Mrs." ${EctConAddSpecialistForm.salutation == 'Mrs.' ? 'selected' : ''}><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMrs"/></option>
+                                                <option value="Miss" ${EctConAddSpecialistForm.salutation == 'Miss' ? 'selected' : ''}><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMiss"/></option>
+                                                <option value="Ms." ${EctConAddSpecialistForm.salutation == 'Ms.' ? 'selected' : ''}><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.msgMs"/></option>
                                             </select>
                                         </td>
                                     </tr>
 
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.website"/></td>
-                                        <td><input type="text" name="website"/></td>
+                                        <td><input type="text" name="website" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.website}'/>"/></td>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.email"/></td>
-                                        <td colspan="4"><input type="text" name="email"/></td>
+                                        <td colspan="4"><input type="text" name="email" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.email}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.specialistType"/></td>
@@ -342,7 +343,7 @@
                                                 </fmt:message>
                                             </span><br/>
                                             <% } %>
-                                            <input type="text" name="referralNo"/>
+                                            <input type="text" name="referralNo" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.referralNo}'/>"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -372,36 +373,36 @@
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.eDataUrl"/></td>
-                                        <td colspan="5"><input type="text" style="width:100%" name="eDataUrl"/></td>
+                                        <td colspan="5"><input type="text" style="width:100%" name="eDataUrl" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.eDataUrl}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.eDataOscarKey"/></td>
-                                        <td colspan="5"><input type="text" style="width:100%" name="eDataOscarKey"/></td>
+                                        <td colspan="5"><input type="text" style="width:100%" name="eDataOscarKey" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.eDataOscarKey}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.eDataServiceKey"/></td>
-                                        <td colspan="5"><input type="text" style="width:100%" name="eDataServiceKey"/></td>
+                                        <td colspan="5"><input type="text" style="width:100%" name="eDataServiceKey" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.eDataServiceKey}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.eDataServiceName"/></td>
-                                        <td colspan="5"><input type="text" style="width:100%" name="eDataServiceName"/></td>
+                                        <td colspan="5"><input type="text" style="width:100%" name="eDataServiceName" value="<e:forHtmlAttribute value='${EctConAddSpecialistForm.eDataServiceName}'/>"/></td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.hideFromView"/></td>
                                         <td colspan="5">
                                             <select name="hideFromView">
-                                                <option value="false"></option>
-                                                <option value="true"></option>
+                                                <option value="false" ${!EctConAddSpecialistForm.hideFromView ? 'selected' : ''}>false</option>
+                                                <option value="true" ${EctConAddSpecialistForm.hideFromView ? 'selected' : ''}>true</option>
                                             </select>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td><fmt:message key="oscarEncounter.oscarConsultationRequest.config.AddSpecialist.eform"/></td>
                                         <td colspan="5">
-                                            <select name="EctConAddSpecialistForm" name="eformId">
-                                                <option value="0">--None--</option>
+                                            <select name="eformId">
+                                                <option value="0" ${EctConAddSpecialistForm.eformId == 0 ? 'selected' : ''}>--None--</option>
                                                 <c:forEach var="eform" items="${eforms}">
-                                                    <option value="${eform.id}">
+                                                    <option value="${eform.id}" ${EctConAddSpecialistForm.eformId == eform.id ? 'selected' : ''}>
                                                             ${eform.formName}
                                                     </option>
                                                 </c:forEach>

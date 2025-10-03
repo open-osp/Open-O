@@ -32,7 +32,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,java.io.*"
-        errorPage="../../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="riskDataBean" class="java.util.Properties" scope="page"/>
 <jsp:useBean id="risks"

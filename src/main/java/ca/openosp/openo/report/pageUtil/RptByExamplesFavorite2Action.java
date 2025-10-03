@@ -53,15 +53,9 @@ public class RptByExamplesFavorite2Action extends ActionSupport {
 
     public String execute() throws ServletException, IOException {
         String providerNo = (String) request.getSession().getAttribute("user");
-       
-        // Deletion case
-        if ("true".equalsIgnoreCase(this.getToDelete())) {
-            deleteQuery(this.getId());
-            return SUCCESS;
-        }
 
-        // Edit case
         if (!StringUtils.isEmpty(this.getNewQuery())) {
+            // Edit case
             this.setQuery(this.getNewQuery());
             if (!StringUtils.isEmpty(this.getNewName())) {
                 this.setFavoriteName(this.getNewName());
@@ -69,24 +63,21 @@ public class RptByExamplesFavorite2Action extends ActionSupport {
                 ReportByExamplesFavoriteDao dao = SpringUtils.getBean(ReportByExamplesFavoriteDao.class);
                 for (ReportByExamplesFavorite f : dao.findByQuery(this.getNewQuery())) {
                     this.setFavoriteName(f.getName());
-                    break;
                 }
             }
+            return "edit";
+        } else if ("true".equalsIgnoreCase(this.getToDelete())) {
+            // Deletion case
+            deleteQuery(this.getId());
         } else {
+            // Add to favorite case
             String favoriteName = this.getFavoriteName();
             String query = this.getQuery();
-
-            String queryWithEscapeChar = StringEscapeUtils.escapeSql(query);
+            String queryWithEscapeChar = StringEscapeUtils.escapeSql(StringUtils.defaultString(query));
             write2Database(providerNo, favoriteName, queryWithEscapeChar);
         }
 
-        // Save new favorite
-        String favoriteName = this.getFavoriteName();
-        String query = this.getQuery();
-        String queryWithEscapeChar = StringEscapeUtils.escapeSql(StringUtils.defaultString(query));
-        MiscUtils.getLogger().debug("escapeSql: " + queryWithEscapeChar);
-        write2Database(providerNo, favoriteName, queryWithEscapeChar);
-
+        // Sets all of the favorite queries, only used if the user adds or deletes a favorite query
         RptByExampleQueryBeanHandler hd = new RptByExampleQueryBeanHandler(providerNo);
         request.setAttribute("allFavorites", hd);
         return SUCCESS;

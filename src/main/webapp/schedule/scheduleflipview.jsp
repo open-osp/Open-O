@@ -90,7 +90,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="DateTimeCodeBean" class="java.util.Hashtable"
              scope="page"/>

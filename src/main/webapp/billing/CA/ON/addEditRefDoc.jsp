@@ -41,7 +41,7 @@
         response.sendRedirect("../logout.jsp");
     }
 %>
-<%@ page errorPage="../appointment/errorpage.jsp"
+<%@ page errorPage="/errorpage.jsp"
          import="java.util.*,
                  java.sql.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>

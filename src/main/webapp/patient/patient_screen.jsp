@@ -28,7 +28,7 @@
     if (session.getValue("patient") == null) response.sendRedirect("../logout.jsp");
     String demographic_no = (String) session.getAttribute("demo_no");
 %>
-<%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*" errorPage="../appointment/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>

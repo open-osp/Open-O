@@ -54,9 +54,39 @@ public class DocumentPreview2Action extends ActionSupport {
     private List<EctFormData.PatientForm> allForms = new ArrayList<>();
 
     public String execute() {
-        if ("fetchEFormDocuments".equals(request.getParameter("method"))) {
-            return fetchEFormDocuments();
+        String method = request.getParameter("method");
+
+        if (method != null) {
+            if (method.equalsIgnoreCase("fetchEFormDocuments"))
+                return fetchEFormDocuments();
+            else if (method.equalsIgnoreCase("renderEDocPDF")) {
+                renderEDocPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("renderEFormPDF")) {
+                renderEFormPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("renderHrmPDF")) {
+                renderHrmPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("renderLabPDF")) {
+                renderLabPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("renderFormPDF")) {
+                renderFormPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("renderPDF")) {
+                renderPDF();
+                return null;
+            }
+            else if (method.equalsIgnoreCase("fetchConsultDocuments"))
+                return fetchConsultDocuments();
         }
+
         return fetchConsultDocuments();
     }
 
@@ -191,7 +221,7 @@ public class DocumentPreview2Action extends ActionSupport {
         String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 
         allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
-        allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
+        allEForms = EFormUtil.listPatientEformsCurrent(Integer.valueOf(demographicNo), true);
         allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo, false);
         allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
         allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);

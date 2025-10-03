@@ -30,7 +30,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler;
 import org.apache.logging.log4j.Logger;
@@ -48,6 +47,8 @@ import org.apache.struts2.ServletActionContext;
 public final class EctSetupHistoryIndex2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
+
+    private EctMeasurementsDataBeanHandler measurementsData;
 
     private Logger logger = MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -68,14 +69,11 @@ public final class EctSetupHistoryIndex2Action extends ActionSupport {
 
             request.getSession().setAttribute("EctSessionBean", bean);
 
-            EctMeasurementsDataBeanHandler hd = new EctMeasurementsDataBeanHandler(demo);
+            measurementsData = new EctMeasurementsDataBeanHandler(demo);
             if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
-                List<EctMeasurementsDataBean> measureTypes = (List<EctMeasurementsDataBean>) hd.getMeasurementsDataVector();
+                List<EctMeasurementsDataBean> measureTypes = (List<EctMeasurementsDataBean>) measurementsData.getMeasurementsDataVector();
                 EctMeasurementsDataBeanHandler.addRemoteMeasurementsTypes(loggedInInfo, measureTypes, demo);
             }
-
-            HttpSession session = request.getSession();
-            session.setAttribute("measurementsData", hd);
 
             return "continue";
 
@@ -83,6 +81,10 @@ public final class EctSetupHistoryIndex2Action extends ActionSupport {
             logger.debug("cannot get the EctSessionBean");
         }
         return "newcontinue";
+    }
+
+    public EctMeasurementsDataBeanHandler getMeasurementsData() {
+        return measurementsData;
     }
 
 }

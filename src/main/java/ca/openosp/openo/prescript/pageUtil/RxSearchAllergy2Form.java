@@ -35,6 +35,10 @@ public final class RxSearchAllergy2Form {
     private boolean type2 = false;
     private boolean type1 = false;
 
+    private String iNKDA;
+    private String hasDrugAllergy;
+    private String submit;
+
     public String getSearchString() {
         return (this.searchString);
     }
@@ -81,5 +85,29 @@ public final class RxSearchAllergy2Form {
 
     public void setType1(boolean RHS) {
         this.type1 = RHS;
+    }
+
+    public String getiNKDA() {
+        return iNKDA;
+    }
+
+    public void setiNKDA(String iNKDA) {
+        this.iNKDA = iNKDA;
+    }
+
+    public String getHasDrugAllergy() {
+        return hasDrugAllergy;
+    }
+
+    public void setHasDrugAllergy(String hasDrugAllergy) {
+        this.hasDrugAllergy = hasDrugAllergy;
+    }
+
+    public String getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(String submit) {
+        this.submit = submit;
     }
 }

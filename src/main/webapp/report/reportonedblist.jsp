@@ -26,7 +26,7 @@
     if (request.getParameter("startDate") != null) startDate = request.getParameter("startDate");
     if (request.getParameter("endDate") != null) endDate = request.getParameter("endDate");
 %>
-<%@ page import="java.util.*, java.sql.*" errorPage="../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*" errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.commn.dao.forms.FormsDao" %>
 
 <jsp:useBean id="providerNameBean" class="java.util.Properties" scope="page"/>

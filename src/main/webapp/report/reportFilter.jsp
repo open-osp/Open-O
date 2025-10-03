@@ -13,7 +13,7 @@
     }
 %>
 
-<%@ page errorPage="../appointment/errorpage.jsp"
+<%@ page errorPage="/errorpage.jsp"
          import="java.util.*, ca.openosp.openo.report.data.*" %>
 <%@ page import="ca.openosp.openo.report.data.RptReportFilter" %>
 <%@ page import="ca.openosp.openo.report.data.RptReportItem" %>

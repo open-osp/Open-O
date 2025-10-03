@@ -18,7 +18,7 @@
     String curUser_no = (String) session.getAttribute("user");
     String[] ROLE = new String[]{"doctor", "resident", "nurse", "social worker", "other"};
 %>
-<%@ page errorPage="../errorpage.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>

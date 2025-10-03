@@ -28,7 +28,7 @@
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
-<%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="../provider/errorpage.jsp" %>
+<%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
 <%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>

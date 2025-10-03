@@ -220,7 +220,7 @@ public class EctDisplayMeasurements2Action extends EctDisplayAction {
                 MeasurementGroupStyle group = groups.get(j);
                 winName = group.getGroupName() + bean.demographicNo;
                 hash = Math.abs(winName.hashCode());
-                url = "popupPage(500,1000,'" + hash + "','" + request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupMeasurements.do?groupName=" + group.getGroupName() + "');measurementLoaded('" + hash + "')";
+                url = "popupPage(500,1000,'" + hash + "','" + request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupMeasurements.do?demographicNo=" + bean.demographicNo + "&groupName=" + group.getGroupName() + "');measurementLoaded('" + hash + "')";
                 Dao.addPopUpUrl(url);
                 Dao.addPopUpText(group.getGroupName());
             }

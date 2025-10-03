@@ -37,7 +37,7 @@
         }
     }
 %>
-<%@ page errorPage="../errorpage.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -910,7 +910,7 @@
         // Log the error to the console
         System.err.println("JSP Processing Error:");
         e.printStackTrace(System.err);
-        request.getRequestDispatcher("/error.jsp").forward(request, response);
+        request.getRequestDispatcher("/errorpage.jsp").forward(request, response);
         return;
     }
     %>

@@ -27,7 +27,7 @@
 <%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 <%@ page import="java.sql.*, java.util.*" %>
-<%@ page errorPage="/common/error.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.ScheduleTemplateDao" %>
 <%@page import="ca.openosp.openo.commn.model.ScheduleTemplate" %>

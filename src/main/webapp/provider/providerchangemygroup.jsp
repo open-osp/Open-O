@@ -30,7 +30,7 @@
     String oldGroup_no = request.getParameter("mygroup_no") == null ? "." : request.getParameter("mygroup_no");
 %>
 <%@ page import="java.util.*,java.sql.*"
-         errorPage="../provider/errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
 <%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>

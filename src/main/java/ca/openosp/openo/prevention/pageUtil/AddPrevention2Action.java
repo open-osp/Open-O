@@ -112,8 +112,7 @@ public class AddPrevention2Action extends ActionSupport {
         String given = request.getParameter("given");
         String prevDate = request.getParameter("prevDate");
         String providerName = request.getParameter("providerName");
-        String providerNo = request.getParameter("providers");
-
+        String providerNo = request.getParameter("providerNo");
 
         String nextDate = request.getParameter("nextDate");
         String neverWarn = request.getParameter("neverWarn");
@@ -303,11 +302,6 @@ public class AddPrevention2Action extends ActionSupport {
                 result.add("Prevention record not found");
             }
         }
-
-//	  if(UtilDateUtilities.StringToDate(prevDate, "yyyy-MM-dd HH:mm") == null) {
-//		  result.add("Prevention date not valid");
-//	  }
-
 
         return result;
     }

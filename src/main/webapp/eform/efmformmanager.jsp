@@ -39,8 +39,7 @@
 <html>
     <head>
     <title>E-Form Manager</title>
-
-        <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery*"></script>
+        <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
 

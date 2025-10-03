@@ -185,7 +185,7 @@ public class SearchDemographicAutoComplete2Action extends ActionSupport {
         for (int idx = 0; idx < size; ++idx) {
             record = info.get(idx);
             json.append("{\"label\":\"" + record.get("formattedName") + " " + record.get("fomattedDob") + " (" + record.get("status") + ")\",\"value\":\"" + record.get("demographicNo") + "\"");
-            json.append(",\"providerNo\":\"" + record.get("providerNo") + "\",\"providers\":\"" + record.get("providerName") + "\",\"nextAppt\":\"" + record.get("nextAppointment") + "\",");
+            json.append(",\"providerNo\":\"" + record.get("providerNo") + "\",\"provider\":\"" + record.get("providerName") + "\",\"nextAppt\":\"" + record.get("nextAppointment") + "\",");
             json.append("\"formattedName\":\"" + record.get("formattedName") + "\"}");
 
             if (idx < size - 1) {

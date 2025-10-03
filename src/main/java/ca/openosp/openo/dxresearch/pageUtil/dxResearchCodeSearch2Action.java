@@ -52,7 +52,6 @@ public final class dxResearchCodeSearch2Action extends ActionSupport {
             throw new RuntimeException("missing required sec object (_dxresearch)");
         }
 
-        //String demographicNo = request.getParameter("demographicNo");
         String[] xml_research = new String[5];
         xml_research[0] = request.getParameter("xml_research1");
         xml_research[1] = request.getParameter("xml_research2");

@@ -64,6 +64,7 @@
 <%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
     <head>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
         <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.page.title"/> Start Time
             : <%=OscarProperties.getInstance().getStartTime()%>
@@ -71,7 +72,6 @@
         <link rel="stylesheet" type="text/css"
               href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
         <script>
             jQuery.noConflict();
         </script>
@@ -416,28 +416,30 @@
                        onclick='popupPage(500,1000,"${pageContext.request.contextPath}/form/setupSelect.do");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnSelectForm"/></a></li>
                 <li><a href="#"
                        onclick='popupPage(500,1000,"${pageContext.request.contextPath}/form/formXmlUpload.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnImportFormData"/></a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/../eform/efmformmanager.jsp">
+                <li><a href="${pageContext.request.contextPath}/eform/efmformmanager.jsp">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnUploadForm"/>
                 </a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/../eform/efmimagemanager.jsp">
+                <li><a href="${pageContext.request.contextPath}/eform/efmimagemanager.jsp">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnUploadImage"/>
                 </a></li>
-                <li><a href="${pageContext.request.contextPath}/admin/../eform/efmmanageformgroups.jsp">
+                <li><a href="${pageContext.request.contextPath}/eform/efmmanageformgroups.jsp">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.frmGroups"/>
                 </a></li>
 
                 <% if (IsPropertiesOn.isIndivicaRichTextLetterEnable()) { %>
-                <li><a href="${pageContext.request.contextPath}/admin/../eform/efmformrtl_config.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.richTextLetter"/></a></li>
+                <li><a href="${pageContext.request.contextPath}/eform/efmformrtl_config.jsp">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.richTextLetter"/>
+                </a></li>
                 <% } %>
 
-                <li><a href="${pageContext.request.contextPath}/admin/../eform/efmmanageindependent.jsp">
+                <li><a href="${pageContext.request.contextPath}/eform/efmmanageindependent.jsp">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.frmIndependent"/>
                 </a></li>
 
                 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.fieldnote" rights="r"
                                    reverse="<%=false%>">
                     <li><a href="#"
-                           onclick='popupPage(600,900,"${pageContext.request.contextPath}/admin/../eform/fieldNoteReport/fieldnotereport.jsp");return false;'>
+                           onclick='popupPage(600,900,"${pageContext.request.contextPath}/eform/fieldNoteReport/fieldnotereport.jsp");return false;'>
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.fieldNoteReport"/></a>
                     </li>
                 </security:oscarSec>

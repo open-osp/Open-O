@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@page errorPage="../provider/errorpage.jsp" %>
+<%@page errorPage="/errorpage.jsp" %>
 <%@ page
         import="java.util.*, ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.*" %>
 <%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>

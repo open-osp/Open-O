@@ -235,7 +235,7 @@
                             <% if (demographicNo != null) { %>
                             <input type="button" class="smallButton"
                                    value="Search OLIS"
-                                   onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis1/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')">
+                                   onClick="popupStart('1000','1200','<%=request.getContextPath() %>/olis/Search.jsp?demographicNo=<%=demographicNo %>','OLIS_SEARCH')">
                             <% } %>
 
                             <% if (demographicNo == null && request.getParameter("fname") != null) { %>

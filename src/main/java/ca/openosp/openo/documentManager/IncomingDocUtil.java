@@ -819,6 +819,10 @@ public final class IncomingDocUtil {
     }
 
     public static void doPagesAction(String pdfAction, String queueIdStr, String pdfDir, String pdfName, String pdfPageNumber, String pdfExtractPageNumber, Locale locale) throws Exception {
+        if (pdfAction == null || pdfAction.trim().isEmpty()) {
+            return;
+        }
+
         String filePathName = getIncomingDocumentFilePathName(queueIdStr, pdfDir, pdfName);
         ResourceBundle props = ResourceBundle.getBundle("oscarResources", locale);
         int degree = 0;

@@ -78,7 +78,7 @@
         <div class="file_upload_buttons fileupload-buttonbar ui-widget-header ui-corner-top">
             <form action="<%=context%>/documentManager/documentUpload.do?method=executeUpload" method="POST"
                   enctype="multipart/form-data">
-                <input type="hidden" id="provider" name="provider" value="<%=provider%>"/>
+                <input type="hidden" id="provider" name="providers" value="<%=provider%>"/>
                 <input type="hidden" name="queue" value="<%=queueId%>"/>
                 <input type="file" name="filedata" multiple>
                 <button type="submit">Upload</button>

@@ -139,7 +139,7 @@
                 var codeType = document.forms[0].selectedCodingSystem.value;
                 var demographicNo = escape(document.forms[0].demographicNo.value);
 
-                awnd = rs('att', 'dxResearchCodeSearch.do?codeType=' + codeType + '&xml_research1=' + t0 + '&xml_research2=' + t1 + '&xml_research3=' + t2 + '&xml_research4=' + t3 + '&xml_research5=' + t4 + '&demographicNo=' + demographicNo, 600, 600, 1);
+                awnd = rs('att', '${pageContext.request.contextPath}/oscarResearch/oscarDxResearch/dxResearchCodeSearch.do?codeType=' + codeType + '&xml_research1=' + t0 + '&xml_research2=' + t1 + '&xml_research3=' + t2 + '&xml_research4=' + t3 + '&xml_research5=' + t4 + '&demographicNo=' + demographicNo, 600, 600, 1);
                 awnd.focus();
             }
 

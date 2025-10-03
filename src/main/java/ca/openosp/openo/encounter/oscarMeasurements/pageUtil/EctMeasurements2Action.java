@@ -59,9 +59,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EctMeasurements2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -83,7 +81,7 @@ public class EctMeasurements2Action extends ActionSupport {
 
         HttpSession session = request.getSession();
 
-        String demographicNo = request.getParameter("demographic_no");
+        String demographicNo = request.getParameter("demographicNo");
         String providerNo = (String) session.getAttribute("user");
         String prog_no = new EctProgram(session).getProgram(providerNo);
 
@@ -101,14 +99,14 @@ public class EctMeasurements2Action extends ActionSupport {
             mFlowsheet = templateConfig.getFlowSheet(template, custList);
         }
 
-        String numType = (String) this.getValue("numType");
+        String numType = request.getParameter("numType");
         int iType = Integer.parseInt(numType);
 
         String textOnEncounter = ""; // "**"+StringUtils.rightPad(by,80,"*")+"\\n";
 
         // if parent window content has changed then we need to propagate change so
         // we do not write to parent
-        String parentChanged = (String) this.getValue("parentChanged");
+        String parentChanged = request.getParameter("parentChanged");
         request.setAttribute("parentChanged", parentChanged);
 
         boolean valid = true;
@@ -136,12 +134,12 @@ public class EctMeasurements2Action extends ActionSupport {
             mInstrcName = "inputMInstrc-" + i;
             commentsName = "comments-" + i;
             dateName = "date-" + i;
-            inputValue = (String) this.getValue(inputValueName);
-            inputType = (String) this.getValue(inputTypeName);
-            inputTypeDisplay = (String) this.getValue(inputTypeDisplayName);
-            mInstrc = (String) this.getValue(mInstrcName);
-            comments = (String) this.getValue(commentsName);
-            dateObserved = (String) this.getValue(dateName);
+            inputValue = request.getParameter(inputValueName);
+            inputType = request.getParameter(inputTypeName);
+            inputTypeDisplay = request.getParameter(inputTypeDisplayName);
+            mInstrc = request.getParameter(mInstrcName);
+            comments = request.getParameter(commentsName);
+            dateObserved = request.getParameter(dateName);
 
             if (StringUtils.isEmpty(inputValue)) {
                 continue;
@@ -221,13 +219,13 @@ public class EctMeasurements2Action extends ActionSupport {
                 validationName = "validation-" + i;
                 dateName = "date-" + i;
 
-                inputValue = (String) this.getValue(inputValueName);
-                inputType = (String) this.getValue(inputTypeName);
-                mInstrc = (String) this.getValue(mInstrcName);
-                comments = (String) this.getValue(commentsName);
+                inputValue = request.getParameter(inputValueName);
+                inputType = request.getParameter(inputTypeName);
+                mInstrc = request.getParameter(mInstrcName);
+                comments = request.getParameter(commentsName);
                 comments = org.apache.commons.lang.StringEscapeUtils.escapeSql(comments);
-                validation = (String) this.getValue(validationName);
-                dateObserved = (String) this.getValue(dateName);
+                validation = request.getParameter(validationName);
+                dateObserved = request.getParameter(dateName);
 
                 org.apache.commons.validator.GenericValidator gValidator = new org.apache.commons.validator.GenericValidator();
                 if (!GenericValidator.isBlankOrNull(inputValue)) {
@@ -272,11 +270,13 @@ public class EctMeasurements2Action extends ActionSupport {
             // "**********************************************************************************\\n";
 
         } else {
-            String groupName = (String) this.getValue("groupName");
-            String css = (String) this.getValue("css");
+            String groupName = request.getParameter("groupName");
+            String css = request.getParameter("css");
             request.setAttribute("groupName", groupName);
             request.setAttribute("css", css);
             request.setAttribute("demographicNo", demographicNo);
+            System.out.println("Set demographicNo attribute: " + demographicNo);
+            System.out.println("=== END DEBUG ===");
 
             if (ajax) {
                 JSONObject obj = new JSONObject();
@@ -334,18 +334,5 @@ public class EctMeasurements2Action extends ActionSupport {
             request.setAttribute("textOnEncounter", StringEscapeUtils.escapeJavaScript(textOnEncounter));
             return SUCCESS;
         }
-    }
-    public final Map values = new HashMap();
-
-    public void setValue(String key, Object value) {
-        values.put(key, value);
-    }
-
-    public Object getValue(String key) {
-        return values.get(key);
-    }
-
-    public boolean isEmpty() {
-        return values.isEmpty();
     }
 }

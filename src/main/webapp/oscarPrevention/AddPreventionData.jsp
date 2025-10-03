@@ -797,6 +797,7 @@
                 <form action="${pageContext.request.contextPath}/oscarPrevention/AddPrevention.do" method="post" onsubmit="return handleFormSubmission()">
                     <input type="hidden" name="prevention" value="<%=prevention%>"/>
                     <input type="hidden" name="demographic_no" value="<%=demographic_no%>"/>
+                    <input type="hidden" name="providerNo" value="<%=provider%>"/>
                     <%if (snomedId != null) {%>
                     <input type="hidden" name="snomedId" value="<%=snomedId %>"/>
                     <%} %>

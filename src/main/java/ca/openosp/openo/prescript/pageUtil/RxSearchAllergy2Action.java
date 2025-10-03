@@ -77,21 +77,17 @@ public final class RxSearchAllergy2Action extends ActionSupport {
         String jsondata = request.getParameter("jsonData");
         if (jsondata != null) {
             RxSearchAllergy2Form frm = (RxSearchAllergy2Form) JsonUtil.jsonToPojo(jsondata, RxSearchAllergy2Form.class);
+
             this.setType1(frm.getType1());
             this.setType2(frm.getType2());
             this.setType3(frm.getType3());
             this.setType4(frm.getType4());
             this.setType5(frm.getType5());
+            this.setSearchString(frm.getSearchString());
         }
-
-        RxAllergyData aData = new RxAllergyData();
-        //RxAllergyData.Allergy[] arr =
-        //    aData.AllergySearch(frm.getSearchString(), frm.getType5(),
-        //    frm.getType4(), frm.getType3(), frm.getType2(), frm.getType1());
 
 
         ///Search a drug like another one
-
         RxDrugRef drugRef = new RxDrugRef();
 
         java.util.Vector vec = new java.util.Vector();
@@ -135,6 +131,7 @@ public final class RxSearchAllergy2Action extends ActionSupport {
         boolean itemsFound = true;
 
         String wildcardRightOnly = OscarProperties.getInstance().getProperty("allergies.search_right_wildcard_only", "false");
+        
         vec = drugRef.list_search_element_select_categories(this.getSearchString(), catVec, Boolean.valueOf(wildcardRightOnly));
 
         //  'id':'0','category':'','name'
@@ -147,13 +144,13 @@ public final class RxSearchAllergy2Action extends ActionSupport {
         TreeMap<String, Allergy> flatList = new TreeMap<String, Allergy>();
 
         //we want to categorize the search results.
-        Map<Integer, List<Allergy>> allergyResults = new HashMap<Integer, List<Allergy>>();
-        allergyResults.put(8, new ArrayList<Allergy>());
-        allergyResults.put(10, new ArrayList<Allergy>());
-        allergyResults.put(11, new ArrayList<Allergy>());
-        allergyResults.put(12, new ArrayList<Allergy>());
-        allergyResults.put(13, new ArrayList<Allergy>());
-        allergyResults.put(14, new ArrayList<Allergy>());
+        Map<String, List<Allergy>> allergyResults = new HashMap<String, List<Allergy>>();
+        allergyResults.put("8", new ArrayList<Allergy>());
+        allergyResults.put("10", new ArrayList<Allergy>());
+        allergyResults.put("11", new ArrayList<Allergy>());
+        allergyResults.put("12", new ArrayList<Allergy>());
+        allergyResults.put("13", new ArrayList<Allergy>());
+        allergyResults.put("14", new ArrayList<Allergy>());
 
         Map<Integer, Allergy> classResults = new HashMap<Integer, Allergy>();
 
@@ -171,7 +168,7 @@ public final class RxSearchAllergy2Action extends ActionSupport {
                     classVec.add("" + arr[i].getDrugrefId());
                 }
 
-                allergyResults.get(hash.get("category")).add(arr[i]);
+                allergyResults.get(String.valueOf(hash.get("category"))).add(arr[i]);
                 if (flatList.get(arr[i].getDescription()) == null) {
                     flatList.put(arr[i].getDescription(), arr[i]);
                 }

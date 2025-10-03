@@ -21,7 +21,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,ca.openosp.openo.commn.model.*,org.apache.commons.lang.time.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
 <jsp:useBean id="daySheetBean" class="ca.openosp.AppointmentMainBean" scope="page"/>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>

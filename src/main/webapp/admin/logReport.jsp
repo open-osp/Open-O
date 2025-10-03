@@ -74,9 +74,9 @@
     Properties propName = new Properties();
     // select providers list
     if (isSiteAccessPrivacy) {
-        sql = "select p.* from providers p INNER JOIN providersite s ON p.provider_no = s.provider_no WHERE s.site_id IN (SELECT site_id from providersite where provider_no=" + curUser_no + ") order by p.first_name, p.last_name";
+        sql = "select p.* from provider p INNER JOIN providersite s ON p.provider_no = s.provider_no WHERE s.site_id IN (SELECT site_id from providersite where provider_no=" + curUser_no + ") order by p.first_name, p.last_name";
     } else {
-        sql = "select * from providers p order by p.first_name, p.last_name ";
+        sql = "select * from provider p order by p.first_name, p.last_name ";
     }
     ResultSet rs = dbObj.queryResults(sql);
 

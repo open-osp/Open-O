@@ -66,7 +66,7 @@
         demoData = new DemographicData();
         demographic = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
     } else
-        response.sendRedirect("../error.jsp");
+        request.getRequestDispatcher("/errorpage.jsp").forward(request, response);
 
     EctConsultationFormRequestUtil consultUtil;
     consultUtil = new EctConsultationFormRequestUtil();

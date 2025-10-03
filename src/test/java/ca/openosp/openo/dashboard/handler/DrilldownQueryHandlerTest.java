@@ -30,18 +30,17 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import ca.openosp.openo.dashboard.handler.DrilldownQueryHandler;
-import ca.openosp.openo.dashboard.handler.IndicatorTemplateHandler;
-import ca.openosp.openo.dashboard.handler.IndicatorTemplateXML;
 import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import ca.openosp.openo.commn.dao.DaoTestFixtures;
 import ca.openosp.openo.dashboard.query.Column;
 import ca.openosp.openo.dashboard.query.DrillDownAction;
 import ca.openosp.openo.dashboard.query.Parameter;
 import ca.openosp.openo.dashboard.query.RangeInterface;
 
-public class DrilldownQueryHandlerTest {
+public class DrilldownQueryHandlerTest extends DaoTestFixtures {
 
     private static List<Column> columns;
     private static List<Parameter> parameters;
@@ -67,7 +66,6 @@ public class DrilldownQueryHandlerTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-
         URL url = Thread.currentThread().getContextClassLoader().getResource("indicatorXMLTemplates/diabetes_hba1c_in_range_test.xml");
         byte[] byteArray = null;
         InputStream is = null;

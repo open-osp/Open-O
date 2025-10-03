@@ -39,6 +39,7 @@
     function rs(n, u, w, h, x) {
         args = "width=" + w + ",height=" + h + ",resizable=yes,scrollbars=yes,status=0,top=60,left=30";
         remote = window.open(u, n, args);
+        return remote;
     }
 
     function dxScriptAttach(name2) {
@@ -91,7 +92,6 @@
         <tr>
             <td>Dx &nbsp;&nbsp;
                 <input type="text" name="dxCode" size="5" maxlength="5" ondblClick="dxScriptAttach('dxCode')"
-                       onchange="changeCodeDesc();"
                        value="<%=defaultDxCode%>"/>
                 <a href=# onclick="dxScriptAttach('dxCode');">Search</a>
             </td>

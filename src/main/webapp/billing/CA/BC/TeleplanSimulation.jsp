@@ -148,7 +148,7 @@
     <form action="${pageContext.request.contextPath}/billing/CA/BC/SimulateTeleplanFile.do"
                onsubmit="return checkSubmit();" class="form-inline">
         <label for="provider">Select provider</label>
-        <select id="provider" name="provider">
+        <select id="provider" name="providers">
             <option value="all">All Providers</option>
             <%
                 ProviderData pd = new ProviderData();

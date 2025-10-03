@@ -52,7 +52,9 @@ import ca.openosp.openo.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -200,6 +202,9 @@ public class AddEForm2Action extends ActionSupport {
         }
 
         EForm curForm = new EForm(fid, demographic_no, providerNo);
+        curForm.setContextPath(request.getContextPath());
+		curForm.setRealPath(request.getServletContext().getRealPath(File.separator));
+		curForm.setImagePath();
 
         //add eform_link value from session attribute
         ArrayList<String> openerNames = curForm.getOpenerNames();
@@ -217,7 +222,6 @@ public class AddEForm2Action extends ActionSupport {
         curForm.setValues(paramNames, paramValues);
         if (!openerNames.isEmpty()) curForm.setOpenerValues(openerNames, openerValues);
         if (eform_link != null) curForm.setEformLink(eform_link);
-        curForm.setImagePath();
         curForm.setAction();
         curForm.setNowDateTime();
 //TODO        if (!errors.isEmpty()) {

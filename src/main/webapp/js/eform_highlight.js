@@ -33,7 +33,7 @@ function _refreshfields() {
 
     $.ajax({
         url: 'FetchUpdatedData.do?method=ajaxFetchData&demographic=' + demographic +
-            '&provider=' + provider + '&fields=' + fields,
+            '&providers=' + provider + '&fields=' + fields,
         dataType: 'json',
         success: function (data) {
             for (var s in data) {

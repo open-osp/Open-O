@@ -1,4 +1,4 @@
-<%@page import="java.sql.*" errorPage="" %>
+<%@page import="java.sql.*" errorPage="/errorpage.jsp" %>
 <%@page
         import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.openo.billing.ca.bc.MSP.*,ca.openosp.openo.billing.ca.bc.data.*" %>
 <%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>

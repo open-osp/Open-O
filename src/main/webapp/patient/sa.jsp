@@ -30,7 +30,7 @@
     String user_no = (String) session.getAttribute("user");
     String demographic_no = (String) session.getAttribute("demo_no");
 %>
-<%@ page import="java.util.*, java.sql.*, ca.openosp.*,java.net.*" errorPage="../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*,java.net.*" errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="risks" class="ca.openosp.OBRisks_99_12" scope="page"/>
 

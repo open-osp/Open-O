@@ -95,7 +95,13 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
      */
     public String execute() {
         String method = request.getParameter("method");
-        if ("delete".equals(method)) {
+        if ("add".equals(method)) {
+            return add();
+        } else if ("remove".equals(method)) {
+            return remove();
+        } else if ("create".equals(method)) {
+            return create();
+        } else if ("delete".equals(method)) {
             return delete();
         } else if ("update".equals(method)) {
             return update();
@@ -145,7 +151,7 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
      * @param group The target group ID, defaults to "0" (root) if not specified
      */
     @SuppressWarnings("unused")
-    public void add() {
+    public String add() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String memberId = request.getParameter("member");
         String groupId = request.getParameter("group");
@@ -158,6 +164,8 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
             messengerGroupManager.addMember(loggedInInfo, contactIdentifier, Integer.parseInt(groupId));
         }
         request.setAttribute("success", true);
+
+        return NONE;
     }
 
     /**
@@ -175,7 +183,7 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
      * @param group The group ID to remove from or to delete entirely
      */
     @SuppressWarnings("unused")
-    public void remove() {
+    public String remove() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String memberId = request.getParameter("member");
         String groupId = request.getParameter("group");
@@ -199,6 +207,8 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
             // No member specified - delete the entire group
             messengerGroupManager.removeGroup(loggedInInfo, Integer.parseInt(groupId));
         }
+
+        return NONE;
     }
 
     /**
@@ -211,7 +221,7 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
      * @param groupName The name/description for the new group
      * @param parentId The parent group ID, defaults to "0" (root) if not specified
      */
-    public void create() {
+    public String create() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String groupName = request.getParameter("groupName");
         String parentId = request.getParameter("parentId");
@@ -222,6 +232,8 @@ public class MsgMessengerAdmin2Action extends ActionSupport {
         messengerGroupManager.addGroup(loggedInInfo, groupName, Integer.parseInt(parentId));
         // Refresh the display after creating the group
         fetch();
+
+        return NONE;
     }
 
     /**

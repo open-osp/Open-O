@@ -331,7 +331,7 @@
 
                 <div class="span3">
                     Select Provider<br>
-                    <select name="provider">
+                    <select name="providers">
                         <% if (bMultisites) { %>
                         <option value="all">Select Providers</option>
                         <% } else { %>

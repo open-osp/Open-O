@@ -91,7 +91,7 @@
                 log.warn("Missing requestToken: {}", contextMsg);
                 session.setAttribute("oauthErrorMessage",
                     "Authentication failed: missing request token.");
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                response.sendRedirect(request.getContextPath() + "/errorpage.jsp");
                 return;
             }
 

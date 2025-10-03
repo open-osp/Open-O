@@ -80,7 +80,7 @@ public final class EctSetupMeasurements2Action extends ActionSupport {
             request.getSession().setAttribute("EctSessionBean", bean);
             demo = bean.getDemographicNo();
         } else {
-            demo = request.getParameter("demographic_no");
+            demo = request.getParameter("demographicNo");
         }
         request.setAttribute("demographicNo", demo);
         EctMeasurementTypesBeanHandler hd = new EctMeasurementTypesBeanHandler(groupName, demo);

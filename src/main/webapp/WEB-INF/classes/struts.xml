@@ -205,7 +205,7 @@
             <result name="error">/500.jsp</result>
         </action>
         <action name="oscarEncounter/IncomingEncounter" class="ca.openosp.openo.encounter.pageUtil.EctIncomingEncounter2Action">
-            <result name="failure">/oscarEncounter/error.jsp</result>
+            <result name="failure">/errorpage.jsp</result>
             <result name="success">/oscarEncounter/Index.jsp</result>
             <result name="success2">/oscarEncounter/Index2.jsp</result>
             <result name="domain-error">/casemgmt/domain-error.jsp</result>
@@ -431,7 +431,7 @@
             <result name="printLabReq">/form/formlabreqprint.jsp</result>
             <result name="save">/form/forwardname.jsp</result>
             <result name="graph">/form/createpdf</result>
-            <result name="failure">/oscarEncounter/error.jsp</result>
+            <result name="failure">/errorpage.jsp</result>
         </action>
         <action name="form/forwardshortcutname" class="ca.openosp.openo.form.pageUtil.FormForward2Action"/>
         <action name="form/SetupForm" class="ca.openosp.openo.form.pageUtil.FrmSetupForm2Action"/>
@@ -905,7 +905,7 @@
         </action>
         <action name="oscarEncounter/SaveEncounter" class="ca.openosp.openo.encounter.pageUtil.EctSaveEncounter2Action">
             <result name="saveAndStay">/oscarEncounter/Index.jsp?saved=true</result>
-            <result name="failure">/oscarEncounter/error.jsp</result>
+            <result name="failure">/errorpage.jsp</result>
             <result name="success">/oscarEncounter/TimeOut.jsp</result>
             <result name="bill">/billing.do</result>
             <result name="splitchart">/oscarEncounter/Index.jsp?saved=true&amp;splitchart=true</result>
@@ -914,7 +914,7 @@
         </action>
         <action name="oscarEncounter/SaveEncounter2" class="ca.openosp.openo.encounter.pageUtil.EctSaveEncounter2Action">
             <result name="saveAndStay">/oscarEncounter/Index2.jsp?saved=true</result>
-            <result name="failure">/oscarEncounter/error.jsp</result>
+            <result name="failure">/errorpage.jsp</result>
             <result name="success">/oscarEncounter/TimeOut.jsp</result>
             <result name="bill">/billing.do</result>
             <result name="splitchart">/oscarEncounter/Index2.jsp?saved=true&amp;splitchart=true</result>
@@ -1972,6 +1972,7 @@
             <result name="success">/documentManager/undocument.jsp</result>
             <result name="displaySingleDoc">/documentManager/MultiPageDocDisplay.jsp</result>
             <result name="nextIncomingDoc">/documentManager/incomingDocs.jsp</result>
+            <result name="error">/failure.jsp</result>
         </action>
         <action name="DocumentDescriptionTemplate" class="ca.openosp.openo.provider.web.DocumentDescriptionTemplate2Action"/>
         <action name="PrinterList" class="ca.openosp.openo.printer.PrinterList2Action"/>
@@ -2054,12 +2055,12 @@
         </action>
         <action name="caseload/CaseloadContent" class="ca.openosp.openo.caseload.CaseloadContent2Action"/>
         <action name="tickler/EditTickler" class="ca.openosp.openo.tickler.pageUtil.EditTickler2Action">
-            <result name="close">/closenreload.html</result>
+            <result name="close">/closenreload.jsp</result>
             <result name="failure">/failure.jsp</result>
             <result name="error">/errorpage.jsp</result>
         </action>
         <action name="tickler/EditTicklerTextSuggest" class="ca.openosp.openo.tickler.pageUtil.EditTickler2Action">
-            <result name="close">/closenreload.html</result>
+            <result name="close">/closenreload.jsp</result>
             <result name="error">/errorpage.jsp</result>
         </action>
         <action name="CodeSearch" class="ca.openosp.openo.commn.web.CodeSearchService2Action"/>

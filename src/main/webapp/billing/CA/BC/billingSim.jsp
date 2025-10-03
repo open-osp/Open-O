@@ -38,7 +38,7 @@
     String user_no = (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*" errorPage="../../../errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*" errorPage="/errorpage.jsp" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.Provider" %>
@@ -144,7 +144,7 @@
         <tr>
             <td width="220"><b><font face="Arial, Helvetica, sans-serif"
                                      size="2" color="#003366"> Select Provider </font></b></td>
-            <td width="254"><select name="provider">
+            <td width="254"><select name="providers">
                 <option value="%"><b>All Providers</b></option>
                 <%
                     String proFirst = "";

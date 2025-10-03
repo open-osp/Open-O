@@ -24,8 +24,6 @@
     
 --%>
 
-<%--@ page errorPage="../error.jsp"--%>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -35,7 +33,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ page
-        import="java.io.*,java.util.*, java.sql.*, ca.openosp.*, java.net.*, ca.openosp.openo.integration.mcedt.mailbox.ActionUtils, java.math.BigInteger,ca.ontario.health.edt.ResponseResult" %>
+        import="java.io.*,java.util.*, java.sql.*, ca.openosp.*, java.net.*, ca.openosp.openo.integration.mcedt.mailbox.ActionUtils, java.math.BigInteger,ca.ontario.health.edt.ResponseResult" errorPage="/errorpage.jsp" %>
 <%
 
     List<File> toEdt = ActionUtils.getUploadList();

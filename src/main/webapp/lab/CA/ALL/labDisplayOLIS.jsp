@@ -12,7 +12,7 @@
 <%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.lab.ca.all.upload.MessageUploader" %>
-<%@ page language="java" errorPage="../../../provider/errorpage.jsp" %>
+<%@ page language="java" errorPage="/errorpage.jsp" %>
 <%@ page
         import="java.util.*,java.sql.*,ca.openosp.openo.olis.*,ca.openosp.openo.commn.dao.PatientLabRoutingDao, ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.model.PatientLabRouting,ca.openosp.openo.lab.ca.all.*,ca.openosp.openo.lab.ca.all.util.*,ca.openosp.openo.lab.ca.all.parsers.*,ca.openosp.openo.lab.LabRequestReportLink,ca.openosp.openo.mds.data.ReportStatus,ca.openosp.openo.log.*,org.apache.commons.codec.binary.Base64" %>
 <%@page import="ca.openosp.openo.utility.AppointmentUtil" %>

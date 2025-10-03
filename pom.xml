@@ -1296,6 +1296,79 @@
             <version>7.5.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Modern Test Framework Dependencies -->
+        <!-- JUnit 5 (Jupiter) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 5 Params for parameterized tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit Vintage Engine for backward compatibility with JUnit 4 tests -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.10.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito for Java 21 -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.8.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Mockito JUnit Jupiter integration -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.8.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- AssertJ for fluent assertions -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- H2 in-memory database for tests -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- DBUnit for database testing -->
+        <dependency>
+            <groupId>org.dbunit</groupId>
+            <artifactId>dbunit</artifactId>
+            <version>2.7.3</version>
+            <scope>test</scope>
+            <exclusions>
+                <!-- Exclude PostgreSQL driver - OpenO uses MariaDB/MySQL only -->
+                <!-- Fixes CVE GHSA-24rp-q3w6-vc56 false positive -->
+                <exclusion>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -1675,32 +1748,74 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
-                <configuration>
-                    <!-- DANGER: skipTests will COMPLETELY skip running tests when true even in CI. Tests will only compile, not execute. -->
-                    <skipTests>false</skipTests>
-                    <excludes>
-                        <exclude>**/*EDTTest.java</exclude>
-                        <exclude>**/HinValidatorTest.java</exclude>
-                        <exclude>**/AR2005*.java</exclude>
-                        <exclude>**/OntarioMDSpec4DataTest.java</exclude>
-                        <exclude>**/ONAREnhancedBornConnectorTest.java</exclude>
-                        <exclude>org/oscarehr/e2e/**/*.java</exclude>
-                        <exclude>tests/**</exclude>
-                    </excludes>
-                    <systemPropertyVariables>
-                        <oscar.dbinit.skip>${oscar.dbinit.skip}</oscar.dbinit.skip>
-                        <buildDirectory>${project.build.directory}</buildDirectory>
-                    </systemPropertyVariables>
-                    <!-- Java 21 compatibility flags for JAXB -->
-                    <argLine>
-                        --add-opens java.base/java.lang=ALL-UNNAMED
-                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                        --add-opens java.base/sun.reflect=ALL-UNNAMED
-                        --add-opens java.base/sun.nio.ch=ALL-UNNAMED
-                        --add-opens java.base/java.io=ALL-UNNAMED
-                        --add-opens java.base/java.util=ALL-UNNAMED
-                    </argLine>
-                </configuration>
+                <dependencies>
+                    <!-- Support for JUnit 5 -->
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.10.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <!-- Run modern tests first -->
+                    <execution>
+                        <id>modern-tests</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <testSourceDirectory>src/test-modern/java</testSourceDirectory>
+                            <reportsDirectory>${project.build.directory}/surefire-reports-modern</reportsDirectory>
+                            <includes>
+                                <include>**/*Test.java</include>
+                                <include>**/*Tests.java</include>
+                            </includes>
+                            <skipTests>${skipModernTests}</skipTests>
+                            <argLine>
+                                -Xmx2048m
+                                -Dnet.bytebuddy.experimental=true
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.util=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </execution>
+                    <!-- Run original tests second -->
+                    <execution>
+                        <id>default-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <testSourceDirectory>src/test/java</testSourceDirectory>
+                            <skipTests>false</skipTests>
+                            <excludes>
+                                <exclude>**/*EDTTest.java</exclude>
+                                <exclude>**/HinValidatorTest.java</exclude>
+                                <exclude>**/AR2005*.java</exclude>
+                                <exclude>**/OntarioMDSpec4DataTest.java</exclude>
+                                <exclude>**/ONAREnhancedBornConnectorTest.java</exclude>
+                                <exclude>org/oscarehr/e2e/**/*.java</exclude>
+                                <exclude>tests/**</exclude>
+                            </excludes>
+                            <systemPropertyVariables>
+                                <oscar.dbinit.skip>${oscar.dbinit.skip}</oscar.dbinit.skip>
+                                <buildDirectory>${project.build.directory}</buildDirectory>
+                            </systemPropertyVariables>
+                            <!-- Java 21 compatibility flags for JAXB -->
+                            <argLine>
+                                -Dnet.bytebuddy.experimental=true
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                                --add-opens java.base/sun.reflect=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-opens java.base/java.io=ALL-UNNAMED
+                                --add-opens java.base/java.util=ALL-UNNAMED
+                            </argLine>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -1718,6 +1833,33 @@
                             <pattern>yy.MM.dd-HHmmss</pattern>
                             <locale>en_US</locale>
                             <timeZone>Canada/Eastern</timeZone>
+                        </configuration>
+                    </execution>
+                    <!-- Add modern test sources to default build -->
+                    <execution>
+                        <id>add-modern-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/test-modern/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-modern-test-resource</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>add-test-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>src/test-modern/resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -1809,6 +1951,20 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Profile to skip modern tests if needed -->
+        <profile>
+            <id>skip-modern-tests</id>
+            <activation>
+                <property>
+                    <name>skipModernTests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <skipModernTests>true</skipModernTests>
+            </properties>
         </profile>
     </profiles>
 </project>

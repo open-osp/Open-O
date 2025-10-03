@@ -101,6 +101,29 @@ For developers who are not compiling for the first time in the dev container, it
    make install
    ```
 
+### Running Tests
+
+The make script supports various test execution options:
+
+   ```zsh
+   # Run all tests (modern JUnit 5 + legacy JUnit 4)
+   make install --run-tests
+
+   # Run only modern tests (JUnit 5)
+   make install --run-modern-tests
+
+   # Run only legacy tests (JUnit 4)
+   make install --run-legacy-tests
+
+   # Run only modern unit tests (fast, mocked dependencies)
+   make install --run-unit-tests
+
+   # Run only modern integration tests (slower, real database)
+   make install --run-integration-tests
+   ```
+
+**Note:** Running tests adds time to the build process. Modern unit tests execute in < 4 seconds, while legacy tests may take 5-15 minutes.
+
 ### View OpenO application logs
 
 OpenO logs are sent to the console and can be viewed using Docker commands. The development environment is configured with DEBUG level logging by default for comprehensive troubleshooting.

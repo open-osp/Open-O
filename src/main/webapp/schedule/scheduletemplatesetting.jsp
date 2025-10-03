@@ -27,7 +27,7 @@
 <%
 
 %>
-<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*" errorPage="../appointment/errorpage.jsp" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*" errorPage="/errorpage.jsp" %>
 <%@page import="ca.openosp.openo.commn.model.Provider" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>

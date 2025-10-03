@@ -109,7 +109,7 @@ public final class Frm2Action extends ActionSupport {
                 newID = formId;
             }
             //if we are printing all pages of form, grab info from db and merge with current page info
-            else if (request.getParameter("submit").equals("printAll") || request.getParameter("submit").equals("printAllJasperReport")) {
+            else if ("printAll".equals(request.getParameter("submit")) || "printAllJasperReport".equals(request.getParameter("submit"))) {
 
                 if (rec instanceof JasperReportPdfPrint) {
                     boolean isRourkeForm2020 = true;
@@ -146,7 +146,7 @@ public final class Frm2Action extends ActionSupport {
                     }
                     newID = formId;
                 }
-            } else if (request.getParameter("update") != null && request.getParameter("update").equals("true")) {
+            } else if ("true".equals(request.getParameter("update"))) {
                 boolean bMulPage = request.getParameter("c_lastVisited") != null;
                 String name;
 
@@ -180,10 +180,10 @@ public final class Frm2Action extends ActionSupport {
                 newID = rec.saveFormRecord(props);
                 LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.UPDATE, request
                         .getParameter("form_class"), "" + newID, request.getRemoteAddr(), request.getParameter("demographic_no"));
-            } else if (request.getParameter("submit").equals("autosaveAjax")) {
+            } else if ("autosaveAjax".equals(request.getParameter("submit"))) {
                 quickSaveForm(rec, request, response);
                 return null;
-            } else if (request.getParameter("submit").equals("saveFormLetter")) {
+            } else if ("saveFormLetter".equals(request.getParameter("submit"))) {
                 for (Enumeration varEnum = request.getParameterNames(); varEnum.hasMoreElements(); ) {
                     String name = (String) varEnum.nextElement();
                     props.setProperty(name, request.getParameter(name));

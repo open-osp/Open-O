@@ -29,7 +29,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 
 <jsp:useBean id="providerNameBean" class="ca.openosp.Dict" scope="session"/>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>

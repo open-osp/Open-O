@@ -21,7 +21,7 @@
     String curUser_no = (String) session.getAttribute("user");
 %>
 
-<%@page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="../../errorpage.jsp" %>
+<%@page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
 <%@page import="ca.openosp.openo.billing.CA.model.BillingInr" %>
 <%@page import="ca.openosp.openo.billing.CA.dao.BillingInrDao" %>

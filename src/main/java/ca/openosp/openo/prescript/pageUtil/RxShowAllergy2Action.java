@@ -126,9 +126,9 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
         RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 
-        String forward = request.getContextPath() + "/oscarRx/ShowAllergies.jsp";
+        String forward = request.getContextPath() + "/oscarRx/ShowAllergies.jsp?demographicNo=" + demo_no;
         if (useRx3) {
-            forward = request.getContextPath() + "/oscarRx/ShowAllergies2.jsp";
+            forward = request.getContextPath() + "/oscarRx/ShowAllergies2.jsp?demographicNo=" + demo_no;
         }
         if (patient != null) {
             request.getSession().setAttribute("Patient", patient);

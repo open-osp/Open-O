@@ -23,27 +23,38 @@
     Ontario, Canada
 
 --%>
-
-<%@page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<!DOCTYPE html>
 
 <%@page import="java.util.*,ca.openosp.openo.eform.*" %>
-<%@page import="ca.openosp.openo.web.eform.EfmPatientFormList" %>
-<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     String demographic_no = request.getParameter("demographic_no");
     String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
 
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+	if (session.getAttribute("userrole") == null) {
+		response.sendRedirect("../logout.jsp");
+	}
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String country = request.getLocale().getCountry();
     String orderByRequest = request.getParameter("orderby");
     String orderBy = "";
-    if (orderByRequest == null) orderBy = EFormUtil.DATE;
-    else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
-    else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
+	if (orderByRequest == null) {
+		orderBy = EFormUtil.DATE;
+	} else if (orderByRequest.equals("form_subject")) {
+		orderBy = EFormUtil.SUBJECT;
+	} else if (orderByRequest.equals("form_name")) {
+		orderBy = EFormUtil.NAME;
+	}
 
     String groupView = request.getParameter("group_view");
     if (groupView == null) {
@@ -52,255 +63,209 @@
 
     String appointment = request.getParameter("appointment");
     String parentAjaxId = request.getParameter("parentAjaxId");
-
-
-    int pageNo = 1;
-    int pageSize = 25;
-
-    String strPage = request.getParameter("page");
-    if (strPage != null) {
-        try {
-            pageNo = Integer.parseInt(strPage);
-        } catch (Exception e) {
-            pageNo = 1;
-        }
-    }
-    String strPageSize = request.getParameter("pageSize");
-    if (strPageSize != null) {
-        try {
-            pageSize = Integer.parseInt(strPageSize);
-        } catch (Exception e) {
-            pageSize = 25;
-        }
-    }
-
-    //probably just want to merge these 2 methods, and add the group restriction when necessary.
-    ArrayList<HashMap<String, ? extends Object>> eForms;
-    if (groupView.equals("")) {
-        eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, roleName$, pageSize * (pageNo - 1), pageSize);
-    } else {
-        eForms = EFormUtil.listPatientEForms(LoggedInInfo.getLoggedInInfoFromSession(request), orderBy, EFormUtil.CURRENT, demographic_no, groupView, pageSize * (pageNo - 1), pageSize);
-    }
-
-    boolean hasMore = eForms.size() == pageSize;
-
-    String reloadUrl = "efmpatientformlist.jsp?" + request.getQueryString();
-    if (reloadUrl.indexOf("page=") != -1) {
-        reloadUrl = reloadUrl.replaceFirst("(?<=[?&;])page=.*?($|[&;])", "");
-        reloadUrl = reloadUrl.replaceFirst("(?<=[?&;])pageSize=.*?($|[&;])", "");
-    }
-    if (reloadUrl.endsWith("&")) {
-        reloadUrl = reloadUrl.substring(0, reloadUrl.length() - 1);
-    }
 %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%!
+    DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+%>
+<%
+    Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographic_no);
+%>
 
+<fmt:setBundle basename="oscarResources"/>
 
 <html>
-
     <head>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
-        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.title"/></title>
-        <link rel="stylesheet" type="text/css"
-              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
-        <link rel="stylesheet" type="text/css"
-              href="<%= request.getContextPath() %>/share/css/eformStyle.css">
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.7.1.min.js"></script>
-        <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.fileDownload.js"></script>
-        <script src="<%=request.getContextPath()%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-        <script type="text/javascript" language="javascript">
-            $(document).ready(function () {
+        <title>
+            <fmt:message key="eform.showmyform.title"/>
+        </title>
 
-                //setup pagination
-                <%
-                    if(pageNo == 1) {
-                %>
-                $("#prev").attr("disabled", true);
-                <%}
-                if(!hasMore ) {
-                %>
-                $("#next").attr("disabled", true);
-                <%}%>
+        <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/DataTables/datatables.css" rel="stylesheet">
+        <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
 
-                $("#pageSize").val('<%=pageSize%>');
+        <script src="${pageContext.request.contextPath}/js/global.js"></script>
+        <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+        <script src="${pageContext.request.contextPath}/library/bootstrap/3.0.0/js/bootstrap.js"></script>
+        <script src="${pageContext.request.contextPath}/library/DataTables/datatables.min.js"></script>
 
-                $("#prev").bind('click', function (event) {
-                    var page = $("#pageEl").val();
-                    var prevPage = parseInt(page) - 1;
-                    if (prevPage < 1) {
-                        return false;
-                    }
-                    location.href = '<%=reloadUrl%>' + '&page=' + prevPage + '&pageSize=' + $("#pageSize").val();
-                });
+        <script src="${pageContext.request.contextPath}/js/jquery.fileDownload.js"></script>
+        <script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
 
-                $("#next").bind('click', function (event) {
-                    var page = $("#pageEl").val();
-                    var nextPage = parseInt(page) + 1;
-                    location.href = '<%=reloadUrl%>' + '&page=' + nextPage + '&pageSize=' + $("#pageSize").val();
-                });
+        <script>
 
-                $("#pageSize").bind('change', function (event) {
-                    location.href = '<%=reloadUrl%>' + '&page=1&pageSize=' + $("#pageSize").val();
-                });
+			$(document).ready(function () {
+				let table = jQuery('#efmTable').DataTable({
+					"lengthMenu": [[15, 30, 60, 120, -1], [15, 30, 60, 120, "<fmt:message key='demographic.search.All'/>"]],
+					"order": [2],
+					columnDefs: [{ orderable: false, targets: 3 }],
+					"language": {
+						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:message key='global.i18nLanguagecode'/>.json"
+					}
+				});
 
-            });
+			});
 
+			function popupPage(varpage, windowname) {
+				let page = "" + varpage;
+				windowprops = "height=700,width=800,location=no,"
+					+ "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
+				let popup = window.open(page, windowname, windowprops);
+				if (popup != null) {
+					if (popup.opener == null) {
+						popup.opener = self;
+					}
+					popup.focus();
+				}
+			}
+
+			function checkSelectBox() {
+				let selectVal = document.forms[0].group_view.value;
+				if (selectVal === "default") {
+					return false;
+				}
+			}
+
+			function updateAjax() {
+				let parentAjaxId = "<%=parentAjaxId%>";
+				if (parentAjaxId !== "null") {
+					window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
+					window.opener.updateNeeded = true;
+				}
+
+			}
         </script>
-
-        <script type="text/javascript" language="javascript">
-            function popupPage(varpage, windowname) {
-                var page = "" + varpage;
-                windowprops = "height=700,width=800,location=no,"
-                    + "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
-                var popup = window.open(page, windowname, windowprops);
-                if (popup != null) {
-                    if (popup.opener == null) {
-                        popup.opener = self;
-                    }
-                    popup.focus();
-                }
+        <style>
+            :root *:not(h2, .h2) {
+                font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+                font-size: 12px;
+                overscroll-behavior: none;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
 
-            function checkSelectBox() {
-                var selectVal = document.forms[0].group_view.value;
-                if (selectVal == "default") {
-                    return false;
-                }
+            #heading h2 {
+                display: inline-block;
             }
 
-            function updateAjax() {
-                var parentAjaxId = "<%=parentAjaxId%>";
-                if (parentAjaxId != "null") {
-                    window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
-                    window.opener.updateNeeded = true;
-                }
-
+            #heading span {
+                margin-left:50px;
             }
 
 
-        </script>
-        <script type="text/javascript" language="JavaScript"
-                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+            :root a {
+                color:blue;
+            }
+
+            div.menu-columns {
+                display: flex;
+                gap: 10px;
+            }
+
+            div.left-column {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                flex-basis: max-content;
+                text-wrap: nowrap;
+            }
+        </style>
     </head>
 
-    <body onunload="updateAjax()" class="BodyStyle" vlink="#0000FF">
+    <body onunload="updateAjax()">
+    <div class="container">
+        <div id="heading">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-ruled" viewBox="0 0 16 16">
+                    <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V9H3V2a1 1 0 0 1 1-1h5.5zM3 12v-2h2v2zm0 1h2v2H4a1 1 0 0 1-1-1zm3 2v-2h7v1a1 1 0 0 1-1 1zm7-3H6v-2h7z"></path>
+                </svg>
+                <fmt:message key="eform.showmyform.msgFormLybrary"/>
+            </h2>
+            <span><%= Encode.forHtml(demographic.getDisplayName()) %></span>
+        </div>
+        <div class="menu-columns">
 
-    <!--  -->
-    <table class="MainTable" id="scrollNumber1" name="encounterTable">
-        <tr class="MainTableTopRow">
-            <td class="MainTableTopRowLeftColumn" width="175"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgMyForm"/></td>
-            <td class="MainTableTopRowRightColumn">
-                <table class="TopStatusBar">
-                    <tr>
-                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgFormLybrary"/></td>
-                        <td>&nbsp;</td>
-                        <td style="text-align: right"><a
-                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
-                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td class="MainTableLeftColumn" valign="top">
+            <div class="left-column">
 
-                <a href="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
-
-                <br>
+                <a href="${pageContext.request.contextPath}/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail">
+                    <fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
                 <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
-                   class="current"> <fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnAddEForm"/></a><br/>
-                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.calldeletedformdata.btnGoToForm"/></a><br/>
-                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnDeleted"/></a>
-
-                <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r"
-                                   reverse="<%=false%>">
-                    <br/>
-                    <a href="#"
-                       onclick="javascript: return popup(600, 1200, '../administration/?show=Forms', 'manageeforms');"
-                       style="color: #835921;"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgManageEFrm"/></a>
-                </security:oscarSec>
-
+                   class="current"> <fmt:message key="eform.showmyform.btnAddEForm"/></a>
+                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>">
+                    <fmt:message key="eform.calldeletedformdata.btnGoToForm"/></a>
                 <jsp:include page="efmviewgroups.jsp">
-                    <jsp:param name="url" value="../eform/efmpatientformlist.jsp"/>
+                    <jsp:param name="url" value="${pageContext.request.contextPath}/eform/efmpatientformlist.jsp"/>
                     <jsp:param name="groupView" value="<%=groupView%>"/>
                     <jsp:param name="patientGroups" value="1"/>
                     <jsp:param name="parentAjaxId" value="<%=parentAjaxId%>"/>
                 </jsp:include>
 
-            </td>
-            <td class="MainTableRightColumn" valign="top">
+                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>">
+                    <fmt:message key="eform.showmyform.btnDeleted"/></a>
 
-                <div>
+                <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="r"
+                                   reverse="<%=false%>">
+                    <a href="#" onclick="javascript: return popup(600, 1200, '${pageContext.request.contextPath}/administration/?show=Forms', 'manageeforms');" style="color: #835921;">
+                       <fmt:message key="eform.showmyform.msgManageEFrm"/></a>
+                </security:oscarSec>
+
+            </div>
+            <div class="right-column">
+
+                <form id="sendToPhrForm" action="efmpatientformlistSendPhrAction.jsp">
                     <input type="hidden" name="clientId" value="<%=demographic_no%>"/>
-                    <input type="hidden" name="page" id="pageEl" value="<%=pageNo%>"/>
-                    <table class="elements" width="100%">
-                        <tr bgcolor=<%=deepColor%>>
+                    <table id="efmTable" class="table table-striped table-compact dataTable no-footer">
+                        <thead>
+                        <tr>
                             <th>
-                                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&orderby=form_name&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>">
-                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnFormName"/>
-                                </a>
+                                <fmt:message key="eform.showmyform.btnFormName"/>
                             </th>
-                            <th><a
-                                    href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&orderby=form_subject&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnSubject"/></a></th>
-                            <th><a
-                                    href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&group_view=<%=groupView%>&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.formDate"/></a></th>
-                            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgAction"/></th>
+                            <th>
+                                <fmt:message key="eform.showmyform.btnSubject"/>
+                            </th>
+                            <th>
+                                <fmt:message key="eform.showmyform.formDate"/>
+                            </th>
+                            <th>
+                                <fmt:message key="eform.showmyform.msgAction"/>
+                            </th>
                         </tr>
+                        </thead>
+                        <tbody>
                         <%
-
+                            ArrayList<HashMap<String, ? extends Object>> eForms;
+                            if (groupView.equals("")) {
+                                eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, roleName$);
+                            } else {
+                                eForms = EFormUtil.listPatientEForms(orderBy, EFormUtil.CURRENT, demographic_no, groupView, roleName$);
+                            }
 
                             for (int i = 0; i < eForms.size(); i++) {
                                 HashMap<String, ? extends Object> curform = eForms.get(i);
                         %>
-                        <tr bgcolor="<%=((i % 2) == 1)?"#F2F2F2":"white"%>">
+                        <tr>
+
                             <td><a href="#"
                                    ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
-                                   TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgViewFrm"/>"
-                                   onmouseover="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgViewFrm"/>'; return true"><%=curform.get("formName")%>
+                                   TITLE="<fmt:message key="eform.showmyform.msgViewFrm"/>"
+                                   onmouseover="window.status='
+                                        <fmt:message key="eform.showmyform.msgViewFrm"/>'; return true"><%=Encode.forHtmlContent((String)curform.get("formName"))%>
                             </a></td>
-                            <td><%=curform.get("formSubject")%>
+                            <td><%=Encode.forHtmlContent((String)curform.get("formSubject"))%>
                             </td>
-                            <td align='center'><%=curform.get("formDate")%>
+                            <td><%=curform.get("formDate")%>
                             </td>
-                            <td align='center'><a
-                                    href="<%= request.getContextPath() %>/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
-                                    onClick="javascript: return confirm('Are you sure you want to delete this eform?');"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.btnDelete"/></a></td>
-                        </tr>
-                        <%
-                            }
-                            if (eForms.size() <= 0) {
-                        %>
-                        <tr>
-                            <td align='center' colspan='5'><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgNoData"/></td>
+                            <td><a style="color:red;" href="${pageContext.request.contextPath}/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&group_view=<%=groupView%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"
+                                    onClick="return confirm('Are you sure you want to delete this eform?');">
+                                        <fmt:message key="eform.uploadimages.btnDelete"/></a></td>
                         </tr>
                         <%
                             }
                         %>
+                        </tbody>
                     </table>
-
-
-                    <br/>
-
-                    <button id="prev" onclick="return false;">Previous Page</button>
-                    <button id="next" onclick="return false;">Next Page</button>
-                    &nbsp;
-                    <select name="pageSize" id="pageSize">
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="150">150</option>
-                        <option value="200">200</option>
-                        <option value="250">250</option>
-                        <option value="500">500</option>
-                    </select>
-                </div>
-
-            </td>
-        </tr>
-        <tr>
-            <td class="MainTableBottomRowLeftColumn"></td>
-            <td class="MainTableBottomRowRightColumn"></td>
-        </tr>
-    </table>
+                </form>
+            </div>
+        </div>
+    </div>
     </body>
 </html>

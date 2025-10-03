@@ -129,9 +129,9 @@
      * Ordering is very important.
      * For Javascript: First is last.
      */
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
     thisEForm.addHeadJavascript(request.getContextPath()+"/js/jquery.are-you-sure.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
 
     thisEForm.addCSS(request.getContextPath()+"/library/bootstrap/5.0.2/css/bootstrap.css", "all");
     thisEForm.addHeadJavascript(request.getContextPath()+"/library/bootstrap/5.0.2/js/bootstrap.bundle.js");

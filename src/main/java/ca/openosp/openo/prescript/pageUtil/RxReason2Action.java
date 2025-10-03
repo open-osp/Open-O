@@ -80,7 +80,7 @@ public final class RxReason2Action extends ActionSupport {
         String codingSystem = request.getParameter("codingSystem");
         String primaryReasonFlagStr = request.getParameter("primaryReasonFlag");
         String comments = request.getParameter("comments");
-        String code = request.getParameter("code");
+        String code = request.getParameter("jsonDxSearch");
 
         String drugIdStr = request.getParameter("drugId");
         String demographicNo = request.getParameter("demographicNo");
@@ -134,7 +134,11 @@ public final class RxReason2Action extends ActionSupport {
         return "close";
     }
 
-
+    /**
+     * Used for archiving the current reason, will set the value of the archived flag to true and set the reason.
+     * And will show a success message to the user
+     * @return "success" which will redirect back to the "SelectReason.jsp" page
+     */
     public String archiveReason() {
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_rx", "r", null)) {

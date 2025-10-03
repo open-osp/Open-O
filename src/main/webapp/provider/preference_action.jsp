@@ -36,7 +36,6 @@
 <%@page import="java.util.List" %>
 
 <%
-    //@SuppressWarnings("unchecked")
     HashMap<String, String[]> parameters = new HashMap(request.getParameterMap());
 
     String providerNo = parameters.get("provider_no")[0];
@@ -44,12 +43,5 @@
     ProviderPreferenceDao preferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
     ProviderPreference preference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
 
-    //preference.setDefaultDxCode(parameters.get("dxCode")[0]);
-    //preference.setNew_tickler_warning_window(parameters.get("new_tickler_warning_window")[0]);
-    //PreferenceAction.savePreference(preference);
-
-    //parameters.remove("dxCode");
-    //parameters.remove("provider_no");
-
-    response.sendRedirect(request.getContextPath() + "/providers/providerDefaultDxCode.jsp?provider_no=" + providerNo);
+    response.sendRedirect(request.getContextPath() + "/provider/providerDefaultDxCode.jsp?provider_no=" + providerNo);
 %>

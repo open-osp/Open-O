@@ -23,7 +23,7 @@
 
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page errorPage="errorpage.jsp"%>
+<%@ page errorPage="/errorpage.jsp"%>
 
 <%@page import="java.util.*,java.net.*,java.sql.*,ca.openosp.*,ca.openosp.openo.util.*,ca.openosp.openo.appt.*" %>
 <%@page import="ca.openosp.openo.billing.ca.on.data.*" %>

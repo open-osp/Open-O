@@ -58,7 +58,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.frmGroups"/></title>
 
         <style>

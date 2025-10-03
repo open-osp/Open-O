@@ -23,7 +23,7 @@
 %>
 
 <%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*, ca.openosp.openo.dxresearch.bean.*"
-         errorPage="../errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ include file="../../../admin/dbconnection.jsp" %>
 

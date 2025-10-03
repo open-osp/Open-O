@@ -110,7 +110,7 @@
               if (backuppath == null || backuppath.isEmpty()) {
                   request.setAttribute("errorMessage",
                     "backup_path missing in properties; please configure.");
-                  request.getRequestDispatcher("/error.jsp")
+                  request.getRequestDispatcher("/errorpage.jsp")
                          .forward(request, response);
                   return;
               }

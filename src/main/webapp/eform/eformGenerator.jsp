@@ -818,7 +818,6 @@ and other liscences (MIT, LGPL etc) as indicated
             textTop += " .DoNotPrint {\n\tdisplay:none;\n }\n .noborder {\n\tborder:0px;\n\tbackground: transparent;\n";
             textTop += "&lt;/style&gt;\n\n";
 
-
             if (<% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_print_enabled")) { %>(document.getElementById('includePdfPrintControl').checked) || <%}%> <% if (OscarProperties.getInstance().isPropertyActive("eform_generator_indivica_fax_enabled")) { %>(document.getElementById("includeFaxControl").checked) || <% } %> (document.getElementById('AddSignature').checked)) {
                 textTop += "&lt;!-- jQuery for greater functionality --&gt;\n"
                 // dependency on jquery up to version 2.2.1 for pdf and faxing for OSCAR Pro
@@ -1166,7 +1165,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "var ImgArray = [];\n"
                 textTop += "&lt;/script&gt;\n\n"
 
-                textTop += "&lt;script src="<%= request.getContextPath() %>/eform/displayImage.do?imagefile=stamps.js"&gt;&lt;/script&gt;\n"
+                textTop += "&lt;script src=\"<%= request.getContextPath() %>/eform/displayImage.do?imagefile=stamps.js\"&gt;&lt;/script&gt;\n"
                 textTop += "&lt;script type=&quot;text/javascript&quot;&gt;\n"
                 textTop += "//autoloading signature images\n"
                 textTop += "ImgArray.push(\n\t&quot;anonymous|BNK.png&quot;"

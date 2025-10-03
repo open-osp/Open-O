@@ -22,7 +22,7 @@
 %>
 <%@ page
         import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, ca.openosp.openo.db.*,java.net.*"
-        errorPage="../appointment/errorpage.jsp" %>
+        errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.db.DBPreparedHandler" %>
 <%@ page import="ca.openosp.openo.db.DBPreparedHandlerParam" %>
 <html>

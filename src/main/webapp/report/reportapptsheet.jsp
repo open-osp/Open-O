@@ -40,7 +40,7 @@
 %>
 
 <%@ page import="java.util.*, java.sql.*, ca.openosp.*,ca.openosp.openo.login.*, java.text.*, java.lang.*,java.net.*"
-         errorPage="../appointment/errorpage.jsp" %>
+         errorPage="/errorpage.jsp" %>
 
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
@@ -63,8 +63,8 @@
     ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
 
     String[][] dbQueries = new String[][]{
-            {"search_apptsheetall", "select a.appointment_no, a.appointment_date,a.name, a.provider_no, a.start_time, a.end_time, p.last_name, p.first_name from appointment a, providers p where (a.start_time='00:00:00' or a.start_time>='23:59:59' or a.end_time='00:00:00' or a.end_time>='23:59:59' or a.start_time > a.end_time) and a.appointment_date>=? and a.provider_no=p.provider_no and a.status != 'C' order by p.last_name, p.first_name, " + orderby},
-            {"search_apptsheetsingleall", "select a.appointment_no, a.appointment_date, a.name, a.provider_no,a.start_time,a.end_time,p.last_name,p.first_name from appointment a,providers p where (a.start_time='00:00:00' or a.start_time>='23:59:59' or a.end_time='00:00:00' or a.end_time>='23:59:59' or a.start_time > a.end_time) and a.appointment_date>=? and a.provider_no=? and a.status != 'C' and a.provider_no=p.provider_no order by " + orderby},
+            {"search_apptsheetall", "select a.appointment_no, a.appointment_date,a.name, a.provider_no, a.start_time, a.end_time, p.last_name, p.first_name from appointment a, provider p where (a.start_time='00:00:00' or a.start_time>='23:59:59' or a.end_time='00:00:00' or a.end_time>='23:59:59' or a.start_time > a.end_time) and a.appointment_date>=? and a.provider_no=p.provider_no and a.status != 'C' order by p.last_name, p.first_name, " + orderby},
+            {"search_apptsheetsingleall", "select a.appointment_no, a.appointment_date, a.name, a.provider_no,a.start_time,a.end_time,p.last_name,p.first_name from appointment a,provider p where (a.start_time='00:00:00' or a.start_time>='23:59:59' or a.end_time='00:00:00' or a.end_time>='23:59:59' or a.start_time > a.end_time) and a.appointment_date>=? and a.provider_no=? and a.status != 'C' and a.provider_no=p.provider_no order by " + orderby},
     };
 
     String[][] responseTargets = new String[][]{};
