@@ -184,32 +184,32 @@ if (heading != null){
 <h4 style="margin-bottom:1px;margin-top:3px;"><%=Encode.forHtmlContent(heading)%></h4>
 <%}%>
 <div class="drugProfileText" style="">
-    <table width="100%" cellpadding="3" border="0" class="list-drugs sortable" id="Drug_table<%=Encode.forHtmlContent(heading)%>">
+    <table class="list-drugs sortable" id="Drug_table<%=Encode.forHtmlContent(heading)%>">
         <tr>
-        	<th align="left"><b>Entered Date</b></th>
-            <th align="left"><b><bean:message key="SearchDrug.msgRxDate"/></b></th>
-            <th align="left"><b>Days to Exp</b></th>
-            <th align="left"><b>LT Med</b></th>
-            <th align="left"><b><bean:message key="SearchDrug.msgPrescription"/></b></th>
+        	<th ><b>Entered Date</b></th>
+            <th ><b><bean:message key="SearchDrug.msgRxDate"/></b></th>
+            <th ><b>Days to Exp</b></th>
+            <th ><b>LT Med</b></th>
+            <th ><b><bean:message key="SearchDrug.msgPrescription"/></b></th>
 			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgReprescribe"/></b></th>
+            <th ><b><bean:message key="SearchDrug.msgReprescribe"/></b></th>
             	<%if(!OscarProperties.getInstance().getProperty("rx.delete_drug.hide","false").equals("true")) {%>
-            	<th align="center" width="35px"><b><bean:message key="SearchDrug.msgDelete"/></b></th>
+            	<th ><b><bean:message key="SearchDrug.msgDelete"/></b></th>
             <% 	}	 
 			}            
             %>
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgDiscontinue"/></b></th>		
-			<th align="center" width="35px" title="<bean:message key="SearchDrug.msgReason_help"/>"><b><bean:message key="SearchDrug.msgReason"/></b></th>    
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgPastMed"/></b></th>
+            <th ><b><bean:message key="SearchDrug.msgDiscontinue"/></b></th>		
+			<th  title="<bean:message key="SearchDrug.msgReason_help"/>"><b><bean:message key="SearchDrug.msgReason"/></b></th>    
+            <th ><b><bean:message key="SearchDrug.msgPastMed"/></b></th>
             <%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            	<th align="center" width="15px">&nbsp;</th>
+            	<th>&nbsp;</th>
             <% } %>
-            <th align="center"><bean:message key="SearchDrug.msgLocationPrescribed"/></th>
-            <th align="center" title="<bean:message key="SearchDrug.msgHideCPP_help"/>"><bean:message key="SearchDrug.msgHideCPP"/></th>
+            <th ><bean:message key="SearchDrug.msgLocationPrescribed"/></th>
+            <th title="<bean:message key="SearchDrug.msgHideCPP_help"/>"><bean:message key="SearchDrug.msgHideCPP"/></th>
             <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
-             <th align="center"><bean:message key="SearchDrug.msgDispense"/></th>
+             <th ><bean:message key="SearchDrug.msgDispense"/></th>
              <%} %>
-             <th align="center"></th>
+             <th ></th>
         </tr>
 
         <%
@@ -283,8 +283,8 @@ if (heading != null){
                 boolean startDateUnknown = prescriptDrug.getStartDateUnknown();
         %>
         <tr>
-        <td valign="top"><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%></a></td>
-            <td valign="top">
+        <td><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%></a></td>
+            <td>
             	<% if(startDateUnknown) { %>
             		
             	<% } else { 
@@ -294,14 +294,14 @@ if (heading != null){
             		<a id="rxDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>"><%=startDate%></a>
             	<% } %>
             </td>
-            <td valign="top">
+            <td >
             	<% if(startDateUnknown) { %>
             		
             	<% } else { %>
             		<%=prescriptDrug.daysToExpire()%>
             	<% } %>
             </td>
-            <td valign="top">
+            <td >
 
                 <div class="drug-maintenance-switch" style="display: flex; align-items: baseline;">
                     <% String drugMaintenanceSwitch = "drugMaintenanceSwitch_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
@@ -324,11 +324,11 @@ if (heading != null){
 			}
 			
 			%>
-            <td valign="top"><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%></a></td>
+            <td ><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%></a></td>
 			<%            			
 	           	if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
            	%>
-            <td width="20px" align="center" valign="top">
+            <td>
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
                 <div style="display: flex; align-items: center;">
                     <% String cbxId = "reRxCheckBox_" + prescriptIdInt; %>
@@ -347,7 +347,7 @@ if (heading != null){
                 <%}%>
             </td>
 			<%if(!OscarProperties.getInstance().getProperty("rx.delete_drug.hide","false").equals("true")) { %>
-            <td width="20px" align="center" valign="top">
+            <td>
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
                    <a id="del_<%=prescriptIdInt%>" name="delete" <%=styleColor%> href="javascript:void(0);" onclick="Delete2(this);">Del</a>
                 <%}%>
@@ -356,7 +356,7 @@ if (heading != null){
 			<% } 
 	         }
 			%>
-            <td width="20px" align="center" valign="top">
+            <td>
                 <%if(!prescriptDrug.isDiscontinued())
                 {
                	 if (prescriptDrug.getRemoteFacilityId()==null)
@@ -399,7 +399,7 @@ if (heading != null){
             Boolean past_med = prescriptDrug.getPastMed();
             %>
             
-            <td align="center" valign="top">
+            <td >
                	<% if( past_med == null) { %>                        		
         			unk
         		<% } else if(past_med) { %>
@@ -410,7 +410,7 @@ if (heading != null){
             </td>
 
 			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <td width="10px" align="center" valign="top">
+            <td>
             	<% 	
             		if (prescriptDrug.getRemoteFacilityId()==null)
             		{
@@ -423,7 +423,7 @@ if (heading != null){
             </td>
             <% } %>
             
-            <td width="10px" align="center" valign="top">
+            <td>
                 <%
                 if (prescriptDrug.getRemoteFacilityName() != null){ %>
                     <span class="external"><%=prescriptDrug.getRemoteFacilityName()%></span>
@@ -436,7 +436,7 @@ if (heading != null){
 
             </td>
 
-			<td align="center" valign="top">
+			<td >
 				<%
 					boolean hideCpp = prescriptDrug.getHideFromCpp();
 					String checked="";
@@ -448,7 +448,7 @@ if (heading != null){
 			</td>
 			
 			<%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
-			<td align="center" valign="top">
+			<td >
 				<%
 					if(prescriptDrug.getDispenseInternal() != null && prescriptDrug.getDispenseInternal() == true ) {
 						if(securityManager.hasWriteAccess("_dispensing",roleName$,true)) {	
@@ -462,7 +462,7 @@ if (heading != null){
 			</td>
 			<% } %>
 			
-			<td nowrap="nowrap" align="center" valign="top">
+			<td nowrap="nowrap" >
 				<%if(!(prescriptDrugs.get(prescriptDrugs.size()-1) == prescriptDrug)) {%>
 				<img border="0" src="<%=request.getContextPath()%>/images/icon_down_sort_arrow.png" onclick="moveDrugDown(<%=prescriptDrug.getId() %>,<%=prescriptDrugs.get(x+1).getId() %>,<%=prescriptDrug.getDemographicId()%>);return false;"/>
 				<% } %>
