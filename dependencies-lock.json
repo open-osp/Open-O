@@ -994,11 +994,11 @@
   }, {
     "groupId" : "net.java.dev.jna",
     "artifactId" : "jna",
-    "version" : "5.16.0",
+    "version" : "5.18.1",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:2eGpxL6mstiqyWAdCXp3AT/TI7b1xh2D+sIZirapiLXPITkGGJM7FD3kzCVthL0qhnmPyzZ5R5zPxq7LIDQZhA=="
+    "integrity" : "sha512:6Fmqe/AyJdrN0EPGf5OeklDj4iPvAxoMtncXl0Ni6d8r0dnXBOe1LnQIIw8B2Ba6t+wadF2c8v6ybr2DmAJsfg=="
   }, {
     "groupId" : "net.oauth.core",
     "artifactId" : "oauth-provider",
@@ -2504,6 +2504,14 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:sgXFwb1JGTXPwzNboFTK/BNdLHMgVDK0y0+ltOSIfW8arSlmYn0Hj6rMrdRbFXiFAiOWWwiB1P+DcQgP7qIoxw=="
+  }, {
+    "groupId" : "org.jboss.aerogear",
+    "artifactId" : "aerogear-otp-java",
+    "version" : "1.0.0",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:/g3yVILCax2J+65FjySKQhPrz2tN6mLs3QimukuCZN66zv+4B7bwYsw0BNP+3dqWRQXdDWYbUyB+uJnWEkt+Zg=="
   }, {
     "groupId" : "org.jboss.logging",
     "artifactId" : "jboss-logging",
