@@ -30,7 +30,7 @@ import java.util.List;
 import org.oscarehr.common.model.AbstractCodeSystemModel;
 import org.oscarehr.common.model.DiagnosticCode;
 
-public interface DiagnosticCodeDao extends AbstractDao<DiagnosticCode> {
+public interface DiagnosticCodeDao extends AbstractCodeSystemDao<DiagnosticCode> {
     List<DiagnosticCode> findByDiagnosticCode(String diagnosticCode);
     List<DiagnosticCode> findByDiagnosticCodeAndRegion(String diagnosticCode, String region);
     List<DiagnosticCode> search(String searchString);
