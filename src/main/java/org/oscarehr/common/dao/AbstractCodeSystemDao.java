@@ -43,18 +43,18 @@ public interface AbstractCodeSystemDao<T extends AbstractCodeSystemModel<?>> ext
 
     public static enum codingSystem {icd9,icd10,ichppccode,msp,SnomedCore}
 
-    public static String getDaoName(codingSystem codeSystem) {
-        String object;
+    public static Class<?> getDaoName(codingSystem codeSystem) {
+        Class<?> object;
         switch(codeSystem) {
-            case SnomedCore: object = "snomedCoreDao";
+            case SnomedCore: object = SnomedCoreDao.class;
                 break;
-            case icd10: object = "icd10Dao";
+            case icd10: object = Icd10Dao.class;
                 break;
-            case icd9: object = "icd9Dao";
+            case icd9: object = Icd9Dao.class;
                 break;
-            case ichppccode: object = "ichppccodeDao";
+            case ichppccode: object = IchppccodeDao.class;
                 break;
-            case msp: object = "diagnosticCodeDao";
+            case msp: object = DiagnosticCodeDao.class;
                 break;
             default: throw new IllegalArgumentException("Unsupported code system: " + codeSystem + ". Please use one of icd9, ichppccode, snomedcore");
         }
