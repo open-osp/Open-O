@@ -38,6 +38,6 @@ public interface ScheduleDateDao extends AbstractDao<ScheduleDate> {
     List<ScheduleDate> search_numgrpscheduledate(String myGroupNo, Date sDate);
     List<Object[]> search_appttimecode(Date sDate, String providerNo);
     List<ScheduleDate> search_scheduledate_teamp(Date date, Date date2, Character status, List<String> providerNos);
-    List<ScheduleDate> search_scheduledate_datep(Date date, Date date2, String status);
+    List<ScheduleDate> search_scheduledate_datep(Date date, Date date2, Character status);
     List<ScheduleDate> findByProviderStartDateAndPriority(String providerNo, Date apptDate, String priority);
 }
