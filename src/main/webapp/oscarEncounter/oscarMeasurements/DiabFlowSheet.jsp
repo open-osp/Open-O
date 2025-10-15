@@ -40,8 +40,8 @@
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
-    if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     String project = request.getContextPath();
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String demographic_no = request.getParameter("demographic_no");
@@ -54,7 +54,7 @@
     "You have no right to access this page!"
     <%
         LogAction.addLog((String) session.getAttribute("user"), LogConst.NORIGHT + LogConst.READ, LogConst.CON_FLOWSHEET, temp, request.getRemoteAddr(), demographic_no);
-        response.sendRedirect("../../noRights.html"); %>
+        response.sendRedirect(request.getContextPath() + "/noRights.html"); %>
 </security:oscarSec>
 
 

@@ -135,13 +135,13 @@
                                     <%
                                     } else {
                                     %>
-                                    <a HREF="#" ONCLICK="popupPage2('../demographic/search.jsp');return false;"
+                                    <a HREF="#" ONCLICK="popupPage2('<%= request.getContextPath() %>/demographic/search.jsp');return false;"
                                        TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>'
                                        OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.search"/></a>
                                     <% } %>
                                 </caisi:isModuleLoad>
                                 <caisi:isModuleLoad moduleName="caisi" reverse="true">
-                                    <a HREF="#" ONCLICK="popupPage2('../demographic/search.jsp');return false;"
+                                    <a HREF="#" ONCLICK="popupPage2('<%= request.getContextPath() %>/demographic/search.jsp');return false;"
                                        TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>'
                                        OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.searchPatientRecords"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.search"/></a>
                                 </caisi:isModuleLoad>
@@ -152,7 +152,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_report" rights="r">
                                 <li>
                                     <a HREF="#"
-                                       ONCLICK="popupPage2('../report/reportindex.jsp','reportPage');return false;"
+                                       ONCLICK="popupPage2('<%= request.getContextPath() %>/report/reportindex.jsp','reportPage');return false;"
                                        TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.genReport"/>'
                                        OnMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.genReport"/>' ; return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.report"/></a>
                                 </li>
@@ -162,7 +162,7 @@
                                 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="r">
                                     <li>
                                         <a HREF="#"
-                                           ONCLICK="popupPage2('../billing/CA/<%=prov%>/billingReportCenter.jsp?displaymode=billreport&providerview=<%=curUser_no%>');return false;"
+                                           ONCLICK="popupPage2('<%= request.getContextPath() %>/billing/CA/<%=prov%>/billingReportCenter.jsp?displaymode=billreport&providerview=<%=curUser_no%>');return false;"
                                            TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.genBillReport"/>'
                                            onMouseOver="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.genBillReport"/>';return true"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.billing"/></a>
                                     </li>
@@ -225,7 +225,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                 <li>
                                     <a HREF="#"
-                                       onclick="popup('700', '1024', '../documentManager/documentReport.jsp?function=providers&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');"
+                                       onclick="popup('700', '1024', '<%= request.getContextPath() %>/documentManager/documentReport.jsp?function=providers&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');"
                                        TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><fmt:setBundle basename="oscarResources"/><fmt:message key="global.edoc"/></a>
                                 </li>
                             </security:oscarSec>
@@ -233,7 +233,7 @@
                         <security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
                             <li>
                                 <a HREF="#"
-                                   ONCLICK="popupPage2('../tickler/ticklerMain.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;"
+                                   ONCLICK="popupPage2('<%= request.getContextPath() %>/tickler/ticklerMain.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>');return false;"
                                    TITLE='<fmt:setBundle basename="oscarResources"/><fmt:message key="global.tickler"/>'>
                                     <span id="oscar_new_tickler"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></span></a>
                             </li>
@@ -250,7 +250,7 @@
 
                         <oscar:oscarPropertiesCheck property="WORKFLOW" value="yes">
                             <li><a href="javascript:void(0)"
-                                   onClick="popup(700,1024,'../oscarWorkflow/WorkFlowList.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.workflow"/>')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnworkflow"/>
+                                   onClick="popup(700,1024,'<%= request.getContextPath() %>/oscarWorkflow/WorkFlowList.jsp','<fmt:setBundle basename="oscarResources"/><fmt:message key="global.workflow"/>')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnworkflow"/>
                             </a></li>
                         </oscar:oscarPropertiesCheck>
 
@@ -341,7 +341,7 @@
             <ul id="userSettingsMenu">
                 <li>
                     <a title="Scratch Pad" href="javascript: function myFunction() {return false; }"
-                       onClick="popup(700,1024,'../scratch/index.jsp','scratch')"><span
+                       onClick="popup(700,1024,'<%= request.getContextPath() %>/scratch/index.jsp','scratch')"><span
                             class="glyphicon glyphicon-list-alt"></span></a>
                 </li>
                 <li>

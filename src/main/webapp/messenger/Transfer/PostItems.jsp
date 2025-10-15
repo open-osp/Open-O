@@ -73,7 +73,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../securityError.jsp?type=_msg");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_msg");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -112,5 +112,5 @@
     bean.setAttachment(sXML);
 
     // Redirect to message creation page
-    response.sendRedirect("../CreateMessage.jsp");
+    response.sendRedirect(request.getContextPath() + "/messenger/CreateMessage.jsp");
 %>

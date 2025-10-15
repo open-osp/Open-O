@@ -56,7 +56,7 @@
              class="ca.openosp.openo.decision.DesAntenatalPlannerRisks_99_12" scope="page"/>
 <jsp:useBean id="checklist"
              class="ca.openosp.openo.decision.DesAnnualReviewPlannerChecklist" scope="page"/>
-<%@ include file="../../admin/dbconnection.jsp" %>
+<%@ include file="/admin/dbconnection.jsp" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.DesAnnualReviewPlan" %>
 <%@page import="ca.openosp.openo.commn.dao.DesAnnualReviewPlanDao" %>

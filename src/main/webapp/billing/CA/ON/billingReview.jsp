@@ -25,7 +25,7 @@
 <%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*, ca.openosp.openo.dxresearch.bean.*"
          errorPage="/errorpage.jsp" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ include file="../../../admin/dbconnection.jsp" %>
+<%@ include file="/admin/dbconnection.jsp" %>
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
@@ -1119,7 +1119,7 @@
 
     function addToDiseaseRegistry() {
         if (validateItems()) {
-            var url = "<%=request.getContextPath()%>/oscarResearch/dxresearch/dxResearch.do";
+            var url = "<%=request.getContextPath()%>/oscarResearch/oscarDxResearch/dxResearch.do";
             var data = Form.serialize(dxForm);
             //alert ( data);
             new Ajax.Updater('dxListing', url, {
@@ -1151,7 +1151,7 @@
 
     function getNewCurrentDxCodeList(origRequest) {
         //alert("calling get NEW current Dx Code List");
-        var url = "../../../oscarResearch/dxresearch/currentCodeList.jsp";
+        var url = "<%= request.getContextPath() %>/oscarResearch/oscarDxResearch/currentCodeList.jsp";
         var ran_number = Math.round(Math.random() * 1000000);
         var params = "demographicNo=<%=demoNO%>&rand=" + ran_number;  //hack to get around ie caching the page
         //alert(params);
@@ -1175,7 +1175,7 @@
             <input type="hidden" name="forwardTo" value="codeList"/>
             <div class="wrapper" id="dxListing">
                 <jsp:include
-                        page="../../../oscarResearch/oscarDxResearch/quickCodeList.jsp">
+                        page="/oscarResearch/oscarDxResearch/quickCodeList.jsp">
                     <jsp:param name="demographicNo" value="<%=demoNO%>"/>
                 </jsp:include>
             </div>
@@ -1191,7 +1191,7 @@
                                              style="font-size: small;">show/hide</a></h3>
         <div class="wrapper" id="dxFullListing" style="display: none;">
             <jsp:include
-                    page="../../../oscarResearch/oscarDxResearch/currentCodeList.jsp">
+                    page="/oscarResearch/oscarDxResearch/currentCodeList.jsp">
                 <jsp:param name="demographicNo" value="<%=demoNO%>"/>
             </jsp:include>
         </div>

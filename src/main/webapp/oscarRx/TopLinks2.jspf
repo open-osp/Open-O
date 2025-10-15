@@ -33,7 +33,7 @@
     ca.openosp.openo.log.*" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
-<jsp:include page="../images/spinner.jsp" flush="true"/>
+<jsp:include page="/images/spinner.jsp" flush="true"/>
 
 <script type="text/javascript">
 function newWindow(url) {

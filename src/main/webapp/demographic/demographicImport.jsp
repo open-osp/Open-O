@@ -176,7 +176,7 @@
         </script>
 
     </head>
-    <jsp:include page="../images/spinner.jsp" flush="true"/>
+    <jsp:include page="/images/spinner.jsp" flush="true"/>
     <body vlink="#0000FF">
 
     <%

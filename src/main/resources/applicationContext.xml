@@ -258,6 +258,13 @@
 	<bean id="preparedTicklerManagerT" class="ca.openosp.openo.wl.prepared.PreparedTicklerManagerImpl" scope="singleton" />
 	<bean id="providerManager" class="ca.openosp.openo.PMmodule.service.ProviderManagerImpl" autowire="byName" />
 	<bean id="clientRestrictionManager" class="ca.openosp.openo.PMmodule.service.ClientRestrictionManagerImpl" autowire="byName" />
+
+	<bean id="ectProgramManager" class="ca.openosp.openo.encounter.data.EctProgramManagerImpl">
+		<constructor-arg ref="demographicDao" />
+		<constructor-arg ref="programProviderDAO" />
+		<constructor-arg ref="providerDefaultProgramDao" />
+		<constructor-arg ref="programDao" />
+	</bean>
 	
 	<!-- Admin Start -->
 	<bean id="secobjprivilegeDao" class="ca.openosp.openo.daos.security.SecobjprivilegeDaoImpl" autowire="byName" />

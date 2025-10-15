@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_lab");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -889,11 +889,11 @@
             //alert(div);
             var url = '';
             if (type == 'DOC')
-                url = "../documentManager/showDocument.jsp";
+                url = "<%= request.getContextPath() %>/documentManager/showDocument.jsp";
             else if (type == 'MDS')
                 url = "";
             else if (type == 'HL7')
-                url = "../lab/CA/ALL/labDisplayAjax.jsp";
+                url = "<%= request.getContextPath() %>/lab/CA/ALL/labDisplayAjax.jsp";
             else if (type == 'CML')
                 url = "";
             else
@@ -1690,7 +1690,7 @@
                 }
             }
             if (aBoxIsChecked) {
-                popupStart(397, 700, '../oscarMDS/SelectProvider.jsp', 'providerselect');
+                popupStart(397, 700, '<%= request.getContextPath() %>/oscarMDS/SelectProvider.jsp', 'providerselect');
             } else {
                 alert(msgSelectOneLab);
             }
@@ -2405,7 +2405,7 @@
 
                     <%--                            <td align="right" valign="center" width="30%">--%>
 
-                    <%--                                | <a href="javascript:popupStart(300,400,'../oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>--%>
+                    <%--                                | <a href="javascript:popupStart(300,400, '<%= request.getContextPath() %>/oscarEncounter/About.jsp')" style="color: #FFFFFF;" ><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>--%>
                     <%--                            </td>--%>
                 </tr>
             </table>

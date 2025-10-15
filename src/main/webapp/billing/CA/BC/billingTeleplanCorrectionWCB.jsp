@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_billing");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -186,7 +186,7 @@
         <table width="100%">
             <tr>
                 <td colspan="2" class="SectionHead"><a href=#
-                                                       onClick="popup(700,900,'../../../demographic/demographiccontrol.jsp?demographic_no=<%=form.getDemographicNumber()%>&displaymode=edit&dboperation=search_detail','
+                                                       onClick="popup(700,900,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=form.getDemographicNumber()%>&displaymode=edit&dboperation=search_detail','
                                                            <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.popupPage2Window"/>');return false;"
                                                        title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>">Patient
                     Information</a> <input type="hidden" name="id" id="id" value="<%=form.getId()%>"/>

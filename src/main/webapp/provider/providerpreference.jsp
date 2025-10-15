@@ -515,7 +515,7 @@
                 <oscar:oscarPropertiesCheck property="TORONTO_RFQ" value="no">
                     <tr>
                         <TD align="center"><a href=#
-                                              onClick="popupPage(230,600,'../casemgmt/newCaseManagementEnable.jsp');return false;">Enable
+                                              onClick="popupPage(230,600,'<%= request.getContextPath() %>/casemgmt/newCaseManagementEnable.jsp');return false;">Enable
                             OSCAR CME UI</a> &nbsp;&nbsp;&nbsp;
                     </tr>
                 </oscar:oscarPropertiesCheck>
@@ -703,7 +703,7 @@
             </tr>
             <tr>
                 <td align="center"><a href=#
-                                      onClick="popupPage(230,860,'../admin/displayDocumentDescriptionTemplate.jsp');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDocumentDescriptionTemplate"/></a></td>
+                                      onClick="popupPage(230,860,'<%= request.getContextPath() %>/admin/displayDocumentDescriptionTemplate.jsp');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnSetDocumentDescriptionTemplate"/></a></td>
             </tr>
             <tr>
                 <td align="center"><a href=# onClick="popupPage(500,900,'clients.jsp');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.btnEditClients"/></a></td>

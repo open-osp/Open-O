@@ -62,6 +62,22 @@ import ca.openosp.openo.encounter.data.EctProgram;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for managing prescription deletion and discontinuation operations.
+ * <p>
+ * This action handles multiple prescription management operations including:
+ * <ul>
+ * <li>Deleting single or multiple prescriptions</li>
+ * <li>Discontinuing prescriptions with reason tracking</li>
+ * <li>Clearing prescription stash and re-prescription lists</li>
+ * <li>Deleting prescriptions when closing the prescription dialog box</li>
+ * </ul>
+ * <p>
+ * All deletion operations archive the drug record rather than performing hard deletes,
+ * maintaining audit trail compliance for healthcare data.
+ *
+ * @since 2006-04-20
+ */
 public final class RxDeleteRx2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -71,6 +87,30 @@ public final class RxDeleteRx2Action extends ActionSupport {
 
     private static final String PRIVILEGE_UPDATE = "u";
 
+    /**
+     * Main execution method that routes to appropriate sub-methods based on parameterValue parameter.
+     * <p>
+     * Routes to:
+     * <ul>
+     * <li>Delete2() - Single prescription deletion by ID</li>
+     * <li>DeleteRxOnCloseRxBox() - Delete prescription when closing dialog</li>
+     * <li>clearStash() - Clear prescription stash</li>
+     * <li>clearReRxDrugList() - Clear re-prescription list</li>
+     * <li>Discontinue() - Discontinue prescription with reason</li>
+     * </ul>
+     * <p>
+     * If no method parameter is provided, performs bulk deletion using the drugList parameter.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>parameterValue - String method name to execute (optional)</li>
+     * <li>drugList - Comma-separated drug IDs for bulk deletion (used when no method specified)</li>
+     * </ul>
+     *
+     * @return String action result ("success", "close", etc.) or null for AJAX responses
+     * @throws IOException if response writing fails
+     * @throws ServletException if servlet processing fails
+     */
     @Override
     public String execute()
             throws IOException, ServletException {
@@ -121,12 +161,34 @@ public final class RxDeleteRx2Action extends ActionSupport {
         return SUCCESS;
     }
 
+    /**
+     * Sets the deletion flags on a drug record for archiving.
+     * <p>
+     * Marks the drug as archived rather than performing a hard delete,
+     * maintaining compliance with healthcare audit trail requirements.
+     *
+     * @param drug Drug the drug entity to mark as deleted
+     */
     private void setDrugDelete(Drug drug) {
         drug.setArchived(true);
         drug.setArchivedDate(new Date());
         drug.setArchivedReason(Drug.DELETED);
     }
 
+    /**
+     * Deletes a single prescription by ID.
+     * <p>
+     * Archives the specified prescription and logs the deletion action.
+     * This method is typically called via AJAX from the prescription interface.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>deleteRxId - String in format "prefix_drugId" where drugId is the prescription ID</li>
+     * </ul>
+     *
+     * @return null (AJAX response, no page navigation)
+     * @throws IOException if response redirect fails
+     */
     public String Delete2()
             throws IOException {
 
@@ -154,6 +216,20 @@ public final class RxDeleteRx2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Deletes a prescription when the prescription dialog box is closed.
+     * <p>
+     * Uses a random ID to look up the actual drug ID from the session's random ID mapping,
+     * then archives the prescription and returns the drug ID as JSON.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>randomId - String random identifier mapped to the actual drug ID in the session</li>
+     * </ul>
+     *
+     * @return null (writes JSON response with drug ID directly to output stream)
+     * @throws IOException if response writing fails
+     */
     public String DeleteRxOnCloseRxBox()
             throws IOException {
 
@@ -194,6 +270,15 @@ public final class RxDeleteRx2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Clears the prescription stash stored in the session.
+     * <p>
+     * The stash is a temporary storage area for prescriptions that are being
+     * worked on but not yet finalized.
+     *
+     * @return String "successClearStash" action result
+     * @throws IOException if response redirect fails
+     */
     public String clearStash()
             throws IOException {
         RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
@@ -205,6 +290,15 @@ public final class RxDeleteRx2Action extends ActionSupport {
         return "successClearStash";
     }
 
+    /**
+     * Clears the re-prescription drug list stored in the session.
+     * <p>
+     * The re-prescription list tracks drugs that are being re-prescribed
+     * (renewed) for the patient. This method clears that list.
+     *
+     * @return null (AJAX response, no page navigation)
+     * @throws IOException if response redirect fails
+     */
     public String clearReRxDrugList()
             throws IOException {
         checkPrivilege(request, PRIVILEGE_UPDATE);
@@ -221,21 +315,29 @@ public final class RxDeleteRx2Action extends ActionSupport {
 
 
     /**
-     * The action to discontinue a drug.
+     * Discontinues a drug by setting archived status and creating a case management note.
      * <p>
-     * first set discontinued boolean field to true.
-     * Grab the end_date and log that this providers is changing (discontinuing) the drug and the old end date is this and the new end date is this.
-     * set end_date = today
-     * set reason
-     * set annotation if needed.
+     * The method performs the following operations:
+     * <ul>
+     * <li>Sets the drug's archived flag to true</li>
+     * <li>Sets the archived date to current date</li>
+     * <li>Records the discontinuation reason</li>
+     * <li>Creates a case management note documenting the discontinuation</li>
+     * <li>Logs the action for audit purposes</li>
+     * <li>Returns JSON response with drug ID and reason</li>
+     * </ul>
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return the ActionForward
-     * @throws IOException
-     * @throws ServletException
+     * Expected request parameters:
+     * <ul>
+     * <li>drugId - Integer ID of the drug to discontinue</li>
+     * <li>reason - String reason for discontinuation</li>
+     * <li>comment - String additional comments (optional)</li>
+     * <li>demoNo - String demographic number</li>
+     * <li>drugSpecial - String drug special instructions</li>
+     * </ul>
+     *
+     * @return null (writes JSON response directly to output stream)
+     * @throws IOException if response writing fails
      */
     //STILL NEED TO SAVE REASON AND COMMENT "would like to create a summary note in the echart"
     public String Discontinue() throws IOException {
@@ -295,6 +397,31 @@ public final class RxDeleteRx2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Creates a case management note documenting the discontinuation of a prescription.
+     * <p>
+     * This method creates a comprehensive clinical note that includes:
+     * <ul>
+     * <li>Drug special instructions</li>
+     * <li>Discontinuation reason</li>
+     * <li>Discontinuation comment</li>
+     * <li>Provider and program information</li>
+     * </ul>
+     * <p>
+     * The note is linked to the drug record via CaseManagementNoteLink for
+     * complete audit trail and clinical documentation.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>drugId - String ID of the discontinued drug</li>
+     * <li>demoNo - String demographic number of the patient</li>
+     * <li>drugSpecial - String special instructions for the drug</li>
+     * <li>reason - String reason for discontinuation</li>
+     * <li>comment - String additional comments about discontinuation</li>
+     * </ul>
+     *
+     * @param request HttpServletRequest containing discontinuation details
+     */
     private void createDiscontinueNote(HttpServletRequest request) {
         //create a note and store this info in casemanagement_note table
         //note_id,update_date,observation_date,demographic_no,provider_no,note: ,signed,include_issue_innote,archived,position, uuid
@@ -346,19 +473,47 @@ public final class RxDeleteRx2Action extends ActionSupport {
         EDocUtil.addCaseMgmtNoteLink(cmnl);
     }
 
-
+    /**
+     * Checks if the current user has the required privilege for prescription operations.
+     * <p>
+     * Validates that the logged-in user has the specified privilege level (read, update, delete)
+     * for the "_rx" security object. Throws RuntimeException if privilege check fails.
+     *
+     * @param request HttpServletRequest containing the logged-in user session
+     * @param privilege String privilege level to check ("r" for read, "u" for update, "d" for delete)
+     * @throws RuntimeException if the user lacks the required privilege
+     */
     private void checkPrivilege(HttpServletRequest request, String privilege) {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_rx", privilege, null)) {
             throw new RuntimeException("missing required sec object (_rx)");
         }
     }
 
+    /**
+     * Comma-separated list of drug IDs for bulk deletion operations.
+     * <p>
+     * This property is set by Struts 2 when the drugList parameter is present
+     * in the request. Used by the default execute() method for bulk deletions.
+     */
     private String drugList = null;
 
+    /**
+     * Gets the comma-separated list of drug IDs for bulk deletion.
+     *
+     * @return String comma-separated drug IDs, or null if not set
+     */
     public String getDrugList() {
         return this.drugList;
     }
 
+    /**
+     * Sets the comma-separated list of drug IDs for bulk deletion.
+     * <p>
+     * This setter is called automatically by Struts 2 when the drugList
+     * parameter is present in the request.
+     *
+     * @param RHS String comma-separated drug IDs
+     */
     public void setDrugList(String RHS) {
         this.drugList = RHS;
     }

@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_demographic");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -154,7 +154,7 @@
             }
         }
     } else {
-        redirect.append("../close.html");
+        redirect.append(request.getContextPath() + "/close.html");
     }
     response.sendRedirect(redirect.toString());
 %>

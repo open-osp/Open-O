@@ -74,6 +74,43 @@ import ca.openosp.openo.olis1.queries.Z50Query;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for OLIS (Ontario Laboratory Information System) search queries.
+ * <p>
+ * This action handles the construction and submission of various OLIS HL7 query types
+ * to retrieve laboratory results from the Ontario provincial laboratory system.
+ * It supports multiple query types with different search criteria and parameters:
+ * <ul>
+ * <li>Z01 - Patient-centric lab result query (most common)</li>
+ * <li>Z02 - Retrieve specific test results by placer group number</li>
+ * <li>Z04 - Provider-centric query for all patients</li>
+ * <li>Z05 - Query by destination laboratory</li>
+ * <li>Z06 - Query by ordering facility</li>
+ * <li>Z07 - Query by time period only</li>
+ * <li>Z08 - Query with minimal criteria</li>
+ * <li>Z50 - Patient demographic search (find patients)</li>
+ * </ul>
+ * <p>
+ * The action processes request parameters to build HL7 query objects with appropriate
+ * PID, OBR, OBX, PV1, ZRP, ZBR, and other HL7 segments based on the query type.
+ * <p>
+ * Key features:
+ * <ul>
+ * <li>Query UUID tracking for result correlation</li>
+ * <li>Consent override logging with OscarLog audit trail</li>
+ * <li>Patient consent handling (blocked information, consent block all)</li>
+ * <li>Date range parsing and normalization</li>
+ * <li>Provider credential mapping from UserProperty</li>
+ * <li>Demographic data integration from patient records</li>
+ * <li>Support for quantity-limited queries</li>
+ * <li>Multiple practitioner role filtering (ordering, attending, admitting, copied-to)</li>
+ * </ul>
+ * <p>
+ * All properties are automatically populated by Struts 2 property injection from
+ * request parameters before the execute() method is called.
+ *
+ * @since 2006-04-20
+ */
 public class OLISSearch2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -84,6 +121,62 @@ public class OLISSearch2Action extends ActionSupport {
 
     public static HashMap<String, Query> searchQueryMap = new HashMap<String, Query>();
 
+    /**
+     * Main execution method for OLIS search query construction and submission.
+     * <p>
+     * This method handles two main workflows:
+     * <ul>
+     * <li>Redo existing query - Retrieves a previously constructed query by UUID and resubmits it,
+     *     optionally with consent override if forced</li>
+     * <li>New query construction - Builds a new HL7 query object based on queryType parameter
+     *     (Z01, Z02, Z04, Z05, Z06, Z07, Z08, Z50) with all relevant search parameters</li>
+     * </ul>
+     * <p>
+     * For new queries, the method:
+     * <ul>
+     * <li>Parses and validates all request parameters specific to the query type</li>
+     * <li>Constructs appropriate HL7 segments (PID, OBR, OBX, PV1, ZRP, ZBR, etc.)</li>
+     * <li>Integrates demographic and provider data from the database</li>
+     * <li>Generates a unique UUID for query tracking</li>
+     * <li>Stores the query in searchQueryMap for potential re-execution</li>
+     * <li>Logs consent overrides if applicable</li>
+     * <li>Submits the query via Driver.submitOLISQuery()</li>
+     * </ul>
+     * <p>
+     * Expected request parameters vary by query type but commonly include:
+     * <ul>
+     * <li>queryType - String OLIS query type (Z01, Z02, Z04, Z05, Z06, Z07, Z08, Z50)</li>
+     * <li>redo - String "true" to resubmit existing query by UUID</li>
+     * <li>uuid - String query UUID for redo operations</li>
+     * <li>force - String "true" to override consent blocks</li>
+     * <li>demographic - String demographic number for patient queries</li>
+     * <li>requestingHic - String provider number for requesting HIC</li>
+     * <li>startTimePeriod / endTimePeriod - String date range (yyyy-MM-dd)</li>
+     * <li>quantityLimitedQuery - String "true" to enable quantity limit</li>
+     * <li>quantityLimit - String number of results to limit</li>
+     * <li>blockedInformationConsent - String consent code (Y/N/Z for override)</li>
+     * <li>testRequestCode[] - String array of test request codes (OBR.4)</li>
+     * <li>testResultCode[] - String array of test result codes (OBX.3)</li>
+     * <li>orderingPractitioner - String provider number for ordering practitioner</li>
+     * <li>copiedToPractitioner - String provider number for copied-to practitioner</li>
+     * <li>attendingPractitioner - String provider number for attending practitioner</li>
+     * <li>admittingPractitioner - String provider number for admitting practitioner</li>
+     * <li>performingLaboratory - String laboratory identifier</li>
+     * <li>reportingLaboratory - String laboratory identifier</li>
+     * <li>excludePerformingLaboratory - String laboratory identifier to exclude</li>
+     * <li>excludeReportingLaboratory - String laboratory identifier to exclude</li>
+     * </ul>
+     * <p>
+     * Z50-specific parameters:
+     * <ul>
+     * <li>z50firstName - String patient first name</li>
+     * <li>z50lastName - String patient last name</li>
+     * <li>z50sex - String patient sex (M/F)</li>
+     * <li>z50dateOfBirth - String patient date of birth (yyyy-MM-dd)</li>
+     * </ul>
+     *
+     * @return String "results" to forward to results page
+     */
     public String execute() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -826,6 +919,15 @@ public class OLISSearch2Action extends ActionSupport {
 
     }
 
+    /**
+     * Adjusts a date to the end of day (23:59:59) for date range queries.
+     * <p>
+     * This helper method is used to normalize end date parameters to include
+     * all results up to the last second of the specified day.
+     *
+     * @param d Date the date to adjust
+     * @return Date the same date set to 23:59:59
+     */
     private Date changeToEndOfDay(Date d) {
         Calendar c = Calendar.getInstance();
         c.setTime(d);

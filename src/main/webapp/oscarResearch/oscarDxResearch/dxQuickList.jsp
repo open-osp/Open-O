@@ -45,7 +45,7 @@ Required Parameters to plug-in:
                 <div class="panel-body">
                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.quickList"/>
                     <small class="pull-right">
-                        <a class="oscar-dialog-link" href="dxResearchCustomization.jsp">
+                        <a class="oscar-dialog-link" href="${pageContext.request.contextPath}/oscarResearch/oscarDxResearch/dxResearchCustomization.jsp">
                             add/edit
                         </a>
                     </small>

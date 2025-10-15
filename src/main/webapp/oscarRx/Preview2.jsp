@@ -74,7 +74,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -134,7 +134,7 @@
 
             <%--    function onPrint2(method) {--%>
 
-            <%--            document.getElementById("preview2Form").action = "../form/createcustomedpdf?__title=Rx&__method=" + method;--%>
+            <%--            document.getElementById("preview2Form").action = "<%= request.getContextPath() %>/form/createcustomedpdf?__title=Rx&__method=" + method;--%>
             <%--            document.getElementById("preview2Form").target="_blank";--%>
             <%--            document.getElementById("preview2Form").submit();--%>
             <%--       return true;--%>

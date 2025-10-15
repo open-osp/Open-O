@@ -52,7 +52,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -378,7 +378,7 @@ Remote documents not supported
         }
 
         function DocAnnotation() {
-            popup(350, 500, '../annotation/annotation.jsp?display=Documents&table_id=' + docid + '&demo=<%=demographicID%>', 'anwin');
+            popup(350, 500, '<%= request.getContextPath() %>/annotation/annotation.jsp?display=Documents&table_id=' + docid + '&demo=<%=demographicID%>', 'anwin');
         }
 
         function DocEdit() {

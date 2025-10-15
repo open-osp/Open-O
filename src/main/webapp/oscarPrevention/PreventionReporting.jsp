@@ -50,7 +50,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_prevention" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_prevention");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_prevention");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -602,7 +602,7 @@
                        <tr>
                           <td><%=i+1%></td>
                           <td>
-                              <a href="javascript: return false;" onClick="popup(724,964,'../demographic/demographiccontrol.jsp?demographic_no=<%=dis.demographicNo%>&amp;displaymode=edit&amp;dboperation=search_detail','MasterDemographic')"><%=dis.demographicNo%></a>
+                              <a href="javascript: return false;" onClick="popup(724,964,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=dis.demographicNo%>&amp;displaymode=edit&amp;dboperation=search_detail','MasterDemographic')"><%=dis.demographicNo%></a>
                           </td>
                           <td><%=DemographicData.getDob(demo,"-")%></td>
 

@@ -26,6 +26,30 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.net.URLEncoder" %>
+<%
+    // Check if demographicNo is present and valid
+    String demographicNo = request.getParameter("demographicNo");
+    if (demographicNo == null || demographicNo.trim().isEmpty() || "null".equals(demographicNo)) {
+        // No patient matched - redirect to patient search page
+        String labNo = request.getParameter("labNo");
+        String labType = request.getParameter("labType");
+        String keyword = request.getParameter("keyword");
+
+        String redirectURL = request.getContextPath() + "/oscarMDS/PatientSearch.jsp?search_mode=search_name&limit1=0&limit2=10";
+        if (labNo != null) {
+            redirectURL += "&labNo=" + URLEncoder.encode(labNo, "UTF-8");
+        }
+        if (labType != null) {
+            redirectURL += "&labType=" + URLEncoder.encode(labType, "UTF-8");
+        }
+        if (keyword != null) {
+            redirectURL += "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+        }
+
+        response.sendRedirect(redirectURL);
+        return;
+    }
+%>
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -41,7 +65,7 @@
 
         %>
 
-        location.href = '${pageContext.request.contextPath}/oscarEncounter/IncomingEncounter.do?demographicNo=<%=request.getParameter("demographicNo")%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=';
+        location.href = '${pageContext.request.contextPath}/oscarEncounter/IncomingEncounter.do?demographicNo=<%=demographicNo%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=';
         window.resizeTo(980, 700);
 
     </script>
@@ -50,7 +74,7 @@
 <body>
 
 <a
-        href="javascript:popupPage(700, 980, '${pageContext.request.contextPath}/oscarEncounter/IncomingEncounter.do?demographicNo=<%=request.getParameter("demographicNo")%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=');window.close();">Please
+        href="javascript:popupPage(700, 980, '${pageContext.request.contextPath}/oscarEncounter/IncomingEncounter.do?demographicNo=<%=demographicNo%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=');window.close();">Please
     click here to go to the patient's E-Chart.</a>
 
 </body>

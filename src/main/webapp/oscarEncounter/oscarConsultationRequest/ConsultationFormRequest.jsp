@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../securityError.jsp?type=_con");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_con");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -625,7 +625,7 @@
             }
 
             input#referalDate, input#appointmentDate, input#followUpDate {
-                background-image: url(../../images/cal.gif);
+                background-image: url(<%= request.getContextPath() %>/images/cal.gif);
                 background-position-x: right;
                 background-position-y: center;
                 background-repeat: no-repeat;
@@ -1554,7 +1554,7 @@ if (userAgent != null) {
 
     <body topmargin="0" leftmargin="0" vlink="#0000FF"
           onload="window.focus();disableDateFields();disableEditing();showSignatureImage();">
-    <jsp:include page="../../images/spinner.jsp" flush="true"/>
+    <jsp:include page="/images/spinner.jsp" flush="true"/>
     <%
     java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
     if (actionErrors != null && !actionErrors.isEmpty()) {

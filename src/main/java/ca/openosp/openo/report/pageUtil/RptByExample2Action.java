@@ -69,7 +69,7 @@ public class RptByExample2Action extends ActionSupport {
         }
 
         if (request.getSession().getAttribute("user") == null)
-            response.sendRedirect("../logout.htm");
+            response.sendRedirect(request.getContextPath() + "/logout.htm");
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();

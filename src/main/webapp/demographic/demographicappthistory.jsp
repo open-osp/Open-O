@@ -348,7 +348,7 @@
                             bgcolor="<%=bodd?weakColor:"white"%>" appt_no="<%=appointment.getId().toString()%>"
                             demographic_no="<%=demographic_no%>" provider_no="<%=provider!=null?provider.getId():""%>">
                         <td align="center"><a href=#
-                                              onClick="popupPageNew(360,680,'../appointment/appointmentcontrol.jsp?demographic_no=<%=demographic_no%>&appointment_no=<%=appointment.getId().toString()%>&displaymode=edit&dboperation=search');return false;"><%=appointment.getAppointmentDate()%>
+                                              onClick="popupPageNew(360,680, '<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?demographic_no=<%=demographic_no%>&appointment_no=<%=appointment.getId().toString()%>&displaymode=edit&dboperation=search');return false;"><%=appointment.getAppointmentDate()%>
                         </a></td>
                         <td align="center"><%=appointment.getStartTime()%>
                         </td>

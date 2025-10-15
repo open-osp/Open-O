@@ -83,7 +83,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -115,7 +115,7 @@
                    objectName='<%="_rx$"+demoNo%>' rights="o"
                    reverse="<%=false%>">
     <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.accessDenied"/>
-    <% response.sendRedirect("../acctLocked.html"); %>
+    <% response.sendRedirect(request.getContextPath() + "/acctLocked.html"); %>
 </security:oscarSec>
 
 <%
@@ -1496,7 +1496,7 @@
 
         function displayInstructions(randomId) {
             var data = "randomId=" + randomId;
-            mb.show(randomId, 'displayInstructions', '600px');
+            mb.show(randomId, '<%= request.getContextPath() %>/oscarRx/displayInstructions', '600px');
 
         }
 
@@ -2084,7 +2084,7 @@
                 var data = "randomId=" + randomId + "&favoriteName=" + favoriteName;
                 new Ajax.Request(url, {
                     method: 'get', parameters: data, onSuccess: function (transport) {
-                        window.location.href = "oscarRx/SearchDrug3.jsp";
+                        window.location.href = "<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp";
                     }
                 })
             }

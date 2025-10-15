@@ -77,7 +77,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_lab");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -1164,7 +1164,7 @@ request.setAttribute("missingTests", missingTests);
             </script>
         </c:if>
 
-    <form name="reassignForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" action="Forward.do">
+    <form name="reassignForm_<%= Encode.forHtmlAttribute(segmentID) %>" method="post" action="<%= request.getContextPath() %>/lab/CA/ALL/Forward.do">
         <input type="hidden" name="flaggedLabs" value="<%= Encode.forHtmlAttribute(segmentID) %>"/>
         <input type="hidden" name="selectedProviders" value=""/>
         <input type="hidden" name="favorites" value=""/>
@@ -1335,19 +1335,19 @@ request.setAttribute("missingTests", missingTests);
                                     %>v<%= i + 1 %>&#160;<%
                                 } else {
                                     if (searchProviderNo != null) { // null if we were called from e-chart
-                                %><a href="labDisplay.jsp?segmentID=<%=multiID[i]%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>">v<%= i + 1 %>
+                                %><a href="${pageContext.request.contextPath}/lab/CA/ALL/labDisplay.jsp?segmentID=<%=multiID[i]%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>">v<%= i + 1 %>
                                 </a>&#160;<%
                                 } else {
-                                %><a href="labDisplay.jsp?segmentID=<%=multiID[i]%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>">v<%= i + 1 %>
+                                %><a href="${pageContext.request.contextPath}/lab/CA/ALL/labDisplay.jsp?segmentID=<%=multiID[i]%>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>">v<%= i + 1 %>
                                 </a>&#160;<%
                                             }
                                         }
                                     }
 //                                                if( multiID.length > 1 ) {
                                     if (searchProviderNo != null) { // null if we were called from e-chart
-                                %><a href="labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
+                                %><a href="${pageContext.request.contextPath}/lab/CA/ALL/labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&searchProviderNo=<%= searchProviderNo %>&all=true">All</a>&#160;<%
                                 } else {
-                                %><a href="labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
+                                %><a href="${pageContext.request.contextPath}/lab/CA/ALL/labDisplay.jsp?segmentID=<%= Encode.forHtmlAttribute(segmentID) %>&multiID=<%=multiLabId%>&providerNo=<%= providerNo %>&all=true">All</a>&#160;<%
                                     }
 //                                                }
                                 %>
@@ -2084,7 +2084,7 @@ request.setAttribute("missingTests", missingTests);
 
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
                 </a>
                     &nbsp;<%if (loincCode != null) { %>
                     <a href="javascript:popupStart('660','1000','http://apps.nlm.nih.gov/medlineplus/services/mpconnect.cfm?mainSearchCriteria.v.cs=2.16.840.1.113883.6.1&mainSearchCriteria.v.c=<%=loincCode%>&informationRecipient.languageCode.c=en')">
@@ -2130,7 +2130,7 @@ request.setAttribute("missingTests", missingTests);
                 if (!obxName.equals("")) { %>
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
                 </a>
                     &nbsp;
                     <%if (loincCode != null) { %>
@@ -2194,7 +2194,7 @@ request.setAttribute("missingTests", missingTests);
             %>
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
                 </a>
                     &nbsp;<%if (loincCode != null) { %>
                     <a href="javascript:popupStart('660','1000','http://apps.nlm.nih.gov/medlineplus/services/mpconnect.cfm?mainSearchCriteria.v.cs=2.16.840.1.113883.6.1&mainSearchCriteria.v.c=<%=loincCode%>&informationRecipient.languageCode.c=en')">
@@ -2279,10 +2279,10 @@ request.setAttribute("missingTests", missingTests);
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%="NarrativeRes"%>"><%
                                    			if(handler.getOBXIdentifier(j, k).equalsIgnoreCase(handler.getOBXIdentifier(j, k-1)) && (obxCount>1) && ! handler.getMsgType().equals("MEDITECH") ){%>
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8")%>')"></a><%
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8")%>')"></a><%
                                    			}else if(! handler.getMsgType().equals("MEDITECH") ) {%>
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
                 </a>
                         <%}%>
                         <%if(isVIHARtf){
@@ -2318,7 +2318,7 @@ request.setAttribute("missingTests", missingTests);
 
                     <% if(handler.getMsgType().equals("PATHL7") && !isAllowedDuplicate && (obxCount>1) && handler.getOBXIdentifier(j, k).equalsIgnoreCase(handler.getOBXIdentifier(j, k-1)) && (handler.getOBXValueType(j, k).equals("TX") || handler.getOBXValueType(j, k).equals("FT"))){%>
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"></a><%
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"></a><%
                                    			} else {
 
 
@@ -2327,7 +2327,7 @@ request.setAttribute("missingTests", missingTests);
                 <td></td>
                     <% } else { %>
                 <td valign="top" align="left"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                        href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
+                        href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier=<%= URLEncoder.encode(handler.getOBXIdentifier(j, k).replaceAll("&","%26"),"UTF-8") %>')"><%=obxName %>
                 </a>
 
                     <% if (loincCode != null) { %>

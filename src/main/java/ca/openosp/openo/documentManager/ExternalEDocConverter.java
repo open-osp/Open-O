@@ -11,14 +11,12 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
 
 public class ExternalEDocConverter implements EDocConverterInterface {
-    private final CommandLine cmdLine;
-    private final DefaultExecutor executor = new DefaultExecutor();
-
+    private final String command;
+    private final String args;
+    
     public ExternalEDocConverter(String command, String args) {
-        cmdLine = new CommandLine(command);
-        cmdLine.addArguments(args, false);
-        cmdLine.addArgument("-", false); // stdin
-        cmdLine.addArgument("-", false); // stdout
+        this.command = command;
+        this.args = args;
     }
 
     /**
@@ -32,12 +30,26 @@ public class ExternalEDocConverter implements EDocConverterInterface {
     */
     @Override
     public void convert(String document, OutputStream os) throws IOException {
-        ByteArrayInputStream stdin = new ByteArrayInputStream(document.getBytes(StandardCharsets.UTF_8));
-        PumpStreamHandler streams = new PumpStreamHandler(os, os, stdin);
+        // Create fresh instances for each execution
+        CommandLine cmdLine = new CommandLine(command);
+        cmdLine.addArguments(args, false);
+        cmdLine.addArgument("-", false); // stdin
+        cmdLine.addArgument("-", false); // stdout
+        
+        DefaultExecutor executor = new DefaultExecutor();
+        ByteArrayInputStream stdin = new ByteArrayInputStream(
+            document.getBytes(StandardCharsets.UTF_8)
+        );
+
+        // Separate stderr from stdout to prevent PDF corruption
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PumpStreamHandler streams = new PumpStreamHandler(os, stderr, stdin);
         executor.setStreamHandler(streams);
+        
         int exitCode = executor.execute(cmdLine);
         if (exitCode != 0) {
-            throw new IOException("wkhtmltopdf failed with exit code " + exitCode);
+            String errorMsg = stderr.toString(StandardCharsets.UTF_8);
+            throw new IOException("wkhtmltopdf failed with exit code " + exitCode + ": " + errorMsg);
         }
     }
 }

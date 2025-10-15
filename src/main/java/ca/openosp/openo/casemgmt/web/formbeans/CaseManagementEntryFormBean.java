@@ -35,7 +35,7 @@ public class CaseManagementEntryFormBean {
     private CaseManagementCPP cpp;
     private String demoNo;
     private String noteId;
-    private CheckBoxBean[] issueCheckList;
+    private List<CheckBoxBean> issueCheckList;
     private CheckIssueBoxBean[] newIssueCheckList;
     private List newIssueList;
     private String sign;
@@ -109,11 +109,11 @@ public class CaseManagementEntryFormBean {
         this.includeIssue = includeIssue;
     }
 
-    public CheckBoxBean[] getIssueCheckList() {
+    public List<CheckBoxBean> getIssueCheckList() {
         return issueCheckList;
     }
 
-    public void setIssueCheckList(CheckBoxBean[] issueCheckList) {
+    public void setIssueCheckList(List<CheckBoxBean> issueCheckList) {
         this.issueCheckList = issueCheckList;
     }
 

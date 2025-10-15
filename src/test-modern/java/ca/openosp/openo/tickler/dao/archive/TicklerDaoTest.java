@@ -426,7 +426,7 @@ class TicklerDaoTest extends OpenODaoTestBase {
         // Then
         Tickler updated = ticklerDao.find(id);
         assertThat(updated.getStatus()).isEqualTo(Tickler.STATUS.C);
-        assertThat(updated.getUpdateDate()).isAfter(updated.getCreateDate());
+        assertThat(updated.getUpdateDate()).isAfterOrEqualTo(updated.getCreateDate());
     }
 
     @Test

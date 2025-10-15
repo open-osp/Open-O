@@ -1724,7 +1724,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         String msgSuccess = "provider.setLabRecall.msgSuccess";
         if (delete) {
-            msgSuccess = "providers.setLabRecall.msgDeleted";
+            msgSuccess = "provider.setLabRecall.msgDeleted";
         }
         request.setAttribute("providermsgSuccess", msgSuccess);
         request.setAttribute("method", "saveLabRecallPrefs");
@@ -1798,7 +1798,8 @@ public class ProviderProperty2Action extends ActionSupport {
         String providerValue = request.getParameter("taskAssigneeSelection.value");
 
         UserProperty a = this.getTaskAssigneeSelection();
-        if ("providers".equals(radioValue)) {
+
+        if ("provider".equals(radioValue)) {
             a.setValue(providerValue); // providerNo
         } else {
             a.setValue(radioValue); // default or mrp
@@ -2470,14 +2471,29 @@ public class ProviderProperty2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
-        UserProperty prop = saveProperty(providerNo, getPreventionSSOWarningProperty(), UserProperty.PREVENTION_SSO_WARNING);
-        UserProperty prop2 = saveProperty(providerNo, getPreventionISPAWarningProperty(), UserProperty.PREVENTION_ISPA_WARNING);
-        UserProperty prop3 = saveProperty(providerNo, getPreventionNonISPAWarningProperty(), UserProperty.PREVENTION_NON_ISPA_WARNING);
+        String checkboxValue1 = request.getParameter("preventionSSOWarningProperty.checked");
+        String checkboxValue2 = request.getParameter("preventionISPAWarningProperty.checked");
+        String checkboxValue3 = request.getParameter("preventionNonISPAWarningProperty.checked");
+
+        if (preventionSSOWarningProperty == null) {
+            preventionSSOWarningProperty = new UserProperty();
+        }
+        if (preventionISPAWarningProperty == null) {
+            preventionISPAWarningProperty = new UserProperty();
+        }
+        if (preventionNonISPAWarningProperty == null) {
+            preventionNonISPAWarningProperty = new UserProperty();
+        }
+
+        preventionSSOWarningProperty.setChecked(checkboxValue1 != null);
+        preventionISPAWarningProperty.setChecked(checkboxValue2 != null);
+        preventionNonISPAWarningProperty.setChecked(checkboxValue3 != null);
+
+        saveProperty(providerNo, getPreventionSSOWarningProperty(), UserProperty.PREVENTION_SSO_WARNING);
+        saveProperty(providerNo, getPreventionISPAWarningProperty(), UserProperty.PREVENTION_ISPA_WARNING);
+        saveProperty(providerNo, getPreventionNonISPAWarningProperty(), UserProperty.PREVENTION_NON_ISPA_WARNING);
 
         request.setAttribute("status", "success");
-        request.setAttribute("preventionSSOWarningProperty", prop);
-        request.setAttribute("preventionISPAWarningProperty", prop2);
-        request.setAttribute("preventionNonISPAWarningProperty", prop3);
 
         request.setAttribute("providertitle", "provider.preventionPrefs.title");
         request.setAttribute("providermsgPrefs", "provider.preventionPrefs.msgPrefs"); //=Preferences

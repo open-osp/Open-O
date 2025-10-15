@@ -73,7 +73,7 @@
     <table width="600" cellspacing="0" cellpadding="0" align="center">
 
         <!--instead of using css for the border I am using an image so the look is seamless between the table and about_oscar.jpg image-->
-        <td background="../images/about_layout/table_body_bkg.jpg">
+        <td background="<%= request.getContextPath() %>/images/about_layout/table_body_bkg.jpg">
 
             <img src="<%= request.getContextPath() %>/images/about_layout/about_oscar.jpg" border="0">
 

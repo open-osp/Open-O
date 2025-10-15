@@ -21,7 +21,7 @@
 			String trimmedEscapedLinkName=StringEscapeUtils.escapeHtml(AppointmentProviderAdminDayUIBean.getLengthLimitedLinkName(loggedInInfo3, formNameTemp));
 			String escapedLinkName=StringEscapeUtils.escapeHtml(formNameTemp);
 			%>
-				|<a href=# onClick='popupPage2("../form/forwardshortcutname.do?formname=<%=escapedLinkName%>&amp;demographic_no=<%=demographic_no%>&amp;appointmentNo=<%=appointment_no%>")' title='<%=escapedLinkName%>'><%=trimmedEscapedLinkName%></a>
+				|<a href=# onClick='popupPage2("<%= request.getContextPath() %>/form/forwardshortcutname.do?formname=<%=escapedLinkName%>&amp;demographic_no=<%=demographic_no%>&amp;appointmentNo=<%=appointment_no%>")' title='<%=escapedLinkName%>'><%=trimmedEscapedLinkName%></a>
 			<%
 		}
 		

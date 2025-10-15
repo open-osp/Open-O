@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -336,7 +336,7 @@
                             <script language="javascript">
                                 function customWarning() {
                                     if (confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseDrug.msgCustomWarning"/>") == true) {
-                                        window.location.href = 'oscarRx/chooseDrug.do?demographicNo=<%= response.encodeURL(demoNo) %>';
+                                        window.location.href = '<%= request.getContextPath() %>/oscarRx/chooseDrug.do?demographicNo=<%= response.encodeURL(demoNo) %>';
                                     }
                                 }
                             </script>

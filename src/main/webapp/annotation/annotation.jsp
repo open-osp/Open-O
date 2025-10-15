@@ -158,7 +158,7 @@
                 LogAction.addLog(user_no, LogConst.ANNOTATE, display, String.valueOf(tableId), request.getRemoteAddr(), demo, cmn.getNote());
             }
         }
-        response.sendRedirect("../close.html");
+        response.sendRedirect(request.getContextPath() + "/close.html");
     }
 
     //Display revision history

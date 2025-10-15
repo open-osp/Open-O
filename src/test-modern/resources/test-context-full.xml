@@ -105,6 +105,12 @@
     <!-- SessionFactory extracted from EntityManagerFactory for compatibility -->
     <bean id="sessionFactory" factory-bean="&amp;entityManagerFactory" factory-method="getNativeEntityManagerFactory" />
 
+    <!-- Configure HibernateTemplate with AUTO flush mode for tests -->
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="checkWriteOperations" value="false" />
+    </bean>
+
     <!-- JPA EntityManagerFactory - use the SessionFactory we configured -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -143,6 +149,12 @@
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
+                <prop key="hibernate.flushMode">AUTO</prop>
+                <prop key="org.hibernate.flushMode">COMMIT</prop>
+                <prop key="javax.persistence.flush-mode">AUTO</prop>
+                <prop key="hibernate.transaction.flush_before_completion">true</prop>
+                <prop key="hibernate.transaction.auto_close_session">false</prop>
                 <prop key="hibernate.cache.use_second_level_cache">false</prop>
                 <prop key="hibernate.id.new_generator_mappings">true</prop>
                 <prop key="hibernate.archive.autodetection">class,hbm</prop>
@@ -154,10 +166,17 @@
     <!-- JPA support -->
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
-    <!-- TransactionManager -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <!-- TransactionManager - JpaTransactionManager handles both JPA and Hibernate -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" autowire="byName">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <!-- Set default timeout for test transactions -->
+        <property name="defaultTimeout" value="60" />
+        <!-- Ensure Hibernate sessions are handled properly -->
+        <property name="nestedTransactionAllowed" value="true" />
     </bean>
+
+    <!-- Enable annotation-driven transactions -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
 
     <!-- Component scanning disabled - we'll manually define beans instead -->
     <!-- This avoids issues with DAOs trying to access SpringUtils during initialization -->

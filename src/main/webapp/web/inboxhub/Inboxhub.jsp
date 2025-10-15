@@ -52,7 +52,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
     <title>Inboxhub</title>
 </head>
 <body>
-<jsp:include page="../../images/spinner.jsp" flush="true"/>
+<jsp:include page="/images/spinner.jsp" flush="true"/>
 <script>
     const contextPath = "<e:forJavaScript value='${pageContext.request.contextPath}' />";
 </script>

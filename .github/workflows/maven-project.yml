@@ -71,14 +71,13 @@ jobs:
         with:
           compose-file: ".devcontainer/docker-compose.yml"
       
-      - name: Generate make file
-        run: docker exec openo-tomcat-dev .devcontainer/development/scripts/make lock
+      # Removed incorrect 'make lock' - we should validate against committed lock file, not update it
       
       - name: Build project
         run: docker exec openo-tomcat-dev .devcontainer/development/scripts/make install
 
       - name: Run unit tests & build JSP files
-        run: docker exec openo-tomcat-dev mvn package -Pjspc
+        run: docker exec openo-tomcat-dev mvn package -Pjspc,modern-tests -Ddependency.lock.filename=dependencies-lock-modern.json
 
   lint:
     runs-on: ubuntu-latest

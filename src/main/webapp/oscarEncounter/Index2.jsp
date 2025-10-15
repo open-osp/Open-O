@@ -39,7 +39,7 @@
        scope="request"/>
 <%
     long startTime = System.currentTimeMillis();
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String demographic$ = request.getParameter("demographicNo");
     boolean bPrincipalControl = false;
@@ -55,7 +55,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_eChart");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -67,7 +67,7 @@
 <security:oscarSec roleName="<%=roleName$%>" objectName="<%=eChart$%>"
                    rights="o" reverse="<%=false%>">
     You have no rights to access the data!
-    <% response.sendRedirect("../acctLocked.html"); %>
+    <% response.sendRedirect(request.getContextPath() + "/acctLocked.html"); %>
 </security:oscarSec>
 
 <%-- only principal has the save rights --%>
@@ -1243,7 +1243,7 @@
                             NOWRAP>
                             <%
                                 String winName = "Master" + bean.demographicNo;
-                                String url = "../demographic/demographiccontrol.jsp?demographic_no=" + bean.demographicNo + "&displaymode=edit&dboperation=search_detail";
+                                String url = request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + bean.demographicNo + "&displaymode=edit&dboperation=search_detail";
                             %> <a href="#"
                                   style="font-size: 11px; text-decoration: none"
                                   onClick="popupPage(700,1000,'<%=winName%>','<%=url%>'); return false;"
@@ -1253,7 +1253,7 @@
                         </a>&nbsp;<%=bean.patientSex%> <%=bean.patientAge%>
 
                             <a
-                                    href="javascript:popupPage(400,850,'ApptHist','../demographic/demographiccontrol.jsp?demographic_no=<%=bean.demographicNo%>&last_name=<%=bean.patientLastName%>&first_name=<%=bean.patientFirstName%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25')"
+                                    href="javascript:popupPage(400,850,'ApptHist','<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=bean.demographicNo%>&last_name=<%=bean.patientLastName%>&first_name=<%=bean.patientFirstName%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25')"
                                     style="font-size: 11px; text-decoration: none;"
                                     title="Click to see appointment history"><span
                                     style="margin-left: 20px;">Next Appt: <oscar:nextAppt
@@ -1560,7 +1560,7 @@
                                                 <tr>
                                                     <td width='75%'>
                                                         <div class="RowTop"><a href=#
-                                                                               onClick="popupPage(600,700,'<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.popupPage2Window"/>','../report/reportecharthistory.jsp?demographic_no=<%=bean.demographicNo%>');return false;">
+                                                                               onClick="popupPage(600,700,'<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.popupPage2Window"/>','<%= request.getContextPath() %>/report/reportecharthistory.jsp?demographic_no=<%=bean.demographicNo%>');return false;">
                                                             <fmt:setBundle basename="oscarResources"/><fmt:message key="global.encounter"/>: <%=bean.patientLastName %>
                                                             ,
                                                             <%=bean.patientFirstName%>

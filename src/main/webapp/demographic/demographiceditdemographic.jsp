@@ -61,7 +61,7 @@
                    objectName='<%="_demographic$"+demographic$%>' rights="o"
                    reverse="<%=false%>">
     <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.accessDenied"/>
-    <% response.sendRedirect("../acctLocked.html");
+    <% response.sendRedirect(request.getContextPath() + "/acctLocked.html");
         authed = false;
     %>
 </security:oscarSec>
@@ -133,7 +133,7 @@
 <c:set var="ctx" value="${ pageContext.request.contextPath }"/>
 <%
     if (session.getAttribute("user") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
         return;
     }
 
@@ -1011,7 +1011,7 @@
 
                                 <%
                                     if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {%>
-                                <jsp:include page="../admin/IntegratorStatus.jspf"/>
+                                <jsp:include page="/admin/IntegratorStatus.jspf"/>
                                 <%}%>
 
                             </td>
@@ -1228,7 +1228,7 @@
                         %>
                         <tr>
                             <td><a href="#"
-                                   onclick="popup(500,500,'../integrator/manage_linked_clients.jsp?demographicId=<%=demographic.getDemographicNo()%>', 'manage_linked_clients'); return false;">Integrator
+                                   onclick="popup(500,500,'<%= request.getContextPath() %>/integrator/manage_linked_clients.jsp?demographicId=<%=demographic.getDemographicNo()%>', 'manage_linked_clients'); return false;">Integrator
                                 Linking</a>
                             </td>
                         </tr>
@@ -2221,7 +2221,7 @@
                                                                                                         startTimeStr = String.format("%02d", startHour) + ":" + String.format("%02d", startMin);
                                                                                                         endTimeStr = String.format("%02d", startHour) + ":" + String.format("%02d", startMin + timecodeInterval - 1);
 
-                                                                                                        provMap.get(thisProv).get(sortDateStr + "," + qApptWkDay + " " + qApptMonth + "-" + qApptDay).put(startTimeStr + "," + timecodeChar, "../appointment/addappointment.jsp?demographic_no=" + demographic.getDemographicNo() + "&name=" + URLEncoder.encode(demographic.getLastName() + "," + demographic.getFirstName()) + "&provider_no=" + thisProvNo + "&bFirstDisp=true&year=" + qApptYear + "&month=" + qApptMonth + "&day=" + qApptDay + "&start_time=" + startTimeStr + "&end_time=" + endTimeStr + "&duration=" + templateDuration + "&search=true");
+                                                                                                        provMap.get(thisProv).get(sortDateStr + "," + qApptWkDay + " " + qApptMonth + "-" + qApptDay).put(startTimeStr + "," + timecodeChar, request.getContextPath() + "/appointment/addappointment.jsp?demographic_no=" + demographic.getDemographicNo() + "&name=" + URLEncoder.encode(demographic.getLastName() + "," + demographic.getFirstName()) + "&provider_no=" + thisProvNo + "&bFirstDisp=true&year=" + qApptYear + "&month=" + qApptMonth + "&day=" + qApptDay + "&start_time=" + startTimeStr + "&end_time=" + endTimeStr + "&duration=" + templateDuration + "&search=true");
                                                                                                     }
                                                                                                 }
                                                                                             }
@@ -2514,7 +2514,7 @@
                                                                 <%if (hasImportExtra) { %>
                                                                 <a href="javascript:void(0);"
                                                                    title="Extra data from Import"
-                                                                   onclick="window.open('../annotation/importExtra.jsp?display=<%=annotation_display %>&amp;table_id=<%=demographic_no %>&amp;demo=<%=demographic_no %>','anwin','width=400,height=250');">
+                                                                   onclick="window.open('<%= request.getContextPath() %>/annotation/importExtra.jsp?display=<%=annotation_display %>&amp;table_id=<%=demographic_no %>&amp;demo=<%=demographic_no %>','anwin','width=400,height=250');">
                                                                     <img src="<%= request.getContextPath() %>/images/notes.gif" align="right"
                                                                          alt="Extra data from Import" height="16"
                                                                          width="13" border="0"> </a>

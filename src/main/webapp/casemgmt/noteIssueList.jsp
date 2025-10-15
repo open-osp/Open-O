@@ -279,7 +279,7 @@
                 <c:set var="writeAccess" value="${issueCheckList.issueDisplay.writeAccess}" />
                 <c:set var="disabled" value="${!writeAccess}" />
 
-                <input type="checkbox" id="${id}" name="issueCheckList" property="checked" ${disabled ? 'disabled="disabled"' : ''}/>
+                <input type="checkbox" id="${id}" name="issueCheckList[${status.index}].checked" ${disabled ? 'disabled="disabled"' : ''}/>
 
                 <a href="#" onclick="return displayIssue('${winame}');">
                     <c:out value="${issueCheckList.issueDisplay.description}" />
@@ -299,31 +299,31 @@
                 <div id="${winame}" style="margin-left: 20px; display: none;">
                     <div>
                         <div style="width: 50%; float: left; display: inline;">
-                            <input type="radio" name="issueCheckList" property="issue.acute" value="true" onchange="${submitString}"> acute
+                            <input type="radio" name="issueCheckList[${status.index}].issue.acute" value="true" onchange="${submitString}"> acute
                         </div>
                         <div style="width: 50%; float: left; display: inline; clear: right;">
-                            <input type="radio" name="issueCheckList" property="issue.acute" value="false" onchange="${submitString}"> chronic
+                            <input type="radio" name="issueCheckList[${status.index}].issue.acute" value="false" onchange="${submitString}"> chronic
                         </div>
                         <div style="width: 50%; float: left; display: inline;">
-                            <input type="radio" name="issueCheckList" property="issue.certain" value="true" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> certain
+                            <input type="radio" name="issueCheckList[${status.index}].issue.certain" value="true" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> certain
                         </div>
                         <div style="width: 50%; float: left; display: inline; clear: right;">
-                            <input type="radio" name="issueCheckList" property="issue.certain" value="false" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> uncertain
+                            <input type="radio" name="issueCheckList[${status.index}].issue.certain" value="false" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> uncertain
                         </div>
                         <div style="width: 50%; float: left; display: inline;">
-                            <input type="radio" name="issueCheckList" property="issue.major" value="true" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> major
+                            <input type="radio" name="issueCheckList[${status.index}].issue.major" value="true" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> major
                         </div>
                         <div style="width: 50%; float: left; display: inline; clear: right;">
-                            <input type="radio" name="issueCheckList" property="issue.major" value="false" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> not major
+                            <input type="radio" name="issueCheckList[${status.index}].issue.major" value="false" ${disabled ? 'disabled="disabled"' : ''} onchange="${submitString}"> not major
                         </div>
                         <div style="width: 50%; float: left; display: inline;">
-                            <input type="radio" name="issueCheckList" property="issue.resolved" value="true" onchange="${submitString}"> resolved
+                            <input type="radio" name="issueCheckList[${status.index}].issue.resolved" value="true" onchange="${submitString}"> resolved
                         </div>
                         <div style="width: 50%; float: left; display: inline; clear: right;">
-                            <input type="radio" name="issueCheckList" property="issue.resolved" value="false" onchange="${submitString}"> unresolved
+                            <input type="radio" name="issueCheckList[${status.index}].issue.resolved" value="false" onchange="${submitString}"> unresolved
                         </div>
                         <div style="text-align: center;">
-                            <input type="text" name="issueCheckList" property="issueDisplay.role" size="10" ${disabled ? 'disabled="disabled"' : ''} />
+                            <input type="text" name="issueCheckList[${status.index}].issueDisplay.role" size="10" ${disabled ? 'disabled="disabled"' : ''} />
                         </div>
                     </div>
                 </div>

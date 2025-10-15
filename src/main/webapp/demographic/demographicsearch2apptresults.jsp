@@ -195,7 +195,7 @@
         </svg>
         Search Patient
     </h2>
-    <form method="post" name="titlesearch" action="../demographic/demographiccontrol.jsp"
+    <form method="post" name="titlesearch" action="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp"
           onSubmit="return checkTypeIn()">
         <div id="demographicSearch" class="searchBox input-group select-group" style="margin-bottom:10px;">
             <%--    <ul style="display: flex;">--%>
@@ -306,7 +306,7 @@
             <%--   </li>--%>
             <% if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {%>
             <%--        <li>--%>
-            <jsp:include page="../admin/IntegratorStatus.jspf"></jsp:include>
+            <jsp:include page="/admin/IntegratorStatus.jspf"></jsp:include>
             <%--        </li>--%>
             <% } %>
             <%--    </ul>--%>
@@ -367,7 +367,7 @@
         </script>
 
 
-        <form method="post" name="addform" action="../appointment/addappointment.jsp">
+        <form method="post" name="addform" action="<%= request.getContextPath() %>/appointment/addappointment.jsp">
             <input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 
             <table class="table table-condensed table-striped table-responsive">
@@ -660,12 +660,12 @@
         <script language="JavaScript">
 
             function last() {
-                document.nextform.action = "../demographic/demographiccontrol.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nLastPage%>&limit2=<%=strLimit2%>";
+                document.nextform.action = "<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nLastPage%>&limit2=<%=strLimit2%>";
                 //document.nextform.submit();
             }
 
             function next() {
-                document.nextform.action = "../demographic/demographiccontrol.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nNextPage%>&limit2=<%=strLimit2%>";
+                document.nextform.action = "<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?keyword=<%=request.getParameter("keyword")%>&search_mode=<%=request.getParameter("search_mode")%>&displaymode=<%=request.getParameter("displaymode")%>&dboperation=<%=request.getParameter("dboperation")%>&orderby=<%=request.getParameter("orderby")%>&limit1=<%=nNextPage%>&limit2=<%=strLimit2%>";
                 //document.nextform.submit();
             }
 
@@ -674,7 +674,7 @@
         <a href="#" onclick="showHideItem('demographicSearch');" id="searchPopUpButton"
            class="rightButton top">Search</a>
         <div class="bottomBar" style="margin-bottom:10px; margin-top:10px;">
-            <form method="post" name="nextform" action="../demographic/demographiccontrol.jsp">
+            <form method="post" name="nextform" action="<%= request.getContextPath() %>/demographic/demographiccontrol.jsp">
                 <%
                     if (nLastPage >= 0) {
                 %>

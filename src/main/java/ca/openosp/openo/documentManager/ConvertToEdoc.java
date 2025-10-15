@@ -77,7 +77,9 @@ public final class ConvertToEdoc {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
     private static final String DEFAULT_CONTENT_TYPE = "application/pdf";
     private static final String SYSTEM_ID = "-1";
-    private static String contextPath;
+    private static final String DEFAULT_WKHTMLTOPDF_COMMAND = "/usr/bin/wkhtmltopdf";
+    private static final String DEFAULT_WKHTMLTOPDF_ARGS = "--enable-local-file-access --minimum-font-size 10 --print-media-type --encoding utf-8 -T 10mm -L 8mm -R 8mm --disable-javascript";
+    
     private static String realPath;
     private static final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 
@@ -170,7 +172,6 @@ public final class ConvertToEdoc {
             providerNo = formTransportContainer.getLoggedInInfo().getLoggedInProviderNo();
         }
         // this should be the same for every thread.
-        ConvertToEdoc.contextPath = formTransportContainer.getContextPath();
         ConvertToEdoc.realPath = formTransportContainer.getRealPath();
 
         EDoc edoc = null;
@@ -211,7 +212,6 @@ public final class ConvertToEdoc {
      */
     public synchronized static Path saveAsTempPDF(FormTransportContainer formTransportContainer) {
         String htmlString = formTransportContainer.getHTML();
-        ConvertToEdoc.contextPath = formTransportContainer.getContextPath();
         ConvertToEdoc.realPath = formTransportContainer.getRealPath();
         String filename = buildFilename(formTransportContainer.getFormName(), formTransportContainer.getDemographicNo());
         return execute(htmlString, filename);
@@ -308,30 +308,71 @@ public final class ConvertToEdoc {
             throws DocumentException, IOException {
 
         OscarProperties props = OscarProperties.getInstance();
-        String cmd = props.getProperty("WKHTMLTOPDF_COMMAND");
-        String args = props.getProperty("WKHTMLTOPDF_ARGS");
+        String cmd = props.getProperty("WKHTMLTOPDF_COMMAND", DEFAULT_WKHTMLTOPDF_COMMAND);
+        String args = props.getProperty("WKHTMLTOPDF_ARGS", DEFAULT_WKHTMLTOPDF_ARGS);
 
         EDocConverterInterface converter = "internal".equalsIgnoreCase(cmd) ? new InternalEDocConverter() : new ExternalEDocConverter(cmd, args);
 
         try {
             converter.convert(document, os);
         } catch(Exception e) {
-            logger.error("Primary conversion failed", e);
-            fallbackRender(document, os);
+            logger.warn("Primary PDF conversion failed, attempting fallback: " + e.getMessage());
+
+            try {
+                os.reset();
+                fallbackRender(document, os);
+            } catch (Exception fallbackError) {
+                logger.error("Fallback PDF conversion also failed", fallbackError);
+                String combinedMessage = "PDF conversion failed with all methods. "
+                        + "Primary error: " + e.getMessage()
+                        + "; Fallback error: " + fallbackError.getMessage();
+                DocumentException docEx = new DocumentException(combinedMessage);
+                docEx.initCause(fallbackError);
+                throw docEx;
+            }
         }
     }
 
     private static void fallbackRender(String document, OutputStream os)
-            throws DocumentException, IOException {
+        throws DocumentException, IOException {
+        // Prepare document for Flying Saucer's strict XHTML requirements
+        Document doc = prepareDocumentForFlyingSaucer(document);
+        
         ITextRenderer renderer = new ITextRenderer();
         SharedContext sharedContext = renderer.getSharedContext();
         sharedContext.setPrint(true);
         sharedContext.setInteractive(false);
         sharedContext.setReplacedElementFactory(new ReplacedElementFactoryImpl());
         sharedContext.getTextRenderer().setSmoothingThreshold(0);
-        renderer.setDocumentFromString(document, null);
+        
+        renderer.setDocumentFromString(doc.outerHtml(), null);
         renderer.layout();
         renderer.createPDF(os, true);
+    }
+
+    /**
+     * Prepare document for Flying Saucer which requires strict XHTML
+     */
+    private static Document prepareDocumentForFlyingSaucer(String document) {
+        Document doc = Jsoup.parse(document);
+        
+        // Flying Saucer requires XML/XHTML syntax
+        doc.outputSettings()
+            .syntax(Document.OutputSettings.Syntax.xml)  // Self-closes tags automatically
+            .escapeMode(Entities.EscapeMode.xhtml)
+            .charset("UTF-8")
+            .prettyPrint(false);
+        
+        // Remove scripts (Flying Saucer can't execute them)
+        doc.select("script").remove();
+        
+        // Ensure img tags have alt attributes (XHTML requirement)
+        doc.select("img:not([alt])").attr("alt", "");
+        
+        // Ensure input tags have type attribute
+        doc.select("input:not([type])").attr("type", "text");
+        
+        return doc;
     }
 
     public static Document getDocument(final String documentString, String realPath) {
@@ -359,12 +400,13 @@ public final class ConvertToEdoc {
 
         Document document = Jsoup.parse(documentString);
         document.outputSettings()
-            .syntax(Document.OutputSettings.Syntax.xml)  // Enforce XML syntax
+            .syntax(Document.OutputSettings.Syntax.html)  // Use HTML syntax for better compatibility
             .escapeMode(Entities.EscapeMode.xhtml)
+            .charset("UTF-8")
             .prettyPrint(false);
 
         /*
-         * remove invalid, suspicious, and CDN links
+         * Process and validate resource paths
          */
         validateResourcePaths(document);
 
@@ -565,10 +607,8 @@ public final class ConvertToEdoc {
     private static String getRealPath(String uri) {
         String contextRealPath = "";
 
-        logger.debug("Context path set to " + contextPath);
-
+        // Try to resolve relative paths
         if (ConvertToEdoc.realPath != null) {
-            logger.debug("Relative file path " + uri);
             try {
 				Path basePath = Paths.get(ConvertToEdoc.realPath);
 				String fileNameToFind = Paths.get(uri).getFileName().toString();
@@ -590,8 +630,6 @@ public final class ConvertToEdoc {
 				logger.error("Error while searching file in directory: " + ConvertToEdoc.realPath, e);
 			}
         }
-
-        logger.debug("Absolute file path " + contextRealPath);
 
         return contextRealPath;
     }

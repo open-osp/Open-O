@@ -47,6 +47,22 @@ import ca.openosp.openo.prescript.data.RxPatientData;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for displaying and managing patient allergies.
+ * <p>
+ * This action handles:
+ * <ul>
+ * <li>Displaying patient allergy information</li>
+ * <li>Reordering allergies in the display list</li>
+ * <li>Managing RxSessionBean for prescription context</li>
+ * <li>Routing to appropriate JSP based on RX3 configuration</li>
+ * </ul>
+ * <p>
+ * Supports both legacy (ShowAllergies.jsp) and RX3 (ShowAllergies2.jsp) interfaces
+ * based on system and user preferences.
+ *
+ * @since 2006-04-20
+ */
 public final class RxShowAllergy2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -56,9 +72,24 @@ public final class RxShowAllergy2Action extends ActionSupport {
     private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
 
 
+    /**
+     * Handles allergy reordering and redirects to the allergies display page.
+     * <p>
+     * Reorders the allergy based on request parameters and redirects back to
+     * the allergies list page for the specified demographic.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>demographicNo - String demographic number of the patient</li>
+     * <li>allergyId - Integer ID of the allergy to reorder</li>
+     * <li>direction - String direction to move ("up" or "down")</li>
+     * </ul>
+     *
+     * @return String NONE (redirect handled manually)
+     * @throws RuntimeException if redirect fails
+     */
     public String reorder() {
         reorder(request);
-        //ActionForward fwd = mapping.findForward("success-redirect");
         try {
             response.sendRedirect(request.getContextPath() + "/oscarRx/ShowAllergies.jsp?demographicNo=" + request.getParameter("demographicNo"));
         } catch (IOException e) {
@@ -67,6 +98,31 @@ public final class RxShowAllergy2Action extends ActionSupport {
         return NONE;
     }
 
+    /**
+     * Main execution method for displaying patient allergies.
+     * <p>
+     * This method:
+     * <ul>
+     * <li>Checks security privileges for allergy access</li>
+     * <li>Determines RX3 interface preference (system-wide or user-specific)</li>
+     * <li>Sets up or retrieves RxSessionBean for the session</li>
+     * <li>Loads patient data including allergies</li>
+     * <li>Redirects to appropriate allergies display JSP</li>
+     * </ul>
+     * <p>
+     * Routes to reorder() method if method parameter equals "reorder".
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>demographicNo - String demographic number of the patient (required)</li>
+     * <li>view - String view mode (optional)</li>
+     * <li>method - String method name for routing (optional, "reorder" supported)</li>
+     * </ul>
+     *
+     * @return String "failure" if demographicNo is missing, null for redirect
+     * @throws IOException if redirect fails
+     * @throws ServletException if servlet processing fails
+     */
     public String execute()
             throws IOException, ServletException {
 
@@ -139,6 +195,25 @@ public final class RxShowAllergy2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Reorders allergies in the patient's allergy list by swapping positions.
+     * <p>
+     * Moves the specified allergy up or down in the display order by swapping
+     * position values with the adjacent allergy. Changes are persisted to the database.
+     * <p>
+     * Direction "up" moves the allergy earlier in the list (lower index).
+     * Direction "down" moves the allergy later in the list (higher index).
+     * Boundary conditions are handled (cannot move first item up or last item down).
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>allergyId - Integer ID of the allergy to reorder</li>
+     * <li>demographicNo - String demographic number of the patient</li>
+     * <li>direction - String direction to move ("up" or "down")</li>
+     * </ul>
+     *
+     * @param request HttpServletRequest containing reordering parameters
+     */
     private void reorder(HttpServletRequest request) {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 

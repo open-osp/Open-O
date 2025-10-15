@@ -27,7 +27,7 @@
             // Generating an eform configuration.
             if (typeof options == "undefined" || options == null || options.eform) {
                 options = typeof options == "undefined" ? {} : options;
-                element.sigHTML = "../signature_pad/tabletSignature.jsp?inWindow=true&saveToDB=true&demographicNo=";
+                element.sigHTML = "<%= request.getContextPath() %>/signature_pad/tabletSignature.jsp?inWindow=true&saveToDB=true&demographicNo=";
                 element.signatureDisplay = "#signatureDisplay";
                 element.signatureInput = "#signatureInput";
                 element.signatureValue = "#signatureValue"

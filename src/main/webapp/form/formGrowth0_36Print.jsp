@@ -5,7 +5,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -65,7 +65,7 @@
         cfgGraphic = request.getParameterValues("__cfgGraphicFile");
     }
 
-    //response.sendRedirect("<%= request.getContextPath() %>/form/createpdf");
+    //response.sendRedirect(request.getContextPath() + "/form/createpdf");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>

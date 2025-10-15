@@ -295,7 +295,7 @@
         }
 
         function openPatient(demographicNo) {
-            popupPage(700, 1200, '../demographic/demographiccontrol.jsp?demographic_no=' + demographicNo + '&displaymode=edit&dboperation=search_detail');
+            popupPage(700, 1200, '<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=' + demographicNo + '&displaymode=edit&dboperation=search_detail');
         }
 
         jQuery(document).ready(function () {

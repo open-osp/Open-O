@@ -29,7 +29,7 @@
 <%@ page import="java.util.ResourceBundle"%>
 <%
     if (session.getValue("user") == null)
-        response.sendRedirect("../logout.htm");
+        response.sendRedirect(request.getContextPath() + "/logout.htm");
 
     ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
 

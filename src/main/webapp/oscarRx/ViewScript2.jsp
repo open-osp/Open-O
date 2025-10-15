@@ -68,7 +68,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -270,7 +270,7 @@
                 }
                 <%}
             }%>
-                let action = "../form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
+                let action = "<%= request.getContextPath() %>/form/createcustomedpdf?__title=Rx&__method=" + method + "&useSC=" + useSC + "&scAddress=" + scAddress + "&rxPageSize=" + rxPageSize + "&scriptId=" + scriptId;
                 document.getElementById("preview").contentWindow.document.getElementById("preview2Form").action = action;
                 if (method !== "oscarRxFax") {
                     document.getElementById("preview").contentWindow.document.getElementById("preview2Form").target = "_blank";
@@ -669,7 +669,7 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
                                         }
 
                                         function clearPendingFax() {
-                                            parent.window.location = "../oscarRx/close.html";
+                                            parent.window.location = "<%= request.getContextPath() %>/oscarRx/close.html";
                                             parent.myLightWindow.deactivate();
                                         }
 

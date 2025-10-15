@@ -6,7 +6,7 @@
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting,_admin" rights="r"
                    reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_report&type=_admin.reporting&type=_admin");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting&type=_admin");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -154,7 +154,7 @@
                 <tr bgcolor="#FFFFFF">
                     <div align="right"><a
                             href="javascript: function myFunction() {return false; }"
-                            onClick="popupPage(700,720,'../../../oscarReport/manageProvider.jsp?action=billingreport')">
+                            onClick="popupPage(700,720,'<%= request.getContextPath() %>/oscarReport/manageProvider.jsp?action=billingreport')">
                         <font face="Arial, Helvetica, sans-serif" size="1">Manage
                             Provider List</font> </a></div>
                 </tr>

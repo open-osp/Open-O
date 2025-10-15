@@ -39,7 +39,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_lab");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -128,7 +128,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
 
 <body>
 <!-- form forwarding of the lab -->
-<form name="reassignForm" method="post" action="Forward.do"><input
+<form name="reassignForm" method="post" action="<%= request.getContextPath() %>/oscarMDS/Forward.do"><input
         type="hidden" name="flaggedLabs"
         value="<%= request.getParameter("segmentID") %>"/> <input
         type="hidden" name="selectedProviders" value=""/>

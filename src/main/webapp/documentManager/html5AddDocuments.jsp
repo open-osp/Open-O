@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -130,7 +130,7 @@
     <script type="text/javascript">
 
         // add dedicated css
-        noswfupload.css("../share/css/noswfupload.css", "../share/css/noswfupload-icons.css");
+        noswfupload.css("<%= request.getContextPath() %>/share/css/noswfupload.css", "<%= request.getContextPath() %>/share/css/noswfupload-icons.css");
         var upload_url;//global to attached providers no and queue no.
 
         onload = function () {

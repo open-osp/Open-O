@@ -121,8 +121,10 @@ public abstract class OpenOWebTestBase extends OpenOTestBase {
         // Replace the SpringUtils bean with our mock
         replaceSpringUtilsBean(SecurityInfoManager.class, mockSecurityInfoManager);
 
-        // Set up LoggedInInfo in session
-        mockSession.setAttribute("loggedInInfo", mockLoggedInInfo);
+        // Set up LoggedInInfo in session with the correct key
+        // LoggedInInfo uses a specific key pattern for session storage
+        String loggedInInfoKey = LoggedInInfo.class.getName() + ".LOGGED_IN_INFO_KEY";
+        mockSession.setAttribute(loggedInInfoKey, mockLoggedInInfo);
     }
 
     /**

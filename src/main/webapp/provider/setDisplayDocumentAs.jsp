@@ -29,8 +29,8 @@
 <%@page import="java.util.*" %>
 <%@ page import="java.util.ResourceBundle"%>
 <%
-    if (session.getValue("user") == null) response.sendRedirect("../logout.htm");
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.htm");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
     String providertitle = (String) request.getAttribute("providertitle");

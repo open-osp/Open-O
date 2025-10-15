@@ -114,22 +114,35 @@ public class DemographicManagerImpl implements DemographicManager {
     @Autowired
     AppointmentManager appointmentManager;
 
-    @Override
-    public Demographic getDemographic(LoggedInInfo loggedInInfo, Integer demographicId)
-            throws PatientDirectiveException {
-        checkPrivilege(loggedInInfo, SecurityInfoManager.READ, (demographicId != null) ? demographicId : null);
+    /**
+	 *  Get the patient demographic profile.
+	 *  This particular method also sets the Demographic.MRP and Demographic.nextAppointment
+	 *  properties.
+	 * @param loggedInInfo
+	 * @param demographicId
+	 * @return
+	 * @throws PatientDirectiveException
+	 */
+     @Override
+     public Demographic getDemographic(LoggedInInfo loggedInInfo, Integer demographicId) throws PatientDirectiveException {
+        checkPrivilege(loggedInInfo, SecurityInfoManager.READ, (demographicId != null) ? demographicId : null); 
+        Demographic demographic = demographicDao.getDemographicById(demographicId); 
+        if(demographic != null) {
+			this.getMRP(loggedInInfo, demographic);
+			this.getNextAppointmentDate(loggedInInfo, demographic);
+		}
+		return demographic;
+     }
 
-        Demographic result = demographicDao.getDemographicById(demographicId);
-
-        // --- log action ---
-        // if (result != null) {
-        // LogAction.addLog(loggedInInfo, "DemographicManager.getDemographic", null,
-        // null, ""+demographicId, null);
-        // }
-
-        return (result);
-    }
-
+    /**
+	 *  Get the patient demographic profile.
+	 *  This particular method also sets the Demographic.MRP and Demographic.nextAppointment
+	 *  properties.
+	 * @param loggedInInfo
+	 * @param demographicNo
+	 * @return
+	 * @throws PatientDirectiveException
+	 */
     @Override
     public Demographic getDemographic(LoggedInInfo loggedInInfo, String demographicNo) {
         checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
@@ -140,7 +153,6 @@ public class DemographicManagerImpl implements DemographicManager {
             return null;
         }
         return getDemographic(loggedInInfo, demographicId);
-
     }
 
     @Override

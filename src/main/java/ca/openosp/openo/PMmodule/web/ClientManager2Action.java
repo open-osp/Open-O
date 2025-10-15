@@ -378,7 +378,7 @@ public class ClientManager2Action extends ActionSupport {
         // for Vaccine Provider
         if (roles.indexOf("Vaccine Provider") != -1) {
             try {
-                response.sendRedirect("/VaccineProviderReport.do?id=" + id);
+                response.sendRedirect(request.getContextPath() + "/VaccineProviderReport.do?id=" + id);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

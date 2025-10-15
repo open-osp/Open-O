@@ -75,7 +75,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_msg");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_msg");%>
 </security:oscarSec>
 <%
     // Exit if user is not authorized
@@ -139,7 +139,7 @@
     if (bean == null) {
         bean = (MsgSessionBean) request.getSession().getAttribute("msgSessionBean");
         if (bean == null) {
-            response.sendRedirect("errorpage.jsp?message=Session expired");
+            response.sendRedirect(request.getContextPath() + "/errorpage.jsp?message=Session expired");
             return;
         }
     }
@@ -197,7 +197,7 @@
                         <td style="text-align: right">
 
                             <a href="javascript:void(0)"
-                               onclick="javascript:popupPage(600,700,'../oscarEncounter/About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
+                               onclick="javascript:popupPage(600,700,'<%= request.getContextPath() %>/oscarEncounter/About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
                         </td>
                     </tr>
                 </table>

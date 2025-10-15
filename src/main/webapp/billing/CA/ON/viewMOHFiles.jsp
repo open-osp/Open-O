@@ -44,7 +44,7 @@
                 location.href = "<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp";
                 return;
             } else if (fileType == "P" || fileType == "S") {
-                form.action = "/<%= OscarProperties.getInstance().getProperty("project_home") %>/servlet/oscar.DocumentUploadServlet";
+                form.action = "<%= request.getContextPath() %>/servlet/ca.openosp.DocumentUploadServlet";
             } else if (fileType == "L") {
                 form.action = "<%= request.getContextPath() %>/billing/CA/ON/billingLreport.jsp";
             } else {

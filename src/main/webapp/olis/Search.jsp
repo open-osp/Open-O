@@ -28,7 +28,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
 <%
-    if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
 

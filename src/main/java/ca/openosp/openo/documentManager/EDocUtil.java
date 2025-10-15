@@ -52,6 +52,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.pdmodel.PDDocument;
+
 import ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
@@ -1214,25 +1215,21 @@ public final class EDocUtil {
         
         try {
             String docDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-            if (docDir == null || docDir.trim().isEmpty()) {
-                throw new IllegalStateException("DOCUMENT_DIR is not configured");
-            }
-            
+
             File documentDir = new File(docDir);
             String canonicalDocDir = documentDir.getCanonicalPath();
-            
-            String baseFileName = inputPath.getFileName().toString();
-            
-            // Always resolve the file within the document directory
-            File file = new File(documentDir, baseFileName);
-            
+
+            String canonicalTempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalPath(); 
+
             // Get the canonical path to resolve any symbolic links or relative paths
-            String canonicalPath = file.getCanonicalPath();
+            File inputFile = inputPath.toFile();
+            String canonicalPath = inputFile.getCanonicalPath();
             
             // Validate that the resolved path is within the allowed document directory
-            if (!canonicalPath.startsWith(canonicalDocDir + File.separator)) {
-                logger.warn("Path is outside of the document directory: " + fileName);
-                throw new SecurityException("Access denied: File is outside the document directory");
+            if (!canonicalPath.startsWith(canonicalDocDir + File.separator) && 
+                !canonicalPath.startsWith(canonicalTempDir + File.separator)) {
+                logger.warn("Path is outside of the allowed directories: " + fileName);
+                throw new SecurityException("Access denied: File is outside the allowed directories");
             }
             
             return canonicalPath;

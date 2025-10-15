@@ -80,7 +80,7 @@ public class MessagingManagerImpl implements MessagingManager {
 
     /**
      * PREFERRED METHOD
-     * Get the entire inbox for the logged-in providers only.
+     * Get the entire inbox for the logged-in provider only.
      * Results can be reduced by specifying the message status and/or a result limit.
      *
      * @param loggedInInfo
@@ -237,7 +237,7 @@ public class MessagingManagerImpl implements MessagingManager {
         }
 
         int count = 0;
-        // get all messages by providers.
+        // get all messages by provider.
         List<MessageList> messageList = messageListDao.findUnreadByProvider(providerNo);
 
         if (messageList != null) {
@@ -292,7 +292,7 @@ public class MessagingManagerImpl implements MessagingManager {
     }
 
     /**
-     * Set the message opened by this local providers from new to read. Matching providers numbers from
+     * Set the message opened by this local provider from new to read. Matching provider numbers from
      * remote locations will be ignored.
      *
      * @param loggedInInfo

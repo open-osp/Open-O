@@ -140,7 +140,7 @@
                 document.serviceform.submit();
             }
             if (saveTemp == 1) {
-                popupPage(30, 200, '../provider/notice.htm');
+                popupPage(30, 200, '<%= request.getContextPath() %>/provider/notice.htm');
                 document.serviceform.target = "printlocation";
                 document.serviceform.cmd.value = "Save";
                 document.serviceform.submit();
@@ -167,7 +167,7 @@
 </head>
 <body onLoad="setfocus()" bgcolor="#c4e9f6" bgproperties="fixed"
       topmargin="0" leftmargin="1" rightmargin="1">
-<form name="serviceform" action="../provider/providercontrol.jsp"
+<form name="serviceform" action="<%= request.getContextPath() %>/provider/providercontrol.jsp"
       method="POST" onSubmit="return (onSubmitForm());">
     <%
         //if bNewForm is false (0), then it should be able to display xml data.
@@ -274,7 +274,7 @@
                         . </a> <input type="hidden" name="oox" value="0"> <input
                             type="hidden" name="ooy" value="0"> <input type="hidden"
                                                                        name="cmd" value=""> <%
-                        String newFormURL = "../provider/providercontrol.jsp?";
+                        String newFormURL = request.getContextPath() + "/provider/providercontrol.jsp?";
                         if (request.getParameter("demographic_no") != null)
                             newFormURL += "demographic_no=" + request.getParameter("demographic_no");
                         if (request.getParameter("appointment_no") != null)
@@ -1438,7 +1438,7 @@
     </table>
     <%
         if (bNewList) {
-            out.println(risks.doStuff(new String("../webapps/" + oscarVariables.getProperty("project_home") + "/providers/obarrisks_99_12.xml")));
+            out.println(risks.doStuff(new String(application.getRealPath("/providers/obarrisks_99_12.xml"))));
         }
     %>
 </form>

@@ -57,7 +57,7 @@
             CaseManagementEntryFormBean form=(CaseManagementEntryFormBean) session.getAttribute(sessionFrmName);
             request.setAttribute("caseManagementEntryForm", form);
 
-        int size=form.getIssueCheckList().length;
+        int size = (form.getIssueCheckList() != null) ? form.getIssueCheckList().size() : 0;
 
         if (session.getAttribute("newNote")!=null && "true".equalsIgnoreCase((String)session.getAttribute("newNote")))
         {%>

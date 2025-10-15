@@ -59,7 +59,7 @@
     reverse="true">
   <%
     authed = false;
-    response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.backup");
+    response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.backup");
   %>
 </security:oscarSec>
 <%

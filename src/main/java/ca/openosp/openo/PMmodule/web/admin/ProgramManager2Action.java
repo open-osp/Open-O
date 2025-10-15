@@ -96,6 +96,30 @@ import ca.openosp.openo.services.security.RolesManager;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for comprehensive program management in the PMmodule.
+ * <p>
+ * This action handles all aspects of program administration including:
+ * <ul>
+ * <li>Program CRUD operations (create, read, update, delete)</li>
+ * <li>Program provider management</li>
+ * <li>Team management and team-provider/client assignments</li>
+ * <li>Program access control and role assignments</li>
+ * <li>Functional user management</li>
+ * <li>Client status management</li>
+ * <li>Service restriction settings</li>
+ * <li>Vacancy and vacancy template management</li>
+ * <li>Program queue management</li>
+ * <li>Program signature tracking for audit</li>
+ * <li>Remote referral integration via CAISI Integrator</li>
+ * </ul>
+ * <p>
+ * The action uses method-based routing where the "method" request parameter
+ * determines which operation to execute. All properties are automatically
+ * populated by Struts 2 property injection.
+ *
+ * @since 2005-10-01
+ */
 public class ProgramManager2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -215,6 +239,35 @@ public class ProgramManager2Action extends ActionSupport {
     }
 
 
+    /**
+     * Main execution method that routes to appropriate sub-methods based on method parameter.
+     * <p>
+     * Routes to 34 different methods for program management operations:
+     * <ul>
+     * <li>list() - Default, lists programs (filtered or all)</li>
+     * <li>edit/add - Program form display and creation</li>
+     * <li>save - Save program</li>
+     * <li>delete - Delete program</li>
+     * <li>save_provider/edit_provider/delete_provider - Provider management</li>
+     * <li>save_team/edit_team/delete_team/assign_team/assign_team_client/remove_team - Team operations</li>
+     * <li>save_access/edit_access/delete_access - Access control</li>
+     * <li>save_function/edit_function/delete_function - Functional user management</li>
+     * <li>save_status/edit_status/delete_status/assign_status_client - Client status</li>
+     * <li>save_restriction_settings/enable_restriction/disable_restriction - Service restrictions</li>
+     * <li>save_vacancy/save_vacancy_template/viewVacancyTemplate/chooseTemplate - Vacancy management</li>
+     * <li>activeTmplStatus/inactiveTmplStatus/saveVacancyStatus - Vacancy template status</li>
+     * <li>remove_queue/remove_remote_queue - Queue management</li>
+     * <li>programSignatures - Signature display</li>
+     * <li>assign_role - Role assignment</li>
+     * </ul>
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>method - String method name (determines routing)</li>
+     * </ul>
+     *
+     * @return String result name for Struts 2 result mapping
+     */
     public String execute() {
         String method = request.getParameter("method");
         if ("edit".equals(method)) {
@@ -374,8 +427,21 @@ public class ProgramManager2Action extends ActionSupport {
         return "edit";
     }
 
+    /**
+     * Loads program signatures for display.
+     * <p>
+     * Retrieves all signatures associated with a program for audit tracking.
+     * Signatures are created whenever a program is modified to track who made
+     * changes and when.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>programId - String ID of the program</li>
+     * </ul>
+     *
+     * @return String "programSignatures" to forward to signatures view
+     */
     public String programSignatures() {
-        //DynaActionForm programForm = (DynaActionForm) form;
         String programId = request.getParameter("programId");
         if (programId != null) {
             // List<ProgramSignature> pss = programManager.getProgramSignatures(Integer.valueOf(programId));

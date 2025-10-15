@@ -30,7 +30,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.Spring;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.FlowSheetDrugDao;
@@ -45,6 +44,20 @@ import ca.openosp.openo.utility.SpringUtils;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for managing flowsheet drug and diagnosis associations.
+ * <p>
+ * This action handles saving associations between:
+ * <ul>
+ * <li>Flowsheets and drugs (via ATC codes)</li>
+ * <li>Flowsheets and diagnoses (via diagnosis codes and types)</li>
+ * </ul>
+ * <p>
+ * These associations are used to link clinical flowsheets with relevant
+ * medications and diagnoses for patient care tracking and documentation.
+ *
+ * @since 2006-04-20
+ */
 public class FlowSheetDrug2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -54,6 +67,23 @@ public class FlowSheetDrug2Action extends ActionSupport {
     private FlowSheetDxDao flowSheetDxDao = SpringUtils.getBean(FlowSheetDxDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    /**
+     * Main execution method that routes to appropriate sub-methods based on method parameter.
+     * <p>
+     * Routes to:
+     * <ul>
+     * <li>save() - Saves flowsheet-drug association</li>
+     * <li>dxSave() - Saves flowsheet-diagnosis association</li>
+     * </ul>
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>method - String method name ("save" or "dxSave")</li>
+     * </ul>
+     *
+     * @return String result from routed method, or null if no method specified
+     * @throws Exception if persistence or security check fails
+     */
     @Override
     public String execute() throws Exception {
         if ("save".equals(request.getParameter("method"))) {
@@ -63,10 +93,27 @@ public class FlowSheetDrug2Action extends ActionSupport {
             return dxSave();
         }
         log2.debug("AnnotationAction-unspec");
-        //return setup();
         return null;
     }
 
+    /**
+     * Saves a flowsheet-drug association using ATC code.
+     * <p>
+     * Creates a new FlowSheetDrug record linking a flowsheet template to a specific
+     * drug identified by its ATC (Anatomical Therapeutic Chemical) code for a patient.
+     * Requires write privilege for the demographic.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>flowsheet - String flowsheet template name</li>
+     * <li>demographic - String demographic number</li>
+     * <li>atcCode - String ATC code of the drug</li>
+     * </ul>
+     *
+     * @return String JSP path with query parameters for redirect to flowsheet
+     * @throws Exception if persistence fails
+     * @throws SecurityException if user lacks write privilege for demographic
+     */
     public String save() throws Exception {
         String flowsheet = request.getParameter("flowsheet");
         String demographicNo = request.getParameter("demographic");
@@ -86,17 +133,28 @@ public class FlowSheetDrug2Action extends ActionSupport {
 
         flowSheetDrugDao.persist(cust);
 
-        /*ActionForward ff = mapping.findForward("success");
-        //ff.setRedirect(true);
-        ActionForward af = new ActionForward(ff.getPath() + "?demographic_no=" + demographicNo + "&template=" + flowsheet, true);
-
-
-        //request.setAttribute("demographic", demographicNo);
-        //request.setAttribute("flowsheet", flowsheet);
-        return af;*/
         return "/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=" + demographicNo + "&template=" + flowsheet;
     }
 
+    /**
+     * Saves a flowsheet-diagnosis association using diagnosis code and type.
+     * <p>
+     * Creates a new FlowSheetDx record linking a flowsheet template to a specific
+     * diagnosis identified by its code and type (e.g., ICD-9, ICD-10) for a patient.
+     * Requires write privilege for the demographic.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>flowsheet - String flowsheet template name</li>
+     * <li>demographic - String demographic number</li>
+     * <li>dxCode - String diagnosis code</li>
+     * <li>dxCodeType - String diagnosis code type (e.g., "icd9", "icd10")</li>
+     * </ul>
+     *
+     * @return String JSP path with query parameters for redirect to flowsheet
+     * @throws Exception if persistence fails
+     * @throws SecurityException if user lacks write privilege for demographic
+     */
     public String dxSave() throws Exception {
         String flowsheet = request.getParameter("flowsheet");
         String demographicNo = request.getParameter("demographic");
@@ -119,16 +177,6 @@ public class FlowSheetDrug2Action extends ActionSupport {
 
         flowSheetDxDao.persist(cust);
 
-        /*ActionForward ff = mapping.findForward("success");
-        //ff.setRedirect(true);
-        ActionForward af = new ActionForward(ff.getPath() + "?demographic_no=" + demographicNo + "&template=" + flowsheet, true);
-
-
-        //request.setAttribute("demographic", demographicNo);
-        //request.setAttribute("flowsheet", flowsheet);
-        return af;*/
         return "/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp?demographic_no=" + demographicNo + "&template=" + flowsheet;
     }
-
-
 }

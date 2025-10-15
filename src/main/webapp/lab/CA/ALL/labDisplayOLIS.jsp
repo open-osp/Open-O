@@ -35,7 +35,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_lab");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -576,7 +576,7 @@
         }
 
         function linkreq(rptId, reqId) {
-            var link = "../../LinkReq.jsp?table=hl7TextMessage&rptid=" + rptId + "&reqid=" + reqId + "<%=demographicID != null ? "&demographicNo=" + demographicID : ""%>";
+            var link = "<%= request.getContextPath() %>/lab/LinkReq.jsp?table=hl7TextMessage&rptid=" + rptId + "&reqid=" + reqId + "<%=demographicID != null ? "&demographicNo=" + demographicID : ""%>";
             window.open(link, "linkwin", "width=500, height=200");
         }
 
@@ -598,7 +598,7 @@
 
 <body style="width:800px">
 <!-- form forwarding of the lab -->
-<form name="reassignForm" method="post" action="Forward.do">
+<form name="reassignForm" method="post" action="<%= request.getContextPath() %>/lab/CA/ALL/Forward.do">
     <input type="hidden" name="flaggedLabs" value="<%= segmentID %>"/>
     <input type="hidden" name="selectedProviders" value=""/>
     <input type="hidden" name="labType" value="HL7"/>
@@ -626,7 +626,7 @@
                             <% } %>
                             <input type="button" class="smallButton"
                                    value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.index.btnForward"/>"
-                                   onClick="popupStart(300, 400, '../../../oscarMDS/SelectProvider.jsp', 'providerselect')">
+                                   onClick="popupStart(300, 400, '<%= request.getContextPath() %>/oscarMDS/SelectProvider.jsp', 'providerselect')">
                             <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/> "
                                    onClick="window.close()">
                             <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> " onClick="printPDF()">
@@ -1871,7 +1871,7 @@
                     <% } %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXResult(obr, obx), status) %>
                         </td>
@@ -1893,7 +1893,7 @@
                     %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXSNResult(obr, obx), status) %>
                         </td>
@@ -1929,7 +1929,7 @@
                     %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXTMResult(obr, obx), status) %>
                         </td>
@@ -1942,7 +1942,7 @@
                     %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXDTResult(obr, obx), status) %>
                         </td>
@@ -1955,7 +1955,7 @@
                     %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXTSResult(obr, obx), status) %>
                         </td>
@@ -1969,7 +1969,7 @@
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td colspan="7" valign="top"
                             align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                     </tr>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
@@ -1996,7 +1996,7 @@
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td colspan="7" valign="top"
                             align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                     </tr>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
@@ -2058,7 +2058,7 @@
                     %>
                     <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="<%=lineClass%>">
                         <td valign="top" align="leftZOR"><%= obrFlag ? "&nbsp; &nbsp; &nbsp;" : "&nbsp;" %><a
-                                href="javascript:popupStart('660','900','../ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
+                                href="javascript:popupStart('660','900','${pageContext.request.contextPath}/lab/CA/ON/labValues.jsp?testName=<%=obxName%>&demo=<%=demographicID%>&labType=HL7&identifier='+encodeURIComponent('<%= handler.getOBXIdentifier(obr, obx)%>'))"><%=obxDisplayName %>
                         </a></td>
                         <td align="right"><%= strikeOutInvalidContent(handler.getOBXResult(obr, obx), status) %>
                         </td>
@@ -2132,7 +2132,7 @@
                             <% } %>
                             <input type="button" class="smallButton"
                                    value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.index.btnForward"/>"
-                                   onClick="popupStart(300, 400, '../../../oscarMDS/SelectProvider.jsp', 'providerselect')">
+                                   onClick="popupStart(300, 400, '<%= request.getContextPath() %>/oscarMDS/SelectProvider.jsp', 'providerselect')">
                             <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/> "
                                    onClick="window.close()">
                             <input type="button" value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> " onClick="printPDF()">

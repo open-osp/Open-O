@@ -43,7 +43,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -55,7 +55,7 @@
     <head>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="SelectPharmacy.title"/></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <jsp:include page="../images/spinner.jsp" flush="true"/>
+        <jsp:include page="/images/spinner.jsp" flush="true"/>
 
 		<script src="${pageContext.request.contextPath}/csrfguard"></script>
 
@@ -402,7 +402,7 @@
                     opener.window.refresh();
                     window.close();
                 } else {
-                    window.location.href = "oscarRx/SearchDrug3.jsp";
+                    window.location.href = "<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp";
                 }
             }
 

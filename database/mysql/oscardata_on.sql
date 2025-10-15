@@ -13565,7 +13565,7 @@ INSERT INTO diagnosticcode VALUES (533,'042','AIDS                              
 --
 
 --
--- Dumping data for table 'providers'
+-- Dumping data for table 'provider'
 --
 
 --

@@ -54,7 +54,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w" reverse="<%=true%>">
     <%authed2 = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_flowsheet");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_flowsheet");%>
 </security:oscarSec>
 <%
     if (!authed2) {

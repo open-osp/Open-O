@@ -406,7 +406,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         // get issues for current demographic, based on providers rights
         Boolean useNewCaseMgmt = Boolean.valueOf((String) session.getAttribute("newCaseManagement"));
 
-        CheckBoxBean[] checkedList = null;
+                List<CheckBoxBean> checkedList = null;
         if (useNewCaseMgmt) {
 
             CaseManagementView2Action caseManagementViewAction = new CaseManagementView2Action();
@@ -416,7 +416,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
             caseManagementViewAction.sortIssuesByOrderId(checkBoxBeanList);
 
-            checkedList = checkBoxBeanList.toArray(new CheckBoxBean[checkBoxBeanList.size()]);
+                        checkedList = checkBoxBeanList;
             Iterator itr = note.getIssues().iterator();
             while (itr.hasNext()) {
                 int id = ((CaseManagementIssue) itr.next()).getId().intValue();
@@ -431,7 +431,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
             caseManagementViewAction.addRemoteIssues(loggedInInfo, checkBoxBeanList, demographicNo, false);
             caseManagementViewAction.addGroupIssues(loggedInInfo, checkBoxBeanList, demographicNo, false);
 
-            checkedList = checkBoxBeanList.toArray(new CheckBoxBean[0]);
+                        checkedList = checkBoxBeanList;
 
             for (CaseManagementIssue cmi : note.getIssues()) {
                 setChecked_oldCme(checkedList, cmi);
@@ -631,7 +631,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
     }
 
-    private void setChecked_oldCme(CheckBoxBean[] checkedList, CaseManagementIssue cmi) {
+    private void setChecked_oldCme(List<CheckBoxBean> checkedList, CaseManagementIssue cmi) {
         for (CheckBoxBean cbb : checkedList) {
             if (cbb.getIssueDisplay().code.equals(cmi.getIssue().getCode())) {
                 cbb.setChecked("on");
@@ -931,12 +931,12 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         Set<CaseManagementIssue> issueSet = new HashSet<CaseManagementIssue>();
         Set<CaseManagementNote> noteSet = new HashSet<CaseManagementNote>();
         String[] issue_id = request.getParameterValues("issue_id");
-        CheckBoxBean[] existingCaseIssueList = sessionFrm.getIssueCheckList();
+        List<CheckBoxBean> existingCaseIssueList = sessionFrm.getIssueCheckList();
         ArrayList<CheckBoxBean> caseIssueList = new ArrayList<CheckBoxBean>();
 
         // copy existing issues for sessionfrm
-        for (int idx = 0; idx < existingCaseIssueList.length; ++idx) {
-            caseIssueList.add(existingCaseIssueList[idx]);
+        if (existingCaseIssueList != null) {
+            caseIssueList.addAll(existingCaseIssueList);
         }
 
         // first we check if any notes have been removed
@@ -1016,9 +1016,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
             } // end for
 
-            CheckBoxBean[] newCheckBox = new CheckBoxBean[caseIssueList.size()];
-            newCheckBox = caseIssueList.toArray(newCheckBox);
-            sessionFrm.setIssueCheckList(newCheckBox);
+            sessionFrm.setIssueCheckList(caseIssueList);
 
         }
         note.setIssues(issueSet);
@@ -1316,7 +1314,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         // this goes into the database casemgmt_issue table
         List<CaseManagementIssue> issuelist = new ArrayList<CaseManagementIssue>();
 
-        CheckBoxBean[] checkedlist = sessionFrm.getIssueCheckList();
+        List<CheckBoxBean> checkedlist = sessionFrm.getIssueCheckList();
         // this is for debugging, please keep it for future development
         // System.out.println("Checkedlist from sessionFrm: " + Arrays.toString(checkedlist));
         // this gets attached to the CaseManagementNote object
@@ -1474,12 +1472,12 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         return note.getId();
     }
 
-    private String saveCheckedIssues_oldCme(HttpServletRequest request, String demo, List<CaseManagementIssue> issuelist, CheckBoxBean[] checkedlist, Set<CaseManagementIssue> issueset, Set noteSet, String ongoing) {
+    private String saveCheckedIssues_oldCme(HttpServletRequest request, String demo, List<CaseManagementIssue> issuelist, List<CheckBoxBean> checkedlist, Set issueset, Set noteSet, String ongoing) {
 
         int demographicNo = Integer.parseInt(demo);
 
-        for (int i = 0; i < checkedlist.length; i++) {
-            CheckBoxBean checkBoxBean = checkedlist[i];
+        for (int i = 0; i < checkedlist.size(); i++) {
+            CheckBoxBean checkBoxBean = checkedlist.get(i);
             CaseManagementViewAction.IssueDisplay issueDisplay = checkBoxBean.getIssueDisplay();
 
             if (issueDisplay.resolved != null && issueDisplay.resolved.equals("unresolved")) {
@@ -1561,11 +1559,11 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         caseManagementIssue.setResolved("resolved".equals(issueDisplay.resolved));
     }
 
-    private String saveCheckedIssues_newCme(HttpServletRequest request, String demo, CaseManagementNote note, List issuelist, CheckBoxBean[] checkedlist, Set issueset, Set noteSet, String ongoing) {
+    private String saveCheckedIssues_newCme(HttpServletRequest request, String demo, CaseManagementNote note, List issuelist, List<CheckBoxBean> checkedlist, Set issueset, Set noteSet, String ongoing) {
         int demographicNo = Integer.parseInt(demo);
 
-        for (int i = 0; i < checkedlist.length; i++) {
-            CheckBoxBean checkBoxBean = checkedlist[i];
+        for (int i = 0; i < checkedlist.size(); i++) {
+            CheckBoxBean checkBoxBean = checkedlist.get(i);
             IssueDisplay issueDisplay = checkBoxBean.getIssueDisplay();
 
             if (issueDisplay.resolved != null && issueDisplay.resolved.equals("unresolved")) {
@@ -1739,18 +1737,18 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         int numIssues = Integer.parseInt(request.getParameter("numIssues"));
 
-        CheckBoxBean[] checkedlist = sessionFrm.getIssueCheckList();
+        List<CheckBoxBean> checkedlist = sessionFrm.getIssueCheckList();
         for (int i = 0; i < numIssues; i++) {
             String ischecked = request.getParameter("issue" + i);
             if (ischecked != null && ischecked.equalsIgnoreCase("on")) {
-                checkedlist[i].setChecked("on");
-                CaseManagementIssue iss = checkedlist[i].getIssue();
+                checkedlist.get(i).setChecked("on");
+                CaseManagementIssue iss = checkedlist.get(i).getIssue();
                 iss.setNotes(noteSet);
-                issueset.add(checkedlist[i].getIssue());
+                issueset.add(checkedlist.get(i).getIssue());
             } else {
-                checkedlist[i].setChecked("off");
+                checkedlist.get(i).setChecked("off");
             }
-            issuelist.add(checkedlist[i].getIssue());
+            issuelist.add(checkedlist.get(i).getIssue());
         }
 
         note.setIssues(issueset);
@@ -2173,10 +2171,12 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         // check to see if this issue has already been associated with this demographic
         long lIssueId = Long.parseLong(issueId);
-        CheckBoxBean[] existingCaseIssueList = sessionFrm.getIssueCheckList();
-        for (int idx = 0; idx < existingCaseIssueList.length; ++idx) {
-            if (existingCaseIssueList[idx].getIssue().getIssue_id() == lIssueId) {
-                break;
+        List<CheckBoxBean> existingCaseIssueList = sessionFrm.getIssueCheckList();
+        if (existingCaseIssueList != null) {
+            for (CheckBoxBean checkBoxBean : existingCaseIssueList) {
+                if (checkBoxBean.getIssue().getIssue_id() == lIssueId) {
+                    break;
+                }
             }
         }
 
@@ -2233,7 +2233,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         // add checked new issues to client's issue list
         // client's old issues
-        CheckBoxBean[] oldList = sessionFrm.getIssueCheckList();
+                List<CheckBoxBean> oldList = sessionFrm.getIssueCheckList();
         // client's new issues
         CheckIssueBoxBean[] issueList = sessionFrm.getNewIssueCheckList();
         int k = 0;
@@ -2249,13 +2249,9 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
             }
         }
 
-        CheckBoxBean[] caseIssueList = new CheckBoxBean[oldList.length + k];
-        for (int i = 0; i < oldList.length; i++) {
-            caseIssueList[i] = new CheckBoxBean();
-            caseIssueList[i].setChecked(oldList[i].getChecked());
-            caseIssueList[i].setUsed(oldList[i].isUsed());
-            caseIssueList[i].setIssue(oldList[i].getIssue());
-            caseIssueList[i].setIssueDisplay(oldList[i].getIssueDisplay());
+        List<CheckBoxBean> caseIssueList = new ArrayList<CheckBoxBean>();
+        for (CheckBoxBean bean : oldList) {
+            caseIssueList.add(bean);
         }
         k = 0;
 
@@ -2279,37 +2275,38 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
                 if (issueList[i].isChecked()) {
                     if (caseManagementIssueDao.getIssuebyId(demono, String.valueOf(issueList[i].getIssue().getId())) != null) {
                         //issue already added
-                        for (int j = 0; j < oldList.length; j++) {
-                            if (oldList[j].getIssue().getIssue_id() == issueList[i].getIssue().getId().longValue()) { //find old issue and check it
-                                caseIssueList[j].setChecked("on");
-                                caseIssueList[j].getIssue().setAcute(false);
-                                caseIssueList[j].getIssue().setCertain(false);
-                                caseIssueList[j].getIssue().setMajor(false);
-                                caseIssueList[j].getIssue().setResolved(false);
+                        for (int j = 0; j < oldList.size(); j++) {
+                            if (oldList.get(j).getIssue().getIssue_id() == issueList[i].getIssue().getId().longValue()) { //find old issue and check it
+                                caseIssueList.get(j).setChecked("on");
+                                caseIssueList.get(j).getIssue().setAcute(false);
+                                caseIssueList.get(j).getIssue().setCertain(false);
+                                caseIssueList.get(j).getIssue().setMajor(false);
+                                caseIssueList.get(j).getIssue().setResolved(false);
 
-                                caseIssueList[j].getIssueDisplay().setAcute("chronic");
-                                caseIssueList[j].getIssueDisplay().setCertain("uncertain");
-                                caseIssueList[j].getIssueDisplay().setMajor("not major");
-                                caseIssueList[j].getIssueDisplay().setResolved("unresolved");
+                                caseIssueList.get(j).getIssueDisplay().setAcute("chronic");
+                                caseIssueList.get(j).getIssueDisplay().setCertain("uncertain");
+                                caseIssueList.get(j).getIssueDisplay().setMajor("not major");
+                                caseIssueList.get(j).getIssueDisplay().setResolved("unresolved");
                             }
                         }
                     } else {
-                        caseIssueList[oldList.length + k] = new CheckBoxBean();
+                        CheckBoxBean newBean = new CheckBoxBean();
                         CaseManagementIssue cmi = newIssueToCIssue(sessionFrm, issueList[i].getIssue(), programId);
-                        caseIssueList[oldList.length + k].setIssue(cmi);
-                        caseIssueList[oldList.length + k].setChecked("on");
+                        newBean.setIssue(cmi);
+                        newBean.setChecked("on");
                         IssueDisplay issueDisplay = caseManagementViewAction.getIssueDisplay(providerNo, programId, cmi);
-                        caseIssueList[oldList.length + k].setIssueDisplay(issueDisplay);
+                        newBean.setIssueDisplay(issueDisplay);
 
                         // should issue be automagically added to Dx? check config file
                         if (dxProps != null && dxProps.get(issueList[i].getIssue().getCode()) != null) {
                             String codingSystem = dxProps.getProperty("coding_system");
-                            if (caseIssueList[oldList.length + k].getIssue().isCertain()) {
+                            if (newBean.getIssue().isCertain()) {
                                 logger.debug("adding to Dx");
                                 this.caseManagementMgr.saveToDx(loggedInInfo, getDemographicNo(request), issueList[i].getIssue().getCode(), codingSystem, false);
-                                caseIssueList[oldList.length + k].getIssue().setMajor(true);
+                                newBean.getIssue().setMajor(true);
                             }
                         }
+                        caseIssueList.add(newBean);
 
                         k++;
                     }
@@ -2360,7 +2357,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         int index = Integer.parseInt(strIndex);
 
         // change issue
-        CheckBoxBean[] oldList = this.getIssueCheckList();
+        List<CheckBoxBean> oldList = this.getIssueCheckList();
 
         CheckIssueBoxBean[] issueList = this.getNewIssueCheckList();
         CheckIssueBoxBean substitution = null;
@@ -2375,23 +2372,23 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         }
 
         if (substitution != null) {
-            for (int x = 0; x < oldList.length; x++) {
+            for (int x = 0; x < oldList.size(); x++) {
                 if (x == index) {
 
-                    Issue oldIssue = oldList[x].getIssue().getIssue();
+                    Issue oldIssue = oldList.get(x).getIssue().getIssue();
                     origIssueDesc = oldIssue.getDescription();
 
                     Issue newIssue = caseManagementMgr.getIssue(String.valueOf(substitution.getIssue().getId().longValue()));
                     newIssueDesc = newIssue.getDescription();
 
-                    oldList[x].getIssue().setIssue(newIssue);
-                    oldList[x].getIssue().setIssue_id(substitution.getIssue().getId().longValue());
-                    oldList[x].getIssue().setType(newIssue.getType());
-                    oldList[x].getIssueDisplay().setCode(newIssue.getCode());
-                    oldList[x].getIssueDisplay().setCodeType(newIssue.getType());
-                    oldList[x].getIssueDisplay().setDescription(newIssue.getDescription());
+                    oldList.get(x).getIssue().setIssue(newIssue);
+                    oldList.get(x).getIssue().setIssue_id(substitution.getIssue().getId().longValue());
+                    oldList.get(x).getIssue().setType(newIssue.getType());
+                    oldList.get(x).getIssueDisplay().setCode(newIssue.getCode());
+                    oldList.get(x).getIssueDisplay().setCodeType(newIssue.getType());
+                    oldList.get(x).getIssueDisplay().setDescription(newIssue.getDescription());
 
-                    caseManagementMgr.saveCaseIssue(oldList[x].getIssue());
+                    caseManagementMgr.saveCaseIssue(oldList.get(x).getIssue());
                 }
             }
         }
@@ -2417,25 +2414,27 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         String sessionFrmName = "caseManagementEntryForm" + getDemographicNo(request);
         CaseManagementEntryFormBean sessionFrm = (CaseManagementEntryFormBean) session.getAttribute(sessionFrmName);
 
-        CheckBoxBean[] curIssues = sessionFrm.getIssueCheckList();
+        List<CheckBoxBean> curIssues = sessionFrm.getIssueCheckList();
 
-        if (substitution != null) {
+        if (substitution != null && curIssues != null && idx < curIssues.size()) {
 
             Issue iss = caseManagementMgr.getIssue(substitution);
-            curIssues[idx].getIssue().setIssue(iss);
-            curIssues[idx].getIssue().setIssue_id(iss.getId());
-            this.caseManagementMgr.saveCaseIssue(curIssues[idx].getIssue());
+            curIssues.get(idx).getIssue().setIssue(iss);
+            curIssues.get(idx).getIssue().setIssue_id(iss.getId());
+            this.caseManagementMgr.saveCaseIssue(curIssues.get(idx).getIssue());
 
             // update form with new issue list
             Set<CaseManagementIssue> issueset = new HashSet<CaseManagementIssue>();
-            for (int i = 0; i < curIssues.length; ++i) {
-                if (curIssues[i].getChecked().equalsIgnoreCase("on")) issueset.add(curIssues[i].getIssue());
+            for (CheckBoxBean checkBoxBean : curIssues) {
+                if (checkBoxBean.getChecked().equalsIgnoreCase("on")) issueset.add(checkBoxBean.getIssue());
             }
 
             sessionFrm.getCaseNote().setIssues(issueset);
         }
 
-        sessionFrm.setIssueCheckList(curIssues);
+        if (curIssues != null) {
+            sessionFrm.setIssueCheckList(curIssues);
+        }
         request.setAttribute("caseManagementEntryForm", sessionFrm);
 
         return "issueList_ajax";
@@ -2460,33 +2459,27 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         request.setAttribute("demoAge", getDemoAge(demono));
         request.setAttribute("demoDOB", getDemoDOB(demono));
 
-        CheckBoxBean[] oldList = sessionFrm.getIssueCheckList();
+        List<CheckBoxBean> oldList = sessionFrm.getIssueCheckList();
 
         String inds = this.getDeleteId();
         Integer ind = Integer.valueOf(inds);
 
         // delete the right issue
-        CheckBoxBean[] caseIssueList = new CheckBoxBean[oldList.length - 1];
-        int k = 0;
+        List<CheckBoxBean> caseIssueList = new ArrayList<CheckBoxBean>();
         CaseManagementIssue iss = null;
 
-        if (ind.intValue() >= oldList.length) {
+        if (ind.intValue() >= oldList.size()) {
             logger.error("issueDelete index error");
             return "view";
         }
-        for (int i = 0; i < oldList.length; i++) {
+        for (int i = 0; i < oldList.size(); i++) {
 
             if (i != ind.intValue()) {
-                caseIssueList[k] = new CheckBoxBean();
-                caseIssueList[k].setChecked(oldList[i].getChecked());
-                caseIssueList[k].setUsed(oldList[i].isUsed());
-                caseIssueList[k].setIssue(oldList[i].getIssue());
-                caseIssueList[k].setIssueDisplay(oldList[i].getIssueDisplay());
-                k++;
+                caseIssueList.add(oldList.get(i));
             }
             if (i == ind.intValue()) {
                 // delete from caseissue table
-                iss = oldList[i].getIssue();
+                iss = oldList.get(i).getIssue();
                 caseManagementMgr.deleteIssueById(iss);
             }
         }
@@ -2532,21 +2525,44 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         request.setAttribute("demoAge", getDemoAge(demono));
         request.setAttribute("demoDOB", getDemoDOB(demono));
 
-        CheckBoxBean[] oldList = sessionFrm.getIssueCheckList();
-
         String inds = this.getLineId();
-
         Integer ind = Integer.valueOf(inds);
+
+        // Get the list from session
+        List<CheckBoxBean> oldList = sessionFrm.getIssueCheckList();
+
+        // Read the changed values directly from request parameters
+        String acuteParam = request.getParameter("issueCheckList[" + ind + "].issue.acute");
+        String certainParam = request.getParameter("issueCheckList[" + ind + "].issue.certain");
+        String majorParam = request.getParameter("issueCheckList[" + ind + "].issue.major");
+        String resolvedParam = request.getParameter("issueCheckList[" + ind + "].issue.resolved");
+
+        logger.debug("issueChange for index " + ind + ": resolved=" + resolvedParam);
+
+        // Update the issue with the new values from the form
+        if (acuteParam != null) {
+            oldList.get(ind).getIssue().setAcute(Boolean.parseBoolean(acuteParam));
+        }
+        if (certainParam != null) {
+            oldList.get(ind).getIssue().setCertain(Boolean.parseBoolean(certainParam));
+        }
+        if (majorParam != null) {
+            oldList.get(ind).getIssue().setMajor(Boolean.parseBoolean(majorParam));
+        }
+        if (resolvedParam != null) {
+            oldList.get(ind).getIssue().setResolved(Boolean.parseBoolean(resolvedParam));
+        }
+
         List<CaseManagementIssue> iss = new ArrayList<CaseManagementIssue>();
-        oldList[ind.intValue()].getIssue().setUpdate_date(new Date());
-        iss.add(oldList[ind.intValue()].getIssue());
+        oldList.get(ind.intValue()).getIssue().setUpdate_date(new Date());
+        iss.add(oldList.get(ind.intValue()).getIssue());
         caseManagementMgr.saveAndUpdateCaseIssues(iss);
 
         //Change issueDisplay if this issue is successfully saved.
-        sessionFrm.getIssueCheckList()[ind.intValue()].getIssueDisplay().setAcute(oldList[ind.intValue()].getIssue().isAcute() ? "acute" : "chronic");
-        sessionFrm.getIssueCheckList()[ind.intValue()].getIssueDisplay().setCertain(oldList[ind.intValue()].getIssue().isCertain() ? "certain" : "uncertain");
-        sessionFrm.getIssueCheckList()[ind.intValue()].getIssueDisplay().setMajor(oldList[ind.intValue()].getIssue().isMajor() ? "major" : "not major");
-        sessionFrm.getIssueCheckList()[ind.intValue()].getIssueDisplay().setResolved(oldList[ind.intValue()].getIssue().isResolved() ? "resolved" : "unresolved");
+        sessionFrm.getIssueCheckList().get(ind.intValue()).getIssueDisplay().setAcute(oldList.get(ind.intValue()).getIssue().isAcute() ? "acute" : "chronic");
+        sessionFrm.getIssueCheckList().get(ind.intValue()).getIssueDisplay().setCertain(oldList.get(ind.intValue()).getIssue().isCertain() ? "certain" : "uncertain");
+        sessionFrm.getIssueCheckList().get(ind.intValue()).getIssueDisplay().setMajor(oldList.get(ind.intValue()).getIssue().isMajor() ? "major" : "not major");
+        sessionFrm.getIssueCheckList().get(ind.intValue()).getIssueDisplay().setResolved(oldList.get(ind.intValue()).getIssue().isResolved() ? "resolved" : "unresolved");
 
         if (OscarProperties.getInstance().isCaisiLoaded()) {
             // get access right
@@ -3254,10 +3270,10 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         return false;
     }
 
-    protected void SetChecked(CheckBoxBean[] checkedlist, int id) {
-        for (int i = 0; i < checkedlist.length; i++) {
-            if (checkedlist[i].getIssue().getId().intValue() == id) {
-                checkedlist[i].setChecked("on");
+    protected void SetChecked(List<CheckBoxBean> checkedlist, int id) {
+        for (int i = 0; i < checkedlist.size(); i++) {
+            if (checkedlist.get(i).getIssue().getId().intValue() == id) {
+                checkedlist.get(i).setChecked("on");
                 break;
             }
         }
@@ -3438,7 +3454,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
     private CaseManagementCPP cpp;
     private String demoNo;
     private String noteId;
-    private CheckBoxBean[] issueCheckList;
+        private List<CheckBoxBean> issueCheckList;
     private CheckIssueBoxBean[] newIssueCheckList;
     private List newIssueList;
     private String sign;
@@ -3507,12 +3523,26 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         this.includeIssue = includeIssue;
     }
 
-    public CheckBoxBean[] getIssueCheckList() {
+    public List<CheckBoxBean> getIssueCheckList() {
         return issueCheckList;
     }
 
-    public void setIssueCheckList(CheckBoxBean[] issueCheckList) {
-        this.issueCheckList = issueCheckList;
+    public void setIssueCheckList(List<CheckBoxBean> issueCheckList) {
+        // Only set if it's a valid list with persisted objects (not from Struts parameter binding)
+        // During parameter binding, Struts creates NEW unpersisted objects which causes errors
+        // We read form values directly from request parameters in issueChange() instead
+        if (issueCheckList != null && !issueCheckList.isEmpty()) {
+            try {
+                CheckBoxBean firstItem = issueCheckList.get(0);
+                // Check if the first item has a persisted issue (has an ID)
+                if (firstItem != null && firstItem.getIssue() != null && firstItem.getIssue().getId() != null) {
+                    this.issueCheckList = issueCheckList;
+                }
+            } catch (IndexOutOfBoundsException | NullPointerException e) {
+                // Expected during Struts parameter binding with unpersisted objects
+                logger.debug("Ignoring issueCheckList from Struts binding: {}", e.getMessage());
+            }
+        }
     }
 
     public String getLineId() {

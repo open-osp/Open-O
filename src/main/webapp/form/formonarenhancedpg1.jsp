@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -59,9 +59,6 @@
     FrmRecord rec = (new FrmRecordFactory()).factory(formClass);
     java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo, formId);
 
-    FrmData fd = new FrmData();
-    String resource = fd.getResource();
-    resource = resource + "../ob/riskinfo/";
     props.setProperty("c_lastVisited", "pg1");
 
     //get project_home

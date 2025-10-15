@@ -63,13 +63,13 @@
                 <%if (request.getAttribute("status") == null) {%>
                 <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
                     <input type="hidden" name="method" value="<c:out value="${method}"/>">
-                    <input type="checkbox" name="preventionSSOWarningProperty.checked" />
+                    <input type="checkbox" name="preventionSSOWarningProperty.checked" <c:if test="${preventionSSOWarningProperty.checked}">checked</c:if>/>
                         Hide Warning when not logged into OneID Single Sign On.
                     <br/>
-                    <input type="checkbox" name="preventionISPAWarningProperty.checked" />
+                    <input type="checkbox" name="preventionISPAWarningProperty.checked" <c:if test="${preventionISPAWarningProperty.checked}">checked</c:if>/>
                         Hide Warning when Patient has not consented to send ISPA data to DHIR.
                     <br/>
-                    <input type="checkbox" name="preventionNonISPAWarningProperty.checked" />
+                    <input type="checkbox" name="preventionNonISPAWarningProperty.checked" <c:if test="${preventionNonISPAWarningProperty.checked}">checked</c:if>/>
                         Hide Warning when Patient has not consented to send Non-ISPA data to DHIR.
                     <br/><br/>
                     <input type="submit" value="<%=bundle.getString(providerbtnSubmit)%>"/>

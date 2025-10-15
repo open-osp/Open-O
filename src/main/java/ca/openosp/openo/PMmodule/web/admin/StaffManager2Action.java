@@ -53,6 +53,25 @@ import ca.openosp.openo.log.LogAction;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for managing staff (healthcare providers) in the Program Management module.
+ * <p>
+ * This action handles comprehensive staff management including:
+ * <ul>
+ * <li>Listing and searching for providers by facility and program</li>
+ * <li>Editing provider details and program assignments</li>
+ * <li>Assigning providers to programs with specific roles</li>
+ * <li>Managing provider team assignments within programs</li>
+ * <li>Adding/removing providers from facilities</li>
+ * <li>Managing program-specific provider roles and permissions</li>
+ * </ul>
+ * <p>
+ * The action uses method-based routing where the "method" request parameter
+ * determines which operation to execute. All properties are automatically
+ * populated by Struts 2 property injection.
+ *
+ * @since 2005-10-01
+ */
 public class StaffManager2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -69,6 +88,29 @@ public class StaffManager2Action extends ActionSupport {
 
     private SecRoleDao secRoleDao = SpringUtils.getBean(SecRoleDao.class);
 
+    /**
+     * Main execution method that routes to appropriate sub-methods based on method parameter.
+     * <p>
+     * Routes to the following operations:
+     * <ul>
+     * <li>list() - Default, lists all active providers (or filtered by search)</li>
+     * <li>search() - Search providers by facility and/or program</li>
+     * <li>edit() - Display provider edit form with program assignments</li>
+     * <li>add_to_facility() - Add provider to a facility</li>
+     * <li>remove_from_facility() - Remove provider from a facility</li>
+     * <li>assign_role() - Assign or update provider's role in a program</li>
+     * <li>assign_team() - Add provider to a team within a program</li>
+     * <li>remove_team() - Remove provider from a team</li>
+     * <li>remove_entry() - Remove provider from a program entirely</li>
+     * </ul>
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>method - String method name (determines routing)</li>
+     * </ul>
+     *
+     * @return String result name for Struts 2 result mapping
+     */
     public String execute() {
         String method = request.getParameter("method");
         if ("add_to_facility".equals(method)) {
@@ -87,7 +129,7 @@ public class StaffManager2Action extends ActionSupport {
             return assign_role();
         } else if ("remove_entry".equals(method)) {
             return remove_entry();
-        } 
+        }
         return list();
     }
 
@@ -160,27 +202,40 @@ public class StaffManager2Action extends ActionSupport {
     }
 
 
+    /**
+     * Lists all active healthcare providers.
+     * <p>
+     * Retrieves all active providers, facilities, and programs for display
+     * in the staff management list view. This is the default action when
+     * no method is specified.
+     *
+     * @return String "list" to forward to the list view
+     */
     public String list() {
-        // DynaActionForm providerForm = (DynaActionForm)form;
-        // StaffManagerViewFormBean formBean =
-        // (StaffManagerViewFormBean)providerForm.get("view");
-
-        // request.setAttribute("providers",providerManager.getProviders());
-        // changed to get all active providers
         request.setAttribute("providers", providerManager.getActiveProviders());
-
         request.setAttribute("facilities", facilityDao.findAll(true));
-
-        // show programs which can be assigned to the providers
         request.setAttribute("programs", programManager.getAllPrograms("Any", "Any", 0));
 
         LogAction.log("read", "full providers list", "", request);
         return "list";
     }
 
+    /** Facility ID for filtering provider search */
     private String facilityId;
+
+    /** Program ID for filtering provider search */
     private String programId;
 
+    /**
+     * Searches for providers filtered by facility and/or program.
+     * <p>
+     * Filters the provider list based on the selected facility and program.
+     * If facility is "0" (all facilities), program filter is reset. The
+     * facilityId and programId properties are populated via Struts 2
+     * property injection.
+     *
+     * @return String "list" to forward to the list view with filtered results
+     */
     public String search() {
         if (facilityId == null)
             facilityId = "0";
@@ -217,13 +272,29 @@ public class StaffManager2Action extends ActionSupport {
 
         return "edit";
     }
+
+    /** Program provider object for program assignment operations */
     private ProgramProvider program_provider;
+
+    /** Provider object being edited or managed */
     private Provider provider;
 
+    /**
+     * Gets the program provider form object.
+     *
+     * @return ProgramProvider the program provider being edited
+     */
     public ProgramProvider getProgram_provider() {
         return program_provider;
     }
 
+    /**
+     * Sets the program provider form object.
+     * <p>
+     * Called by Struts 2 during form submission to populate the object.
+     *
+     * @param program_provider ProgramProvider the program provider to set
+     */
     public void setProgram_provider(ProgramProvider program_provider) {
         this.program_provider = program_provider;
     }

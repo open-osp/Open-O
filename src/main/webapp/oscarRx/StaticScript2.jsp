@@ -54,7 +54,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -114,7 +114,7 @@
 
         <%
             if (session.getAttribute("user") == null)
-                response.sendRedirect("../logout.jsp");
+                response.sendRedirect(request.getContextPath() + "/logout.jsp");
             String curUser_no = (String) session.getAttribute("user");
             String regionalIdentifier = request.getParameter("regionalIdentifier");
             String cn = request.getParameter("cn");

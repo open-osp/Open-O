@@ -310,7 +310,7 @@ setTimeout("refreshTabAlerts('"+id+"')", 10);
 }
 
 function refreshTabAlerts(id) {
-var url = "../provider/tabAlertsRefresh.jsp";
+var url = "<%= request.getContextPath() %>/provider/tabAlertsRefresh.jsp";
 var pars = "id=" + id;
 jQuery.ajax({
 url: url,

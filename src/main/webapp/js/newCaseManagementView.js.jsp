@@ -2826,6 +2826,14 @@ function updateCPPNote() {
         $("issueAutocomplete").value = "";
         $("newIssueId").value = "";
         //notifyIssueUpdate();
+
+        // Refresh the encounter window's "Unresolved Issues" navbar section
+        var demographicNo = $("demographicNo").value;
+
+        if (typeof loadDiv === 'function' && demographicNo) {
+            var reloadUrl = ctx + "/oscarEncounter/displayIssues.do?demographicNo=" + demographicNo + "&cmd=unresolvedIssues&reloadURL=" + encodeURIComponent(ctx + "/oscarEncounter/displayIssues.do");
+            loadDiv('unresolvedIssueslist', reloadUrl, 0);
+        }
     }
 
     function submitIssue(event) {

@@ -47,7 +47,7 @@
 <%@ taglib prefix="csrf" uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" %>
 
 <%
-    if (session.getValue("user") == null) response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     String demographic_no = request.getParameter("demographic_no");
     String id = request.getParameter("id");
     String measurement = request.getParameter("measurement");

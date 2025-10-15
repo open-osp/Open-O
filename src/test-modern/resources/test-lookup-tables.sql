@@ -1,7 +1,7 @@
 -- Test lookup tables for reference data
 -- These tables are referenced by formulas in HBM mappings but don't have entity classes
 
--- Gender lookup table
+-- Gender lookup table (Hibernate may auto-create this due to formula in Demographic.hbm.xml)
 CREATE TABLE IF NOT EXISTS lst_gender (
     code char(1) NOT NULL PRIMARY KEY,
     description varchar(80),
@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS lst_gender (
     displayorder int(10)
 );
 
-INSERT INTO lst_gender (code, description, isactive, displayorder) VALUES
+-- Use MERGE for H2 to handle existing data gracefully
+MERGE INTO lst_gender (code, description, isactive, displayorder) KEY(code) VALUES
 ('M', 'Male', 1, 1),
 ('F', 'Female', 1, 2),
 ('X', 'Non-binary', 1, 3),

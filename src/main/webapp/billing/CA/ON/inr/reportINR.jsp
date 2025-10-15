@@ -23,7 +23,7 @@
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*, java.sql.*, java.net.*" %>
-<%@ include file="../../../../admin/dbconnection.jsp" %>
+<%@ include file="/admin/dbconnection.jsp" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
@@ -312,7 +312,7 @@
             <tr>
                 <td>
                     <a href="#"
-                       onClick='rs("billingcalendar","../billingCalendarPopup.jsp?year=<%=curYear%>&month=<%=curMonth%>&type=service","380","300","0")'>Service
+                       onClick='rs("billingcalendar","<%= request.getContextPath() %>/billing/CA/ON/billingCalendarPopup.jsp?year=<%=curYear%>&month=<%=curMonth%>&type=service","380","300","0")'>Service
                         Date:</a>
                     <input type="text" name="xml_appointment_date"
                            value="<%=now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH)%>"

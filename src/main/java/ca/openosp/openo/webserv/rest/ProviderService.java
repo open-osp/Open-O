@@ -68,10 +68,10 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * REST service for providers-related operations using OAuth 1.0a authentication.
- * 
- * This service provides endpoints for managing providers, retrieving providers information,
- * and handling providers settings. It uses ScribeJava OAuth1 for authentication.
+ * REST service for provider-related operations using OAuth 1.0a authentication.
+ *
+ * This service provides endpoints for managing providers, retrieving provider information,
+ * and handling provider settings. It uses ScribeJava OAuth1 for authentication.
  */
 @Component("ProviderService")
 @Path("/providerService/")
@@ -161,16 +161,16 @@ public class ProviderService extends AbstractServiceImpl {
     }
 
         /**
-         * Retrieves a specific providers by ID.
+         * Retrieves a specific provider by ID.
          *
-         * @param id The providers ID
+         * @param id The provider ID
          * @return ProviderTransfer object
          */
         @GET
         @Path("/provider/{id}")
         @Produces({"application/xml", "application/json"})
         public ProviderTransfer getProvider(@PathParam("id") String id) {
-            logger.debug("Retrieving providers {}", id);
+            logger.debug("Retrieving provider {}", id);
 
             Provider provider = providerDao.getProvider(id);
             if (provider == null) {
@@ -178,22 +178,22 @@ public class ProviderService extends AbstractServiceImpl {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
 
-            logger.info("Successfully retrieved providers: {}", id);
+            logger.info("Successfully retrieved provider: {}", id);
             return ProviderTransfer.toTransfer(provider);
         }
 
 
     /**
-     * Retrieves the currently logged-in providers.
-     * 
-     * @return JSON representation of the logged-in providers, or 404 if none
+     * Retrieves the currently logged-in provider.
+     *
+     * @return JSON representation of the logged-in provider, or 404 if none
      */
     @GET
     @Path("/provider/me")
     @Produces("application/json")
     public Response getLoggedInProvider() {
         try {
-            logger.debug("Retrieving logged-in providers");
+            logger.debug("Retrieving logged-in provider");
             Provider provider = getLoggedInInfo().getLoggedInProvider();
 
             if (provider == null) {
@@ -206,35 +206,35 @@ public class ProviderService extends AbstractServiceImpl {
                                .build();
             }
 
-            // serialize the providers to JSON
+            // serialize the provider to JSON
             JsonConfig config = new JsonConfig();
             config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
             String body = JSONObject.fromObject(provider, config).toString();
 
-            logger.info("Successfully retrieved logged-in providers: {}", provider.getProviderNo());
+            logger.info("Successfully retrieved logged-in provider: {}", provider.getProviderNo());
             return Response.ok(body, "application/json").build();
         }
         catch (WebApplicationException e) {
             throw e;
         }
         catch (Exception e) {
-            logger.error("Error retrieving logged-in providers: {}", e.getMessage(), e);
+            logger.error("Error retrieving logged-in provider: {}", e.getMessage(), e);
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
     }
 
 
     /**
-     * Retrieves a providers as JSON by ID.
+     * Retrieves a provider as JSON by ID.
      *
-     * @param id The providers ID
-     * @return JSON representation of the providers
+     * @param id The provider ID
+     * @return JSON representation of the provider
      */
     @GET
     @Path("/providerjson/{id}")
     @Produces("application/json")
     public String getProviderAsJSON(@PathParam("id") String id) {
-        logger.debug("Retrieving providers {} as JSON", id);
+        logger.debug("Retrieving provider {} as JSON", id);
 
         Provider provider = providerDao.getProvider(id);
         if (provider == null) {
@@ -244,7 +244,7 @@ public class ProviderService extends AbstractServiceImpl {
 
         JsonConfig config = new JsonConfig();
         config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
-        logger.info("Successfully retrieved providers {} as JSON", id);
+        logger.info("Successfully retrieved provider {} as JSON", id);
         return JSONObject.fromObject(provider, config).toString();
     }
 

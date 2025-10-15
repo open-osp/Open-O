@@ -24,12 +24,12 @@
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 <security:oscarSec roleName="<%=roleName$%>"
                    objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-    <%response.sendRedirect("../logout.jsp");%>
+    <%response.sendRedirect(request.getContextPath() + "/logout.jsp");%>
 </security:oscarSec>
 
 <%@page import="ca.openosp.openo.commn.model.ProfessionalSpecialist" %>
@@ -73,7 +73,7 @@
 
 
             function openAddSpecialist() {
-                popupOscarRx(625, 1024, '../oscarEncounter/oscarConsultationRequest/config/AddSpecialist.jsp');
+                popupOscarRx(625, 1024, '<%= request.getContextPath() %>/oscarEncounter/oscarConsultationRequest/config/AddSpecialist.jsp');
                 return false;
             }
 

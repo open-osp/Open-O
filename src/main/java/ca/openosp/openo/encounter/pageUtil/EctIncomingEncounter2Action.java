@@ -86,6 +86,12 @@ public class EctIncomingEncounter2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String demoNo = request.getParameter("demographicNo");
 
+        // Check if demographicNo is null or invalid
+        if (demoNo == null || demoNo.trim().isEmpty() || "null".equals(demoNo)) {
+            log.error("EctIncomingEncounter2Action called with null or invalid demographicNo");
+            throw new IllegalArgumentException("Invalid or missing demographicNo parameter");
+        }
+
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "r",
                 null)) {
             throw new SecurityException("missing required sec object (_demographic)");

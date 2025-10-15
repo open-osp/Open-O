@@ -205,7 +205,7 @@ String curProvider_no = (String)session.getAttribute("user");
 					</li>
 					</oscar:oscarPropertiesCheck>
 					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/servlet/oscar.DocumentUploadServlet"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingReconciliation"/></a></li>                       
+						class="xlink" rel="${ctx}/servlet/ca.openosp.DocumentUploadServlet"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingReconciliation"/></a></li>
 		                        <!--  li><a href='javascript:void(0);' onclick ='popupPage(600,900,"${ctx}/billing/CA/ON/billingRA.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingReconciliation"/></a></li-->
 					<!--  li><a href='javascript:void(0);' onclick ='popupPage(600,1000,"${ctx}/billing/CA/ON/billingOBECEA.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnEDTBillingReportGenerator"/></a></li-->
 					<li><a href='javascript:void(0);'

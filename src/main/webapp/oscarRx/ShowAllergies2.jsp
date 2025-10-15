@@ -50,7 +50,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_allergy" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_allergy");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_allergy");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -92,7 +92,7 @@
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/allergies.css">
         <style type="text/css">
             .ajax-loader {
-                background: url(../images/ui-anim_basic_16x16.gif) center right no-repeat;
+                background: url(<%= request.getContextPath() %>/images/ui-anim_basic_16x16.gif) center right no-repeat;
             }
         </style>
         <script type="text/javascript">
@@ -151,10 +151,10 @@
                     $.fn.toggleSection = function (typecode) {
                         var imgsrc = document.getElementById(typecode + "_img").src;
                         if (imgsrc.indexOf('expander') != -1) {
-                            document.getElementById(typecode + "_img").src = '../images/collapser.png';
+                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/collapser.png';
                             Effect.BlindDown(document.getElementById(typecode + "_content"), {duration: 0.1});
                         } else {
-                            document.getElementById(typecode + "_img").src = '../images/expander.png';
+                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/expander.png';
                             Effect.BlindUp(document.getElementById(typecode + "_content"), {duration: 0.1});
                         }
                     }
@@ -165,10 +165,10 @@
                         var typecode = this.id.split("_")[0];
                         var imgsrc = document.getElementById(typecode + "_img").src;
                         if (imgsrc.indexOf('expander') != -1) {
-                            document.getElementById(typecode + "_img").src = '../images/collapser.png';
+                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/collapser.png';
                             $("#" + typecode + "_content").show();
                         } else {
-                            document.getElementById(typecode + "_img").src = '../images/expander.png';
+                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/expander.png';
                             $("#" + typecode + "_content").hide();
                         }
                     })
@@ -589,7 +589,7 @@
                                                         if (!allergy.isIntegratorResult()) {
                                                     %>
                                                     <a href="#" title="Annotation"
-                                                       onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=
+                                                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=
                                                            ${patient.getDemographicNo() }','anwin','width=400,height=500');">
                                                         <% if (existingAnnots.size() > 0) {%>
                                                         <img src="<%= request.getContextPath() %>/images/filledNotes.gif" border="0"/>

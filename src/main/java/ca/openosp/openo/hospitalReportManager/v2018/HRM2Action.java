@@ -25,22 +25,22 @@
 package ca.openosp.openo.hospitalReportManager.v2018;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLDecoder;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jettison.json.JSONArray;
@@ -81,6 +81,36 @@ import ca.openosp.OscarProperties;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for Hospital Report Manager (HRM) operations and administration.
+ * <p>
+ * This action handles comprehensive HRM functionality including:
+ * <ul>
+ * <li>Report file upload and processing (uploadReport)</li>
+ * <li>Private key file upload for SFTP authentication (uploadPrivateKey)</li>
+ * <li>SFTP configuration management (saveConfigurationDetails, getConfigurationDetails)</li>
+ * <li>Manual report fetching from remote servers (fetch)</li>
+ * <li>Automated polling configuration for scheduled downloads</li>
+ * <li>Report categorization and search (searchCategory, saveCategory)</li>
+ * <li>Provider confidentiality statement management</li>
+ * <li>HRM transaction logging and detailed log viewing</li>
+ * <li>DataTables-based report listing with filtering and pagination</li>
+ * </ul>
+ * <p>
+ * The action routes requests to specific methods based on the "method" request parameter.
+ * File upload operations use Struts 2's built-in file upload mechanism with filename
+ * sanitization to prevent path traversal attacks.
+ * <p>
+ * All operations enforce role-based security checks using SecurityInfoManager with
+ * three privilege levels:
+ * <ul>
+ * <li>_hrm - Standard HRM access for providers</li>
+ * <li>_hrm.administrator - Administrative HRM access</li>
+ * <li>_admin.hrm - System-level HRM administration</li>
+ * </ul>
+ *
+ * @since 2006-04-20
+ */
 public class HRM2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -97,67 +127,110 @@ public class HRM2Action extends ActionSupport {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     private HRMDocumentToDemographicDao hrmDocumentToDemographicDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
 
+    // Struts 2 file upload properties for HRM report upload
+    private List<File> hrm_file;
+    private List<String> hrm_fileContentType;
+    private List<String> hrm_fileFileName;
+
+    // Struts 2 file upload properties for private key upload
+    private List<File> privateKeyFile;
+    private List<String> privateKeyFileContentType;
+    private List<String> privateKeyFileFileName;
+
+    /**
+     * Uploads an HRM report file and adds it to the provider inbox.
+     * <p>
+     * This method processes uploaded HRM (Hospital Report Manager) report files,
+     * validates the file, parses the report content, and adds it to the logged-in
+     * provider's inbox. The file is sanitized to prevent path traversal attacks.
+     * <p>
+     * Expected request parameters (via Struts 2 property injection):
+     * <ul>
+     * <li>hrm_file - File uploaded HRM report file</li>
+     * </ul>
+     *
+     * @return null (writes JSON response directly to output stream)
+     * @throws Exception if report processing fails
+     * @throws SecurityException if user lacks _hrm read privilege
+     */
     public String uploadReport() throws Exception {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        boolean isHrm = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_hrm", "r", null);
-
-        if (!isHrm) {
-            return null;
+        // MANDATORY security check
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", "r", null)) {
+            throw new SecurityException("missing required sec object (_hrm)");
         }
 
         String downloadDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-
         JSONObject obj = new JSONObject();
 
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-
         try {
+            if (hrm_file != null && !hrm_file.isEmpty()) {
+                for (int i = 0; i < hrm_file.size(); i++) {
+                    File uploadedFile = hrm_file.get(i);
+                    String originalFileName = hrm_fileFileName.get(i);
 
-            // Create a factory for disk-based file items
-            DiskFileItemFactory factory = new DiskFileItemFactory();
-
-            // Configure a repository (to ensure a secure temp location is used)
-            ServletContext servletContext = ServletActionContext.getServletContext();
-            File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-            factory.setRepository(repository);
-
-            // Create a new file upload handler
-            ServletFileUpload upload = new ServletFileUpload(factory);
-
-            // Parse the request
-            List<FileItem> items = upload.parseRequest(request);
-
-            for (FileItem item : items) {
-                if ("hrm_file".equals(item.getFieldName())) {
-
-                    File file = new File(downloadDirectory, item.getName());
-                    item.write(file);
-
-                    HRMReport report = HRMReportParser.parseReport(loggedInInfo, file.getAbsolutePath());
-                    if (report != null) {
-                        HRMReportParser.addReportToInbox(loggedInInfo, report);
-                    } else {
-                        throw new RuntimeException();
+                    // Sanitize filename to prevent path traversal attacks
+                    String sanitizedFileName = sanitizeFileName(originalFileName);
+                    if (sanitizedFileName == null || sanitizedFileName.isEmpty()) {
+                        MiscUtils.getLogger().error("Invalid filename provided: '{}'", originalFileName);
+                        obj.put("message", "Error: Invalid filename");
+                        throw new RuntimeException("Invalid filename provided");
                     }
 
+                    // Additional safeguard: extract only the filename component
+                    String safeFileName = FilenameUtils.getName(sanitizedFileName);
+                    if (safeFileName == null || safeFileName.isEmpty()) {
+                        MiscUtils.getLogger().error("Unable to extract safe filename from: '{}'", sanitizedFileName);
+                        obj.put("message", "Error: Invalid filename");
+                        throw new RuntimeException("Invalid filename after sanitization");
+                    }
 
-                    obj.put("message", item.getName() + " successfully saved");
+                    // Copy uploaded file to document directory
+                    File destinationFile = new File(downloadDirectory, safeFileName);
+
+                    // Validate that the uploaded file is a real file inside the temp directory
+                    File tempDir = (File) request.getServletContext().getAttribute("javax.servlet.context.tempdir");
+                    if (tempDir != null) {
+                        try {
+                            String tempDirCanonicalPath = tempDir.getCanonicalPath();
+                            String uploadedFileCanonicalPath = uploadedFile.getCanonicalPath();
+                            if (!uploadedFileCanonicalPath.startsWith(tempDirCanonicalPath + File.separator)
+                                    || !uploadedFile.isFile() || !uploadedFile.canRead()) {
+                                MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFileCanonicalPath);
+                                obj.put("message", "Error: Invalid uploaded file location");
+                                throw new RuntimeException("Invalid uploaded file location");
+                            }
+                        } catch (IOException ioException) {
+                            MiscUtils.getLogger().error("Error validating uploaded file path", ioException);
+                            obj.put("message", "Error: File validation failed");
+                            throw new RuntimeException("File validation failed", ioException);
+                        }
+                    }
+
+                    try (InputStream inputStream = new FileInputStream(uploadedFile)) {
+                        java.nio.file.Files.copy(inputStream, destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    }
+
+                    // Parse and process the HRM report
+                    HRMReport report = HRMReportParser.parseReport(loggedInInfo, destinationFile.getAbsolutePath());
+                    if (report != null) {
+                        HRMReportParser.addReportToInbox(loggedInInfo, report);
+                        obj.put("message", safeFileName + " successfully saved");
+                    } else {
+                        obj.put("message", "Error: Could not parse report");
+                        throw new RuntimeException("Failed to parse HRM report");
+                    }
                 }
+            } else {
+                obj.put("message", "Error: No file uploaded");
             }
 
-        } catch (FileUploadException e) {
-            // TODO Auto-generated catch block
-            MiscUtils.getLogger().error("Error", e);
-            obj.put("message", "Error:" + e.getMessage());
-            throw new RuntimeException(e);
-
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            MiscUtils.getLogger().error("Error", e);
-            obj.put("message", "Error:" + e.getMessage());
+            MiscUtils.getLogger().error("Error processing HRM report upload", e);
+            obj.put("message", "Error: " + e.getMessage());
             throw new RuntimeException(e);
         }
-
 
         response.setContentType("application/json");
         obj.write(response.getWriter());
@@ -165,13 +238,30 @@ public class HRM2Action extends ActionSupport {
         return null;
     }
 
+    /**
+     * Uploads an HRM private key file for OMD (Ontario MD) integration.
+     * <p>
+     * This method processes uploaded private key files used for secure SFTP
+     * communication with the HRM system. The file is saved to the OMD directory
+     * and the filename is stored in user properties for later retrieval.
+     * <p>
+     * Expected request parameters (via Struts 2 property injection):
+     * <ul>
+     * <li>privateKeyFile - File private key file for SFTP authentication</li>
+     * </ul>
+     *
+     * @return null (writes JSON response directly to output stream)
+     * @throws Exception if private key upload fails
+     * @throws SecurityException if user lacks _admin.hrm read privilege
+     */
     public String uploadPrivateKey() throws Exception {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        boolean isAdmin = securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin.hrm", "r", null);
-
-        if (!isAdmin) {
-            return null;
+        // MANDATORY security check
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", "r", null)) {
+            throw new SecurityException("missing required sec object (_admin.hrm)");
         }
+
         String privateKeyDirectory = OscarProperties.getInstance().getProperty("OMD_DIRECTORY");
         if (privateKeyDirectory == null) {
             privateKeyDirectory = OscarProperties.getInstance().getProperty("DOCUMENT_DIR") + File.separator + ".." + File.separator + "hrm" + File.separator + "OMD";
@@ -180,44 +270,66 @@ public class HRM2Action extends ActionSupport {
         JSONObject obj = new JSONObject();
 
         try {
+            if (privateKeyFile != null && !privateKeyFile.isEmpty()) {
+                for (int i = 0; i < privateKeyFile.size(); i++) {
+                    File uploadedFile = privateKeyFile.get(i);
+                    String originalFileName = privateKeyFileFileName.get(i);
 
-            // Create a factory for disk-based file items
-            DiskFileItemFactory factory = new DiskFileItemFactory();
+                    // Sanitize filename to prevent path traversal attacks
+                    String sanitizedFileName = sanitizeFileName(originalFileName);
+                    if (sanitizedFileName == null || sanitizedFileName.isEmpty()) {
+                        MiscUtils.getLogger().error("Invalid filename provided: '{}'", originalFileName);
+                        obj.put("message", "Error: Invalid filename");
+                        throw new RuntimeException("Invalid filename provided");
+                    }
 
-            // Configure a repository (to ensure a secure temp location is used)
-            ServletContext servletContext = ServletActionContext.getServletContext();
-            File repository = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-            factory.setRepository(repository);
+                    // Additional safeguard: extract only the filename component
+                    String safeFileName = FilenameUtils.getName(sanitizedFileName);
+                    if (safeFileName == null || safeFileName.isEmpty()) {
+                        MiscUtils.getLogger().error("Unable to extract safe filename from: '{}'", sanitizedFileName);
+                        obj.put("message", "Error: Invalid filename");
+                        throw new RuntimeException("Invalid filename after sanitization");
+                    }
 
-            // Create a new file upload handler
-            ServletFileUpload upload = new ServletFileUpload(factory);
+                    // Copy uploaded file to private key directory
+                    File destinationFile = new File(privateKeyDirectory, safeFileName);
 
-            // Parse the request
-            List<FileItem> items = upload.parseRequest(request);
+                    // Validate that the uploaded file is a real file inside the temp directory
+                    File tempDir = (File) request.getServletContext().getAttribute("javax.servlet.context.tempdir");
+                    if (tempDir != null) {
+                        try {
+                            String tempDirCanonicalPath = tempDir.getCanonicalPath();
+                            String uploadedFileCanonicalPath = uploadedFile.getCanonicalPath();
+                            if (!uploadedFileCanonicalPath.startsWith(tempDirCanonicalPath + File.separator)
+                                    || !uploadedFile.isFile() || !uploadedFile.canRead()) {
+                                MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFileCanonicalPath);
+                                obj.put("message", "Error: Invalid uploaded file location");
+                                throw new RuntimeException("Invalid uploaded file location");
+                            }
+                        } catch (IOException ioException) {
+                            MiscUtils.getLogger().error("Error validating uploaded file path", ioException);
+                            obj.put("message", "Error: File validation failed");
+                            throw new RuntimeException("File validation failed", ioException);
+                        }
+                    }
 
-            for (FileItem item : items) {
-                if ("privateKeyFile".equals(item.getFieldName())) {
-                    File file = new File(privateKeyDirectory, item.getName());
-                    item.write(file);
+                    try (InputStream inputStream = new FileInputStream(uploadedFile)) {
+                        java.nio.file.Files.copy(inputStream, destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    }
 
-                    //update props
-                    saveUserProperty("hrm_private_key_file", item.getName());
+                    // Update user property with the private key filename
+                    saveUserProperty("hrm_private_key_file", safeFileName);
 
-                    obj.put("message", item.getName() + " successfully saved");
+                    obj.put("message", safeFileName + " successfully saved");
                 }
+            } else {
+                obj.put("message", "Error: No file uploaded");
             }
 
-        } catch (FileUploadException e) {
-            // TODO Auto-generated catch block
-            MiscUtils.getLogger().error("Error", e);
-            obj.put("message", "Error:" + e.getMessage());
-
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            MiscUtils.getLogger().error("Error", e);
-            obj.put("message", "Error:" + e.getMessage());
+            MiscUtils.getLogger().error("Error processing private key upload", e);
+            obj.put("message", "Error: " + e.getMessage());
         }
-
 
         response.setContentType("application/json");
         obj.write(response.getWriter());
@@ -792,13 +904,9 @@ public class HRM2Action extends ActionSupport {
 
             for (HRMDocument d : docs) {
                 HRMCategory category = null;
-                //Provider providers = null;
                 if (d.getHrmCategoryId() != null) {
                     category = hrmCategoryDao.find(d.getHrmCategoryId());
                 }
-                //if(d.getRecipientProviderNo() != null) {
-                //	providers = providerDao.getProvider(d.getRecipientProviderNo());
-                //}
 
                 List<HRMDocumentToDemographic> ptList = hrmDocumentToDemographicDao.findByHrmDocumentId(d.getId().toString());
                 Integer demographicNo = ptList.get(0).getDemographicNo();
@@ -868,6 +976,103 @@ public class HRM2Action extends ActionSupport {
         obj.write(response.getWriter());
 
         return null;
+    }
+
+    /**
+     * Sanitizes filename to prevent path traversal attacks and other security issues.
+     * <p>
+     * This method applies multiple security measures to ensure the filename is safe:
+     * <ul>
+     * <li>Unicode normalization to prevent homoglyph attacks</li>
+     * <li>URL decoding to catch encoded traversal attempts (e.g., %2e%2e)</li>
+     * <li>Path component extraction (removes directory separators)</li>
+     * <li>Dangerous character removal (Windows illegal chars, multiple dots)</li>
+     * <li>Length validation (max 255 characters)</li>
+     * </ul>
+     * <p>
+     * Based on the pattern from HRMUploadLab2Action.
+     *
+     * @param fileName String original filename from user upload
+     * @return String sanitized filename, or null if invalid
+     */
+    private static String sanitizeFileName(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return null;
+        }
+
+        // First normalize Unicode to prevent homoglyph attacks
+        String normalized = Normalizer.normalize(fileName, Normalizer.Form.NFKC);
+
+        // URL decode to catch encoded traversal attempts like %2e%2e
+        String decoded = normalized;
+        try {
+            // Decode multiple times to catch double-encoding
+            for (int i = 0; i < 3; i++) {
+                String temp = URLDecoder.decode(decoded, "UTF-8");
+                if (temp.equals(decoded)) {
+                    break; // No more encoding layers
+                }
+                decoded = temp;
+            }
+        } catch (Exception e) {
+            // If decoding fails, reject the filename
+            return null;
+        }
+
+        // Extract just the filename (remove any path components)
+        String baseName = new File(decoded).getName();
+
+        // Remove dangerous characters and sequences
+        String sanitized = baseName
+            .replaceAll("[\\\\/:*?\"<>|]", "") // Windows illegal chars
+            .replaceAll("\\.{2,}", ".")        // Multiple dots (../)
+            .replaceAll("^\\.", "")            // Leading dot
+            .replaceAll("\\.$", "")            // Trailing dot
+            .trim();
+
+        // Additional security checks
+        if (sanitized.isEmpty() ||
+            sanitized.contains("..") ||
+            sanitized.startsWith("/") ||
+            sanitized.startsWith("\\") ||
+            sanitized.length() > 255) {
+            return null;
+        }
+
+        // Ensure we have a reasonable filename
+        if (sanitized.length() < 1) {
+            return null;
+        }
+
+        return sanitized;
+    }
+
+    // Struts 2 property injection setters for HRM report upload
+
+    public void setHrm_file(List<File> hrm_file) {
+        this.hrm_file = hrm_file;
+    }
+
+    public void setHrm_fileContentType(List<String> hrm_fileContentType) {
+        this.hrm_fileContentType = hrm_fileContentType;
+    }
+
+    public void setHrm_fileFileName(List<String> hrm_fileFileName) {
+        this.hrm_fileFileName = hrm_fileFileName;
+    }
+
+    // Struts 2 property injection setters for private key upload
+
+    public void setPrivateKeyFile(List<File> privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
+    }
+
+    public void setPrivateKeyFileContentType(List<String> privateKeyFileContentType) {
+        this.privateKeyFileContentType = privateKeyFileContentType;
+    }
+
+    public void setPrivateKeyFileFileName(List<String> privateKeyFileFileName) {
+        this.privateKeyFileFileName = privateKeyFileFileName;
     }
 
 }

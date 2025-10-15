@@ -137,6 +137,7 @@
     eForm.addHiddenInputElement("eFormPDF", (String) request.getAttribute("eFormPDF"));
     eForm.addHiddenInputElement("isDownloadEForm", (String) request.getAttribute("isDownload"));
     eForm.addHiddenInputElement("newForm", "false");
+    eForm.addHiddenInputElement("isSuccess_Autoclose", (String) request.getAttribute("isSuccess_Autoclose"));
     // Add EForm attachments
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     addHiddenEFormAttachments(loggedInInfo, eForm, fdid);

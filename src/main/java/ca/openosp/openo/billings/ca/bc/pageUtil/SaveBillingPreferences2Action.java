@@ -38,19 +38,54 @@ import ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO;
 
 import java.util.List;
 
-/**
- * Saves the values in the ActionForm into the BillingPreferences record
- *
- * @version 1.0
- */
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for saving British Columbia billing preferences for a provider.
+ * <p>
+ * This action persists multiple types of billing preferences including:
+ * <ul>
+ * <li>Default billing form preference</li>
+ * <li>Default billing provider</li>
+ * <li>Default Teleplan service location (visit type)</li>
+ * <li>Referral settings</li>
+ * <li>Payee provider number</li>
+ * <li>Invoice payee information display settings</li>
+ * <li>GST number preferences</li>
+ * <li>Auto-populate referral setting</li>
+ * </ul>
+ * <p>
+ * All properties are automatically populated by Struts 2 from request parameters
+ * before the execute() method is called.
+ *
+ * @since 2006-04-20
+ */
 public class SaveBillingPreferences2Action
         extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    /**
+     * Saves British Columbia billing preferences for the specified provider.
+     * <p>
+     * This method persists or updates the following preferences:
+     * <ul>
+     * <li>Default billing form - stored in Property table</li>
+     * <li>Default billing provider - stored in Property table (if provided)</li>
+     * <li>Default service location (Teleplan visit type) - stored in Property table (if provided)</li>
+     * <li>Auto-populate referral flag - stored in Property table</li>
+     * <li>Invoice payee information - stored in Property table</li>
+     * <li>Invoice display clinic info flag - stored in Property table</li>
+     * <li>Referral number and payee provider - stored in BillingPreference table</li>
+     * </ul>
+     * <p>
+     * For each preference, the method checks if a record exists and either creates
+     * a new one or updates the existing record. The providerNo is set as a request
+     * attribute for use by the result page.
+     *
+     * @return String "success" to forward to the result page
+     */
     public String execute() {
         BillingPreferencesDAO dao = SpringUtils.getBean(BillingPreferencesDAO.class);
         PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
@@ -160,26 +195,50 @@ public class SaveBillingPreferences2Action
         return SUCCESS;
     }
 
+    // Core provider and billing identifiers
+    /** Provider number for whom preferences are being saved */
     private String providerNo;
+
+    /** Referral number for billing purposes */
     private String referral;
+
+    /** Default payee provider number for this provider's billing */
     private String payeeProviderNo;
+
+    // GST preferences
+    /** GST number for billing */
     private String gstNo;
+
+    /** Whether to use the clinic's GST number instead of provider-specific GST */
     private boolean useClinicGstNo;
+
+    // Referral preferences
+    /** Whether to automatically populate referral information in billing forms */
     private boolean autoPopulateRefer;
 
-    //What to display for payee info when this providers gets referred to as a payee on an invoice
+    // Invoice payee display preferences
+    /** Custom text to display for payee info when this provider is referenced as a payee on an invoice */
     private String invoicePayeeInfo;
+
+    /** Whether to display clinic information on invoices where this provider is the payee */
     private boolean invoicePayeeDisplayClinicInfo;
 
-    //Default billing form preference
+    // Default billing form preferences
+    /** Default billing form to use for this provider */
     private String defaultBillingForm;
+
+    /** Form code for billing */
     private String formCode;
+
+    /** Description of the billing form */
     private String description;
 
-    //Default billing provider preference
+    // Default billing provider preference
+    /** Default billing provider number to use when creating bills */
     private String defaultBillingProvider;
 
-    //Default Teleplan service location (visittype)
+    // Default Teleplan service location preference (BC-specific)
+    /** Default Teleplan service location code (visit type) for BC MSP billing */
     private String defaultServiceLocation;
 
     public String getProviderNo() {

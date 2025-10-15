@@ -33,7 +33,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_appointment" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_appointment");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_appointment");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -46,7 +46,7 @@
 
 <%@page import="ca.openosp.openo.appt.status.service.impl.AppointmentStatusMgrImpl" %>
 <%
-    if (session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 
 %>
 

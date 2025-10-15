@@ -25,7 +25,7 @@
 --%>
 <!DOCTYPE html>
 <%
-    if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -55,11 +55,11 @@
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
 
-        <link href="/oscar/css/bootstrap.css" rel="stylesheet" type="text/css">
-        <link href="/oscar/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
 
 
-        <link rel="stylesheet" href="/oscar/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
 
         <style>
             body {

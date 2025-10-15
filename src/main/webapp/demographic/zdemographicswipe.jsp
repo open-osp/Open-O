@@ -60,7 +60,7 @@
         //-->
     </script>
 </head>
-<body background="../images/gray_bg.jpg" bgproperties="fixed" onLoad="setfocus()" topmargin="0" leftmargin="0"
+<body background="<%= request.getContextPath() %>/images/gray_bg.jpg" bgproperties="fixed" onLoad="setfocus()" topmargin="0" leftmargin="0"
       rightmargin="0" onload="setfocus()">
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">

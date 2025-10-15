@@ -71,7 +71,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_msg" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_msg");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_msg");%>
 </security:oscarSec>
 <%
     // Exit if user is not authorized

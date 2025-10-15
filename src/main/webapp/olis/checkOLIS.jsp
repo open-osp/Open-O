@@ -38,11 +38,11 @@
 <%
     if (session.getAttribute("userrole") == null) {
 
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %><security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>"><%
-    response.sendRedirect("../logout.jsp");
+    response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %></security:oscarSec>
 <%
 
@@ -90,7 +90,7 @@
         Connection c = DbConnectionFilter.getThreadLocalDbConnection(); //select only
         try {
 
-            PreparedStatement ps_findConfiguredProviders = c.prepareStatement("select * from providers where practitionerNo != ''");
+            PreparedStatement ps_findConfiguredProviders = c.prepareStatement("select * from provider where practitionerNo != ''");
             PreparedStatement ps_prop = c.prepareStatement("select * from property where provider_no = ? and name = ?");
             ResultSet rs = ps_findConfiguredProviders.executeQuery();
 

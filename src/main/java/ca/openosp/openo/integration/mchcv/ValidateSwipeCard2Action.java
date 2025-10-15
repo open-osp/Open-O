@@ -31,19 +31,37 @@ import javax.servlet.http.HttpServletResponse;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for validating health card magnetic stripe data.
+ * <p>
+ * This action processes magnetic stripe data from a health card reader,
+ * validates the health card number and version, and returns the validation
+ * result. Used for verifying patient health card information via card swipe.
+ * <p>
+ * The magnetic stripe property is automatically populated by Struts 2 from
+ * the request parameter.
+ *
+ * @since 2006-04-20
+ */
 public class ValidateSwipeCard2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
     /**
-     * This is the action called from the Struts framework.
+     * Validates health card magnetic stripe data.
+     * <p>
+     * This method:
+     * <ul>
+     * <li>Parses the magnetic stripe data to extract health number and card version</li>
+     * <li>Validates the health card information using the appropriate HC validator</li>
+     * <li>Sets validation results and parsed data as request attributes</li>
+     * </ul>
+     * <p>
+     * The magneticStripe property is populated automatically by Struts 2 from
+     * the request parameter before this method is called.
      *
-     * @param mapping  The ActionMapping used to select this instance.
-     * @param form     The optional ActionForm bean for this request.
-     * @param request  The HTTP Request we are processing.
-     * @param response The HTTP Response we are processing.
-     * @return
-     * @throws java.lang.Exception
+     * @return String "success" to forward to the result page
+     * @throws Exception if magnetic stripe parsing or validation fails
      */
     @Override
     public String execute() throws Exception {
@@ -58,12 +76,31 @@ public class ValidateSwipeCard2Action extends ActionSupport {
         return SUCCESS;
     }
 
+    /**
+     * Raw magnetic stripe data read from the health card.
+     * <p>
+     * This property is automatically set by Struts 2 from the magneticStripe
+     * request parameter before the execute() method is called.
+     */
     private String magneticStripe;
 
+    /**
+     * Gets the raw magnetic stripe data from the health card.
+     *
+     * @return String raw magnetic stripe data
+     */
     public String getMagneticStripe() {
         return magneticStripe;
     }
 
+    /**
+     * Sets the raw magnetic stripe data from the health card.
+     * <p>
+     * This setter is called automatically by Struts 2 when the magneticStripe
+     * parameter is present in the request.
+     *
+     * @param magneticStripe String raw magnetic stripe data
+     */
     public void setMagneticStripe(String magneticStripe) {
         this.magneticStripe = magneticStripe;
     }

@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eform" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../securityError.jsp?type=_eform");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eform");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -412,17 +412,17 @@
                             for (int idx = 0; idx < labs.size(); ++idx) {
                                 result = labs.get(idx);
                                 if (result.isMDS()) {
-                                    url = "../../oscarMDS/SegmentDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID + "&status=" + result.getReportStatus();
+                                    url = request.getContextPath() + "/oscarMDS/SegmentDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID + "&status=" + result.getReportStatus();
                                     labDisplayName = result.getDiscipline();
                                 } else if (result.isCML()) {
-                                    url = "../../lab/CA/ON/CMLDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID;
+                                    url = request.getContextPath() + "/lab/CA/ON/CMLDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID;
                                     labDisplayName = result.getDiscipline();
                                 } else if (result.isHL7TEXT()) {
                                     // Modified display name to append the lab's date and time.
                                     labDisplayName = result.getDiscipline();
-                                    url = "../../lab/CA/ALL/labDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID;
+                                    url = request.getContextPath() + "/lab/CA/ALL/labDisplay.jsp?providerNo=" + providerNo + "&segmentID=" + result.segmentID;
                                 } else {
-                                    url = "../../lab/CA/BC/labDisplay.jsp?segmentID=" + result.segmentID + "&providerNo=" + providerNo;
+                                    url = request.getContextPath() + "/lab/CA/BC/labDisplay.jsp?segmentID=" + result.segmentID + "&providerNo=" + providerNo;
                                     labDisplayName = result.getDiscipline();
                                 }
 

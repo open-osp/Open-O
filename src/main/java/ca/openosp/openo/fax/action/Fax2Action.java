@@ -88,14 +88,14 @@ public class Fax2Action extends ActionSupport {
 
         if (TransactionType.CONSULTATION.name().equalsIgnoreCase(transactionType)) {
             try {
-                response.sendRedirect("/oscarEncounter/ViewRequest.do?de=" + demographicNo + "&requestId=" + transactionId);
+                response.sendRedirect(request.getContextPath() + "/oscarEncounter/ViewRequest.do?de=" + demographicNo + "&requestId=" + transactionId);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             return NONE;
         } else if (TransactionType.EFORM.name().equalsIgnoreCase(transactionType)) {
             try {
-                response.sendRedirect("/eform/efmshowform_data.jsp?fdid=" + transactionId + "&parentAjaxId=eforms");
+                response.sendRedirect(request.getContextPath() + "/eform/efmshowform_data.jsp?fdid=" + transactionId + "&parentAjaxId=eforms");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

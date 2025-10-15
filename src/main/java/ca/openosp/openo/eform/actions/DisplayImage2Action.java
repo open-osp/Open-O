@@ -68,7 +68,7 @@ public class DisplayImage2Action extends ActionSupport {
             response.setContentType(contentType);
             OutputStream outputStream = response.getOutputStream();
             IOUtils.copy(stream, outputStream);
-            return SUCCESS;
+            return NONE;
         } catch (Exception e) {
             return NONE;
         } finally {

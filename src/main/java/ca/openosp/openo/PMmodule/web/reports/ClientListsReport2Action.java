@@ -36,6 +36,24 @@ import ca.openosp.openo.utility.SpringUtils;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
+/**
+ * Struts 2 action for generating client lists reports in the Program Management module.
+ * <p>
+ * This action handles client reporting functionality including:
+ * <ul>
+ * <li>Display report form with provider and program selection options</li>
+ * <li>Generate client lists based on selected criteria (currently disabled)</li>
+ * </ul>
+ * <p>
+ * Note: The actual report generation feature is temporarily disabled for security
+ * reasons. The action currently only displays the form with available providers
+ * and programs for selection.
+ * <p>
+ * The action uses method-based routing where the "method" request parameter
+ * determines which operation to execute.
+ *
+ * @since 2005-10-01
+ */
 public class ClientListsReport2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
@@ -45,15 +63,33 @@ public class ClientListsReport2Action extends ActionSupport {
 
     private ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
 
+    /**
+     * Main execution method that routes to report generation or displays the form.
+     * <p>
+     * Routes to:
+     * <ul>
+     * <li>report() - Generate client lists report (if method="report")</li>
+     * <li>Default - Display report form with provider and program lists</li>
+     * </ul>
+     * <p>
+     * The default action retrieves all providers and programs for selection
+     * in the report criteria form.
+     *
+     * Expected request parameters:
+     * <ul>
+     * <li>method - String method name ("report" for report generation)</li>
+     * </ul>
+     *
+     * @return String "form" to display report form, or "report" to show results
+     */
     public String execute() {
         if ("report".equals(request.getParameter("method"))) {
             return report();
         }
-        // need to get the reporting options here, i.e.
+
+        // Get reporting options:
         // - providers list
         // - program list
-        // - icd-10 isue list?
-
         List<Provider> providers = providerManager.getProviders();
         request.setAttribute("providers", providers);
 
@@ -63,16 +99,19 @@ public class ClientListsReport2Action extends ActionSupport {
         return "form";
     }
 
+    /**
+     * Generates the client lists report based on selected criteria.
+     * <p>
+     * Note: This feature is temporarily disabled for security reasons.
+     * The report generation logic has been commented out. When enabled,
+     * this method would query demographics based on report criteria and
+     * return formatted results.
+     *
+     * @return String "report" to forward to the report results view
+     */
     public String report() {
-
-// feature temporaryily disabled for sec reasons
-
-//        DynaActionForm reportForm = (DynaActionForm)form;
-//        ClientListsReportFormBean formBean = (ClientListsReportFormBean)reportForm.get("form");
-//
-//        Map<String, ClientListsReportResults> reportResults = demographicDao.findByReportCriteria(formBean);
-//        request.setAttribute("reportResults", reportResults);
-
+        // Feature temporarily disabled for security reasons
+        // Report generation logic has been disabled pending security review
 
         return "report";
     }

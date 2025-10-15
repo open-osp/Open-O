@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w" reverse="<%=true%>">
     <%authed2 = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_flowsheet");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_flowsheet");%>
 </security:oscarSec>
 <%
     if (!authed2) {
@@ -62,9 +62,9 @@
 
 <%
     long startTimeToGetP = System.currentTimeMillis();
-    if (session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     //TODO: MOVE THIS TO AN ACTION
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
     FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
