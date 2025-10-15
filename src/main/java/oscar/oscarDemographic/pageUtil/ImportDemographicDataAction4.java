@@ -25,123 +25,12 @@
 
 package oscar.oscarDemographic.pageUtil;
 
-import java.awt.Color;
-import java.io.*;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.upload.FormFile;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.PMmodule.model.Program;
-import org.oscarehr.PMmodule.model.ProgramProvider;
-import org.oscarehr.PMmodule.service.AdmissionManager;
-import org.oscarehr.PMmodule.service.ProgramManager;
-import org.oscarehr.casemgmt.dao.IssueDAO;
-import org.oscarehr.casemgmt.model.CaseManagementIssue;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
-import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
-import org.oscarehr.casemgmt.model.Issue;
-import org.oscarehr.casemgmt.service.CaseManagementManager;
-import org.oscarehr.common.dao.AdmissionDao;
-import org.oscarehr.common.dao.AllergyDao;
-import org.oscarehr.common.dao.AppointmentStatusDao;
-import org.oscarehr.common.dao.ContactDao;
-import org.oscarehr.common.dao.DemographicArchiveDao;
-import org.oscarehr.common.dao.DemographicContactDao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.DemographicExtDao;
-import org.oscarehr.common.dao.DemographicPharmacyDao;
-import org.oscarehr.common.dao.DocumentExtraReviewerDao;
-import org.oscarehr.common.dao.DrugDao;
-import org.oscarehr.common.dao.DrugReasonDao;
-import org.oscarehr.common.dao.MeasurementsExtDao;
-import org.oscarehr.common.dao.OscarAppointmentDao;
-import org.oscarehr.common.dao.PartialDateDao;
-import org.oscarehr.common.dao.PatientLabRoutingDao;
-import org.oscarehr.common.dao.PharmacyInfoDao;
-import org.oscarehr.common.dao.ProviderDataDao;
-import org.oscarehr.common.dao.ProviderLabRoutingDao;
-import org.oscarehr.common.model.AbstractModel;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.AppointmentStatus;
-import org.oscarehr.common.model.Contact;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicArchive;
-import org.oscarehr.common.model.DemographicContact;
-import org.oscarehr.common.model.DemographicPharmacy;
-import org.oscarehr.common.model.DocumentExtraReviewer;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.DrugReason;
-import org.oscarehr.common.model.MeasurementsExt;
-import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.PatientLabRouting;
-import org.oscarehr.common.model.PharmacyInfo;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.ProviderLabRoutingModel;
-import org.oscarehr.hospitalReportManager.HRMReport;
-import org.oscarehr.hospitalReportManager.HRMReportParser;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentSubClassDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentToProviderDao;
-import org.oscarehr.hospitalReportManager.model.HRMDocument;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
-import org.oscarehr.managers.NioFileManager;
-import org.oscarehr.managers.SecurityInfoManager;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
-import ca.uhn.hl7v2.model.v23.datatype.ID;
-import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.XTN;
-import ca.uhn.hl7v2.model.v23.group.ORU_R01_ORDER_OBSERVATION;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.segment.MSH;
-import ca.uhn.hl7v2.model.v23.segment.NTE;
-import ca.uhn.hl7v2.model.v23.segment.OBR;
-import ca.uhn.hl7v2.model.v23.segment.OBX;
 import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.util.Terser;
 import cds.AlertsAndSpecialNeedsDocument.AlertsAndSpecialNeeds;
 import cds.AllergiesAndAdverseReactionsDocument.AllergiesAndAdverseReactions;
 import cds.AppointmentsDocument.Appointments;
@@ -167,20 +56,48 @@ import cds.ReportsDocument.Reports.OBRContent;
 import cds.ReportsDocument.Reports.ReportReviewed;
 import cds.ReportsDocument.Reports.SourceAuthorPhysician;
 import cds.RiskFactorsDocument.RiskFactors;
-import cdsDt.AddressType;
-import cdsDt.AdverseReactionType;
-import cdsDt.DateTimeFullOrPartial;
+import cdsDt.*;
 import cdsDt.DiabetesComplicationScreening.ExamCode;
 import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
-import cdsDt.PersonNamePartQualifierCode;
-import cdsDt.PersonNamePartTypeCode;
-import cdsDt.PersonNameSimple;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
-import cdsDt.YIndicator;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.upload.FormFile;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.oscarehr.PMmodule.dao.ProviderDao;
+import org.oscarehr.PMmodule.model.Program;
+import org.oscarehr.PMmodule.model.ProgramProvider;
+import org.oscarehr.PMmodule.service.AdmissionManager;
+import org.oscarehr.PMmodule.service.ProgramManager;
+import org.oscarehr.casemgmt.dao.IssueDAO;
+import org.oscarehr.casemgmt.model.*;
+import org.oscarehr.casemgmt.service.CaseManagementManager;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.model.*;
+import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.hospitalReportManager.HRMReport;
+import org.oscarehr.hospitalReportManager.HRMReportParser;
+import org.oscarehr.hospitalReportManager.dao.*;
+import org.oscarehr.hospitalReportManager.model.*;
+import org.oscarehr.managers.NioFileManager;
+import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 import org.oscarehr.ws.LabUploadWs;
 import oscar.OscarProperties;
-import org.oscarehr.documentManager.EDocUtil;
 import oscar.oscarDemographic.data.DemographicAddResult;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
@@ -189,13 +106,7 @@ import oscar.oscarLab.FileUploadCheck;
 import oscar.oscarLab.LabRequestReportLink;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
-import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
-import oscar.oscarLab.ca.all.upload.handlers.CMLHandler;
-import oscar.oscarLab.ca.all.upload.handlers.ExcellerisOntarioHandler;
-import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
-import oscar.oscarLab.ca.all.upload.handlers.MDSHandler;
-import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
-import oscar.oscarLab.ca.all.upload.handlers.PATHL7Handler;
+import oscar.oscarLab.ca.all.upload.handlers.*;
 import oscar.oscarLab.ca.all.util.Utilities;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
@@ -204,6 +115,23 @@ import oscar.oscarRx.data.RxDrugData.DrugMonograph;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  *
@@ -2677,8 +2605,11 @@ public class ImportDemographicDataAction4 extends Action {
                                 	f.write(b);
                                 	f.close();
                                 } else {
-                                	 String tmpDir = currentDirectory;
-                                             //oscarProperties.getProperty("TMP_DIR");
+	                                // override upload zip directory with setting from properties file.
+	                                String tmpDir = currentDirectory;
+									if(oscarProperties.hasProperty("TMP_DIR") && !oscarProperties.getProperty("TMP_DIR").equals("")) {
+										tmpDir = oscarProperties.getProperty("TMP_DIR");
+									}
                                      tmpDir = Util.fixDirName(tmpDir);
                                      String path3 = tmpDir + repR[i].getFilePath();
                                      if(!path3.endsWith(contentType)) {
@@ -2689,7 +2620,12 @@ public class ImportDemographicDataAction4 extends Action {
                                      }
                                      
                                      //FileUtils.copyFile(new File(tmpDir + repR[i].getFilePath().substring(repR[i].getFilePath().lastIndexOf("\\")+1)), new File(docDir + docFileName));
-                                     FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
+	                                 File incomingfile = new File(path3);
+									 if(incomingfile.exists()) {
+										 FileUtils.copyFile(incomingfile, new File(docDir + docFileName));
+									 } else {
+										 err_data.add("Error! attachment file: " + path3 + " does not exist.") ;
+									 }
                                 }
 
                                 if (repR[i].getClass1()!=null) {
