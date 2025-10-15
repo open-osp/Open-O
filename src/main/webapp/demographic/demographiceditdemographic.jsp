@@ -4255,7 +4255,7 @@ function checkInsuranceEligibility() {
 		});
 	}).done(function(data){
 		jQuery('#menu2 #search_spinner').text("");
-		jQuery('#menu2 #returnTeleplanMsg').text(data);
+		jQuery('#menu2 #returnTeleplanMsg').html(data);
 	})
  }
 
