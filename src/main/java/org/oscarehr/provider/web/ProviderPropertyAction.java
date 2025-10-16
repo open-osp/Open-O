@@ -26,6 +26,7 @@ package org.oscarehr.provider.web;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Logger;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -42,12 +43,19 @@ import org.oscarehr.common.model.UserProperty;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+
+import net.sf.json.JSONObject;
 import oscar.eform.EFormUtil;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil;
 
+import org.oscarehr.managers.ProviderManager2;
+import org.oscarehr.managers.SecurityInfoManager;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -55,6 +63,10 @@ import java.util.*;
  * @author rjonasz
  */
 public class ProviderPropertyAction extends DispatchAction {
+    private static final Logger logger = MiscUtils.getLogger();
+
+    private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
+    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private UserPropertyDAO userPropertyDAO;
 
@@ -1565,6 +1577,65 @@ public class ProviderPropertyAction extends DispatchAction {
 
 		return actionmapping.findForward("genCppSingleLine");
 	}
+
+    public ActionForward viewHl7LabResultPrefs(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        boolean offerFileForOthers = providerManager2.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+        boolean allowOthersFileForYou = providerManager2.isHl7AllowOthersFileForYou(loggedInInfo, providerNo);
+
+        request.setAttribute("offerFileForOthers", offerFileForOthers);
+        request.setAttribute("allowOthersFileForYou", allowOthersFileForYou);
+
+        return actionmapping.findForward("genHl7LabResultPrefs");
+    }
+
+    public ActionForward setOfferFileForOthersPref(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+        
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String value = request.getParameter("value");
+        boolean status = providerManager2.updateHl7OfferFileForOthers(loggedInInfo, providerNo, value);
+
+        JSONObject json = new JSONObject();
+        json.put("status", status);
+        writeJsonResponse(response, json.toString());
+        return null;
+    }
+
+    public ActionForward setAllowOthersFileForYouPref(ActionMapping actionmapping, ActionForm actionform, HttpServletRequest request, HttpServletResponse response) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String value = request.getParameter("value");
+        boolean status = providerManager2.updateHl7AllowOthersFileForYou(loggedInInfo, providerNo, value);
+
+        JSONObject json = new JSONObject();
+        json.put("status", status);
+        writeJsonResponse(response, json.toString());
+        return null;
+    }
+
+    private void writeJsonResponse(HttpServletResponse response, String json) {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        try (PrintWriter out = response.getWriter()) {
+            out.write(json);
+        } catch (Exception e) {
+            logger.error("An error occurred while writing JSON response to the output stream", e);
+        }
+    }
     
 public ActionForward viewEDocBrowserInDocumentReport(ActionMapping actionmapping,
             ActionForm actionform,
