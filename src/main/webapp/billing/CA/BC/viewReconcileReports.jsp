@@ -140,9 +140,8 @@ if(!authed) {
      </tr>
 
   <%
-    
-    for(TeleplanS21 result : teleplanS21Dao.search_all_tahd("D")) {
-    
+    try {
+    for(TeleplanS21 result : teleplanS21Dao.search_all_tahd('D')) {
         raNo  = result.getId().toString();
         paymentdate = result.getPayment();
         payable = result.getPayeeName();
@@ -173,7 +172,12 @@ if(!authed) {
      <tr>
         <td colspan="10" bgcolor="#EBF4F5">&nbsp;</td>
      </tr>
- <% }%>
+
+ <% }
+} catch (Exception e) {
+		MiscUtils.getLogger().error("error", e);
+}
+%>
 
 </table>
 
