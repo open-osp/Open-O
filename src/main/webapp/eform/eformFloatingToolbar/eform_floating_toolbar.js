@@ -31,11 +31,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			})
 		}
 
-		/**
-		 *  Enable Are-you-sure dirty page detection.
-		 */
-		jQuery("form:first").areYouSure();
-
 	const isSuccessAndAutoclose = document.getElementById("isSuccess_Autoclose") &&
 		document.getElementById("isSuccess_Autoclose").value === 'true';
 	if (isSuccessAndAutoclose) {
@@ -67,12 +62,6 @@ function remoteSave() {
 		});
 
 		moveSubject();
-
-		if (typeof releaseDirtyFlag === "function") {
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
-			window["releaseDirtyFlag"]();
-		}
-
 		// don't need the dirty form notification if the form is being autosaved.
 		if(isFormDirty()) {
 			jQuery("form:first").trigger('reinitialize.areYouSure');
@@ -96,6 +85,12 @@ function remoteSave() {
 			}
 		}
 		
+		if(typeof releaseDirtyFlag === "function")
+		{
+			console.log("Releasing dirty window flag by releaseDirtyFlag function")
+			window["releaseDirtyFlag"]();
+		}
+
 		if(typeof submission === "function")
 		{
 			console.log("Executing submission method before submitting first form directly");
@@ -425,25 +420,20 @@ function remoteSave() {
 		 * Needs to be saved if this is
 		 * a new eForm or it has been altered.
 		 */
-		if(isFormDirty()) {
+		if(typeof needToConfirm !== 'undefined' && needToConfirm) {
 			console.log("eForm needs to be saved.")
 			remoteSave();
 		}
+
+		/*
+		 * for situations when the eForm does not contain dirty form
+		 * detection; save it everytime.
+		 */
+		else if(typeof needToConfirm === 'undefined') {
+			remoteSave();
 	}
 
-	/**
-	 *  detect if this form is dirty enough to be auto-saved.
-	 * @returns {boolean}
-	 */
-	function isFormDirty() {
-		// new forms are always dirty
-		const formElement = jQuery("#newForm");
-		if(formElement && formElement.val() === "true") {
-			return true;
-		}
 
-		// if the form has be edited added to.
-		return jQuery('form:first').hasClass('dirty');
 	}
 
 	function hailMary() {
