@@ -23,12 +23,11 @@
  */
 package org.oscarehr.dashboard.handler;
 
-import java.util.List;
-
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.oscarehr.dashboard.handler.IndicatorTemplateXML.RangeType;
 import org.oscarehr.dashboard.query.Column;
 import org.oscarehr.dashboard.query.DrillDownAction;
@@ -37,10 +36,11 @@ import org.oscarehr.dashboard.query.RangeInterface;
 import org.oscarehr.dashboard.query.RangeInterface.Limit;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.hibernate.SessionFactory;
+
+import java.util.List;
 
 @Service
 public abstract class AbstractQueryHandler extends HibernateDaoSupport {
