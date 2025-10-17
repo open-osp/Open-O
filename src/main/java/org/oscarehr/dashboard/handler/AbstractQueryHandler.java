@@ -24,10 +24,7 @@
 package org.oscarehr.dashboard.handler;
 
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.oscarehr.dashboard.handler.IndicatorTemplateXML.RangeType;
 import org.oscarehr.dashboard.query.Column;
 import org.oscarehr.dashboard.query.DrillDownAction;
@@ -46,7 +43,6 @@ import java.util.List;
 public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 	
 	private static Logger logger = MiscUtils.getLogger();
-	public SessionFactory sessionFactory;
 
 	@Autowired
     public void setSessionFactoryOverride(SessionFactory sessionFactory) {
@@ -65,7 +61,7 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 	private LoggedInInfo loggedInInfo;
 	
 	public AbstractQueryHandler() {
-		// default
+
 	}
 
 	protected List<?> execute() {
@@ -79,23 +75,29 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
 	protected List<?> execute( String query ) {
 		
 		setResultList( null );
-		
-		//Session session = getSession();
-		Session session = sessionFactory.getCurrentSession();
-		SQLQuery sqlQuery = session.createSQLQuery( query );
-		List<?> results = sqlQuery.setResultTransformer( Criteria.ALIAS_TO_ENTITY_MAP ).list();		
 
-		logger.info( "Thread " + Thread.currentThread().getName() +  "[" + Thread.currentThread().getId() 
-				+ "] Query results " + results );
+		Transaction tx = null;
+		try (Session session = getSessionFactory().openSession()) {
+			tx = session.beginTransaction();
+			SQLQuery sqlQuery = session.createSQLQuery(query);
+			List<?> results = sqlQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
 
-		//TODO work on method to detect and exclude demographic files that are 
-		// defined in the securityInfoManager object.
-		
-		setResultList( results );			
-		//releaseSession( session );
-		session.close();
+			logger.info("Thread " + Thread.currentThread().getName() + "[" + Thread.currentThread().getId()
+					+ "] Query results " + results);
 
-		return results;
+			//TODO work on method to detect and exclude demographic files that are
+			// defined in the securityInfoManager object.
+
+			setResultList(results);
+			tx.commit();
+
+			return results;
+		} catch (Exception e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new RuntimeException("Error executing query", e);
+		}
 	}
 	
 
