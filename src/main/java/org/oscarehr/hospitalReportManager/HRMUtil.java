@@ -28,6 +28,7 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.OscarProperties;
 import oscar.oscarLab.ca.on.HRMResultsData;
 import oscar.util.StringUtils;
 
@@ -56,6 +57,13 @@ public class HRMUtil {
 	 * Because multiple versions of a single HRM document can be received, 
 	 */
 	public static ArrayList<HashMap<String, ? extends Object>> listHRMDocuments(LoggedInInfo loggedInInfo, String sortBy, boolean sortAsc, String demographicNo,boolean filterDuplicates){
+		if (OscarProperties.getInstance().isBritishColumbiaBillingRegion()) {
+			return new ArrayList<>();
+		}
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
+			logger.warn("missing required security object (_hrm)");
+			return new ArrayList<>();
+		}
 
 		ArrayList<HashMap<String, ? extends Object>> hrmdocslist = new ArrayList<HashMap<String, ?>>();
 

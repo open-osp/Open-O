@@ -124,9 +124,9 @@ public class EmailComposeManager {
             return new ArrayList<>();
         }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
-			logger.error("missing required security object (_hrm)");
+            logger.warn("missing required security object (_hrm)");
             return new ArrayList<>();
-		}
+        }
 
         List<String> attachedHRMIds = convertToList(attachedHRMDocuments);
 
