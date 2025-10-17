@@ -62,11 +62,6 @@ function remoteSave() {
 		});
 
 		moveSubject();
-		// don't need the dirty form notification if the form is being autosaved.
-		if(isFormDirty()) {
-			jQuery("form:first").trigger('reinitialize.areYouSure');
-		}
-
 		if (typeof saveRTL === "function") {
 			console.log("Saving RTL or RTL template");
 			window["saveRTL"]();
