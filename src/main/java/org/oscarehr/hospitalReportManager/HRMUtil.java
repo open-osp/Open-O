@@ -57,7 +57,7 @@ public class HRMUtil {
 	 * Because multiple versions of a single HRM document can be received, 
 	 */
 	public static ArrayList<HashMap<String, ? extends Object>> listHRMDocuments(LoggedInInfo loggedInInfo, String sortBy, boolean sortAsc, String demographicNo,boolean filterDuplicates){
-		if (OscarProperties.getInstance().isBritishColumbiaBillingRegion()) {
+		if (!OscarProperties.getInstance().isOntarioBillingRegion()) {
 			return new ArrayList<>();
 		}
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {

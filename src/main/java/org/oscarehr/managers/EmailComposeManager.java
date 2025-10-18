@@ -120,7 +120,7 @@ public class EmailComposeManager {
     }
 
     public List<EmailAttachment> prepareHRMAttachments(LoggedInInfo loggedInInfo, String[] attachedHRMDocuments) throws PDFGenerationException {
-        if (OscarProperties.getInstance().isBritishColumbiaBillingRegion()) {
+        if (!OscarProperties.getInstance().isOntarioBillingRegion()) {
             return new ArrayList<>();
         }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
