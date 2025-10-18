@@ -25,13 +25,12 @@
 
 package org.oscarehr.billing.CA.BC.dao;
 
-import java.util.List;
-
-import javax.persistence.Query;
-
 import org.oscarehr.billing.CA.BC.model.TeleplanS21;
 import org.oscarehr.common.dao.AbstractDaoImpl;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.List;
 
 @Repository
 public class TeleplanS21Dao extends AbstractDaoImpl<TeleplanS21>{
@@ -52,7 +51,7 @@ public class TeleplanS21Dao extends AbstractDaoImpl<TeleplanS21>{
 		return results;
 	}
 	
-	public List<TeleplanS21> search_all_tahd(String excludeStatus) {
+	public List<TeleplanS21> search_all_tahd(Character excludeStatus) {
 		Query q = entityManager.createQuery("SELECT t from TeleplanS21 t WHERE t.status <> ? ORDER BY t.payment desc");
 		q.setParameter(0, excludeStatus);
 		
