@@ -21,6 +21,8 @@ import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.OscarProperties;
+
 public class EmailComposeAction extends DispatchAction {
     private static final Logger logger = MiscUtils.getLogger();
     private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
@@ -56,7 +58,9 @@ public class EmailComposeAction extends DispatchAction {
             emailAttachmentList.addAll(emailComposeManager.prepareEFormAttachments(loggedInInfo, fdid, attachedEForms));
             emailAttachmentList.addAll(emailComposeManager.prepareEDocAttachments(loggedInInfo, attachedDocuments));
             emailAttachmentList.addAll(emailComposeManager.prepareLabAttachments(loggedInInfo, attachedLabs));
-            emailAttachmentList.addAll(emailComposeManager.prepareHRMAttachments(loggedInInfo, attachedHRMDocuments));
+            if (OscarProperties.getInstance().isOntarioBillingRegion()) {
+                emailAttachmentList.addAll(emailComposeManager.prepareHRMAttachments(loggedInInfo, attachedHRMDocuments));
+            }
             emailAttachmentList.addAll(emailComposeManager.prepareFormAttachments(request, response, attachedForms, Integer.parseInt(demographicId)));
         } catch (PDFGenerationException e) {
             logger.error(e.getMessage(), e);
