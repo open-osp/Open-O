@@ -330,7 +330,7 @@ public final class ImageRenderingServlet extends HttpServlet {
         String defaultClinicLogo = (defaultResourceUrl != null) ? defaultResourceUrl.getPath() : null;
 
         try {
-            // Set the filename from properties or use default logo
+            // Set the filename from properties or use the default logo
             String filename = OscarProperties.getInstance().getProperty("CLINIC_LOGO_FILE", defaultClinicLogo);
             if (filename == null || filename.isEmpty()) {
                 filename = defaultClinicLogo;
