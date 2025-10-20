@@ -24,7 +24,7 @@ if(!authed) {
 }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
 <%
 String user_no = (String) session.getAttribute("user");
 String userfirstname = (String) session.getAttribute("userfirstname");
@@ -37,20 +37,20 @@ String userlastname = (String) session.getAttribute("userlastname");
 	scope="page" />
 <%@ page
 	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
-<%@ page import="oscar.oscarLab.ca.on.*"%>
-<%@ page import="oscar.oscarLab.ca.all.Hl7textResultsData"%>
+<%@ page import="ca.openosp.openo.lab.ca.on.*"%>
+<%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData"%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentDao"%>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao"%>
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMDocument"%>
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic"%>
+<%@page import="ca.openosp.openo.utility.SessionConstants"%>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao"%>
+<%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentToDemographicDao"%>
+<%@page import="ca.openosp.openo.hospitalReportManager.model.HRMDocument"%>
+<%@page import="ca.openosp.openo.hospitalReportManager.model.HRMDocumentToDemographic"%>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="org.oscarehr.common.model.EFormData" %>
-<%@ page import="oscar.eform.EFormUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.commn.model.EFormData" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
 
 <!-- Deprecated: Please use attachDocument.jsp. -->
 <%
