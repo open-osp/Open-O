@@ -115,17 +115,9 @@ public class HRMDownloadFile2Action extends ActionSupport {
         // Set both headers for compatibility
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + encodedFileName);
 
-        try (ServletOutputStream out = response.getOutputStream();
-            ByteArrayInputStream in = new ByteArrayInputStream(report.getBinaryContent())) {
-
-            byte[] buffer = new byte[8192]; // 8 KB buffer
-            int bytesRead;
-            while ((bytesRead = in.read(buffer)) != -1) {
-                out.write(buffer, bytesRead, bytesRead);
-            }
-            out.flush();
+        try (ServletOutputStream out = response.getOutputStream()) {
+            out.write(data);
         } catch (IOException e) {
-            // Optional: add proper logging or rethrow if needed
             throw new IOException("Error streaming HRM report: " + e.getMessage(), e);
         }
 
