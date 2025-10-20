@@ -47,8 +47,10 @@
     }
 %>
 
+<!DOCTYPE HTML>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/oscarRx/styles.css">
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="ManagePharmacy.title"/></title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
@@ -75,8 +77,6 @@
             }
             ID = (String) request.getParameter("ID");
         %>
-
-        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
 
