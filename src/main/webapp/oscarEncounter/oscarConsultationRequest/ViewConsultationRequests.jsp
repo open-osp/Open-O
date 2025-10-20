@@ -470,27 +470,27 @@ background-color:rgb(212, 212, 254);
                                     for (int i = 0; i < theRequests.ids.size(); i++) {
                                         //multisites. skip record if not belong to same site/team
                                         if (isSiteAccessPrivacy || isTeamAccessPrivacy) {
-                                            if (providerMap.get(theRequests.providerNo.elementAt(i)) == null) continue;
+                                            if (providerMap.get(theRequests.providerNo.get(i)) == null) continue;
                                         }
 
-                                        String id = theRequests.ids.elementAt(i);
-                                        String status = theRequests.status.elementAt(i);
-                                        String patient = theRequests.patient.elementAt(i);
-                                        String provide = theRequests.provider.elementAt(i);
-                                        String service = theRequests.service.elementAt(i);
+                                        String id = theRequests.ids.get(i);
+                                        String status = theRequests.status.get(i);
+                                        String patient = theRequests.patient.get(i);
+                                        String provide = theRequests.provider.get(i);
+                                        String service = theRequests.service.get(i);
                                         boolean eReferral = theRequests.eReferral.get(i);
-                                        String date = theRequests.date.elementAt(i);
-                                        String demo = theRequests.demographicNo.elementAt(i);
-                                        String appt = theRequests.apptDate.elementAt(i);
-                                        String patBook = theRequests.patientWillBook.elementAt(i);
-                                        String urgency = theRequests.urgency.elementAt(i);
-                                        String sendTo = theRequests.teams.elementAt(i);
+                                        String date = theRequests.date.get(i);
+                                        String demo = theRequests.demographicNo.get(i);
+                                        String appt = theRequests.apptDate.get(i);
+                                        String patBook = theRequests.patientWillBook.get(i);
+                                        String urgency = theRequests.urgency.get(i);
+                                        String sendTo = theRequests.teams.get(i);
                                         if (sendTo == null) sendTo = "-1";
-                                        String specialist = theRequests.vSpecialist.elementAt(i);
-                                        String followUpDate = theRequests.followUpDate.elementAt(i);
+                                        String specialist = theRequests.vSpecialist.get(i);
+                                        String followUpDate = theRequests.followUpDate.get(i);
                                         String siteName = "";
                                         if (bMultisites) {
-                                            siteName = theRequests.siteName.elementAt(i);
+                                            siteName = theRequests.siteName.get(i);
                                         }
                                         if (status.equals("1") && dateGreaterThan(date, Calendar.WEEK_OF_YEAR, -1)) {
                                             tickerList.add(demo);

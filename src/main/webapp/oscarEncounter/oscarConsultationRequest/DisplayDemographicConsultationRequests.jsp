@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -42,10 +42,6 @@
 
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@page
         import="ca.openosp.openo.encounter.pageUtil.*,ca.openosp.openo.encounter.data.*" %>
@@ -238,13 +234,13 @@
                                 <tbody>
                                     <%
                                         for (int i = 0; i < theRequests.ids.size(); i++) {
-                                            String id        = (String) theRequests.ids.elementAt(i);
-                                            String status    = (String) theRequests.status.elementAt(i);
-                                            String patient   = (String) theRequests.patient.elementAt(i);
-                                            String provider  = (String) theRequests.provider.elementAt(i);
-                                            String service   = (String) theRequests.service.elementAt(i);
-                                            String date      = (String) theRequests.date.elementAt(i);
-                                            Provider cProv   = (Provider) theRequests.consultProvider.elementAt(i);
+                                            String id        = theRequests.ids.get(i);
+                                            String status    = theRequests.status.get(i);
+                                            String patient   = theRequests.patient.get(i);
+                                            String provider  = theRequests.provider.get(i);
+                                            String service   = theRequests.service.get(i);
+                                            String date      = theRequests.date.get(i);
+                                            Provider cProv   = theRequests.consultProvider.get(i);
                                     %>
                                     <tr>
                                         <td class="stat<%=status%>" width="75">

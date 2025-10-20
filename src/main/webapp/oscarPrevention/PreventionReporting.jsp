@@ -28,7 +28,9 @@
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 <%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,java.net.*,ca.openosp.openo.eform.*" %>
-<%@page import="ca.openosp.OscarProperties, ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
+<%@page import="ca.openosp.OscarProperties"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
+<%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="ca.openosp.openo.demographic.data.DemographicNameAgeString" %>
 <%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
@@ -629,7 +631,7 @@
 
 
                           <% } else {
-                              org.oscarehr.common.model.Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
+                              Demographic demoSDM = demoData.getSubstituteDecisionMaker(LoggedInInfo.getLoggedInInfoFromSession(request), dis.demographicNo.toString());%>
                           <td><%=demo.getAgeAsOf(asDate)%></td>
                           <td><%=Encode.forHtmlContent(h.get("sex"))%></td>
                           <td><%=Encode.forHtmlContent(h.get("lastName"))%></td>

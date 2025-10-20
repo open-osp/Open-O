@@ -22,6 +22,7 @@
     Toronto, Ontario, Canada
 
 --%>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

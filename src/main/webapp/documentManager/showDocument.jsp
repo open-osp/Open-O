@@ -63,12 +63,13 @@
 <%@ page import="ca.openosp.openo.mds.data.ReportStatus" %>
 <%@ page import="ca.openosp.openo.commn.dao.*" %>
 <%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
     ProviderInboxRoutingDao providerInboxRoutingDao = SpringUtils.getBean(ProviderInboxRoutingDao.class);
     UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-       
+
     LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
     String providerNo = loggedInInfo.getLoggedInProviderNo();
     UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);                        
