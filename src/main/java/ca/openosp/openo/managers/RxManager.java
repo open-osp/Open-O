@@ -65,14 +65,6 @@ public interface RxManager {
     public Boolean addFavorite(Favorite f);
 
     /**
-     * Retrieves a set of stored instructions that match the given string.
-     *
-     * @param str The string to match against stored instructions.
-     * @return A set of strings representing the matching stored instructions.
-     */
-    Set<String> getStoredInstructionsMatching(String str);
-
-    /**
      * Archives a drug. This will remove the drug from the current list. The drug can still be found under the 'All' section.
      *
      * @param info          Logged-in user information.
