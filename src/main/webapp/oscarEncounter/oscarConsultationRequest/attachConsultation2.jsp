@@ -16,7 +16,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_con");%>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_con");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -65,7 +65,7 @@ String demoNo = request.getParameter("demo");
 String requestId = request.getParameter("requestId");
 String providerNo = request.getParameter("provNo");
 
-if(demoNo == null && requestId == null ) response.sendRedirect("../error.jsp");
+if(demoNo == null && requestId == null ) response.sendRedirect(request.getContextPath() + "/error.jsp");
 
 if( demoNo == null || demoNo.equals("null")  ) {
 
