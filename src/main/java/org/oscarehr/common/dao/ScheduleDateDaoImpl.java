@@ -123,7 +123,7 @@ public class ScheduleDateDaoImpl extends AbstractDaoImpl<ScheduleDate> implement
 	}
 	
     @Override
-	public List<ScheduleDate> search_scheduledate_datep(Date date, Date date2, String status) {
+	public List<ScheduleDate> search_scheduledate_datep(Date date, Date date2, Character status) {
 		Query query = entityManager.createQuery("select s from ScheduleDate s where s.date>=:sdate and s.date <=:edate and s.status=:status  order by s.date");
 		query.setParameter("sdate", date);
 		query.setParameter("edate", date2);

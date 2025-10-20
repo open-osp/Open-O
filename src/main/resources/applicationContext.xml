@@ -138,7 +138,7 @@
 	<bean id="BillingPreferencesDAO" class="oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO" autowire="byName" />
 	<bean id="PrivateBillTransactionDAO" class="oscar.oscarBilling.ca.bc.data.PrivateBillTransactionsDAO" autowire="byName" />
 	<bean id="SupServiceCodeAssocDAO" class="oscar.oscarBilling.ca.bc.data.SupServiceCodeAssocDAO" autowire="byName" />
-	<bean id="BillingreferralDAO" class="org.oscarehr.common.dao.BillingreferralDaoImpl" autowire="byName" />
+	<bean id="BillingreferralDao" class="org.oscarehr.common.dao.BillingreferralDaoImpl" autowire="byName" />
 	<bean id="DxresearchDAO" class="org.oscarehr.common.dao.DxresearchDAOImpl" autowire="byName" />
 	<bean id="icd9Dao" class="org.oscarehr.common.dao.Icd9DaoImpl" autowire="byName" />
 	<bean id="defaultIssueDao" class="org.caisi.dao.DefaultIssueDaoImpl" autowire="byName" />

@@ -119,22 +119,15 @@
      * Ordering is very important.
      * For Javascript: First is last.
      */
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
     thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
-    thisEForm.addHeadJavascript(request.getContextPath()+"/js/jquery.are-you-sure.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
 
-    thisEForm.addCSS(request.getContextPath()+"/library/bootstrap/5.0.2/css/bootstrap.css", "all");
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/bootstrap/5.0.2/js/bootstrap.bundle.js");
-
-    thisEForm.addCSS(request.getContextPath()+"/css/oscar_alert.css", "all");
     thisEForm.addCSS(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.css", "all");
     thisEForm.addBodyJavascript(request.getContextPath()+"/eform/eformFloatingToolbar/eform_floating_toolbar.js");
-    thisEForm.addBodyJavascript(request.getContextPath()+"/js/oscar-alert.js");
     thisEForm.addHiddenInputElement("context", request.getContextPath());
     thisEForm.addHiddenInputElement("demographicNo", demographic_no);
     thisEForm.addHiddenInputElement("fid", fid);
     thisEForm.addHiddenInputElement("fdid", request.getParameter("fdid"));
-    thisEForm.addHiddenInputElement("newForm", "true");
 
     // Add email consent properties
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
