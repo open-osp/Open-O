@@ -1336,6 +1336,9 @@ public final class RxWriteScript2Action extends ActionSupport {
         HashMap hm = new HashMap();
         hm.put("NoStashItem", n);
         JSONObject jsonObject = JSONObject.fromObject(hm);
+
+        response.setContentType("application/json");
+
         response.getOutputStream().write(jsonObject.toString().getBytes());
         return null;
     }
