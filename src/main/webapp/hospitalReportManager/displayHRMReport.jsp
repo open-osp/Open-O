@@ -478,9 +478,9 @@
 
             <%
                 if (hrmReport.isBinary()) {
-                    String reportFileData = hrmReport.getFileData();
-                    String noMessageIdFileData = reportFileData.replaceAll("<MessageUniqueID>.*?</MessageUniqueID>", "<MessageUniqueID></MessageUniqueID>");
-                    String noMessageIdHash = org.apache.commons.codec.digest.DigestUtils.md5Hex(noMessageIdFileData);
+                    // Use the hash stored in the database instead of recalculating it
+                    // This ensures compatibility with reports uploaded before UTF-8 encoding migration
+                    String noMessageIdHash = document.getReportHash();
 
                     if (hrmReport.getFileExtension() != null && (".gif".equals(hrmReport.getFileExtension()) || ".jpg".equals(hrmReport.getFileExtension()) || ".png".equals(hrmReport.getFileExtension()))) {
             %><img
