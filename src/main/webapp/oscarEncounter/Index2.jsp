@@ -708,34 +708,6 @@
                 return true;
             }
 
-            <%--
-            function tryAnother(){
-            ////
-                var txt = "null";
-                var foundIn = "null";
-                if (window.getSelection){
-                    txt = window.getSelection();
-                    foundIn = 'window.getSelection()';
-                 }else if (document.getSelection){
-                    txt = document.getSelection();
-                    foundIn = 'document.getSelection()';
-                 }else if (document.selection){
-                    txt = document.selection.createRange().text;
-                    foundIn = 'document.selection.createRange()';
-                 }
-                 alert (txt+"\n"+foundIn);
-                ////
-            }
-
-            function selectBox(name) {
-                to = name.options[name.selectedIndex].value;
-                name.selectedIndex =0;
-                if(to!="null")
-                  popupPageK(to);
-            }
-
-            --%>
-
             function measurementLoaded(name) {
                 measurementWindows.push(openWindows[name]);
             }
@@ -748,18 +720,6 @@
             }
 
             function showMenu(menuNumber, eventObj) {
-                //    alert(eventObj);
-                /*hideAllMenus();
-                var menuId = 'menu' + menuNumber;
-                if(changeObjectVisibility(menuId, 'visible')) {
-                var menuTitle = getStyleObject('menuTitle' + menuNumber);
-                menuTitle.backgroundColor = '#ff9900';
-                eventObj.cancelBubble = true;
-                return true;
-                } else {
-                return false;
-                }
-                */
                 var menuId = 'menu' + menuNumber;
                 return showPopup(menuId, eventObj);
             }
@@ -859,21 +819,6 @@
                 return false;
 
             }
-
-            <%--function popLeftColumn(url,div,params) {
-
-                params = "cmd=" + params;
-                var objAjax = new Ajax.Updater(div,url, {method:'post',
-                                                      postBody:params,
-                                                      asynchronous:true,
-                                                      evalScripts:true,
-                                                      onFailure: function(request) {
-
-                                                                $(div).innerHTML = "<h3>Error:</h3>" + request.status;
-                                                      }
-                                              });
-
-            }--%>
 
             function popLeftColumn(url, div, params) {
                 params = "cmd=" + params;

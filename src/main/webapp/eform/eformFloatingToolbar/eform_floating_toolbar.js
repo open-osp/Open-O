@@ -70,7 +70,9 @@ function remoteSave() {
 			ShowSpin(true);
 		});
 
-    moveSubject();
+		appendImageInputs();
+		
+		moveSubject();
 
 		if (typeof releaseDirtyFlag === "function") {
 			console.log("Releasing dirty window flag by releaseDirtyFlag function")
@@ -807,27 +809,40 @@ function HideSpin() {
     }, 300);
 }
 
-/**
- * A counter hack for a hack.
- * This method moves the image SRC values into hidden place-holders in the Form element
- * A counter-measure to ensure images that are set by Javascript methods are captured
- * when the form is saved or rendered into a pdf.
- */
-jQuery(window).on('load', function () {
-    const imageTags = jQuery('img');
-    if (imageTags) {
-        imageTags.each(function () {
-            const id = jQuery(this).attr('id') || "";
-            const value = jQuery(this).attr('src') || "";
-            jQuery('<input>', {
-                id: Math.random().toString(36) + '-' + id,
-                name: 'openosp-image-link',
-                value: JSON.stringify({id: id, value: value}),
-                type: 'hidden'
-            }).appendTo("form[method='POST']");
-        })
-    }
-})
+	/**
+	 * A counter hack for a hack.
+	 * This method moves the image SRC values into hidden place-holders in the Form element
+	 * A counter-measure to ensure images that are set by Javascript methods are captured
+	 * when the form is saved or rendered into a pdf.
+	 */
+	function appendImageInputs() {
+		jQuery("form[method='POST'] img").each(function () {
+			const id = jQuery(this).attr('id');
+			const src = jQuery(this).attr('src') || "";
+
+			// Skip image if it doesn't have an ID
+			if (!id || id.trim() === "") {
+				return true;
+			}
+
+			const inputId = 'openosp-img-' + id;
+
+			// Remove any existing hidden input for this image
+			jQuery("input[type='hidden'][id='" + inputId + "']").remove();
+
+			// Add a fresh hidden input
+			jQuery('<input>', {
+				id: inputId,
+				name: 'openosp-image-link',
+				value: JSON.stringify({ id: id, value: src }),
+				type: 'hidden'
+			}).appendTo("form[method='POST']");
+		});
+	}
+
+	jQuery(window).on('load', function() {
+		appendImageInputs();
+	})
 
 	function handleEmailPrivilege() {
 		// Get the value of the element with ID 'hasEmailPrivilege'
