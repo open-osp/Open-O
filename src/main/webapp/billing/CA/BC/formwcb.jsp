@@ -50,7 +50,7 @@
 <%@ page import="ca.openosp.openo.billings.ca.bc.Teleplan.WCBCodes" %>
 <%@ page import="ca.openosp.openo.billings.ca.bc.MSP.WcbHelper" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 

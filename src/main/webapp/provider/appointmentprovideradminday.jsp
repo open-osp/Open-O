@@ -435,6 +435,8 @@
     <c:set var="masterLinkRights" value="true" scope="page"/>
 </security:oscarSec>
 
+<fmt:setBundle basename="oscarResources"/>
+
 <html>
     <head>
         <title><%=WordUtils.capitalize(userlastname + ", " + org.apache.commons.lang.StringUtils.substring(userfirstname, 0, 1)) + "-"%><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.title"/></title>
@@ -892,11 +894,11 @@
                                     <c:if test="${doctorLinkRights}">
                                         <li>
                                        <a HREF="#" id="inboxLink">
-                                                <span id="oscar_new_lab"><bean:message key="global.lab"/></span>
+                                                <span id="oscar_new_lab"><fmt:message key="global.lab"/></span>
                                             </a>
                                             <oscar:newUnclaimedLab>
                                                 <a id="unclaimedLabLink" class="tabalert" HREF="javascript:void(0)"
-                                                   title='<bean:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
+                                                   title='<fmt:message key="provider.appointmentProviderAdminDay.viewLabReports"/>'>U</a>
                                             </oscar:newUnclaimedLab>
                                         </li>
                                     </c:if>

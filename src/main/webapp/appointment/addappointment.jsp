@@ -103,6 +103,7 @@ Ontario, Canada
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
+<fmt:setBundle basename="oscarResources"/>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 
 <%
@@ -1419,7 +1420,7 @@ Ontario, Canada
 		    <% if (pros.isPropertyActive("mc_number")) { %>
 		    <tr>
 			    <td>
-				    <bean:message key="Appointment.formMC" />:
+				    <fmt:message key="Appointment.formMC" />:
 			    </td>
 			    <td>
 				    <input type="text" name="appt_mc_number" class="form-control"/>

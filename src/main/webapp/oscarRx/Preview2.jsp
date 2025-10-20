@@ -303,7 +303,7 @@
             showPatientDOB = true;
         }
     %>
-    <form action="${pageContext.request.contextPath}/form/formname.do" method="post" styleId="preview2Form">
+    <form action="${pageContext.request.contextPath}/form/formname.do" method="post" id="preview2Form">
         <input type="hidden" name="demographic_no" value="<%=bean.getDemographicNo()%>"/>
         <table>
             <tr>
@@ -567,13 +567,21 @@
                                         var img = document.getElementById("signature");
                                         img.src = '<%=imageUrl%>&rand=' + counter;
 
-                                        var request = dojo.io.bind({
-                                            url: '<%=statusUrl%>',
-                                            method: "post",
-                                            mimetype: "text/html",
-                                            load: function (type, data, evt) {
-                                                var x = data.trim();
+                                        // Modern fetch API
+                                        fetch('<%=statusUrl%>', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Accept': 'text/html'
                                             }
+                                        })
+                                        .then(function(response) {
+                                            return response.text();
+                                        })
+                                        .then(function(data) {
+                                            var x = data.trim();
+                                        })
+                                        .catch(function(error) {
+                                            console.error('Error checking signature status:', error);
                                         });
                                     }
                                 </script>

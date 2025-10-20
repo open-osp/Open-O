@@ -308,6 +308,9 @@ public final class RxManagePharmacy2Action extends ActionSupport {
             hm.put("serviceLocationIdentifier", pharmacy.getServiceLocationIdentifier());
             hm.put("notes", pharmacy.getNotes());
             JSONObject jsonObject = JSONObject.fromObject(hm);
+
+            response.setContentType("application/json");
+
             response.getOutputStream().write(jsonObject.toString().getBytes());
         }
         return null;

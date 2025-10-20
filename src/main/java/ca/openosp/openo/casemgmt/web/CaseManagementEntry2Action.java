@@ -1951,9 +1951,13 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         }
 
         String toBill = request.getParameter("toBill");
+
         if (toBill != null && toBill.equalsIgnoreCase("true")) {
             String region = this.getBillRegion();
-            String appointmentNo = this.getAppointmentNo();
+            // Try to get appointment number from the note first, before the action field
+            Integer noteApptNo = this.getCaseNote() != null ? this.getCaseNote().getAppointmentNo() : null;
+            String appointmentNo = (noteApptNo != null && noteApptNo > 0) ?
+                String.valueOf(noteApptNo) : this.getAppointmentNo();
             String name = this.getDemoName(demoNo);
             String date = this.getAppointmentDate();
             String start_time = this.getStart_time();

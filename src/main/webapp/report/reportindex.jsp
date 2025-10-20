@@ -104,13 +104,6 @@
                 src="<%= request.getContextPath() %>/share/calendar/lang/calendar-en.js"></script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
-
-        <script type="text/javascript" src="<%= request.getContextPath() %>/dojoAjax/dojo.js"></script>
-        <script type="text/javascript" language="JavaScript">
-            dojo.require("dojo.date.format");
-            dojo.require("dojo.widget.*");
-            dojo.require("dojo.validate.*");
-        </script>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/caisi_report_tools.js"></script>
 
 
