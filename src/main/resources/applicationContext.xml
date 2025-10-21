@@ -177,8 +177,7 @@
 
 	<!--Container for holding preventions -->
 	<bean id="preventionMgr" class="ca.openosp.openo.provider.model.PreventionManager"></bean>
-
-
+  
 	<!-- OscarSuperManager manager provides business logic facade for jsp layer -->
 	<bean id="oscarSuperManager" class="ca.openosp.openo.service.OscarSuperManagerImpl" autowire="byName" init-method="init"/>
 
@@ -266,8 +265,7 @@
 		<property name="demographicExtDao" ref="demographicExtDao" />
 		<property name="outsideOfDomainEnabled" value="${pmm.client.search.outside.of.domain.enabled}" />
 	</bean>
-
-	
+  
  	<bean id="demographicManagerT" class="ca.openosp.openo.services.DemographicManagerTickler">
 		<property name="demographicDao" ref="demographicDao" />
 	</bean>
