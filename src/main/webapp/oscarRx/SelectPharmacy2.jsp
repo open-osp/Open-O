@@ -116,6 +116,7 @@
                                     pharm += "Main Phone: " + preferredPharmacyInfo.phone1 + "<br />";
                                     pharm += "Fax: " + preferredPharmacyInfo.fax + "<br />";
                                     pharm += "<a href='javascript:void(0)' onclick='viewPharmacy(" + preferredPharmacyInfo.id + "); event.stopPropagation(); return false;'>View More</a></td>";
+                                    pharm += "<p class='add-date' style='color: grey; text-align: right; margin: 0;'><i><small>Added: " + formatTimestamp(preferredPharmacyInfo.demoAddDate) + "</small></i></p>";
                                     pharm += "</tr><tr><td class='prefAction prefUnlink'> Remove from List </td></tr><tr><td class='prefAction prefDown'> Move Down </td></tr></table></div>";
                                     $("#preferredList").append(pharm);
                                 }
@@ -406,8 +407,33 @@
                 }
             }
 
-        </script>
-        <style>
+			function formatTimestamp(timestamp) {
+				// Check if the input is null, undefined, or not a number
+				if (!timestamp || typeof timestamp !== 'number' || isNaN(timestamp)) {
+					return "Unavailable"; // One-word message for invalid input
+				}
+
+				// Create a Date object from the timestamp (in milliseconds)
+				const date = new Date(timestamp);
+
+				// Check if the Date object is valid
+				if (isNaN(date.getTime())) {
+					return "Unavailable"; // One-word message for invalid date
+				}
+
+				// Extract the year, month, day, hours, and minutes
+				const year = date.getFullYear();
+				const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+				const day = String(date.getDate()).padStart(2, '0');
+				const hours = String(date.getHours()).padStart(2, '0');
+				const minutes = String(date.getMinutes()).padStart(2, '0');
+
+				// Format the date and time as "YYYY-MM-DD HH:MM"
+				return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
+			}
+
+		</script>
+		<style>
 
             table tr td {
                 vertical-align: top;

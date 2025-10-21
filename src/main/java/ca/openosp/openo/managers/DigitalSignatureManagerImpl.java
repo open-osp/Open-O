@@ -113,7 +113,7 @@ public class DigitalSignatureManagerImpl implements DigitalSignatureManager {
         }
 
         try {
-            Path baseDir = Paths.get("/safe/signatures").toAbsolutePath().normalize();
+            Path baseDir = Paths.get(System.getProperty("java.io.tmpdir")).toAbsolutePath().normalize();
             Path filePath = baseDir.resolve(filename).normalize();
 
             if (!filePath.startsWith(baseDir)) {

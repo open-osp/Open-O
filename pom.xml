@@ -463,6 +463,20 @@
             <version>5.8.16</version>
         </dependency>
 
+        <!-- Spring Cache Support with EhCache 2.x -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>5.3.39</version>
+        </dependency>
+
+        <!-- EhCache 2.x for Spring Cache -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.10.9.2</version>
+        </dependency>
+
         <dependency>
             <groupId>com.onelogin</groupId>
             <artifactId>java-saml</artifactId>

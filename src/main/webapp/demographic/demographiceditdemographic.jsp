@@ -5076,7 +5076,6 @@
         });
 
         function callEligibilityWebService(url, id) {
-
             var ran_number = Math.round(Math.random() * 1000000);
             var params = "demographic=<%=demographic_no%>&method=checkElig&rand=" + ran_number;  //hack to get around ie caching the page
             var response;
@@ -5087,6 +5086,22 @@
                 }
             });
         }
+        
+        function checkInsuranceEligibility() {
+            let params = {};
+            params.demographic =<%=demographic_no%>;
+            params.method = 'checkElig';
+            params.rand = Math.round(Math.random()*1000000);  //hack to get around ie caching the page
+            let url = '${ctx}/billing/CA/BC/ManageTeleplan.do';
+            jQuery.post(url, params, function() {
+                jQuery('#menu2').dialog({
+                    title: "MSP Eligibility"
+                });
+            }).done(function(data){
+                jQuery('#menu2 #search_spinner').text("");
+                jQuery('#menu2 #returnTeleplanMsg').html(data);
+            })
+         }
 
         <%
 if (privateConsentEnabled) {

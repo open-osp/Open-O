@@ -29,6 +29,7 @@
     <%@page import="ca.openosp.OscarProperties"%>
     <%@page contentType="text/javascript"%>
     <%@page import="ca.openosp.openo.casemgmt.common.Colour"%>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
     var numNotes = 0;   //How many saved notes do we have?
     var ctx;        //url context

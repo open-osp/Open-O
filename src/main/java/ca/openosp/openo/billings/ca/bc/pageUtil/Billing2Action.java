@@ -93,7 +93,7 @@ public final class Billing2Action extends ActionSupport {
                 }
 
                 request.getSession().setAttribute("billingSessionBean", bean);
-
+                
                 try {
                     _log.debug("Start of billing rules");
                     List<DSConsequence> list = BillingGuidelines.getInstance().evaluateAndGetConsequences(loggedInInfo, request.getParameter("demographic_no"), (String) request.getSession().getAttribute("user"));

@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
     <div class="navbar">
     <div class="navbar-inner">
