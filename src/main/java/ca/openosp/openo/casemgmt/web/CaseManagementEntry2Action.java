@@ -2100,8 +2100,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
             search = request.getParameter("term");
         }
 
-        // Use searchIssuesNoRolesConcerned to bypass program/role restrictions
-        List<Issue> searchResults = caseManagementMgr.searchIssuesNoRolesConcerned(providerNo, programId, search);
+        List<Issue> searchResults = caseManagementMgr.searchIssues(providerNo, programId, search);
 
         JSONUtil.jsonResponse(response, JsonUtil.pojoCollectionToJson(searchResults));
         return null;
