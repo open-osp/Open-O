@@ -52,7 +52,7 @@
 		</property>
 	</bean>
 
-	<!-- Enable Spring Cache -->
+	<!-- Enable Spring Cache with EhCache 2.x -->
 	<cache:annotation-driven />
 
 	<!-- EhCache Cache Manager -->
