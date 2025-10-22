@@ -47,4 +47,17 @@ public class EmailLogDaoImpl extends AbstractDaoImpl<EmailLog> implements EmailL
 
         return query.getResultList();
     }
+
+    /**
+     * Updates only the status, errorMessage, and timestamp of EmailLog without touching LOB fields.
+     */
+    public int updateEmailStatus(Integer id, EmailLog.EmailStatus status, String errorMessage, Date timestamp) {
+        String hql = "UPDATE EmailLog e SET e.status = :status, e.errorMessage = :msg, e.timestamp = :ts WHERE e.id = :id";
+        Query query = entityManager.createQuery(hql);
+        query.setParameter("id", id);
+        query.setParameter("status", status);
+        query.setParameter("msg", errorMessage);
+        query.setParameter("ts", timestamp);
+        return query.executeUpdate();
+    }
 }
