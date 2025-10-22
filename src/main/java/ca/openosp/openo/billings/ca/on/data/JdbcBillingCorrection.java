@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import ca.openosp.openo.commn.dao.BillingONCHeader1Dao;
 import ca.openosp.openo.commn.dao.BillingONEAReportDao;
 import ca.openosp.openo.commn.dao.BillingONExtDao;
@@ -78,7 +77,7 @@ public class JdbcBillingCorrection {
         c.setDemographicNo(Integer.parseInt(ch1Obj.getDemographic_no()));
         c.setProviderNo(ch1Obj.getProvider_no());
         c.setAppointmentNo(Integer.parseInt(ch1Obj.getAppointment_no()));
-        c.setDemographicName(StringEscapeUtils.escapeSql(ch1Obj.getDemographic_name()));
+        c.setDemographicName(ch1Obj.getDemographic_name());
         c.setSex(ch1Obj.getSex());
         c.setProvince(ch1Obj.getProvince());
         c.setBillingDate(dateFormatter.parse(ch1Obj.getBilling_date()));

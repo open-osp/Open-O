@@ -30,11 +30,10 @@ import ca.openosp.openo.commn.model.*;
 import ca.openosp.openo.utility.*;
 import com.opensymphony.xwork2.ActionSupport;
 import ca.openosp.openo.model.security.Secrole;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
@@ -86,6 +85,9 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
     private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
     private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -602,7 +604,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         Map<String, String> jsonMap = new HashMap<String, String>();
         jsonMap.put("isNoteEdited", ret);
-        JSONObject json = JSONObject.fromObject(jsonMap);
+        ObjectNode json = objectMapper.valueToTree(jsonMap);
         response.getOutputStream().write(json.toString().getBytes());
         return null;
     }
@@ -788,7 +790,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         HashMap<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put("id", note.getId());
-        JSONObject json = JSONObject.fromObject(hashMap);
+        ObjectNode json = objectMapper.valueToTree(hashMap);
         response.getOutputStream().write(json.toString().getBytes());
 
         return null;
@@ -3160,7 +3162,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
         CaseManagementNoteLink link = caseManagementNoteLinkDao.getLastLinkByTableId(CaseManagementNoteLink.TICKLER, Long.valueOf(ticklerNo));
-        JSONObject json = JSONObject.fromObject("{}");
+        ObjectNode json = objectMapper.valueToTree("{}");
 
         if (link != null) {
             Long noteId = link.getNoteId();
@@ -3169,8 +3171,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
             if (note != null) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                JsonConfig config = new JsonConfig();
-                config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
+                // Jackson handles date formatting automatically - no config needed
 
                 Map<String, Serializable> hashMap = new HashMap<String, Serializable>();
                 hashMap.put("noteId", note.getId().toString());
@@ -3178,7 +3179,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
                 hashMap.put("revision", note.getRevision());
                 hashMap.put("obsDate", formatter.format(note.getObservation_date()));
                 hashMap.put("editor", this.providerMgr.getProvider(note.getProviderNo()).getFormattedName());
-                json = JSONObject.fromObject(hashMap, config);
+                json = objectMapper.valueToTree(hashMap); // Jackson: no config parameter
             }
         }
         response.getOutputStream().write(json.toString().getBytes());

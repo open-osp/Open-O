@@ -27,7 +27,7 @@
 package ca.openosp.openo.billings.ca.bc.pageUtil;
 
 import ca.openosp.openo.commn.model.Demographic;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
