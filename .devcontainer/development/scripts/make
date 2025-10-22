@@ -343,7 +343,7 @@ for arg in "$@"; do
       docusaurus_serve
       ;;
     lock)
-       # Update the maven dependency lock files
+      # Update the maven dependency lock files
       if [ "$2" = "--modern" ]; then
         echo "Updating modern dependencies lock file (dependencies-lock-modern.json)..."
         mvn se.vandmo:dependency-lock-maven-plugin:lock -Pmodern-tests -Ddependency.lock.filename=dependencies-lock-modern.json
