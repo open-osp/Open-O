@@ -18,4 +18,4 @@
 
 --%>
 
-<jsp:forward page="onGenRAError.jsp" />
+<jsp:forward page="onGenRAError.jsp"/>

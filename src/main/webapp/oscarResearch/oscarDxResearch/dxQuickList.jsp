@@ -32,61 +32,62 @@ Required Parameters to plug-in:
 	quickList : default quick list name by parameter
 
  --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
 <table id="dxCodeQuicklist">
-	<tr>
-		<td class="heading">
-		${ quickList }
-			<div class="panel panel-default">
-	  			<div class="panel-body">
-					<bean:message key="oscarResearch.oscarDxResearch.quickList" />
-					<small class="pull-right">
-						<a class="oscar-dialog-link" href="dxResearchCustomization.jsp">
-							add/edit
-						</a>
-					</small>
-				</div>
-			</div>
-		</td>
-	</tr>
-	<tr>
-		<td class="quickList">	
-			<html:select styleClass="form-control" style="overflow:auto" property="quickList" onchange="javascript:changeList(this,'${ demographicNo }','${ providerNo }');" >			
-				<logic:iterate id="quickLists" name="allQuickLists" property="dxQuickListBeanVector" >				
-					<option value="${ quickLists.quickListName }" ${ quickLists.quickListName eq param.quickList || quickLists.lastUsed eq 'Selected' ? 'selected' : '' } >			
-						<bean:write	name="quickLists" property="quickListName" />
-					</option>
-				</logic:iterate>
-			</html:select>	
- 				<ul class="list-group">
-  				<logic:iterate id="item" name="allQuickListItems" property="dxQuickListItemsVector">
-  					<li class="list-group-item">
+    <tr>
+        <td class="heading">
+            ${ quickList }
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.quickList"/>
+                    <small class="pull-right">
+                        <a class="oscar-dialog-link" href="${pageContext.request.contextPath}/oscarResearch/oscarDxResearch/dxResearchCustomization.jsp">
+                            add/edit
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td class="quickList">
+            <select class="form-control" style="overflow:auto" name="quickList"
+                         onchange="javascript:changeList(this,'${ demographicNo }','${ providerNo }');">
+                <c:forEach var="quickLists" items="${allQuickLists.dxQuickListBeanVector}">
+                    <option value="${ quickLists.quickListName }" ${ quickLists.quickListName eq param.quickList || quickLists.lastUsed eq 'Selected' ? 'selected' : '' } >
+                        <c:out value="${quickLists.quickListName}"/>
+                    </option>
+                </c:forEach>
+            </select>
+            <ul class="list-group">
+                <c:forEach var="item" items="${allQuickListItems.dxQuickListItemsVector}">
+                    <li class="list-group-item">
   					<span class="pull-right">
- 						<html:link href="#" title="${ item.dxSearchCode }"
-						onclick="javascript:submitform( '${ item.dxSearchCode }', '${ item.type }' )" >
-							add
-					</html:link>
+ 						<a href="#" title="${ item.dxSearchCode }"
+                                   onclick="javascript:submitform( '${ item.dxSearchCode }', '${ item.type }' )">
+                            add
+                        </a>
 					</span>
-  					<bean:write name="item" property="type" />: 
-  					<bean:write name="item" property="description" />	
-					</li>
-				</logic:iterate>
-			</ul>
-		</td>
-	</tr>		
+                        <c:out value="${item.type}"/>:
+                        <c:out value="${item.description}"/>
+                    </li>
+                </c:forEach>
+            </ul>
+        </td>
+    </tr>
 </table>
 
 <script type="text/javascript">
-	function changeList(quickList, demographicNo, providerNo){       
-	    location.href = 'setupDxResearch.do?demographicNo='
-	    		+demographicNo
-	    		+'&quickList='
-	    		+quickList.value
-	    		+'&providerNo='
-	    		+providerNo;
-	}
+    function changeList(quickList, demographicNo, providerNo) {
+        location.href = 'setupDxResearch.do?demographicNo='
+            + encodeURIComponent(demographicNo)
+            + '&quickList='
+            + encodeURIComponent(quickList.value)
+            + '&providerNo='
+            + encodeURIComponent(providerNo);
+    }
 </script>

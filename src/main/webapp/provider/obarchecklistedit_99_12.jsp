@@ -25,89 +25,92 @@
 --%>
 
 <%
-  String user_no = (String) session.getAttribute("user");
+    String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, java.io.*, oscar.*"
-	errorPage="/errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, java.io.*, ca.openosp.*"
+         errorPage="/errorpage.jsp" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>ANTENATAL CHECK LIST</title>
-<link rel="stylesheet" href="antenatalrecord.css">
-<script language="JavaScript">
-<!--		
-function onExit() {
-  if(confirm("Are you sure to exit WITHOUT saving the form?")) window.close();
-}
-//-->
-</SCRIPT>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>ANTENATAL CHECK LIST</title>
+    <link rel="stylesheet" href="antenatalrecord.css">
+    <script language="JavaScript">
+        <!--
+        function onExit() {
+            if (confirm("Are you sure to exit WITHOUT saving the form?")) window.close();
+        }
+
+        //-->
+    </SCRIPT>
 </head>
 <body onLoad="setfocus()" bgcolor="#c4e9f6" bgproperties="fixed"
-	topmargin="0" leftmargin="1" rightmargin="1">
+      topmargin="0" leftmargin="1" rightmargin="1">
 <form name="checklistedit" action="obarchecklistedit_99_12.jsp"
-	method="POST">
+      method="POST">
+    <%
+        char sep = oscarVariables.getProperty("file_separator").toCharArray()[0];
+        String str = null;
+        if (request.getParameter("submit") != null && request.getParameter("submit").compareTo(" Save ") == 0) {
+            FileWriter inf = new FileWriter(".." + sep + "webapps" + sep + oscarVariables.getProperty("project_home") + sep + "decision" + sep + "desantenatalplannerchecklist_99_12.xml");
+            str = request.getParameter("checklist");
+            str = SxmlMisc.replaceString(str, " & ", " &amp; ");
+            str = SxmlMisc.replaceString(str, " > ", " &gt; ");
+            str = SxmlMisc.replaceString(str, " < ", " &lt; ");
+            inf.write(str);
+            inf.close();
+        }
+    %>
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+        <tr bgcolor="#486ebd">
+            <th align=CENTER><font face="Arial, Helvetica, sans-serif"
+                                   color="#FFFFFF">Antenatal Check List</font></th>
+            <th width="25%" nowrap>
+                <div align="right"><a href=#
+                                      onClick="popupPage(450,900,'ar1risk_99_12.htm')"><font
+                        color="#FFFF66">View Risk Number</font></a> <input type="button"
+                                                                           name="Button"
+                                                                           value="&nbsp;<%=request.getParameter("submit")!=null?" Exit ":"Cancel"%>&nbsp;"
+                                                                           onClick="onExit();">&nbsp;
+                </div>
+            </th>
+        </tr>
+        <tr>
+            <td align=CENTER colspan="2"><font
+                    face="Times New Roman, Times, serif"> <textarea
+                    name="checklist" cols="100" rows="38" style="width: 100%">
 <%
-  char sep = oscarVariables.getProperty("file_separator").toCharArray()[0];
-  String str = null;
-  if(request.getParameter("submit")!=null && request.getParameter("submit").compareTo(" Save ")==0) {
-    FileWriter inf = new FileWriter(".."+sep+"webapps"+sep+oscarVariables.getProperty("project_home")+sep+"decision"+sep+"desantenatalplannerchecklist_99_12.xml");
-    str = request.getParameter("checklist");
-	str = SxmlMisc.replaceString(str," & "," &amp; ");
-  	str = SxmlMisc.replaceString(str," > "," &gt; ");
-  	str = SxmlMisc.replaceString(str," < "," &lt; ");
-    inf.write(str);
-    inf.close();
-  }			
-%>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER><font face="Arial, Helvetica, sans-serif"
-			color="#FFFFFF">Antenatal Check List</font></th>
-		<th width="25%" nowrap>
-		<div align="right"><a href=#
-			onClick="popupPage(450,900,'ar1risk_99_12.htm')"><font
-			color="#FFFF66">View Risk Number</font></a> <input type="button"
-			name="Button"
-			value="&nbsp;<%=request.getParameter("submit")!=null?" Exit ":"Cancel"%>&nbsp;"
-			onClick="onExit();">&nbsp;</div>
-		</th>
-	</tr>
-	<tr>
-		<td align=CENTER colspan="2"><font
-			face="Times New Roman, Times, serif"> <textarea
-			name="checklist" cols="100" rows="38" style="width: 100%">
-<%
-//		try {
-			File file = new File(".."+sep+"webapps"+sep+oscarVariables.getProperty("project_home")+sep+"decision"+sep+"desantenatalplannerchecklist_99_12.xml");
-			if(!file.isFile() || !file.canRead()) {
-				throw new IOException();
-			}
-			RandomAccessFile raf = new RandomAccessFile(file, "r");
-			String aline=""; //, temp="";
-			while (true) {
-				aline = raf.readLine(); 
-				if(aline!=null){
+    //		try {
+    File file = new File(".." + sep + "webapps" + sep + oscarVariables.getProperty("project_home") + sep + "decision" + sep + "desantenatalplannerchecklist_99_12.xml");
+    if (!file.isFile() || !file.canRead()) {
+        throw new IOException();
+    }
+    RandomAccessFile raf = new RandomAccessFile(file, "r");
+    String aline = ""; //, temp="";
+    while (true) {
+        aline = raf.readLine();
+        if (aline != null) {
 //					aline="<pre>" + aline + "</pre>"  ;
-                    out.println(aline);
-				}else {
-					break;
-				}
-			}
-			raf.close();
+            out.println(aline);
+        } else {
+            break;
+        }
+    }
+    raf.close();
 //		} catch(IOException e) {}
 %>
 </textarea> </font></td>
-	</tr>
-	<TR>
-		<td><b>*</b> The Symbols ("&", "<", or ">") should be written as
-		" & ", " < ", or " > " in the content. Or use ("&amp;amp;","&amp;lt;",
-		or "&amp;gt;") instead.</td>
-	</tr>
-</table>
-<input type='submit' name='submit' value=' Save '> <input
-	type="button" name="Button" value=" Exit " onClick="onExit();">
+        </tr>
+        <TR>
+            <td><b>*</b> The Symbols ("&", "<", or ">") should be written as
+                " & ", " < ", or " > " in the content. Or use ("&amp;amp;","&amp;lt;",
+                or "&amp;gt;") instead.
+            </td>
+        </tr>
+    </table>
+    <input type='submit' name='submit' value=' Save '> <input
+        type="button" name="Button" value=" Exit " onClick="onExit();">
 </form>
 </body>
 </html>

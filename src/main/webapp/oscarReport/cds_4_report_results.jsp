@@ -23,153 +23,146 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="org.oscarehr.PMmodule.model.Program"%>
-<%@page import="java.util.HashSet"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager"%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.managers.ProviderManager2"%>
-<%@page import="java.util.Date"%>
-<%@page import="java.util.List"%>
-<%@page import="org.oscarehr.common.model.CdsFormOption"%>
-<%@page import="org.oscarehr.web.Cds4ReportUIBean"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="java.text.SimpleDateFormat" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@page import="java.util.HashSet" %>
+<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.managers.ProviderManager2" %>
+<%@page import="java.util.Date" %>
+<%@page import="java.util.List" %>
+<%@page import="ca.openosp.openo.commn.model.CdsFormOption" %>
+<%@page import="ca.openosp.openo.web.Cds4ReportUIBean" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
-	ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    ProviderManager2 providerManager = (ProviderManager2) SpringUtils.getBean(ProviderManager2.class);
+    ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
 
-    SimpleDateFormat sdf=new SimpleDateFormat(DateFormatUtils.ISO_DATE_FORMAT.getPattern());
-	Date startDate=sdf.parse(request.getParameter("startDate"));
-	Date endDateInclusive=sdf.parse(request.getParameter("endDate"));
+    SimpleDateFormat sdf = new SimpleDateFormat(DateFormatUtils.ISO_DATE_FORMAT.getPattern());
+    Date startDate = sdf.parse(request.getParameter("startDate"));
+    Date endDateInclusive = sdf.parse(request.getParameter("endDate"));
 
-	
-	String functionalCentreId=request.getParameter("functionalCentreId");
 
-	// null for none selected, array of providerIds if selected
-	String[] providerIdList=request.getParameterValues("providerIds");
-	String[] programIdListTemp=request.getParameterValues("programIds");
-	HashSet<Integer> programIds=null;
-	if (programIdListTemp!=null && programIdListTemp.length>0)
-	{
-		programIds=new HashSet<Integer>();
-		
-		for (String s: programIdListTemp)
-		{
-			s=StringUtils.trimToNull(s);
-			if (s!=null)
-			{
-				programIds.add(new Integer(s));
-			}
-		}
-	}
-			
-	Cds4ReportUIBean cds4ReportUIBean=new Cds4ReportUIBean(loggedInInfo, functionalCentreId, startDate, endDateInclusive, providerIdList, programIds);
-	
-	List<CdsFormOption> cdsFormOptions=Cds4ReportUIBean.getCdsFormOptions();
-	
-	StringBuilder providerNamesList=new StringBuilder();
-	if (providerIdList!=null  && providerIdList.length>0) 
-	{
-		for (String providerId : providerIdList)
-		{
-			Provider provider=providerManager.getProvider(loggedInInfo, providerId);
-			providerNamesList.append(provider.getFormattedName()+" ("+provider.getProviderNo()+"), ");
-		}
-	}
+    String functionalCentreId = request.getParameter("functionalCentreId");
 
-	StringBuilder programNamesList=new StringBuilder();
-	if (programIds!=null)
-	{
-		for (Integer programId : programIds)
-		{
-			Program program=programManager.getProgram(programId);
-			programNamesList.append(program.getName()+" ("+program.getType()+"), ");
-		}
-	}
+    // null for none selected, array of providerIds if selected
+    String[] providerIdList = request.getParameterValues("providerIds");
+    String[] programIdListTemp = request.getParameterValues("programIds");
+    HashSet<Integer> programIds = null;
+    if (programIdListTemp != null && programIdListTemp.length > 0) {
+        programIds = new HashSet<Integer>();
+
+        for (String s : programIdListTemp) {
+            s = StringUtils.trimToNull(s);
+            if (s != null) {
+                programIds.add(new Integer(s));
+            }
+        }
+    }
+
+    Cds4ReportUIBean cds4ReportUIBean = new Cds4ReportUIBean(loggedInInfo, functionalCentreId, startDate, endDateInclusive, providerIdList, programIds);
+
+    List<CdsFormOption> cdsFormOptions = Cds4ReportUIBean.getCdsFormOptions();
+
+    StringBuilder providerNamesList = new StringBuilder();
+    if (providerIdList != null && providerIdList.length > 0) {
+        for (String providerId : providerIdList) {
+            Provider provider = providerManager.getProvider(loggedInInfo, providerId);
+            providerNamesList.append(provider.getFormattedName() + " (" + provider.getProviderNo() + "), ");
+        }
+    }
+
+    StringBuilder programNamesList = new StringBuilder();
+    if (programIds != null) {
+        for (Integer programId : programIds) {
+            Program program = programManager.getProgram(programId);
+            programNamesList.append(program.getName() + " (" + program.getType() + "), ");
+        }
+    }
 %>
 
 <h3>CDS Report</h3>
 <span style="font-weight:bold">Functional Centre : </span><%=cds4ReportUIBean.getFunctionalCentreDescription()%>
-<br />
+<br/>
 <span style="font-weight:bold">Dates : </span><%=cds4ReportUIBean.getDateRangeForDisplay()%>
-<br />
+<br/>
 
 <%
-	if (providerIdList!= null)
-	{
-		%>
-		<span style="font-weight:bold">Providers : </span><%=StringEscapeUtils.escapeHtml(providerNamesList.toString())%>
-		<br />
-		<%
-	}
+    if (providerIdList != null) {
+%>
+<span style="font-weight:bold">Providers : </span><%=StringEscapeUtils.escapeHtml(providerNamesList.toString())%>
+<br/>
+<%
+    }
 
-	if (programIds!=null)
-	{
-		%>
-			<span style="font-weight:bold">Programs : </span><%=StringEscapeUtils.escapeHtml(programNamesList.toString())%>
-			<br />
-		<%
-	}
+    if (programIds != null) {
+%>
+<span style="font-weight:bold">Programs : </span><%=StringEscapeUtils.escapeHtml(programNamesList.toString())%>
+<br/>
+<%
+    }
 %>
 
 <table class="table table-bordered table-striped table-hover">
-	<thead>
-		<tr>
-		<th>CDS Category ID</th>
-		<th>CDS Category Description</th>
-		<th>Multi<br />Admn</th>
-		<%
-			for (int i=0; i<Cds4ReportUIBean.NUMBER_OF_COHORT_BUCKETS; i++)
-			{
-				%>
-					<th>Coh<br /><%=i%></th>
-				<%
-			}
-		%>
-		<th>Coh<br />Total</th>
-	</tr>
-	</thead>
-	<tbody>
-	<%
-		for (CdsFormOption cdsFormOption : cdsFormOptions)
-		{
-			int[] dataRow=cds4ReportUIBean.getDataRow(cdsFormOption);
-			%>
-				<tr>
-					<td><%=StringEscapeUtils.escapeHtml(cdsFormOption.getCdsDataCategory())%></td>
-					<td><%=StringEscapeUtils.escapeHtml(cdsFormOption.getCdsDataCategoryName())%></td>
-					<%
-						for (int dataElement : dataRow)
-						{
-							%>
-								<td><%=dataElement==-1?"N/A":String.valueOf(dataElement)%></td>
-							<%
-						}
-					%>
-					<td><%=Cds4ReportUIBean.getCohortTotal(dataRow)%></td>
-				</tr>
-			<%
-		}
-	%>
-	</tbody>
+    <thead>
+    <tr>
+        <th>CDS Category ID</th>
+        <th>CDS Category Description</th>
+        <th>Multi<br/>Admn</th>
+        <%
+            for (int i = 0; i < Cds4ReportUIBean.NUMBER_OF_COHORT_BUCKETS; i++) {
+        %>
+        <th>Coh<br/><%=i%>
+        </th>
+        <%
+            }
+        %>
+        <th>Coh<br/>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <%
+        for (CdsFormOption cdsFormOption : cdsFormOptions) {
+            int[] dataRow = cds4ReportUIBean.getDataRow(cdsFormOption);
+    %>
+    <tr>
+        <td><%=StringEscapeUtils.escapeHtml(cdsFormOption.getCdsDataCategory())%>
+        </td>
+        <td><%=StringEscapeUtils.escapeHtml(cdsFormOption.getCdsDataCategoryName())%>
+        </td>
+        <%
+            for (int dataElement : dataRow) {
+        %>
+        <td><%=dataElement == -1 ? "N/A" : String.valueOf(dataElement)%>
+        </td>
+        <%
+            }
+        %>
+        <td><%=Cds4ReportUIBean.getCohortTotal(dataRow)%>
+        </td>
+    </tr>
+    <%
+        }
+    %>
+    </tbody>
 </table>

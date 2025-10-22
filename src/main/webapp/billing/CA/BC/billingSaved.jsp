@@ -23,30 +23,31 @@
     Ontario, Canada
 
 --%>
-<%      
-  if(session.getValue("user") == null)
-    response.sendRedirect("../../../logout.jsp");
+<%
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
 <html>
 <head>
-  <title></title>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
+    <title></title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
 
-function start(){
-    this.focus();
-}
-function closeit() {
-}   
+        function start() {
+            this.focus();
+        }
 
-</script>
+        function closeit() {
+        }
+
+    </script>
 </head>
 
 <body onload="start()">
 
 <script LANGUAGE="JavaScript">
-      self.close();
-      self.opener.refresh();
+    self.close();
+    self.opener.refresh();
 </script>
 
 </body>

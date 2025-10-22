@@ -25,244 +25,246 @@
 --%>
 
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="oscar.oscarReport.oscarMeasurements.pageUtil.*"%>
-<%@ page import="java.util.*, java.sql.*, java.text.*, java.net.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="ca.openosp.openo.report.oscarMeasurements.pageUtil.*" %>
+<%@ page import="java.util.*, java.sql.*, java.text.*, java.net.*" %>
+<%@ page import="ca.openosp.openo.commn.model.MeasurementType" %>
+
 <%
-    GregorianCalendar now=new GregorianCalendar(); 
+    GregorianCalendar now = new GregorianCalendar();
     int curYear = now.get(Calendar.YEAR);
-    int curMonth = (now.get(Calendar.MONTH)+1);
+    int curMonth = (now.get(Calendar.MONTH) + 1);
     int curDay = now.get(Calendar.DAY_OF_MONTH);
 %>
 
-<html:html lang="en">
+<html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarReport.CDMReport.msgPercentageOfPatientWhoMetGuideline" /></title>
-<html:base />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<script language="javascript">
-function isArray(elementInQuestion) {
-    if (elementInQuestion.length) {
-        return true;
-    } 
-    else {
-        return false;
-    }
-}
-
-function checkAll(field){            
-    var i;    
-    
-    if(isArray(field)){
-        for(i=0; i<field.length; i++){
-            field[i].checked=true;
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgPercentageOfPatientWhoMetGuideline"/></title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
+    <script language="javascript">
+        function isArray(elementInQuestion) {
+            if (elementInQuestion.length) {
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
-    else{
-        field.checked=true;
-    }
- }
 
-function unCheckAll(field){            
-    var i;    
-    
-    if(isArray(field)){
-        for(i=0; i<field.length; i++){
-            field[i].checked=false;
+        function checkAll(field) {
+            var i;
+
+            if (isArray(field)) {
+                for (i = 0; i < field.length; i++) {
+                    field[i].checked = true;
+                }
+            } else {
+                field.checked = true;
+            }
         }
-    }
-    else{
-        field.checked=false;
-    }
- }
-</script>
-<link rel="stylesheet" type="text/css"
-	href="../../oscarEncounter/encounterStyles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="window.focus();">
-<html:errors />
-<html:form
-	action="oscarReport/oscarMeasurements/InitializePatientsMetGuidelineCDMReport.do">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarReport.CDMReport.msgReport" /></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
-				<tr>
-					<td><bean:message key="oscarReport.CDMReport.msgTitle" />: <bean:write
-						name="CDMGroup" /></td>
-					<td></td>
-					<td style="text-align: right"><oscar:help keywords="report" key="app.top1"/> | <a
-						href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-						key="global.about" /></a> | <a
-						href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-						key="global.license" /></a></td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn">&nbsp;</td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=900>
-				<tr>
-					<td>
-					<table>
-						<tr>
-							<td class="nameBox" colspan='4'><bean:message
-								key="oscarReport.CDMReport.msgNumberOfPatientsSeen" /></td>
-						</tr>
-						<tr>
-							<th align="left" class="subTitles" width="2"></th>
-							<th align="left" class="subTitles" width="120"><bean:message
-								key="oscarReport.CDMReport.msgStartDate" /></th>
-							<th align="left" class="subTitles" width="120"><bean:message
-								key="oscarReport.CDMReport.msgEndDate" /></th>
-							<th align="left" class="subTitles" width="650"></th>
-						</tr>
-						<tr>
-							<td width="2" class="fieldBox" bgcolor="#ddddff"><input
-								type="checkbox" checked="checked" name="patientSeenCheckbox"
-								value="ctr" /></td>
-							<td width="120" class="fieldBox" bgcolor="#ddddff"><input
-								type="text" name='startDateA'
-								value='<bean:write name="lastYear"/>' size="10"> <img
-								src="../img/calendar.gif" border="0"
-								onClick="window.open('../../oscarReport/oscarReportCalendarPopup.jsp?type=startDateA&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')" />
-							</td>
-							<td width="120" class="fieldBox" bgcolor="#ddddff"><input
-								type="text" name='endDateA' value='<bean:write name="today"/>'
-								size="10"> <img src="../img/calendar.gif" border="0"
-								onClick="window.open('../../oscarReport/oscarReportCalendarPopup.jsp?type=endDateA&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')" />
-							</td>
-							<td width="450" class="fieldBox" bgcolor="#ddddff"></td>
-						</tr>
-					</table>
-					</td>
-				</tr>
-				<tr>
-					<td>
-					<table>
-						<tr>
-							<logic:present name="messages">
-								<logic:iterate id="msg" name="messages">
-									<bean:write name="msg" />
-									<br>
-								</logic:iterate>
-							</logic:present>
-						</tr>
-						<tr>
-							<td>
-						<tr>
-							<td class="nameBox" colspan='8'><bean:message
-								key="oscarReport.CDMReport.msgPercentageOfPatientWhoMetGuideline" />
-							</td>
-						</tr>
-						<tr>
-							<th align="left" class="subTitles" width="2"></th>
-							<th align="left" class="subTitles" width="4"><bean:message
-								key="oscarReport.CDMReport.msgTest" /></th>
-							<th align="left" class="subTitles" width="200"><bean:message
-								key="oscarReport.CDMReport.msgTestDescription" /></th>
-							<th align="left" class="subTitles" width="200"><bean:message
-								key="oscarReport.CDMReport.msgMeasuringInstruction" /></th>
-							<th align="left" class="subTitles" width="10"><bean:message
-								key="oscarReport.CDMReport.msgAboveBelow" /></th>
-							<th align="left" class="subTitles" width="50"><bean:message
-								key="oscarReport.CDMReport.msgGuideline" /></th>
-							<th align="left" class="subTitles" width="120"><bean:message
-								key="oscarReport.CDMReport.msgStartDate" /></th>
-							<th align="left" class="subTitles" width="120"><bean:message
-								key="oscarReport.CDMReport.msgEndDate" /></th>
-						</tr>
-						<logic:iterate id="measurementType" name="measurementTypes"
-							property="measurementTypeVector" indexId="ctr">
-							<tr>
-								<td width="2" class="fieldBox" bgcolor="#ddddff"><input
-									type="checkbox" name="guidelineCheckbox" value="<%=ctr%>" /></td>
-								<td width="4" class="fieldBox" bgcolor="#ddddff" width="5"><bean:write
-									name="measurementType" property="typeDisplayName" /></td>
-								<td width="200" class="fieldBox" bgcolor="#ddddff"><bean:write
-									name="measurementType" property="typeDesc" /></td>
-								<td width="200" class="fieldBox" bgcolor="#ddddff"></td>
-								<td width="10" class="fieldBox" bgcolor="#ddddff">
-								<table>
-									<tr>
-										<td><input type="radio"
-											name='<%="value(aboveBelow" + ctr+")"%>' value=">"
-											checked="checked" /></td>
-										<td><input type="radio"
-											name='<%="value(aboveBelow" + ctr+")"%>'
-											value="<"/></td>
+
+        function unCheckAll(field) {
+            var i;
+
+            if (isArray(field)) {
+                for (i = 0; i < field.length; i++) {
+                    field[i].checked = false;
+                }
+            } else {
+                field.checked = false;
+            }
+        }
+    </script>
+    <link rel="stylesheet" type="text/css"
+          href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF"
+          onload="window.focus();">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <form action="${pageContext.request.contextPath}/oscarReport/oscarMeasurements/InitializePatientsMetGuidelineCDMReport.do" method="post">
+        <table class="MainTable" id="scrollNumber1" name="encounterTable">
+            <tr class="MainTableTopRow">
+                <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgReport"/></td>
+                <td class="MainTableTopRowRightColumn">
+                    <table class="TopStatusBar">
+                        <tr>
+                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgTitle"/>: <c:out value="${CDMGroup}"/></td>
+                            <td></td>
+                            <td style="text-align: right"><a
+                                    href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                    href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="MainTableLeftColumn">&nbsp;</td>
+                <td class="MainTableRightColumn">
+                    <table border=0 cellspacing=4 width=900>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td class="nameBox" colspan='4'><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgNumberOfPatientsSeen"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th align="left" class="subTitles" width="2"></th>
+                                        <th align="left" class="subTitles" width="120"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgStartDate"/></th>
+                                        <th align="left" class="subTitles" width="120"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgEndDate"/></th>
+                                        <th align="left" class="subTitles" width="650"></th>
+                                    </tr>
+                                    <tr>
+                                        <td width="2" class="fieldBox" bgcolor="#ddddff"><input
+                                                type="checkbox" checked="checked" name="patientSeenCheckbox"
+                                                value="ctr"/></td>
+                                        <td width="120" class="fieldBox" bgcolor="#ddddff"><input
+                                                type="text" name='startDateA'
+                                                value='<c:out value="${lastYear}"/>' size="10"> <img
+                                                src="<%= request.getContextPath() %>/img/calendar.gif" border="0"
+                                                onClick="window.open('<%= request.getContextPath() %>/oscarReport/oscarReportCalendarPopup.jsp?type=startDateA&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')"/>
+                                        </td>
+                                        <td width="120" class="fieldBox" bgcolor="#ddddff"><input
+                                                type="text" name='endDateA' value='<c:out value="${today}"/>'
+                                                size="10"> <img src="<%= request.getContextPath() %>/img/calendar.gif" border="0"
+                                                                onClick="window.open('<%= request.getContextPath() %>/oscarReport/oscarReportCalendarPopup.jsp?type=endDateA&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')"/>
+                                        </td>
+                                        <td width="450" class="fieldBox" bgcolor="#ddddff"></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <c:if test="${not empty messages}">
+                                            <c:forEach var="msg" items="${messages}">
+                                                <c:out value="${msg}"/>
+                                                <br>
+                                            </c:forEach>
+                                        </c:if>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                    <tr>
+                                        <td class="nameBox" colspan='8'><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgPercentageOfPatientWhoMetGuideline"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th align="left" class="subTitles" width="2"></th>
+                                        <th align="left" class="subTitles" width="4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgTest"/></th>
+                                        <th align="left" class="subTitles" width="200"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgTestDescription"/></th>
+                                        <th align="left" class="subTitles" width="200"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgMeasuringInstruction"/></th>
+                                        <th align="left" class="subTitles" width="10"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgAboveBelow"/></th>
+                                        <th align="left" class="subTitles" width="50"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgGuideline"/></th>
+                                        <th align="left" class="subTitles" width="120"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgStartDate"/></th>
+                                        <th align="left" class="subTitles" width="120"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.msgEndDate"/></th>
+                                    </tr>
+                                    <c:forEach var="measurementType" items="${measurementTypes.measurementTypeVector}" varStatus="ctr">
+                                    <tr>
+                                        <td width="2" class="fieldBox" bgcolor="#ddddff">
+                                            <input type="checkbox" name="guidelineCheckbox" value="${ctr.index}" />
+                                        </td>
+                                        <td width="4" class="fieldBox" bgcolor="#ddddff">
+                                            <c:out value="${measurementType.typeDisplayName}" />
+                                        </td>
+                                        <td width="200" class="fieldBox" bgcolor="#ddddff">
+                                            <c:out value="${measurementType.typeDesc}" />
+                                        </td>
+                                        <td width="200" class="fieldBox" bgcolor="#ddddff"></td>
+                                        <td width="10" class="fieldBox" bgcolor="#ddddff">
+                                            <table>
+                                                <tr>
+                                                    <td><input type="radio" name="value(aboveBelow${ctr.index})" value=">" checked="checked" /></td>
+                                                    <td><input type="radio" name="value(aboveBelow${ctr.index})" value="<" /></td>
                                                 </tr>
                                             </table>
                                         </td>
-                                        <td width="50"  class="fieldBox" bgcolor="#ddddff"><input type="text" name="guidelineB" size="6" /></td>     
-                                        <td width="120" class="fieldBox" bgcolor="#ddddff">
-                                            <input type="text" name="startDateB" value='<bean:write name="lastYear"/>'  size="10">
-                                            <img src="../img/calendar.gif" border="0" onClick="window.open('../../oscarReport/oscarReportCalendarPopup.jsp?type=<%="startDateB[" + ctr + "]"%>&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')"/>
+                                        <td width="50" class="fieldBox" bgcolor="#ddddff">
+                                            <input type="text" name="guidelineB" size="6" />
                                         </td>
                                         <td width="120" class="fieldBox" bgcolor="#ddddff">
-                                            <input type="text" name="endDateB" value='<bean:write name="today"/>'  size="10">
-                                            <img src="../img/calendar.gif" border="0" onClick="window.open('../../oscarReport/oscarReportCalendarPopup.jsp?type=<%="endDateB[" + ctr + "]"%>&amp;year=<%=curYear%>&amp;month=<%=curMonth%>&amp;form=<%="RptInitializePatientsMetGuidelineCDMReportForm"%>','','width=300,height=300')"/>
+                                            <input type="text" name="startDateB" value="${lastYear}" size="10">
+                                            <img src="<%= request.getContextPath() %>/img/calendar.gif" border="0"
+                                                 onclick="window.open('<%= request.getContextPath() %>/oscarReport/oscarReportCalendarPopup.jsp?type=startDateB[${ctr.index}]&amp;year=${curYear}&amp;month=${curMonth}&amp;form=RptInitializePatientsMetGuidelineCDMReportForm','','width=300,height=300')" />
                                         </td>
-                                        <input type="hidden" name='<%="value(measurementType"+ctr+")"%>' value="<bean:write name="measurementType" property="type" />"/>
+                                        <td width="120" class="fieldBox" bgcolor="#ddddff">
+                                            <input type="text" name="endDateB" value="${today}" size="10">
+                                            <img src="<%= request.getContextPath() %>/img/calendar.gif" border="0"
+                                                 onclick="window.open('<%= request.getContextPath() %>/oscarReport/oscarReportCalendarPopup.jsp?type=endDateB[${ctr.index}]&amp;year=${curYear}&amp;month=${curMonth}&amp;form=RptInitializePatientsMetGuidelineCDMReportForm','','width=300,height=300')" />
+                                        </td>
+                                        <input type="hidden" name="value(measurementType${ctr.index})" value="${measurementType.type}" />
                                     </tr>
                                     <tr>
                                         <td width="2" class="fieldBox" bgcolor="#ddddff"></td>
-                                        <td width="4" class="fieldBox" bgcolor="#ddddff" width="5"></td>
-                                        <td width="200" class="fieldBox" bgcolor="#ddddff"></td>                                                        
+                                        <td width="4" class="fieldBox" bgcolor="#ddddff"></td>
+                                        <td width="200" class="fieldBox" bgcolor="#ddddff"></td>
                                         <td width="200" class="fieldBox" bgcolor="#ddddff">
                                             <table>
-                                                <%int i=0;%>
-                                                <logic:iterate id="mInstrc" name='<%="mInstrcs" + ctr%>' property="measuringInstrcVector" indexId="index">
-                                                <tr>
-                                                    <td><input type="checkbox" name='<%="value(mInstrcsCheckbox"+ctr+index+")"%>' checked="checked" value='<bean:write name="mInstrc" property="measuringInstrc" />'/><bean:write name="mInstrc" property="measuringInstrc" /></td>
-                                                </tr>
-                                                <%i++;%>
-                                                </logic:iterate>                                                
+                                                <% int i = 0; %>
+                                                <c:forEach var="mInstrc" items="${measurementType.measuringInstrcVector}" varStatus="index">
+                                                    <tr>
+                                                        <td>
+                                                            <input type="checkbox" name="value(mInstrcsCheckbox${ctr.index}${index.index})" checked="checked"
+                                                                   value="${mInstrc.measuringInstrc}" />
+                                                            <c:out value="${mInstrc.measuringInstrc}" />
+                                                        </td>
+                                                    </tr>
+                                                    <% i++; %>
+                                                </c:forEach>
                                             </table>
                                         </td>
-                                        <input type="hidden" name='<%= "value(mNbInstrcs" + ctr + ")" %>' value='<%=i%>'/>
+                                        <input type="hidden" name="value(mNbInstrcs${ctr.index})" value="${i}" />
                                         <td width="10" class="fieldBox" bgcolor="#ddddff"></td>
-                                        <td width="50"class="fieldBox" bgcolor="#ddddff"></td>     
+                                        <td width="50" class="fieldBox" bgcolor="#ddddff"></td>
                                         <td width="120" class="fieldBox" bgcolor="#ddddff"></td>
-                                        <td width="120" class="fieldBox" bgcolor="#ddddff"></td>           
+                                        <td width="120" class="fieldBox" bgcolor="#ddddff"></td>
                                     </tr>
-                                    </logic:iterate>                        
+                                    </c:forEach>
+
                                     <tr>
-                                   </tr>
+                                    </tr>
 
-                                </td>
-                            </tr>
-                        </table>
-                    </td>   
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td class="MainTableBottomRowLeftColumn">
-
-        </td>
-        <td class="MainTableBottomRowRightColumn">
-        <table>
-            <tr>
-                <td align="left"><input type="submit" name="submitBtn" value="<bean:message key="oscarReport.CDMReport.btnGenerateReport"/>"/></td>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
             </tr>
         </table>
         </td>
-    </tr>
-</table>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn">
 
-</html:form>
+            </td>
+            <td class="MainTableBottomRowRightColumn">
+                <table>
+                    <tr>
+                        <td align="left"><input type="submit" name="submitBtn"
+                                                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.CDMReport.btnGenerateReport"/>"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
 
-</body>
-</html:html>
+    </form>
+
+    </body>
+</html>

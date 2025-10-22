@@ -24,57 +24,58 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.util.*"%>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="java.util.*" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 
 
 <%
-String demographic_no = StringUtils.trimToNull(request.getParameter("demo"));
-DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-Map<String,String> demoExt;
-if( demographic_no != null ) {
-     demoExt = demographicExtDao.getAllValuesForDemo(Integer.parseInt(demographic_no));
-}
-else {
-    demoExt = new HashMap<String, String>();
-}
+    String demographic_no = StringUtils.trimToNull(request.getParameter("demo"));
+    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+    Map<String, String> demoExt;
+    if (demographic_no != null) {
+        demoExt = demographicExtDao.getAllValuesForDemo(Integer.parseInt(demographic_no));
+    } else {
+        demoExt = new HashMap<String, String>();
+    }
 
 %>
 <tr>
-	<td align="right"><b>Consent:</b></td>
-	<td align="left" colspan="3">
-	<% String given_consent = StringUtils.trimToEmpty(demoExt.get("given_consent")); %>
-	<select name="given_consent">
-		<option value="-1" <%=getSel(given_consent,"-1")%>>Not Asked</option>
-		<option value="1" <%=getSel(given_consent,"1")%>>Has Given
-		Consent</option>
-		<option value="2" <%=getSel(given_consent,"2")%>>Has Refused
-		Consent</option>
-	</select> <input type="hidden" name="ethnicityOrig"
-		value="<%=StringUtils.trimToEmpty(demoExt.get("given_consent"))%>">
-	</td>
+    <td align="right"><b>Consent:</b></td>
+    <td align="left" colspan="3">
+        <% String given_consent = StringUtils.trimToEmpty(demoExt.get("given_consent")); %>
+        <select name="given_consent">
+            <option value="-1" <%=getSel(given_consent, "-1")%>>Not Asked</option>
+            <option value="1" <%=getSel(given_consent, "1")%>>Has Given
+                Consent
+            </option>
+            <option value="2" <%=getSel(given_consent, "2")%>>Has Refused
+                Consent
+            </option>
+        </select> <input type="hidden" name="ethnicityOrig"
+                         value="<%=StringUtils.trimToEmpty(demoExt.get("given_consent"))%>">
+    </td>
 
 </tr>
 <%!
-    String getSel(String s, String s2){
-        if (s != null && s2 != null && s.equals(s2)){
+    String getSel(String s, String s2) {
+        if (s != null && s2 != null && s.equals(s2)) {
             return "selected";
         }
         return "";

@@ -24,37 +24,38 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.MiscUtils"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart"
-	rights="r" reverse="<%=true%>">
-	<%response.sendRedirect("../logout.jsp");%>
+                   rights="r" reverse="<%=true%>">
+    <%response.sendRedirect(request.getContextPath() + "/logout.jsp");%>
 </security:oscarSec>
 
-<%@ page import="java.net.URLDecoder, oscar.form.data.*"%>
+<%@ page import="java.net.URLDecoder, ca.openosp.openo.form.data.*" %>
+<%@ page import="ca.openosp.openo.form.data.FrmData" %>
 
 <%
 
     // forward to the page 'form_link'
-    if(true) {
+    if (true) {
         out.clear();
-        //forward to the current specified form, e.g. ../form/formar.jsp?demographic_no=
+        //forward to the current specified form, e.g. contextPath/form/formar.jsp?demographic_no=
         String strFrm = URLDecoder.decode(request.getParameter("formname"), "UTF-8");
         String[] formPath = (new FrmData()).getShortcutFormValue(request.getParameter("demographic_no"), strFrm);
         formPath[0] = formPath[0].trim();
-        
-        String remoteFacilityIdString=request.getParameter("remoteFacilityId");
-        String appointmentNo=request.getParameter("appointmentNo");
-        
-        String nextPage = formPath[0] + 
-        				 request.getParameter("demographic_no")  + 
-        				 ((remoteFacilityIdString!=null)?"&remoteFacilityId="+remoteFacilityIdString:"") + 
-        				 ((appointmentNo!=null)?"&appointmentNo="+appointmentNo:"") + 
-        				 ((request.getParameter("formId") != null)?"&formId="+request.getParameter("formId"):"&formId=" + formPath[1]);
-        MiscUtils.getLogger().info("Forwarding to page : "+nextPage);
+
+        String remoteFacilityIdString = request.getParameter("remoteFacilityId");
+        String appointmentNo = request.getParameter("appointmentNo");
+
+        String nextPage = formPath[0] +
+                request.getParameter("demographic_no") +
+                ((remoteFacilityIdString != null) ? "&remoteFacilityId=" + remoteFacilityIdString : "") +
+                ((appointmentNo != null) ? "&appointmentNo=" + appointmentNo : "") +
+                ((request.getParameter("formId") != null) ? "&formId=" + request.getParameter("formId") : "&formId=" + formPath[1]);
+        MiscUtils.getLogger().info("Forwarding to page : " + nextPage);
         pageContext.forward(nextPage);
         return;
     }

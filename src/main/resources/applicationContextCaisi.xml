@@ -19,7 +19,7 @@
 
 
 	<!-- configure the available measurement flow sheets -->
-	<bean id="measurementTemplateFlowSheet" class="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig">
+	<bean id="measurementTemplateFlowSheet" class="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig">
 		<property name="flowSheets">
 			<list>
 				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/omdDiabetesFlowsheet.xml</value>
@@ -39,56 +39,26 @@
 	</bean>
 
 	<!-- DAO -->
-	<bean id="genericIntakeNodeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeNodeDAOImpl" autowire="byName" />
-	<bean id="genericIntakeDAO" class="org.oscarehr.PMmodule.dao.GenericIntakeDAOImpl" autowire="byName" />
-	<bean id="healthSafetyDao" class="org.oscarehr.PMmodule.dao.HealthSafetyDaoImpl" autowire="byName" />
-	<bean id="formsDAO" class="org.oscarehr.PMmodule.dao.FormsDAOImpl" autowire="byName" />
-	<bean id="populationReportDao" class="org.oscarehr.common.dao.PopulationReportDaoImpl" autowire="byName" />
+	<bean id="formsDAO" class="ca.openosp.openo.PMmodule.dao.FormsDAOImpl" autowire="byName" />
+	<bean id="populationReportDao" class="ca.openosp.openo.commn.dao.PopulationReportDaoImpl" autowire="byName" />
 
 
 	<!-- managers  -->
-	<bean id="issueAdminManager" class="org.caisi.service.IssueAdminManager" autowire="byName" />
+	<bean id="issueAdminManager" class="ca.openosp.openo.services.IssueAdminManager" autowire="byName" />
 
-	<!-- Generic Intake -->
-	<bean id="genericIntakeManager" class="org.oscarehr.PMmodule.service.GenericIntakeManagerImpl" autowire="byName" />
-	<bean id="streetHealthReportManager" class="org.oscarehr.PMmodule.service.impl.StreetHealthReportManagerImpl">
-		<property name="demographicDao" ref="demographicDao" />
-		<property name="genericIntakeManager" ref="genericIntakeManager" />
-	</bean>
-	<!-- Generic Intake -->
-	<bean id="healthSafetyManager" class="org.oscarehr.PMmodule.service.HealthSafetyManagerImpl">
-		<property name="healthSafetyDao" ref="healthSafetyDao" />
-	</bean>
-
-	<bean id="oscarSecurityManager" class="org.oscarehr.PMmodule.service.impl.OscarSecurityManagerImpl" autowire="byName" />
-	<bean id="formsManagerCaisi" class="org.oscarehr.PMmodule.service.impl.FormsManagerImpl" autowire="byName" />
-	<bean id="surveyUserManager" class="org.oscarehr.survey.service.impl.UserManagerOscar" autowire="byName" />
-	<bean id="populationReportManager" class="org.oscarehr.common.service.PopulationReportManager" autowire="byName">
+	<bean id="oscarSecurityManager" class="ca.openosp.openo.PMmodule.service.impl.OscarSecurityManagerImpl" autowire="byName" />
+	<bean id="formsManagerCaisi" class="ca.openosp.openo.PMmodule.service.impl.FormsManagerImpl" autowire="byName" />
+	<bean id="populationReportManager" class="ca.openosp.openo.commn.service.PopulationReportManager" autowire="byName">
 		<property name="issueDAO" ref="IssueDAO" />
 		<property name="populationReportDao" ref="populationReportDao" />
 	</bean>
 	<!-- ========================= SCHEDULED JOBS ========================= -->
 
-	 <bean id="scheduledBedProgramDischargeTask" class="org.oscarehr.PMmodule.task.BedProgramDischargeTask" autowire="byType">
-		<property name="programManager" ref="programManager" />
-	</bean>
     <!-- Define the scheduled executor factory bean -->
-	<bean id="schedulerBedProgramDischarge" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
-		<property name="scheduledExecutorTasks">
-			<list>
-				<!-- Configure the scheduled task -->
-				<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-					<property name="delay" value="120000" />
-					<property name="period" value="3600000" />
-					<property name="runnable" ref="scheduledBedProgramDischargeTask" />
-				</bean>
-			</list>
-		</property>
-	</bean>
 
 	
 
-	 <bean id="scheduledErProgramDischargeTask" class="org.oscarehr.PMmodule.task.ErProgramDischargeTask">
+	 <bean id="scheduledErProgramDischargeTask" class="ca.openosp.openo.PMmodule.task.ErProgramDischargeTask">
 		<property name="admissionManager" ref="admissionManager" />
 		<property name="providerManager" ref="providerManager" />
 	</bean>
@@ -107,7 +77,7 @@
 	</bean>
 
 
-	<bean id="scheduledAnonymousClientDischargeTask" class="org.oscarehr.PMmodule.task.AnonymousClientDischargeTask" />
+	<bean id="scheduledAnonymousClientDischargeTask" class="ca.openosp.openo.PMmodule.task.AnonymousClientDischargeTask" />
     <!-- Define the scheduled executor factory bean -->
     <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
         <property name="scheduledExecutorTasks">
@@ -122,54 +92,12 @@
         </property>
     </bean>
 
-
-	 <bean id="scheduledOcanSubmissionTask" class="oscar.ocan.task.OcanSubmissionTask">
-		<property name="genericIntakeManager" ref="genericIntakeManager" />
-		<property name="ocanDataProcessor" ref="ocanDataProcessor" />
-		<property name="useTestData" value="true" />
-		<property name="testDataPath" value="C:/TEMP/ocan_test" />
-	</bean>
     <!-- Define the scheduled executor factory bean -->
-	<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
-		<property name="scheduledExecutorTasks">
-			<list>
-				<!-- Configure the scheduled task -->
-				<bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-					<property name="delay" value="43200000000" />
-					<property name="period" value="86400000" />
-					<property name="runnable" ref="scheduledOcanSubmissionTask" />
-				</bean>
-			</list>
-		</property>
-	</bean>
-
-
-	<bean id="ocanIarSubmissionTask" class="org.oscarehr.util.OcanIarSubmissionTask" />
-    <!-- Define the scheduled executor factory bean -->
-    <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
-        <property name="scheduledExecutorTasks">
-            <list>
-                <!-- Configure the scheduled task -->
-                <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-                    <property name="delay" value="43200000000" />
-                    <property name="period" value="86400000" />
-                    <property name="runnable" ref="ocanIarSubmissionTask" />
-                </bean>
-            </list>
-        </property>
-    </bean>
-
 	<bean id="schedulerCaisi" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
     <property name="scheduledExecutorTasks">
         <list>
             <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-                <property name="runnable" ref="scheduledBedProgramDischargeTask" />
-            </bean>
-            <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
                 <property name="runnable" ref="scheduledAnonymousClientDischargeTask" />
-            </bean>
-            <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-                <property name="runnable" ref="ocanIarSubmissionTask" />
             </bean>
         </list>
     </property>
@@ -177,60 +105,13 @@
 
 
 
-	<!-- <bean id="schedulerCaisi" class="org.springframework.scheduling.timer.TimerFactoryBean">
-		<property name="scheduledTimerTasks">
-			<list>
-				<ref bean="scheduledBedProgramDischargeTask" />
-				<ref bean="scheduledAnonymousClientDischargeTask" />
-				 <ref bean="ocanIarSubmissionTask"/>
-
-				
-			</list>
-		</property>
-	</bean> -->
-	<bean id="QuestionTypes" class="org.oscarehr.survey.model.QuestionTypes" scope="singleton" />
 	<!--
-		<bean id="UCRConfigurationManager" class="org.oscarehr.PMmodule.web.reports.custom.UCRConfigurationManager"> <property name="filename"> <value>org/oscarehr/PMmodule/web/reports/custom/test.xml</value> </property> </bean>
+		<bean id="UCRConfigurationManager" class="org.oscarehr.PMmodule.www.reports.custom.UCRConfigurationManager"> <property name="filename"> <value>org/oscarehr/PMmodule/www/reports/custom/test.xml</value> </property> </bean>
 	-->
 
 
-	<!-- DATIS Intake Exporter -->
-	<bean id="agencyInformationValidator" class="org.oscarehr.PMmodule.exporter.DATISAgencyInformationValidator" scope="prototype" />
-	<bean id="gamingFormValidator" class="org.oscarehr.PMmodule.exporter.DATISGamingFormValidator" scope="prototype" />
-	<bean id="listOfProgramsValidator" class="org.oscarehr.PMmodule.exporter.DATISListOfProgramsValidator" scope="prototype" />
-	<bean id="mainValidator" class="org.oscarehr.PMmodule.exporter.DATISMainValidator" scope="prototype" />
-	<bean id="nonClientServiceValidator" class="org.oscarehr.PMmodule.exporter.DATISNonClientServiceValidator" scope="prototype" />
-	<bean id="programInformationValidator" class="org.oscarehr.PMmodule.exporter.DATISProgramInformationValidator" scope="prototype" />
 
-	<bean id="abstractIntakeExporter" abstract="true" class="org.oscarehr.PMmodule.exporter.AbstractIntakeExporter" >
-		<property name="genericIntakeManager" ref="genericIntakeManager"></property>
-	</bean>
-	<bean id="intakeExporterAgencyInformation" class="org.oscarehr.PMmodule.exporter.DATISAgencyInformation" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/agencyinformation.xml"></property>
-		<property name="validator" ref="agencyInformationValidator"></property>
-	</bean>
-	<bean id="intakeExporterListOfPrograms" class="org.oscarehr.PMmodule.exporter.DATISListOfPrograms" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/listofprograms.xml"></property>
-		<property name="validator" ref="listOfProgramsValidator"></property>
-	</bean>
-	<bean id="intakeExporterMain" class="org.oscarehr.PMmodule.exporter.DATISMain" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/main.xml"></property>
-		<property name="validator" ref="mainValidator"></property>
-	</bean>
-	<bean id="intakeExporterProgramInformation" class="org.oscarehr.PMmodule.exporter.DATISProgramInformation" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/programinformation.xml"></property>
-		<property name="validator" ref="programInformationValidator"></property>
-	</bean>
-	<bean id="intakeExporterGamblingForm" class="org.oscarehr.PMmodule.exporter.DATISGamingForm" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/gamblingform.xml"></property>
-		<property name="validator" ref="gamingFormValidator"></property>
-	</bean>
-	<bean id="intakeExporterNonClientService" class="org.oscarehr.PMmodule.exporter.DATISNonClientService" parent="abstractIntakeExporter" scope="prototype">
-		<property name="fieldsFile" value="/org/oscarehr/PMmodule/exporter/nonclientservice.xml"></property>
-		<property name="validator" ref="nonClientServiceValidator"></property>
-	</bean>
-
-	<context:component-scan base-package="org.oscarehr.PMmodule.dao" />
-	<context:component-scan base-package="org.oscarehr.PMmodule.service" />
-	<context:component-scan base-package="org.oscarehr.PMmodule.web.admin" />
+	<context:component-scan base-package="ca.openosp.openo.PMmodule.dao" />
+	<context:component-scan base-package="ca.openosp.openo.PMmodule.service" />
+	<context:component-scan base-package="ca.openosp.openo.PMmodule.web.admin" />
 </beans>

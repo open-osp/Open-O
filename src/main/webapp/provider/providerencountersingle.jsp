@@ -24,93 +24,95 @@
 
 --%>
 
-<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.EncounterTemplateDao" %>
-<%@page import="org.oscarehr.common.model.EncounterTemplate" %>
-<%@page import="org.oscarehr.common.dao.EncounterDao" %>
-<%@page import="org.oscarehr.common.model.Encounter" %>
-<%@page import="oscar.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.EncounterTemplateDao" %>
+<%@page import="ca.openosp.openo.commn.model.EncounterTemplate" %>
+<%@page import="ca.openosp.openo.commn.dao.EncounterDao" %>
+<%@page import="ca.openosp.openo.commn.model.Encounter" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
 <%
-	EncounterTemplateDao encounterTemplateDao = SpringUtils.getBean(EncounterTemplateDao.class);
+    EncounterTemplateDao encounterTemplateDao = SpringUtils.getBean(EncounterTemplateDao.class);
     EncounterDao encounterDao = SpringUtils.getBean(EncounterDao.class);
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Single Encounter</title>
-<script LANGUAGE="JavaScript">
-<!--
-function start(){
-  this.focus();
-}
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Single Encounter</title>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
 
-//-->
-</script>
+        //-->
+    </script>
 </head>
 <body onload="start()" topmargin="0" leftmargin="0" rightmargin="0">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#CCCCFF">
-		<th align="CENTER">AN ENCOUNTER RECORD</th>
-	</tr>
+    <tr bgcolor="#CCCCFF">
+        <th align="CENTER">AN ENCOUNTER RECORD</th>
+    </tr>
 </table>
 <%
 
-   String content="";
-   String encounterattachment="";
-   String temp="";
-   Encounter enc = encounterDao.find(Integer.parseInt(request.getParameter("encounter_no")));
-   if(enc != null) {
-     content = enc.getContent();
-     encounterattachment = enc.getEncounterAttachment();
+    String content = "";
+    String encounterattachment = "";
+    String temp = "";
+    Encounter enc = encounterDao.find(Integer.parseInt(request.getParameter("encounter_no")));
+    if (enc != null) {
+        content = enc.getContent();
+        encounterattachment = enc.getEncounterAttachment();
 %>
 <font size="-1"><%=ConversionUtils.toDateString(enc.getEncounterDate())%> <%=ConversionUtils.toTimeString(enc.getEncounterTime())%>
-&nbsp;<font color="green"><%=enc.getSubject().equals("")?"Unknown":enc.getSubject()%></font></font>
+    &nbsp;<font color="green"><%=enc.getSubject().equals("") ? "Unknown" : enc.getSubject()%>
+    </font></font>
 <br>
 <xml id="xml_list">
-<encounter>
-<%=content%>
-</encounter>
+    <encounter>
+        <%=content%>
+    </encounter>
 </xml>
 <%
-   }     
+    }
 %>
 <table datasrc='#xml_list' width='100%' border='0' BGCOLOR="#EEEEFF">
-	<tr>
-		<td>Attachment: <%
-   StringTokenizer st = new StringTokenizer(encounterattachment);
-   while (st.hasMoreTokens()) {
-   temp = st.nextToken(">").substring(1);
-%> <a href=#
-			onClick="popupPage(600,800, '<%=st.nextToken("<").substring(1)%>')">
-		<%=temp%></a> <%
-     st.nextToken(">");
-   }
-%>
-		</td>
-		<td align='right' width='20%' nowrap>
-		<div datafld='xml_username'></div>
-		</td>
-	</tr>
+    <tr>
+        <td>Attachment: <%
+            StringTokenizer st = new StringTokenizer(encounterattachment);
+            while (st.hasMoreTokens()) {
+                temp = st.nextToken(">").substring(1);
+        %> <a href=#
+              onClick="popupPage(600,800, '<%=st.nextToken("<").substring(1)%>')">
+            <%=temp%>
+        </a> <%
+                st.nextToken(">");
+            }
+        %>
+        </td>
+        <td align='right' width='20%' nowrap>
+            <div datafld='xml_username'></div>
+        </td>
+    </tr>
 </table>
 <%
-  if(request.getParameter("template")!=null && !(request.getParameter("template").equals(".")) ) {
-	  
-     for(EncounterTemplate template : encounterTemplateDao.findByName(request.getParameter("template"))) {
-    	 out.println(template.getEncounterTemplateValue());
-     }
-     
-	
-  } else {
-     out.println("<table datasrc='#xml_list' border='0'><tr><td><font color='blue'>Content:</font></td></tr><tr><td><div datafld='xml_content'></td></tr></table>");
-  }
+    if (request.getParameter("template") != null && !(request.getParameter("template").equals("."))) {
+
+        for (EncounterTemplate template : encounterTemplateDao.findByName(request.getParameter("template"))) {
+            out.println(template.getEncounterTemplateValue());
+        }
+
+
+    } else {
+        out.println("<table datasrc='#xml_list' border='0'><tr><td><font color='blue'>Content:</font></td></tr><tr><td><div datafld='xml_content'></td></tr></table>");
+    }
 %>
 
 <center><input type="button" value="Print Preview"
-	onClick="popupPage(600,800, 'providerencounterprint.jsp?encounter_no=<%=request.getParameter("encounter_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&username=<%=request.getParameter("username")%>')">
-<input type="button" value="Close this window" onClick="self.close()">
+               onClick="popupPage(600,800, 'providerencounterprint.jsp?encounter_no=<%=request.getParameter("encounter_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&username=<%=request.getParameter("username")%>')">
+    <input type="button" value="Close this window" onClick="self.close()">
 </center>
 </body>
 </html>

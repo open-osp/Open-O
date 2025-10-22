@@ -25,21 +25,30 @@
 --%>
 
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="oscar.util.ConversionUtils"%>
-<%@page import="org.oscarehr.casemgmt.web.NoteDisplay"%>
+<%@page import="ca.openosp.openo.util.ConversionUtils"%>
+<%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay"%>
 <%  long start = System.currentTimeMillis(); %>
 <%@include file="/casemgmt/taglibs.jsp"%>
 <%@page
-	import="java.util.List, java.util.Set, java.util.Iterator, org.oscarehr.casemgmt.model.CaseManagementIssue, org.oscarehr.casemgmt.model.CaseManagementNoteExt"%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="org.oscarehr.provider.web.CppPreferencesUIBean"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.casemgmt.web.CaseManagementViewAction"%>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@page import="org.oscarehr.common.model.UserProperty"%>
-<%@page import="org.oscarehr.common.model.PartialDate"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+	import="java.util.List, java.util.Set, java.util.Iterator, ca.openosp.openo.casemgmt.model.CaseManagementIssue, ca.openosp.openo.casemgmt.model.CaseManagementNoteExt, ca.openosp.openo.casemgmt.model.CaseManagementNote"%>
+<%@page import="ca.openosp.openo.commn.model.Provider"%>
+<%@page import="ca.openosp.openo.provider.web.CppPreferencesUIBean"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.casemgmt.web.CaseManagementViewAction"%>
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO"%>
+<%@page import="ca.openosp.openo.commn.model.UserProperty"%>
+<%@page import="ca.openosp.openo.commn.model.PartialDate"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo"%>
+<%@page import="org.owasp.encoder.Encode" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed=true;
@@ -56,16 +65,16 @@
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"
 	scope="request" />
-<nested:size id="num" name="Notes" />
+<c:set var="num" value="${fn:length(Notes)}" />
 <div class="nav-menu-heading" style="background-color:#<c:out value="${param.hc}"/>">
 <div class="nav-menu-add-button">
 <h3>
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+	SecurityManager securityManager = new SecurityManager();
 	if(securityManager.hasWriteAccess("_" + request.getParameter("issue_code"),roleName$)) {
 %>
-<a href="javascript:void(0)" title='Add Item' onclick="return showEdit(event,'<bean-el:message key="${param.title}" />','',0,'','','','<%=request.getAttribute("addUrl")%>0', '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=request.getAttribute("cppIssue")%>','','<c:out value="${param.demographicNo}"/>');">+</a>
+<a href="javascript:void(0)" title='Add Item' onclick="return showEdit(event,'<fmt:setBundle basename="oscarResources"/><fmt:message key="${param.title}" />','',0,'','','','<%=request.getAttribute("addUrl")%>0', '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=request.getAttribute("cppIssue")%>','','<c:out value="${param.demographicNo}"/>');">+</a>
 <% } else { %>
 	&nbsp;
 <% } %>
@@ -73,7 +82,7 @@
 </div>
 <div class="nav-menu-title">
 <h3>
-	<a href="javascript:void(0)" onclick="return showIssueHistory('<c:out value="${param.demographicNo}"/>','<%=request.getAttribute("issueIds")%>');"><bean-el:message key="${param.title}" /></a>
+	<a href="javascript:void(0)" onclick="return showIssueHistory('<c:out value="${param.demographicNo}"/>','<%=request.getAttribute("issueIds")%>');"><fmt:setBundle basename="oscarResources"/><fmt:message key="${param.title}" /></a>
 </h3>
 </div>
 </div>
@@ -87,108 +96,152 @@
         </c:choose>
 
 <ul>
-<% List<CaseManagementNoteExt> noteExts = (List<CaseManagementNoteExt>)request.getAttribute("NoteExts"); %>
-	<nested:iterate indexId="noteIdx" id="note" name="Notes"
-		type="org.oscarehr.casemgmt.model.CaseManagementNote">
-                <input type="hidden" id="<c:out value="${param.cmd}"/><nested:write name="note" property="id"/>" value="<nested:write name="noteIdx"/>">
-		<% if( noteIdx % 2 == 0 ) { %>
-		<li class="cpp"	style="background-color: #F3F3F3;">
-		<%}else {%>
-		
-		<li class="cpp" >
-		<%}
-                //load up the prefs once
-                CppPreferencesUIBean prefsBean = new CppPreferencesUIBean(loggedInInfo.getLoggedInProviderNo());
-                prefsBean.loadValues();
-				String addlData = CaseManagementViewAction.getCppAdditionalData(note.getId(),(String)request.getAttribute("cppIssue"),noteExts,prefsBean);
-				
-				String strNoteExts = getNoteExts(note.getId(), noteExts);
-                List<Provider> listEditors = note.getEditors();
-                StringBuffer editors = new StringBuffer();
-                for( Provider p: listEditors) {
-                	editors.append(p.getFormattedName() + ";");                     
-                }             
-                
-                String htmlNoteTxt = note.getNote() + addlData;
-               
-                //single line or 'normal' view.
-                boolean singleLine = Boolean.valueOf(oscar.OscarProperties.getInstance().getProperty("echart.cpp.single_line","false"));
-                UserPropertyDAO userPropertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
-                UserProperty prop = userPropertyDao.getProp(loggedInInfo.getLoggedInProviderNo(),UserProperty.CPP_SINGLE_LINE);
-                if(prop != null) {
-                	singleLine = Boolean.valueOf((prop.getValue().equals("yes")?true:false));
+<%
+    List<CaseManagementNoteExt> noteExts = (List<CaseManagementNoteExt>)request.getAttribute("NoteExts");
+    List<CaseManagementNote> notes = (List<CaseManagementNote>) request.getAttribute("Notes");
+    if (notes != null) {
+        for (int i = 0; i < notes.size(); i++) {
+            CaseManagementNote note = notes.get(i);
+%>
+    <input type="hidden" id="<%= request.getParameter("cmd") + note.getId() %>" value="<%= i %>" />
+
+    <% if (i % 2 == 0) { %>
+        <li class="cpp" style="background-color: #F3F3F3;">
+    <% } else { %>
+        <li class="cpp">
+    <% } %>
+
+<%
+            CppPreferencesUIBean prefsBean = new CppPreferencesUIBean(loggedInInfo.getLoggedInProviderNo());
+            prefsBean.loadValues();
+
+            String addlData = CaseManagementViewAction.getCppAdditionalData(note.getId(), (String) request.getAttribute("cppIssue"), noteExts, prefsBean);
+            String strNoteExts = getNoteExts(note.getId(), noteExts);
+
+            List<Provider> listEditors = note.getEditors();
+            StringBuffer editors = new StringBuffer();
+            for (Provider p : listEditors) {
+                editors.append(p.getFormattedName()).append(";");
+            }
+
+            String htmlNoteTxt = note.getNote() + addlData;
+
+            boolean singleLine = Boolean.valueOf(OscarProperties.getInstance().getProperty("echart.cpp.single_line", "false"));
+            UserPropertyDAO userPropertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
+            UserProperty prop = userPropertyDao.getProp(loggedInInfo.getLoggedInProviderNo(), UserProperty.CPP_SINGLE_LINE);
+            if (prop != null) {
+                singleLine = "yes".equals(prop.getValue());
+            }
+            if (singleLine) {
+                if (htmlNoteTxt.indexOf("\n") != -1) {
+                    htmlNoteTxt = htmlNoteTxt.substring(0, htmlNoteTxt.indexOf("\n")) + "...";
                 }
-                if(singleLine) {
-                	if(htmlNoteTxt.indexOf("\n")!=-1) {
-                    	htmlNoteTxt = htmlNoteTxt.substring(0,htmlNoteTxt.indexOf("\n")) + "...";
-                    }	
-                } else {
-                	htmlNoteTxt = htmlNoteTxt.replaceAll("\n", "<br>");
-                }                          
-                
-                String noteTxt = note.getNote();
-                noteTxt = noteTxt.replaceAll("\"","");
-                noteTxt = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(noteTxt);         
-                
-                Set<CaseManagementIssue>setIssues = note.getIssues();
-                StringBuffer strNoteIssues = new StringBuffer();
-                CaseManagementIssue iss;
-                Iterator<CaseManagementIssue>iter = setIssues.iterator();
-                while(iter.hasNext()) {
-                    iss = iter.next();
-                    strNoteIssues.append(iss.getIssue_id()+";"+iss.getIssue().getCode()+";"+org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(iss.getIssue().getDescription()));
-                    if( iter.hasNext() ) {
-                        strNoteIssues.append(";");
-                    }
+            } else {
+                htmlNoteTxt = htmlNoteTxt.replaceAll("\n", "<br>");
+            }
+
+            String noteTxt = note.getNote().replaceAll("\"", "");
+            noteTxt = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(noteTxt);
+
+            Set<CaseManagementIssue> setIssues = note.getIssues();
+            StringBuffer strNoteIssues = new StringBuffer();
+            Iterator<CaseManagementIssue> iter = setIssues.iterator();
+            while (iter.hasNext()) {
+                CaseManagementIssue iss = iter.next();
+                strNoteIssues.append(iss.getIssue_id()).append(";")
+                             .append(iss.getIssue().getCode()).append(";")
+                             .append(org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(iss.getIssue().getDescription()));
+                if (iter.hasNext()) {
+                    strNoteIssues.append(";");
                 }
-                %> <span id="spanListNote<nested:write name="note" property="id"/>">
-			
-			<c:choose>
-            <c:when test='${param.title == "oscarEncounter.oMeds.title" || param.title == "oscarEncounter.riskFactors.title" || param.title == "oscarEncounter.famHistory.title"|| param.noheight == "true"}'>
-                <a class="links" onmouseover="this.className='linkhover'"	onmouseout="this.className='links'" title="Rev:<nested:write name="note" property="revision"/> - Last update:<nested:write name="note" property="update_date" format="dd-MMM-yyyy"/>" id="listNote<nested:write name="note" property="id"/>" href="javascript:void(0)" onclick="showEdit(event,'<bean-el:message key="${param.title}" />','<nested:write name="note" property="id"/>','<%=StringEscapeUtils.escapeJavaScript(editors.toString())%>','<nested:write name="note" property="observation_date" format="dd-MMM-yyyy"/>','<nested:write name="note" property="revision"/>','<%=noteTxt%>', '<%=request.getAttribute("addUrl")%><nested:write name="note" property="id"/>', '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=strNoteIssues.toString()%>','<%=strNoteExts%>','<c:out value="${param.demographicNo}"/>');return false;" >
+            }
+%>
+    <span id="spanListNote<%= note.getId() %>">
+        <c:choose>
+            <c:when test='${param.title == "oscarEncounter.oMeds.title" || param.title == "oscarEncounter.riskFactors.title" || param.title == "oscarEncounter.famHistory.title" || param.noheight == "true"}'>
+                <a class="links"
+                   onmouseover="this.className='linkhover'"
+                   onmouseout="this.className='links'"
+                   title="Rev:<%= note.getRevision() %> - Last update:<%= note.getUpdate_date() %>"
+                   id="listNote<%= note.getId() %>"
+                   href="javascript:void(0)"
+                   onclick="showEdit(event,'<fmt:setBundle basename="oscarResources"/><fmt:message key="${param.title}" />','<%= note.getId() %>','<%= StringEscapeUtils.escapeJavaScript(editors.toString()) %>','<%= note.getObservation_date() %>','<%= note.getRevision() %>','<%= noteTxt %>', '<%= request.getAttribute("addUrl") %><%= note.getId() %>', '<%= request.getParameter("cmd") %>','<%= request.getAttribute("identUrl") %>','<%= strNoteIssues.toString() %>','<%= strNoteExts %>','<%= request.getParameter("demographicNo") %>');return false;">
             </c:when>
             <c:otherwise>
-                <a class="topLinks" onmouseover="this.className='topLinkhover'"	onmouseout="this.className='topLinks'" title="Rev:<nested:write name="note" property="revision"/> - Last update:<nested:write name="note" property="update_date" format="dd-MMM-yyyy"/>" id="listNote<nested:write name="note" property="id"/>" href="javascript:void(0)" onclick="showEdit(event,'<bean-el:message key="${param.title}" />','<nested:write name="note" property="id"/>','<%=StringEscapeUtils.escapeJavaScript(editors.toString())%>','<nested:write name="note" property="observation_date" format="dd-MMM-yyyy"/>','<nested:write name="note" property="revision"/>','<%=noteTxt%>', '<%=request.getAttribute("addUrl")%><nested:write name="note" property="id"/>', '<c:out value="${param.cmd}"/>','<%=request.getAttribute("identUrl")%>','<%=strNoteIssues.toString()%>','<%=strNoteExts%>','<c:out value="${param.demographicNo}"/>');return false;" >
+                <a class="topLinks"
+                   onmouseover="this.className='topLinkhover'"
+                   onmouseout="this.className='topLinks'"
+                   title="Rev:<%= note.getRevision() %> - Last update:<%= note.getUpdate_date() %>"
+                   id="listNote<%= note.getId() %>"
+                   href="javascript:void(0)"
+                   onclick="showEdit(event,'<fmt:setBundle basename="oscarResources"/><fmt:message key="${param.title}" />','<%= note.getId() %>','<%= StringEscapeUtils.escapeJavaScript(editors.toString()) %>','<%= note.getObservation_date() %>','<%= note.getRevision() %>','<%= noteTxt %>', '<%= request.getAttribute("addUrl") %><%= note.getId() %>', '<%= request.getParameter("cmd") %>','<%= request.getAttribute("identUrl") %>','<%= strNoteIssues.toString() %>','<%= strNoteExts %>','<%= request.getParameter("demographicNo") %>');return false;">
             </c:otherwise>
-        	</c:choose>                 
-			
-			<%=htmlNoteTxt%></a>
-		</span></li>
-	</nested:iterate>
-	<%
-		List<NoteDisplay>remoteNotes = (List<NoteDisplay>)request.getAttribute("remoteNotes");
-		String htmlText;
-		int noteIdx = 0;
-		if( remoteNotes != null ) {
-		    for( NoteDisplay remoteNote : remoteNotes) {
-				htmlText = remoteNote.getNote();
-				htmlText = htmlText.replaceAll("\n", "<br>");
-				if( noteIdx % 2 == 0 ) {
-				%>				
-				<li class="cpp" style="background-color: #FFCCCC;">
-				<%
-				}
-				else {
-				    %>
-				    <li class="cpp" style="background-color: #CCA3A3">
-				    <%
-				}
-				%>
-					<a class="links" onmouseover="this.className='linkhover'"	onmouseout="this.className='links'" title="<%=remoteNote.getLocation()%> by <%=remoteNote.getProviderName()%> on <%=ConversionUtils.toTimestampString(remoteNote.getObservationDate())%>" href="javascript:void(0)" onclick="showIntegratedNote('<bean-el:message key="${param.title}" />',<%=htmlText%>,<%=remoteNote.getLocation()%>, <%=remoteNote.getProviderName()%>, <%=ConversionUtils.toTimestampString(remoteNote.getObservationDate())%>);">					
-					<%=htmlText%>
-					</a>
-				</li>
-				<%
-		    }
-		    
-		}
-	%>
+        </c:choose>
+
+        <%= htmlNoteTxt %></a>
+    </span></li>
+<%
+        } // end for
+    } // end if
+%>
+
+    <%-- Remote Notes Section --%>
+    <fmt:setBundle basename="oscarResources"/>
+<fmt:message key="${param.title}" var="resolvedTitleRaw"/>
+<c:set var="resolvedTitle" value="${fn:escapeXml(resolvedTitleRaw)}"/>
+
+<%
+  // JS‑escaped version of the title
+  String resolvedTitleJs = Encode.forJavaScript(
+    (String) pageContext.getAttribute("resolvedTitle")
+  );
+%>
+
+<ul>
+  <c:forEach var="remoteNote" items="${remoteNotes}" varStatus="status">
+    <% 
+       // pull the JSP var "remoteNote" into a Java variable
+       NoteDisplay note =
+         (NoteDisplay) pageContext.getAttribute("remoteNote");
+
+       // now you can use 'note' in your scriptlet
+       String rawText   = note.getNote().replaceAll("\n","<br>");
+       String rawTextJs = Encode.forJavaScript(rawText);
+
+       String locAttr = note.getLocation();
+       String locJs   = Encode.forJavaScript(locAttr);
+
+       String provAttr = note.getProviderName();
+       String provJs   = Encode.forJavaScript(provAttr);
+
+       String timestamp = ConversionUtils
+                            .toTimestampString(note.getObservationDate());
+       String timeJs   = Encode.forJavaScript(timestamp);
+    %>
+
+    <li class="cpp ${status.index % 2 == 0 ? 'row-even' : 'row-odd'}">
+      <a class="links"
+         onmouseover="this.className='linkhover'"
+         onmouseout="this.className='links'"
+         title="<%= Encode.forHtmlAttribute(locAttr) %> by <%= Encode.forHtmlAttribute(provAttr) %> on <%= Encode.forHtmlAttribute(timestamp) %>"
+         href="javascript:void(0)"
+         onclick="showIntegratedNote(
+           '<%= resolvedTitleJs %>',
+           '<%= rawTextJs      %>',
+           '<%= locJs          %>',
+           '<%= provJs         %>',
+           '<%= timeJs         %>'
+         ); return false;">
+        <%= Encode.forHtml(rawText) %>
+      </a>
+    </li>
+  </c:forEach>
 </ul>
 
-<input type="hidden" id="<c:out value="${param.cmd}"/>num"
-	value="<nested:write name="num"/>">
-<input type="hidden" id="<c:out value="${param.cmd}"/>threshold"
-	value="0">
+
+<input type="hidden" id="${param.cmd}num" value="${num}">
+<input type="hidden" id="${param.cmd}threshold" value="0">
+
 <%!
     String getNoteExts(Long noteId, List<CaseManagementNoteExt> lcme) {
 	StringBuffer strcme = new StringBuffer();
@@ -214,12 +267,12 @@
 
             if (type!=null && !type.trim().equals("")) {
                 if (type.equals(PartialDate.YEARONLY))
-                    val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy");
+                    val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy");
                 else if (type.equals(PartialDate.YEARMONTH))
-                    val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM");
-                else val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
+                    val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM");
+                else val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
             } else {
-                val = oscar.util.UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
+                val = UtilDateUtilities.DateToString(cme.getDateValue(),"yyyy-MM-dd");
             }
             return val;
         }

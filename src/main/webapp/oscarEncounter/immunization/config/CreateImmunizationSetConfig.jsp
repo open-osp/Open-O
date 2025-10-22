@@ -24,188 +24,193 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-        String co = (String) request.getAttribute("cols");
-        String ro = (String) request.getAttribute("rows");
-        int cols = 0;
-        int rows = 0;
-    try{
+    String setName = null;
+    String co = (String) request.getAttribute("cols");
+    String ro = (String) request.getAttribute("rows");
+    int cols = 0;
+    int rows = 0;
+    try {
         cols = Integer.parseInt(co);
         rows = Integer.parseInt(ro);
         rows++;
         cols++;
-
-    }catch(Exception e){
-    	MiscUtils.getLogger().error("there was a boo-boo co="+co+" ro="+ro, e);
+    } catch (Exception e) {
+        MiscUtils.getLogger().error("there was a boo-boo co=" + co + " ro=" + ro, e);
     }
 
-    String setName = ((String) request.getAttribute("name"));
+    setName = ((String) request.getAttribute("setName"));
 %>
 
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<html>
 
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarEncounter.immunization.config.createImmunizationSetConfig.title" />
-</title>
-<html:base />
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.title"/>
+        </title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-</head>
-<script language="javascript">
-function BackToOscar()
-{
-       window.close();
-}
+    </head>
+    <script language="javascript">
+        function BackToOscar() {
+            window.close();
+        }
 
-function switchColor(val){
-    var value = val
-    var td = val.parentNode;
-     td.bgcolor = "#ffffff";
-}
-</script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+        function switchColor(val) {
+            var value = val
+            var td = val.parentNode;
+            td.bgcolor = "#ffffff";
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="window.focus();">
-<html:errors />
-<table border="0" cellpadding="0" cellspacing="0"
-	style="border-collapse: collapse" bordercolor="#111111" width="100%"
-	id="AutoNumber1" height="100%">
-	<tr>
-		<td width="100%"
-			style="padding-left: 3; padding-right: 3; padding-top: 2; padding-bottom: 2"
-			height="0%" colspan="2">
-		
-		</td>
-	</tr>
-	<tr>
-		<td width="10%" height="37" bgcolor="#000000">&nbsp;</td>
-		<td width="100%" bgcolor="#000000"
-			style="border-left: 2px solid #A9A9A9; padding-left: 5" height="0%">
-		<p class="ScreenTitle"><bean:message
-			key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgCreateNew" /></p>
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
-			valign="top">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF"
+          onload="window.focus();">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <table border="0" cellpadding="0" cellspacing="0"
+           style="border-collapse: collapse" bordercolor="#111111" width="100%"
+           id="AutoNumber1" height="100%">
+        <tr>
+            <td width="100%"
+                style="padding-left: 3; padding-right: 3; padding-top: 2; padding-bottom: 2"
+                height="0%" colspan="2">
 
-			<!----Start new rows here-->
-			<tr>
-				<td>
-				<div class="DivContentTitle"><br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep4" />
-				<br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep5" />
-				<br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep6" />
-				</div>
-				</td>
-			</tr>
-			<tr>
-				<td><bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgSetName" />:
-				<%=setName%></td>
-			</tr>
-			<tr>
-				<td><html:form
-					action="/oscarEncounter/immunization/config/CreateImmunizationSetConfig">
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" height="37" bgcolor="#000000">&nbsp;</td>
+            <td width="100%" bgcolor="#000000"
+                style="border-left: 2px solid #A9A9A9; padding-left: 5" height="0%">
+                <p class="ScreenTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgCreateNew"/></p>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
+                valign="top">
+                <table cellpadding="0" cellspacing="2"
+                       style="border-collapse: collapse" bordercolor="#111111" width="100%"
+                       height="100%">
 
-					<html:hidden property="name" value="<%=setName%>" />
-					<table border=1>
-						<%for (int i = 0; i < rows; i++ ){ %>
-						<tr>
-							<%  if ( i == 0 ) {
-                                            for (int j=0; j < cols; j++){
-                                                if (j==0){%>
-							<th class=head>&nbsp;</th>
-							<%}else{%>
-							<th class=head><textarea name="heading<%=i+"D"+j%>" rows="2"></textarea>
-							</th>
-							<%}%>
-							<%    }
+                    <!----Start new rows here-->
+                    <tr>
+                        <td>
+                            <div class="DivContentTitle"><br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep4"/>
+                                <br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep5"/>
+                                <br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgStep6"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.msgSetName"/>:
+                            <%=setName%>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><form action="${pageContext.request.contextPath}/oscarEncounter/immunization/config/CreateImmunizationSetConfig.do" method="post">
 
-                                      }else{
+                            <input type="hidden" name="setName" id="setName" value="<%=setName%>"/>
+                            <table border=1>
+                                <%for (int i = 0; i < rows; i++) { %>
+                                <tr>
+                                    <% if (i == 0) {
+                                        for (int j = 0; j < cols; j++) {
+                                            if (j == 0) {%>
+                                    <th class=head>&nbsp;</th>
+                                    <%} else {%>
+                                    <th class=head><textarea name="heading<%=i+"D"+j%>" rows="2"></textarea>
+                                    </th>
+                                    <%}%>
+                                    <% }
 
-                                            for (int j=0; j < cols; j++){
-                                                if (j==0){%>
-							<td class=head><textarea name="immunization<%=i+"D"+j%>"
-								rows="2"></textarea></td>
+                                    } else {
 
-							<%}else{%>
-							<td class=grey valign=middle align=center><input
-								type="checkbox" name="yearAge<%=i+"D"+j%>"
-								onclick="switchColor(this)"></td>
-							<%}%>
-							<%}
+                                        for (int j = 0; j < cols; j++) {
+                                            if (j == 0) {%>
+                                    <td class=head><textarea name="immunization<%=i+"D"+j%>"
+                                                             rows="2"></textarea></td>
+
+                                    <%} else {%>
+                                    <td class=grey valign=middle align=center><input
+                                            type="checkbox" name="yearAge<%=i+"D"+j%>"
+                                            onclick="switchColor(this)"></td>
+                                    <%}%>
+                                    <%
+                                            }
                                         }
                                     %>
 
-						</tr>
-						<%}%>
-						<tr>
-							<td colspan=<%=cols%>><input type="submit"
-								value="<bean:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.btnRender"/>" />
-							</td>
-						</tr>
-					</table>
-				</html:form></td>
+                                </tr>
+                                <%}%>
+                                <tr>
+                                    <td colspan=<%=cols%>><input type="submit"
+                                                                 value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetConfig.btnRender"/>"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form></td>
 
-			</tr>
+                    </tr>
 
 
+                    <!----End new rows here-->
 
-			<!----End new rows here-->
+                    <tr height="100%">
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
 
-			<tr height="100%">
-				<td></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-
-	<tr>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
-			colspan="2"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+        <tr>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+                colspan="2"></td>
+        </tr>
+    </table>
+    </body>
+</html>

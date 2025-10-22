@@ -26,38 +26,44 @@
 <div class="flex">
     <div class="mw-9">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_enough_income" data-score="1">
-        <strong class="tt highlight"  data-field-name="enough_income" data-toggle="tooltip"
-            title="Does the patient have enough income? Does the patient need SAFER rent grants, Fair Pharmacare, Disability tax credits?">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_enough_income" data-score="1">
+        <strong class="tt highlight" data-field-name="enough_income" data-toggle="tooltip"
+                title="Does the patient have enough income? Does the patient need SAFER rent grants, Fair Pharmacare, Disability tax credits?">
             Enough Income?
         </strong>
     </div>
     <div class="pl-4 flex items-center">
-        <label class="font-normal flex items-center"><input type="radio" name="enough_income" class="m-0" autocomplete="off" value="1" data-score="0">
+        <label class="font-normal flex items-center"><input type="radio" name="enough_income" class="m-0"
+                                                            autocomplete="off" value="1" data-score="0">
             <span class="pl-1">Yes</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="enough_income" class="m-0" autocomplete="off" value="0" data-score="1">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="enough_income" class="m-0"
+                                                                 autocomplete="off" value="0" data-score="1">
             <span class="pl-1">No</span></label>
     </div>
     <div class="flex items-center">
         <span class="tt radio-inline control-label font-bold" data-toggle="tooltip" data-html="true"
-            title="Frequent: more than weekly excursions outside of the home.<br><br>Occasional: less than weekly excursions outside of the home">
+              title="Frequent: more than weekly excursions outside of the home.<br><br>Occasional: less than weekly excursions outside of the home">
             <svg height="10" width="10">
-                <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+                <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
             </svg><input type="checkbox" class="action-required" name="action_required_socially_engaged" data-score="1">
-            <strong class="tt highlight"  data-field-name="socially_engaged" >Socially Engaged</strong>
+            <strong class="tt highlight" data-field-name="socially_engaged">Socially Engaged</strong>
         </span>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0" value="frequent"
-                autocomplete="off" data-score="0">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0"
+                                                                 value="frequent"
+                                                                 autocomplete="off" data-score="0">
             <span class="pl-1">Frequent</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0" value="occasional"
-                autocomplete="off" data-score="0.5">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0"
+                                                                 value="occasional"
+                                                                 autocomplete="off" data-score="0.5">
             <span class="pl-1">Occasional</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0" autocomplete="off" value="not" data-score="1">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="socially_engaged" class="m-0"
+                                                                 autocomplete="off" value="not" data-score="1">
             <span class="pl-1">Not</span></label>
     </div>
 </div>

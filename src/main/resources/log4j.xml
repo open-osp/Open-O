@@ -31,10 +31,14 @@
 	<!-- ############################# -->
 
 	<category name="org.oscarehr">
-		<priority value="INFO" />
+		<priority value="DEBUG" />
+	</category>
+	
+	<category name="org.apache.cxf">
+		<priority value="DEBUG"/>
 	</category>
 
-	<category name="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
+	<category name="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="INTEGRATOR_FILE" />
 	</category>
@@ -45,11 +49,11 @@
 	</category>
 -->
 	
-	<!-- //debugging soap messages 
+	<!-- //debugging soap messages  -->
 	<category name="httpclient.wire">
 		<priority value="DEBUG" />
 	</category>
-	-->
+	
 
 	<category name="org.apache.cxf.transport.https.HttpsURLConnectionFactory">
 		<priority value="WARN" />
@@ -104,11 +108,7 @@
 	</category>
 	
 	<!-- control if you want the possible excessive memory usage warnings. WARN and below will show them -->
-	<category name="org.oscarehr.util.ProblemCheckFilter">
-		<priority value="ERROR" />
-	</category>
-	
-	<category name="org.apache.struts.tiles.TilesRequestProcessor">
+	<category name="org.oscarehr.utility.ProblemCheckFilter">
 		<priority value="ERROR" />
 	</category>
 	

@@ -25,90 +25,82 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ page import="java.util.*,oscar.oscarBilling.ca.bc.pageUtil.*" %>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="java.util.*,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.billing,_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_admin&type=_admin.billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
+<html>
 
 
+    <head>
+        <title>Add Private Billing Code</title>
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+        <script type="text/javascript">
 
-<head>
-<title>Add Private Billing Code</title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-<script type="text/javascript">
+            function isNumeric(strString) {
+                var validNums = "0123456789.";
+                var strChar;
+                var retval = true;
 
-function isNumeric(strString){
-    var validNums = "0123456789.";
-    var strChar;
-    var retval = true;
+                for (i = 0; i < strString.length && retval == true; i++) {
+                    strChar = strString.charAt(i);
+                    if (validNums.indexOf(strChar) == -1) {
+                        retval = false;
+                    }
+                }
+                return retval;
+            }
 
-    for (i = 0; i < strString.length && retval == true; i++){
-       strChar = strString.charAt(i);
-       if (validNums.indexOf(strChar) == -1){
-          retval = false;
-       }
-    }
-     return retval;
-}
+            function checkUnits() {
+                if (!isNumeric(document.BillingAddCodeForm.value.value)) {
+                    alert("Price has to be a numeric value");
+                    document.BillingAddCodeForm.value.focus();
+                    return false;
+                }
+                return true;
+            }
+        </script>
+    </head>
 
-function checkUnits(){
-	if  (!isNumeric(document.BillingAddCodeForm.value.value)){
-		alert("Price has to be a numeric value");
-	        document.BillingAddCodeForm.value.focus();
-		return false;
-	}
-	return true;
-}
-</script>
-</head>
+    <body>
+    <h3>Add Private Billing Code</h3>
+    <div class="container-fluid well">
 
-<body>
-	<h3>Add Private Billing Code</h3>
-	<div class="container-fluid well">
-	
-    <html:form action="/billing/CA/BC/billingAddCode" onsubmit="return checkUnits();">
-      <%
-		BillingAddCodeForm frm = (BillingAddCodeForm) request.getAttribute("BillingAddCodeForm");
-		String isEdit = request.getParameter("edit")!=null?request.getParameter("edit"):"";
-		if (request.getAttribute("code") != null){
-			frm.setCode((String) request.getAttribute("code"));
-			frm.setDesc((String) request.getAttribute("desc"));
-			frm.setValue((String) request.getAttribute("value"));
-		}
+        <form action="${pageContext.request.contextPath}/billing/CA/BC/billingAddCode.do" method="post" onsubmit="return checkUnits();">
+            <%
+                if (request.getAttribute("returnMessage") != null) {
+            %>
+            <%=request.getAttribute("returnMessage")%>
+            <%}%>
+            <input type="hidden" name="whereTo" id="whereTo" value="private"/>
 
-		if (request.getAttribute("returnMessage") != null){%>
-			<%=request.getAttribute("returnMessage")%>
-		<%}%>                
-	<html:hidden property="whereTo" value="private"/>
+            Service Code: <br>
+            A-<input type="text" name="code" maxlength="9" style="width:100px"/>
+            <div style="margin-top:-10px;margin-bottom:10px;"><small>Private Codes will be prefixed with 'A' by
+                default</small></div>
 
-	
-        Service Code: <br>
-	A-<html:text property="code" maxlength="9" style="width:100px" />
-	<div style="margin-top:-10px;margin-bottom:10px;"><small>Private Codes will be prefixed with 'A' by default</small></div>
-		
-	Description:<br>
-	<html:text property="desc"/><br> 
+            Description:<br>
+            <input type="text" name="desc" id="desc" /><br>
 
-        Price:<br>
-	<html:text property="value"/><br> 
+            Price:<br>
+            <input type="text" name="value" id="value" /><br>
 
-	<html:submit styleClass="btn btn-primary" value="Add"/> <a href="billingPrivateCodeAdjust.jsp" class="btn">Cancel</a>
-    </html:form>
+            <input type="submit" name="submit" class="btn btn-primary" value="Add"/> <a href="billingPrivateCodeAdjust.jsp" class="btn">Cancel</a>
+        </form>
     </div>
-</body>
-</html:html>
+    </body>
+</html>

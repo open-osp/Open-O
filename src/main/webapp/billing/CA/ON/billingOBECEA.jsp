@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
     Copyright (c) 2006-. OSCARservice, OpenSoft System. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -17,49 +17,60 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
-<%   
-  if(session.getValue("user") == null)
-    response.sendRedirect("../../logout.jsp");
-  
-  String user_no;
-  user_no = (String) session.getAttribute("user");
-  String docdownload = oscarVariables.getProperty("project_home") ;;
-  session.setAttribute("homepath", docdownload);      
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
+<%
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+
+    String user_no;
+    user_no = (String) session.getAttribute("user");
+    String docdownload = oscarVariables.getProperty("project_home");
+    ;
+    session.setAttribute("homepath", docdownload);
 
 %>
 <!DOCTYPE html>
-<html:html>
-<head>
+<html>
+    <head>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-<title>EDT OBEC Response Report Generator</title>
-</head>
+        <title>EDT OBEC Response Report Generator</title>
+    </head>
 
-<body>
+    <body>
 
-<p>EDT OBEC Response Report Generator</p>
+    <p>EDT OBEC Response Report Generator</p>
 
-<html:form action="/oscarBilling/DocumentErrorReportUpload.do"	method="POST" enctype="multipart/form-data">
-	
+    <form action="${pageContext.request.contextPath}/oscarBilling/DocumentErrorReportUpload.do" method="POST" enctype="multipart/form-data">
 
 
-    <div class="alert alert-error">
-  
-    <html:errors />
+        <div class="alert alert-error">
+
+            <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
     </div>
+<% } %>
+        </div>
 
-<div class="well">
-Select diskette <input type="file" name="file1" value="" required>
+        <div class="well">
+            Select diskette <input type="file" name="file1" value="" required>
 
-<input type="submit" name="Submit" class="btn btn-primary" value="Create Report">
-</div>
+            <input type="submit" name="Submit" class="btn btn-primary" value="Create Report">
+        </div>
 
 
-</html:form>
-</body>
-</html:html>
+    </form>
+    </body>
+</html>

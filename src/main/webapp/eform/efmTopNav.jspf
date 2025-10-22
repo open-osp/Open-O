@@ -23,14 +23,14 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
     <div class="navbar">
     <div class="navbar-inner">
-    <a class="brand" href="#"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
+    <a class="brand" href="#"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgManageEFrm"/></a>
     <ul class="nav">
     <li><a href="<%= request.getContextPath() %>/eform/efmformmanager.jsp" class="contentLink">eForm Library</a></li>
-    <li><a href="<%= request.getContextPath() %>/eform/efmmanageformgroups.jsp" class="contentLink"><bean:message key="eform.groups.name" /></a></li>
+    <li><a href="<%= request.getContextPath() %>/eform/efmmanageformgroups.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.groups.name"/></a></li>
     <!-- <li><a href="#">eForm Emporium</a></li> -->
 	<li class="dropdown">
 		<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-trigger="hover">
@@ -43,7 +43,7 @@
 		</ul>
 	</li>
 
-	<li><a href="<%= request.getContextPath() %>/eform/efmimagemanager.jsp" class="contentLink">Image Library <!--<bean:message key="admin.admin.btnUploadImage" />--></a></li>    		
+	<li><a href="<%= request.getContextPath() %>/eform/efmimagemanager.jsp" class="contentLink">Image Library <!--<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnUploadImage"/>--></a></li>    		
     </ul>
     </div>
     </div>

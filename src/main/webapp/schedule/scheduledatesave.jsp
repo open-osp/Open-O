@@ -26,81 +26,81 @@
 
 <%
 
-  String user_name = (String) session.getAttribute("userlastname")+","+ (String) session.getAttribute("userfirstname");
-  String provider_no = request.getParameter("provider_no");
+    String user_name = (String) session.getAttribute("userlastname") + "," + (String) session.getAttribute("userfirstname");
+    String provider_no = request.getParameter("provider_no");
 %>
 <%@ page
-	import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*"
-	errorPage="../appointment/errorpage.jsp"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*"
+        errorPage="/errorpage.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<jsp:useBean id="scheduleDateBean" class="java.util.Hashtable" scope="session" />
-<jsp:useBean id="scheduleRscheduleBean" class="oscar.RscheduleBean"	scope="session" />
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ScheduleDate" %>
-<%@ page import="org.oscarehr.common.dao.ScheduleDateDao" %>
+
+<jsp:useBean id="scheduleDateBean" class="java.util.Hashtable" scope="session"/>
+<jsp:useBean id="scheduleRscheduleBean" class="ca.openosp.RscheduleBean" scope="session"/>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ScheduleDate" %>
+<%@ page import="ca.openosp.openo.commn.dao.ScheduleDateDao" %>
 <%
-	ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
+    ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
 %>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="schedule.scheduledatesave.title" /></title>
-</head>
-<%
-  String available = request.getParameter("available");
-  String priority = "c";
-  String reason = request.getParameter("reason");
-  String hour = request.getParameter("hour");
-  //save the record first, change holidaybean next
-  int rowsAffected = 0;
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatesave.title"/></title>
+    </head>
+    <%
+        String available = request.getParameter("available");
+        String priority = "c";
+        String reason = request.getParameter("reason");
+        String hour = request.getParameter("hour");
+        //save the record first, change holidaybean next
+        int rowsAffected = 0;
 
-  ScheduleDate sd = scheduleDateDao.findByProviderNoAndDate(provider_no, MyDateFormat.getSysDate(request.getParameter("date")));
-  if(sd != null) {
-	  sd.setStatus('D');
-	  scheduleDateDao.merge(sd);
-  }
-  //add R schedule date if it is available
-  if(request.getParameter("Submit")!=null && request.getParameter("Submit").equals(" Delete ")) {
-    if(scheduleRscheduleBean.getDateAvail(request.getParameter("date"))) {
-      sd = new ScheduleDate();
-      sd.setDate(MyDateFormat.getSysDate(request.getParameter("date")));
-      sd.setProviderNo(provider_no);
-      sd.setAvailable('1');
-      sd.setPriority('b');
-      sd.setReason("");
-      sd.setHour(scheduleRscheduleBean.getDateAvailHour(request.getParameter("date")));
-      sd.setCreator(user_name);
-      sd.setStatus(scheduleRscheduleBean.active.toCharArray()[0]);
-      scheduleDateDao.persist(sd);
-    }
-  }
-  scheduleDateBean.remove(request.getParameter("date") );
+        ScheduleDate sd = scheduleDateDao.findByProviderNoAndDate(provider_no, MyDateFormat.getSysDate(request.getParameter("date")));
+        if (sd != null) {
+            sd.setStatus('D');
+            scheduleDateDao.merge(sd);
+        }
+        //add R schedule date if it is available
+        if (request.getParameter("Submit") != null && request.getParameter("Submit").equals(" Delete ")) {
+            if (scheduleRscheduleBean.getDateAvail(request.getParameter("date"))) {
+                sd = new ScheduleDate();
+                sd.setDate(MyDateFormat.getSysDate(request.getParameter("date")));
+                sd.setProviderNo(provider_no);
+                sd.setAvailable('1');
+                sd.setPriority('b');
+                sd.setReason("");
+                sd.setHour(scheduleRscheduleBean.getDateAvailHour(request.getParameter("date")));
+                sd.setCreator(user_name);
+                sd.setStatus(scheduleRscheduleBean.active.toCharArray()[0]);
+                scheduleDateDao.persist(sd);
+            }
+        }
+        scheduleDateBean.remove(request.getParameter("date"));
 
-if(request.getParameter("Submit")!=null && request.getParameter("Submit").equals(" Save ")) {
+        if (request.getParameter("Submit") != null && request.getParameter("Submit").equals(" Save ")) {
 
-  sd = new ScheduleDate();
-  sd.setDate(MyDateFormat.getSysDate(request.getParameter("date")));
-  sd.setProviderNo(provider_no);
-  sd.setAvailable(available.toCharArray()[0]);
-  sd.setPriority(priority.toCharArray()[0]);
-  sd.setReason(reason);
-  sd.setHour(hour);
-  sd.setCreator(user_name);
-  sd.setStatus(scheduleRscheduleBean.active.toCharArray()[0]);
-  scheduleDateDao.persist(sd);
+            sd = new ScheduleDate();
+            sd.setDate(MyDateFormat.getSysDate(request.getParameter("date")));
+            sd.setProviderNo(provider_no);
+            sd.setAvailable(available.toCharArray()[0]);
+            sd.setPriority(priority.toCharArray()[0]);
+            sd.setReason(reason);
+            sd.setHour(hour);
+            sd.setCreator(user_name);
+            sd.setStatus(scheduleRscheduleBean.active.toCharArray()[0]);
+            scheduleDateDao.persist(sd);
 
-  scheduleDateBean.put(request.getParameter("date"), new HScheduleDate(available, priority, reason, hour, user_name) );
-}
-%>
+            scheduleDateBean.put(request.getParameter("date"), new HScheduleDate(available, priority, reason, hour, user_name));
+        }
+    %>
 
-<script language="JavaScript">
-<!--
-  opener.location.reload();
-  self.close();
-//-->
-</script>
-<body>
-</body>
-</html:html>
+    <script language="JavaScript">
+        <!--
+        opener.location.reload();
+        self.close();
+        //-->
+    </script>
+    <body>
+    </body>
+</html>

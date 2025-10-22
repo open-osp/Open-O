@@ -276,7 +276,7 @@ DATE_FORMAT(CONCAT( (d.year_of_birth),'-',(d.month_of_birth),'-',(d.date_of_birt
  
  <Denominator id="DMRegP" name="Diabetes Registry By Practice" 
     type="SQL" 
-    provider="true">select distinct demographic_no from dxresearch,demographic where dxresearch_code in ('250') and coding_system = 'icd9' and dxresearch.demographic_no = demographic.demographic_no and demographic.provider_no = '${provider_no}'</Denominator> 
+    providers="true">select distinct demographic_no from dxresearch,demographic where dxresearch_code in ('250') and coding_system = 'icd9' and dxresearch.demographic_no = demographic.demographic_no and demographic.provider_no = '${provider_no}'</Denominator>
 
  <Denominator id="ActPat" name="Active Patients" 
     type="SQL">select distinct demographic_no from demographic  where roster_status = 'A'</Denominator> 

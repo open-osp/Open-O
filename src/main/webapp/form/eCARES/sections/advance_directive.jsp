@@ -26,9 +26,11 @@
 <div class="flex items-center">
     <div style="width: 200px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_advance_directive_in_place" data-score="1">
-        <strong class="tt highlight" data-toggle="tooltip" data-field-name="advance_directive_in_place" title="Advance directive in place">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_advance_directive_in_place" data-score="1">
+        <strong class="tt highlight" data-toggle="tooltip" data-field-name="advance_directive_in_place"
+                title="Advance directive in place">
             Advance directive in place
         </strong>
     </div>
@@ -45,7 +47,7 @@
 
     <span class="tt font-bold pl-8" data-toggle="tooltip" title="Code Status" style="width:210px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
         </svg><input type="checkbox" class="action-required" name="action_required_code_status" data-score="1">
         <strong>Code Status</strong>
     </span>
@@ -54,8 +56,9 @@
         <input type="radio" name="code_status" value="dnr" class="m-0" autocomplete="off">
         <span class="pl-1">Do not resuscitate</span>
     </label>
-        <label class="flex items-center font-normal pl-6"><input type="radio" name="code_status" value="r" class="m-0" autocomplete="off">
-            <span class="pl-1">Resuscitate</span>
-        </label>
+    <label class="flex items-center font-normal pl-6"><input type="radio" name="code_status" value="r" class="m-0"
+                                                             autocomplete="off">
+        <span class="pl-1">Resuscitate</span>
+    </label>
 
 </div>

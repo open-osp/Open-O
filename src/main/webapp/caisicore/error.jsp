@@ -1,7 +1,4 @@
-
 <%--
-
-
     Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
     This program is free software; you can redistribute it and/or
@@ -21,17 +18,16 @@
     This software was written for
     Centre for Research on Inner City Health, St. Michael's Hospital,
     Toronto, Ontario, Canada
-
 --%>
 
 
+<%@page isErrorPage="true" %>
 
-<%@page isErrorPage="true"%>
 
-
-<%@page import="org.oscarehr.util.MiscUtils"%><head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Doh!</title>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<head>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Doh!</title>
 </head>
 
 An Error has occurred in this application.
@@ -39,7 +35,7 @@ An Error has occurred in this application.
 <% if (exception != null) { %>
 <pre>
 <%
-	MiscUtils.getLogger().error("Error", exception); 
+    MiscUtils.getLogger().error("Error", exception);
 %>
 </pre>
 <% }%>

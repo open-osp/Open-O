@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,53 +24,48 @@
 --%>
 
 
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_casemgmt.notes" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*"%>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*"%>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 
 
+<input type="hidden" name="primaryPhysician" id="primaryPhysician"/>
+<input type="hidden" name="primaryCounsellor" id="primaryCounsellor"/>
+<input type="hidden" name="otherFileNumber" id="otherFileNumber"/>
 
-<html:hidden property="cpp.primaryPhysician" />
-<html:hidden property="cpp.primaryCounsellor" />
-<html:hidden property="cpp.otherFileNumber" />
+<input type="hidden" name="familyHistory" id="familyHistory"/>
+<input type="hidden" name="medicalHistory" id="medicalHistory"/>
+<input type="hidden" name="socialHistory" id="socialHistory"/>
 
-<html:hidden property="cpp.familyHistory" />
-<html:hidden property="cpp.medicalHistory" />
-<html:hidden property="cpp.socialHistory" />
-
-<html:hidden property="cpp.pastMedications" />
-<html:hidden property="cpp.otherSupportSystems" />
+<input type="hidden" name="pastMedications" id="pastMedications"/>
+<input type="hidden" name="otherSupportSystems" id="otherSupportSystems"/>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1"
-	bgcolor="#C0C0C0">
-	<tr class="title">
-		<td>Reminders</td>
-	</tr>
-	<tr>
-		<td bgcolor="white"><html:textarea property="cpp.reminders"
-			rows="4" cols="85" /></td>
-
-	</tr>
+       bgcolor="#C0C0C0">
+    <tr class="title">
+        <td>Reminders</td>
+    </tr>
+    <tr>
+        <td bgcolor="white"><textarea name="reminders" rows="4" cols="85"></textarea></td>
+    </tr>
 </table>
-<html:submit value="save"
-	onclick="this.form.method.value='patientCPPSave'" />
-<logic:messagesPresent message="true">
-	<html:messages id="message" message="true" bundle="casemgmt">
-		<div style="color: blue"><I><c:out value="${message}" /></I></div>
-	</html:messages>
-</logic:messagesPresent>
+<input type="submit" name="submit" value="save" onclick="this.form.method.value='patientCPPSave'"/>
+<c:if test="${not empty messages}">
+    <c:forEach var="message" items="${messages}">
+        <div style="color: blue"><I><c:out value="${message}"/></I></div>
+    </c:forEach>
+</c:if>

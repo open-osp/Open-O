@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE module PUBLIC
-		"-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
-		"https://checkstyle.org/dtds/configuration_1_3.dtd">
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <!--
 
@@ -27,297 +27,114 @@
   To completely disable a check, just comment it out or delete it from the file.
 
   Finally, it is worth reading the documentation.
-  
+
   *************************************
-  
+
   This file *was* based on the SUN/Above information. It's been altered
   since.
 
 -->
 
+<!-- Checker configuration                             -->
+<!-- See https://checkstyle.org/config.html#Checker -->
 <module name="Checker">
-    <!--
-        If you set the basedir property below, then all reported file
-        names will be relative to the specified directory. See
-        http://checkstyle.sourceforge.net/5.x/config.html#Checker
-
-        <property name="basedir" value="${basedir}"/>
-    -->
-
-	<!-- can't use right now due to GPL header false alarms 
-   	<module name="StrictDuplicateCode">
-    -->
-    
-	<module name="SuppressionFilter">
-	    <property name="file" value="utils/checkstyle_suppressions.xml"/>
-	</module>
-
-<!--	<module name="utils.tasks.src.checkstyle.IllegalFilename">-->
-<!--		<property name="illegalRegex" value=".*\.(GIF|PNG|JPG|class)"/>-->
-<!--	</module>-->
-
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*DBHandler\..*|.*getConnection\(.*|.*DBHandler\..*|.*DBPreparedHandler.*|.*DBHelp.*|.*\.selectIntList.*|.*\.selectStringList.*|.*OscarSuperManager.*|.*HibernateDaoSupport.*"/>-->
-<!--		<property name="violationDescription" value="use jpa instead"/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*org.apache.commons.logging.Log.*"/>-->
-<!--		<property name="violationDescription" value="use log4j instead"/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*com\.sun\.*"/>-->
-<!--		<property name="violationDescription" value="best to avoid these as they are not always available, check apache for parallel libs, also sun is no more..."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*ArrayList\s*\(\).*|.*Vector\s*\(\).*|.*HashSet\s*\(\).*|.*HashMap\s*\(\).*|.*Hashtable\s*\(\).*|.*TreeSet\s*\(\).*|.*TreeMap\s*\(\).*|.*WeakHashMap\s*\(\).*"/>-->
-<!--		<property name="violationDescription" value="use generics"/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--&lt;!&ndash;	<module name="org.oscarehr.util.checkstyle.TrackingRegexpCheck">&ndash;&gt;-->
-<!--&lt;!&ndash;		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>&ndash;&gt;-->
-<!--&lt;!&ndash;		<property name="illegalRegex" value=".*LogManager\.getLogger\s*\(.*"/>&ndash;&gt;-->
-<!--&lt;!&ndash;		<property name="violationDescription" value="not really an error, but MiscUtils.getLogger() is probably a better choice."/>&ndash;&gt;-->
-<!--&lt;!&ndash;		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>&ndash;&gt;-->
-<!--&lt;!&ndash;	</module>&ndash;&gt;-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*Hashtable.*|.*Vector.*"/>-->
-<!--		<property name="violationDescription" value="not really an error, but 99% of the time StringBuilder/HashMap/ArrayList is a better choice unless mandated by another API."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java"/>-->
-<!--		<property name="illegalRegex" value=".*BaseGenericIntakeAction.*|.*BaseAction.*"/>-->
-<!--		<property name="violationDescription" value="The base action pattern is terrible, it makes a bloat super class that no one has any idea what is being used where, extend struts directly instead."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*\.(error|warn|debug|fatal)\s*\((e[0-9]*|ex[0-9]*|[a-zA-Z]+xception)\);"/>-->
-<!--		<property name="violationDescription" value="Do not pass an exception to a logger method with out a string, it'll treat the exception as a string if you do."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".jsp,.jspf,.jsf"/>-->
-<!--		<property name="illegalRegex" value=".*pageEncoding.*"/>-->
-<!--		<property name="violationDescription" value="Do not set the page encoding, let the filter set it site wide."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_java_jsp.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".sql"/>-->
-<!--		<property name="illegalRegex" value=".*\s+default\s+.*|.*\s+DEFAULT\s+.*|.*\s+Default\s+.*"/>-->
-<!--		<property name="violationDescription" value="Don't put defaults in table definitions, put them in the JPA objects."/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_sql.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".sql"/>-->
-<!--		<property name="illegalRegex" value=".*0000-00-00.*|.*''.*"/>-->
-<!--		<property name="violationDescription" value="Use null for no value, don't use 0000-00-00 nor empty string"/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_sql.data.xml"/>-->
-<!--	</module>-->
-
-<!--	<module name="utils.tasks.src.checkstyle.TrackingRegexpCheck">-->
-<!--		<property name="fileExtensions" value=".sql"/>-->
-<!--		<property name="illegalRegex" value=".*(MyISAM|MYISAM|myisam|INNODB|Innodb|innodb).*"/>-->
-<!--		<property name="violationDescription" value="Do not specify the database type in the sql scripts, allow people to set the type in the my.cnf"/>-->
-<!--		<property name="dataStoreFilename" value="utils/TrackingRegexpCheck_sql.data.xml"/>-->
-<!--	</module>-->
-
-	<module name="RegexpMultiline">
-		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>
-		<property name="format" value="System\.(out|err)" />
-	</module>
-<!-- Marc: this is causing me problems, have to look at it later
-	<module name="RegexpMultiline">
-		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf,.html,.htm"/>
-		<property name="format" value="8859|latin-1|ascii" />
-	</module>
--->
-	<module name="RegexpMultiline">
-		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf"/>
-		<property name="format" value="printStackTrace" />
-	</module>
-
-	<module name="RegexpMultiline">
-		<property name="fileExtensions" value=".java,.jsp,.jspf,.jsf,.html,.htm"/>
-		<property name="format" value="http-equiv=&quot;(content-type|Cache-Control)" />
-	</module>
-    
-    <module name="TreeWalker">
-
-	    <!-- Checks for Size Violations.                    -->
-	    <!-- See http://checkstyle.sf.net/config_sizes.html -->
-	    <!-- 
-	    <module name="FileLength"/>
-	 	-->
-	 	
-	    <!-- Checks for whitespace                               -->
-	    <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-	    <!-- 
-	    <module name="FileTabCharacter"/>
-	 	-->
-	 
-	    <!-- Miscellaneous other checks.                   -->
-	    <!-- See http://checkstyle.sf.net/config_misc.html -->
-	    <!-- 
-	    <module name="RegexpSingleline">
-	       <property name="format" value="printStackTrace"/>
-	       <property name="minimum" value="0"/>
-	
-	       <property name="maximum" value="0"/>
-	       <property name="message" value="Line has trailing spaces."/>
-	    </module>
-	 	-->
-
-
-		<!--
-		<module name="GenericIllegalRegexp">
-		   <property name="format" value="//.*todo"/>
-		   <property name="ignoreCase" value="true"/>
-		</module>
-        -->
-
-        <!-- Checks for Naming Conventions.                  -->
-        <!-- See http://checkstyle.sf.net/config_naming.html -->
-        <!-- 
-        <module name="ConstantName"/>
-        <module name="LocalFinalVariableName"/>
-        <module name="LocalVariableName"/>
-        <module name="MemberName"/>
-
-        <module name="MethodName"/>
-        <module name="PackageName"/>
-        <module name="ParameterName"/>
-        <module name="StaticVariableName"/>
-        <module name="TypeName"/>
-        -->
-
-        <!-- Checks for imports                              -->
-        <!-- See http://checkstyle.sf.net/config_import.html -->
-        <!-- IllegalImports defaults to sun.* packages -->
-        <!--
-        <module name="AvoidStarImport"/>
-        <module name="IllegalImport"/>
-        -->
-        <module name="RedundantImport"/>
-        <module name="UnusedImports"/>
-
-        <!-- Checks for Size Violations.                    -->
-        <!-- See http://checkstyle.sf.net/config_sizes.html -->
-		<!-- 
-		<module name="LineLength">
-		    <property name="max" value="512"/>
-		</module>
-
-		<module name="MethodLength">
-		   <property name="max" value="128"/>
-		   <property name="countEmpty" value="false"/>
-		</module>
-		<module name="ParameterNumber">
-		   <property name="max" value="16"/>
-		</module>
-		-->
-		
-        <!-- Checks for whitespace                               -->
-        <!-- See http://checkstyle.sf.net/config_whitespace.html -->
-        <!-- 
-        <module name="EmptyForIteratorPad"/>
-        <module name="GenericWhitespace"/>
-        <module name="NoWhitespaceAfter"/>
-        <module name="NoWhitespaceBefore"/>
-        <module name="WhitespaceAfter"/>
-        <module name="WhitespaceAround"/>
-        <module name="MethodParamPad"/>
-        <module name="OperatorWrap"/>
-
-        <module name="ParenPad"/>
-        <module name="TypecastParenPad"/>
-         -->
-
-
-        <!-- Modifier Checks                                    -->
-        <!-- See http://checkstyle.sf.net/config_modifiers.html -->
-		<!--
-        <module name="ModifierOrder"/>
-        <module name="RedundantModifier"/>
-		-->
-
-        <!-- Checks for blocks. You know, those {}'s         -->
-        <!-- See http://checkstyle.sf.net/config_blocks.html -->
-        <!-- 
-        <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock">
-        	<property name="option" value="text"/>
-        </module>
-         -->
-		<!-- 
-		<module name="LeftCurly">
-		    <property name="option" value="nl"/>
-		</module>
-		<module name="RightCurly">
-		    <property name="option" value="alone"/>
-		</module>
-        <module name="NeedBraces"/>
- 		-->
- 		
-        <!-- Checks for common coding problems               -->
-        <!-- See http://checkstyle.sf.net/config_coding.html -->
-		<!-- 
-        <module name="MagicNumber"/>
-        <module name="HiddenField"/>
-        <module name="AvoidInlineConditionals"/>
-        <module name="RedundantThrows"/>
-        <module name="EmptyStatement"/>
-        <module name="EqualsHashCode"/>
-        -->
-<!--         <module name="DoubleCheckedLocking"/> -->
-        <module name="IllegalInstantiation"/>
-
-        <!-- 
-        <module name="MissingSwitchDefault"/>
-        <module name="InnerAssignment"/>
-        <module name="SimplifyBooleanExpression"/>
-        <module name="SimplifyBooleanReturn"/>
- 		-->
- 
-        <!-- Checks for class design                         -->
-        <!-- See http://checkstyle.sf.net/config_design.html -->
-        <!--
-        <module name="DesignForExtension"/>
-        <module name="VisibilityModifier"/>
-        <module name="HideUtilityClassConstructor"/>
-        -->
-        <module name="InterfaceIsType"/>
-
-
-        <!-- Miscellaneous other checks.                   -->
-        <!-- See http://checkstyle.sf.net/config_misc.html -->
-        <!--
-        <module name="FinalParameters"/>
-        <module name="ArrayTypeStyle"/>
-        <module name="TodoComment"/>
-        -->
-        <module name="UpperEll"/>
-
+    <!-- Specify file with suppresions                             -->
+    <!-- See https://checkstyle.org/filters/suppressionfilter.html -->
+    <module name="SuppressionFilter">
+        <property name="file" value="utils/checkstyle_suppressions.xml"/>
     </module>
 
-</module>
+    <!-- Regexp checks                                        -->
+    <!-- See https://checkstyle.org/checks/regexp/index.html  -->
+    <!-- <module name="RegexpMultiline">
+        <property name="fileExtensions" value="java, jsp"/>
+        <property name="format" value="printStackTrace" />
+    </module> -->
+    <!-- <module name="RegexpMultiline">
+        <property name="fileExtensions" value="java, jsp"/>
+        <property name="format" value="System\.(out|err)" />
+    </module> -->
 
+    <!-- Size violations                                    -->
+    <!-- See https://checkstyle.org/checks/sizes/index.html -->
+    <!-- <module name="LineLength">
+        <property name="max" value="120"/>
+        <property name="fileExtensions" value="java" />
+    </module> -->
+
+    <!-- Whitespace                                              -->
+    <!-- See https://checkstyle.org/checks/whitespace/index.html -->
+    <!-- <module name="FileTabCharacter"/> -->
+
+    <!-- TreeWalker configuration                      -->
+    <!-- https://checkstyle.org/config.html#TreeWalker -->
+    <module name="TreeWalker">
+        <!-- Suppression comment filter                                                                -->
+        <!-- See https://checkstyle.org/filters/suppressioncommentfilter.html#SuppressionCommentFilter -->
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE:OFF" />
+            <property name="onCommentFormat" value="CHECKSTYLE:ON" />
+            <property name="checkFormat" value="[a-zA-Z0-9]*" />
+            <property name="checkCPP" value="true" />
+        </module>
+
+        <!-- Checks for Naming Conventions.                      -->
+        <!-- See https://checkstyle.org/checks/naming/index.html -->
+        <!-- <module name="ConstantName"/> -->
+        <!-- <module name="LocalFinalVariableName"/> -->
+        <!-- <module name="LocalVariableName"/> -->
+        <!-- <module name="MemberName"/> -->
+        <!-- <module name="MethodName"/> -->
+        <!-- <module name="PackageName"/> -->
+        <!-- <module name="ParameterName"/> -->
+        <!-- <module name="StaticVariableName"/> -->
+        <!-- <module name="TypeName"/> -->
+
+        <!-- Checks for imports                              -->
+        <!-- See https://checkstyle.org/checks/imports/index.html -->
+        <!-- <module name="RedundantImport"/> -->
+        <!-- <module name="UnusedImports"/> -->
+
+        <!-- Checks for Size Violations.                        -->
+        <!-- See https://checkstyle.org/checks/sizes/index.html -->
+        <!-- <module name="MethodLength">
+           <property name="max" value="128"/>
+           <property name="countEmpty" value="false"/>
+        </module> -->
+        <!-- <module name="ParameterNumber">
+           <property name="max" value="16"/>
+        </module> -->
+
+        <!-- Checks for whitespace                                   -->
+        <!-- See https://checkstyle.org/checks/whitespace/index.html -->
+        <!-- <module name="GenericWhitespace"/> -->
+        <!-- <module name="NoWhitespaceAfter"/> -->
+        <!-- <module name="NoWhitespaceBefore"/> -->
+        <!-- <module name="WhitespaceAfter"/> -->
+        <!-- <module name="WhitespaceAround"/> -->
+        <!-- <module name="OperatorWrap"/> -->
+        <!-- <module name="TypecastParenPad"/> -->
+
+        <!-- Checks for blocks. You know, those {}'s             -->
+        <!-- See https://checkstyle.org/checks/blocks/index.html -->
+        <!-- <module name="LeftCurly">
+            <property name="option" value="eol"/>
+        </module> -->
+        <!-- <module name="RightCurly">
+            <property name="option" value="same"/>
+        </module> -->
+        <!-- <module name="EmptyBlock"/> -->
+
+        <!-- Checks for commons coding problems               -->
+        <!-- https://checkstyle.org/checks/coding/index.html -->
+        <!-- <module name="EmptyStatement"/> -->
+        <!-- <module name="MissingSwitchDefault"/> -->
+        <!-- <module name="InnerAssignment"/> -->
+        <!-- <module name="SimplifyBooleanExpression"/> -->
+
+        <!-- Miscellaneous other checks.                       -->
+        <!-- See https://checkstyle.org/checks/misc/index.html -->
+        <!-- <module name="TodoComment"/> -->
+        <!-- <module name="ArrayTypeStyle"> -->
+    </module>
+</module>

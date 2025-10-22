@@ -9,22 +9,22 @@
 
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import=" org.oscarehr.util.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page import=" ca.openosp.openo.utility.*"%>
 <%@ page import="java.util.*, java.net.URLEncoder "%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao, org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@ page import="oscar.OscarProperties" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao, ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.util.LocaleUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.LocaleUtils" %>
 <%@ page import="java.util.Locale" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session" />
-<jsp:useBean id="as" class="oscar.appt.ApptStatusData" />
+<jsp:useBean id="as" class="ca.openosp.openo.appt.ApptStatusData" />
 <jsp:useBean id="dateTimeCodeBean" class="java.util.HashMap" />
 <%
 
@@ -42,7 +42,7 @@
 
 	String caseloadCurUser_no = (String) session.getAttribute("user");
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	Integer facilityId = loggedInInfo.getCurrentFacility().getId();
+	Integer facilityId = (loggedInInfo.getCurrentFacility() != null) ? loggedInInfo.getCurrentFacility().getId() : null;
 
 %>
 <tr><td colspan="3">
@@ -67,13 +67,12 @@
 #leftSearch, #rightSearch { display: inline; }
 #rightSearch { float:right; }
 </style>
-<c:import url="/infirm.do?action=showProgram"/>
 <%
 Locale locale = request.getLocale();
 String[] clH = new String[] {   LocaleUtils.getMessage(locale, "caseload.msgDemographic"), "", LocaleUtils.getMessage(locale, "caseload.msgAge"), LocaleUtils.getMessage(locale, "caseload.msgSex"), LocaleUtils.getMessage(locale, "caseload.msgLastAppt"), LocaleUtils.getMessage(locale, "caseload.msgNextAppt"), LocaleUtils.getMessage(locale, "caseload.msgApptsLYTD"), LocaleUtils.getMessage(locale, "caseload.msgLab"), LocaleUtils.getMessage(locale, "caseload.msgDoc"), LocaleUtils.getMessage(locale, "caseload.msgTickler"), LocaleUtils.getMessage(locale, "caseload.msgMsg"), LocaleUtils.getMessage(locale, "caseload.msgBMI"), LocaleUtils.getMessage(locale, "caseload.msgBP"), LocaleUtils.getMessage(locale, "caseload.msgWT"), LocaleUtils.getMessage(locale, "caseload.msgSMK"), LocaleUtils.getMessage(locale, "caseload.msgA1C"), LocaleUtils.getMessage(locale, "caseload.msgACR"), LocaleUtils.getMessage(locale, "caseload.msgSCR"), LocaleUtils.getMessage(locale, "caseload.msgLDL"), LocaleUtils.getMessage(locale, "caseload.msgHDL"), LocaleUtils.getMessage(locale, "caseload.msgTCHD"), LocaleUtils.getMessage(locale, "caseload.msgEGFR"), LocaleUtils.getMessage(locale, "caseload.msgEYEE"), LocaleUtils.getMessage(locale, "caseload.msgLastEncounterDate"), LocaleUtils.getMessage(locale, "caseload.msgLastEncounterType"), LocaleUtils.getMessage(locale, "caseload.msgCASHAdmissionDate"), LocaleUtils.getMessage(locale, "caseload.msgACCESS1AdmissionDate")};
 %>
 <script type="text/javascript">
-clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key="caseload.msgAge" />", "<bean:message key="caseload.msgSex" />", "<bean:message key="caseload.msgLastAppt" />", "<bean:message key="caseload.msgNextAppt" />", "<bean:message key="caseload.msgApptsLYTD" />", "<bean:message key="caseload.msgLab" />", "<bean:message key="caseload.msgDoc" />", "<bean:message key="caseload.msgTickler" />", "<bean:message key="caseload.msgMsg" />", "<bean:message key="caseload.msgBMI" />", "<bean:message key="caseload.msgBP" />", "<bean:message key="caseload.msgWT" />", "<bean:message key="caseload.msgSMK" />", "<bean:message key="caseload.msgA1C" />", "<bean:message key="caseload.msgACR" />", "<bean:message key="caseload.msgSCR" />", "<bean:message key="caseload.msgLDL" />", "<bean:message key="caseload.msgHDL" />", "<bean:message key="caseload.msgTCHD" />", "<bean:message key="caseload.msgEYEE" />", "<bean:message key="caseload.msgLastEncounterDate" />", "<bean:message key="caseload.msgLastEncounterType" />", "<bean:message key="caseload.msgCASHAdmissionDate" />", "<bean:message key="caseload.msgACCESS1AdmissionDate" />"];
+clH = ["<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgDemographic"/>", "", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgAge"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgSex"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLastAppt"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgNextAppt"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgApptsLYTD"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLab"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgDoc"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgTickler"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgMsg"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgBMI"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgBP"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgWT"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgSMK"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgA1C"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgACR"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgSCR"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLDL"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgHDL"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgTCHD"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgEYEE"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLastEncounterDate"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLastEncounterType"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgCASHAdmissionDate"/>", "<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgACCESS1AdmissionDate"/>"];
 </script>
 <table border="1" cellpadding="0" cellspacing="0" width="100%" id="caseloadTable">
 <tr><td colspan='<%=clH.length%>'>
@@ -83,19 +82,19 @@ clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key=
 			<div>
 				<div id="leftSearch">
 					<form>
-						<b><bean:message key="caseload.msgNotes" /></b>
+						<b><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgNotes"/></b>
 						<input type='text' id='caseloadQ' size='20' onclick='this.value=""; document.getElementById("caseloadDx").value="";' value="<%=StringEscapeUtils.escapeHtml(caseloadQ).replace("'","\\\'")%>" />
-						<input type='submit' value='<bean:message key="caseload.msgSearch" />' onclick='search("noteSearch"); return false;'>
+						<input type='submit' value='<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgSearch"/>' onclick='search("noteSearch"); return false;'>
 					</form>
 				</div>
 				<div id="rightSearch">
 					<form>
 					<b>Program:</b>
 					<select id="program" onChange='search("search");'>
-						<option value="all" selected><bean:message key="caseload.msgAllPrograms" /></option>
-						<logic:iterate id="pb" name="infirmaryView_programBeans" type="org.apache.struts.util.LabelValueBean">
-							<option value="<%=pb.getValue()%>" ><%= pb.getLabel() %></option>
-						</logic:iterate>
+						<option value="all" selected><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgAllPrograms"/></option>
+						<c:forEach var="pb" items="${infirmaryView_programBeans}">
+							<option value="${pb.value}">${pb.label}</option>
+						</c:forEach>
 					</select>
 					<b>Provider: </b>
 					<select id='caseloadProv' onChange='change_program_lists();search("search");'>
@@ -104,9 +103,9 @@ clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key=
 					boolean bDefaultAllProviders = props.getBooleanProperty("CASELOAD_DEFAULT_ALL_PROVIDERS", "true");					
 					if (bDefaultAllProviders){
 					%>
-						<option value='all' selected><bean:message key="caseload.msgAllProviders" /></option>
+						<option value='all' selected><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgAllProviders"/></option>
 					<%} else {%>
-						<option value='all'><bean:message key="caseload.msgAllProviders" /></option>
+						<option value='all'><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgAllProviders"/></option>
 					<%} %>
 		<%
 		List<Provider> providerList = providerDao.getActiveProviders();
@@ -122,10 +121,10 @@ clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key=
 					<b>Rostered: </b>
 					<select id='caseloadRoster' onChange='search("search");' style='width: 120px'>
 						<option value='' selected></option>
-						<option value='RO'><bean:message key='demographic.demographiceditdemographic.optRostered'/></option>
-						<option value='NR'><bean:message key='demographic.demographiceditdemographic.optNotRostered'/></option>
-						<option value='TE'><bean:message key='demographic.demographiceditdemographic.optTerminated'/></option>
-						<option value='FS'><bean:message key='demographic.demographiceditdemographic.optFeeService'/></option>
+						<option value='RO'><fmt:setBundle basename='oscarResources'/><fmt:message key='demographic.demographiceditdemographic.optRostered'/></option>
+						<option value='NR'><fmt:setBundle basename='oscarResources'/><fmt:message key='demographic.demographiceditdemographic.optNotRostered'/></option>
+						<option value='TE'><fmt:setBundle basename='oscarResources'/><fmt:message key='demographic.demographiceditdemographic.optTerminated'/></option>
+						<option value='FS'><fmt:setBundle basename='oscarResources'/><fmt:message key='demographic.demographiceditdemographic.optFeeService'/></option>
 		<%
 
 		DemographicDao caseloadDemographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
@@ -139,15 +138,15 @@ clH = ["<bean:message key="caseload.msgDemographic" />", "", "<bean:message key=
 					</select>
 					<b>DxReg: </b>
 					<input type='text' id='caseloadDx' size='10' onclick='this.value=""; document.getElementById("caseloadQ").value="";' value="<%= StringEscapeUtils.escapeHtml(caseloadDx).replace("'","\\\'") %>" />
-					<input type='submit' value='<bean:message key="caseload.msgSearch" />' onclick='search("search"); return false;'>
+					<input type='submit' value='<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgSearch"/>' onclick='search("search"); return false;'>
 					</form>
 				</div>
 			</div>
 		</td></tr>
 	</table>
 </td></tr>
-<tr id='loadingHeader' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src='../images/DMSLoader.gif' /><bean:message key="caseload.msgLoading" /></td></tr>
-<tr id='totalResults2' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'> <span id="rows2"></span>/<span id="totalRows2"></span>&nbsp;<bean:message key="caseload.msgResults" /></td></tr>
+<tr id='loadingHeader' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src="<%= request.getContextPath() %>/images/DMSLoader.gif" /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
+<tr id='totalResults2' class='caseloadRow'><td style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'> <span id="rows2"></span>/<span id="totalRows2"></span>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgResults"/></td></tr>
 <tr class='caseloadRow' id='caseloadHeader'>
 
 <%
@@ -173,9 +172,9 @@ String[] objIds = new String[] {"Demographic", "_caseload.DisplayMode", "_caselo
 	</security:oscarSec>
 	<% } %>
 <% } %>
-<tr id='loadingFooter' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src='../images/DMSLoader.gif' /><bean:message key="caseload.msgLoading" /></td></tr>
-<tr id='noResults' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><bean:message key="caseload.msgTryAgain" /></td></tr>
-<tr id='totalResults1' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><span id="rows1"></span>/<span id="totalRows1"></span>&nbsp;<bean:message key="caseload.msgResults" /></td></tr>
+<tr id='loadingFooter' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' colspan='<%=clH.length%>'><img src="<%= request.getContextPath() %>/images/DMSLoader.gif" /><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgLoading"/></td></tr>
+<tr id='noResults' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgTryAgain"/></td></tr>
+<tr id='totalResults1' class='caseloadRow'><td colspan='<%=clH.length%>' style='text-align: center;' bgcolor='#fffff0' ><span id="rows1"></span>/<span id="totalRows1"></span>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="caseload.msgResults"/></td></tr>
 </table>
 <script type="text/javascript">
 
@@ -364,24 +363,7 @@ function draw(json) {
 }
 
 function change_program_lists(){
-	var url="<%=request.getContextPath()%>/infirm.do?action=getProgramList";
-	//var params = "{providerNo:'"+escape(document.getElementById("caseloadProv").value)+"',facilityId:'<%=facilityId %>'}"
-	var params="providerNo="+escape(document.getElementById("caseloadProv").value)+"&facilityId=<%=facilityId %>";
-	jQuery.ajax({
-		type: 'post',
-		data: params,
-		url: url,
-		async: false,
-		success: function(data){
-			jQuery("#program").empty();
-			jQuery("#program").html(data);
-			jQuery("#program").val("all");
-		},
-		error: function(data){
-			alert(data);
-		}
-	}
-	);
+	// Function disabled - infirm.do action no longer exists
 }
 
 jQuery(document).ready(function(){

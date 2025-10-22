@@ -25,11 +25,12 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Icons Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -38,39 +39,44 @@
     <![endif]-->
 
 
-<style>
-#red{color:red;}
-#custom-size{font-size:1.6em;}
-</style>
+    <style>
+        #red {
+            color: red;
+        }
 
-  </head>
-  <body>
+        #custom-size {
+            font-size: 1.6em;
+        }
+    </style>
 
-    <div class="container">
+</head>
+<body>
 
-
-	    	<h1>Hello, Icons! <small><a href="index.jsp">view example list</a></small></h1>
-
-		<h1><span class="glyphicon glyphicon-search"></span></h1>
-		<h2><span class="glyphicon glyphicon-search"></span></h2>
-		<h3><span class="glyphicon glyphicon-search"></span></h3>
-		<h4><span class="glyphicon glyphicon-search"></span></h4>
-		<span class="glyphicon glyphicon-search"></span><br>
-		<span class="glyphicon glyphicon-search" id="red"></span><br>
-		<span class="glyphicon glyphicon-search" id="custom-size"></span><br>
-
-		<button type="button" class="btn btn-default btn-lg">
-		  <span class="glyphicon glyphicon-search"></span> Star
-		</button>
+<div class="container">
 
 
-    </div><!-- /.container -->
+    <h1>Hello, Icons! <small><a href="index.jsp">view example list</a></small></h1>
+
+    <h1><span class="glyphicon glyphicon-search"></span></h1>
+    <h2><span class="glyphicon glyphicon-search"></span></h2>
+    <h3><span class="glyphicon glyphicon-search"></span></h3>
+    <h4><span class="glyphicon glyphicon-search"></span></h4>
+    <span class="glyphicon glyphicon-search"></span><br>
+    <span class="glyphicon glyphicon-search" id="red"></span><br>
+    <span class="glyphicon glyphicon-search" id="custom-size"></span><br>
+
+    <button type="button" class="btn btn-default btn-lg">
+        <span class="glyphicon glyphicon-search"></span> Star
+    </button>
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  </body>
+</div><!-- /.container -->
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
 </html>
 

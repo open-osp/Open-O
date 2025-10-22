@@ -1,20 +1,21 @@
 <%@ page import="java.util.*" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="oscar.oscarLab.ca.on.*" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.*" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
-<%@page import="org.oscarehr.util.MiscUtils,org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.apache.logging.log4j.Logger,org.oscarehr.common.dao.OscarLogDao,org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.inboxhub.query.InboxhubQuery" %>
-<%@ page import="oscar.oscarMDS.data.CategoryData" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils,org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.logging.log4j.Logger,ca.openosp.openo.commn.dao.OscarLogDao,ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.inboxhub.query.InboxhubQuery" %>
+<%@ page import="ca.openosp.openo.mds.data.CategoryData" %>
+
+<fmt:setBundle basename="oscarResources"/>
+
 <c:if test="${page eq 1}">
 <div class="bg-light text-light">
     <row>
-        <input id="topFBtn" type="button" class="btn btn-primary btn-sm ms-1" value="<bean:message key="oscarMDS.index.btnForward"/>" onclick="submitForward('${sessionScope.user}')">
+        <input id="topFBtn" type="button" class="btn btn-primary btn-sm ms-1" value="<fmt:message key="oscarMDS.index.btnForward"/>" onclick="submitForward('${sessionScope.user}')">
         <input id="topFileBtn" type="button" class="btn btn-primary btn-sm" value="File" onclick="submitFile('${sessionScope.user}')"/>
         <div class="d-flex align-items-center position-relative float-end">
             <span class="d-inline me-2 py-1 text-dark fw-bold">Documents <span id="totalDocsCountStat" class="badge" style="background-color: #5a9bd3; color: white;">0</span></span>
@@ -39,18 +40,18 @@
                 <th>
                     <input type="checkbox" onclick="checkAllLabs(0);" name="checkA"/>
                 </th>
-                <th><bean:message key="oscarMDS.index.msgPatientName"/></th>
-                <th><bean:message key="oscarMDS.index.msgSex"/></th>
-                <th><bean:message key="oscarMDS.index.msgResultStatus"/></th>
-                <th><bean:message key="oscarMDS.index.msgLabel"/></th>
-                <th><bean:message key="oscarMDS.index.msgDateTest"/></th>
-                <th><bean:message key="oscarMDS.index.msgRequestingClient"/></th>
-                <th><bean:message key="oscarMDS.index.msgDiscipline"/></th>
-                <th><bean:message key="oscarMDS.index.msgReportStatus"/></th>
+                <th><fmt:message key="oscarMDS.index.msgPatientName"/></th>
+                <th><fmt:message key="oscarMDS.index.msgSex"/></th>
+                <th><fmt:message key="oscarMDS.index.msgResultStatus"/></th>
+                <th><fmt:message key="oscarMDS.index.msgLabel"/></th>
+                <th><fmt:message key="oscarMDS.index.msgDateTest"/></th>
+                <th><fmt:message key="oscarMDS.index.msgRequestingClient"/></th>
+                <th><fmt:message key="oscarMDS.index.msgDiscipline"/></th>
+                <th><fmt:message key="oscarMDS.index.msgReportStatus"/></th>
                 <th>Ack #</th>
             </tr>
             </thead>
-            <tbody id="inoxhubListModeTableBody">
+            <tbody id="inboxhubListModeTableBody">
 </c:if>
             <c:if test="${page ge 1}">
             <c:forEach var="labResult" items="${labDocs}" varStatus="loopStatus">

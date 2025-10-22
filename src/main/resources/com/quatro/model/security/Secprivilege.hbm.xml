@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="com.quatro.model.security.Secprivilege" table="secPrivilege">
+    <class name="ca.openosp.openo.model.security.Secprivilege" table="secPrivilege">
         <id name="id" type="java.lang.Integer">
             <column name="id" precision="2" scale="0" />
             <generator class="assigned" />

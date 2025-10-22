@@ -24,49 +24,48 @@
 --%>
 
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="java.util.*" %>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
-<%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp"%>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
+<%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
-<%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List"%>
-<%@page import="org.oscarehr.documentManager.EDocUtil,org.oscarehr.documentManager.EDoc"%>
-<%@page import="oscar.util.UtilDateUtilities"%>
-<%@page import="java.util.Hashtable"%>
-<%@page import="org.oscarehr.common.dao.CtlDocClassDao,org.oscarehr.common.dao.QueueDao" %>
-<%@page import="org.springframework.web.context.WebApplicationContext"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
+<%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
+<%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@page import="java.util.Hashtable" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlDocClassDao,ca.openosp.openo.commn.dao.QueueDao" %>
+<%@page import="org.springframework.web.context.WebApplicationContext" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
     String demographicID = request.getParameter("demographicID");
     String categoryKey = request.getParameter("categorykey");
-    String errorMessage="";
+    String errorMessage = "";
 
 //if delete request is made
     if (request.getParameter("delDocumentNo") != null && request.getParameter("delDocumentNo").length() > 0) {
@@ -80,15 +79,15 @@
 
     if (request.getParameter("refileDocumentNo") != null && request.getParameter("refileDocumentNo").length() > 0) {
         try {
-            EDocUtil.refileDocument(request.getParameter("refileDocumentNo"),request.getParameter("queueId"));
+            EDocUtil.refileDocument(request.getParameter("refileDocumentNo"), request.getParameter("queueId"));
         } catch (Exception e) {
-            errorMessage= e.getMessage();
+            errorMessage = e.getMessage();
         }
     }
 
     QueueDao queueDao = SpringUtils.getBean(QueueDao.class);
     List<Hashtable> queues = queueDao.getQueues();
-    int queueId=1;
+    int queueId = 1;
 
     String viewstatus = request.getParameter("viewstatus");
     if (viewstatus == null) {
@@ -100,7 +99,7 @@
     } else if (request.getAttribute("view") != null) {
         view = (String) request.getAttribute("view");
     }
-    view = URLDecoder.decode(view,"UTF-8");
+    view = URLDecoder.decode(view, "UTF-8");
     String module = "";
 
     String moduleid = "";
@@ -111,43 +110,38 @@
         module = (String) request.getAttribute("function");
         moduleid = (String) request.getAttribute("functionid");
     }
-    String winwidth="";
-    String winheight="";
+    String winwidth = "";
+    String winheight = "";
     if (request.getParameter("winwidth") != null) {
         winwidth = request.getParameter("winwidth");
     }
-    
+
     if (request.getParameter("winheight") != null) {
         winheight = request.getParameter("winheight");
     }
-    
+
     if (!"".equalsIgnoreCase(moduleid) && (demographicID == null || demographicID.equalsIgnoreCase("null"))) {
         demographicID = moduleid;
     }
     ArrayList doctypes = EDocUtil.getDoctypes(module);
 
 
-
-
-
     ArrayList<ArrayList<EDoc>> categories = new ArrayList<ArrayList<EDoc>>();
     ArrayList<EDoc> docs = new ArrayList<EDoc>();
-    
+
     String sortorder = "";
-    EDocUtil.EDocSort sort=null;
+    EDocUtil.EDocSort sort = null;
     if (request.getParameter("sortorder") != null && request.getParameter("sortorder").equals("Observation")) {
-    	sort = EDocUtil.EDocSort.OBSERVATIONDATE;
-        sortorder="Observation";
+        sort = EDocUtil.EDocSort.OBSERVATIONDATE;
+        sortorder = "Observation";
+    } else if (request.getParameter("sortorder") != null && request.getParameter("sortorder").equals("Update")) {
+        sort = EDocUtil.EDocSort.DATE;
+        sortorder = "Update";
+    } else {
+        sort = EDocUtil.EDocSort.CONTENTDATE;
+        sortorder = "Content";
     }
-    else if (request.getParameter("sortorder") != null && request.getParameter("sortorder").equals("Update")) {
-    	sort = EDocUtil.EDocSort.DATE;
-        sortorder="Update";
-    }
-    else  {
-    	sort = EDocUtil.EDocSort.CONTENTDATE;
-        sortorder="Content";
-    }
-   
+
     if (categoryKey.indexOf("Private") >= 0) {
         docs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PRIVATE, sort, viewstatus);
 
@@ -156,386 +150,391 @@
 
     } else {%>
 Remote documents not supported
-<%}
+<%
+    }
 
 %>
 
 <html>
-    <head>
-        <title><bean:message key="dms.documentBrowser.title"/></title>
+<head>
+    <title><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.title"/></title>
 
-        <script type="text/javascript">  
-            window.moveTo(0,0);
+    <script type="text/javascript">
+        window.moveTo(0, 0);
 
-            function popup(vheight,vwidth,varpage) { //open a new popup window
-                var page = "" + varpage;
-                windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";//360,680
-                var popup=window.open(page, "popup1", windowprops);
-                if (popup != null) {
-                    if (popup.opener == null) {
-                        popup.opener = self;
-                    }
-                    popup.focus();
+        function popup(vheight, vwidth, varpage) { //open a new popup window
+            var page = "" + varpage;
+            windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";//360,680
+            var popup = window.open(page, "popup1", windowprops);
+            if (popup != null) {
+                if (popup.opener == null) {
+                    popup.opener = self;
                 }
+                popup.focus();
             }
-            function ReLoadDoc()
-            {
-                document.DisplayDoc.viewstatus.value=document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
-                document.DisplayDoc.sortorder.value=document.DisplayDoc.selsortorder.options[document.DisplayDoc.selsortorder.selectedIndex].value;
-                document.DisplayDoc.submit();
+        }
+
+        function ReLoadDoc() {
+            document.DisplayDoc.viewstatus.value = document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
+            document.DisplayDoc.sortorder.value = document.DisplayDoc.selsortorder.options[document.DisplayDoc.selsortorder.selectedIndex].value;
+            document.DisplayDoc.submit();
+        }
+
+        function LoadView(viewstr) {
+            document.DisplayDoc.winwidth.value = getWidth();
+            document.DisplayDoc.winheight.value = getHeight();
+            document.DisplayDoc.view.value = viewstr;
+            document.DisplayDoc.viewstatus.value = document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
+            document.DisplayDoc.submit();
+        }
+
+        function DeleteDoc() {
+            document.DisplayDoc.delDocumentNo.value = docid;
+            document.DisplayDoc.viewstatus.value = document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
+            document.DisplayDoc.submit();
+        }
+
+        function UnDeleteDoc() {
+            document.DisplayDoc.undelDocumentNo.value = docid;
+            document.DisplayDoc.viewstatus.value = document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
+            document.DisplayDoc.submit();
+        }
+
+        function RefileDoc() {
+            document.DisplayDoc.refileDocumentNo.value = docid;
+            document.DisplayDoc.viewstatus.value = document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
+            document.DisplayDoc.submit();
+        }
+
+        function setQueue() {
+            document.DisplayDoc.queueId.value = document.getElementById('queueList').options[document.getElementById('queueList').selectedIndex].value;
+        }
+
+        function getWidth() {
+            var myWidth = 0;
+            if (typeof (window.innerWidth) == 'number') {
+                //Non-IE
+                myWidth = window.innerWidth;
+            } else if (document.documentElement && document.documentElement.clientWidth) {
+                //IE 6+ in 'standards compliant mode'
+                myWidth = document.documentElement.clientWidth;
+            } else if (document.body && document.body.clientHeight) {
+                //IE 4 compatible
+                myWidth = document.body.clientWidth;
+            }
+            return myWidth;
+        }
+
+
+        function getHeight() {
+            var myHeight = 0;
+            if (typeof (window.innerHeight) == 'number') {
+                //Non-IE
+                myHeight = window.innerHeight;
+            } else if (document.documentElement && document.documentElement.clientHeight) {
+                //IE 6+ in 'standards compliant mode'
+                myHeight = document.documentElement.clientHeight;
+            } else if (document.body && (document.body.clientHeight)) {
+                //IE 4 compatible
+                myHeight = document.body.clientHeight;
+            }
+            return myHeight;
+        }
+
+        showPageImg = function (curdocid) {
+            var height = 700;
+            if (getHeight() > 750) {
+                height = getHeight() - 50;
             }
 
-            function LoadView(viewstr)
-            {
-                document.DisplayDoc.winwidth.value=getWidth();
-                document.DisplayDoc.winheight.value=getHeight();
-                document.DisplayDoc.view.value=viewstr;
-                document.DisplayDoc.viewstatus.value=document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
-                document.DisplayDoc.submit();
+            var width = 600;
+            if (getWidth() > 1250) {
+                width = getWidth() - 650;
             }
-            function DeleteDoc()
-            {
-                document.DisplayDoc.delDocumentNo.value=docid;
-                document.DisplayDoc.viewstatus.value=document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
-                document.DisplayDoc.submit();
-            }
-            
-            function UnDeleteDoc()
-            {
-                document.DisplayDoc.undelDocumentNo.value=docid;
-                document.DisplayDoc.viewstatus.value=document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
-                document.DisplayDoc.submit();
+            if (curdocid != "0") {
+
+
+                var url2 = '<%=request.getContextPath()%>' + '/documentManager/ManageDocument.do?method=display&doc_no='
+                    + curdocid;
+                document.getElementById('docdisp').innerHTML = '<iframe	src="' + url2 + '"  width="' + width + '" height="' + height + '"></iframe>';
+
+                var url4 = '<%=request.getContextPath()%>' + '/documentManager/ManageDocument.do?method=viewDocumentInfo&doc_no=' + curdocid;
+                document.getElementById('docextrainfo').innerHTML = '<object data="' + url4 + '"  height=250px width="100%" type="text/html" ></object>';
+
+
+            } else {
+                document.getElementById('docdisp').innerHTML = '';
+                document.getElementById('docextrainfo').innerHTML = '';
+
             }
 
-            function RefileDoc()
-            {
-                document.DisplayDoc.refileDocumentNo.value=docid;
-                document.DisplayDoc.viewstatus.value=document.DisplayDoc.selviewstatus.options[document.DisplayDoc.selviewstatus.selectedIndex].value;
-                document.DisplayDoc.submit();
+        }
+        showPageCombineImg = function (doclist) {
+            var height = 700;
+            if (getHeight() > 750) {
+                height = getHeight() - 50;
             }
 
-            function setQueue(){
-                document.DisplayDoc.queueId.value=document.getElementById('queueList').options[document.getElementById('queueList').selectedIndex].value;
+            var width = 600;
+            if (getWidth() > 1250) {
+                width = getWidth() - 650;
             }
+            var url2 = '<%=request.getContextPath()%>' + '/documentManager/combinePDFs.do?ContentDisposition=inline' + doclist;
+            document.getElementById('docdisp').innerHTML = '<object	data="' + url2 + '" type="application/pdf" width="' + width + '" height="' + height + '"></object>';
+            document.getElementById('docextrainfo').innerHTML = '';
 
-            function getWidth() {
-                var myWidth = 0;
-                if( typeof( window.innerWidth ) == 'number' ) {
-                    //Non-IE
-                    myWidth = window.innerWidth;
-                } else if( document.documentElement &&  document.documentElement.clientWidth  ) {
-                    //IE 6+ in 'standards compliant mode'
-                    myWidth = document.documentElement.clientWidth;
-                } else if( document.body && document.body.clientHeight  ) {
-                    //IE 4 compatible
-                    myWidth = document.body.clientWidth;
+        }
+
+        function getSelected(opt) {
+            var selected = new Array();
+            var index = 0;
+            for (var intLoop = 0; intLoop < opt.length; intLoop++) {
+                if (opt[intLoop].selected) {
+                    index = selected.length;
+                    selected[index] = new Object;
+                    selected[index].value = opt[intLoop].value;
+                    selected[index].title = opt[intLoop].title;
+                    selected[index].index = intLoop;
                 }
-                return myWidth;
             }
-   
-          
-            function getHeight() {
-                var myHeight = 0;
-                if( typeof( window.innerHeight ) == 'number' ) {
-                    //Non-IE                    
-                    myHeight = window.innerHeight;
-                } else if( document.documentElement && document.documentElement.clientHeight  ) {
-                    //IE 6+ in 'standards compliant mode'                    
-                    myHeight = document.documentElement.clientHeight;
-                } else if( document.body && (document.body.clientHeight ) ) {
-                    //IE 4 compatible                    
-                    myHeight = document.body.clientHeight;
-                }
-                return myHeight;
+            return selected;
+        }
+
+        function getDoc() {
+            var th = document.getElementById('doclist');
+            var selected = new Array();
+            selected = getSelected(th);
+
+
+            if (selected.length == 0) {
+
+                var div_ref = document.all("docbuttons");
+                div_ref.style.visibility = "hidden";
+                docid = "0";
+                showPageImg(docid);
+
             }
-            
-            showPageImg=function(curdocid){
-                var height=700;
-                if(getHeight()>750) {
-                    height=getHeight()-50;
+            if (selected.length >= 2) {
+                var div_ref = document.all("docbuttons");
+                div_ref.style.visibility = "hidden";
+
+                var docList = '';
+                var combinePdf = true;
+                for (k = 0; k < selected.length; k++) {
+                    var docnoindexend = selected[k].value.indexOf('-');
+
+
+                    var docno = selected[k].value.substring(0, docnoindexend);
+                    var doctype = selected[k].value.substring(docnoindexend + 1, selected[k].value.length);
+                    if (doctype == "text/html") combinePdf = false;
+                    docList = docList + '&docNo=' + docno;
                 }
-                
-                var width=600;
-                if(getWidth()>1250)
-                {
-                    width=getWidth()-650;
+
+                if (combinePdf == true) {
+                    showPageCombineImg(docList);
+                } else {
+                    alert("<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgOnlyPDFCanBeCombined"/>");
+                    setdefaultdoc();
                 }
-                if(curdocid!="0") {
-                                    
-                   
-                    var url2='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=display&doc_no='
-                        +curdocid;
-                    document.getElementById('docdisp').innerHTML = '<iframe	src="' +url2 +'"  width="' +width +'" height="' +height +'"></iframe>';
-                            
-                    var url4='<%=request.getContextPath()%>'+'/documentManager/ManageDocument.do?method=viewDocumentInfo&doc_no='+curdocid;
-                    document.getElementById('docextrainfo').innerHTML = '<object data="' +url4 +'"  height=250px width="100%" type="text/html" ></object>';                    
-                      
-                    
-                } else  
-                {
-                    document.getElementById('docdisp').innerHTML='';
-                    document.getElementById('docextrainfo').innerHTML='';
-                    
-                }
-                                                  
-            }
-            showPageCombineImg=function(doclist){
-                var height=700;
-                if(getHeight()>750) {
-                    height=getHeight()-50;
-                }
-                
-                var width=600;
-                if(getWidth()>1250)
-                {
-                    width=getWidth()-650;
-                }
-                var url2='<%=request.getContextPath()%>'+'/documentManager/combinePDFs.do?ContentDisposition=inline'+doclist;
-                document.getElementById('docdisp').innerHTML = '<object	data="' +url2 +'" type="application/pdf" width="' + width +'" height="' +height +'"></object>';                    
-                document.getElementById('docextrainfo').innerHTML='';
-                                                  
-            }
-            
-            function getSelected(opt) {
-                var selected = new Array();
-                var index = 0;
-                for (var intLoop=0; intLoop < opt.length; intLoop++) {
-                    if (opt[intLoop].selected) {
-                        index = selected.length;
-                        selected[index] = new Object;
-                        selected[index].value = opt[intLoop].value;
-                        selected[index].title = opt[intLoop].title;
-                        selected[index].index = intLoop;
-                    }
-                }
-                return selected;
-            }
-            function getDoc()
-            {
-                var th = document.getElementById('doclist');
-                var selected = new Array();
-                selected=getSelected(th);
-      
-   
-                if(selected.length==0) {
-              
-                    var div_ref = document.all("docbuttons");
+
+            } else if (selected.length == 1) {
+                var docidindexend = selected[0].value.indexOf('-');
+                docid = selected[0].value.substring(0, docidindexend);
+
+                showPageImg(docid);
+                var div_ref = document.all("docbuttons");
+                div_ref.style.visibility = "visible";
+                if (doctype == "text/html") {
+                    var div_ref = document.all("refilebutton");
                     div_ref.style.visibility = "hidden";
-                    docid="0";                    
-                    showPageImg(docid);
-           
-                }  
-                if(selected.length>=2)
-                {
-                    var div_ref = document.all("docbuttons");
-                    div_ref.style.visibility = "hidden";
-                        
-                    var docList='';
-                    var combinePdf=true;
-                    for(k=0;k<selected.length;k++) {
-                        var docnoindexend=selected[k].value.indexOf('-');
-                    
-              
-                        var docno=selected[k].value.substring(0,docnoindexend);
-                        var doctype=selected[k].value.substring(docnoindexend+1,selected[k].value.length);
-                        if(doctype=="text/html") combinePdf=false;
-                        docList=docList+'&docNo='+docno;
-                    }
-                    
-                    if(combinePdf==true) {
-                        showPageCombineImg(docList);
-                    }
-                    else
-                    {
-                        alert("<bean:message key="dms.documentBrowser.msgOnlyPDFCanBeCombined"/>");
-                        setdefaultdoc();
-                    }
-              
-                }
-                else if(selected.length==1)
-                {
-                    var docidindexend=selected[0].value.indexOf('-');
-                    docid=selected[0].value.substring(0,docidindexend);
-                                        
-                    showPageImg(docid);
-                    var div_ref = document.all("docbuttons");                    
+                } else {
+                    var div_ref = document.all("refilebutton");
                     div_ref.style.visibility = "visible";
-                    if(doctype=="text/html") {
-                        var div_ref = document.all("refilebutton");
-                        div_ref.style.visibility = "hidden";
-                    }
-                    else
-                    {
-                            var div_ref = document.all("refilebutton");
-                            div_ref.style.visibility = "visible";
-                    }
-                    
-                }
-            }
-
-
-            function setdefaultdoc()
-            {
-    
-                var doclistObj = document.getElementById('doclist');
-                if(doclistObj.length>=1)
-                {
-                    doclistObj.selectedIndex=0;
-                    doclistObj.focus();
-
-                    getDoc();
-                    doclistObj.focus();
-                }
-                else if(doclistObj.length==0)
-                {
-                    div_ref = document.all("docbuttons");
-                    div_ref.style.visibility = "hidden";
-                        
                 }
 
             }
-                                        
-            function AddTickler()
-            {
-                popup(450,600,'../tickler/ForwardDemographicTickler.do?docType=DOC&docId='+docid+'&demographic_no=<%=demographicID%>','tickler');                                            
-            } 
-            function DocAnnotation()
-            {
-                popup(350,500,'../annotation/annotation.jsp?display=Documents&table_id='+docid+'&demo=<%=demographicID%>','anwin');                                                
-            }
-  
-            function DocEdit()
-            {
-                var th = document.getElementById('doclist');
-                var selected = new Array();
-                selected=getSelected(th);
-                var docidindexend=selected[0].value.indexOf('-');
-                docid=selected[0].value.substring(0,docidindexend);
-                var doctype=selected[0].value.substring(docidindexend+1,selected[0].value.length);
-                
-                if (doctype== 'text/html') { 
-                    popup(450,600,'addedithtmldocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');                                               
-                }
-                else {
-                            
-                    popup(350,500,'editDocument.jsp?editDocumentNo='+docid+'&function=<%=module%>&functionid=<%=demographicID%>','EditDoc');                                               
-                }                                        
+        }
+
+
+        function setdefaultdoc() {
+
+            var doclistObj = document.getElementById('doclist');
+            if (doclistObj.length >= 1) {
+                doclistObj.selectedIndex = 0;
+                doclistObj.focus();
+
+                getDoc();
+                doclistObj.focus();
+            } else if (doclistObj.length == 0) {
+                div_ref = document.all("docbuttons");
+                div_ref.style.visibility = "hidden";
+
             }
 
-        </script>
-    </head>
-    <body onload="window.innerWidth=<%=winwidth.length()>0?winwidth:"screen.availWidth*0.9"%>;window.innerHeight=<%=winheight.length()>0?winheight:"screen.availHeight*0.9"%>;" >
-        <form name="DisplayDoc" method="post" action="documentBrowser.jsp">
+        }
 
-            <table>
-                <%if (errorMessage.length() > 0) {%><tr><td><b><font color="red"><%=errorMessage%></font></b></td></tr><%}%>
-                <tr><td  align="left" valign="top" style="width: 400px" >
-                        <oscar:nameage demographicNo="<%=moduleid%>"/> &nbsp; <oscar:phrverification demographicNo="<%=moduleid%>"><bean:message key="phr.verification.link"/></oscar:phrverification><br>
-                        <%=categoryKey%>
-                        <br>                     
-                             
-                        <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
-                        <input type="hidden" name="sortorder" value="<%=sortorder%>">
-                        <input type="hidden" name="function" value="<%=module%>">
-                        <input type="hidden" name="functionid" value="<%=moduleid%>">
-                        <input type="hidden" name="categorykey" value="<%=categoryKey%>">
+        function AddTickler() {
+            popup(450, 600, '<%=request.getContextPath()%>/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=<%=demographicID%>', 'tickler');
+        }
 
-                        <bean:message key="dms.documentBrowser.msgViewStatus"/> <select id="selviewstatus" name="selviewstatus" onchange="ReLoadDoc()">
-                            <option value="all"
-                                    <%=viewstatus.equalsIgnoreCase("all") ? "selected" : ""%>><bean:message key="dms.documentBrowser.msgAll"/></option>
-                            <option value="deleted"
-                                    <%=viewstatus.equalsIgnoreCase("deleted") ? "selected" : ""%>><bean:message key="dms.documentBrowser.msgDeleted"/></option>
-                            <option value="active"
-                                    <%=viewstatus.equalsIgnoreCase("active") ? "selected" : ""%>><bean:message key="dms.documentBrowser.msgPublished"/></option>
+        function DocAnnotation() {
+            popup(350, 500, '<%= request.getContextPath() %>/annotation/annotation.jsp?display=Documents&table_id=' + docid + '&demo=<%=demographicID%>', 'anwin');
+        }
+
+        function DocEdit() {
+            var th = document.getElementById('doclist');
+            var selected = new Array();
+            selected = getSelected(th);
+            var docidindexend = selected[0].value.indexOf('-');
+            docid = selected[0].value.substring(0, docidindexend);
+            var doctype = selected[0].value.substring(docidindexend + 1, selected[0].value.length);
+
+            if (doctype == 'text/html') {
+                popup(450, 600, 'addedithtmldocument.jsp?editDocumentNo=' + docid + '&function=<%=module%>&functionid=<%=demographicID%>', 'EditDoc');
+            } else {
+
+                popup(350, 500, 'editDocument.jsp?editDocumentNo=' + docid + '&function=<%=module%>&functionid=<%=demographicID%>', 'EditDoc');
+            }
+        }
+
+    </script>
+</head>
+<body onload="window.innerWidth=<%=winwidth.length()>0?winwidth:"screen.availWidth*0.9"%>;window.innerHeight=<%=winheight.length()>0?winheight:"screen.availHeight*0.9"%>;">
+<form name="DisplayDoc" method="post" action="documentBrowser.jsp">
+
+    <table>
+        <%if (errorMessage.length() > 0) {%>
+        <tr>
+            <td><b><font color="red"><%=errorMessage%>
+            </font></b></td>
+        </tr>
+        <%}%>
+        <tr>
+            <td align="left" valign="top" style="width: 400px">
+                <oscar:nameage demographicNo="<%=moduleid%>"/><br>
+                <%=categoryKey%>
+                <br>
+
+                <input type="hidden" name="viewstatus" value="<%=viewstatus%>">
+                <input type="hidden" name="sortorder" value="<%=sortorder%>">
+                <input type="hidden" name="function" value="<%=module%>">
+                <input type="hidden" name="functionid" value="<%=moduleid%>">
+                <input type="hidden" name="categorykey" value="<%=categoryKey%>">
+
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgViewStatus"/> <select id="selviewstatus" name="selviewstatus"
+                                                                                onchange="ReLoadDoc()">
+                <option value="all"
+                        <%=viewstatus.equalsIgnoreCase("all") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgAll"/></option>
+                <option value="deleted"
+                        <%=viewstatus.equalsIgnoreCase("deleted") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgDeleted"/></option>
+                <option value="active"
+                        <%=viewstatus.equalsIgnoreCase("active") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgPublished"/></option>
+            </select>
+
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgSortDate"/>
+                <select id="selsortorder" name="selsortorder" onchange="ReLoadDoc()">
+                    <option value="Content"
+                            <%=sortorder.equalsIgnoreCase("Content") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgContent"/></option>
+                    <option value="Observation"
+                            <%=sortorder.equalsIgnoreCase("Observation") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgObservation"/></option>
+                    <option value="Update"
+                            <%=sortorder.equalsIgnoreCase("Update") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgUpdate"/></option>
+
+                </select>
+                <fieldset>
+                    <legend><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgView"/>:</legend>
+                    <input type="hidden" name="view" value="<%=view%>">
+                    <input type="hidden" name="demographic_no" value="<%=demographicID%>">
+                    <input type="hidden" name="undelDocumentNo" value="">
+                    <input type="hidden" name="delDocumentNo" value="">
+                    <input type="hidden" name="refileDocumentNo" value="">
+                    <input type="hidden" name="queueId" value="<%=queueId%>">
+
+                    <a
+                            href="#" onclick="LoadView('all')"><%=view.equals("all") ? "<b>" : ""%>
+                        All<%=view.equals("all") ? "</b>" : ""%>
+                    </a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
+                    | <a
+                        href="#"
+                        onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals((String) doctypes.get(i3)) ? "<b>" : ""%><%=(String) doctypes.get(i3)%><%=view.equals((String) doctypes.get(i3)) ? "</b>" : ""%>
+                </a>
+                    <%}%>
+                </fieldset>
+
+                <fieldset>
+                    <legend><%
+                        if (sortorder.equals("Content")) { %>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgContent"/><%} else {%>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgUpdate"/> <%}%>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.ObservationTypeDescription"/></legend>
+                    <SELECT MULTIPLE SIZE=15 id="doclist" onchange="getDoc();" style="width: 400px">
+                        <%
+                            for (int i2 = 0; i2 < docs.size(); i2++) {
+                                EDoc cmicurdoc = docs.get(i2);
+                        %>
+                        <option VALUE="<%=cmicurdoc.getDocId()%>-<%=cmicurdoc.getContentType()%>"><%=sortorder.equals("Content") ? UtilDateUtilities.DateToString(cmicurdoc.getContentDateTime(), "yyyy-MM-dd") : cmicurdoc.getDateTimeStamp()%>&nbsp;&nbsp; <%=cmicurdoc.getObservationDate()%>
+                            [<%=cmicurdoc.getType()%>] <%=cmicurdoc.getDescription()%>
+                        </option>
+                        <%}%>
+                    </SELECT>
+                </fieldset>
+                <div id="docbuttons">
+                    <% if (viewstatus.equalsIgnoreCase("active")) {%>
+                    <% if (module.equalsIgnoreCase("demographic")) {%>
+                    <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgAddTickler"/>"
+                           onclick="AddTickler();"> <%}%>
+                    <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgAnnotate"/>"
+                           onclick="DocAnnotation()">
+                    <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgEdit"/>" onclick="DocEdit();">
+                    <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgDelete"/>"
+                           onclick="DeleteDoc();">
+                    <div id="refilebutton">
+                        <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgRefile"/>"
+                               onclick="RefileDoc();">
+                        <select id="queueList" name="queueList" onchange="setQueue();">
+                            <%
+                                for (Hashtable ht : queues) {
+                                    int id = (Integer) ht.get("id");
+                                    String qName = (String) ht.get("queue");
+                            %>
+                            <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%>
+                            </option>
+                            <%}%>
                         </select>
+                    </div>
+                    <%} else if (viewstatus.equalsIgnoreCase("deleted")) {%>
+                    <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentBrowser.msgUndelete"/>"
+                           onclick="UnDeleteDoc();">
+                    <%}%>
+                </div>
+                <fieldset>
+                    <div id="docextrainfo"></div>
+                </fieldset>
 
-                        <bean:message key="dms.documentBrowser.msgSortDate"/>
-                        <select id="selsortorder" name="selsortorder" onchange="ReLoadDoc()">
-                            <option value="Content"
-                                    <%=sortorder.equalsIgnoreCase("Content") ? "selected":""%>><bean:message key="dms.documentBrowser.msgContent"/></option>
-                            <option value="Observation"
-                                    <%=sortorder.equalsIgnoreCase("Observation") ? "selected":""%>><bean:message key="dms.documentBrowser.msgObservation"/></option>
-                            <option value="Update"
-                                    <%=sortorder.equalsIgnoreCase("Update") ? "selected":""%>><bean:message key="dms.documentBrowser.msgUpdate"/></option>
-				
-			</select>
-                        <fieldset><legend><bean:message key="dms.documentBrowser.msgView"/>:</legend>      
-                            <input type="hidden" name="view" value="<%=view%>">
-                            <input type="hidden" name="demographic_no" value="<%=demographicID%>">
-                            <input type="hidden" name="undelDocumentNo" value="">
-                            <input type="hidden" name="delDocumentNo" value="">
-                            <input type="hidden" name="refileDocumentNo" value="">
-                            <input type="hidden" name="queueId" value="<%=queueId%>">
+            </td>
 
-                            <a
-                                href="#" onclick="LoadView('all')" ><%=view.equals("all") ? "<b>":""%>All<%=view.equals("all") ? "</b>":""%></a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
-                            | <a
-                                  href="#" onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals((String) doctypes.get(i3)) ? "<b>":""%><%=(String) doctypes.get(i3)%><%=view.equals((String) doctypes.get(i3)) ? "</b>":""%></a>
-                            <%}%> 
-                        </fieldset>
+            <td valign="top">
 
-                        <fieldset>
-                            <legend><%
-                        if(sortorder.equals("Content")) { %>
-                        <bean:message key="dms.documentBrowser.msgContent"/><%} else {%>
-                        <bean:message key="dms.documentBrowser.msgUpdate"/> <%}%>
-                        <bean:message key="dms.documentBrowser.ObservationTypeDescription"/></legend>                            
-                            <SELECT MULTIPLE SIZE=15 id="doclist" onchange="getDoc();" style="width: 400px" >
-                                <%
-                                    for (int i2 = 0; i2 < docs.size(); i2++) {
-                                        EDoc cmicurdoc = docs.get(i2);
-                                %>
-                                <option VALUE="<%=cmicurdoc.getDocId()%>-<%=cmicurdoc.getContentType()%>"><%=sortorder.equals("Content")?UtilDateUtilities.DateToString(cmicurdoc.getContentDateTime(),"yyyy-MM-dd"):cmicurdoc.getDateTimeStamp()%>&nbsp;&nbsp; <%=cmicurdoc.getObservationDate()%> [<%=cmicurdoc.getType()%>] <%=cmicurdoc.getDescription()%>
-                                </option> <%}%>
-                            </SELECT>
-                        </fieldset>
-                            <div id="docbuttons">
-                                <% if (viewstatus.equalsIgnoreCase("active")) {%>
-                                <% if (module.equalsIgnoreCase("demographic")) {%>
-                                <input type="button" value="<bean:message key="dms.documentBrowser.msgAddTickler"/>" onclick="AddTickler();" > <%}%>
-                                <input type="button" value="<bean:message key="dms.documentBrowser.msgAnnotate"/>" onclick="DocAnnotation()" >
-                                <input type="button" value="<bean:message key="dms.documentBrowser.msgEdit"/>" onclick="DocEdit();" >
-                                <input type="button" value="<bean:message key="dms.documentBrowser.msgDelete"/>" onclick="DeleteDoc();" >
-                                <div id="refilebutton">
-                                    <input type="button" value="<bean:message key="dms.documentBrowser.msgRefile"/>" onclick="RefileDoc();" >
-                                    <select  id="queueList" name="queueList" onchange="setQueue();">
-                                        <%
-                                            for (Hashtable ht : queues) {
-                                                int id = (Integer) ht.get("id");
-                                                String qName = (String) ht.get("queue");
-                                        %>
-                                        <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%> </option>
-                                    <%}%>
-                                    </select>
-                                </div>
-                                <%} else if (viewstatus.equalsIgnoreCase("deleted")) {%>
-                                <input type="button" value="<bean:message key="dms.documentBrowser.msgUndelete"/>" onclick="UnDeleteDoc();" >   
-                                <%}%>
-                            </div>
-                        <fieldset>
-                                <div id="docextrainfo"></div>
-                        </fieldset>
+                <table>
+                    <tr>
+                        <td>
+                            <div id="docdisp"></div>
+                        </td>
+                    </tr>
+                </table>
 
-                    </td>
+            </td>
+        </tr>
 
-                    <td valign="top"> 
+    </table>
+    <input type="hidden" name="winwidth" value="">
+    <input type="hidden" name="winheight" value="">
 
-                        <table><tr><td> 
-                                    <div id="docdisp"></div>                  
-                                </td></tr></table>    
+    <script type="text/javascript">
+        setdefaultdoc();
+    </script>
 
-                    </td>
-                </tr>
-               
-            </table>
-            <input type="hidden" name="winwidth" value="">
-            <input type="hidden" name="winheight" value="">
-
-            <script type="text/javascript">
-                setdefaultdoc();
-            </script>
-
-        </form>                        
-    </body>
+</form>
+</body>
 </html>
 

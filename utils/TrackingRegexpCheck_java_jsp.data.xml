@@ -15,8 +15,6 @@
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/dao/ProviderDao.java:List lst = new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/model/ProgramAccess.java:if (null == this._roles) this._roles = new java.util.HashSet();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/service/ProgramManager.java:* Iterator iter = programProviderDAOT.getProgramProvidersByProvider(new Long(providerNo)).iterator(); ArrayList pList = new ArrayList(); while (iter.hasNext()) { ProgramProvider p = (ProgramProvider) iter.next(); if (p!=null &amp;&amp; p.getProgramId() !=</ViolationValue>
-        <ViolationValue>/src/main/java/org/oscarehr/PMmodule/service/impl/StreetHealthReportManagerImpl.java:List results = new ArrayList();</ViolationValue>
-        <ViolationValue>/src/main/java/org/oscarehr/PMmodule/service/impl/StreetHealthReportManagerImpl.java:return new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/utility/GetProviderRoles.java:Set roles = new HashSet();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/utility/Utility.java:List arr_keyNameSuffix = new ArrayList();</ViolationValue>
         <ViolationValue>/src/main/java/org/oscarehr/PMmodule/utility/Utility.java:List arr_keyNames = new ArrayList();</ViolationValue>
@@ -1024,19 +1022,27 @@
         <ViolationValue>/src/main/webapp/admin/logReport.jsp:params[1]= new DBPreparedHandlerParam(MyDateFormat.getSysDate(sDate));</ViolationValue>
         <ViolationValue>/src/main/webapp/admin/provideraddarecord.jsp:DBPreparedHandler dbObj = new DBPreparedHandler();</ViolationValue>
         <ViolationValue>/src/main/webapp/admin/providerupdate.jsp:DBPreparedHandler dbObj = new DBPreparedHandler();</ViolationValue>
-        <ViolationValue>/src/main/webapp/billing/CA/BC/onSearch3rdBillAddr.jsp:oscar.oscarDB.DBPreparedHandler dbObj = new oscar.oscarDB.DBPreparedHandler();</ViolationValue>
+        <ViolationValue>/src/main/webapp/billing/CA/BC/onSearch3rdBillAddr.jsp:ca.openosp.openo.db.DBPreparedHandler
+          dbObj = new oscar.oscarDB.DBPreparedHandler();</ViolationValue>
         <ViolationValue>/src/main/webapp/billing/CA/ON/billingONNewReport.jsp:DBHelp dbObj = new DBHelp();</ViolationValue>
         <ViolationValue>/src/main/webapp/common/webAppContextAndSuperMgr.jsp:&lt;%-- This code makes new business logic facade OscarSuperManager bean accessible from jsp layer --%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/common/webAppContextAndSuperMgr.jsp:&lt;%@ page import="oscar.service.OscarSuperManager"%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/common/webAppContextAndSuperMgr.jsp:OscarSuperManager oscarSuperManager = (OscarSuperManager)webApplicationContext.getBean("oscarSuperManager");</ViolationValue>
-        <ViolationValue>/src/main/webapp/decision/antenatal/antenatalplanner.jsp:rsdemo = oscar.oscarDB.DBHandler.GetSQL("select * from formONAR where ID = " + form_no);</ViolationValue>
-        <ViolationValue>/src/main/webapp/decision/antenatal/antenatalplannerprint.jsp:rsdemo = oscar.oscarDB.DBHandler.GetSQL("select * from formAR where ID = " + form_no);</ViolationValue>
+        <ViolationValue>/src/main/webapp/decision/antenatal/antenatalplanner.jsp:rsdemo =
+          ca.openosp.openo.db.DBHandler.GetSQL("select * from formONAR where ID = " + form_no);</ViolationValue>
+        <ViolationValue>/src/main/webapp/decision/antenatal/antenatalplannerprint.jsp:rsdemo =
+          ca.openosp.openo.db.DBHandler.GetSQL("select * from formAR where ID = " + form_no);</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographicaddarecord.jsp:DBPreparedHandlerParam [] param =new DBPreparedHandlerParam[34];</ViolationValue>
         <ViolationValue>/src/main/webapp/form/study/ar2ping.jsp:ResultSet rsdemo = DBHandler.GetSQL("select * from formAR where demographic_no= "+demoNo+" order by formEdited desc, ID desc limit 0,1");</ViolationValue>
         <ViolationValue>/src/main/webapp/form/study/diabetetracker.jsp:ResultSet rsdemo = DBHandler.GetSQL("select * from formType2Diabetes where demographic_no= "+ demoNo +" order by formEdited desc, ID desc limit 0,1");</ViolationValue>
-        <ViolationValue>/src/main/webapp/form/study/dm2ping.jsp:ResultSet rsdemo = oscar.oscarDB.DBHandler.GetSQL("select * from formType2Diabetes where demographic_no= "+demoNo +" order by formEdited desc, ID desc limit 0,1");</ViolationValue>
-        <ViolationValue>/src/main/webapp/form/study/dmdata.jsp:ResultSet rsdemo = oscar.oscarDB.DBHandler.GetSQL("select * from formType2Diabetes where demographic_no= "+demoNo+" order by formEdited desc, ID desc limit 0,1");</ViolationValue>
-        <ViolationValue>/src/main/webapp/oscarMDS/PatientSearch.jsp:&lt;%@ page import="java.util.*, java.sql.*,java.net.*, oscar.oscarDB.DBPreparedHandler, oscar.MyDateFormat, oscar.Misc"%&gt;</ViolationValue>
+        <ViolationValue>/src/main/webapp/form/study/dm2ping.jsp:ResultSet rsdemo =
+          ca.openosp.openo.db.DBHandler.GetSQL("select * from formType2Diabetes where demographic_no= "+demoNo +"
+          order by formEdited desc, ID desc limit 0,1");</ViolationValue>
+        <ViolationValue>/src/main/webapp/form/study/dmdata.jsp:ResultSet rsdemo =
+          ca.openosp.openo.db.DBHandler.GetSQL("select * from formType2Diabetes where demographic_no= "+demoNo+"
+          order by formEdited desc, ID desc limit 0,1");</ViolationValue>
+        <ViolationValue>/src/main/webapp/oscarMDS/PatientSearch.jsp:&lt;%@ page import="java.util.*,
+          java.sql.*,java.net.*, ca.openosp.openo.db.DBPreparedHandler, oscar.MyDateFormat, oscar.Misc"%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/oscarMDS/PatientSearch.jsp:DBPreparedHandler db = new DBPreparedHandler();</ViolationValue>
         <ViolationValue>/src/main/webapp/pregnancy/migrateToSplitOnArEnhancedForm.jsp:rs = DBHandler.GetSQL("select * from formONAREnhanced");</ViolationValue>
         <ViolationValue>/src/main/webapp/pregnancy/migrateToSplitOnArEnhancedForm.jsp:rs2 = DBHandler.GetSQL("select * from " + table + " limit 1");</ViolationValue>
@@ -1845,7 +1851,10 @@
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:public java.util.Vector remoteLocationId;</ViolationValue>
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:public java.util.Vector remoteaddrBook;</ViolationValue>
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:public void displayRemoteNodes(Node node,JspWriter out,int depth,String[] thePros,int remoId, java.util.Vector locationVector){</ViolationValue>
-        <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:public void displayRemoteNodes2(Node node,JspWriter out,int depth,oscar.oscarMessenger.data.MsgReplyMessageData reData,int remoId, java.util.Vector locationVector){</ViolationValue>
+        <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:public void
+          displayRemoteNodes2(Node node,JspWriter out,int
+          depth,ca.openosp.openo.messenger.data.MsgReplyMessageData reData,int remoId, java.util.Vector
+          locationVector){</ViolationValue>
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:remoteLocationDesc      = new java.util.Vector();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:remoteLocationDesc = new java.util.Vector();</ViolationValue>
         <ViolationValue>/src/main/java/oscar/oscarMessenger/data/MsgAddressBook.java:remoteLocationId        = new java.util.Vector();</ViolationValue>
@@ -2610,9 +2619,12 @@
         <ViolationValue>/src/main/webapp/casemgmt/noteBrowser.jsp:&lt;%@page import="java.util.Hashtable"%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/casemgmt/noteBrowser.jsp:List&lt;Hashtable&gt; queues = queueDao.getQueues();</ViolationValue>
         <ViolationValue>/src/main/webapp/casemgmt/noteBrowser.jsp:for (Hashtable ht : queues) {</ViolationValue>
-        <ViolationValue>/src/main/webapp/common/OntarioMDRedirect.jsp:&lt;%@page import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.util.OntarioMD,java.util.Hashtable"%&gt;&lt;%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%&gt;&lt;%</ViolationValue>
+        <ViolationValue>/src/main/webapp/common/OntarioMDRedirect.jsp:&lt;%@page
+            import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.utility.OntarioMD,java.util.Hashtable"%&gt;&lt;%@page
+            import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%&gt;&lt;%</ViolationValue>
         <ViolationValue>/src/main/webapp/common/OntarioMDRedirect.jsp:Hashtable loginCreds = omd.loginToOntarioMD(uname,pword,requestor);</ViolationValue>
-        <ViolationValue>/src/main/webapp/common/omdDiseaseList.jsp:&lt;%@page import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.util.OntarioMD,java.util.Hashtable,org.apache.commons.collections.*"%&gt;</ViolationValue>
+        <ViolationValue>/src/main/webapp/common/omdDiseaseList.jsp:&lt;%@page
+            import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.utility.OntarioMD,java.util.Hashtable,org.apache.commons.collections.*"%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographicaddarecordhtm.jsp:Vector vecRef = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographiceditdemographic.jsp:Vector vecRef = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographicpdflabel.jsp:Vector vecRef = new Vector();</ViolationValue>

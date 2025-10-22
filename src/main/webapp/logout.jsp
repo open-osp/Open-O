@@ -23,4 +23,6 @@
     Ontario, Canada
 
 --%>
-<jsp:forward page="/logout.do"></jsp:forward>
+<%
+response.sendRedirect("logout.do");
+%>

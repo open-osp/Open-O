@@ -25,179 +25,179 @@
 --%>
 
 <%@page
-	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarLab.ca.on.*,oscar.util.*,oscar.oscarLab.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.lab.ca.on.*,ca.openosp.openo.util.*,ca.openosp.openo.lab.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabTestValues" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_lab");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-  
-  //int demographic_no = Integer.parseInt(request.getParameter("demographic_no")); 
-  String demographic_no = request.getParameter("demographic_no"); 
-  
-  ArrayList prevList = CommonLabTestValues.findUniqueLabsForPatient(demographic_no);          
+
+    //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
+    String demographic_no = request.getParameter("demographic_no");
+
+    ArrayList prevList = CommonLabTestValues.findUniqueLabsForPatient(demographic_no);
 %>
 
 
 <!DOCTYPE html >
 
 
-<html:html lang="en">
+<html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Cumulative Lab 2</title>
-<!--I18n-->
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css" />
-<script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-<script type="text/javascript" src="../share/javascript/prototype.js"></script>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Cumulative Lab 2</title>
+        <!--I18n-->
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-<link rel="stylesheet" type="text/css"
-	href="../share/css/niftyCorners.css" />
-<link rel="stylesheet" type="text/css"
-	href="../share/css/niftyPrint.css" media="print" />
-<script type="text/javascript" src="../share/javascript/nifty.js"></script>
-<script type="text/javascript">
-window.onload=function(){
-if(!NiftyCheck())
-    return;
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                if (!NiftyCheck())
+                    return;
 
 //Rounded("div.news","all","transparent","#FFF","small border #999");
-Rounded("div.headPrevention","all","#CCF","#efeadc","small border blue");
-Rounded("div.preventionProcedure","all","transparent","#F0F0E7","small border #999");
+                Rounded("div.headPrevention", "all", "#CCF", "#efeadc", "small border blue");
+                Rounded("div.preventionProcedure", "all", "transparent", "#F0F0E7", "small border #999");
 
-Rounded("div.leftBox","top","transparent","#CCCCFF","small border #ccccff");
-Rounded("div.leftBox","bottom","transparent","#EEEEFF","small border #ccccff");
+                Rounded("div.leftBox", "top", "transparent", "#CCCCFF", "small border #ccccff");
+                Rounded("div.leftBox", "bottom", "transparent", "#EEEEFF", "small border #ccccff");
 
-}
-</script>
-
-
+            }
+        </script>
 
 
-<script type="text/javascript">
-//<!--
-//if (document.all || document.layers)  window.resizeTo(790,580);
-function newWindow(file,window) {
-  msgWindow=open(file,window,'scrollbars=yes,width=760,height=520,screenX=0,screenY=0,top=0,left=10');
-  if (msgWindow.opener == null) msgWindow.opener = self;
-} 
-//-->
-</script>
+        <script type="text/javascript">
+            //<!--
+            //if (document.all || document.layers)  window.resizeTo(790,580);
+            function newWindow(file, window) {
+                msgWindow = open(file, window, 'scrollbars=yes,width=760,height=520,screenX=0,screenY=0,top=0,left=10');
+                if (msgWindow.opener == null) msgWindow.opener = self;
+            }
+
+            //-->
+        </script>
 
 
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+
+        <script language="JavaScript">
 
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+            function addLabToProfile(labType, testName) {
 
-<script language="JavaScript">
-
-
-function addLabToProfile(labType,testName){
-
-   alert("calling addLabToProfile");
-   var url = "../lab/DisplayLabValue.jsp";
-   var ran_number=Math.round(Math.random()*1000000);
-   var params = "demographicNo=<%=demographic_no%>&rand="+ran_number+"&labType="+labType+"&testName="+testName;  //hack to get around ie caching the page
-   alert(params);
-   new Ajax.Updater('dd',url, {method:'get',
-                                          parameters:params,
-                                          asynchronous:true,
-                                          onComplete: addLabToList,
-                                          evalScripts:true }); 
-   //alert(origRequest.responseText);
-}
+                alert("calling addLabToProfile");
+                var url = "<%= request.getContextPath() %>/lab/DisplayLabValue.jsp";
+                var ran_number = Math.round(Math.random() * 1000000);
+                var params = "demographicNo=<%=demographic_no%>&rand=" + ran_number + "&labType=" + labType + "&testName=" + testName;  //hack to get around ie caching the page
+                alert(params);
+                new Ajax.Updater('dd', url, {
+                    method: 'get',
+                    parameters: params,
+                    asynchronous: true,
+                    onComplete: addLabToList,
+                    evalScripts: true
+                });
+                //alert(origRequest.responseText);
+            }
 
 
-function addLabToProfile2(labType,testName){
+            function addLabToProfile2(labType, testName) {
 
-   ///alert("calling addLabToProfile2");
-    
-   var newNode = document.createElement('div');
-   var img = document.createElement('img');
-   img.setAttribute('src','../images/osx-pinwheel.gif');
-   
-   newNode.appendChild(img)
-   var ran_number=Math.round(Math.random()*1000000);
-   newNode.setAttribute('id','d'+ran_number);
-   //var 
-   //$('cumulativeLab').appendChild(req.responseText);
-   $('cumulativeLab').appendChild(newNode);
-   //alert(req.responseText);
-   
-   var url = "../lab/DisplayLabValue.jsp";
-   var ran_number=Math.round(Math.random()*1000000);
-   var params = "demographicNo=<%=demographic_no%>&rand="+ran_number+"&labType="+labType+"&testName="+testName;  //hack to get around ie caching the page
-   ///alert(params);  //'d'+ran_number
-   new Ajax.Updater(newNode,url, {method:'get',
-                                          parameters:params,
-                                          asynchronous:true,
-                                           //onComplete: reRound
-                                          evalScripts:true}); 
-   ///alert("sdf"+$('d'+ran_number));
-   //alert(origRequest.responseText);
-}
+                ///alert("calling addLabToProfile2");
 
-function reRound(){
-   Rounded("div.headPrevention","all","#CCF","#efeadc","small border blue");
-   Rounded("div.preventionProcedure","all","transparent","#F0F0E7","small border #999");
-}
+                var newNode = document.createElement('div');
+                var img = document.createElement('img');
+                img.setAttribute('src', '<%= request.getContextPath() %>/images/osx-pinwheel.gif');
 
+                newNode.appendChild(img)
+                var ran_number = Math.round(Math.random() * 1000000);
+                newNode.setAttribute('id', 'd' + ran_number);
+                //var
+                //$('cumulativeLab').appendChild(req.responseText);
+                $('cumulativeLab').appendChild(newNode);
+                //alert(req.responseText);
 
-function addLabToList(req){
-   var newText = document.createTextNode(req.responseText); 
-   var newNode = document.createElement("div");
-   var ran_number=Math.round(Math.random()*1000000);
-   newNode.setAttribute("id","d"+ran_number);
-   //$('cumulativeLab').appendChild(req.responseText);
-   $('cumulativeLab').appendChild(newText);
-   alert(req.responseText);
-}
+                var url = "<%= request.getContextPath() %>/lab/DisplayLabValue.jsp";
+                var ran_number = Math.round(Math.random() * 1000000);
+                var params = "demographicNo=<%=demographic_no%>&rand=" + ran_number + "&labType=" + labType + "&testName=" + testName;  //hack to get around ie caching the page
+                ///alert(params);  //'d'+ran_number
+                new Ajax.Updater(newNode, url, {
+                    method: 'get',
+                    parameters: params,
+                    asynchronous: true,
+                    //onComplete: reRound
+                    evalScripts: true
+                });
+                ///alert("sdf"+$('d'+ran_number));
+                //alert(origRequest.responseText);
+            }
 
-</script>
+            function reRound() {
+                Rounded("div.headPrevention", "all", "#CCF", "#efeadc", "small border blue");
+                Rounded("div.preventionProcedure", "all", "transparent", "#F0F0E7", "small border #999");
+            }
 
 
-</head>
+            function addLabToList(req) {
+                var newText = document.createTextNode(req.responseText);
+                var newNode = document.createElement("div");
+                var ran_number = Math.round(Math.random() * 1000000);
+                newNode.setAttribute("id", "d" + ran_number);
+                //$('cumulativeLab').appendChild(req.responseText);
+                $('cumulativeLab').appendChild(newText);
+                alert(req.responseText);
+            }
 
-<body class="BodyStyle">
-<!--  -->
-<table class="MainTable" id="scrollNumber1">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">lab</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td><oscar:nameage demographicNo="<%=demographic_no%>" /></td>
-				<td>&nbsp;</td>
-				<td style="text-align: right"><oscar:help keywords="lab" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-					key="global.license" /></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top"><!--div class="leftBox">
+        </script>
+
+
+    </head>
+
+    <body class="BodyStyle">
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn">lab</td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td><oscar:nameage demographicNo="<%=demographic_no%>"/></td>
+                        <td>&nbsp;</td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn" valign="top"><!--div class="leftBox">
                   <h3>&nbsp;Labs</h3>
                   <div style="background-color: #EEEEFF;" >
                   <ul >               
@@ -236,93 +236,100 @@ function addLabToList(req){
                   </ul>
                   </div>
                </div--></td>
-		<td valign="top" class="MainTableRightColumn">
-		<table class="cumlatable">
-			<tr>
-				<th>&nbsp;</th>
-				<th>Latest Value</th>
-				<th>Last Done</th>
-				<!-- Dates start here. Need to have all the dates of the different labs -->
-				<% Collections.sort(labTestDates,Collections.reverseOrder());
-                         for(int h = 0; h < labTestDates.size(); h++){ 
-                            //String labDate= (String) labTestDates.get(h);
-                            Date labDate= (Date) labTestDates.get(h);   %>
-				<th><%=UtilDateUtilities.DateToString( labDate , "dd-MMM yy")%></th>
-				<%}%>
-			</tr>
+            <td valign="top" class="MainTableRightColumn">
+                <table class="cumlatable">
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Latest Value</th>
+                        <th>Last Done</th>
+                        <!-- Dates start here. Need to have all the dates of the different labs -->
+                        <% Collections.sort(labTestDates, Collections.reverseOrder());
+                            for (int h = 0; h < labTestDates.size(); h++) {
+                                //String labDate= (String) labTestDates.get(h);
+                                Date labDate = (Date) labTestDates.get(h); %>
+                        <th><%=UtilDateUtilities.DateToString(labDate, "dd-MMM yy")%>
+                        </th>
+                        <%}%>
+                    </tr>
 
-			<%for (int i = 0 ; i < prevList.size(); i++){ 
-                      Hashtable h = (Hashtable) prevList.get(i);
-                      String prevName = (String) h.get("testName");
-                      String labType = (String) h.get("labType");
-                      
-                      String latestVal = "&nbsp;";
-                      String latestDate = "&nbsp;";
-                      String abn = "";
-                      
-                      Hashtable dater2 = (Hashtable) labsBasedOnName.get(labType+"|"+prevName);
-                      for (int h2 = 0; h2 < labTestDates.size(); h2++){  
-                         Date labDate= (Date) labTestDates.get(h2);
-                         Hashtable hdata = (Hashtable) dater2.get(labDate);
-                         if (hdata != null){
-                            latestVal = (String) hdata.get("result");
-                            latestDate = UtilDateUtilities.DateToString( (Date) hdata.get("collDate") , "dd-MMM yyyy");
-                            abn = r(hdata.get("abn"));
-                            h2 = labTestDates.size();
-                         }
-                       }
-                      
-                   %>
-			<tr>
-				<td><%=StringUtils.maxLenString(prevName,30,27,"...")%></td>
-				<td <%=abn%>><%=latestVal%></td>
-				<td <%=abn%>><%=latestDate%></td>
-				<%  Hashtable dater = (Hashtable) labsBasedOnName.get(labType+"|"+prevName);
-                          for (int h2 = 0; h2 < labTestDates.size(); h2++){  
-                            //String labDate= (String) labTestDates.get(h2);
-                            Date labDate= (Date) labTestDates.get(h2);
-                            Hashtable hdata = (Hashtable) dater.get(labDate);
-                            String val = "&nbsp;";
-                            String ab2 = "";
-                            if (hdata != null){
-                                val = (String) hdata.get("result");
-                                ab2 = r(hdata.get("abn")); 
+                    <%
+                        for (int i = 0; i < prevList.size(); i++) {
+                            Hashtable h = (Hashtable) prevList.get(i);
+                            String prevName = (String) h.get("testName");
+                            String labType = (String) h.get("labType");
+
+                            String latestVal = "&nbsp;";
+                            String latestDate = "&nbsp;";
+                            String abn = "";
+
+                            Hashtable dater2 = (Hashtable) labsBasedOnName.get(labType + "|" + prevName);
+                            for (int h2 = 0; h2 < labTestDates.size(); h2++) {
+                                Date labDate = (Date) labTestDates.get(h2);
+                                Hashtable hdata = (Hashtable) dater2.get(labDate);
+                                if (hdata != null) {
+                                    latestVal = (String) hdata.get("result");
+                                    latestDate = UtilDateUtilities.DateToString((Date) hdata.get("collDate"), "dd-MMM yyyy");
+                                    abn = r(hdata.get("abn"));
+                                    h2 = labTestDates.size();
+                                }
                             }
-                      %>
-				<td <%=ab2%>><%=val%></td>
-				<%}%>
-			</tr>
-			<%}%>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
-		<td class="MainTableBottomRowRightColumn" valign="top">&nbsp;</td>
-	</tr>
-</table>
-<script type="text/javascript" src="../share/javascript/boxover.js"></script>
-</body>
-</html:html>
-<%! 
-String refused(Object re){ 
+
+                    %>
+                    <tr>
+                        <td><%=StringUtils.maxLenString(prevName, 30, 27, "...")%>
+                        </td>
+                        <td <%=abn%>><%=latestVal%>
+                        </td>
+                        <td <%=abn%>><%=latestDate%>
+                        </td>
+                        <% Hashtable dater = (Hashtable) labsBasedOnName.get(labType + "|" + prevName);
+                            for (int h2 = 0; h2 < labTestDates.size(); h2++) {
+                                //String labDate= (String) labTestDates.get(h2);
+                                Date labDate = (Date) labTestDates.get(h2);
+                                Hashtable hdata = (Hashtable) dater.get(labDate);
+                                String val = "&nbsp;";
+                                String ab2 = "";
+                                if (hdata != null) {
+                                    val = (String) hdata.get("result");
+                                    ab2 = r(hdata.get("abn"));
+                                }
+                        %>
+                        <td <%=ab2%>><%=val%>
+                        </td>
+                        <%}%>
+                    </tr>
+                    <%}%>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn">&nbsp;</td>
+            <td class="MainTableBottomRowRightColumn" valign="top">&nbsp;</td>
+        </tr>
+    </table>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/boxover.js"></script>
+    </body>
+</html>
+<%!
+    String refused(Object re) {
         String ret = "Given";
-        if (re instanceof java.lang.String){
-                
-        if (re != null && re.equals("1")){
-           ret = "Refused";
-        }
+        if (re instanceof java.lang.String) {
+
+            if (re != null && re.equals("1")) {
+                ret = "Refused";
+            }
         }
         return ret;
     }
-String r(Object re){ 
+
+    String r(Object re) {
         String ret = "";
-        if (re instanceof java.lang.String){                
-           if (re != null && re.equals("A")){
-              ret = "style=\"background: #FFDDDD;\"";
-           }else if(re !=null && re.equals("2")){
-              ret = "style=\"background: #FFCC24;\""; 
-           }
+        if (re instanceof java.lang.String) {
+            if (re != null && re.equals("A")) {
+                ret = "style=\"background: #FFDDDD;\"";
+            } else if (re != null && re.equals("2")) {
+                ret = "style=\"background: #FFCC24;\"";
+            }
         }
         return ret;
     }

@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,87 +24,88 @@
 --%>
 
 
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ page import="org.oscarehr.casemgmt.model.*"%>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*"%>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 
 <%
-	if(application.getAttribute("javax.servlet.context.tempdir") == null) {
-		String tmpDir = System.getProperty("java.io.tmpdir");
-		application.setAttribute("javax.servlet.context.tempdir",new java.io.File(tmpDir));
-	}
+    if (application.getAttribute("javax.servlet.context.tempdir") == null) {
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        application.setAttribute("javax.servlet.context.tempdir", new java.io.File(tmpDir));
+    }
 %>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Client Image Manager</title>
-<link rel="stylesheet" href="<%= request.getContextPath() %>/web.css" />
-<script>
-	function init_page() {
-		<%
-			if(request.getAttribute("success") != null) 
-			{
-				%>
-					opener.location.reload();
-					self.close();
-				<%
-			}
-		%>
-	}
-	
-	function onPicUpload(){
-  	  var obj= document.getElementsByName("clientImage.imagefile")[0];
-      if(obj.value==""){
-      	alert("Please specify picture path and name for upload.");
-      	return false;
-      }	
-	  return true;
-	}
-</script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
+    <title>Client Image Manager</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/web.css"/>
+    <script>
+        // If page is successful, reload the client E-Chart and close the profile picture upload page
+        function init_page() {
+            <%
+                if(request.getAttribute("success") != null)
+                {
+                    %>
+            opener.location.reload();
+            self.close();
+            <%
+        }
+    %>
+        }
+
+        // Makes sure that a picture has been uploaded to the submission box
+        function onPicUpload() {
+            var file = document.getElementById("clientImage").files[0];
+            if (!file) {
+                alert("Please specify a picture path and name for the upload.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 <body bgcolor="#C4D9E7" bgproperties="fixed"
-	onLoad="self.focus();init_page();" topmargin="0" leftmargin="0"
-	rightmargin="0">
+      onLoad="self.focus();init_page();" topmargin="0" leftmargin="0"
+      rightmargin="0">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">Client
-		Image Manager</font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">Client
+            Image Manager</font></th>
+    </tr>
 </table>
 <table BORDER="0" CELLPADDING="1" CELLSPACING="0" WIDTH="100%"
-	BGCOLOR="#C4D9E7">
+       BGCOLOR="#C4D9E7">
 
-	<html:form action="/ClientImage" enctype="multipart/form-data"
-		method="post" onsubmit="return onPicUpload();">
-		<input type="hidden" name="method" value="saveImage" />
-		<%
-	request.getSession().setAttribute("clientId",request.getParameter("demographicNo"));
-	%>
-		<tr valign="top">
-			<td rowspan="2" ALIGN="right" valign="middle"><font
-				face="Verdana" color="#0000FF"><b><i>Add Image </i></b></font></td>
+    <form action="${pageContext.request.contextPath}/ClientImage.do" enctype="multipart/form-data"
+               method="post" onsubmit="return onPicUpload();">
+        <input type="hidden" name="method" value="saveImage"/>
+        <%
+            request.getSession().setAttribute("clientId", request.getParameter("demographicNo"));
+        %>
+        <tr valign="top">
+            <td rowspan="2" ALIGN="right" valign="middle"><font
+                    face="Verdana" color="#0000FF"><b><i>Add Image </i></b></font></td>
 
 
-			<td valign="middle" rowspan="2" ALIGN="left"><html:file
-				property="clientImage" size="30" accept="*.gif,*.jpg" /><br>
-			<html:submit value="Upload" /></td>
-		</tr>
-	</html:form>
+            <td valign="middle" rowspan="2" ALIGN="left">
+                <input type="file" name="clientImage" id="clientImage" size="30" accept="*.gif,*.jpg"/><br>
+                <input type="submit" value="Upload" /></td>
+        </tr>
+    </form>
 </table>
 <br>
 Attention:
@@ -116,11 +116,7 @@ Only gif and jpg image type are allowed for the client photo uploading.
 
 
 <form><input type="button" name="Button" value="cancel"
-	onclick="self.close();" /></form>
-
-
-
-
+             onclick="self.close();"/></form>
 
 
 </body>

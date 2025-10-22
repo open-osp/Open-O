@@ -20,20 +20,20 @@ Calendar._TT = {};
 Calendar._TT["INFO"] = "O kalendarzu";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Time Selector\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
-"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
-"\n\n" +
-"Wybór daty:\n" +
-"- aby wybrać rok użyj przycisków \xab, \xbb\n" +
-"- aby wybrać miesiąc użyj przycisków " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
-"- aby przyspieszyć wybór przytrzymaj wciśnięty przycisk myszy nad ww. przyciskami.";
+    "DHTML Date/Time Selector\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
+    "Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
+    "\n\n" +
+    "Wybór daty:\n" +
+    "- aby wybrać rok użyj przycisków \xab, \xbb\n" +
+    "- aby wybrać miesiąc użyj przycisków " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
+    "- aby przyspieszyć wybór przytrzymaj wciśnięty przycisk myszy nad ww. przyciskami.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Wybór czasu:\n" +
-"- aby zwiększyć wartość kliknij na dowolnym elemencie selekcji czasu\n" +
-"- aby zmniejszyć wartość użyj dodatkowo klawisza Shift\n" +
-"- możesz również poruszać myszkę w lewo i prawo wraz z wciśniętym lewym klawiszem.";
+    "Wybór czasu:\n" +
+    "- aby zwiększyć wartość kliknij na dowolnym elemencie selekcji czasu\n" +
+    "- aby zmniejszyć wartość użyj dodatkowo klawisza Shift\n" +
+    "- możesz również poruszać myszkę w lewo i prawo wraz z wciśniętym lewym klawiszem.";
 
 Calendar._TT["PREV_YEAR"] = "Poprz. rok (przytrzymaj dla menu)";
 Calendar._TT["PREV_MONTH"] = "Poprz. miesiąc (przytrzymaj dla menu)";

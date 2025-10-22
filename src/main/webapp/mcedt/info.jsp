@@ -23,80 +23,80 @@
     Ontario, Canada
 
 --%>
-<%@ page errorPage="error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <head>
-<jsp:include page="head-includes.jsp" />
+    <jsp:include page="head-includes.jsp"/>
 
-<script language="javascript">
-	function goBack(control) {
-		if (control) {
-			control.disabled = true;
-		}
-		window.location.href = "mcedt.do";
-		return false;
-	}
-</script>
-<title>MCEDT: Info</title>
+    <script language="javascript">
+        function goBack(control) {
+            if (control) {
+                control.disabled = true;
+            }
+            window.location.href = "<%= request.getContextPath() %>/mcedt/mcedt.do";
+            return false;
+        }
+    </script>
+    <title>MCEDT: Info</title>
 </head>
 
 <body>
-	<div class="container-fluid">
-		<div class="row-fluid">
+<div class="container-fluid">
+    <div class="row-fluid">
 
-			<h2>Resource Information</h2>
+        <h2>Resource Information</h2>
 
-			<table class="table table-striped  table-condensed">
-				<c:forEach var="d" items="${detail.data}">
-					<tr>
-						<td>ID</td>
-						<td><c:out value="${d.resourceID}" /></td>
-					</tr>
-					<tr>
-						<td>Created</td>
-						<td><fmt:formatDate value="${i:toDate(d.createTimestamp)}" />
-						</td>
-					</tr>
-					<tr>
-						<td>Description</td>
-						<td><c:out value="${d.description}" /></td>
-					</tr>
-					<tr>
-						<td>Resource type</td>
-						<td><c:out value="${d.resourceType}" /></td>
-					</tr>
-					<tr>
-						<td>Modified</td>
-						<td><fmt:formatDate value="${i:toDate(d.modifyTimestamp)}" />
-						</td>
-					</tr>
-					<tr>
-						<td>Result</td>
-						<td><c:out value="${d.result.code}" /> - <c:out
-								value="${d.result.msg}" /></td>
-					</tr>
-					<tr>
-						<td>Status</td>
-						<td><c:out value="${d.status}" /></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td></td>
-					</tr>
-				</c:forEach>
-			</table>
+        <table class="table table-striped  table-condensed">
+            <c:forEach var="d" items="${detail.data}">
+                <tr>
+                    <td>ID</td>
+                    <td><c:out value="${d.resourceID}"/></td>
+                </tr>
+                <tr>
+                    <td>Created</td>
+                    <td><fmt:formatDate value="${i:toDate(d.createTimestamp)}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Description</td>
+                    <td><c:out value="${d.description}"/></td>
+                </tr>
+                <tr>
+                    <td>Resource type</td>
+                    <td><c:out value="${d.resourceType}"/></td>
+                </tr>
+                <tr>
+                    <td>Modified</td>
+                    <td><fmt:formatDate value="${i:toDate(d.modifyTimestamp)}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Result</td>
+                    <td><c:out value="${d.result.code}"/> - <c:out
+                            value="${d.result.msg}"/></td>
+                </tr>
+                <tr>
+                    <td>Status</td>
+                    <td><c:out value="${d.status}"/></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </c:forEach>
+        </table>
 
-			<button onclick="return goBack(this);" class="btn btn-primary">Return</button>
+        <button onclick="return goBack(this);" class="btn btn-primary">Return</button>
 
-		</div><!-- row -->
-	</div><!-- container -->
+    </div><!-- row -->
+</div><!-- container -->
 
 </body>
 </html>

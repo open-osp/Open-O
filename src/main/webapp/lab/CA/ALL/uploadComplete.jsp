@@ -1,21 +1,24 @@
-<%@page contentType="text/xml"%><%@page import="javax.xml.parsers.*, org.w3c.dom.*, oscar.util.*"%><%
- 
-DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-Document doc = builder.newDocument();
+<%@page contentType="text/xml" %>
+<%@page import="javax.xml.parsers.*, org.w3c.dom.*, ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.util.UtilXML" %>
+<%
 
-Element element = doc.createElement("labUploadResult");
-doc.appendChild(element);
-Element outcome = doc.createElement("outcome");
-Element audit = doc.createElement("audit");
-element.appendChild(outcome);
-element.appendChild(audit);
-String s = (String) request.getAttribute("outcome");
-String a = (String) request.getAttribute("audit");
-if (s == null) s = "accessDenied";
-if (a == null) a = "failure";
-outcome.appendChild(doc.createTextNode(s));
-audit.appendChild(doc.createTextNode(a));
-out.write(UtilXML.toXML(doc));
+    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document doc = builder.newDocument();
+
+    Element element = doc.createElement("labUploadResult");
+    doc.appendChild(element);
+    Element outcome = doc.createElement("outcome");
+    Element audit = doc.createElement("audit");
+    element.appendChild(outcome);
+    element.appendChild(audit);
+    String s = (String) request.getAttribute("outcome");
+    String a = (String) request.getAttribute("audit");
+    if (s == null) s = "accessDenied";
+    if (a == null) a = "failure";
+    outcome.appendChild(doc.createTextNode(s));
+    audit.appendChild(doc.createTextNode(a));
+    out.write(UtilXML.toXML(doc));
 %>
 
 <%--

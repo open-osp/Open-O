@@ -1,6 +1,6 @@
 <%@ taglib uri="http://displaytag.sf.net/el" prefix="display-el" %>
-<%@ page import="org.oscarehr.PMmodule.model.ProgramClientRestriction" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramClientRestriction" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 
 <%--
 
@@ -28,25 +28,24 @@
 --%>
 
 
-
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <script>
-	function save() {
-		var maxDays = document.programManagerForm.elements['program.maximumServiceRestrictionDays'].value;
-		if(maxDays != undefined && isNaN(maxDays)) {
-			alert("Maximum length of service restriction '" + maxDays + "' is not a number");
-			return false;
-		}
+    function save() {
+        var maxDays = document.programManagerForm.elements['program.maximumServiceRestrictionDays'].value;
+        if (maxDays != undefined && isNaN(maxDays)) {
+            alert("Maximum length of service restriction '" + maxDays + "' is not a number");
+            return false;
+        }
 
         var defDays = document.programManagerForm.elements['program.defaultServiceRestrictionDays'].value;
-		if(isNaN(defDays)) {
-			alert("Default length of service restrcition '" + defDays + "' is not a number");
-			return false;
-		}
+        if (isNaN(defDays)) {
+            alert("Default length of service restrcition '" + defDays + "' is not a number");
+            return false;
+        }
 
-        document.programManagerForm.method.value='save_restriction_settings';
-		document.programManagerForm.submit()
-	}
+        document.programManagerForm.method.value = 'save_restriction_settings';
+        document.programManagerForm.submit()
+    }
 
 </script>
 
@@ -59,19 +58,21 @@
 </div>
 Please define the following parameters control the behaviour of new service restrictions for this program.
 <table width="100%" border="1" cellspacing="2" cellpadding="3">
-	<tr class="b">
-		<td width="20%">Maximum length of service restriction (in days):</td>
-		<td><html:text property="program.maximumServiceRestrictionDays" size="4" maxlength="4"/>&nbsp;(empty or zero means no maximum)</td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Default service restriction length (in days):</td>
-		<td><html:text property="program.defaultServiceRestrictionDays" size="4" maxlength="4"/></td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<input type="button" value="Save" onclick="return save()" />
-		</td>
-	</tr>
+    <tr class="b">
+        <td width="20%">Maximum length of service restriction (in days):</td>
+        <td><input type="checkbox" name="program.maximumServiceRestrictionDays" size="4" maxlength="4" />&nbsp;(empty or zero
+            means no maximum)
+        </td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Default service restriction length (in days):</td>
+        <td><input type="checkbox" name="program.defaultServiceRestrictionDays" size="4" maxlength="4" /></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <input type="button" value="Save" onclick="return save()"/>
+        </td>
+    </tr>
 </table>
 <br/>
 <div class="tabs" id="tabs">
@@ -84,36 +85,41 @@ Please define the following parameters control the behaviour of new service rest
 <script type="text/javascript">
     function disableRestriction(id) {
         document.programManagerForm.elements['restriction.id'].value = id;
-        document.programManagerForm.method.value='disable_restriction';
+        document.programManagerForm.method.value = 'disable_restriction';
         document.programManagerForm.submit();
     }
 
     function enableRestriction(id) {
         document.programManagerForm.elements['restriction.id'].value = id;
-        document.programManagerForm.method.value='enable_restriction';
+        document.programManagerForm.method.value = 'enable_restriction';
         document.programManagerForm.submit();
     }
 </script>
-<html:hidden property="restriction.id" />
+<input type="hidden" name="id" id="id"/>
 
-<display-el:table class="simple" cellspacing="2" cellpadding="3" id="restriction" name="service_restrictions" export="false" pagesize="0" requestURI="/PMmodule/ProgramManager.do">
-    <display-el:setProperty name="paging.banner.placement" value="bottom" />
-    <display-el:setProperty name="basic.msg.empty_list" value="No service restrictions currently in place for this program." />
+<display-el:table class="simple" cellspacing="2" cellpadding="3" id="restriction" name="service_restrictions"
+                  export="false" pagesize="0" requestURI="/PMmodule/ProgramManager.do">
+    <display-el:setProperty name="paging.banner.placement" value="bottom"/>
+    <display-el:setProperty name="basic.msg.empty_list"
+                            value="No service restrictions currently in place for this program."/>
 
     <display-el:column sortable="false">
         <%
-            String demographicNo = "" + ((ProgramClientRestriction)pageContext.getAttribute("restriction")).getDemographicNo();
+            String demographicNo = "" + ((ProgramClientRestriction) pageContext.getAttribute("restriction")).getDemographicNo();
         %>
-        <caisirole:SecurityAccess accessName="Disable service restriction" accessType="access" providerNo='<%=((Provider)request.getSession().getAttribute("provider")).getProviderNo()%>' demoNo="<%=demographicNo%>" programId='<%=request.getParameter("id")%>'>
-            <a onclick="disableRestriction('<c:out value="${restriction.id}"/>');return false;" href="javascript:void(0);"> Disable </a>
+        <caisirole:SecurityAccess accessName="Disable service restriction" accessType="access"
+                                  providerNo='<%=((Provider)request.getSession().getAttribute("provider")).getProviderNo()%>'
+                                  demoNo="<%=demographicNo%>" programId='<%=request.getParameter("id")%>'>
+            <a onclick="disableRestriction('<c:out value="${restriction.id}"/>');return false;"
+               href="javascript:void(0);"> Disable </a>
         </caisirole:SecurityAccess>
     </display-el:column>
-    <display-el:column property="id" sortable="true" title="Id" />
-    <display-el:column property="client.formattedName" sortable="true" title="Client" />
+    <display-el:column property="id" sortable="true" title="Id"/>
+    <display-el:column property="client.formattedName" sortable="true" title="Client"/>
     <display-el:column property="provider.formattedName" sortable="true" title="Restricted By"/>
-    <display-el:column property="comments" sortable="true" title="Comments" />
-    <display-el:column property="startDate" sortable="true" title="Start date" />
-    <display-el:column property="endDate" sortable="true" title="End date" />
+    <display-el:column property="comments" sortable="true" title="Comments"/>
+    <display-el:column property="startDate" sortable="true" title="Start date"/>
+    <display-el:column property="endDate" sortable="true" title="End date"/>
 </display-el:table>
 
 <br/>
@@ -125,22 +131,27 @@ Please define the following parameters control the behaviour of new service rest
     </table>
 </div>
 
-<display-el:table class="simple" cellspacing="2" cellpadding="3" id="restriction" name="disabled_service_restrictions" export="false" pagesize="0" requestURI="/PMmodule/ProgramManager.do">
-    <display-el:setProperty name="paging.banner.placement" value="bottom" />
-    <display-el:setProperty name="basic.msg.empty_list" value="No service restrictions currently in place for this program." />
+<display-el:table class="simple" cellspacing="2" cellpadding="3" id="restriction" name="disabled_service_restrictions"
+                  export="false" pagesize="0" requestURI="/PMmodule/ProgramManager.do">
+    <display-el:setProperty name="paging.banner.placement" value="bottom"/>
+    <display-el:setProperty name="basic.msg.empty_list"
+                            value="No service restrictions currently in place for this program."/>
 
     <display-el:column sortable="false">
         <%
-            String demographicNo = "" + ((ProgramClientRestriction)pageContext.getAttribute("restriction")).getDemographicNo();
+            String demographicNo = "" + ((ProgramClientRestriction) pageContext.getAttribute("restriction")).getDemographicNo();
         %>
-        <caisirole:SecurityAccess accessName="Create service restriction" accessType="access" providerNo='<%=((Provider)request.getSession().getAttribute("provider")).getProviderNo()%>' demoNo="<%=demographicNo%>" programId='<%=request.getParameter("id")%>'>
-            <a onclick="enableRestriction('<c:out value="${restriction.id}"/>');return false;" href="javascript:void(0);"> Enable </a>
+        <caisirole:SecurityAccess accessName="Create service restriction" accessType="access"
+                                  providerNo='<%=((Provider)request.getSession().getAttribute("provider")).getProviderNo()%>'
+                                  demoNo="<%=demographicNo%>" programId='<%=request.getParameter("id")%>'>
+            <a onclick="enableRestriction('<c:out value="${restriction.id}"/>');return false;"
+               href="javascript:void(0);"> Enable </a>
         </caisirole:SecurityAccess>
     </display-el:column>
-    <display-el:column property="id" sortable="true" title="Id" />
-    <display-el:column property="client.formattedName" sortable="true" title="Client" />
+    <display-el:column property="id" sortable="true" title="Id"/>
+    <display-el:column property="client.formattedName" sortable="true" title="Client"/>
     <display-el:column property="provider.formattedName" sortable="true" title="Restricted By"/>
-    <display-el:column property="comments" sortable="true" title="Comments" />
-    <display-el:column property="startDate" sortable="true" title="Start date" />
-    <display-el:column property="endDate" sortable="true" title="End date" />
+    <display-el:column property="comments" sortable="true" title="Comments"/>
+    <display-el:column property="startDate" sortable="true" title="Start date"/>
+    <display-el:column property="endDate" sortable="true" title="End date"/>
 </display-el:table>

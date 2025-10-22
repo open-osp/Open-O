@@ -24,73 +24,73 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.util.*"%>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="java.util.*" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
-String demographic_no = request.getParameter("demo");
-DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-Map<String,String> demoExt = demographicExtDao.getAllValuesForDemo(Integer.valueOf(demographic_no));
+    String demographic_no = request.getParameter("demo");
+    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+    Map<String, String> demoExt = demographicExtDao.getAllValuesForDemo(Integer.valueOf(demographic_no));
 
 //Creates a hashmap to easily determine description of the ethnicity id in the demoExt map
-Map<String, String> ethnicityMap = new HashMap<String, String>();
-ethnicityMap.put("-1", "Not Set");
-ethnicityMap.put("1", "On-reserve");
-ethnicityMap.put("2", "Off-reserve");
-ethnicityMap.put("3", "Non-status On-reserve");
-ethnicityMap.put("4", "Non-status Off-reserve");
-ethnicityMap.put("5", "Metis");
-ethnicityMap.put("6", "Inuit");
-ethnicityMap.put("11", "Homeless");
-ethnicityMap.put("12", "Out of Country Residents");
-ethnicityMap.put("13", "Other");
+    Map<String, String> ethnicityMap = new HashMap<String, String>();
+    ethnicityMap.put("-1", "Not Set");
+    ethnicityMap.put("1", "On-reserve");
+    ethnicityMap.put("2", "Off-reserve");
+    ethnicityMap.put("3", "Non-status On-reserve");
+    ethnicityMap.put("4", "Non-status Off-reserve");
+    ethnicityMap.put("5", "Metis");
+    ethnicityMap.put("6", "Inuit");
+    ethnicityMap.put("11", "Homeless");
+    ethnicityMap.put("12", "Out of Country Residents");
+    ethnicityMap.put("13", "Other");
 
-pageContext.setAttribute( "demoExt", demoExt );
-pageContext.setAttribute( "ethnicityMap", ethnicityMap);
+    pageContext.setAttribute("demoExt", demoExt);
+    pageContext.setAttribute("ethnicityMap", ethnicityMap);
 
 %>
 <ul>
-<li><strong>First Nation Identity (INAC)</strong></li>
-<li> 
-	<span class="label">Status Number:</span>
-	<span class="info"><c:out value='${ demoExt["statusNum"] }' /></span>
-</li>
-<li>
-	<span class="label">First Nation Community: </span>
-	<span class="info">
-		<c:out value='${param.fncommunity}' />
+    <li><strong>First Nation Identity (INAC)</strong></li>
+    <li>
+        <span class="label">Status Number:</span>
+        <span class="info"><c:out value='${ demoExt["statusNum"] }'/></span>
+    </li>
+    <li>
+        <span class="label">First Nation Community: </span>
+        <span class="info">
+		<c:out value='${param.fncommunity}'/>
 	</span>
-</li>
+    </li>
 
-<li>
-	<span class="label">Family Number: </span> 
-	<span class="info"><c:out value='${ demoExt["fNationFamilyNumber"] }' /></span>
-</li>
+    <li>
+        <span class="label">Family Number: </span>
+        <span class="info"><c:out value='${ demoExt["fNationFamilyNumber"] }'/></span>
+    </li>
 
-<li>
-	<span class="label">Family Position: </span> 
-	<span class="info"><c:out value='${ demoExt["fNationFamilyPosition"] }' /></span>
-</li>
-<li>
-	<span class="label">First Nation Status: </span>
-	<span class="info"><c:out value='${ ethnicityMap[demoExt["ethnicity"]] }' /></span>
-</li>
+    <li>
+        <span class="label">Family Position: </span>
+        <span class="info"><c:out value='${ demoExt["fNationFamilyPosition"] }'/></span>
+    </li>
+    <li>
+        <span class="label">First Nation Status: </span>
+        <span class="info"><c:out value='${ ethnicityMap[demoExt["ethnicity"]] }'/></span>
+    </li>
 
 </ul>

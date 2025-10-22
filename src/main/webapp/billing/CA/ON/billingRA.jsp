@@ -17,59 +17,59 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%   
-if(session.getValue("user") == null) response.sendRedirect("../../../logout.jsp");
+<%
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Billing Reconcilliation</title>
-<script language="JavaScript">
-<!--
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Billing Reconcilliation</title>
+    <script language="JavaScript">
+        <!--
 
 
-//-->
+        //-->
 
-function onSubmit(){   
-   if ( document.form1.file1.value == "!" ){
-      alert("You must select a file before creating a report");
-      return false;
-   }
-   return true;
-}
-</SCRIPT>
+        function onSubmit() {
+            if (document.form1.file1.value == "!") {
+                alert("You must select a file before creating a report");
+                return false;
+            }
+            return true;
+        }
+    </SCRIPT>
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000" onLoad="setfocus()">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align='CENTER'><font face="Arial, Helvetica, sans-serif"
-			color="#FFFFFF"> Billing Reconcilliation </font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align='CENTER'><font face="Arial, Helvetica, sans-serif"
+                                 color="#FFFFFF"> Billing Reconcilliation </font></th>
+    </tr>
 </table>
 
 <p>
 <table width="400" border="0">
-	<form name="form1" method="post"
-		action="../../../servlet/oscar.DocumentUploadServlet"
-		ENCTYPE="multipart/form-data" onsubmit="return onSubmit();">
-	<tr>
-		<td width="181"><b><font face="Arial, Helvetica, sans-serif"
-			size="2">Select diskette </font></b></td>
-		<td width="209"><font face="Arial, Helvetica, sans-serif"
-			size="2"> <input type="file" name="file1" value=""></font></td>
-	</tr>
-	<tr>
-		<td width="181"><input type="submit" name="Submit"
-			value="Create Report"></td>
-		<td width="209">&nbsp;</td>
-	</tr>
-	</form>
+    <form name="form1" method="post"
+          action="<%= request.getContextPath() %>/servlet/ca.openosp.DocumentUploadServlet"
+          ENCTYPE="multipart/form-data" onsubmit="return onSubmit();">
+        <tr>
+            <td width="181"><b><font face="Arial, Helvetica, sans-serif"
+                                     size="2">Select diskette </font></b></td>
+            <td width="209"><font face="Arial, Helvetica, sans-serif"
+                                  size="2"> <input type="file" name="file1" value=""></font></td>
+        </tr>
+        <tr>
+            <td width="181"><input type="submit" name="Submit"
+                                   value="Create Report"></td>
+            <td width="209">&nbsp;</td>
+        </tr>
+    </form>
 </table>
 
 <p><font face="Arial, Helvetica, sans-serif" size="2">*
-Select a file first or click button 'Create Report' directly.</font></p>
+    Select a file first or click button 'Create Report' directly.</font></p>
 
 </body>
 </html>

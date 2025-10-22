@@ -18,7 +18,7 @@
 <tomcat-users>
 <!--
   NOTE:  By default, no user is included in the "manager-gui" role required
-  to operate the "/manager/html" web application.  If you wish to use this app,
+  to operate the "/manager/html" www application.  If you wish to use this app,
   you must define such a user - the username and password are arbitrary.
 -->
 <!--

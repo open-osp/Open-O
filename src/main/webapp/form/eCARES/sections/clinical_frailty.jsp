@@ -31,35 +31,40 @@
         <table id="clinical-frailty-score-table" class="h-full table table-condensed table-striped">
             <tr>
                 <th width="50%">Scale</th>
-                <th width="25%"><span class="mandatory tt" data-toggle="tooltip" data-field-name="clinical_frailty_score_patient"
-                        title="Clinical Frailty Scale - patient">Pt.</span></th>
+                <th width="25%"><span class="mandatory tt" data-toggle="tooltip"
+                                      data-field-name="clinical_frailty_score_patient"
+                                      title="Clinical Frailty Scale - patient">Pt.</span></th>
                 <th width="25%"><span class="tt" data-toggle="tooltip"
-                        data-field-name="clinical_frailty_score_care_giver"
-                        title="Clinical Frailty Scale - caregiver" rel="cg"
-                        data-names="very_fit,well,well_w_comorbid,vulnerable,mildly_frail,moderately_frail,severely_frail,very_severely_ill,terminall_ill">CG</span>
+                                      data-field-name="clinical_frailty_score_care_giver"
+                                      title="Clinical Frailty Scale - caregiver" rel="cg"
+                                      data-names="very_fit,well,well_w_comorbid,vulnerable,mildly_frail,moderately_frail,severely_frail,very_severely_ill,terminall_ill">CG</span>
                 </th>
             </tr>
             <tr>
                 <td class="tt" title="Robust, active, energetic and motivated, among the fittest for
-                their age.">1. Very Fit</td>
+                their age.">1. Very Fit
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="1"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="1"></td>
             </tr>
             <tr>
                 <td class="tt" title="No active disease symptoms but less fit than category one. Very
-                active only occasionally (e.g. Seasonally).">2. Well</td>
+                active only occasionally (e.g. Seasonally).">2. Well
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="2"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="2"></td>
             </tr>
             <tr>
                 <td class="tt" height="60" title="Medical problems are well
-                controlled, not regularly active (beyond routine walking).">3. Well With Rx'd co-morbid disease</td>
+                controlled, not regularly active (beyond routine walking).">3. Well With Rx'd co-morbid disease
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="3"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="3"></td>
             </tr>
             <tr>
                 <td class="tt" title="Not dependent on others for daily help but
-                symptoms limit activities.">4. Apparently vulnerable</td>
+                symptoms limit activities.">4. Apparently vulnerable
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="4"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="4"></td>
             </tr>
@@ -68,7 +73,8 @@
                 (finances, transportation, heavy housework, medications, shopping,
                 cooking). May need help walking outside alone. Suggest initiating
                 discussion around care planning and encourage patient to assign an
-                SDM and POA.">5. Mildly Frail</td>
+                SDM and POA.">5. Mildly Frail
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="5"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="5"></td>
             </tr>
@@ -76,7 +82,8 @@
                 <td class="tt" title="Needs help with all outside activities and keeping
                 house, often problems with stairs. Needs help with bathing and may
                 need minimal assistance with dressing. Suggest involving patient and
-                SDM in goals of care planning in case of future acute health crises.">6. Moderately Frail</td>
+                SDM in goals of care planning in case of future acute health crises.">6. Moderately Frail
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="6"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="6"></td>
             </tr>
@@ -84,7 +91,8 @@
                 <td class="tt" title="Completely dependent for personal care (due to
                 physical and/or cognitive deficits). Stable and not at risk of dying within
                 6 months. Consider the context of routine recommendations and
-                discuss focusing on quality of life." width="55%">7. Severely Frail</td>
+                discuss focusing on quality of life." width="55%">7. Severely Frail
+                </td>
                 <td><input type="radio" name="clinical_frailty_score_patient" autocomplete="off" value="7"></td>
                 <td><input type="radio" name="clinical_frailty_score_care_giver" autocomplete="off" value="7"></td>
             </tr>

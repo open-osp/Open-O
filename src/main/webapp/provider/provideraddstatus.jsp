@@ -24,55 +24,56 @@
 
 --%>
 
-<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat,org.oscarehr.event.EventService"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.MyDateFormat,ca.openosp.openo.event.EventService" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 <%
-  //if action is good, then give me the result
-    String[] param =new String[3];
-    param[0]=request.getParameter("status")+ request.getParameter("statusch");
-    param[1]=(String)session.getAttribute("user");
-    param[2]=request.getParameter("appointment_no");
+    //if action is good, then give me the result
+    String[] param = new String[3];
+    param[0] = request.getParameter("status") + request.getParameter("statusch");
+    param[1] = (String) session.getAttribute("user");
+    param[2] = request.getParameter("appointment_no");
     Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
     appointmentArchiveDao.archiveAppointment(appt);
-    int rowsAffected=0;
-    if(appt != null) {
-  	  appt.setStatus(request.getParameter("status") + request.getParameter("statusch"));
-  	  appt.setLastUpdateUser((String)session.getAttribute("user"));
-  	  appointmentDao.merge(appt);
-  	  rowsAffected=1;
+    int rowsAffected = 0;
+    if (appt != null) {
+        appt.setStatus(request.getParameter("status") + request.getParameter("statusch"));
+        appt.setLastUpdateUser((String) session.getAttribute("user"));
+        appointmentDao.merge(appt);
+        rowsAffected = 1;
     }
-    
+
     EventService eventService = SpringUtils.getBean(EventService.class);//This is when the icon is clicked in the appt screen
-	eventService.appointmentStatusChanged(this,request.getParameter("appointment_no"), request.getParameter("provider_no"), request.getParameter("statusch"));
-    
+    eventService.appointmentStatusChanged(this, request.getParameter("appointment_no"), request.getParameter("provider_no"), request.getParameter("statusch"));
+
     if (rowsAffected == 1) {//add_record
-      int view=0;
-      if(request.getParameter("view")!=null) view=Integer.parseInt(request.getParameter("view")); //0-multiple views, 1-single view
-      String strView=(view==0)?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") );
-      String strViewAll=request.getParameter("viewall")==null?"0":(request.getParameter("viewall")) ;
-      String displaypage="providercontrol.jsp?year="+request.getParameter("year")+"&month="+request.getParameter("month")+"&day="+request.getParameter("day") +"&view="+  strView  +"&displaymode=day&dboperation=searchappointmentday" +"&viewall=" +strViewAll+"&x="+request.getParameter("x")+"&y="+request.getParameter("y");
-    if (request.getParameter("viewWeek") != null) {
-       displaypage += "&provider_no=" + request.getParameter("provider_no");
-    }
-    if(true) {
-      out.clear();
-    	response.sendRedirect(displaypage);
-      //pageContext.forward(displaypage); //forward request&response to the target page
-      return;
-    }
-  } else {
+        int view = 0;
+        if (request.getParameter("view") != null)
+            view = Integer.parseInt(request.getParameter("view")); //0-multiple views, 1-single view
+        String strView = (view == 0) ? "0" : ("1&curProvider=" + request.getParameter("curProvider") + "&curProviderName=" + request.getParameter("curProviderName"));
+        String strViewAll = request.getParameter("viewall") == null ? "0" : (request.getParameter("viewall"));
+        String displaypage = "providercontrol.jsp?year=" + request.getParameter("year") + "&month=" + request.getParameter("month") + "&day=" + request.getParameter("day") + "&view=" + strView + "&displaymode=day&dboperation=searchappointmentday" + "&viewall=" + strViewAll + "&x=" + request.getParameter("x") + "&y=" + request.getParameter("y");
+        if (request.getParameter("viewWeek") != null) {
+            displaypage += "&provider_no=" + request.getParameter("provider_no");
+        }
+        if (true) {
+            out.clear();
+            response.sendRedirect(displaypage);
+            //pageContext.forward(displaypage); //forward request&response to the target page
+            return;
+        }
+    } else {
 %>
 <p>
-<h1><bean:message key="AddProviderStatus.msgAddFailure" /></h1>
+<h1><fmt:setBundle basename="oscarResources"/><fmt:message key="AddProviderStatus.msgAddFailure"/></h1>
 
 <%
-  }
+    }
 %>

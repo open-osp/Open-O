@@ -23,28 +23,28 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="oscar.oscarRx.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
 <%
-String scriptNo = request.getParameter("scriptNo");
-String comment  = request.getParameter("comment");
-if ( !"null".equalsIgnoreCase(scriptNo) && scriptNo != null && comment != null && !"null".equalsIgnoreCase(comment) ){
-   RxPrescriptionData rxData = new RxPrescriptionData();
-   rxData.setScriptComment( scriptNo, comment);
-}
+    String scriptNo = request.getParameter("scriptNo");
+    String comment = request.getParameter("comment");
+    if (!"null".equalsIgnoreCase(scriptNo) && scriptNo != null && comment != null && !"null".equalsIgnoreCase(comment)) {
+        RxPrescriptionData rxData = new RxPrescriptionData();
+        rxData.setScriptComment(scriptNo, comment);
+    }
 
 %>

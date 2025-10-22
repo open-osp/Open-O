@@ -24,19 +24,17 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <hr width="100%">
 <table border="0" cellspacing="0" cellpadding="0" width="100%" class="noprint">
-	<tr>
-		<td><a href=# onClick="javascript:history.go(-1);return false;">
-		<img src="../images/leftarrow.gif" border="0" width="25" height="20"
-			align="absmiddle"> <bean:message
-			key="demographic.zfooterbackclose.btnBack" /> </a></td>
-		<td align="right"><a href="" onClick="self.close();"><bean:message
-			key="demographic.zfooterbackclose.btnClose" /><img
-			src="../images/rightarrow.gif" border="0" width="25" height="20"
-			align="absmiddle"></a></td>
-	</tr>
+    <tr>
+        <td><a href=# onClick="javascript:history.go(-1);return false;">
+            <img src="<%= request.getContextPath() %>/images/leftarrow.gif" border="0" width="25" height="20"
+                 align="absmiddle"> <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.zfooterbackclose.btnBack"/> </a></td>
+        <td align="right"><a href="" onClick="self.close();"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.zfooterbackclose.btnClose"/><img
+                src="<%= request.getContextPath() %>/images/rightarrow.gif" border="0" width="25" height="20"
+                align="absmiddle"></a></td>
+    </tr>
 </table>

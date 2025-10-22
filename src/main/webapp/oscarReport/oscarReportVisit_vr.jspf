@@ -31,7 +31,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
 if(!authed) {
@@ -39,12 +39,13 @@ if(!authed) {
 }
 %>
 
-<%@page import="org.oscarehr.common.dao.ReportProviderDao" %>
-<%@page import="org.oscarehr.common.model.ReportProvider" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="oscar.MyDateFormat" %>
+<%@page import="ca.openosp.openo.commn.dao.ReportProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.ReportProvider" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.MyDateFormat" %>
 <%@page import="java.sql.ResultSet" %> 
 <%@page import="java.math.BigDecimal" %>
+<%@ page import="ca.openosp.openo.report.data.VisitReportData" %>
 
 <table class="table table-bordered table-striped table-hover table-condensed" style="font-size:12px;">
 	<thead>
@@ -145,7 +146,7 @@ for(Object[] result : reportProviderDao.search_reportprovider("visitreport", ohi
     p_no = provider.getProviderNo();
     team = rp.getTeam();
 
-    oscar.oscarReport.data.VisitReportData vrd = new oscar.oscarReport.data.VisitReportData();
+    VisitReportData vrd = new VisitReportData();
     vrd.setDateBegin(dateBegin);
     vrd.setDateEnd(dateEnd);
     vrd.setProviderNo(p_no);

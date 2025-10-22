@@ -24,172 +24,173 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="../provider/errorpage.jsp"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.model.MyGroupPrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
-<%@ page import="org.oscarehr.common.model.ProviderData"%>
-<%@ page import="org.oscarehr.common.dao.ProviderDataDao"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+
+<%@ page import="java.util.*,java.sql.*,java.util.ResourceBundle" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.commn.model.ProviderData" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDataDao" %>
 
 <%
-	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
-	ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
+    MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
+    ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
 
     String curProvider_no = (String) session.getAttribute("user");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 
-    boolean isSiteAccessPrivacy=false;
+    boolean isSiteAccessPrivacy = false;
 %>
 
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r" reverse="false">
-	<%isSiteAccessPrivacy=true; %>
+    <%isSiteAccessPrivacy = true; %>
 </security:oscarSec>
 
 <!DOCTYPE html>
-<html:html lang="en">
-<head>
+<html>
+    <head>
 
-<title><bean:message key="admin.adminnewgroup.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminnewgroup.title"/></title>
 
-<script>
+        <script>
 
-function setfocus() {
-  this.focus();
-  document.UPDATEPRE.mygroup_no.focus();
-  document.UPDATEPRE.mygroup_no.select();
-}
+            function setfocus() {
+                this.focus();
+                document.UPDATEPRE.mygroup_no.focus();
+                document.UPDATEPRE.mygroup_no.select();
+            }
 
-function validate() {
-  group = document.UPDATEPRE.mygroup_no.value;
+            function validate() {
+                group = document.UPDATEPRE.mygroup_no.value;
 
-  if (group.length <=0 || group <= " ") {
-     alert("<bean:message key="admin.adminNewGroup.msgGroupIsRequired"/>");
+                if (group.length <= 0 || group <= " ") {
+                    alert("<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminNewGroup.msgGroupIsRequired"/>");
 
-     return false;
-  }
-  else {
-  	var checked=false;
-  	var checkboxes = document.getElementsByName("data");
-	var x=0;
-		for(x=0;x<checkboxes.length;x++) {
-			if(checkboxes[x].checked==true) {
-				checked=true;
-			}
-		}
-		if(checked==false) {
-			alert('You must choose a provider');
-			return false;
-		}
-		return true;
-  	}
-}
-</script>
+                    return false;
+                } else {
+                    var checked = false;
+                    var checkboxes = document.getElementsByName("data");
+                    var x = 0;
+                    for (x = 0; x < checkboxes.length; x++) {
+                        if (checkboxes[x].checked == true) {
+                            checked = true;
+                        }
+                    }
+                    if (checked == false) {
+                        alert('You must choose a providers');
+                        return false;
+                    }
+                    return true;
+                }
+            }
+        </script>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+    </head>
 
 
-<body onload="setfocus();">
-<%
-  ResourceBundle properties = ResourceBundle.getBundle("oscarResources", request.getLocale());
+    <body onload="setfocus();">
+    <%
+        ResourceBundle properties = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
-  if(request.getParameter("submit")!=null && request.getParameter("submit").equals(properties.getString("admin.admindisplaymygroup.btnSubmit1")) ) { //delete the group member
-    int rowsAffected=0;
-    String[] param =new String[2];
-    StringBuffer strbuf=new StringBuffer();
+        if (request.getParameter("submit") != null && request.getParameter("submit").equals(properties.getString("admin.admindisplaymygroup.btnSubmit1"))) { //delete the group member
+            int rowsAffected = 0;
+            String[] param = new String[2];
+            StringBuffer strbuf = new StringBuffer();
 
-  	for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
-	    strbuf=new StringBuffer(e.nextElement().toString());
-  		if( strbuf.toString().indexOf("displaymode")!=-1 || strbuf.toString().indexOf("submit")!=-1) continue;
+            for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+                strbuf = new StringBuffer(e.nextElement().toString());
+                if (strbuf.toString().indexOf("displaymode") != -1 || strbuf.toString().indexOf("submit") != -1)
+                    continue;
 
-  		param[0]=request.getParameter(strbuf.toString());
-	    param[1]=strbuf.toString().substring( param[0].length() );
-	    myGroupDao.deleteGroupMember(param[0],param[1]);
-      	rowsAffected = 1;
-    }
-  }
-%>
+                param[0] = request.getParameter(strbuf.toString());
+                param[1] = strbuf.toString().substring(param[0].length());
+                myGroupDao.deleteGroupMember(param[0], param[1]);
+                rowsAffected = 1;
+            }
+        }
+    %>
 
-<FORM NAME="UPDATEPRE" METHOD="post" ACTION="adminsavemygroup.jsp" onsubmit="return validate();">
+    <FORM NAME="UPDATEPRE" METHOD="post" ACTION="adminsavemygroup.jsp" onsubmit="return validate();">
 
-<%if(request.getParameter("submit")!=null && request.getParameter("submit").equals(properties.getString("admin.admindisplaymygroup.btnSubmit1")) ) { %>
-<br>
-    <div class="alert alert-success">
- 		<strong>Success!</strong> record(s) have been deleted.
-    </div>
-    
-    <a href="admindisplaymygroup.jsp" class="btn btn-primary">View Group List</a>
+        <%if (request.getParameter("submit") != null && request.getParameter("submit").equals(properties.getString("admin.admindisplaymygroup.btnSubmit1"))) { %>
+        <br>
+        <div class="alert alert-success">
+            <strong>Success!</strong> record(s) have been deleted.
+        </div>
 
-	<a href="adminnewgroup.jsp" class="btn"><bean:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
-<%}else{%>    
-    
-<h3><bean:message key="admin.adminnewgroup.description" /></h3>
+        <a href="admindisplaymygroup.jsp" class="btn btn-primary">View Group List</a>
 
+        <a href="adminnewgroup.jsp" class="btn"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
+        <%} else {%>
 
-					
-				 
-					<input type="text" name="mygroup_no" size="10" maxlength="10" placeholder="<bean:message key="admin.adminmygroup.formGroupNo" />" title="Enter an existing or new group name.">
-					<small>(Max. 10 chars.)</small>
-					
-		<table class="table table-condensed table-hover">	
-		<thead>
-			<tr class="btn-inverse">
-				<th></th>
-				<th>
-					<bean:message key="admin.admindisplaymygroup.formProviderName" />
-				</th>
-			</tr>
-		</thead>
-			
-		<tbody>
-<%
-	// find all active providers
-	int i=0;
-	List<ProviderData> providerList = providerDao.findAll(false);
-   
-   for(ProviderData provider : providerList) {
-		i++;
-%>
-			<tr class="<%=i%2==0?"":"info"%>">
-				<td width="20px" ALIGN="center">
-				<input type="checkbox" name="data" value="<%=i%>"> 
-				<input type="hidden" name="provider_no<%=i%>" value="<%= provider.getId() %>"> 
-				<input type="hidden" name="last_name<%=i%>" value='<%= provider.getLastName() %>'> 
-				<input type="hidden" name="first_name<%=i%>" value='<%= provider.getFirstName() %>'>
-				</td>
-				
-				<td><%= provider.getLastName() %>, <%= provider.getFirstName() %></td>
-
-			</tr>
-<%
-   }
-%>
-		</tbody>
-		</table>
+        <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminnewgroup.description"/></h3>
 
 
-<input type="submit" name="Submit"	class="btn btn-primary" value="<bean:message key="admin.adminnewgroup.btnSubmit"/>">
+        <input type="text" name="mygroup_no" size="10" maxlength="10"
+               placeholder="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminmygroup.formGroupNo"/>"
+               title="Enter an existing or new group name.">
+        <small>(Max. 10 chars.)</small>
 
-<a href="admindisplaymygroup.jsp" class="btn btn-default">Cancel</a>
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr class="btn-inverse">
+                <th></th>
+                <th>
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.formProviderName"/>
+                </th>
+            </tr>
+            </thead>
 
-</FORM>
+            <tbody>
+            <%
+                // find all active providers
+                int i = 0;
+                List<ProviderData> providerList = providerDao.findAll(false);
 
-<%} %>
+                for (ProviderData provider : providerList) {
+                    i++;
+            %>
+            <tr class="<%=i%2==0?"":"info"%>">
+                <td width="20px" ALIGN="center">
+                    <input type="checkbox" name="data" value="<%=i%>">
+                    <input type="hidden" name="provider_no<%=i%>" value="<%= provider.getId() %>">
+                    <input type="hidden" name="last_name<%=i%>" value='<%= provider.getLastName() %>'>
+                    <input type="hidden" name="first_name<%=i%>" value='<%= provider.getFirstName() %>'>
+                </td>
+
+                <td><%= provider.getLastName() %>, <%= provider.getFirstName() %>
+                </td>
+
+            </tr>
+            <%
+                }
+            %>
+            </tbody>
+        </table>
 
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+        <input type="submit" name="Submit" class="btn btn-primary"
+               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminnewgroup.btnSubmit"/>">
 
-<script>
-$( document ).ready(function() {
-parent.parent.resizeIframe($('html').height());      
+        <a href="admindisplaymygroup.jsp" class="btn btn-default">Cancel</a>
 
-});
-</script>
-</body>
-</html:html>
+    </FORM>
+
+    <%} %>
+
+
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            parent.parent.resizeIframe($('html').height());
+
+        });
+    </script>
+    </body>
+</html>

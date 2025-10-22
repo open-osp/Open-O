@@ -8,7 +8,7 @@ case $command in
     ;;
 
   start)
-    catalina.sh start
+    catalina.sh jpda start
 
     sleep 2
     # Save PID to file tomcat.pid

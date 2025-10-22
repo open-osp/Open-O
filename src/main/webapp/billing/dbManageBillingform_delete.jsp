@@ -24,31 +24,31 @@
 
 --%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
-<%@page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 
 <%
-	CtlBillingServiceDao billingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
-	CtlDiagCodeDao diagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
+    CtlBillingServiceDao billingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+    CtlDiagCodeDao diagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
 
-	String typeid = request.getParameter("servicetype");
-	
-	for(CtlBillingService b : billingServiceDao.findByServiceType(typeid)) {
-		billingServiceDao.remove(b.getId());
-	}
-	
-	for(CtlDiagCode d: diagCodeDao.findByServiceType(typeid)) {
-		diagCodeDao.remove(d.getId());
-	}
+    String typeid = request.getParameter("servicetype");
+
+    for (CtlBillingService b : billingServiceDao.findByServiceType(typeid)) {
+        billingServiceDao.remove(b.getId());
+    }
+
+    for (CtlDiagCode d : diagCodeDao.findByServiceType(typeid)) {
+        diagCodeDao.remove(d.getId());
+    }
 %>
 <script LANGUAGE="JavaScript">
-      self.close();
- 	self.opener.refresh();
+    self.close();
+    self.opener.refresh();
 </script>
 

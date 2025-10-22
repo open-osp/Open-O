@@ -25,74 +25,74 @@
 --%>
 
 <%@ page
-	import="java.util.*, org.w3c.dom.*, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+        import="java.util.*, org.w3c.dom.*, ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_con");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_con");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
 
-   String curUser_no =  (String) session.getAttribute("user");
-  
-   String jobId          = (String) request.getAttribute("jobId");
-   String requestId      = (String) request.getAttribute("requestId");
-   String oscarFaxError  = (String) request.getAttribute("oscarFaxError"); 
+    String curUser_no = (String) session.getAttribute("user");
+
+    String jobId = (String) request.getAttribute("jobId");
+    String requestId = (String) request.getAttribute("requestId");
+    String oscarFaxError = (String) request.getAttribute("oscarFaxError");
 
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>OscarFax - Consultations</title>
-<html:base />
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>OscarFax - Consultations</title>
+    <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/encounterStyles.css">
 
 </head>
 
 <body class="BodyStyle" vlink="#0000FF">
 <!--  -->
 <table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Fax</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td>consultation Requests</td>
-				<td></td>
-				<td style="text-align: right"><oscar:help keywords="consult" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')">About</a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')">License</a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<%if (jobId == null){%> Your fax has not been accepted. <br>
-		Fax Error Message : <%=oscarFaxError%> <%}else{%> Your fax has been
-		accepted. <br>
-		request Id = <%=requestId%> <br>
-		job Id = <%= jobId %> <%}%>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
-		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
-	</tr>
+    <tr class="MainTableTopRow">
+        <td class="MainTableTopRowLeftColumn">Fax</td>
+        <td class="MainTableTopRowRightColumn">
+            <table class="TopStatusBar">
+                <tr>
+                    <td>consultation Requests</td>
+                    <td></td>
+                    <td style="text-align: right"><a
+                            href="javascript:popupStart(300,400,'About.jsp')">About</a> | <a
+                            href="javascript:popupStart(300,400,'License.jsp')">License</a></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td class="MainTableLeftColumn">&nbsp;</td>
+        <td class="MainTableRightColumn">
+            <%if (jobId == null) {%> Your fax has not been accepted. <br>
+            Fax Error Message : <%=oscarFaxError%> <%} else {%> Your fax has been
+            accepted. <br>
+            request Id = <%=requestId%> <br>
+            job Id = <%= jobId %> <%}%>
+        </td>
+    </tr>
+    <tr>
+        <td class="MainTableBottomRowLeftColumn">&nbsp;</td>
+        <td class="MainTableBottomRowRightColumn">&nbsp;</td>
+    </tr>
 </table>
 </body>
 </html>

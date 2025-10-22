@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,11 +24,10 @@
 --%>
 
 
-
-<%@ page language="java" isErrorPage="true"%>
+<%@ page language="java" isErrorPage="true" %>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Unauthenticated</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Unauthenticated</title>
 </head>
 <h2>Authentication Error.</h2>
 

@@ -25,43 +25,45 @@
 --%>
 
 <%
-  if(session.getValue("user") == null)    response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>PRINT SETTING</title>
-<script language="JavaScript">
-<!--		
-function setfocus() {
-  this.focus();
-  document.printsetting.x.focus();
-  document.printsetting.x.select();  
-}
-function onSetting() {
-  opener.serviceform.oox.value=document.printsetting.x.value;
-  opener.serviceform.ooy.value=document.printsetting.y.value;
-  window.close();
-}
-//-->
-</SCRIPT>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>PRINT SETTING</title>
+    <script language="JavaScript">
+        <!--
+        function setfocus() {
+            this.focus();
+            document.printsetting.x.focus();
+            document.printsetting.x.select();
+        }
+
+        function onSetting() {
+            opener.serviceform.oox.value = document.printsetting.x.value;
+            opener.serviceform.ooy.value = document.printsetting.y.value;
+            window.close();
+        }
+
+        //-->
+    </SCRIPT>
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0"
-	bgcolor="gold">
+      bgcolor="gold">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER><font face="Arial, Helvetica, sans-serif"
-			color="#FFFFFF"> PRINT SETTING</font></th>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER><font face="Arial, Helvetica, sans-serif"
+                               color="#FFFFFF"> PRINT SETTING</font></th>
 </table>
 
 <center>
-<form name="printsetting" method="post" action="">
-<p>X : <input type="text" name="x" size="10" value="0"> <br>
-Y : <input type="text" name="y" size="10" value="0"></p>
-<p><input type="button" name="Submit" value=" Exit "
-	onClick="onSetting()"></p>
-</form>
+    <form name="printsetting" method="post" action="">
+        <p>X : <input type="text" name="x" size="10" value="0"> <br>
+            Y : <input type="text" name="y" size="10" value="0"></p>
+        <p><input type="button" name="Submit" value=" Exit "
+                  onClick="onSetting()"></p>
+    </form>
 </center>
 
 </BODY>

@@ -24,19 +24,19 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart"
-	rights="r" reverse="<%=true%>">
-	<%response.sendRedirect("../logout.jsp");%>
+                   rights="r" reverse="<%=true%>">
+    <%response.sendRedirect(request.getContextPath() + "/logout.jsp");%>
 </security:oscarSec>
 <%
     // forward to the page 'form_link'
-    if(true) {
+    if (true) {
         out.clear();
-        pageContext.forward(request.getParameter("form_link") + "?demographic_no=" + request.getParameter("demographic_no") ); //+ "&study_no=" + request.getParameter("study_no") ); //forward request&response to the target page "&formId=" + request.getParameter("formId") +
+        pageContext.forward(request.getParameter("form_link") + "?demographic_no=" + request.getParameter("demographic_no")); //+ "&study_no=" + request.getParameter("study_no") ); //forward request&response to the target page "&formId=" + request.getParameter("formId") +
         return;
     }
 %>

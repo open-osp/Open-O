@@ -24,66 +24,69 @@
 
 --%>
 <!DOCTYPE html>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-	objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+                   objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementFlowSheet" %>
-<%@ page import="org.oscarehr.common.model.Flowsheet" %>
-<%@ page import="org.oscarehr.common.dao.FlowsheetDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.commn.model.Flowsheet" %>
+<%@ page import="ca.openosp.openo.commn.dao.FlowsheetDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 
 <%
-	String method = request.getParameter("method");
-	if(method != null ) {
-		if(method.equals("disable")) {
-			String name = request.getParameter("name");
-			MeasurementTemplateFlowSheetConfig.getInstance().disableFlowsheet(name);
-		}
-		if(method.equals("enable")) {
-			String name = request.getParameter("name");
-			MeasurementTemplateFlowSheetConfig.getInstance().enableFlowsheet(name);
-		}
-		response.sendRedirect("manageFlowsheets.jsp");
-	}
+    String method = request.getParameter("method");
+    if (method != null) {
+        if (method.equals("disable")) {
+            String name = request.getParameter("name");
+            MeasurementTemplateFlowSheetConfig.getInstance().disableFlowsheet(name);
+        }
+        if (method.equals("enable")) {
+            String name = request.getParameter("name");
+            MeasurementTemplateFlowSheetConfig.getInstance().enableFlowsheet(name);
+        }
+        response.sendRedirect("manageFlowsheets.jsp");
+    }
 
 %>
-<html:html lang="en">
-<head>
-<script src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Manage Flowsheets</title>
 
-<script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
+<fmt:setBundle basename="oscarResources"/>
 
-<link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css"	rel="stylesheet" type="text/css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
+<html>
+    <head>
+        <script src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Manage Flowsheets</title>
+
+        <script src="<%=request.getContextPath()%>/share/javascript/prototype.js"></script>
+
+        <link href="<%=request.getContextPath()%>/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="<%=request.getContextPath()%>/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css">
+        <link rel="stylesheet" href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css">
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-	<script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
+        <script src="<%=request.getContextPath()%>/js/bootstrap.js"></script>
 
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
 
-<script	src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
+        <script src="<%=request.getContextPath()%>/share/javascript/Oscar.js"></script>
 
 	<style>
 		table {
@@ -94,17 +97,17 @@
 		}
 	</style>
 
-<script>
-jQuery.noConflict();
-jQuery(function() {
-    jQuery( document ).tooltip();
-  });
-</script>
+        <script>
+            jQuery.noConflict();
+            jQuery(function () {
+                jQuery(document).tooltip();
+            });
+        </script>
 
 
-</head>
+    </head>
 
-<body>
+    <body>
 
 <div class="container-fluid">
 <div class="navbar" id="demoHeader"><div class="navbar-inner">
@@ -112,38 +115,38 @@ jQuery(function() {
 </div></div>
 
 			<table class="table table-striped table-condensed table-hover">
-                <thead>
-				<tr>
-					<td><b>Name</b></td>
-					<td><b>Universal</B></td>
-					<td><b>Dx Triggers</B></td>
-					<td><b>Program Triggers</B></td>
-					<td><b>Type</b></td>
-					<td><b>Enabled</b></td>
-					<td><b>Actions</b></td>
-				</tr>
-                </thead>
-                <tbody>
-			<%
-			Hashtable<String, String> systemFlowsheets = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetDisplayNames();
-				for(String name:systemFlowsheets.keySet()) {
-					String displayName = systemFlowsheets.get(name);
-					MeasurementFlowSheet flowSheet = MeasurementTemplateFlowSheetConfig.getInstance().getFlowSheet(name);
+        <thead>
+        <tr>
+            <td><b>Name</b></td>
+            <td><b>Universal</B></td>
+            <td><b>Dx Triggers</B></td>
+            <td><b>Program Triggers</B></td>
+            <td><b>Type</b></td>
+            <td><b>Enabled</b></td>
+            <td><b>Actions</b></td>
+        </tr>
+        </thead>
+        <tbody>
+        <%
+            Hashtable<String, String> systemFlowsheets = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetDisplayNames();
+            for (String name : systemFlowsheets.keySet()) {
+                String displayName = systemFlowsheets.get(name);
+                MeasurementFlowSheet flowSheet = MeasurementTemplateFlowSheetConfig.getInstance().getFlowSheet(name);
 
-					//load from db to know if it's enabled or not.
-					Flowsheet fs = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetSettings().get(flowSheet.getName());
-					boolean enabled=true;
-					if(fs != null) {
-						enabled = fs.isEnabled();
-					}
-					String type="System";
-					if(fs!=null) {
-						type = (fs.isExternal())?"System":"Custom";
-					}
+                //load from db to know if it's enabled or not.
+                Flowsheet fs = MeasurementTemplateFlowSheetConfig.getInstance().getFlowsheetSettings().get(flowSheet.getName());
+                boolean enabled = true;
+                if (fs != null) {
+                    enabled = fs.isEnabled();
+                }
+                String type = "System";
+                if (fs != null) {
+                    type = (fs.isExternal()) ? "System" : "Custom";
+                }
 
 
-					if(!flowSheet.getDisplayName().equals("Health Tracker")){
-					%>
+                if (!flowSheet.getDisplayName().equals("Health Tracker")) {
+        %>
 
 						<tr>
 							<td><%=Encode.forHtmlContent(flowSheet.getDisplayName())%></td>
@@ -174,11 +177,11 @@ jQuery(function() {
 			</div>
 		<div class="panel-body">
 			<form enctype="multipart/form-data" method="POST" action="<%=request.getContextPath()%>/admin/manageFlowsheetsUpload.jsp">
-				<input type="file" name="flowsheet_file">
-				<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;cursor:pointer"><img alt="alert" src="<%=request.getContextPath()%>/images/icon_alertsml.gif"/></span>
-				<input type="submit" value="Upload" class="btn btn-primary">
-			</form>
+        <input type="file" name="flowsheet_file">
+				<span title="<fmt:message key="global.uploadWarningBody"/>" style="vertical-align:middle;cursor:pointer"><img alt="alert" src="<%=request.getContextPath()%>/images/icon_alertsml.gif"/></span>
+        <input type="submit" value="Upload" class="btn btn-primary">
+    </form>
 		</div>
 		</div>
 </div>
-</html:html>
+</html>

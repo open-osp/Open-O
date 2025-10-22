@@ -12,43 +12,43 @@
  *  - errorMessage - set it's CSS display property to "block"
  */
 
-window.onload = function() {
+window.onload = function () {
 
-	// register event listener
-	document.getElementById("providerForm").onsubmit = function(e) {
-		// get form element value in a safe manner
-		var formFieldElement = document.getElementById("numericFormField");
-		if (!formFieldElement) {
-			return;
-		}
+    // register event listener
+    document.getElementById("providerForm").onsubmit = function (e) {
+        // get form element value in a safe manner
+        var formFieldElement = document.getElementById("numericFormField");
+        if (!formFieldElement) {
+            return;
+        }
 
-		var value = formFieldElement.value;
-		if (!value) {
-			return;
-		}
+        var value = formFieldElement.value;
+        if (!value) {
+            return;
+        }
 
-		// trim
-		value = value.replace(/^\s+|\s+$/, "");
+        // trim
+        value = value.replace(/^\s+|\s+$/, "");
 
-		// validate
-		var hasNonDigits = /\D+/.test(value);
-		var isGreaterThanZero = parseInt(value) > 0;
-		var isValid = !hasNonDigits && isGreaterThanZero;
-		if (isValid) {
-			return;
-		}
+        // validate
+        var hasNonDigits = /\D+/.test(value);
+        var isGreaterThanZero = parseInt(value) > 0;
+        var isValid = !hasNonDigits && isGreaterThanZero;
+        if (isValid) {
+            return;
+        }
 
-		// show error message
-		var errorMessageElement = document.getElementById("errorMessage");
-		if (errorMessageElement) {
-			errorMessageElement.style.display = "block";
-		}
+        // show error message
+        var errorMessageElement = document.getElementById("errorMessage");
+        if (errorMessageElement) {
+            errorMessageElement.style.display = "block";
+        }
 
-		// highlight error
-		formFieldElement.focus();
-		formFieldElement.style.borderColor = "red";
+        // highlight error
+        formFieldElement.focus();
+        formFieldElement.style.borderColor = "red";
 
-		// cancel form submission
-		return false;
-	};
+        // cancel form submission
+        return false;
+    };
 };

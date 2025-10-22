@@ -24,29 +24,27 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
 
 <hr width="100%" color="orange">
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr>
-		<td><a href="search.jsp"> <img src="../images/leftarrow.gif"
-			border="0" width="25" height="20" align="absmiddle"> <bean:message
-			key="demographic.footer.btnBack" /></a></td>
-		
-		<td align="right">
-			<caisi:isModuleLoad moduleName="caisi">
-				<a href='<html:rewrite page="/PMmodule/ProviderInfo.do"/>'>
-			</caisi:isModuleLoad>
-			<caisi:isModuleLoad moduleName="caisi" reverse="true">
-				<a href="#" onClick="self.close();">
-			</caisi:isModuleLoad>
-				<bean:message
-				key="demographic.footer.btnClose" /><img
-				src="../images/rightarrow.gif" border="0" width="25" height="20"
-				align="absmiddle"></a>
-			
-		</td>
-	</tr>
+    <tr>
+        <td><a href="search.jsp"> <img src="<%= request.getContextPath() %>/images/leftarrow.gif"
+                                       border="0" width="25" height="20" align="absmiddle"> <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.footer.btnBack"/></a></td>
+
+        <td align="right">
+            <caisi:isModuleLoad moduleName="caisi">
+            <a href='${request.contextPath}/PMmodule/ProviderInfo.do'>
+                </caisi:isModuleLoad>
+                <caisi:isModuleLoad moduleName="caisi" reverse="true">
+                <a href="#" onClick="self.close();">
+                    </caisi:isModuleLoad>
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.footer.btnClose"/><img
+                        src="<%= request.getContextPath() %>/images/rightarrow.gif" border="0" width="25" height="20"
+                        align="absmiddle"></a>
+
+        </td>
+    </tr>
 </table>

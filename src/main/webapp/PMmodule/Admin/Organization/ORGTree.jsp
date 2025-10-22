@@ -22,59 +22,58 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ include file="../../../taglibs.jsp"%>
-<%@page import="com.quatro.common.KeyConstants"%>
+<%@ include file="/taglibs.jsp" %>
+<%@page import="ca.openosp.openo.commons.KeyConstants" %>
 
 
 <script type="text/javascript"
-	src='<c:out value="${ctx}"/>/js/menuExpandable.js'></script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-
+        src='<c:out value="${ctx}"/>/js/menuExpandable.js'></script>
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"
-	scope="request" />
+       scope="request"/>
 
 <table width="100%" height="100%" cellpadding="0px" cellspacing="0px">
-	<tr>
-		<th class="pageTitle" align="center"><span
-			id="_ctl0_phBody_lblTitle" align="left">Organization Chart</span></th>
-	</tr>
-	<tr>
-		<td align="left" class="buttonBar2"><html:link
-			action="/PMmodule/Admin/SysAdmin.do"
-			style="color:Navy;text-decoration:none;">
-			<img border=0 src=<html:rewrite page="/images/close16.png"/> />&nbsp;Close&nbsp;&nbsp;|</html:link>
-		</td>
-	</tr>
-	<tr>
-		<td align="left"></td>
-	</tr>
-	<tr>
-		<td height="100%">
-		<div
-			style="color: Black; background-color: White; border-width: 1px; border-style: Ridge; height: 100%; width: 100%; overflow: auto;"
-			id="scrollBar">
+    <tr>
+        <th class="pageTitle" align="center"><span
+                id="_ctl0_phBody_lblTitle" align="left">Organization Chart</span></th>
+    </tr>
+    <tr>
+        <td align="left" class="buttonBar2"><a
+                href="${pageContext.request.contextPath}/PMmodule/Admin/SysAdmin.do"
+                style="color:Navy;text-decoration:none;">
+            <img border=0 src="${pageContext.request.contextPath}/images/close16.png"/>&nbsp;Close&nbsp;&nbsp;|</a>
+        </td>
+    </tr>
+    <tr>
+        <td align="left"></td>
+    </tr>
+    <tr>
+        <td height="100%">
+            <div
+                    style="color: Black; background-color: White; border-width: 1px; border-style: Ridge; height: 100%; width: 100%; overflow: auto;"
+                    id="scrollBar">
 
-		<table width="100%" cellpadding="0" cellspacing="0">
-			<tr>
-				<td align="left" class="clsHomePageHeader" colspan="5">
-				<h2>Org Chart</h2>
-				</td>
-			</tr>
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td align="left" class="clsHomePageHeader" colspan="5">
+                            <h2>Org Chart</h2>
+                        </td>
+                    </tr>
 
-		</table>
+                </table>
 
-		<table width="100%" border="0">
-			<tr>
-				<td colspan="2">
-				</td>
-			</tr>
-		</table>
-		</div>
-		</td>
-	</tr>
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="2">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
 </table>
 <script>
-	initializeMenus();
+    initializeMenus();
 </script>

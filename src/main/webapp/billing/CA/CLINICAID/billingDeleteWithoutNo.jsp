@@ -18,59 +18,60 @@
 
 --%>
 <%
-  String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page errorPage="/errorpage.jsp"%>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@ page errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.appt.ApptStatusData" %>
 
 <%
-OscarAppointmentDao appointmentDao = 
-	(OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    OscarAppointmentDao appointmentDao =
+            (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+    </script>
 </head>
-<body> 
-	<center>
-	<table border="0" cellspacing="0" cellpadding="0" width="90%">
-		<tr bgcolor="#486ebd">
-			<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-			DELETE A BILLING RECORD</font></th>
-		</tr>
-	</table>
+<body>
+<center>
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                DELETE A BILLING RECORD</font></th>
+        </tr>
+    </table>
 
-	<% 
+    <%
 
 
-		oscar.appt.ApptStatusData as = new oscar.appt.ApptStatusData();
-		String unbillStatus = as.unbillStatus(request.getParameter("status"));
-		Appointment appt = appointmentDao.find(
-			Integer.parseInt(request.getParameter("appointment_no")));
-			
-		if(appt != null) 
-		{
-			appt.setStatus(unbillStatus);
-			appt.setLastUpdateUser((String)session.getAttribute("user"));
-			appointmentDao.merge(appt);
-		}
-	%>
-	<p>
-	<h1>Successful Removed billed status</h1>
+        ApptStatusData as = new ApptStatusData();
+        String unbillStatus = as.unbillStatus(request.getParameter("status"));
+        Appointment appt = appointmentDao.find(
+                Integer.parseInt(request.getParameter("appointment_no")));
 
-	<script LANGUAGE="JavaScript">
-		self.opener.refresh();
-	</script> <p></p>
+        if (appt != null) {
+            appt.setStatus(unbillStatus);
+            appt.setLastUpdateUser((String) session.getAttribute("user"));
+            appointmentDao.merge(appt);
+        }
+    %>
+    <p>
+    <h1>Successful Removed billed status</h1>
 
-	<hr width="90%">
-	<form>
-		<input type="button" value="Back to previous page" onClick="window.close()">
-		<input type="button" value="Close this window" onClick="window.close()">
-	</form>
-	</center>
-	</body>
+    <script LANGUAGE="JavaScript">
+        self.opener.refresh();
+    </script>
+    <p></p>
+
+    <hr width="90%">
+    <form>
+        <input type="button" value="Back to previous page" onClick="window.close()">
+        <input type="button" value="Close this window" onClick="window.close()">
+    </form>
+</center>
+</body>
 </html>

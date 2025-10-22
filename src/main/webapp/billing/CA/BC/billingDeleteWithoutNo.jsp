@@ -24,135 +24,139 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-	String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
-<%@page import="oscar.oscarBilling.ca.bc.data.BillingmasterDAO" %>
-<%@page import="oscar.entities.Billingmaster" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@page import="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" %>
+<%@page import="ca.openosp.openo.entities.Billingmaster" %>
+<%@ page import="ca.openosp.openo.appt.ApptStatusData" %>
 
 <%
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
-	BillingmasterDAO billingMasterDao =  SpringUtils.getBean(BillingmasterDAO.class);
+    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    BillingmasterDAO billingMasterDao = SpringUtils.getBean(BillingmasterDAO.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    function closeit() {
-    	//self.opener.refresh();
-      //self.close();
-    }
-    //-->
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
+
+        function closeit() {
+            //self.opener.refresh();
+            //self.close();
+        }
+
+        //-->
     </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		DELETE A BILLING RECORD</font></th>
-	</tr>
-</table>
-<%
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                DELETE A BILLING RECORD</font></th>
+        </tr>
+    </table>
+    <%
 
-String apptNo = request.getParameter("appointment_no");
-ArrayList<String> billCodeList = new ArrayList();
-boolean cannotDelete=false;
+        String apptNo = request.getParameter("appointment_no");
+        ArrayList<String> billCodeList = new ArrayList();
+        boolean cannotDelete = false;
 
-for(Billing b:billingDao.findByAppointmentNo(Integer.parseInt(apptNo))) {
-   if (b.getStatus().substring(0,1).equals("B")){
-        cannotDelete = true;
-    }
-    billCodeList.add(b.getId().toString());
-}
-
-
-if (cannotDelete) {
-%>
-<p>
-<h1>Sorry, cannot delete billed items.</h1>
-
-<form><input type="button" value="Back to previous page"
-	onClick="window.close()"></form>
-<% } else{
-
-    boolean updateApptStatus = false;
-    for (String billNo:billCodeList){
-    	Billing b = billingDao.find(Integer.parseInt(billNo));
-    	 if(b != null) {
-    		 b.setStatus("D");
-    		 billingDao.merge(b);
-    		 updateApptStatus = true;
-    	 }
-      
-    	 for(Billingmaster m : billingMasterDao.getBillingMasterByBillingNo(billNo)) {
-    		 m.setBillingstatus("D");
-    		 billingMasterDao.update(m);
-    	 }
-    }
-
-    if (updateApptStatus) {
-        oscar.appt.ApptStatusData as = new oscar.appt.ApptStatusData();
-        String unbillStatus = as.unbillStatus(request.getParameter("status"));
-        Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
-        appointmentArchiveDao.archiveAppointment(appt);
-        if(appt != null) {
-     	   appt.setStatus(unbillStatus);
-     	   appt.setLastUpdateUser((String)session.getAttribute("user"));
-     	   appointmentDao.merge(appt);
+        for (Billing b : billingDao.findByAppointmentNo(Integer.parseInt(apptNo))) {
+            if (b.getStatus().substring(0, 1).equals("B")) {
+                cannotDelete = true;
+            }
+            billCodeList.add(b.getId().toString());
         }
-%>
-<p>
-<h1>Successful Addition of a billing Record.</h1>
 
-<script LANGUAGE="JavaScript">
-      self.close();
-     	self.opener.refresh();
-</script> <%
-//  break; //get only one billing_no
+
+        if (cannotDelete) {
+    %>
+    <p>
+    <h1>Sorry, cannot delete billed items.</h1>
+
+    <form><input type="button" value="Back to previous page"
+                 onClick="window.close()"></form>
+    <% } else {
+
+        boolean updateApptStatus = false;
+        for (String billNo : billCodeList) {
+            Billing b = billingDao.find(Integer.parseInt(billNo));
+            if (b != null) {
+                b.setStatus("D");
+                billingDao.merge(b);
+                updateApptStatus = true;
+            }
+
+            for (Billingmaster m : billingMasterDao.getBillingMasterByBillingNo(billNo)) {
+                m.setBillingstatus("D");
+                billingMasterDao.update(m);
+            }
+        }
+
+        if (updateApptStatus) {
+            ApptStatusData as = new ApptStatusData();
+            String unbillStatus = as.unbillStatus(request.getParameter("status"));
+            Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
+            appointmentArchiveDao.archiveAppointment(appt);
+            if (appt != null) {
+                appt.setStatus(unbillStatus);
+                appt.setLastUpdateUser((String) session.getAttribute("user"));
+                appointmentDao.merge(appt);
+            }
+    %>
+    <p>
+    <h1>Successful Addition of a billing Record.</h1>
+
+    <script LANGUAGE="JavaScript">
+        self.close();
+        self.opener.refresh();
+    </script>
+    <%
+        //  break; //get only one billing_no
 //  }//end of while
-    }  else {
-%>
-<p>
-<h1>Sorry, addition has failed.</h1>
+    } else {
+    %>
+    <p>
+    <h1>Sorry, addition has failed.</h1>
 
-<%
-    }
-}
-%>
-<p></p>
-<hr width="90%">
-<form><input type="button" value="Close this window"
-	onClick="window.close()"></form>
+    <%
+            }
+        }
+    %>
+    <p></p>
+    <hr width="90%">
+    <form><input type="button" value="Close this window"
+                 onClick="window.close()"></form>
 </center>
 </body>
 </html>

@@ -24,45 +24,46 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.util.*"%>
-<%@page import="org.oscarehr.common.dao.DemographicExtDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="java.util.*" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="org.apache.commons.lang.StringUtils" %>
 
 <%
-String demographic_no = request.getParameter("demo");
-DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
-Map<String,String> demoExt = demographicExtDao.getAllValuesForDemo(Integer.parseInt(demographic_no));
+    String demographic_no = request.getParameter("demo");
+    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+    Map<String, String> demoExt = demographicExtDao.getAllValuesForDemo(Integer.parseInt(demographic_no));
 
-Hashtable h = new Hashtable();
-            h.put("-1","Not Asked");
-            h.put("1","Has Given Consent");
-            h.put("2","Has Refused Consent");
+    Hashtable h = new Hashtable();
+    h.put("-1", "Not Asked");
+    h.put("1", "Has Given Consent");
+    h.put("2", "Has Refused Consent");
 %>
-<li>Consent: <b><%=getText(h,StringUtils.trimToEmpty(demoExt.get("given_consent")) )%></b>
+<li>Consent: <b><%=getText(h, StringUtils.trimToEmpty(demoExt.get("given_consent")))%>
+</b>
 </li>
 
 <%!
 
-String getText(Hashtable h,String s){
-    if (s != null && h.get(s) != null ){
-        return (String) h.get(s);
+    String getText(Hashtable h, String s) {
+        if (s != null && h.get(s) != null) {
+            return (String) h.get(s);
+        }
+        return "";
     }
-    return "";
-}
 %>

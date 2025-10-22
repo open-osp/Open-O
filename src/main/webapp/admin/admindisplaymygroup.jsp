@@ -24,142 +24,147 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.model.MyGroupPrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
 
 <%
-	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
+    MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 
     String curProvider_no = (String) session.getAttribute("user");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    
-    boolean isSiteAccessPrivacy=false;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+
+    boolean isSiteAccessPrivacy = false;
 %>
 
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r" reverse="false">
-	<%isSiteAccessPrivacy=true; %>
+    <%isSiteAccessPrivacy = true; %>
 </security:oscarSec>
 
-<%@ page import="java.util.*,java.sql.*" errorPage="../provider/errorpage.jsp"%>
+<%@ page import="java.util.*,java.sql.*" errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
-<html:html lang="en">
-<head>
+<html>
+    <head>
 
-<title><bean:message key="admin.admindisplaymygroup.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.title"/></title>
 
-<script>
-<!-- start javascript ---- check to see if it is really empty in database
+        <script>
+            <!--
+            start
+            javascript--
+            --check
+            to
+            see
+            if it is
+            really
+            empty in database
 
-//function upCaseCtrl(ctrl) {
-//	ctrl.value = ctrl.value.toUpperCase();
-//}
+            //function upCaseCtrl(ctrl) {
+            //	ctrl.value = ctrl.value.toUpperCase();
+            //}
 
-// stop javascript -->
-</script>
+            // stop javascript -->
+        </script>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-
-<body>
-<FORM NAME="UPDATEPRE" id="groupForm"  METHOD="post" ACTION="adminnewgroup.jsp">
-
-<h3><bean:message key="admin.admin.btnSearchGroupNoRecords" /></h3>
-			
-
-		<table class="table table-condensed table-hover">
-		<thead>
-			<tr class="btn-inverse">
-				<th></th>
-				<th>
-					<bean:message key="admin.adminmygroup.formGroupNo" />
-				</th>
-				<th>
-					<bean:message key="admin.admindisplaymygroup.formProviderName" />
-				</th>
-			</tr>
-		</thead>
-			
-		<tbody>		
-<%
-
-String oldNumber="";
-boolean toggleLine=false;
-
-List<MyGroup> groupList = myGroupDao.findAll();
-Collections.sort(groupList, MyGroup.MyGroupNoComparator);
-
-if(isSiteAccessPrivacy) {
-	groupList = myGroupDao.getProviderGroups(curProvider_no);
-}
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+    </head>
 
 
-for(MyGroup myGroup : groupList) {
+    <body>
+    <FORM NAME="UPDATEPRE" id="groupForm" METHOD="post" ACTION="adminnewgroup.jsp">
 
-	if(!myGroup.getId().getMyGroupNo().equals(oldNumber)) {
-		toggleLine = !toggleLine;
-		oldNumber = myGroup.getId().getMyGroupNo();
-	}
-%>
-			<tr class="<%=toggleLine?"":"info"%>">
-				<td width="20px">
-					<input type="checkbox"
-					name="<%=myGroup.getId().getMyGroupNo() + myGroup.getId().getProviderNo()%>"
-					value="<%=myGroup.getId().getMyGroupNo()%>">
-				</td>
-				<td><%=myGroup.getId().getMyGroupNo()%></td>
-				<td> <%=myGroup.getLastName()+","+ myGroup.getFirstName()%>
-				</td>
-			</tr>
-<%
-   }
-%>
-		</tbody>
-		</table>
+        <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnSearchGroupNoRecords"/></h3>
 
 
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr class="btn-inverse">
+                <th></th>
+                <th>
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminmygroup.formGroupNo"/>
+                </th>
+                <th>
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.formProviderName"/>
+                </th>
+            </tr>
+            </thead>
 
-			<INPUT TYPE="submit" name="submit" class="btn btn-danger"
-			VALUE="<bean:message key="admin.admindisplaymygroup.btnSubmit1"/>"
-			SIZE="7"> 
-					
-			<a href="adminnewgroup.jsp" class="btn btn-primary"><bean:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
+            <tbody>
+            <%
 
-</FORM>
+                String oldNumber = "";
+                boolean toggleLine = false;
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+                List<MyGroup> groupList = myGroupDao.findAll();
+                Collections.sort(groupList, MyGroup.MyGroupNoComparator);
 
-<script>
-function anyChecks(){
-    if ($("#groupForm input:checkbox:checked").length > 0)
-    {
-        // any one is checked
-    	return true;
-    }
-    else
-    {
-       // none is checked
-        alert('please select provider(s)');
-    	return false;
-    }
-}
-
-$('#groupForm').submit(anyChecks);
+                if (isSiteAccessPrivacy) {
+                    groupList = myGroupDao.getProviderGroups(curProvider_no);
+                }
 
 
-$( document ).ready(function() {
-parent.parent.resizeIframe($('html').height());      
+                for (MyGroup myGroup : groupList) {
 
-});
+                    if (!myGroup.getId().getMyGroupNo().equals(oldNumber)) {
+                        toggleLine = !toggleLine;
+                        oldNumber = myGroup.getId().getMyGroupNo();
+                    }
+            %>
+            <tr class="<%=toggleLine?"":"info"%>">
+                <td width="20px">
+                    <input type="checkbox"
+                           name="<%=myGroup.getId().getMyGroupNo() + myGroup.getId().getProviderNo()%>"
+                           value="<%=myGroup.getId().getMyGroupNo()%>">
+                </td>
+                <td><%=myGroup.getId().getMyGroupNo()%>
+                </td>
+                <td><%=myGroup.getLastName() + "," + myGroup.getFirstName()%>
+                </td>
+            </tr>
+            <%
+                }
+            %>
+            </tbody>
+        </table>
 
-</script>
-</body>
-</html:html>
+
+        <INPUT TYPE="submit" name="submit" class="btn btn-danger"
+               VALUE="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.btnSubmit1"/>"
+               SIZE="7">
+
+        <a href="adminnewgroup.jsp" class="btn btn-primary"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
+
+    </FORM>
+
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+
+    <script>
+        function anyChecks() {
+            if ($("#groupForm input:checkbox:checked").length > 0) {
+                // any one is checked
+                return true;
+            } else {
+                // none is checked
+                alert('please select providers(s)');
+                return false;
+            }
+        }
+
+        $('#groupForm').submit(anyChecks);
+
+
+        $(document).ready(function () {
+            parent.parent.resizeIframe($('html').height());
+
+        });
+
+    </script>
+    </body>
+</html>

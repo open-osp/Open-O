@@ -24,37 +24,37 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%@ page
-	import="oscar.oscarEncounter.immunization.data.*,oscar.util.UtilXML"%>
+        import="ca.openosp.openo.encounter.immunization.data.*,ca.openosp.openo.util.UtilXML" %>
 <%@ page
-	import="oscar.oscarEncounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+        import="ca.openosp.openo.encounter.immunization.pageUtil.*, java.util.*, org.w3c.dom.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 
 <%
     String remoteName = (String) request.getAttribute("remoteName");
     String themessage = (String) request.getAttribute("themessage");
-    String theime     = (String) request.getAttribute("theime");
-    String thedate    = (String) request.getAttribute("thedate");
+    String theime = (String) request.getAttribute("theime");
+    String thedate = (String) request.getAttribute("thedate");
     String attachment = (String) request.getAttribute("attachment");
     String thesubject = (String) request.getAttribute("thesubject");
-    String sentBy     = (String) request.getAttribute("sentBy");
+    String sentBy = (String) request.getAttribute("sentBy");
 
     Document xmlDoc = null;
 
@@ -65,195 +65,190 @@ if(!authed) {
 
 
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-<script language="javascript">
-    var browserName=navigator.appName; 
-    if (browserName=="Netscape"){ 
+        <script language="javascript">
+            var browserName = navigator.appName;
+            if (browserName == "Netscape") {
 
-        if( document.implementation ){
-            //this detects W3C DOM browsers (IE is not a W3C DOM Browser)
-            if( Event.prototype && Event.prototype.__defineGetter__ ){
-                //this detects Mozilla Based Browsers
-                Event.prototype.__defineGetter__( "srcElement", function(){
-                    var src = this.target;
-                    if( src && src.nodeType == Node.TEXT_NODE )
-                        src = src.parentNode;
-                        return src;
-                    }
-                );
-            }
-        }
-    }
-    
-    function showTbl(tblName,event){
-        var i;
-
-        var span;
-
-        if(event.srcElement.tagName=='SPAN'){
-            span = event.srcElement;
-        }else{
-            if(event.srcElement.parentNode.tagName=='SPAN'){
-                span = event.srcElement.parentNode;
-            }else{
-                if(event.srcElement.tagName=='IMG'){
-                    span = event.srcElement.parentNode.getElementsByTagName('SPAN').item(0);
-                }
-            }
-        }
-
-        if(span != 'undefined'){
-            var imgs = span.getElementsByTagName('IMG');
-            if(imgs.length>0){
-                var img = imgs.item(0);
-                var s = img.src;
-                if(s.search('plus.gif')>-1){
-                    img.src = s.replace('plus.gif', 'minus.gif');
-                }else{
-                    img.src = s.replace('minus.gif', 'plus.gif');
-                }
-            }
-
-            var nods = span.parentNode.childNodes;
-
-
-            for(i=0; i<nods.length; i++){
-                var nod = nods.item(i);
-
-                if(nod.id == tblName){
-                    if(nod.style.display=="none"){
-                        nod.style.display = "";
-                    }else{
-                        nod.style.display = "none";
+                if (document.implementation) {
+                    //this detects W3C DOM browsers (IE is not a W3C DOM Browser)
+                    if (Event.prototype && Event.prototype.__defineGetter__) {
+                        //this detects Mozilla Based Browsers
+                        Event.prototype.__defineGetter__("srcElement", function () {
+                                var src = this.target;
+                                if (src && src.nodeType == Node.TEXT_NODE)
+                                    src = src.parentNode;
+                                return src;
+                            }
+                        );
                     }
                 }
             }
-        }
-    }
 
-    function expandAll(){
-        var i;
-        var root = document.all('tblRoot');
+            function showTbl(tblName, event) {
+                var i;
 
-        var col = root.getElementsByTagName('IMG');
+                var span;
 
-        for(i=0; i<col.length; i++){
-            var nod = col.item(i);
+                if (event.srcElement.tagName == 'SPAN') {
+                    span = event.srcElement;
+                } else {
+                    if (event.srcElement.parentNode.tagName == 'SPAN') {
+                        span = event.srcElement.parentNode;
+                    } else {
+                        if (event.srcElement.tagName == 'IMG') {
+                            span = event.srcElement.parentNode.getElementsByTagName('SPAN').item(0);
+                        }
+                    }
+                }
 
-            if(nod.src.search('plus.gif')>-1){
-                nod.click();
+                if (span != 'undefined') {
+                    var imgs = span.getElementsByTagName('IMG');
+                    if (imgs.length > 0) {
+                        var img = imgs.item(0);
+                        var s = img.src;
+                        if (s.search('plus.gif') > -1) {
+                            img.src = s.replace('plus.gif', 'minus.gif');
+                        } else {
+                            img.src = s.replace('minus.gif', 'plus.gif');
+                        }
+                    }
+
+                    var nods = span.parentNode.childNodes;
+
+
+                    for (i = 0; i < nods.length; i++) {
+                        var nod = nods.item(i);
+
+                        if (nod.id == tblName) {
+                            if (nod.style.display == "none") {
+                                nod.style.display = "";
+                            } else {
+                                nod.style.display = "none";
+                            }
+                        }
+                    }
+                }
             }
-        }
-    }
 
-    function collapseAll(){
-        var i;
-        var root = document.all('tblRoot');
+            function expandAll() {
+                var i;
+                var root = document.all('tblRoot');
 
-        var col = root.getElementsByTagName('IMG');
+                var col = root.getElementsByTagName('IMG');
 
-        for(i=0; i<col.length; i++){
-            var nod = col.item(i);
+                for (i = 0; i < col.length; i++) {
+                    var nod = col.item(i);
 
-            if(nod.src.search('minus.gif')>-1){
-                nod.click();
+                    if (nod.src.search('plus.gif') > -1) {
+                        nod.click();
+                    }
+                }
             }
-        }
-    }
 
-    function chkClick(){
-        event.cancelBubble = true;
-    }
-</script>
+            function collapseAll() {
+                var i;
+                var root = document.all('tblRoot');
 
-<title><bean:message key="oscarEncounter.ViewAttachment.title" />
-</title>
-</head>
+                var col = root.getElementsByTagName('IMG');
 
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
-<table class="MainTable" id="scrollNumber1"
-	name="<bean:message key="oscarEncounter.ViewAttachment.msgEncounterTable"/>">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message
-			key="global.oscarComm" /></td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td><bean:message
-					key="oscarEncounter.ViewAttachment.msgViewAtt" /></td>
-				<td></td>
-				<td style="text-align: right"><oscar:help keywords="attachment" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-					key="global.license" /></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
+                for (i = 0; i < col.length; i++) {
+                    var nod = col.item(i);
 
-		<table cellspacing="1" valign="top">
-			<tr>
-				<td bgcolor="#DDDDFF"><bean:message
-					key="oscarEncounter.ViewAttachment.msgFrom" />:</td>
-				<td bgcolor="#CCCCFF"><%= sentBy%> <bean:message
-					key="oscarEncounter.ViewAttachment.msgAt" /> <%=remoteName%></td>
-			</tr>
-			<tr>
-				<td bgcolor="#DDDDFF"><bean:message
-					key="oscarEncounter.ViewAttachment.msgSubject" />:</td>
-				<td bgcolor="#BBBBFF"><%= thesubject%></td>
-			</tr>
+                    if (nod.src.search('minus.gif') > -1) {
+                        nod.click();
+                    }
+                }
+            }
 
-			<tr>
-				<td bgcolor="#DDDDFF"><bean:message
-					key="oscarEncounter.ViewAttachment.msgDate" />:</td>
-				<td bgcolor="#B8B8FF"><%= thedate %>&nbsp;&nbsp; <%= theime %>
-				</td>
-			</tr>
+            function chkClick() {
+                event.cancelBubble = true;
+            }
+        </script>
 
-			<tr>
-				<td bgcolor="#EEEEFF"></td>
-				<td bgcolor="#EEEEFF"><textarea name="Message" wrap="hard"
-					readonly="true" rows="18" cols="60"><%=themessage%></textarea></td>
-			</tr>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.title"/>
+        </title>
+    </head>
+
+    <body class="BodyStyle" vlink="#0000FF">
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1"
+           name="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgEncounterTable"/>">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.oscarComm"/></td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgViewAtt"/></td>
+                        <td></td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+
+                <table cellspacing="1" valign="top">
+                    <tr>
+                        <td bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgFrom"/>:
+                        </td>
+                        <td bgcolor="#CCCCFF"><%= sentBy%> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgAt"/> <%=remoteName%>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgSubject"/>:
+                        </td>
+                        <td bgcolor="#BBBBFF"><%= thesubject%>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td bgcolor="#DDDDFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgDate"/>:
+                        </td>
+                        <td bgcolor="#B8B8FF"><%= thedate %>&nbsp;&nbsp; <%= theime %>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td bgcolor="#EEEEFF"></td>
+                        <td bgcolor="#EEEEFF"><textarea name="Message" wrap="hard"
+                                                        readonly="true" rows="18" cols="60"><%=themessage%></textarea>
+                        </td>
+                    </tr>
 
 
+                </table>
 
-		</table>
+                <hr style="color: #A9A9A9;">
+                <div style="height: 6px;"></div>
+                <% DrawDoc(root, out); %>
+                <div style="font-size: 8pt; margin-top: 15px;"><a
+                        href="javascript:expandAll();"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgExpandAll"/></a> &nbsp;|&nbsp; <a
+                        href="javascript:collapseAll();"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.ViewAttachment.msgColapseAll"/></a></div>
 
-		<hr style="color: #A9A9A9;">
-		<div style="height: 6px;"></div>
-		<% DrawDoc(root, out); %>
-		<div style="font-size: 8pt; margin-top: 15px;"><a
-			href="javascript:expandAll();"><bean:message
-			key="oscarEncounter.ViewAttachment.msgExpandAll" /></a> &nbsp;|&nbsp; <a
-			href="javascript:collapseAll();"><bean:message
-			key="oscarEncounter.ViewAttachment.msgColapseAll" /></a></div>
-
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>
 <%!
     String spanStartRoot = "<span class=\"treeNode\" onclick=\"javascript:showTbl('tblRoot',event);\">"
-        + "<img class=\"treeNode\" src=\"graphics/minus.gif\" border=\"0\" />";
+            + "<img class=\"treeNode\" src=\"graphics/minus.gif\" border=\"0\" />";
 
     String spanStart = "<span class=\"treeNode\" onclick=\"javascript:showTbl('tblNode',event);\">"
-        + "<img class=\"treeNode\" src=\"graphics/plus.gif\" border=\"0\" />";
+            + "<img class=\"treeNode\" src=\"graphics/plus.gif\" border=\"0\" />";
     String spanEnd = "</span>";
 
     String tblStartRoot = "<table class=\"treeTable\" id=\"tblRoot\" cellspacing=0 cellpadding=3>";
@@ -266,18 +261,16 @@ if(!authed) {
     String tblEnd = "</table>";
 
     void DrawDoc(Element root, JspWriter out)
-            throws javax.servlet.jsp.JspException, java.io.IOException
-    {
+            throws javax.servlet.jsp.JspException, java.io.IOException {
         out.print(spanStartRoot);
-	     out.print("Document Transfer");
-	     out.print(spanEnd);
+        out.print("Document Transfer");
+        out.print(spanEnd);
         out.print(tblStartRoot);
 
         NodeList lst = root.getChildNodes();
-        for(int i=0; i<lst.getLength(); i++)
-        {
+        for (int i = 0; i < lst.getLength(); i++) {
             out.print(tblRowStart);
-            DrawTable((Element)lst.item(i), out);
+            DrawTable((Element) lst.item(i), out);
             out.print(tblRowEnd);
         }
 
@@ -285,27 +278,23 @@ if(!authed) {
     }
 
     void DrawTable(Element tbl, JspWriter out)
-            throws javax.servlet.jsp.JspException, java.io.IOException
-    {
+            throws javax.servlet.jsp.JspException, java.io.IOException {
         out.print(spanStart + tbl.getAttribute("name") + spanEnd);
         out.print(tblStart);
 
         NodeList lst = tbl.getChildNodes();
-        for(int i=0; i<lst.getLength(); i++)
-        {
+        for (int i = 0; i < lst.getLength(); i++) {
             out.print(tblRowStart);
-            DrawItem((Element)lst.item(i), out);
+            DrawItem((Element) lst.item(i), out);
             out.print(tblRowEnd);
         }
         out.print(tblEnd);
     }
 
     void DrawItem(Element item, JspWriter out)
-            throws javax.servlet.jsp.JspException, java.io.IOException
-    {
+            throws javax.servlet.jsp.JspException, java.io.IOException {
         out.print(spanStart);
-        if(! item.getAttribute("removable").equalsIgnoreCase("false"))
-        {
+        if (!item.getAttribute("removable").equalsIgnoreCase("false")) {
             String sName = "item" + item.getAttribute("itemId");
             out.print("<input type=checkbox name='" + sName + "' onclick='javascript:chkClick();'/>");
         }
@@ -313,13 +302,10 @@ if(!authed) {
         out.print(tblStartContent);
 
         NodeList lst = item.getChildNodes();
-        for(int i=0; i<lst.getLength(); i++)
-        {
-            if(lst.item(i).getNodeType()==Node.ELEMENT_NODE)
-            {
-                if(((Element)lst.item(i)).getTagName().equals("content"))
-                {
-                    DrawContent((Element)lst.item(i), out);
+        for (int i = 0; i < lst.getLength(); i++) {
+            if (lst.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                if (((Element) lst.item(i)).getTagName().equals("content")) {
+                    DrawContent((Element) lst.item(i), out);
                 }
             }
         }
@@ -327,16 +313,12 @@ if(!authed) {
     }
 
     void DrawContent(Element content, JspWriter out)
-            throws javax.servlet.jsp.JspException, java.io.IOException
-    {
+            throws javax.servlet.jsp.JspException, java.io.IOException {
         NodeList lst = content.getChildNodes();
-        for(int i=0; i<lst.getLength(); i++)
-        {
-            if(lst.item(i).getNodeType()==Node.ELEMENT_NODE)
-            {
-                Element fld = (Element)lst.item(i);
-                if(fld.getTagName().equals("fld"))
-                {
+        for (int i = 0; i < lst.getLength(); i++) {
+            if (lst.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element fld = (Element) lst.item(i);
+                if (fld.getTagName().equals("fld")) {
                     out.print("<tr><td style='font-weight:bold'>");
                     out.print(fld.getAttribute("name") + ": ");
                     out.print("</td><td>");

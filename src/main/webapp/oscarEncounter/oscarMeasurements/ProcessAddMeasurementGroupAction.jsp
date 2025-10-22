@@ -25,53 +25,63 @@
 --%>
 
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%
+    String groupName = (String) session.getAttribute("groupName");
+%>
+
 <%@ page
-	import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
+        import="java.lang.*,ca.openosp.openo.encounter.oscarMeasurements.pageUtil.*" %>
 
-<html:html lang="en">
+<html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarEncounter.Measurements.msgProcessAddMeasurementGroupAction" />
-</title>
-<html:base />
-</head>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgProcessAddMeasurementGroupAction"/>
+        </title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
 
-<script language="javascript">
+    <script language="javascript">
 
-function submitForm(){
-    
-    document.forms[0].submit();
-    
- }
+        function submitForm() {
 
+            document.forms[0].submit();
 
-</script>
-
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
-<html:errors />
-<table>
-	<form action="SetupAddMeasurementGroup.do">
-	<tr>
-		<input type="hidden" name="value(groupName)"
-			value="<bean:write name="groupName"/>" />
-		<td>Processing...</td>
-		<script>
-                submitForm();
-            </script>
-	</tr>
-	</form>
-</table>
+        }
 
 
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <table>
+        <form action="oscarEncounter/oscarMeasurements/SetupAddMeasurementGroup.do">
+            <tr>
+                <input type="hidden" name="groupName" value="<%= groupName %>"/>
+                <td>Processing...</td>
+                <script>
+                    submitForm();
+                </script>
+            </tr>
+        </form>
+    </table>
 
 
-</body>
-</html:html>
+    </body>
+</html>

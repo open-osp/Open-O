@@ -11,12 +11,12 @@
 
 	<!-- ############################# -->
 
-	<category name="org.oscarehr">
+	<category name="ca.openosp.openo">
 		<priority value="INFO" />
 	</category>
 
 	<!-- E2E will test many cases which will spam log output; this will squelch it -->
-	<category name="org.oscarehr.e2e">
+	<category name="ca.openosp.openo.e2e">
 		<priority value="FATAL" />
 	</category>
 

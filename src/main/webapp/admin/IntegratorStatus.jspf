@@ -21,13 +21,14 @@
     Centre for Research on Inner City Health, St. Michael's Hospital,
     Toronto, Ontario, Canada
 
---%><%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+--%><%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="oscar.oscarEncounter.data.*, oscar.oscarProvider.data.*, oscar.util.UtilDateUtilities" %>
-<%@ page import="org.oscarehr.util.MiscUtils"%>
+<%@ page import="ca.openosp.openo.encounter.data.*, ca.openosp.openo.providers.data.*, ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils"%>
 <%@ page import="java.net.URLEncoder"%>
-<%@ page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager, org.oscarehr.util.LoggedInInfo, org.oscarehr.common.model.Facility" %>
+<%@ page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager, ca.openosp.openo.utility.LoggedInInfo, ca.openosp.openo.commn.model.Facility" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -35,7 +36,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
 	if(!authed) {
@@ -52,7 +53,7 @@
 		if (facility.isIntegratorEnabled()){
 			int secondsTillConsideredStale = -1;
 			try{
-				secondsTillConsideredStale = Integer.parseInt(oscar.OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
+				secondsTillConsideredStale = Integer.parseInt(OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
 			}catch(Exception e){
 				MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int",e);
 				secondsTillConsideredStale = -1;
@@ -71,9 +72,9 @@
 			}	
 		%>
 			<%if (CaisiIntegratorManager.isIntegratorOffline(request.getSession())) {%>
-    			<div style="background: none repeat scroll 0% 0% red; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.NA"/></div>
+    			<div style="background: none repeat scroll 0% 0% red; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.integrator.NA"/></div>
     		<%}else if(!allSynced) {%>
-    			<div style="background: none repeat scroll 0% 0% orange; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><bean:message key="oscarEncounter.integrator.outOfSync"/>
+    			<div style="background: none repeat scroll 0% 0% orange; color: white; font-weight: bold; padding-left: 10px; margin-bottom: 2px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.integrator.outOfSync"/>
     			&nbsp;&nbsp;
 				<a href="javascript:void(0)" onClick="popup(233,600,'<c:out value="${ctx}"/>/admin/viewIntegratedCommunity.jsp','ViewICommun'); return false;" >Integrator</a>
     			</div>

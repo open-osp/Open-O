@@ -24,35 +24,33 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-	String roleName$ = (String) session.getAttribute("userrole") + ","
-			+ (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + ","
+            + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
-<%@page import="org.oscarehr.web.admin.KeyManagerUIBean"%><%@page import="org.oscarehr.util.MiscUtils"%>
-<%@page import="org.apache.commons.lang.StringUtils"%>
+<%@page import="ca.openosp.openo.web.admin.KeyManagerUIBean" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="org.apache.commons.lang.StringUtils" %>
 <%
-	String serviceName=request.getParameter("serviceName");
-	Integer professionalSpecialistId=null;
-	try
-	{
-		String temp=StringUtils.trimToNull(request.getParameter("professionalSpecialistId"));
-		if (temp!=null)	professionalSpecialistId=Integer.parseInt(temp);
-	}
-	catch (Exception e)
-	{
-		MiscUtils.getLogger().error("Unexpected error.", e);
-	}
-	
-	KeyManagerUIBean.updateMatchingProfessionalSpecialist(serviceName, professionalSpecialistId);
+    String serviceName = request.getParameter("serviceName");
+    Integer professionalSpecialistId = null;
+    try {
+        String temp = StringUtils.trimToNull(request.getParameter("professionalSpecialistId"));
+        if (temp != null) professionalSpecialistId = Integer.parseInt(temp);
+    } catch (Exception e) {
+        MiscUtils.getLogger().error("Unexpected error.", e);
+    }
+
+    KeyManagerUIBean.updateMatchingProfessionalSpecialist(serviceName, professionalSpecialistId);
 %>

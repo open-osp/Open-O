@@ -5,9 +5,6 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-	<suppress checks="RegexpMultiline" files="MSHSegment.java" lines="50" />
-	<!-- 
-	<suppress checks="RegexpMultiline" files="ResponseDefaultsFilter.java" lines="54" />
-	<suppress checks="RegexpMultiline" files="ResponseDefaultsChangeDetectingWrapper.java" lines="44" />
-	 -->
+    <!-- Supresses all files in the resource folder -->
+    <suppress files="[\\/]src[\\/]main[\\/]resources[\\/]*" checks="[a-zA-Z0-9]*"/>
 </suppressions>

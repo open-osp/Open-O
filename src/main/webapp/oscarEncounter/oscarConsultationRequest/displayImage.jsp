@@ -9,47 +9,47 @@
     
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_con" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_con");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_con");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
-<html:html lang="en">
-<head>
-<title><bean:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<% boolean linkIncluded = StringUtils.isNotEmpty(request.getParameter("link")); %>
-<script type="text/javascript">
-function init() {
-	document.getElementById("image").src = decodeURIComponent("<%= request.getParameter("url") %>");
-	<% if (linkIncluded) { %>
-	document.getElementById("link").href = decodeURIComponent("<%= request.getParameter("link") %>");
-	<% } %>
-}
-</script>
-</head>
-<body onload="init()">
-    <% if (linkIncluded) { %> 
-    <a id="link" href="#" style="border:0;" target="_blank"> 
-    <% } %>
-        <img id="image" src="" style="border:0;" />
-    <% if (linkIncluded) { %> 
+<%@ page import="org.apache.commons.lang.StringUtils" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title"/></title>
+
+        <% boolean linkIncluded = StringUtils.isNotEmpty(request.getParameter("link")); %>
+        <script type="text/javascript">
+            function init() {
+                document.getElementById("image").src = decodeURIComponent("<%= request.getParameter("url") %>");
+                <% if (linkIncluded) { %>
+                document.getElementById("link").href = decodeURIComponent("<%= request.getParameter("link") %>");
+                <% } %>
+            }
+        </script>
+    </head>
+    <body onload="init()">
+    <% if (linkIncluded) { %>
+    <a id="link" href="#" style="border:0;" target="_blank">
+        <% } %>
+        <img id="image" src="" style="border:0;"/>
+        <% if (linkIncluded) { %>
     </a>
     <% } %>
-</body>
-</html:html>
+    </body>
+</html>

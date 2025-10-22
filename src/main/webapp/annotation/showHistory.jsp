@@ -24,58 +24,58 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@page	import="org.springframework.web.context.WebApplicationContext,
-		org.springframework.web.context.support.WebApplicationContextUtils,
-		org.oscarehr.casemgmt.model.CaseManagementNote,
-		org.oscarehr.casemgmt.model.CaseManagementNoteLink,
-		org.oscarehr.casemgmt.service.CaseManagementManager,
-		java.util.List"%>
+<%@page import="org.springframework.web.context.WebApplicationContext,
+                org.springframework.web.context.support.WebApplicationContextUtils,
+                ca.openosp.openo.casemgmt.model.CaseManagementNote,
+                ca.openosp.openo.casemgmt.model.CaseManagementNoteLink,
+                ca.openosp.openo.casemgmt.service.CaseManagementManager,
+                java.util.List" %>
 <%
     HttpSession se = request.getSession();
-    WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
+    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(se.getServletContext());
     CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
-    
+
     String display = request.getParameter("display");
     String uuid = request.getParameter("uuid");
-    if (display==null) display = "";
-    if (uuid==null) uuid = "";
+    if (display == null) display = "";
+    if (uuid == null) uuid = "";
     List<CaseManagementNote> lcmn = cmm.getNotesByUUID(uuid);
- %>
+%>
 <html>
 <head>
-<title>Annotation History</title>
+    <title>Annotation History</title>
 </head>
 <body>
 <h3 style="text-align: center;"><%=display%> Annotation Revision History</h3>
 
-<% for (CaseManagementNote cmn : lcmn) { 
-      String showNote = cmn.getNote();
-      if (showNote.startsWith("imported.cms4.2011.06")) showNote = showNote.substring("imported.cms4.2011.06".length());
+<% for (CaseManagementNote cmn : lcmn) {
+    String showNote = cmn.getNote();
+    if (showNote.startsWith("imported.cms4.2011.06")) showNote = showNote.substring("imported.cms4.2011.06".length());
 %>
-    <div style="width: 99%; background-color: #EFEFEF; font-size: 12px; border-left: thin groove #000000; border-bottom: thin groove #000000; border-right: thin groove #000000;">
-	<%=showNote%>
-	<div style="color: #0000FF;">
-	    Documentation Date: <%=cmn.getCreate_date()%><br>
-	    Saved by <%=cmn.getProviderName()%>
-	</div>
+<div style="width: 99%; background-color: #EFEFEF; font-size: 12px; border-left: thin groove #000000; border-bottom: thin groove #000000; border-right: thin groove #000000;">
+    <%=showNote%>
+    <div style="color: #0000FF;">
+        Documentation Date: <%=cmn.getCreate_date()%><br>
+        Saved by <%=cmn.getProviderName()%>
     </div>
-    <br>
+</div>
+<br>
 <% } %>
 
 </body>

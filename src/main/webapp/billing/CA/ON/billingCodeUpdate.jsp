@@ -19,98 +19,99 @@
 --%>
 <%
 
-  String curUser_no = (String) session.getAttribute("user");    
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="../errorpage.jsp"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.BillingService" %>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingService" %>
 <%
-	BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
+    BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Billing Summary</title>
-<script LANGUAGE="JavaScript">
-<!--
-function CodeAttach(File0, File1, File2) {
-      
-<% 
-if(request.getParameter("nameF") != null) {
-		out.println("self.opener." + request.getParameter("nameF") + " = File0;");
-} else {
-%>      
-      self.opener.document.serviceform.xml_other1.value = File0;
-      self.opener.document.serviceform.xml_other2.value = File1;
-      self.opener.document.serviceform.xml_other3.value = File2;
-<% } %>
-      self.close();
-}
--->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Billing Summary</title>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function CodeAttach(File0, File1, File2) {
+
+            <%
+            if(request.getParameter("nameF") != null) {
+                    out.println("self.opener." + request.getParameter("nameF") + " = File0;");
+            } else {
+            %>
+            self.opener.document.serviceform.xml_other1.value = File0;
+            self.opener.document.serviceform.xml_other2.value = File1;
+            self.opener.document.serviceform.xml_other3.value = File2;
+            <% } %>
+            self.close();
+        }
+
+        -->
+    </script>
 
 </head>
 <body>
 <%
- if (request.getParameter("update").equals("Confirm")) {
- 
- 
-        String temp="";
-        String[] param =new String[10];
+    if (request.getParameter("update").equals("Confirm")) {
+
+
+        String temp = "";
+        String[] param = new String[10];
         param[0] = "";
         param[1] = "";
         param[2] = "";
-	
-	int Count = 0;
-	
-	for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
-		temp=e.nextElement().toString();
-		if( temp.indexOf("code_")==-1 ) continue; 
-                 param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
-                 Count = Count + 1;
-                 
-      }
-    
-    if (Count == 1) {
-    param[1] = "";
-    param[2] = "";
-    }
+
+        int Count = 0;
+
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+            temp = e.nextElement().toString();
+            if (temp.indexOf("code_") == -1) continue;
+            param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
+            Count = Count + 1;
+
+        }
+
+        if (Count == 1) {
+            param[1] = "";
+            param[2] = "";
+        }
         if (Count == 2) {
-        param[2] = "";
-       
-    }
-    
-    if (Count ==0) {
-    %>
+            param[2] = "";
+
+        }
+
+        if (Count == 0) {
+%>
 <p>No input selected</p>
 <input type="button" name="back" value="back"
-	onClick="javascript:history.go(-1);return false;">
+       onClick="javascript:history.go(-1);return false;">
 <%
-    }else{
-    %>
+} else {
+%>
 <script LANGUAGE="JavaScript">
     <!--
-     CodeAttach('<%=param[0]%>','<%=param[1]%>', '<%=param[2]%>' ); 
+    CodeAttach('<%=param[0]%>', '<%=param[1]%>', '<%=param[2]%>');
     -->
-    
+
 </script>
 <%
-}
+    }
 } else {
 %>
 <%
 
-  String code = request.getParameter("update");
-  code = code.substring(code.length()-5);
-  
- int rowsAffected=0;
-    
-	for( BillingService bs:billingServiceDao.findByServiceCode(code)) {
-  		bs.setDescription(request.getParameter(code));
-  		billingServiceDao.merge(bs);
-  		rowsAffected++;
-  	}
+    String code = request.getParameter("update");
+    code = code.substring(code.length() - 5);
+
+    int rowsAffected = 0;
+
+    for (BillingService bs : billingServiceDao.findByServiceCode(code)) {
+        bs.setDescription(request.getParameter(code));
+        billingServiceDao.merge(bs);
+        rowsAffected++;
+    }
 %>
 <%
 %>
@@ -118,7 +119,8 @@ if(request.getParameter("nameF") != null) {
 <h1>Successful Addition of a billing Record.</h1>
 </p>
 <script LANGUAGE="JavaScript">
-    history.go(-1);return false;
+    history.go(-1);
+    return false;
     self.opener.refresh();
 </script>
 <% } %>

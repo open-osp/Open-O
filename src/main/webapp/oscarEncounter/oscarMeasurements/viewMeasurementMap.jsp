@@ -24,277 +24,286 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ page
-	import="java.util.*, oscar.oscarEncounter.oscarMeasurements.data.MeasurementMapConfig, oscar.OscarProperties, oscar.util.StringUtils"%>
+        import="java.util.*, ca.openosp.openo.encounter.oscarMeasurements.data.MeasurementMapConfig, ca.openosp.OscarProperties, ca.openosp.openo.util.StringUtils" %>
 
 <%
 
 %>
 
 <link rel="stylesheet" type="text/css"
-	href="../../oscarMDS/encounterStyles.css">
+      href="<%= request.getContextPath() %>/oscarMDS/encounterStyles.css">
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Measurement Mapping Configuration</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Measurement Mapping Configuration</title>
 
-<script type="text/javascript" language=javascript>
+    <script type="text/javascript" language=javascript>
 
-            function newWindow(varpage, windowname){
-                var page = varpage;
-                windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
-                var popup=window.open(varpage, windowname, windowprops);
-            }
+        function newWindow(varpage, windowname) {
+            var page = varpage;
+            windowprops = "fullscreen=yes,toolbar=yes,directories=no,resizable=yes,dependent=yes,scrollbars=yes,location=yes,status=yes,menubar=yes";
+            var popup = window.open(varpage, windowname, windowprops);
+        }
 
-            function addLoinc(){
-                var loinc_code = document.LOINC.loinc_code.value;
-                var name = document.LOINC.name.value;
+        function addLoinc() {
+            var loinc_code = document.LOINC.loinc_code.value;
+            var name = document.LOINC.name.value;
 
-                if (loinc_code.length > 0 && name.length > 0){
-                    if (modCheck(loinc_code)){
-                        document.LOINC.identifier.value=loinc_code+',PATHL7,'+name;
-                        return true;
-                    }
-                }else{
-                    alert("Please specify both a loinc code and a name before adding.");
-                }
-
-                return false;
-            }
-
-            function modCheck(code){
-                if (code.charAt(0) == 'x' || code.charAt(0) == 'X'){
+            if (loinc_code.length > 0 && name.length > 0) {
+                if (modCheck(loinc_code)) {
+                    document.LOINC.identifier.value = loinc_code + ',PATHL7,' + name;
                     return true;
-                }else{
+                }
+            } else {
+                alert("Please specify both a loinc code and a name before adding.");
+            }
 
-                    var codeArray = new Array();
-                    codeArray = code.split('-');
-                    var length = codeArray[0].length;
+            return false;
+        }
 
-                    var even = false;
-                    if ( (length % 2) == 0 ) even = true;
+        function modCheck(code) {
+            if (code.charAt(0) == 'x' || code.charAt(0) == 'X') {
+                return true;
+            } else {
+
+                var codeArray = new Array();
+                codeArray = code.split('-');
+                var length = codeArray[0].length;
+
+                var even = false;
+                if ((length % 2) == 0) even = true;
 
 
-                    var oddNums = '';
-                    var evenNums = '';
+                var oddNums = '';
+                var evenNums = '';
 
-                    length--;
-                    for (length; length >= 0; length--){
-                        if (even){
-                            even = false;
-                            evenNums = evenNums+codeArray[0].charAt(length);
-                        }else{
-                            even = true;
-                            oddNums = oddNums+codeArray[0].charAt(length);
-                        }
+                length--;
+                for (length; length >= 0; length--) {
+                    if (even) {
+                        even = false;
+                        evenNums = evenNums + codeArray[0].charAt(length);
+                    } else {
+                        even = true;
+                        oddNums = oddNums + codeArray[0].charAt(length);
                     }
+                }
 
-                    oddNums = oddNums*2;
-                    var newNum = evenNums+oddNums;
-                    var sum = 0;
+                oddNums = oddNums * 2;
+                var newNum = evenNums + oddNums;
+                var sum = 0;
 
 
-                    for (var i=0; i < newNum.length; i++){
-                        sum = sum + parseInt(newNum.charAt(i));
-                    }
+                for (var i = 0; i < newNum.length; i++) {
+                    sum = sum + parseInt(newNum.charAt(i));
+                }
 
-                    var newSum = sum;
+                var newSum = sum;
 
-                    while((newSum % 10) != 0){
-                        newSum++;
-                    }
+                while ((newSum % 10) != 0) {
+                    newSum++;
+                }
 
-                    var checkDigit = newSum - sum;
-                    if (checkDigit == codeArray[1]){
-                        return true;
-                    }else{
-                        alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
-                        return false;
-                    }
-
+                var checkDigit = newSum - sum;
+                if (checkDigit == codeArray[1]) {
+                    return true;
+                } else {
+                    alert("The loinc code specified is not a valid loinc code, please start the code with an 'X' if you would like to make your own.");
+                    return false;
                 }
 
             }
 
-            <%String outcome = request.getParameter("outcome");
-            if (outcome != null){
-                if (outcome.equals("success")){
-                    %>
-                      alert("Successfully added loinc code");
-                      window.opener.location.reload()
-                      window.close();
-                    <%
-                }else if (outcome.equals("failedcheck")){
-                    %>
-                      alert("Unable to add code: The specified code already exists in the database");
-                    <%
-                }else{
-                    %>
-                      alert("Failed to add the new code");
-                    <%
-                }
-            }%>
+        }
+
+        <%String outcome = request.getParameter("outcome");
+        if (outcome != null){
+            if (outcome.equals("success")){
+                %>
+        alert("Successfully added loinc code");
+        window.opener.location.reload()
+        window.close();
+        <%
+    }else if (outcome.equals("failedcheck")){
+        %>
+        alert("Unable to add code: The specified code already exists in the database");
+        <%
+    }else{
+        %>
+        alert("Failed to add the new code");
+        <%
+    }
+}%>
 
 
+        window.onload = stripe;
 
-window.onload = stripe;
-
-        </script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-<style type="text/css">
+    </script>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    <style type="text/css">
 
 
-    .even{ background-color:#ccccff;}
-</style>
+        .even {
+            background-color: #ccccff;
+        }
+    </style>
 </head>
 
 <body>
-<form method="post" name="LOINC" action="NewMeasurementMap.do"><input
-	type="hidden" name="identifier" value="">
-<table width="100%" height="100%" border="0">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRow" colspan="9" align="left">
-		<table width="100%">
-			<tr>
-				<td align="left"><input type="button"
-					value=" <bean:message key="global.btnClose"/> "
-					onClick="window.close()"></td>
-				<td align="right">
-                                    <oscar:help keywords="measurement" key="app.top1"/> |
-                                    <a href="javascript:popupStart(300,400,'../About.jsp')"><bean:message key="global.about" /></a> |
-                                    <a href="javascript:popupStart(300,400,'../License.jsp')"><bean:message key="global.license" /></a>
-                                 </td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td valign="top">
+<form method="post" name="LOINC" action="oscarEncounter/oscarMeasurements/NewMeasurementMap.do"><input
+        type="hidden" name="identifier" value="">
+    <table width="100%" height="100%" border="0">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRow" colspan="9" align="left">
+                <table width="100%">
+                    <tr>
+                        <td align="left"><input type="button"
+                                                value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/> "
+                                                onClick="window.close()"></td>
+                        <td align="right">
 
-		<table>
-			<tr>
-                                <th valign="bottom" class="Header">MEAS</th>
-								<th valign="bottom" class="Header">Loinc Code</th>
-                                <th valign="bottom" class="Header">Desc</th>
-                                <th valign="bottom" class="Header">--</th>
-                                <%
-                                MeasurementMapConfig map = new MeasurementMapConfig();
-                                List<String> types = map.getLabTypes();
-                                types.remove("FLOWSHEET");
-                                for(String type:types){%>
-                                <th valign="bottom" class="Header"><%=type%></th>
-                                <%}%>
-			</tr>
-                        <tbody>
+                            <a href="javascript:popupStart(300,400, '<%= request.getContextPath() %>/oscarEncounter/About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> |
+                            <a href="javascript:popupStart(300,400, '<%= request.getContextPath() %>/oscarEncounter/License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+
+                <table>
+                    <tr>
+                        <th valign="bottom" class="Header">MEAS</th>
+                        <th valign="bottom" class="Header">Loinc Code</th>
+                        <th valign="bottom" class="Header">Desc</th>
+                        <th valign="bottom" class="Header">--</th>
                         <%
+                            MeasurementMapConfig map = new MeasurementMapConfig();
+                            List<String> types = map.getLabTypes();
+                            types.remove("FLOWSHEET");
+                            for (String type : types) {%>
+                        <th valign="bottom" class="Header"><%=type%>
+                        </th>
+                        <%}%>
+                    </tr>
+                    <tbody>
+                    <%
 
 
-                        List<String> list =map.getDistinctLoincCodes();
+                        List<String> list = map.getDistinctLoincCodes();
                         boolean odd = true;
-                        for(String s:list){
+                        for (String s : list) {
 
-                        	List<HashMap<String,String>> codesHash = map.getMappedCodesFromLoincCodes(s);
+                            List<HashMap<String, String>> codesHash = map.getMappedCodesFromLoincCodes(s);
                             String desc = "";
-                            if (codesHash.size() > 0 ){
+                            if (codesHash.size() > 0) {
                                 desc = getDesc(codesHash.get(0));
                             }
 
-                            HashMap<String, HashMap<String,String>> h = map.getMappedCodesFromLoincCodesHash(s);
+                            HashMap<String, HashMap<String, String>> h = map.getMappedCodesFromLoincCodesHash(s);
 
-                            String measurement = getDisplay(h,"FLOWSHEET");
+                            String measurement = getDisplay(h, "FLOWSHEET");
 
-                        %>
+                    %>
 
-                        <tr style="background-color:<%=rowColour(odd)%>">
-                            <td class="Cell" >
-                                <% if (measurement != null && !measurement.equals("&nbsp;")){%>
-                                <%=measurement%>
-                                <%}else{%>
-                                <a href="addMeasurementMap2.jsp?loinc=<%=s%>">map</a>
-                                <%}%>
-                            </td>
-                            <td class="Cell" ><%=s%></td>
-                            <td class="Cell" ><%=desc%></td>
-                            <td class="Cell">&nbsp;</td>
-
-                            <%for(String type:types){%>
-                                <td class="Cell" ><%=getDisplay(h,type)%></td>
+                    <tr style="background-color:<%=rowColour(odd)%>">
+                        <td class="Cell">
+                            <% if (measurement != null && !measurement.equals("&nbsp;")) {%>
+                            <%=measurement%>
+                            <%} else {%>
+                            <a href="addMeasurementMap2.jsp?loinc=<%=s%>">map</a>
                             <%}%>
+                        </td>
+                        <td class="Cell"><%=s%>
+                        </td>
+                        <td class="Cell"><%=desc%>
+                        </td>
+                        <td class="Cell">&nbsp;</td>
+
+                        <%for (String type : types) {%>
+                        <td class="Cell"><%=getDisplay(h, type)%>
+                        </td>
+                        <%}%>
 
 
+                    </tr>
 
-                        </tr>
-
-                        <%
-                        odd = !odd;
+                    <%
+                            odd = !odd;
                         }%>
-					</tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="<%=4+types.size()%>" style="background-color:black;color:white" align="center"> Unmapped Codes</td>
-                            </tr>
-                            <tr>
-                                <td colspan="4">&nbsp;</td>
-                                <%for(String type:types){%>
-                                
-                                <td valign="top" style="border: 1px solid black;">
-                                
-                                <h4 class="Header" style="text-align:center"><%=type%></h4>
-                                    <ul>
-                                    <li>test</li>
-                                    <%
-                                    ArrayList<HashMap<String,String>> unList = map.getUnmappedMeasurements(type);
-                                    for (HashMap<String,String> h:unList){
-                                    %>
-                                       <li><%=h.get(("name"))%></li>
-                                    <%}%>
-                                    </ul>
-                                </td>
-                                <%}%>
-                            </tr>
-                        </tfoot>
-		</table>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="<%=4+types.size()%>" style="background-color:black;color:white" align="center">
+                            Unmapped Codes
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">&nbsp;</td>
+                        <%for (String type : types) {%>
 
-		</td>
-	</tr>
-</table>
+                        <td valign="top" style="border: 1px solid black;">
+
+                            <h4 class="Header" style="text-align:center"><%=type%>
+                            </h4>
+                            <ul>
+                                <li>test</li>
+                                <%
+                                    ArrayList<HashMap<String, String>> unList = map.getUnmappedMeasurements(type);
+                                    for (HashMap<String, String> h : unList) {
+                                %>
+                                <li><%=h.get(("name"))%>
+                                </li>
+                                <%}%>
+                            </ul>
+                        </td>
+                        <%}%>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </td>
+        </tr>
+    </table>
 </form>
 </body>
 </html>
 <%!
-  String rowColour(Boolean b){
-      if (b.booleanValue()){
-          b = Boolean.valueOf(!b);
-          return "#DDDDDD";
-      }else{
+    String rowColour(Boolean b) {
+        if (b.booleanValue()) {
+            b = Boolean.valueOf(!b);
+            return "#DDDDDD";
+        } else {
 
-          return "#FFFFFF";
-      }
+            return "#FFFFFF";
+        }
 
-  }
+    }
 
 
+    String getDesc(HashMap<String, String> h) {
+        return h.get("name");
+    }
 
-  String getDesc(HashMap<String,String> h){
-      return h.get("name");
-  }
+    String getDisplay(HashMap<String, HashMap<String, String>> h, String type) {
+        HashMap<String, String> data = h.get(type);
+        if (data == null) {
+            return "&nbsp;";
+        }
+        return data.get("name") + ": " + data.get("ident_code");
+    }
 
-  String getDisplay(HashMap<String, HashMap<String,String>> h, String type){
-      HashMap<String,String> data = h.get(type);
-      if (data == null ){ return "&nbsp;";}
-      return data.get("name")+": "+data.get("ident_code");
-  }
+    String getCodeMap(List<HashMap<String, String>> list) {
+        StringBuffer sb = new StringBuffer();
 
-  String getCodeMap(List<HashMap<String,String>> list){
-      StringBuffer sb = new StringBuffer();
-
-        for(HashMap<String,String> h : list){
-            sb.append(h.get("name")+" : "+h.get("lab_type")+"("+h.get("ident_code")+ ")   |  ");
+        for (HashMap<String, String> h : list) {
+            sb.append(h.get("name") + " : " + h.get("lab_type") + "(" + h.get("ident_code") + ")   |  ");
         }
         return sb.toString();
-  }
+    }
 %>

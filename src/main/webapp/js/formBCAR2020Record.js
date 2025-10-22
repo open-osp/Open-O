@@ -15,20 +15,20 @@ var provNo;
 var page = 0;
 
 
-function init(pageNo){
+function init(pageNo) {
     page = pageNo;
     if (page === 1) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage1Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage1Height));
     } else if (page === 2) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage2Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage2Height));
     } else if (page === 3) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage3Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage3Height));
     } else if (page === 4) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage4Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage4Height));
     } else if (page === 5) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage5Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage5Height));
     } else if (page === 6) {
-        window.resizeTo(window.outerWidth, Math.min(screen.availHeight,maxPage6Height));
+        window.resizeTo(window.outerWidth, Math.min(screen.availHeight, maxPage6Height));
     } else {
         window.resizeTo(window.outerWidth, screen.availHeight);
     }
@@ -40,7 +40,7 @@ function init(pageNo){
     //Enable Calendars
     calendars(page);
     dialogs(page);
-    
+
     if (page === 1) {
         // Load multi-select checkbox dropdowns
         var ethnicity = $("textarea[name='t_ethnicity']").val();
@@ -53,31 +53,31 @@ function init(pageNo){
             });
 
         //Enable All No Links
-        $('#presentPregnancyNo').click(function(){
+        $('#presentPregnancyNo').click(function () {
             allNo('presentPregnancy');
             return false;
         });
-        $('#medicalHistoryNo').click(function(){
+        $('#medicalHistoryNo').click(function () {
             allNo('medicalHistory');
             return false;
         });
-        $('#lifestyleSocialNo').click(function(){
+        $('#lifestyleSocialNo').click(function () {
             allNo('lifestyleSocial');
             return false;
         });
-        $('#familyHistoryNo').click(function(){
+        $('#familyHistoryNo').click(function () {
             allNo('familyHistory');
             return false;
         });
-        $('#initialExam1Norm').click(function(){
+        $('#initialExam1Norm').click(function () {
             allNo('initialExam1');
             return false;
         });
-        $('#initialExam2Norm').click(function(){
+        $('#initialExam2Norm').click(function () {
             allNo('initialExam2');
             return false;
         });
-        
+
         //Enable Toggle Rules and Default States for standard Yes/No/Details Fields
         toggleFieldRules('presentPregnancyBleeding');
         toggleFieldRules('presentPregnancyNausea');
@@ -178,14 +178,14 @@ function init(pageNo){
         //Initial Physical Exam
 
         toggleFieldRulesEx('c_initialExamHeadNorm', 'c_initialExamHeadAbNorm', []);
-        toggleFieldRulesEx('c_initialExamBreastsNorm', 'c_initialExamBreastsAbNorm',[] );
+        toggleFieldRulesEx('c_initialExamBreastsNorm', 'c_initialExamBreastsAbNorm', []);
         toggleFieldRulesEx('c_initialExamHeartNorm', 'c_initialExamHeartAbNorm', []);
         toggleFieldRulesEx('c_initialExamAbdomenNorm', 'c_initialExamAbdomenAbNorm', []);
         toggleFieldRulesEx('c_initialExamMusculoNorm', 'c_initialExamMusculoAbNorm', []);
         toggleFieldRulesEx('c_initialExamSkinNorm', 'c_initialExamSkinAbNorm', []);
         toggleFieldRulesSingle('c_initialExamSkinOther', ['t_initialExamSkinOtherDetails']);
         toggleFieldRulesEx('c_initialExamPelvicNorm', 'c_initialExamPelvicAbNorm', []);
-        toggleFieldRulesMultiple(['c_initialExamPelvicNorm','c_initialExamPelvicAbNorm'], []);
+        toggleFieldRulesMultiple(['c_initialExamPelvicNorm', 'c_initialExamPelvicAbNorm'], []);
         toggleFieldRulesEx('c_initialExamOtherNorm', 'c_initialExamOtherAbNorm', []);
 
 
@@ -196,9 +196,9 @@ function init(pageNo){
 
         //Pregnancy Planned
         toggleFieldRulesUnique(['c_pregnancyPlannedYes', 'c_pregnancyPlannedNo']);
-        
+
         //Comments
-        toggleFieldRulesUnique(['c_commentsMD','c_commentsRM','c_commentsNP']);
+        toggleFieldRulesUnique(['c_commentsMD', 'c_commentsRM', 'c_commentsNP']);
 
         //Set Default States for custom rules
         if ($('input[name="t_biologicalFatherName"]').prop("value") == $('input[name="t_partnerName"]').prop("value")) {
@@ -246,50 +246,50 @@ function init(pageNo){
         });
     } else if (page === 2) {
         //EDD
-        toggleFieldRulesUnique(['c_confirmedEDDUS','c_confirmedEDDIVF']);
-        
+        toggleFieldRulesUnique(['c_confirmedEDDUS', 'c_confirmedEDDIVF']);
+
         //Test Results
-        toggleFieldRulesUnique(['c_investigationsRubellaImm','c_investigationsRubellaNonImm']);
-        toggleFieldRulesUnique(['c_investigationsHIVNeg','c_investigationsHIVPos']);
-        toggleFieldRulesUnique(['c_investigationsSyphilisNR','c_investigationsSyphilisR']);
-        toggleFieldRulesUnique(['c_investigationsHBsAgNR','c_investigationsHBsAgR']);
-        toggleFieldRulesUnique(['c_investigationsGonorrheaNeg','c_investigationsGonorrheaPos']);
-        toggleFieldRulesUnique(['c_investigationsChlamydiaNeg','c_investigationsChlamydiaPos']);
-        toggleFieldRulesUnique(['c_investigationsUrineNeg','c_investigationsUrinePos']);
-        toggleFieldRulesUnique(['c_investigationsGDMGCTNeg','c_investigationsGDMGCTPos']);
-        toggleFieldRulesUnique(['c_investigationsGDMGTTNeg','c_investigationsGDMGTTPos']);
-        toggleFieldRulesUnique(['c_investigationsGBSNeg','c_investigationsGBSPos']);
+        toggleFieldRulesUnique(['c_investigationsRubellaImm', 'c_investigationsRubellaNonImm']);
+        toggleFieldRulesUnique(['c_investigationsHIVNeg', 'c_investigationsHIVPos']);
+        toggleFieldRulesUnique(['c_investigationsSyphilisNR', 'c_investigationsSyphilisR']);
+        toggleFieldRulesUnique(['c_investigationsHBsAgNR', 'c_investigationsHBsAgR']);
+        toggleFieldRulesUnique(['c_investigationsGonorrheaNeg', 'c_investigationsGonorrheaPos']);
+        toggleFieldRulesUnique(['c_investigationsChlamydiaNeg', 'c_investigationsChlamydiaPos']);
+        toggleFieldRulesUnique(['c_investigationsUrineNeg', 'c_investigationsUrinePos']);
+        toggleFieldRulesUnique(['c_investigationsGDMGCTNeg', 'c_investigationsGDMGCTPos']);
+        toggleFieldRulesUnique(['c_investigationsGDMGTTNeg', 'c_investigationsGDMGTTPos']);
+        toggleFieldRulesUnique(['c_investigationsGBSNeg', 'c_investigationsGBSPos']);
         toggleFieldRulesSingle('c_prenatalGeneticOther', ['t_prenatalGeneticOtherDetails']);
-        toggleFieldRulesSingleOpposite('c_prenatalGeneticDeclined',['c_prenatalGeneticSIPS','c_prenatalGeneticIPS','c_prenatalGeneticQuad','c_prenatalGeneticCVS','t_prenatalGeneticResults','c_prenatalGeneticNIPTMSP','c_prenatalGeneticNIPTSelf','t_prenatalGeneticOtherDetails','c_prenatalGeneticOther','c_prenatalGeneticAmnio']);
+        toggleFieldRulesSingleOpposite('c_prenatalGeneticDeclined', ['c_prenatalGeneticSIPS', 'c_prenatalGeneticIPS', 'c_prenatalGeneticQuad', 'c_prenatalGeneticCVS', 't_prenatalGeneticResults', 'c_prenatalGeneticNIPTMSP', 'c_prenatalGeneticNIPTSelf', 't_prenatalGeneticOtherDetails', 'c_prenatalGeneticOther', 'c_prenatalGeneticAmnio']);
 
         //Edinburgh
-        toggleFieldRulesSingleOpposite('c_edinburgDeclined', ['d_edinburgDate','t_edinburgGA','t_edinburgTotalScore','t_edinburgAnxietySubscore','t_edinburgSelfharmSubscore','t_edinburgFollowup']);
-        
+        toggleFieldRulesSingleOpposite('c_edinburgDeclined', ['d_edinburgDate', 't_edinburgGA', 't_edinburgTotalScore', 't_edinburgAnxietySubscore', 't_edinburgSelfharmSubscore', 't_edinburgFollowup']);
+
         //Perinatal Considerations
-        toggleFieldRulesUnique(['c_considerationsPregnancySingleton','c_considerationsPregnancyTwin','c_considerationsPregnancyMultiple']);
-        toggleFieldRulesUnique(['c_considerationsVBACEligNo','c_considerationsVBACEligYes','c_considerationsVBACEligNA']);
-        toggleFieldRulesUnique(['c_considerationsVBACPlanNo','c_considerationsVBACPlanYes','c_considerationsVBACPlanNA']);
-        toggleFieldRulesUnique(['c_considerationsBreastfeedNo','c_considerationsBreastfeedYes','c_considerationsBreastfeedUN']);
-        
+        toggleFieldRulesUnique(['c_considerationsPregnancySingleton', 'c_considerationsPregnancyTwin', 'c_considerationsPregnancyMultiple']);
+        toggleFieldRulesUnique(['c_considerationsVBACEligNo', 'c_considerationsVBACEligYes', 'c_considerationsVBACEligNA']);
+        toggleFieldRulesUnique(['c_considerationsVBACPlanNo', 'c_considerationsVBACPlanYes', 'c_considerationsVBACPlanNA']);
+        toggleFieldRulesUnique(['c_considerationsBreastfeedNo', 'c_considerationsBreastfeedYes', 'c_considerationsBreastfeedUN']);
+
         //Sign Offs
-        toggleFieldRulesUnique(['c_signOffsMD1','c_signOffsRM1','c_signOffsNP1']);
-        toggleFieldRulesUnique(['c_signOffsMD2','c_signOffsRM2','c_signOffsNP2']);
-        toggleFieldRulesUnique(['c_signOffsMD3','c_signOffsRM3','c_signOffsNP3']);
+        toggleFieldRulesUnique(['c_signOffsMD1', 'c_signOffsRM1', 'c_signOffsNP1']);
+        toggleFieldRulesUnique(['c_signOffsMD2', 'c_signOffsRM2', 'c_signOffsNP2']);
+        toggleFieldRulesUnique(['c_signOffsMD3', 'c_signOffsRM3', 'c_signOffsNP3']);
     } else if (page === 3) {
         //Sign Offs
-        toggleFieldRulesUnique(['c_signOffsMD1','c_signOffsRM1','c_signOffsNP1']);
-        toggleFieldRulesUnique(['c_signOffsMD2','c_signOffsRM2','c_signOffsNP2']);
-        toggleFieldRulesUnique(['c_signOffsMD3','c_signOffsRM3','c_signOffsNP3']);
+        toggleFieldRulesUnique(['c_signOffsMD1', 'c_signOffsRM1', 'c_signOffsNP1']);
+        toggleFieldRulesUnique(['c_signOffsMD2', 'c_signOffsRM2', 'c_signOffsNP2']);
+        toggleFieldRulesUnique(['c_signOffsMD3', 'c_signOffsRM3', 'c_signOffsNP3']);
     } else if (page === 6) {
         // Attachments/Additional Info Page
-        toggleFieldRulesSingle('c_attMedications', ['mt_attMedications','fetchMedications\\|mt_attMedications','fetchLongTermMedications\\|mt_attMedications','fetchOtherMeds']);
-        toggleFieldRulesSingle('c_attAllergies', ['mt_attAllergies','fetchAllergies\\|mt_attAllergies']);
-        toggleFieldRulesSingle('c_attAdditionalInfo', ['mt_attAdditionalInfo','fetchAddInfoSocHistory','fetchAddInfoFamHistory','fetchAddInfoMedHistory','fetchAddInfoConcerns','fetchAddInfoOtherMeds','fetchAddInfoReminders','fetchRiskFactors\\|mt_attAdditionalInfo']);
+        toggleFieldRulesSingle('c_attMedications', ['mt_attMedications', 'fetchMedications\\|mt_attMedications', 'fetchLongTermMedications\\|mt_attMedications', 'fetchOtherMeds']);
+        toggleFieldRulesSingle('c_attAllergies', ['mt_attAllergies', 'fetchAllergies\\|mt_attAllergies']);
+        toggleFieldRulesSingle('c_attAdditionalInfo', ['mt_attAdditionalInfo', 'fetchAddInfoSocHistory', 'fetchAddInfoFamHistory', 'fetchAddInfoMedHistory', 'fetchAddInfoConcerns', 'fetchAddInfoOtherMeds', 'fetchAddInfoReminders', 'fetchRiskFactors\\|mt_attAdditionalInfo']);
     }
 
 }
 
-function allNo(section){
+function allNo(section) {
     if (section === 'presentPregnancy') {
         check('c_presentPregnancyARTNo');
         check('c_presentPregnancyBleedingNo');
@@ -361,8 +361,8 @@ toggleFieldRulesUnique applies a unique rule so that only one field in the field
 at any one time. 
  */
 function toggleFieldRulesUnique(fieldList) {
-    fieldList.forEach(function(fieldName, index) {
-        $('input[name="'+ fieldName + '"]').change(function() {
+    fieldList.forEach(function (fieldName, index) {
+        $('input[name="' + fieldName + '"]').change(function () {
             var $this = $(this);
             if ($this.prop("checked")) {
                 fieldList.forEach(function (fieldName, index) {
@@ -374,6 +374,7 @@ function toggleFieldRulesUnique(fieldList) {
         });
     });
 }
+
 /*
 toggleFieldRulesSingle expands upon toggleFieldRules to allow you to specify a single checkbox field
 and a list of all of the fields you would like to be toggled (enabled/disabled based on the checkField).
@@ -386,9 +387,9 @@ function toggleFieldRulesSingle(checkField, fieldList) {
     if (!$('input[name="' + checkField + '"]').prop("checked")) {
         fieldList.forEach(disableField);
     }
-    
+
     //Create Toggle Functions
-    $('input[name="'+ checkField + '"]').change(function() {
+    $('input[name="' + checkField + '"]').change(function () {
         toggleField(checkField, fieldList);
     });
 }
@@ -402,10 +403,10 @@ function disableField(fieldName) {
 
     // Wipe the contents of any matching control thats not a button
     fieldList.not(':input[type=button]').prop("value", "");
-    
+
     // Uncheck any checkbox 
     fieldList.find('[type=checkbox]').prop("checked", false);
-    
+
     // Disable any input
     fieldList.prop("disabled", true);
 }
@@ -415,7 +416,7 @@ enableField wraps all of the code to enable a field (whether it be a button, tex
 fieldName: is the field to be enabled
  */
 function enableField(fieldName) {
-    $('input[name="'+ fieldName + '"],#' + fieldName).prop("disabled", false);
+    $('input[name="' + fieldName + '"],#' + fieldName).prop("disabled", false);
 }
 
 /*
@@ -438,7 +439,7 @@ The rules that are applied are:
 - If *any* checkField is checked, the fields in the fieldList are Enabled. 
 - If *all* checkFields are unchecked, the field in the fieldList are wiped and disabled.
  */
-function toggleFieldRulesMultiple (checkFieldList, fieldList) {
+function toggleFieldRulesMultiple(checkFieldList, fieldList) {
     //Set Default State
     // Check if any of the fields in the checkFieldList are checked
     if (!checkFieldList.some(checkField => $('input[name="' + checkField + '"]').prop("checked"))) {
@@ -446,8 +447,8 @@ function toggleFieldRulesMultiple (checkFieldList, fieldList) {
     }
 
     //Create Toggle Functions
-    checkFieldList.forEach(function(checkField) {
-        $('input[name="'+ checkField + '"]').change(function() {
+    checkFieldList.forEach(function (checkField) {
+        $('input[name="' + checkField + '"]').change(function () {
             toggleField(checkField, fieldList);
         });
     });
@@ -462,7 +463,7 @@ the fields in the field list are disabled/wiped/unchecked.
 function toggleFieldRulesSingleOpposite(checkField, fieldList) {
     //Set Default State
     if ($('input[name="' + checkField + '"]').prop("checked")) {
-        fieldList.forEach(function(fieldName, index) {
+        fieldList.forEach(function (fieldName, index) {
             $('input[type="text"][name="' + fieldName + '"]').prop("value", "");
             $('#' + fieldName).prop("value", "");
             $('input[name="' + fieldName + '"]').prop("disabled", true);
@@ -472,17 +473,17 @@ function toggleFieldRulesSingleOpposite(checkField, fieldList) {
     }
 
     //Create Toggle Functions
-    $('input[name="'+ checkField + '"]').change(function() {
+    $('input[name="' + checkField + '"]').change(function () {
         if ($('input[name="' + checkField + '"]').prop("checked")) {
-            fieldList.forEach(function(fieldName, index) {
+            fieldList.forEach(function (fieldName, index) {
                 $('input[type="text"][name="' + fieldName + '"]').prop("value", "");
                 $('#' + fieldName).prop("value", "");
-                $('input[name="'+ fieldName + '"]').prop("disabled", true);
-                $('#'+ fieldName).prop("disabled", true);
+                $('input[name="' + fieldName + '"]').prop("disabled", true);
+                $('#' + fieldName).prop("disabled", true);
                 $('input[name="' + fieldName + '"]').prop("checked", false);
             });
         } else {
-            fieldList.forEach(function(fieldName, index) {
+            fieldList.forEach(function (fieldName, index) {
                 $('input[name="' + fieldName + '"]').prop("disabled", false).change();
                 $('#' + fieldName).prop("disabled", false);
             });
@@ -501,34 +502,34 @@ The rules applied are:
 function toggleFieldRulesEx(fieldNo, fieldYes, fieldList) {
     //Set Default State
     if (!$('input[name="' + fieldYes + '"]').prop("checked")) {
-        fieldList.forEach(function(fieldName, index) {
+        fieldList.forEach(function (fieldName, index) {
             $('input[type="text"][name="' + fieldName + '"]').prop("value", "");
             $('input[name="' + fieldName + '"]').prop("disabled", true);
             $('input[name="' + fieldName + '"]').prop("checked", false);
         });
     }
-    
+
     //Create Toggle Functions
-    $('input[name="'+ fieldYes + '"]').change(function() {
+    $('input[name="' + fieldYes + '"]').change(function () {
         if ($('input[name="' + fieldYes + '"]').prop("checked")) {
             $('input[name="' + fieldNo + '"]').prop("checked", false);
-            fieldList.forEach(function(fieldName, index) {
-                $('input[name="'+ fieldName + '"]').prop("disabled", false);
-                $('input[name="'+ fieldName + '"]').prop("checked", false).change();
+            fieldList.forEach(function (fieldName, index) {
+                $('input[name="' + fieldName + '"]').prop("disabled", false);
+                $('input[name="' + fieldName + '"]').prop("checked", false).change();
             });
         } else {
-            fieldList.forEach(function(fieldName, index) {
+            fieldList.forEach(function (fieldName, index) {
                 $('input[type="text"][name="' + fieldName + '"]').prop("value", "");
                 $('input[name="' + fieldName + '"]').prop("disabled", true);
                 $('input[name="' + fieldName + '"]').prop("checked", false);
             });
         }
     });
-    
-    $('input[name="'+ fieldNo + '"]').change(function() {
+
+    $('input[name="' + fieldNo + '"]').change(function () {
         if ($('input[name="' + fieldNo + '"]').prop("checked")) {
             $('input[name="' + fieldYes + '"]').prop("checked", false);
-            fieldList.forEach(function(fieldName, index) {
+            fieldList.forEach(function (fieldName, index) {
                 $('input[type="text"][name="' + fieldName + '"]').prop("value", "");
                 $('input[name="' + fieldName + '"]').prop("disabled", true);
                 $('input[name="' + fieldName + '"]').prop("checked", false);
@@ -553,52 +554,51 @@ function toggleFieldRules(fieldName) {
     //Set Default State
     if (!$('input[name$="' + fieldName + 'Yes"]').prop("checked")) {
         $('input[type$="text"][name$="' + fieldName + 'Details"]').prop("value", "");
-        $('input[name$="'+ fieldName + 'Details"]').prop("disabled", true);
+        $('input[name$="' + fieldName + 'Details"]').prop("disabled", true);
     }
 
     //Create toggle functions
-    $('input[name$="'+ fieldName + 'Yes"]').change(function() {
+    $('input[name$="' + fieldName + 'Yes"]').change(function () {
         if ($('input[name$="' + fieldName + 'Yes"]').prop("checked")) {
             $('input[name$="' + fieldName + 'No"]').prop("checked", false);
-            $('input[name$="'+ fieldName + 'Details"]').prop("disabled", false);
+            $('input[name$="' + fieldName + 'Details"]').prop("disabled", false);
         } else {
             $('input[type="text"][name$="' + fieldName + 'Details"]').prop("value", "");
-            $('input[name$="'+ fieldName + 'Details"]').prop("disabled", true);
+            $('input[name$="' + fieldName + 'Details"]').prop("disabled", true);
         }
     });
-    $('input[name$="'+ fieldName + 'No"]').change(function() {
+    $('input[name$="' + fieldName + 'No"]').change(function () {
         if ($('input[name$="' + fieldName + 'No"]').prop("checked")) {
             $('input[name$="' + fieldName + 'Yes"]').prop("checked", false);
             $('input[type="text"][name$="' + fieldName + 'Details"]').prop("value", "");
-            $('input[name$="'+ fieldName + 'Details"]').prop("disabled", true);
+            $('input[name$="' + fieldName + 'Details"]').prop("disabled", true);
         }
     });
 }
 
 function reset() {
     document.forms[0].target = "";
-    document.forms[0].action = "../form/BCAR2020.do" ;
+    document.forms[0].action = "../form/BCAR2020.do";
 }
 
 function onSave() {
-    document.forms[0].method.value="save";
+    document.forms[0].method.value = "save";
     var ret1 = validate();
     var ret = checkAllDates();
-    if(ret == true && ret1==true) {
+    if (ret == true && ret1 == true) {
         reset();
     }
     if (ret && ret1) {
-        window.onunload=null;
+        window.onunload = null;
     }
     return ret && ret1;
 }
 
 function onSaveExit() {
-    document.forms[0].method.value="saveAndExit";
+    document.forms[0].method.value = "saveAndExit";
     var ret1 = validate();
     var ret = checkAllDates();
-    if(ret == true && ret1==true)
-    {
+    if (ret == true && ret1 == true) {
         reset();
     }
     return ret && ret1;
@@ -624,16 +624,16 @@ function daysInArray(n) {
     return this;
 }
 
-function daysInFebruary (year){
+function daysInFebruary(year) {
     // February has 29 days in any year evenly divisible by four,
     // EXCEPT for centurial years which are not also divisible by 400.
-    return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
+    return (((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28);
 }
 
-function stripCharsInBag(s, bag){
+function stripCharsInBag(s, bag) {
     var returnString = "";
 
-    for (var i = 0; i < s.length; i++){
+    for (var i = 0; i < s.length; i++) {
         var c = s.charAt(i);
         if (bag.indexOf(c) === -1) {
             returnString += c;
@@ -643,10 +643,10 @@ function stripCharsInBag(s, bag){
     return returnString;
 }
 
-function isInteger(s){
+function isInteger(s) {
     var isInt = true;
 
-    for (var i = 0; i < s.length; i++){
+    for (var i = 0; i < s.length; i++) {
         var c = s.charAt(i);
         if (((c < "0") || (c > "9"))) {
             isInt = false;
@@ -660,12 +660,12 @@ function isNumber(value) {
     return value != null && value.trim().length > 0 && !isNaN(value);
 }
 
-function isDate(dtStr){
+function isDate(dtStr) {
     var daysInMonth = daysInArray(12);
     var pos1 = dtStr.indexOf(dtCh);
-    var pos2 = dtStr.indexOf(dtCh,pos1 + 1);
-    var strMonth = dtStr.substring(0,pos1);
-    var strDay = dtStr.substring(pos1 + 1,pos2);
+    var pos2 = dtStr.indexOf(dtCh, pos1 + 1);
+    var strMonth = dtStr.substring(0, pos1);
+    var strDay = dtStr.substring(pos1 + 1, pos2);
     var strYear = dtStr.substring(pos2 + 1);
 
     if (strDay.charAt(0) === "0" && strDay.length > 1) strDay = strDay.substring(1);
@@ -679,19 +679,19 @@ function isDate(dtStr){
     var day = parseInt(strDay);
     var year = parseInt(strYear);
 
-    if (pos1 === -1 || pos2 === -1){
+    if (pos1 === -1 || pos2 === -1) {
         return "format";
     }
-    if (month<1 || month > 12){
+    if (month < 1 || month > 12) {
         return "month";
     }
-    if (day<1 || day > 31 || (month === 2 && day > daysInFebruary(year)) || day > daysInMonth[month]){
+    if (day < 1 || day > 31 || (month === 2 && day > daysInFebruary(year)) || day > daysInMonth[month]) {
         return "day";
     }
-    if (strYear.length !== 4 || year === 0 || year<minYear || year > maxYear){
+    if (strYear.length !== 4 || year === 0 || year < minYear || year > maxYear) {
         return "year";
     }
-    if (dtStr.indexOf(dtCh,pos2+1) !== -1 || isInteger(stripCharsInBag(dtStr, dtCh)) === false){
+    if (dtStr.indexOf(dtCh, pos2 + 1) !== -1 || isInteger(stripCharsInBag(dtStr, dtCh)) === false) {
         return "date";
     }
 
@@ -699,11 +699,10 @@ function isDate(dtStr){
 }
 
 function valDate(dateBox, ds = dtCh) {
-    if(dateBox){
+    if (dateBox) {
         try {
             var dateString = dateBox.value;
-            if(dateString === "") {
-                //            alert('dateString'+dateString);
+            if (dateString === "") {
                 return true;
             }
             var dt = dateString.split(ds);
@@ -713,8 +712,8 @@ function valDate(dateBox, ds = dtCh) {
             var orderString = m + '/' + d + '/' + y;
             var pass = isDate(orderString);
 
-            if(pass !== true) {
-                alert('Invalid '+pass+' in field ' + dateBox.title);
+            if (pass !== true) {
+                alert('Invalid ' + pass + ' in field ' + dateBox.title);
                 dateBox.focus();
                 return false;
             }
@@ -770,119 +769,119 @@ function checkAllDates() {
             valid = false;
         }
     } else if (page === 2) {
-        if(valDate(document.forms[0].d_imagingDate1)==false) {
+        if (valDate(document.forms[0].d_imagingDate1) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_imagingDate2)==false) {
+        } else if (valDate(document.forms[0].d_imagingDate2) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_imagingDate3)==false) {
+        } else if (valDate(document.forms[0].d_imagingDate3) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_imagingDate4)==false) {
+        } else if (valDate(document.forms[0].d_imagingDate4) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_confirmedEDD)==false) {
+        } else if (valDate(document.forms[0].d_confirmedEDD) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_investigationsAntibody1)==false) {
+        } else if (valDate(document.forms[0].d_investigationsAntibody1) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_investigationsRhIgDate1)==false) {
+        } else if (valDate(document.forms[0].d_investigationsRhIgDate1) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_investigationsAntibody2)==false) {
+        } else if (valDate(document.forms[0].d_investigationsAntibody2) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_investigationsRhIgDate2)==false) {
+        } else if (valDate(document.forms[0].d_investigationsRhIgDate2) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_edinburgDate)==false) {
+        } else if (valDate(document.forms[0].d_edinburgDate) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_investigationsGBSDate)==false) {
+        } else if (valDate(document.forms[0].d_investigationsGBSDate) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate1)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate1) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate2)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate2) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate3)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate3) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate4)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate4) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate5)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate5) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate6)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate6) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate7)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate7) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate8)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate8) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate9)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate9) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate10)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate10) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate11)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate11) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate12)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate12) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate13)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate13) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate14)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate14) == false) {
             valid = false;
         }
     } else if (page === 3) {
-        if(valDate(document.forms[0].d_confirmedEDD)==false) {
+        if (valDate(document.forms[0].d_confirmedEDD) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate15)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate15) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate16)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate16) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate17)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate17) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate18)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate18) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate19)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate19) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate20)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate20) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate21)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate21) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate22)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate22) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate23)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate23) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate24)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate24) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate25)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate25) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate26)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate26) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate27)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate27) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate28)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate28) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate29)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate29) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate30)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate30) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate31)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate31) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate32)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate32) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate33)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate33) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate34)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate34) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate35)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate35) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate36)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate36) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate37)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate37) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate38)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate38) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate39)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate39) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate40)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate40) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate41)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate41) == false) {
             valid = false;
-        } else if(valDate(document.forms[0].d_prenatalVisitDate42)==false) {
+        } else if (valDate(document.forms[0].d_prenatalVisitDate42) == false) {
             valid = false;
         }
     }
-    
+
     return valid;
 }
 
@@ -902,7 +901,7 @@ function appendNotify(field) {
             promptMessage = "Click on the attachments link at the top of this page to add and customize a list of allergies.";
             break;
     }
-    
+
     $('input[type="text"][name=' + field.name + ']').val(fieldMessage);
     alert(promptMessage);
 }
@@ -911,55 +910,54 @@ function calculateBmi(field) {
     var height = $('input[type="text"][name="t_initialExamHT"]').prop("value");
     var weight = $('input[type="text"][name="t_initialExamWT"]').prop("value");
 
-    if(isNumber(height) && isNumber(weight)) {
+    if (isNumber(height) && isNumber(weight)) {
         height = parseFloat(height) / 100;
         weight = parseFloat(weight);
-        if(height && height !== 0 && weight && weight !== 0) {
+        if (height && height !== 0 && weight && weight !== 0) {
             field.value = Math.round(weight * 10 / height / height) / 10;
         }
-    }
-    else {
+    } else {
         alert("Please enter a valid Height and Pre-preg. Wt before calculating BMI.");
     }
 }
 
 function calcAgeAtEDD(EDD, DOB, field) {
-    var DOB_array=DOB.split("/");
+    var DOB_array = DOB.split("/");
     var age = 0;
 
-    if ( EDD == "" ){
+    if (EDD == "") {
         alert("Please enter 'Confirmed EDD' in Section 12 of Part 2 (Page 1) before calculating the 'Age at EDD'.");
-    }else if (DOB.length != 10){
+    } else if (DOB.length != 10) {
         alert("Please enter a date of birth first.");
-    }else{
+    } else {
         var EDD_array = EDD.split("/");
         age = EDD_array[2] - DOB_array[2];
-        if (EDD_array[1] < DOB_array[1]){
+        if (EDD_array[1] < DOB_array[1]) {
             age--;
-        }else if (EDD_array[1] == DOB_array[1] && EDD_array[0] < DOB_array[0]){
+        } else if (EDD_array[1] == DOB_array[1] && EDD_array[0] < DOB_array[0]) {
             age--;
         }
-        field.value =  age;
+        field.value = age;
     }
     recheckForm();
 }
 
 function calculateByLMP(field, ds = dtCh) {
-    if (document.forms[0].d_LMP.value!="" && valDate(document.forms[0].d_LMP)==true) {
+    if (document.forms[0].d_LMP.value != "" && valDate(document.forms[0].d_LMP) == true) {
         var str_date = document.forms[0].d_LMP.value;
 
         var dt = str_date.split(ds);
         var dd = dt[0];
-        var mm = eval(dt[1]-1);
+        var mm = eval(dt[1] - 1);
         var yyyy = dt[2];
-        
-        var calDate=new Date(yyyy,mm,dd);
+
+        var calDate = new Date(yyyy, mm, dd);
 
         calDate.setTime(eval(calDate.getTime() + (280 * 86400000)));
 
-        varMonth1 = calDate.getMonth()+1;
-        varMonth1 = varMonth1>9? varMonth1 : ("0"+varMonth1);
-        varDate1 = calDate.getDate()>9? calDate.getDate(): ("0"+calDate.getDate());
+        varMonth1 = calDate.getMonth() + 1;
+        varMonth1 = varMonth1 > 9 ? varMonth1 : ("0" + varMonth1);
+        varDate1 = calDate.getDate() > 9 ? calDate.getDate() : ("0" + calDate.getDate());
         field.value = varDate1 + '/' + varMonth1 + '/' + calDate.getFullYear();
     } else {
         alert("Please enter a valid 'LMP' in Section 3 before calculating the 'EDD by LMP'.");
@@ -968,14 +966,14 @@ function calculateByLMP(field, ds = dtCh) {
 }
 
 function dayDifference(day1, day2) {
-    return (day2 - day1) / (1000*60*60*24);
+    return (day2 - day1) / (1000 * 60 * 60 * 24);
 }
 
 function getGestationalAgeDays(edd, comparison) {
     // Get the GA based on two dates, the confirmed edd and the date you are checking against (comparison, which may simply be todays date)
     var numberOfDays = -1;
 
-    if(edd.length === 10) {
+    if (edd.length === 10) {
         var year = edd.substring(6, 10);
         var month = edd.substring(3, 5);
         var day = edd.substring(0, 2);
@@ -1052,10 +1050,14 @@ function getGAByFieldDate(resultField, eddField, comparisonField) {
  * Setup Calendars
  */
 function setupCalendar(field) {
-    Calendar.setup({ onUpdate: function(){recheckForm()}, inputField : field, ifFormat : '%d/%m/%Y', showsTime :false, button : field + '_cal', singleClick : true, step : 1 });
+    Calendar.setup({
+        onUpdate: function () {
+            recheckForm()
+        }, inputField: field, ifFormat: '%d/%m/%Y', showsTime: false, button: field + '_cal', singleClick: true, step: 1
+    });
 }
 
-function calendars(page){
+function calendars(page) {
     if (page === 1) {
         setupCalendar('d_contraceptiveLastUsed');
         setupCalendar('d_LMP');
@@ -1162,7 +1164,7 @@ function dialogs(page) {
         buttons: {
             "Print": function () {
                 $(this).dialog("close");
-                
+
                 $("#printPg1").val($("#print_pr1").prop('checked'));
                 $("#printPg2").val($("#print_pr2").prop('checked'));
                 $("#printPg3").val($("#print_pr3").prop('checked'));
@@ -1188,16 +1190,16 @@ function dialogs(page) {
 }
 
 function onPageChange(pageNo) {
-    var url = pageNo !== '6' ? 'formBCAR2020pg'+pageNo+'.jsp?demographic_no='+demographicNo+'&formId='+formId+'&provNo='+provNo : 'formBCAR2020Attachments.jsp?demographic_no='+demographicNo+'&formId='+formId+'&provNo='+provNo;
+    var url = pageNo !== '6' ? 'formBCAR2020pg' + pageNo + '.jsp?demographic_no=' + demographicNo + '&formId=' + formId + '&provNo=' + provNo : 'formBCAR2020Attachments.jsp?demographic_no=' + demographicNo + '&formId=' + formId + '&provNo=' + provNo;
 
     var result = false;
     var isValid = validate();
     var datesValid = checkAllDates();
-    if(isValid === true && datesValid === true) {
+    if (isValid === true && datesValid === true) {
         reset();
-        if($('form').hasClass('dirty') && confirm("Would you like to save the changes made on this page first?")) {
+        if ($('form').hasClass('dirty') && confirm("Would you like to save the changes made on this page first?")) {
             result = true;
-            document.forms[0].method.value="save";
+            document.forms[0].method.value = "save";
             document.forms[0].forwardTo.value = pageNo;
             document.forms[0].submit();
         } else {
@@ -1208,23 +1210,15 @@ function onPageChange(pageNo) {
     return result;
 }
 
-const wtEnglish2Metric = function(obj) {
+const wtEnglish2Metric = function (obj) {
     let weight = obj.value;
-    if(! weight) {
+    if (!weight) {
         alert("Enter a value in pounds.");
     }
-    if(isNumber(weight) ) {
-        let weightM = Math.round(weight * 10 * 0.4536) / 10 ;
-        if(confirm("Are you sure you want to change " + weight + " pounds to " + weightM +"kg?") ) {
+    if (isNumber(weight)) {
+        let weightM = Math.round(weight * 10 * 0.4536) / 10;
+        if (confirm("Are you sure you want to change " + weight + " pounds to " + weightM + "kg?")) {
             obj.value = weightM;
         }
     }
 }
-
-
-
-
-
-
-
-

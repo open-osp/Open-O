@@ -19,113 +19,113 @@
 --%>
 
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@ page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingType" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingTypeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingType" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingTypeDao" %>
 <%
-	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
-	CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
-	CtlBillingTypeDao ctlBillingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
+    CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+    CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
+    CtlBillingTypeDao ctlBillingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
 %>
 
 <%
-String group1="",group2="", group3="";
-String typeid = "", type="", billtype="";
+    String group1 = "", group2 = "", group3 = "";
+    String typeid = "", type = "", billtype = "";
 
-typeid = request.getParameter("typeid");
-type = request.getParameter("type");
-group1 = request.getParameter("group1");
-group2 = request.getParameter("group2");
-group3 = request.getParameter("group3");
-billtype = request.getParameter("billtype");
+    typeid = request.getParameter("typeid");
+    type = request.getParameter("type");
+    group1 = request.getParameter("group1");
+    group2 = request.getParameter("group2");
+    group3 = request.getParameter("group3");
+    billtype = request.getParameter("billtype");
 
-String errMessage = null;
+    String errMessage = null;
 
-if (type.compareTo("") == 0 || group1.compareTo("") == 0 || group2.compareTo("") == 0 || group3.compareTo("") == 0) {
-	errMessage = "Error: Type Description, Groups Descrption must be entered.";
+    if (type.compareTo("") == 0 || group1.compareTo("") == 0 || group2.compareTo("") == 0 || group3.compareTo("") == 0) {
+        errMessage = "Error: Type Description, Groups Descrption must be entered.";
 %>
 
 <jsp:forward page='manageBillingform.jsp'>
-			<jsp:param name="errorMessage" value='<%=errMessage%>' />
-			<jsp:param name="type" value='<%=type%>' />
-			<jsp:param name="typeid" value='<%=typeid%>' />
-			<jsp:param name="group1" value='<%=group1%>' />
-			<jsp:param name="group2" value='<%=group2%>' />
-			<jsp:param name="group3" value='<%=group3%>' />
-			<jsp:param name="billingform" value='000' />
-		</jsp:forward>
+    <jsp:param name="errorMessage" value='<%=errMessage%>'/>
+    <jsp:param name="type" value='<%=type%>'/>
+    <jsp:param name="typeid" value='<%=typeid%>'/>
+    <jsp:param name="group1" value='<%=group1%>'/>
+    <jsp:param name="group2" value='<%=group2%>'/>
+    <jsp:param name="group3" value='<%=group3%>'/>
+    <jsp:param name="billingform" value='000'/>
+</jsp:forward>
 
 <%
 } else {
-	
-	if (ctlBillingServiceDao.findByServiceTypeId(typeid).size() > 0) {
-		errMessage = "Error: Service Type ID '"+typeid+"' already exists.";
-		%>
 
-		<jsp:forward page='manageBillingform.jsp'>
-			<jsp:param name="errorMessage" value='<%=errMessage%>' />
-			<jsp:param name="type" value='<%=type%>' />
-			<jsp:param name="typeid" value='<%=typeid%>' />
-			<jsp:param name="group1" value='<%=group1%>' />
-			<jsp:param name="group2" value='<%=group2%>' />
-			<jsp:param name="group3" value='<%=group3%>' />
-			<jsp:param name="billingform" value='000' />
-		</jsp:forward>
+    if (ctlBillingServiceDao.findByServiceTypeId(typeid).size() > 0) {
+        errMessage = "Error: Service Type ID '" + typeid + "' already exists.";
+%>
 
-		<%
-	}
-	
-	
-	CtlBillingService cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group1);
-	cbs.setServiceGroup("Group1");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
+<jsp:forward page='manageBillingform.jsp'>
+    <jsp:param name="errorMessage" value='<%=errMessage%>'/>
+    <jsp:param name="type" value='<%=type%>'/>
+    <jsp:param name="typeid" value='<%=typeid%>'/>
+    <jsp:param name="group1" value='<%=group1%>'/>
+    <jsp:param name="group2" value='<%=group2%>'/>
+    <jsp:param name="group3" value='<%=group3%>'/>
+    <jsp:param name="billingform" value='000'/>
+</jsp:forward>
+
+<%
+        }
 
 
-    cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group2);
-	cbs.setServiceGroup("Group2");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
+        CtlBillingService cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group1);
+        cbs.setServiceGroup("Group1");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
 
-    cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group3);
-	cbs.setServiceGroup("Group3");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
 
-	CtlDiagCode cdc = new CtlDiagCode();
-	cdc.setServiceType(typeid);
-	cdc.setDiagnosticCode("000");
-	cdc.setStatus("A");
-	ctlDiagCodeDao.persist(cdc);
+        cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group2);
+        cbs.setServiceGroup("Group2");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
 
-	if (!billtype.equals("no")) {
-		CtlBillingType cbt = new CtlBillingType();
-		cbt.setId(typeid);
-		cbt.setBillType(billtype);
-		ctlBillingTypeDao.persist(cbt);
-	}
+        cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group3);
+        cbs.setServiceGroup("Group3");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
 
-response.sendRedirect("manageBillingform.jsp");
-} %>
+        CtlDiagCode cdc = new CtlDiagCode();
+        cdc.setServiceType(typeid);
+        cdc.setDiagnosticCode("000");
+        cdc.setStatus("A");
+        ctlDiagCodeDao.persist(cdc);
+
+        if (!billtype.equals("no")) {
+            CtlBillingType cbt = new CtlBillingType();
+            cbt.setId(typeid);
+            cbt.setBillType(billtype);
+            ctlBillingTypeDao.persist(cbt);
+        }
+
+        response.sendRedirect("manageBillingform.jsp");
+    } %>

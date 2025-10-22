@@ -1,10 +1,11 @@
 #maincontent {
-    margin:auto 10px;
+    margin: auto 10px;
     margin-bottom: 10px;
 }
+
 table {
     border-collapse: collapse;
-    width:100%;
+    width: 100%;
 }
 
 .alignTop {
@@ -43,8 +44,8 @@ table {
 
 body {
     background-color: #BBCCFF;
-    top:0px;
-    left:0px;
+    top: 0px;
+    left: 0px;
 }
 
 input:read-only:not([type="submit"]) {
@@ -153,14 +154,16 @@ input:disabled {
     padding-left: 2px;
 }
 
-table.ar-table-border  {
+table.ar-table-border {
     border-bottom: 1px solid black;
 }
+
 .ar-table-border td {
     border-right: 1px solid black;
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
 table.ar-table-border tr td:nth-child(1) {
     padding-left: 2px;
 }
@@ -168,11 +171,13 @@ table.ar-table-border tr td:nth-child(1) {
 table.regular-border {
     border: 1px solid black;
 }
+
 table.regular-border tr td {
     border: 1px solid black;
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
 table.regular-border tr td:nth-child(1) {
     padding-left: 2px;
 }
@@ -180,10 +185,12 @@ table.regular-border tr td:nth-child(1) {
 table.outside-border {
     border: 1px solid black;
 }
+
 table.outside-border tr td {
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
 table.outside-border tr td:nth-child(1) {
     padding-left: 2px;
 }
@@ -191,17 +198,20 @@ table.outside-border tr td:nth-child(1) {
 table.outside-border-alt {
     border: 1px solid black;
 }
-table.outside-border-alt tr td{
+
+table.outside-border-alt tr td {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
     padding-top: 2px;
     padding-bottom: 2px;
 }
-table.outside-border-alt tr td:nth-child(1){
+
+table.outside-border-alt tr td:nth-child(1) {
     border-right: 1px solid black;
     padding-left: 2px;
 }
-table.outside-border-alt tr td:nth-child(3){
+
+table.outside-border-alt tr td:nth-child(3) {
     border-right: 1px solid black;
 }
 
@@ -230,20 +240,25 @@ tr.noBorderTopBottom td {
     flex: 1;
     min-width: 80px;
 }
+
 .flex-column-title-alt {
     flex: 1;
     min-width: 110px;
 }
+
 .flex-column {
     flex: 1;
     min-width: 60px;
 }
+
 .flex-double-column {
     flex: 2;
 }
+
 .flex-triple-column {
     flex: 3;
 }
+
 .flex-quad-column {
     flex: 4;
 }
@@ -257,6 +272,7 @@ tr.noBorderTopBottom td {
     display: flex;
     align-items: baseline;
 }
+
 .divFlex input[type=checkbox] {
     margin-left: 0;
     margin-right: 3px;
@@ -277,21 +293,21 @@ div.data-list-input {
     padding: 5px 0 5px 0;
 }
 
-.data-list-input select{
+.data-list-input select {
     position: absolute;
     top: 0px;
     left: 0px;
     height: 20px;
 }
 
-.data-list-input input{
+.data-list-input input {
     position: absolute;
     top: 2px;
     left: 0px;
     height: 16px;
 }
 
-.btn.dropdown-toggle.btn-light{
+.btn.dropdown-toggle.btn-light {
     font-size: 8pt;
     height: 18px;
     padding: 0px 6px 0px 0px;
@@ -306,6 +322,7 @@ table.reference-table tr td {
     background-color: white;
     vertical-align: top;
 }
+
 .reference-header-1 {
     color: white;
     background-color: black;
@@ -317,6 +334,7 @@ table.reference-table tr td {
     padding-top: 4px;
     padding-bottom: 4px;
 }
+
 .reference-header-2 {
     color: black;
     background-color: lightgrey;
@@ -328,6 +346,7 @@ table.reference-table tr td {
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
 .reference-pad {
     padding-bottom: 3px;
 }

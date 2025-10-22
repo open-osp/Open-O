@@ -24,80 +24,88 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>"> 
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils"%>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager"%>
-<%@page import="org.oscarehr.caisi_integrator.ws.CachedFacility"%>
-<%@page import="java.util.List"%>
-<%@page import="java.util.Calendar,org.oscarehr.util.MiscUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
+<%@page import="java.util.List" %>
+<%@page import="java.util.Calendar,ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<%@include file="/layouts/caisi_html_top.jspf"%>
+<%@include file="/layouts/caisi_html_top.jspf" %>
 
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	List<CachedFacility> facilities=CaisiIntegratorManager.getRemoteFacilities(loggedInInfo, loggedInInfo.getCurrentFacility(),false);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    List<CachedFacility> facilities = CaisiIntegratorManager.getRemoteFacilities(loggedInInfo, loggedInInfo.getCurrentFacility(), false);
 
-	int secondsTillConsideredStale = -1;
-	try{
-		secondsTillConsideredStale = Integer.parseInt(oscar.OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
-	}catch(Exception e){
-		MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int",e);
-		secondsTillConsideredStale = -1;
-	}
+    int secondsTillConsideredStale = -1;
+    try {
+        secondsTillConsideredStale = Integer.parseInt(OscarProperties.getInstance().getProperty("seconds_till_considered_stale"));
+    } catch (Exception e) {
+        MiscUtils.getLogger().error("OSCAR Property: seconds_till_considered_stale did not parse to an int", e);
+        secondsTillConsideredStale = -1;
+    }
 
 
-	Calendar timeConsideredStale = Calendar.getInstance();
-	//TODO: 
-	timeConsideredStale.add(Calendar.SECOND, -secondsTillConsideredStale);
+    Calendar timeConsideredStale = Calendar.getInstance();
+    //TODO:
+    timeConsideredStale.add(Calendar.SECOND, -secondsTillConsideredStale);
 %>
 
-<h3>Community of integrated facilities considered old if facility hasn't sync since <%=DateFormatUtils.ISO_DATETIME_FORMAT.format(timeConsideredStale) %></h3>
+<h3>Community of integrated facilities considered old if facility hasn't sync
+    since <%=DateFormatUtils.ISO_DATETIME_FORMAT.format(timeConsideredStale) %>
+</h3>
 
 <table style="border-collapse: collapse">
-	<tr style="border: solid black 2px; background: silver">
-		<td style="border: solid black 1px">Name</td>
-		<td style="border: solid black 1px">Description</td>
-		<td style="border: solid black 1px">Contact Name</td>
-		<td style="border: solid black 1px">Contact Email</td>
-		<td style="border: solid black 1px">Contact Phone</td>
-		<td style="border: solid black 1px">Last Updated</td>
-	</tr>
-	<%
-		for (CachedFacility x : facilities)
-		{
-			Calendar lastDataUpdate = x.getLastDataUpdate();
-			String background = "white";
-			if( lastDataUpdate == null || timeConsideredStale.after(lastDataUpdate)){
-				background = "orange";
-			}
-			
-			%>
-	<tr style="border: solid black 2px; background: <%=background %>; color: gray">
-		<td style="border: solid black 1px"><%=x.getName()%></td>
-		<td style="border: solid black 1px"><%=x.getDescription()%></td>
-		<td style="border: solid black 1px"><%=x.getContactName()%></td>
-		<td style="border: solid black 1px"><%=x.getContactEmail()%></td>
-		<td style="border: solid black 1px"><%=x.getContactPhone()%></td>
-		<td style="border: solid black 1px"><%=(x.getLastDataUpdate()!=null?DateFormatUtils.ISO_DATETIME_FORMAT.format(x.getLastDataUpdate()):"")%></td>
-	</tr>
-	<%
-		}
-	%>
+    <tr style="border: solid black 2px; background: silver">
+        <td style="border: solid black 1px">Name</td>
+        <td style="border: solid black 1px">Description</td>
+        <td style="border: solid black 1px">Contact Name</td>
+        <td style="border: solid black 1px">Contact Email</td>
+        <td style="border: solid black 1px">Contact Phone</td>
+        <td style="border: solid black 1px">Last Updated</td>
+    </tr>
+    <%
+        for (CachedFacility x : facilities) {
+            Calendar lastDataUpdate = x.getLastDataUpdate();
+            String background = "white";
+            if (lastDataUpdate == null || timeConsideredStale.after(lastDataUpdate)) {
+                background = "orange";
+            }
+
+    %>
+    <tr style="border: solid black 2px; background: <%=background %>; color: gray">
+        <td style="border: solid black 1px"><%=x.getName()%>
+        </td>
+        <td style="border: solid black 1px"><%=x.getDescription()%>
+        </td>
+        <td style="border: solid black 1px"><%=x.getContactName()%>
+        </td>
+        <td style="border: solid black 1px"><%=x.getContactEmail()%>
+        </td>
+        <td style="border: solid black 1px"><%=x.getContactPhone()%>
+        </td>
+        <td style="border: solid black 1px"><%=(x.getLastDataUpdate() != null ? DateFormatUtils.ISO_DATETIME_FORMAT.format(x.getLastDataUpdate()) : "")%>
+        </td>
+    </tr>
+    <%
+        }
+    %>
 </table>
 
-<%@include file="/layouts/caisi_html_bottom.jspf"%>
+<%@include file="/layouts/caisi_html_bottom.jspf" %>

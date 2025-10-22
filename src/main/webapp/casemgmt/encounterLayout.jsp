@@ -1,5 +1,4 @@
-
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
 
     Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
@@ -25,39 +24,38 @@
 --%>
 
 
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
-<%@ page errorPage="/casemgmt/error.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
+<%@ page errorPage="/errorpage.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
 <%
-	long loadPage = System.currentTimeMillis();
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    long loadPage = System.currentTimeMillis();
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<c:set var="ctx" value="${pageContext.request.contextPath}"
-	scope="request" />
-<link rel="stylesheet" href="<c:out value="${ctx}"/>/css/casemgmt.css"
-	type="text/css">
-<link rel="stylesheet" type="text/css"
-	href="<c:out value="${ctx}"/>/css/print.css" media="print" />
-<html:base />
-<title>Case Management</title>
-<%! String refresh = oscar.OscarProperties.getInstance().getProperty("refresh.encounterLayout.jsp", "-1"); %>
-<%="-1".equals(refresh)?"":"<meta http-equiv=\"refresh\" content=\""+refresh+";\">"%>
-</head>
-<body>
-<table border="0" width="100%" cellspacing="5">
-	<tbody>
-		<tr>
-			<td width="22%" valign="top"><tiles:insert attribute="navigation" /></td>
-			<td width="78%" valign="top"><tiles:insert attribute="body" /></td>
-		</tr>
-	</tbody>
-</table>
-</body>
-</html:html>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <c:set var="ctx" value="${pageContext.request.contextPath}"
+               scope="request"/>
+        <link rel="stylesheet" href="<c:out value="${ctx}"/>/css/casemgmt.css"
+              type="text/css">
+        <link rel="stylesheet" type="text/css"
+              href="<c:out value="${ctx}"/>/css/print.css" media="print"/>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <title>Case Management</title>
+        <%! String refresh = OscarProperties.getInstance().getProperty("refresh.encounterLayout.jsp", "-1"); %>
+        <%="-1".equals(refresh) ? "" : "<meta http-equiv=\"refresh\" content=\"" + refresh + ";\">"%>
+    </head>
+    <body>
+    <table border="0" width="100%" cellspacing="5">
+        <tbody>
+        <tr>
+            <td width="22%" valign="top"><jsp:include page="navigation.jsp"/></td>
+            <td width="78%" valign="top"><jsp:include page="CaseManagementView.jsp"/></td>
+        </tr>
+        </tbody>
+    </table>
+    </body>
+</html>

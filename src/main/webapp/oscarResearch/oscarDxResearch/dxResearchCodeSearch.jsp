@@ -24,135 +24,116 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<% 
+
+<%
     String user_no;
     user_no = (String) session.getAttribute("user");
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.title" /></title>
-<script LANGUAGE="JavaScript">
-//<!--
-function CodeAttach(File0) {
-     
-    self.close();
-    self.opener.document.forms[0].xml_research1.value = File0;
-    self.opener.document.forms[0].xml_research2.value = '';
-    self.opener.document.forms[0].xml_research3.value = '';
-    self.opener.document.forms[0].xml_research4.value = '';
-    self.opener.document.forms[0].xml_research5.value = '';
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.title"/></title>
+        <script LANGUAGE="JavaScript">
+            //<!--
+            function CodeAttach(File0) {
 
-}
+                self.close();
+                self.opener.document.forms[0].xml_research1.value = File0;
+                self.opener.document.forms[0].xml_research2.value = '';
+                self.opener.document.forms[0].xml_research3.value = '';
+                self.opener.document.forms[0].xml_research4.value = '';
+                self.opener.document.forms[0].xml_research5.value = '';
 
-function CodesAttach() {
+            }
 
-    var nbSearchCodes = document.codeSearchForm.searchCodes;
-	if (nbSearchCodes.length==undefined) {
-		if (nbSearchCodes.checked) self.opener.document.forms[0].xml_research1.value = nbSearchCodes.value;
-	} else {
-		var j = 0;
-		for(var i=0; i<nbSearchCodes.length; i++){
-			if (nbSearchCodes[i].checked) {
-				if (j==0) {
-					self.opener.document.forms[0].xml_research1.value = nbSearchCodes[i].value;
-					j++;
-				} else if (j==1) {
-					self.opener.document.forms[0].xml_research2.value = nbSearchCodes[i].value;
-					j++;
-				} else if (j==2) {
-					self.opener.document.forms[0].xml_research3.value = nbSearchCodes[i].value;
-					j++;
-				} else if (j==3) {
-					self.opener.document.forms[0].xml_research4.value = nbSearchCodes[i].value;
-					j++;
-				} else if (j==4) {
-					self.opener.document.forms[0].xml_research5.value = nbSearchCodes[i].value;
-					j++;
-				} else {
-					break;
-				}
-			}
-		}
-	}
-    self.close();
-}
-//-->
-</script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
+            function CodesAttach() {
 
-<body bgcolor="#FFFFFF">
-<form name="codeSearchForm" method="post">
+                var nbSearchCodes = document.codeSearchForm.searchCodes;
+                if (nbSearchCodes.length == undefined) {
+                    if (nbSearchCodes.checked) self.opener.document.forms[0].xml_research1.value = nbSearchCodes.value;
+                } else {
+                    var j = 0;
+                    for (var i = 0; i < nbSearchCodes.length; i++) {
+                        if (nbSearchCodes[i].checked) {
+                            if (j == 0) {
+                                self.opener.document.forms[0].xml_research1.value = nbSearchCodes[i].value;
+                                j++;
+                            } else if (j == 1) {
+                                self.opener.document.forms[0].xml_research2.value = nbSearchCodes[i].value;
+                                j++;
+                            } else if (j == 2) {
+                                self.opener.document.forms[0].xml_research3.value = nbSearchCodes[i].value;
+                                j++;
+                            } else if (j == 3) {
+                                self.opener.document.forms[0].xml_research4.value = nbSearchCodes[i].value;
+                                j++;
+                            } else if (j == 4) {
+                                self.opener.document.forms[0].xml_research5.value = nbSearchCodes[i].value;
+                                j++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
+                self.close();
+            }
 
-<table width="600" cellspacing="1">
-	<tr>
-		<td colspan="2"><h3><%=session.getAttribute("codeType").toString().toUpperCase()%> <bean:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgCodeSearch" /></h3></td>
-	</tr>
-	<tr class="heading">
-		<td width="20%"><bean:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgCode" /></td>
-		<td width="80%"><bean:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgDescription" /></td>
-	</tr>
+            //-->
+        </script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
 
-	<% 
-    int intCount=0;
-    String color="#EEEEFF";
-    int Count=0;    
-  %>
-	<logic:iterate id="code" name="allMatchedCodes"
-		property="dxCodeSearchBeanVector">
-		<%  
-        if (Count == 0){
-            Count = 1;
-            color = "#FFFFFF";
-        } 
-        else {
-            Count = 0;
-            color="#EEEEFF";
-        }       
-     %>
-		<tr bgcolor="<%=color%>">
-			<td><input type="checkbox" name="searchCodes"
-				value="<bean:write name='code' property='dxSearchCode'/>"
-				<bean:write name='code' property='exactMatch'/> /><bean:write
-				name='code' property='dxSearchCode' /></td>
-			<td><bean:write name='code' property='description' /></td>
-		</tr>
-		<% intCount++; %>
-	</logic:iterate>
-	<%  if (intCount == 0 ) { %>
-	<tr bgcolor="<%=color%>">
-		<td colspan="2"><bean:message
-			key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgNoMatch" />.
-		<%// =i%>
-		</td>
+    <body bgcolor="#FFFFFF">
+    <form name="codeSearchForm" method="post">
 
-	</tr>
-	<%  }%>
+        <table width="600" cellspacing="1">
+            <tr>
+                <td colspan="2"><h3><%=session.getAttribute("codeType").toString().toUpperCase()%> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgCodeSearch"/></h3></td>
+            </tr>
+            <tr class="heading">
+                <td width="20%"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgCode"/></td>
+                <td width="80%"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgDescription"/></td>
+            </tr>
 
-	<%--
-  <% if (intCount == 1) { %>
-  <logic:iterate id="code" name="allMatchedCodes" property="dxCodeSearchBeanVector">  
-      <script LANGUAGE="JavaScript">
-        CodeAttach('<bean:write name='code' property='dxSearchCode'/>'); 
-      </script>
-  </logic:iterate>
-<% } %>
---%>
-</table>
-<input type="button" name="confirm" value="Confirm"
-	onclick="javascript:CodesAttach();"><input type="button"
-	name="<bean:message key="global.btnCancel"/>" value="Cancel"
-	onclick="javascript:window.close()">
+            <%
+                int intCount = 0;
+                String color = "#EEEEFF";
+                int Count = 0;
+            %>
+            <c:forEach var="code" items="${allMatchedCodes.dxCodeSearchBeanVector}" varStatus="loopStatus">
+                <c:set var="color" value="${loopStatus.index % 2 == 0 ? '#FFFFFF' : '#EEEEFF'}"/>
+                <tr bgcolor="${color}">
+                    <td>
+                        <input type="checkbox" name="searchCodes" value="${code.dxSearchCode}"
+                            ${code.exactMatch == 'true' ? 'checked' : ''} />
+                        <c:out value="${code.dxSearchCode}"/>
+                    </td>
+                    <td><c:out value="${code.description}"/></td>
+                </tr>
+            </c:forEach>
+            <% if (intCount == 0) { %>
+            <tr bgcolor="<%=color%>">
+                <td colspan="2"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarResearch.oscarDxResearch.dxResearchCodeSearch.msgNoMatch"/>.
+                    <%// =i%>
+                </td>
 
-<p></p>
-<p>&nbsp;</p>
-<h3>&nbsp;</h3>
-</form>
-</body>
-</html:html>
+            </tr>
+            <% }%>
+
+        </table>
+        <input type="button" name="confirm" value="Confirm"
+               onclick="javascript:CodesAttach();"><input type="button"
+                                                          name="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnCancel"/>" value="Cancel"
+                                                          onclick="javascript:window.close()">
+
+        <p></p>
+        <p>&nbsp;</p>
+        <h3>&nbsp;</h3>
+    </form>
+    </body>
+</html>

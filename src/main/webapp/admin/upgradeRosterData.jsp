@@ -24,40 +24,40 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.model.Demographic"%>
-<%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@page import="org.oscarehr.common.model.DemographicArchive"%>
-<%@page import="org.oscarehr.common.dao.DemographicArchiveDao"%>
-<%@page import="org.oscarehr.common.dao.DemographicDao"%>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="org.oscarehr.casemgmt.dao.CaseManagementNoteDAO"%>
-<%@page import="org.oscarehr.common.model.SecRole"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.dao.SecRoleDao"%>
-<%@page import="oscar.oscarDB.*" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicArchive" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAO" %>
+<%@page import="ca.openosp.openo.commn.model.SecRole" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.SecRoleDao" %>
+<%@page import="ca.openosp.openo.db.*" %>
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 
 <html>
 <head>
-<title>Upgrade Roster Data</title>
+    <title>Upgrade Roster Data</title>
 </head>
 <body>
 
@@ -75,24 +75,25 @@ if(!authed) {
  -->
 
 <%
-	String action = request.getParameter("action");
-	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-	DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
-	DemographicArchiveDao demographicArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
-%>				
+    String action = request.getParameter("action");
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+    DemographicArchiveDao demographicArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
+%>
 
 
 <h3>
-	Rostering code was updated as per the OntarioMD 5.0 EMR Specification. As such, previously entered data needs to be adjusted to the updated database.
-	Specifically, a new field has been added to "Enrolled To Physician". Previously, only the MRP field was available.
-	<br/>
-	This utility will set the Enrolled To Physician to that of MRP for patients where Roster Status was set to ROSTERED.
+    Rostering code was updated as per the OntarioMD 5.0 EMR Specification. As such, previously entered data needs to be
+    adjusted to the updated database.
+    Specifically, a new field has been added to "Enrolled To Physician". Previously, only the MRP field was available.
+    <br/>
+    This utility will set the Enrolled To Physician to that of MRP for patients where Roster Status was set to ROSTERED.
 </h3>
 
-<%if(action == null || !"run".equals(action)) { %>
+<%if (action == null || !"run".equals(action)) { %>
 <form action="upgradeRosterData.jsp">
-	Run Utility:<br/>
-	<!-- 
+    Run Utility:<br/>
+    <!--
 	Physician:
 	
 		<select name="physician">
@@ -102,51 +103,52 @@ if(!authed) {
 		<% } %>
 	</select>
 	-->
-	<input type="hidden" name="action" value="run"/>
-	<input type="submit" value="Run Report"/>
+    <input type="hidden" name="action" value="run"/>
+    <input type="submit" value="Run Report"/>
 </form>
-<%} else {
-	//String provider = request.getParameter("physician");
-	for(Integer demographicNo : demographicDao.getDemographicIds()) {
-		Demographic d = demographicDao.getDemographicById(demographicNo);
-		
-		for(DemographicArchive da:demographicArchiveDao.findByDemographicNoChronologically(demographicNo)) { //ASC
-			if("RO".equals(da.getRosterStatus()) || "TE".equals(da.getRosterStatus())) {
-				if(!StringUtils.isEmpty(da.getProviderNo()) && StringUtils.isEmpty(da.getRosterEnrolledTo())) {
-					da.setRosterEnrolledTo(da.getProviderNo());
-					demographicArchiveDao.merge(da);
-				} else {
-					//that;s weird
-				}
-			}
-		
-			if("TE".equals(da.getRosterStatus()) && StringUtils.isEmpty(da.getRosterTerminationReason())) {
-				da.setRosterTerminationReason("33");
-				demographicDao.save(d);
-			}
-		}
-		
-		if("RO".equals(d.getRosterStatus()) || "TE".equals(d.getRosterStatus())) {
-			if(!StringUtils.isEmpty(d.getProviderNo())  && StringUtils.isEmpty(d.getRosterEnrolledTo())) {
-				d.setRosterEnrolledTo(d.getProviderNo());
-				demographicDao.save(d);
-			} else {
-				//that;s weird
-			}
-		}
-		
-		if("TE".equals(d.getRosterStatus()) && StringUtils.isEmpty(d.getRosterTerminationReason())) {
-			d.setRosterTerminationReason("33");
-			demographicDao.save(d);
-		}
-		
-	}
-	
+<%
+} else {
+    //String providers = request.getParameter("physician");
+    for (Integer demographicNo : demographicDao.getDemographicIds()) {
+        Demographic d = demographicDao.getDemographicById(demographicNo);
+
+        for (DemographicArchive da : demographicArchiveDao.findByDemographicNoChronologically(demographicNo)) { //ASC
+            if ("RO".equals(da.getRosterStatus()) || "TE".equals(da.getRosterStatus())) {
+                if (!StringUtils.isEmpty(da.getProviderNo()) && StringUtils.isEmpty(da.getRosterEnrolledTo())) {
+                    da.setRosterEnrolledTo(da.getProviderNo());
+                    demographicArchiveDao.merge(da);
+                } else {
+                    //that;s weird
+                }
+            }
+
+            if ("TE".equals(da.getRosterStatus()) && StringUtils.isEmpty(da.getRosterTerminationReason())) {
+                da.setRosterTerminationReason("33");
+                demographicDao.save(d);
+            }
+        }
+
+        if ("RO".equals(d.getRosterStatus()) || "TE".equals(d.getRosterStatus())) {
+            if (!StringUtils.isEmpty(d.getProviderNo()) && StringUtils.isEmpty(d.getRosterEnrolledTo())) {
+                d.setRosterEnrolledTo(d.getProviderNo());
+                demographicDao.save(d);
+            } else {
+                //that;s weird
+            }
+        }
+
+        if ("TE".equals(d.getRosterStatus()) && StringUtils.isEmpty(d.getRosterTerminationReason())) {
+            d.setRosterTerminationReason("33");
+            demographicDao.save(d);
+        }
+
+    }
+
 %>
-	
-	<H2>Upgrade complete</H2>
- <%
-	}
- %>
+
+<H2>Upgrade complete</H2>
+<%
+    }
+%>
 </body>
 </html>

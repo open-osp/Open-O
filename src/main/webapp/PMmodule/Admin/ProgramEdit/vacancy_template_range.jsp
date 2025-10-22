@@ -24,45 +24,45 @@
 
 --%>
 
-<%@page import="org.apache.commons.lang.StringUtils"%>
-<%@page import="org.oscarehr.PMmodule.model.VacancyTemplate"%>
-<%@page import="org.oscarehr.PMmodule.model.Criteria"%>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaType"%>
-<%@page import="org.oscarehr.PMmodule.model.CriteriaTypeOption"%>
-<%@page import="org.oscarehr.PMmodule.service.VacancyTemplateManager"%>
-<%@page import="org.oscarehr.PMmodule.dao.CriteriaTypeDao"%>
-<%@page import="org.oscarehr.PMmodule.dao.CriteriaTypeOptionDao"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.model.VacancyTemplate" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Criteria" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaType" %>
+<%@page import="ca.openosp.openo.PMmodule.model.CriteriaTypeOption" %>
+<%@page import="ca.openosp.openo.PMmodule.service.VacancyTemplateManager" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.CriteriaTypeDao" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.CriteriaTypeOptionDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-	CriteriaTypeDao criteriaTypeDAO = SpringUtils.getBean(CriteriaTypeDao.class);
-	CriteriaTypeOptionDao criteriaTypeOptionDAO = SpringUtils.getBean(CriteriaTypeOptionDao.class);
-	String min="", max="", nameMax="", nameMin="";	
-	
-	String optionValueSelected = request.getParameter("optionValueSelected");
-	String typeSelected = request.getParameter("typeSelected"); //Age Category	
-	if(!StringUtils.isBlank(optionValueSelected)) {		
-		CriteriaTypeOption cto = criteriaTypeOptionDAO.getByValue(optionValueSelected);
-		if(cto!=null) {
-			min = String.valueOf(cto.getRangeStartValue());
-			max = String.valueOf(cto.getRangeEndValue());
-		}
-	}
-	nameMax=typeSelected.toLowerCase().replaceAll(" ","_").concat("Maximum");
-	nameMin=typeSelected.toLowerCase().replaceAll(" ","_").concat("Minimum");
+    CriteriaTypeDao criteriaTypeDAO = SpringUtils.getBean(CriteriaTypeDao.class);
+    CriteriaTypeOptionDao criteriaTypeOptionDAO = SpringUtils.getBean(CriteriaTypeOptionDao.class);
+    String min = "", max = "", nameMax = "", nameMin = "";
+
+    String optionValueSelected = request.getParameter("optionValueSelected");
+    String typeSelected = request.getParameter("typeSelected"); //Age Category
+    if (!StringUtils.isBlank(optionValueSelected)) {
+        CriteriaTypeOption cto = criteriaTypeOptionDAO.getByValue(optionValueSelected);
+        if (cto != null) {
+            min = String.valueOf(cto.getRangeStartValue());
+            max = String.valueOf(cto.getRangeEndValue());
+        }
+    }
+    nameMax = typeSelected.toLowerCase().replaceAll(" ", "_").concat("Maximum");
+    nameMin = typeSelected.toLowerCase().replaceAll(" ", "_").concat("Minimum");
 %>
 
 <div id="block_vacancyType_<%=typeSelected.toLowerCase().replaceAll(" ","_")%>">
-	<table>
-	<tr class="b">
-	<td class="beright"><%=typeSelected%> Range Minimum:</td>
-	<td><input type="text" size="50" maxlength="50" value="<%=min %>" name="<%=nameMin%>">
-	</td>
-	</tr>
-	<tr class="b">
-	<td class="beright"><%=typeSelected%> Range Maximum:</td>
-	<td><input type="text" size="50" maxlength="50" value="<%=max %>" name="<%=nameMax%>">
-	</td>
-	</tr>
-	</table>			 
-	
+    <table>
+        <tr class="b">
+            <td class="beright"><%=typeSelected%> Range Minimum:</td>
+            <td><input type="text" size="50" maxlength="50" value="<%=min %>" name="<%=nameMin%>">
+            </td>
+        </tr>
+        <tr class="b">
+            <td class="beright"><%=typeSelected%> Range Maximum:</td>
+            <td><input type="text" size="50" maxlength="50" value="<%=max %>" name="<%=nameMax%>">
+            </td>
+        </tr>
+    </table>
+
 </div>

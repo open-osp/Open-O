@@ -26,31 +26,34 @@
 
 table {
     border-collapse: collapse;
-    margin:0;
-    padding:0;
-    width:100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .alignRight {
     text-align: right;
 }
+
 .alignLeft {
     text-align: left;
 }
+
 .alignTop {
     vertical-align: top;
 }
+
 .smallText {
     font-size: small;
 }
 
 input#searchHealthCareTeamInput:not(:focus) {
-    color:#000;
+    color: #000;
     color: rgba(0, 0, 0, 0.5);
 }
 
 input#searchHealthCareTeamInput:focus {
-    color:black;
+    color: black;
 }
 
 
@@ -59,10 +62,10 @@ body#demographiceditdemographic table#demographicPatientNotes,
 body#demographiceditdemographic table#waitingListTable,
 body#demographiceditdemographic table#privacyConsentTable,
 body#demographiceditdemographic table#rxinteractionTable,
-body#demographiceditdemographic table#firstnationsdatatable{
-    background-color:white !important;
+body#demographiceditdemographic table#firstnationsdatatable {
+    background-color: white !important;
     border-collapse: collapse !important;
-    border-bottom:thin solid #CCCCFF !important;
+    border-bottom: thin solid #CCCCFF !important;
 }
 
 /* DISPLAY HEALTH CARE TEAM */
@@ -75,12 +78,12 @@ div#healthCareTeam li {
 
 /* MANAGE HEALTH CARE TEAM */
 table#listHealthCareTeam {
-    width:100%;
+    width: 100%;
     border-collapse: collapse;
 }
 
 table#listHealthCareTeam tr:nth-of-type(odd) td {
-    background-color:whitesmoke;
+    background-color: whitesmoke;
 }
 
 table#listHealthCareTeam .alignRight {
@@ -100,9 +103,9 @@ table#listHealthCareTeam th {
 }
 
 table#addEditHealthCareTeam td {
-    padding:0 5px;
+    padding: 0 5px;
     vertical-align: top;
-    background-color:whitesmoke !important;
+    background-color: whitesmoke !important;
 }
 
 table#listHealthCareTeam {
@@ -129,10 +132,10 @@ tr#privacyConsentHeading, tr#paitientNotesHeading, tr#waitingListHeading, .categ
 }
 
 table#privacyConsentTable {
-    width:100%;
+    width: 100%;
 }
 
-tr#privacyConsentHeading th, tr#paitientNotesHeading th, tr#waitingListHeading th, .category_table_heading th  {
+tr#privacyConsentHeading th, tr#paitientNotesHeading th, tr#waitingListHeading th, .category_table_heading th {
     padding-left: 5px;
     background-color: #CCCCFF;
     font-size: 7.5pt;
@@ -143,63 +146,75 @@ tr#privacyConsentHeading th, tr#paitientNotesHeading th, tr#waitingListHeading t
 body#detachedView
 ul {
     list-style-type: none;
-    padding:0;
+    padding: 0;
     margin: 5px 0;
-    background-color:white;
+    background-color: white;
 }
+
 body#detachedView
 ul li {
-    background-color:inherit;
+    background-color: inherit;
 }
+
 body#detachedView
 ul li.odd {
-    background-color:inherit;
+    background-color: inherit;
 }
+
 body#detachedView
 ul li.even {
-    background-color:inherit;
+    background-color: inherit;
 }
 
 
 /* HEALTH CARE TEAM DETACHED VIEW */
-body#detachedView {margin:0px; padding:0px;}
+body#detachedView {
+    margin: 0px;
+    padding: 0px;
+}
 
 body#detachedView #tableTitle {
-    display:none;
+    display: none;
 }
 
 body#detachedView
 ul {
     list-style-type: none;
-    padding:0;
+    padding: 0;
     margin: 1px;
-    background-color:white;
-    border:#CCCCFF 1px solid;
+    background-color: white;
+    border: #CCCCFF 1px solid;
 }
+
 body#detachedView
 ul li {
-    background-color:inherit;
-    padding:2px;
+    background-color: inherit;
+    padding: 2px;
 }
+
 body#detachedView
 ul li.odd {
-    background-color:#EEEEFF;
+    background-color: #EEEEFF;
 
 }
+
 body#detachedView
 ul li.even {
-    background-color:inherit;
+    background-color: inherit;
 
 }
+
 body#detachedView
 ul li:hover {
-    background-color:yellow;
+    background-color: yellow;
 }
+
 body#detachedView
 table {
     border-collapse: collapse;
 
 }
+
 body#detachedView
 table.MainTable {
     background-color: #A9A9A9;
@@ -207,50 +222,50 @@ table.MainTable {
 
 body#detachedView
 table.healthCareTeamMemberDetailTable {
-    border-top:#CCCCFF 1px solid;
-    border-bottom:#CCCCFF 1px solid;
-    width:100%;
+    border-top: #CCCCFF 1px solid;
+    border-bottom: #CCCCFF 1px solid;
+    width: 100%;
 }
 
 body#detachedView table.healthCareTeamMemberDetailTable td.alignRight {
-    padding-left:10px;
-    width:100px;
+    padding-left: 10px;
+    width: 100px;
 }
 
 body#detachedView table.healthCareTeamMemberDetailTable .role,
 body#detachedView table.healthCareTeamMemberDetailTable .contactName {
-    display:none;
+    display: none;
 }
 
 
 /* TOGGLE VIEWS INSIDE manageHealthCareTeam.jsp */
 
-table#listHealthCareTeam.toolsView  {
-    display:none;
+table#listHealthCareTeam.toolsView {
+    display: none;
 }
 
 table#addEditHealthCareTeam.toolsView {
     display: inherit;
-    border:none;
+    border: none;
     background-color: inherit;
 }
 
 table#addEditHealthCareTeam.toolsView td {
-    border:none;
+    border: none;
 }
 
-table#listHealthCareTeam.listView  {
+table#listHealthCareTeam.listView {
     display: inherit;
-    border:none;
+    border: none;
     background-color: inherit;
 }
 
-table#listHealthCareTeam.listView  {
-    border:none;
+table#listHealthCareTeam.listView {
+    border: none;
 }
 
 table#addEditHealthCareTeam.listView {
-    display:none;
+    display: none;
 }
 
 table tr td.displayHCTHeading, tr#healthCareTeamSubHeading {
@@ -262,24 +277,30 @@ table tr td.displayHCTHeading, tr#healthCareTeamSubHeading {
 /* workarounds */
 * html .ui-autocomplete {
     width: 1px;
-} /* without this, the menu expands to 100% in IE6 */
+}
+
+/* without this, the menu expands to 100% in IE6 */
 .ui-autocomplete-loading {
-    background: white url('../images/ui-anim_basic_16x16.gif') right center
-    no-repeat;
+    background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 
 .ui-autocomplete {
-    width:40%;
+    width: 40%;
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: white;
     border: #ccc thin solid;
-    padding:5px;
+    padding: 5px;
 }
 
-.ui-autocomplete li:nth-child(even) {background-color: whitesmoke;}
-.ui-autocomplete li:nth-child(odd) {background-color: white;}
+.ui-autocomplete li:nth-child(even) {
+    background-color: whitesmoke;
+}
+
+.ui-autocomplete li:nth-child(odd) {
+    background-color: white;
+}
 
 .ui-menu .ui-menu {
     background-color: whitesmoke;
@@ -290,6 +311,6 @@ table tr td.displayHCTHeading, tr#healthCareTeamSubHeading {
     padding: 5px;
 }
 
-.ui-menu .ui-menu-item a.ui-state-hover,.ui-menu .ui-menu-item a.ui-state-active {
+.ui-menu .ui-menu-item a.ui-state-hover, .ui-menu .ui-menu-item a.ui-state-active {
     background-color: yellow;
 }

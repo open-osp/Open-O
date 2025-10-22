@@ -1,11 +1,11 @@
 <%@page import="net.sf.json.JSONObject"%>
 <%@page import="net.sf.json.JSONArray"%>
 <%@page import="net.sf.json.JSONSerializer"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.dao.ServiceClientDao"%>
-<%@page import="org.oscarehr.common.model.ServiceClient"%>
-<%@page import="org.oscarehr.common.dao.ServiceAccessTokenDao"%>
-<%@page import="org.oscarehr.common.model.ServiceAccessToken"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils"%>
+<%@page import="ca.openosp.openo.commn.dao.ServiceClientDao"%>
+<%@page import="ca.openosp.openo.commn.model.ServiceClient"%>
+<%@page import="ca.openosp.openo.commn.dao.ServiceAccessTokenDao"%>
+<%@page import="ca.openosp.openo.commn.model.ServiceAccessToken"%>
 <%@page import="java.util.List"%>
 
 <%

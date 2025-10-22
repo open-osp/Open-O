@@ -25,8 +25,8 @@
 --%>
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-1.12.0.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/library/moment.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/alertify.core.css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/alertify.default.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/alertify.core.css"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/alertify.default.css"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/alertify.js"></script>
 
 <style type="text/css">
@@ -34,7 +34,7 @@
         max-height: 75vh;
         overflow-y: auto;
     }
-    
+
     .measurement-modal-header {
         text-align: center;
         margin: 0;
@@ -43,14 +43,19 @@
 <script>
     // Must include jQuery for ajax call, cannot assume the form this file will be included in has it already included
     let local_jQuery = jQuery.noConflict(true);
-    
+
     // Map of measurementTypes to corresponding name and default instructions
-    let measurementTypeMap = {'WT': {'name': 'Weight', 'instructions': 'in kg'}, 'HT':  {'name': 'Height', 'instructions' : 'in cm'}, 'HR': {'name': 'Heart Rate', 'instructions': 'in BPMB'}, 'BP': {'name': 'Blood Pressure', 'instructions': ''}};
+    let measurementTypeMap = {
+        'WT': {'name': 'Weight', 'instructions': 'in kg'},
+        'HT': {'name': 'Height', 'instructions': 'in cm'},
+        'HR': {'name': 'Heart Rate', 'instructions': 'in BPMB'},
+        'BP': {'name': 'Blood Pressure', 'instructions': ''}
+    };
     let existingMeasurementUsed = false;
 
     /**
      * This function will retrieve specific demographic measurement data and display it in a modal for the user to select and import into the desired form field
-     * 
+     *
      * @param elementId - The ID of the input element on the form that the measurement value will be inserted into
      * @param measurementType - The type of measurement that will be retrieved (height, weight, etc.)
      * @param measurementUnits - The birth date of the selected patient
@@ -59,20 +64,20 @@
      * @param appointmentNo - The appointment the form is created on
      */
     function displayDemographicMeasurements(elementId, measurementType, demographicNo, demographicDobString, appointmentNo) {
-         let demographicDob = new Date(demographicDobString);
-         
+        let demographicDob = new Date(demographicDobString);
+
         local_jQuery.ajax({
             type: 'POST',
             url: '<%=request.getContextPath()%>/oscarEncounter/MeasurementData.do?action=getMeasurementsByType&demographicNo=' + demographicNo + '&measurementType=' + measurementType,
             async: false,
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 // On successful retrieval of the measurement data, a modal body will be constructed with the list for selection
                 let modalHeader = "<h4 class=\"measurement-modal-header\">" + measurementTypeMap[measurementType].name + "</h4>";
                 let measurementValueInput = "Current Value: <input type=\"text\" id=\"currentMeasurementValue\" value=\"" + document.getElementById(elementId).value + "\" onkeydown=\"resetInstructions('" + measurementType + "')\"/> <span id=\"measurementInstruction\">" + measurementTypeMap[measurementType].instructions + "</span>";
                 let observationDateInput = "Observation Date: <input type=\"date\" id=\"currentMeasurementObservationDate\" value=\"" + moment(new Date()).format('YYYY-MM-DD') + "\"/>";
                 let body = "<div class=\"view-height-75-scroll\">" + modalHeader + "<div>" + measurementValueInput + "<br/>" + observationDateInput + "</div>";
-                
+
                 if (data[-1] !== null && data[-1] !== "No Results Found") {
                     local_jQuery.each(data, function () {
                         // At the beginning of each iteration, the patients age in days, weeks, months and years at the date of observation will be calculated, and displayed based on what the result is
@@ -113,20 +118,20 @@
                         body += "<a href=\"#\"><p onclick=\"setDemographicMeasurementModalValues('" + this.dataField + "', '" + this.measuringInstruction + "', '" + moment(this.dateObserved.time).format('YYYY-MM-DD') + "'); return false;\">" + this.dataField + " " + this.measuringInstruction + " (" + moment(this.dateObserved.time).format('YYYY-MM-DD') + " - " + ageDisplay + ")</p></a>";
                     });
                 }
-                
+
                 body += "</div>";
 
-                alertify.set({ labels: {ok: 'Save', cancel: 'Okay'}});
-                alertify.confirm(body, function(save) {
+                alertify.set({labels: {ok: 'Save', cancel: 'Okay'}});
+                alertify.confirm(body, function (save) {
                     if (save && !existingMeasurementUsed) {
                         // If the user clicks save, complete an ajax call that will save a new measurement record to the database
                         local_jQuery.ajax({
                             type: 'POST',
-                            url: '<%=request.getContextPath()%>/oscarEncounter/MeasurementData.do?action=saveMeasurement&demographicNo=' + demographicNo + '&appointmentNo=' + appointmentNo + '&type=' + measurementType + 
+                            url: '<%=request.getContextPath()%>/oscarEncounter/MeasurementData.do?action=saveMeasurement&demographicNo=' + demographicNo + '&appointmentNo=' + appointmentNo + '&type=' + measurementType +
                                 '&value=' + document.getElementById("currentMeasurementValue").value + '&instruction=' + document.getElementById('measurementInstruction').innerHTML + "&dateObserved=" + document.getElementById('currentMeasurementObservationDate').value,
                             dataType: 'json',
                             async: false,
-                            success: function(data) {
+                            success: function (data) {
                                 // If the JSON data returned states success = true, display success message, else display failed
                                 if (data && data.success) {
                                     alertify.success("Successfully saved measurement!");
@@ -142,7 +147,7 @@
             }
         });
     }
-    
+
     function setDemographicMeasurementModalValues(currentMeasurementValue, measurementInstruction, currentMeasurementObservationDate) {
         let currentMeasurementValueElement = document.getElementById('currentMeasurementValue');
         let measurementInstructionElement = document.getElementById('measurementInstruction');
@@ -152,7 +157,7 @@
         currentMeasurementObservationDateElement.value = currentMeasurementObservationDate;
         existingMeasurementUsed = true;
     }
-    
+
     function resetInstructions(measurementType) {
         let measurementInstructionElement = document.getElementById('measurementInstruction');
         measurementInstructionElement.innerHTML = measurementTypeMap[measurementType].instructions;

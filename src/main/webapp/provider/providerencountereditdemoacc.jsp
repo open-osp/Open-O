@@ -25,121 +25,122 @@
 --%>
 
 <%
-  String apptProvider_no, user_no, username;
-  user_no = (String) session.getAttribute("user");
-  //username =  request.getParameter("username").toUpperCase();
+    String apptProvider_no, user_no, username;
+    user_no = (String) session.getAttribute("user");
+    //username =  request.getParameter("username").toUpperCase();
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*,java.net.*"
-	errorPage="/errorpage.jsp"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*,java.net.*"
+         errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
 <%
-	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean(DemographicAccessoryDao.class);
+    DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>DEMO ACCS</title>
-<link rel="stylesheet" href="../web.css">
-<script language="JavaScript">
-<!--
-function setfocus() {
-  document.demoacce.xml_Problem_List.focus();
-  //document.demoacce.year.select();
-}
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>DEMO ACCS</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
+    <script language="JavaScript">
+        <!--
+        function setfocus() {
+            document.demoacce.xml_Problem_List.focus();
+            //document.demoacce.year.select();
+        }
 
-//-->
-</script>
+        //-->
+    </script>
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF"><%=request.getParameter("demographic_name")%></font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF"><%=request.getParameter("demographic_name")%>
+        </font></th>
+    </tr>
 </table>
 <%
-   boolean bNewDemoAcc=true;
-	DemographicAccessory da = demographicAccessoryDao.find(Integer.parseInt(request.getParameter("demographic_no")));
-	if(da != null) {
-		String content = da.getContent();
-		bNewDemoAcc=false;
+    boolean bNewDemoAcc = true;
+    DemographicAccessory da = demographicAccessoryDao.find(Integer.parseInt(request.getParameter("demographic_no")));
+    if (da != null) {
+        String content = da.getContent();
+        bNewDemoAcc = false;
 
 %>
 <xml id="xml_list">
-<encounteraccessory>
-<%=content%>
-</encounteraccessory>
+    <encounteraccessory>
+        <%=content%>
+    </encounteraccessory>
 </xml>
 <%
-   }
+    }
 %>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<!--for form use-->
-	<form name="demoacce" method="post"
-		action="providersavedemographicaccessory.jsp">
-	<tr>
-		<td>
+    <!--for form use-->
+    <form name="demoacce" method="post"
+          action="providersavedemographicaccessory.jsp">
+        <tr>
+            <td>
 
-		<table border="0" cellpadding="2" cellspacing="0" bgcolor="#aabbcc"
-			width=100%>
-			<tr>
-				<td>
-				<table bgcolor="#eeeeee" border="0" cellpadding="3" cellspacing="0"
-					width="100%">
-					<tr>
-						<td bgcolor="#ffffff" align="center">
+                <table border="0" cellpadding="2" cellspacing="0" bgcolor="#aabbcc"
+                       width=100%>
+                    <tr>
+                        <td>
+                            <table bgcolor="#eeeeee" border="0" cellpadding="3" cellspacing="0"
+                                   width="100%">
+                                <tr>
+                                    <td bgcolor="#ffffff" align="center">
 
-						<table width="100%" border="0" cellpadding="2" cellspacing="0"
-							bgcolor="#aabbcc" <%=bNewDemoAcc?"":"datasrc='#xml_list'"%>>
-							<tr>
-								<td width="50%" align="center">Problem List:<br>
-								<textarea name="xml_Problem_List" style="width: 100%" cols="30"
-									rows="18" <%=bNewDemoAcc?"":"datafld='xml_Problem_List'"%>></textarea>
+                                        <table width="100%" border="0" cellpadding="2" cellspacing="0"
+                                               bgcolor="#aabbcc" <%=bNewDemoAcc ? "" : "datasrc='#xml_list'"%>>
+                                            <tr>
+                                                <td width="50%" align="center">Problem List:<br>
+                                                    <textarea name="xml_Problem_List" style="width: 100%" cols="30"
+                                                              rows="18" <%=bNewDemoAcc ? "" : "datafld='xml_Problem_List'"%>></textarea>
 
-								</td>
-								<td width="50%" align="center">Medication:<br>
-								<textarea name="xml_Medication" style="width: 100%" cols="30"
-									rows="18" <%=bNewDemoAcc?"":"datafld='xml_Medication'"%>></textarea>
-								</td>
-							</tr>
-							<tr>
-								<td>
-								<div align="center">Allergy/Alert:<br>
-								<textarea name="xml_Alert" style="width: 100%" cols="30"
-									rows="15" <%=bNewDemoAcc?"":"datafld='xml_Alert'"%>></textarea>
-								</div>
-								</td>
-								<td>
-								<div align="center">Family Social History:<br>
-								<textarea name="xml_Family_Social_History" style="width: 100%"
-									cols="30" rows="15"
-									<%=bNewDemoAcc?"":"datafld='xml_Family_Social_History'"%>></textarea>
-								</div>
-								</td>
-							</tr>
-						</table>
+                                                </td>
+                                                <td width="50%" align="center">Medication:<br>
+                                                    <textarea name="xml_Medication" style="width: 100%" cols="30"
+                                                              rows="18" <%=bNewDemoAcc ? "" : "datafld='xml_Medication'"%>></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div align="center">Allergy/Alert:<br>
+                                                        <textarea name="xml_Alert" style="width: 100%" cols="30"
+                                                                  rows="15" <%=bNewDemoAcc ? "" : "datafld='xml_Alert'"%>></textarea>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div align="center">Family Social History:<br>
+                                                        <textarea name="xml_Family_Social_History" style="width: 100%"
+                                                                  cols="30" rows="15"
+                                                                <%=bNewDemoAcc ? "" : "datafld='xml_Family_Social_History'"%>></textarea>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
 
-						</td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-		</table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
 
-		</td>
-	</tr>
-	<tr>
-		<td align="center"><br>
-		<input type="hidden" name="demographic_no"
-			value="<%=request.getParameter("demographic_no")%>"> <input
-			type="submit" name="submit" value=" Save "> <input
-			type="button" name="Button" value="Cancel" onClick="window.close();">
-		</td>
-	</tr>
-	</form>
+            </td>
+        </tr>
+        <tr>
+            <td align="center"><br>
+                <input type="hidden" name="demographic_no"
+                       value="<%=request.getParameter("demographic_no")%>"> <input
+                        type="submit" name="submit" value=" Save "> <input
+                        type="button" name="Button" value="Cancel" onClick="window.close();">
+            </td>
+        </tr>
+    </form>
 </table>
 
 </body>

@@ -23,76 +23,58 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.service.AcceptableUseAgreementManager"%>
-<%@page import="oscar.OscarProperties, javax.servlet.http.Cookie, oscar.oscarSecurity.CookieSecurity, oscar.login.UAgentInfo" %>
-<%@page import="org.apache.velocity.runtime.directive.Foreach"%>
-<%@page import="org.oscarehr.common.service.AcceptableUseAgreementManager"%>
-<%@page import="java.util.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.PMmodule.model.Program" %>
-<%@ page import="org.oscarehr.common.model.Facility" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProviderManager" %>
-<%@ page import="org.oscarehr.PMmodule.service.ProgramManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="org.apache.commons.lang.StringUtils"%>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@ page import="org.caisi.service.InfirmBedProgramManager"%>
-<%@ page import="org.apache.struts.util.LabelValueBean"%>
-
-
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="ca.openosp.openo.util.LabelValueBean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
-<%@ include file="/common/webAppContextAndSuperMgr.jsp"%>
+<%@ include file="/common/webAppContextAndSuperMgr.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <p>&nbsp;</p>
-<h3 align="center"><bean:message key="provider.selectClinicSite" /></h3>
+<h3 align="center"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.selectClinicSite"/></h3>
 <head>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
 </head>
 <body>
 <%
-ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
-
-LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-String providerNo = loggedInInfo.getLoggedInProviderNo();
-Facility facility = loggedInInfo.getCurrentFacility();
-
-//List<Program> programs = programManager.getActiveProgramByFacility(providerNo, facility.getId());
-InfirmBedProgramManager bpm = (InfirmBedProgramManager) SpringUtils.getBean(InfirmBedProgramManager.class);
-List<LabelValueBean> programs = bpm.getProgramBeans(providerNo, facility.getId());
-
-int defaultprogramId = bpm.getDefaultProgramId(providerNo);
-
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    String providerNo = loggedInInfo.getLoggedInProviderNo();
+    Facility facility = loggedInInfo.getCurrentFacility();
+    List<LabelValueBean> programs = new ArrayList<LabelValueBean>();
+    int defaultprogramId = 0;
 %>
 <p>&nbsp;</p>
 <table align="center">
-   <tr>
-    <td align="right" width="30%"><bean:message key="provider.clinicSite" />:</td>
-     <td align="left" width="60%"> 
-     
-		<select id="programIdForLocation" name="programIdForLocation">
-		<%
-			if (programs != null && !programs.isEmpty()) {
-		       	for (LabelValueBean program : programs) {
-		       		String selected = (Integer.parseInt(program.getValue()) == defaultprogramId)?" selected=\"selected\" ":"";
-		   	%>
-		        <option value="<%=program.getValue()%>" <%=selected%>><%=StringEscapeUtils.escapeHtml(program.getLabel())%></option>
-		    <%	}
-		    }
-		  	%>
-		</select>
-		<input type="button" value="Go -->" onClick="javascript:setLocation();" />  
-     </td>
-   </tr>
+    <tr>
+        <td align="right" width="30%"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.clinicSite"/>:</td>
+        <td align="left" width="60%">
+
+            <select id="programIdForLocation" name="programIdForLocation">
+                <%
+                    if (programs != null && !programs.isEmpty()) {
+                        for (LabelValueBean program : programs) {
+                            String selected = (Integer.parseInt(program.getValue()) == defaultprogramId) ? " selected=\"selected\" " : "";
+                %>
+                <option value="<%=program.getValue()%>" <%=selected%>><%=StringEscapeUtils.escapeHtml(program.getLabel())%>
+                </option>
+                <% }
+                }
+                %>
+            </select>
+            <input type="button" value="Go -->" onClick="javascript:setLocation();"/>
+        </td>
+    </tr>
 </table>
 </body>
 <script type="text/javascript">
-function setLocation(){
-	var programIdForLocation = jQuery("#programIdForLocation").val();
-	window.location.href="provider/providercontrol.jsp?<%=org.oscarehr.util.SessionConstants.CURRENT_PROGRAM_ID%>="+programIdForLocation;
-}
+    function setLocation() {
+        var programIdForLocation = jQuery("#programIdForLocation").val();
+        window.location.href = "provider/providercontrol.jsp?<%=ca.openosp.openo.utility.SessionConstants.CURRENT_PROGRAM_ID%>=" + encodeURIComponent(programIdForLocation);
+    }
 </script>
 </html>

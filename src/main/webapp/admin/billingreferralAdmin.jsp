@@ -24,16 +24,17 @@
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 <security:oscarSec roleName="<%=roleName$%>"
                    objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-    <%response.sendRedirect("../logout.jsp");%>
+    <%response.sendRedirect(request.getContextPath() + "/logout.jsp");%>
 </security:oscarSec>
 
-<%@page import="org.oscarehr.common.model.ProfessionalSpecialist" %>
+<%@page import="ca.openosp.openo.commn.model.ProfessionalSpecialist" %>
 <%@page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
 
 <%
     String searchBy = "searchByName";
@@ -46,13 +47,13 @@
     String addressQ = (String) request.getAttribute("address");
     Boolean checked = (Boolean) request.getAttribute("showHidden");
 %>
-<html:html lang="en">
+<html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Referral Doctor</title>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
-        <script type="text/javascript" language="JavaScript" src="../share/javascript/Oscar.js"></script>
+        <script type="text/javascript" language="JavaScript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
         <script src="<%=request.getContextPath() %>/js/jquery-1.7.1.min.js" type="text/javascript"></script>
 
@@ -72,12 +73,12 @@
 
 
             function openAddSpecialist() {
-                popupOscarRx(625, 1024, '../oscarEncounter/oscarConsultationRequest/config/AddSpecialist.jsp');
+                popupOscarRx(625, 1024, '<%= request.getContextPath() %>/oscarEncounter/oscarConsultationRequest/config/AddSpecialist.jsp');
                 return false;
             }
 
             function openEditSpecialist(specId) {
-                popupOscarRx(625, 1024, '../oscarEncounter/EditSpecialists.do?specId=' + specId);
+                popupOscarRx(625, 1024, '<%=request.getContextPath()%>/oscarEncounter/EditSpecialists.do?specId=' + specId);
             }
 
             function checkUncheck(referralId) {
@@ -120,7 +121,7 @@
                 $("#addressQuery").val('');
             }
         </script>
-        <link href="<html:rewrite page='/css/displaytag.css'/>" rel="stylesheet"></link>
+        <link href="${request.contextPath}/css/displaytag.css" rel="stylesheet"></link>
     </head>
 
     <body vlink="#0000FF" class="BodyStyle">
@@ -177,7 +178,7 @@
                         ProfessionalSpecialist ps = (ProfessionalSpecialist) pageContext.getAttribute("referral");
 
                         String linkName = ps.getReferralNo();
-                        if (oscar.util.StringUtils.isNullOrEmpty(ps.getReferralNo())) {
+                        if (StringUtils.isNullOrEmpty(ps.getReferralNo())) {
                             linkName = "N/A";
                         }
                     %>
@@ -240,4 +241,4 @@
         </tr>
     </table>
     <% } %>
-</html:html>
+</html>

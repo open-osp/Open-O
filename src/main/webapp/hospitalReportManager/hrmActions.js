@@ -3,9 +3,9 @@ function addComment(reportId) {
     let data = {method: "addComment", reportId: reportId, comment: comment};
     jQuery.ajax({
         type: "POST",
-        url: contextpath+"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: data,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("commentstatus" + reportId).innerHTML = data;
         }
@@ -15,9 +15,9 @@ function addComment(reportId) {
 function deleteComment(commentId, reportId) {
     jQuery.ajax({
         type: "POST",
-        url: contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=deleteComment&commentId=" + commentId,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("commentstatus" + reportId).innerHTML = data;
         }
@@ -33,17 +33,13 @@ function doSignOff(reportId, view, isSign) {
 
     jQuery.ajax({
         type: "POST",
-        url: contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: data,
-        success: function(data)
-        {
-            if (view)
-            {
+        success: function (data) {
+            if (view) {
                 self.opener.removeReport(reportId);
                 window.close();
-            }
-            else
-            {
+            } else {
                 var signOffButton = document.getElementById('signoff' + reportId);
                 var buttonText = "Sign-Off";
                 var buttonClick = "";
@@ -51,8 +47,7 @@ function doSignOff(reportId, view, isSign) {
                 if (isSign) {
                     buttonText = "Revoke " + buttonText;
                     buttonClick = "javascript: revokeSignOffHrm('" + reportId + "');";
-                }
-                else {
+                } else {
                     buttonClick = "javascript: signOffHrm('" + reportId + "', " + view + ");";
                 }
 
@@ -66,9 +61,9 @@ function doSignOff(reportId, view, isSign) {
 function makeIndependent(reportId) {
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=makeIndependent&reportId=" + reportId,
-        success: function(data) {
+        success: function (data) {
             if (data != null && data.indexOf('Success') !== -1) {
                 $("similarNotice").innerHTML = "";
             }
@@ -84,27 +79,27 @@ function addDemoToHrm(reportId, csrfToken) {
     var demographicNo = $("demofind" + reportId + "hrm").value;
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=assignDemographic&reportId=" + reportId + "&demographicNo=" + demographicNo,
         headers: headers,
-        success: function(data) {
+        success: function (data) {
             if (data != null && data.indexOf('Success') !== -1) {
                 $("demostatus" + reportId).innerHTML = data + "<br/>" +
                     $('autocompletedemo' + reportId + 'hrm').value.split('(')[0] +
                     "<a href=\"#\" onclick=\"removeDemoFromHrm('" + reportId + "')\">(remove)</a>";
                 $('autocompletedemo' + reportId + 'hrm').hide();
-                toggleButtonBar(true,reportId);
+                toggleButtonBar(true, reportId);
             }
         }
     });
 }
 
 function toggleButtonBar(show, reportId) {
-    jQuery("#msgBtn_"+reportId).prop('disabled',!show);
-    jQuery("#mainTickler_"+reportId).prop('disabled',!show);
-    jQuery("#mainEchart_"+reportId).prop('disabled',!show);
-    jQuery("#mainMaster_"+reportId).prop('disabled',!show);
-    jQuery("#mainApptHistory_"+reportId).prop('disabled',!show);
+    jQuery("#msgBtn_" + reportId).prop('disabled', !show);
+    jQuery("#mainTickler_" + reportId).prop('disabled', !show);
+    jQuery("#mainEchart_" + reportId).prop('disabled', !show);
+    jQuery("#mainMaster_" + reportId).prop('disabled', !show);
+    jQuery("#mainApptHistory_" + reportId).prop('disabled', !show);
 
 }
 
@@ -115,17 +110,17 @@ function removeDemoFromHrm(reportId, csrfToken) {
     }
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=removeDemographic&reportId=" + reportId,
         headers: headers,
-        success: function(data) {
+        success: function (data) {
             if (data != null && data.indexOf('Success') !== -1) {
                 $("demostatus" + reportId).innerHTML = data + "<br/>" +
                     "<i>Not currently linked</i>";
                 $('autocompletedemo' + reportId + 'hrm').value = "";
                 $('autocompletedemo' + reportId + 'hrm').show();
                 $('demofind' + reportId + 'hrm').value = null;
-                toggleButtonBar(false,reportId);
+                toggleButtonBar(false, reportId);
             }
         }
     });
@@ -134,9 +129,9 @@ function removeDemoFromHrm(reportId, csrfToken) {
 function addProvToHrm(reportId, providerNo) {
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=assignProvider&reportId=" + reportId + "&providerNo=" + providerNo,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("provstatus" + reportId).innerHTML = data;
         }
@@ -146,9 +141,9 @@ function addProvToHrm(reportId, providerNo) {
 function removeProvFromHrm(mappingId, reportId) {
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=removeProvider&providerMappingId=" + mappingId,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("provstatus" + reportId).innerHTML = data;
         }
@@ -158,9 +153,9 @@ function removeProvFromHrm(mappingId, reportId) {
 function makeActiveSubClass(reportId, subClassId) {
     jQuery.ajax({
         type: "POST",
-        url:  contextpath +"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: "method=makeActiveSubClass&reportId=" + reportId + "&subClassId=" + subClassId,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("subclassstatus" + reportId).innerHTML = data;
         }
@@ -170,9 +165,8 @@ function makeActiveSubClass(reportId, subClassId) {
 }
 
 
-
-function printHrm(hrmReportId){
-    window.location = contextpath + "/hospitalReportManager/PrintHRMReport.do?segmentId="+hrmReportId+"&hrmReportId="+hrmReportId;
+function printHrm(hrmReportId) {
+    window.location = contextpath + "/hospitalReportManager/PrintHRMReport.do?segmentId=" + hrmReportId + "&hrmReportId=" + hrmReportId;
 }
 
 function setDescription(reportId) {
@@ -180,9 +174,9 @@ function setDescription(reportId) {
     let data = {method: "setDescription", reportId: reportId, description: comment};
     jQuery.ajax({
         type: "POST",
-        url: contextpath+"/hospitalReportManager/Modify.do",
+        url: contextpath + "/hospitalReportManager/Modify.do",
         data: data,
-        success: function(data) {
+        success: function (data) {
             if (data != null)
                 $("descriptionstatus" + reportId).innerHTML = data;
         }
@@ -209,9 +203,9 @@ function updateCategory(reportId) {
     if (categoryId) {
         jQuery.ajax({
             type: "POST",
-            url:  contextpath +"/hospitalReportManager/Modify.do",
+            url: contextpath + "/hospitalReportManager/Modify.do",
             data: "method=updateCategory&reportId=" + reportId + "&categoryId=" + categoryId,
-            success: function(data) {
+            success: function (data) {
                 if (data != null) {
                     if (data.indexOf('Success') !== -1) {
                         $('hrmCategory_' + reportId).innerHTML = $('selectedCategory_' + reportId).innerHTML = categoryName;
@@ -234,16 +228,16 @@ function setupHrmDemoAutoCompletion(docId, csrfToken) {
             url = window.contextpath + "/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
         }
 
-        jQuery( "#autocompletedemo" + docId + "hrm" ).autocomplete({
+        jQuery("#autocompletedemo" + docId + "hrm").autocomplete({
             source: url,
             minLength: 2,
-            focus: function( event, ui ) {
-                jQuery( "#autocompletedemo" + docId + "hrm" ).val( ui.item.label);
+            focus: function (event, ui) {
+                jQuery("#autocompletedemo" + docId + "hrm").val(ui.item.label);
                 return false;
             },
-            select: function(event, ui) {
-                jQuery( "#autocompletedemo" + docId + "hrm").val(ui.item.label);
-                jQuery( "#demofind" + docId + "hrm").val(ui.item.value);
+            select: function (event, ui) {
+                jQuery("#autocompletedemo" + docId + "hrm").val(ui.item.label);
+                jQuery("#demofind" + docId + "hrm").val(ui.item.value);
                 jQuery("routetodemo" + docId + "hrm").value = ui.item.value;
 
                 addDemoToHrm(docId, csrfToken);

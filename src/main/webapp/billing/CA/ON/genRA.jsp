@@ -18,5 +18,5 @@
 
 --%>
 
-<jsp:forward page="onGenRA.jsp" />
+<jsp:forward page="onGenRA.jsp"/>
 

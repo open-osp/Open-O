@@ -23,101 +23,101 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.util.*"%>
-<%@page import="org.caisi.dao.*"%>
-<%@page import="org.caisi.model.*"%>
-<%@page import="org.oscarehr.PMmodule.model.*"%>
-<%@page import="org.oscarehr.PMmodule.dao.*"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="java.util.*" %>
+<%@page import="org.caisi.dao.*" %>
+<%@page import="org.caisi.model.*" %>
+<%@page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
-	scope="request" />
+       scope="request"/>
 
 <div class="page-header">
-	<h4>Provider Service Report Form</h4>
+    <h4>Provider Service Report Form</h4>
 </div>
 
 <form action="${ctx}/oscarReport/provider_service_report_export.jsp"
-	class="well form-horizontal" id="psrForm">
+      class="well form-horizontal" id="psrForm">
 
-	<fieldset>
-		<h4>
-			Export to csv <br>
-			<small>This will provide a break down of all unique
-				encounters of a demographic to a provider, broken down by month and
-				for the entire interval as well. This only does the numbers for a
-				program of type bed or service.</small>
-		</h4>
-		<div class="row-fluid">
-			<div class="control-group">
-				<label class="control-label">Start Date</label>
-				<div class="controls">
-					<input id="startDate" name="startDate" class="input-mini" size="7"
-						type="text" />
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">EndDate (inclusive)</label>
-				<div class="controls">
-					<input id="endDate" name="endDate" class="input-mini" size="7"
-						type="text" />
-				</div>
-			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn btn-primary">
-						<i class="icon-download-alt icon-white"></i> Export
-					</button>
-				</div>
-			</div>
-		</div>
-	</fieldset>
+    <fieldset>
+        <h4>
+            Export to csv <br>
+            <small>This will provide a break down of all unique
+                encounters of a demographic to a provider, broken down by month and
+                for the entire interval as well. This only does the numbers for a
+                program of type bed or service.</small>
+        </h4>
+        <div class="row-fluid">
+            <div class="control-group">
+                <label class="control-label">Start Date</label>
+                <div class="controls">
+                    <input id="startDate" name="startDate" class="input-mini" size="7"
+                           type="text"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">EndDate (inclusive)</label>
+                <div class="controls">
+                    <input id="endDate" name="endDate" class="input-mini" size="7"
+                           type="text"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="icon-download-alt icon-white"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </fieldset>
 </form>
 
 <script>
-	var startDt = $("#startDate").datepicker({
-		format : "mm/yyyy",
-		viewMode : "months",
-		minViewMode : "months"
-	});
+    var startDt = $("#startDate").datepicker({
+        format: "mm/yyyy",
+        viewMode: "months",
+        minViewMode: "months"
+    });
 
-	var endDt = $("#endDate").datepicker({
-		format : "mm/yyyy",
-		viewMode : "months",
-		minViewMode : "months"
-	});
+    var endDt = $("#endDate").datepicker({
+        format: "mm/yyyy",
+        viewMode: "months",
+        minViewMode: "months"
+    });
 
-	$(document).ready(function() {
-		$('#psrForm').validate({
-			rules : {
-				startDate : {
-					required : true,
-					oscarMonth : true
-				},
-				endDate : {
-					required : true,
-					oscarMonth : true
-				}
-			},
-			submitHandler : function(form) {
-				form.submit();
-			}
-		});
-	});
+    $(document).ready(function () {
+        $('#psrForm').validate({
+            rules: {
+                startDate: {
+                    required: true,
+                    oscarMonth: true
+                },
+                endDate: {
+                    required: true,
+                    oscarMonth: true
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
+            }
+        });
+    });
 </script>

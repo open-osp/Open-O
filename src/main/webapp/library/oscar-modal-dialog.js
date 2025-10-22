@@ -26,34 +26,25 @@
  * This is a living script. 
  */
 
-	// Jquery modal windows
-	jQuery(document).ready( function(){
+// Jquery modal windows
+jQuery(document).ready(function () {
 
-		jQuery( function() {
-			
-			jQuery("body").first().append('<div style="padding:10px;" id="oscar-dialog"></div>');
+    jQuery(function () {
 
-			jQuery( "#oscar-dialog" ).dialog({
-		      autoOpen: false,
-		      modal: true,
-		      width: 'auto',
-		      height: 'auto',
-		      resizable: true
-		      /* ,
-		      show: {
-		        effect: "blind",
-		        duration: 1000
-		      },
-		      hide: {
-		        effect: "explode",
-		        duration: 1000
-		      } */
-		    });
-		 
-			jQuery(".oscar-dialog-link").on( "click", function(event) {
-				event.preventDefault();
-		    	var url = jQuery(this).attr("href");
- 		    	jQuery("#oscar-dialog").load(url).dialog('open'); 
-		    });
-		});
-	});
+        jQuery("body").first().append('<div style="padding:10px;" id="oscar-dialog"></div>');
+
+        jQuery("#oscar-dialog").dialog({
+            autoOpen: false,
+            modal: true,
+            width: 'auto',
+            height: 'auto',
+            resizable: true
+        });
+
+        jQuery(".oscar-dialog-link").on("click", function (event) {
+            event.preventDefault();
+            var url = jQuery(this).attr("href");
+            jQuery("#oscar-dialog").load(url).dialog('open');
+        });
+    });
+});

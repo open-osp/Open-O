@@ -25,75 +25,76 @@
 --%>
 
 <%
-  if(session.getValue("user") == null)  response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ page import="java.sql.*, java.util.*, java.net.*, oscar.*"
-	errorPage="/errorpage.jsp"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicAccessoryDao" %>
-<%@page import="org.oscarehr.common.model.DemographicAccessory" %>
+<%@ page import="java.sql.*, java.util.*, java.net.*, ca.openosp.*"
+         errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
 <%
-	DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao)SpringUtils.getBean(DemographicAccessoryDao.class);
+    DemographicAccessoryDao demographicAccessoryDao = (DemographicAccessoryDao) SpringUtils.getBean(DemographicAccessoryDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 </head>
 <body>
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		ADD/UPDATE AN ENCOUNTERDEMOACCS RECORD</font></th>
-	</tr>
-</table>
-<%
-	String content=SxmlMisc.createXmlDataString(request, "xml_");
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                ADD/UPDATE AN ENCOUNTERDEMOACCS RECORD</font></th>
+        </tr>
+    </table>
+    <%
+        String content = SxmlMisc.createXmlDataString(request, "xml_");
 
-	String[] param = new String[2];
-	param[0]=request.getParameter("demographic_no");
-	param[1]=content;
+        String[] param = new String[2];
+        param[0] = request.getParameter("demographic_no");
+        param[1] = content;
 
-	String[] param1 = new String[2];
-	param1[0]=content;
-	param1[1]=param[0];
+        String[] param1 = new String[2];
+        param1[0] = content;
+        param1[1] = param[0];
 
-	long numRecord=1, rowsAffected=0;
-	numRecord = demographicAccessoryDao.findCount(Integer.parseInt(request.getParameter("demographic_no")));
+        long numRecord = 1, rowsAffected = 0;
+        numRecord = demographicAccessoryDao.findCount(Integer.parseInt(request.getParameter("demographic_no")));
 
-    if (numRecord==0) {
-      DemographicAccessory da = new DemographicAccessory();
-      da.setContent(content);
-      demographicAccessoryDao.persist(da);
-    } else {
-      DemographicAccessory da = demographicAccessoryDao.find(Integer.parseInt(param[0]));
-      da.setContent(content);
-      demographicAccessoryDao.merge(da);
-    }
+        if (numRecord == 0) {
+            DemographicAccessory da = new DemographicAccessory();
+            da.setContent(content);
+            demographicAccessoryDao.persist(da);
+        } else {
+            DemographicAccessory da = demographicAccessoryDao.find(Integer.parseInt(param[0]));
+            da.setContent(content);
+            demographicAccessoryDao.merge(da);
+        }
 
-%>
-<p>
-<h1>Successful Update of the demographic accessory record.</h1>
-</p>
-<script LANGUAGE="JavaScript">
-     	//self.history.go(-1);return false;//this.location.reload();	//self.opener.refresh();
-function dunescape(s) {
-  while(s.indexOf('+')>0) {
-    s = s.replace('+', ' ');
-  }
-  return (unescape(s));
-}
-      self.close();
-     	self.opener.document.encounter.xml_Problem_List.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Problem_List"))%>");
-     	self.opener.document.encounter.xml_Medication.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Medication"))%>");
-     	self.opener.document.encounter.xml_Alert.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Alert"))%>");
-     	self.opener.document.encounter.xml_Family_Social_History.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Family_Social_History"))%>");
-</script>
+    %>
+    <p>
+    <h1>Successful Update of the demographic accessory record.</h1>
+    </p>
+    <script LANGUAGE="JavaScript">
+        //self.history.go(-1);return false;//this.location.reload();	//self.opener.refresh();
+        function dunescape(s) {
+            while (s.indexOf('+') > 0) {
+                s = s.replace('+', ' ');
+            }
+            return (unescape(s));
+        }
 
-<p></p>
-<hr width="90%"/>
-<form><input type="button" value="Close this window"
-	onClick="self.close()"></form>
+        self.close();
+        self.opener.document.encounter.xml_Problem_List.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Problem_List"))%>");
+        self.opener.document.encounter.xml_Medication.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Medication"))%>");
+        self.opener.document.encounter.xml_Alert.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Alert"))%>");
+        self.opener.document.encounter.xml_Family_Social_History.value = dunescape("<%=URLEncoder.encode(request.getParameter("xml_Family_Social_History"))%>");
+    </script>
+
+    <p></p>
+    <hr width="90%"/>
+    <form><input type="button" value="Close this window"
+                 onClick="self.close()"></form>
 </center>
 </body>
 </html>

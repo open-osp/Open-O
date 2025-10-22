@@ -24,56 +24,73 @@
 
 --%>
 
-<%@page import="org.oscarehr.common.model.PartialDate"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.oscarehr.casemgmt.web.PrescriptDrug"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@page import="ca.openosp.openo.commn.model.PartialDate" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="ca.openosp.openo.casemgmt.web.PrescriptDrug" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
-<%@ page import="oscar.oscarRx.data.*,oscar.oscarProvider.data.ProviderMyOscarIdData,oscar.oscarDemographic.data.DemographicData,oscar.OscarProperties,oscar.log.*"%>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager,org.springframework.web.context.WebApplicationContext,
-		org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.casemgmt.model.CaseManagementNoteLink,org.oscarehr.casemgmt.model.CaseManagementNote"%>
+<%@ page
+        import="ca.openosp.openo.rx.data.*,ca.openosp.openo.demographic.data.DemographicData,ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager,
+                org.springframework.web.context.WebApplicationContext,
+                org.springframework.web.context.support.WebApplicationContextUtils,
+                ca.openosp.openo.casemgmt.model.CaseManagementNoteLink,
+                ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.Calendar" %>
-<%@page import="java.util.Enumeration"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@page import="java.util.List,oscar.util.StringUtils"%>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager"%>
-<%@page import="org.oscarehr.util.LoggedInInfo,org.oscarehr.common.dao.DrugReasonDao,org.oscarehr.common.model.DrugReason"%>
-<%@page import="java.util.ArrayList,oscar.util.*,java.util.*,org.oscarehr.common.model.Drug,org.oscarehr.common.dao.*"%>
-<%@page import="org.oscarehr.managers.DrugDispensingManager" %>
-<%@page import="org.oscarehr.managers.CodingSystemManager" %>
+<%@page import="java.util.Enumeration" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@page import="java.util.List,ca.openosp.openo.util.StringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo,ca.openosp.openo.commn.dao.DrugReasonDao,ca.openosp.openo.commn.model.DrugReason" %>
+<%@page import="java.util.ArrayList,ca.openosp.openo.util.*,java.util.*,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.commn.dao.*" %>
+<%@page import="ca.openosp.openo.managers.DrugDispensingManager" %>
+<%@page import="ca.openosp.openo.managers.CodingSystemManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
-<logic:notPresent name="RxSessionBean" scope="session">
-    <logic:redirect href="error.html" />
-</logic:notPresent>
-<logic:present name="RxSessionBean" scope="session">
-    <bean:define id="bean" type="oscar.oscarRx.pageUtil.RxSessionBean"
-                 name="RxSessionBean" scope="session" />
-    <logic:equal name="bean" property="valid" value="false">
-        <logic:redirect href="error.html" />
-    </logic:equal>
-</logic:present>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    RxPatientData.Patient patient = null;
+    RxSessionBean bean = null;
+%>
+<c:if test="${empty sessionScope.RxSessionBean}">
+    <c:redirect url="error.html"/>
+</c:if>
+<c:if test="${not empty sessionScope.RxSessionBean}">
+    <%
+        // Directly access the RxSessionBean from the session
+        bean = (RxSessionBean) session.getAttribute("RxSessionBean");
+        if (bean != null && !bean.isValid()) {
+            response.sendRedirect("error.html");
+            return; // Ensure no further JSP processing
+        }
+        patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
+    %>
+</c:if>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+
+<%
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
@@ -161,94 +178,95 @@
 </style>
 
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
-	oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
-	PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
-	
-	boolean showall = false;
-	if (request.getParameter("show") != null) {
-	    if (request.getParameter("show").equals("all")) {
-	        showall = true;
-	    }
-	}
-	
-	CodingSystemManager codingSystemManager = SpringUtils.getBean(CodingSystemManager.class);
-	
-	boolean integratorEnabled = loggedInInfo.getCurrentFacility().isIntegratorEnabled();
-	String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
-	String heading = request.getParameter("heading");
-	
-if (heading != null){
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    SecurityManager securityManager = new SecurityManager();
+    PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
+
+    boolean showall = false;
+    if (request.getParameter("show") != null) {
+        if (request.getParameter("show").equals("all")) {
+            showall = true;
+        }
+    }
+
+    CodingSystemManager codingSystemManager = SpringUtils.getBean(CodingSystemManager.class);
+
+    boolean integratorEnabled = loggedInInfo.getCurrentFacility().isIntegratorEnabled();
+    String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
+    String heading = request.getParameter("heading");
+
+    if (heading != null) {
 %>
 <h4 style="margin-bottom:1px;margin-top:3px;"><%=Encode.forHtmlContent(heading)%></h4>
 <%}%>
 <div class="drugProfileText" style="">
     <table width="100%" cellpadding="3" border="0" class="list-drugs sortable" id="Drug_table<%=Encode.forHtmlContent(heading)%>">
         <tr>
-        	<th align="left"><b>Entered Date</b></th>
-            <th align="left"><b><bean:message key="SearchDrug.msgRxDate"/></b></th>
+            <th align="left"><b>Entered Date</b></th>
+            <th align="left"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgRxDate"/></b></th>
             <th align="left"><b>Days to Exp</b></th>
             <th align="left"><b>LT Med</b></th>
-            <th align="left"><b><bean:message key="SearchDrug.msgPrescription"/></b></th>
-			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgReprescribe"/></b></th>
-            	<%if(!OscarProperties.getInstance().getProperty("rx.delete_drug.hide","false").equals("true")) {%>
-            	<th align="center" width="35px"><b><bean:message key="SearchDrug.msgDelete"/></b></th>
-            <% 	}	 
-			}            
+            <th align="left"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgPrescription"/></b></th>
+            <%if (securityManager.hasWriteAccess("_rx", roleName$, true)) {%>
+            <th align="center" width="35px"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReprescribe"/></b></th>
+            <%if (!OscarProperties.getInstance().getProperty("prescript.delete_drug.hide", "false").equals("true")) {%>
+            <th align="center" width="35px"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgDelete"/></b></th>
+            <% }
+            }
             %>
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgDiscontinue"/></b></th>		
-			<th align="center" width="35px" title="<bean:message key="SearchDrug.msgReason_help"/>"><b><bean:message key="SearchDrug.msgReason"/></b></th>    
-            <th align="center" width="35px"><b><bean:message key="SearchDrug.msgPastMed"/></b></th>
-            <%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            	<th align="center" width="15px">&nbsp;</th>
+            <th align="center" width="35px"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgDiscontinue"/></b></th>
+            <th align="center" width="35px" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReason_help"/>"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReason"/></b></th>
+            <th align="center" width="35px"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgPastMed"/></b></th>
+            <%if (securityManager.hasWriteAccess("_rx", roleName$, true)) {%>
+            <th align="center" width="15px">&nbsp;</th>
             <% } %>
-            <th align="center"><bean:message key="SearchDrug.msgLocationPrescribed"/></th>
-            <th align="center" title="<bean:message key="SearchDrug.msgHideCPP_help"/>"><bean:message key="SearchDrug.msgHideCPP"/></th>
-            <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
-             <th align="center"><bean:message key="SearchDrug.msgDispense"/></th>
-             <%} %>
-             <th align="center"></th>
+            <th align="center"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgLocationPrescribed"/></th>
+            <th align="center" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgHideCPP_help"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgHideCPP"/></th>
+            <%if (OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing", "false").equals("true")) {%>
+            <th align="center"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgDispense"/></th>
+            <%} %>
+            <th align="center"></th>
         </tr>
 
         <%
-	        List<Drug> prescriptDrugs = null;
+            List<Drug> prescriptDrugs = null;
             CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
 
-            if(showall) {
-            	prescriptDrugs = caseManagementManager.getPrescriptions(loggedInInfo, patient.getDemographicNo(), showall);
-            }
-            else {
+            if (showall) {
+                prescriptDrugs = caseManagementManager.getPrescriptions(loggedInInfo, patient.getDemographicNo(), showall);
+            } else {
                 prescriptDrugs = caseManagementManager.getCurrentPrescriptions(patient.getDemographicNo());
             }
 
-            DrugReasonDao drugReasonDao  = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
-			
+            DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
+
             DrugDispensingManager drugDispensingManager = SpringUtils.getBean(DrugDispensingManager.class);
-            List<String> reRxDrugList=bean.getReRxDrugIdList();
+            List<String> reRxDrugList = bean.getReRxDrugIdList();
             Collections.sort(prescriptDrugs, Drug.START_DATE_COMPARATOR);
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
-			for (int x=0;x<prescriptDrugs.size();x++) {
-				Drug prescriptDrug = prescriptDrugs.get(x);
-				boolean isPrevAnnotation=false;
+            for (int x = 0; x < prescriptDrugs.size(); x++) {
+                Drug prescriptDrug = prescriptDrugs.get(x);
+                boolean isPrevAnnotation = false;
                 String styleColor = "";
                 //test for previous note
                 HttpSession se = request.getSession();
                 Integer tableName = caseManagementManager.getTableNameByDisplay(annotation_display);
-                
+
                 CaseManagementNoteLink cml = null;
                 CaseManagementNote p_cmn = null;
 
-                if (prescriptDrug.getRemoteFacilityId()!=null)
-                {
-                	cml = caseManagementManager.getLatestLinkByTableId(tableName, Long.parseLong(prescriptDrug.getId().toString()));
+                if (prescriptDrug.getRemoteFacilityId() != null) {
+                    cml = caseManagementManager.getLatestLinkByTableId(tableName, Long.parseLong(prescriptDrug.getId().toString()));
                 }
-                
-                if (cml!=null) {p_cmn = caseManagementManager.getNote(cml.getNoteId().toString());}
-                if (p_cmn!=null){isPrevAnnotation=true;}
+
+                if (cml != null) {
+                    p_cmn = caseManagementManager.getNote(cml.getNoteId().toString());
+                }
+                if (p_cmn != null) {
+                    isPrevAnnotation = true;
+                }
 
                 if (request.getParameter("status") != null) { //TODO: Redo this in a better way
                     String stat = request.getParameter("status");
@@ -258,51 +276,77 @@ if (heading != null){
                         continue;
                     }
                 }
-                if (request.getParameter("longTermOnly") != null && request.getParameter("longTermOnly").equals("true")){
-                    if (!prescriptDrug.isLongTerm()){
-                      continue;
+                if (request.getParameter("longTermOnly") != null && request.getParameter("longTermOnly").equals("true")) {
+                    if (!prescriptDrug.isLongTerm()) {
+                        continue;
                     }
                 }
 
-                if (request.getParameter("longTermOnly") != null && request.getParameter("longTermOnly").equals("acute")){
-                    if (prescriptDrug.isLongTerm()){
-                      continue;
+                if (request.getParameter("longTermOnly") != null && request.getParameter("longTermOnly").equals("acute")) {
+                    if (prescriptDrug.isLongTerm()) {
+                        continue;
                     }
                 }
-                if(request.getParameter("drugLocation")!=null&&request.getParameter("drugLocation").equals("external")){
-                    if(!prescriptDrug.isExternal())
+                if (request.getParameter("drugLocation") != null && request.getParameter("drugLocation").equals("external")) {
+                    if (!prescriptDrug.isExternal())
                         continue;
                 }
 //add all long term med drugIds to an array.
-                styleColor = getClassColour( prescriptDrug, now, month);
-                String specialText=prescriptDrug.getSpecial();
-                specialText= specialText == null ? "" : specialText.replace("\n"," ");
-                Integer prescriptIdInt=prescriptDrug.getId();
-                String bn=prescriptDrug.getBrandName();
-                
+                styleColor = getClassColour(prescriptDrug, now, month);
+                String specialText = prescriptDrug.getSpecial();
+                specialText = specialText == null ? "" : specialText.replace("\n", " ");
+                Integer prescriptIdInt = prescriptDrug.getId();
+                String bn = prescriptDrug.getBrandName();
+
                 boolean startDateUnknown = prescriptDrug.getStartDateUnknown();
         %>
         <tr>
-        <td valign="top"><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%></a></td>
+            <td valign="top"><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%>
+                                href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=UtilDateUtilities.DateToString(prescriptDrug.getCreateDate())%>
+            </a></td>
             <td valign="top">
-            	<% if(startDateUnknown) { %>
-            		
-            	<% } else { 
-            		String startDate = oscar.util.UtilDateUtilities.DateToString(prescriptDrug.getRxDate());
-            		startDate = partialDateDao.getDatePartial(startDate, PartialDate.DRUGS,  prescriptDrug.getId(), PartialDate.DRUGS_STARTDATE);
-            	%>
-            		<a id="rxDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>"><%=startDate%></a>
-            	<% } %>
-            </td>
-            <td valign="top">
-            	<% if(startDateUnknown) { %>
-            		
-            	<% } else { %>
-            		<%=prescriptDrug.daysToExpire()%>
-            	<% } %>
-            </td>
-            <td valign="top">
+                <% if (startDateUnknown) { %>
 
+                <% } else {
+                    String startDate = UtilDateUtilities.DateToString(prescriptDrug.getRxDate());
+                    startDate = partialDateDao.getDatePartial(startDate, PartialDate.DRUGS, prescriptDrug.getId(), PartialDate.DRUGS_STARTDATE);
+                %>
+                <a id="rxDate_<%=prescriptIdInt%>"   <%=styleColor%>
+                   href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>"><%=startDate%>
+                </a>
+                <% } %>
+            </td>
+            <td valign="top">
+                <% if (startDateUnknown) { %>
+
+                <% } else { %>
+                <%=prescriptDrug.daysToExpire()%>
+                <% } %>
+            </td>
+            <td valign="top">
+                <%
+                    if (prescriptDrug.isLongTerm()) {
+                %>
+                *
+                <%
+                    } else {
+                        if (prescriptDrug.getRemoteFacilityId() == null) {
+                            if (securityManager.hasWriteAccess("_rx", roleName$, true)) {
+                %>
+                <a id="notLongTermDrug_<%=prescriptIdInt%>"
+                   title="<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.Prescription.changeDrugLongTerm'/>"
+                   onclick="changeLt('<%=prescriptIdInt%>');" href="javascript:void(0);">
+                    L
+                </a>
+                <% 
+                            } else { 
+                %>
+                <span style="color:blue">L</span>
+                <% 
+                            }
+                        }
+                    } 
+                %>
                 <div class="drug-maintenance-switch" style="display: flex; align-items: baseline;">
                     <% String drugMaintenanceSwitch = "drugMaintenanceSwitch_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
                     <input id="<%=drugMaintenanceSwitch%>" type="checkbox" name="checkBox_<%=prescriptIdInt%>"
@@ -315,19 +359,21 @@ if (heading != null){
                     </label>
                 </div>
             </td>
-			<%
-			//display comment as tooltip if not null - simply using the TITLE attr
-			String xComment=prescriptDrug.getComment();
-			String tComment="";
-			if(xComment!=null ){
-				tComment="TITLE='"+xComment+" '";
-			}
-			
-			%>
-            <td valign="top"><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%></a></td>
-			<%            			
-	           	if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
-           	%>
+            <%
+                //display comment as tooltip if not null - simply using the TITLE attr
+                String xComment = prescriptDrug.getComment();
+                String tComment = "";
+                if (xComment != null) {
+                    tComment = "TITLE='" + xComment + " '";
+                }
+
+            %>
+            <td valign="top"><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%>
+                                href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
+            </a></td>
+            <%
+                if (securityManager.hasWriteAccess("_rx", roleName$, true)) {
+            %>
             <td width="20px" align="center" valign="top">
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
                 <div style="display: flex; align-items: center;">
@@ -340,176 +386,184 @@ if (heading != null){
                 </div>
                 <%} else {%>
                 <form action="<%=request.getContextPath()%>/oscarRx/searchDrug.do" method="post">
-                    <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>" />
-                    <input type="hidden" name="searchString" value="<%=getName(prescriptDrug)%>" />
-                    <input type="submit" class="ControlPushButton" value="Search to Re-prescribe" />
+                    <input type="hidden" name="demographicNo" value="<%=patient.getDemographicNo()%>"/>
+                    <input type="hidden" name="searchString" value="<%=getName(prescriptDrug)%>"/>
+                    <input type="submit" class="ControlPushButton" value="Search to Re-prescribe"/>
                 </form>
                 <%}%>
             </td>
-			<%if(!OscarProperties.getInstance().getProperty("rx.delete_drug.hide","false").equals("true")) { %>
+            <%if (!OscarProperties.getInstance().getProperty("prescript.delete_drug.hide", "false").equals("true")) { %>
             <td width="20px" align="center" valign="top">
                 <%if (prescriptDrug.getRemoteFacilityName() == null) {%>
-                   <a id="del_<%=prescriptIdInt%>" name="delete" <%=styleColor%> href="javascript:void(0);" onclick="Delete2(this);">Del</a>
+                <a id="del_<%=prescriptIdInt%>" name="delete" <%=styleColor%> href="javascript:void(0);"
+                   onclick="Delete2(this);">Del</a>
                 <%}%>
             </td>
 
-			<% } 
-	         }
-			%>
-            <td width="20px" align="center" valign="top">
-                <%if(!prescriptDrug.isDiscontinued())
-                {
-               	 if (prescriptDrug.getRemoteFacilityId()==null)
-               	 {
-               		
-					if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
-				
-                %>
-                	<a id="discont_<%=prescriptIdInt%>" href="javascript:void(0);" onclick="Discontinue(event,this);" <%=styleColor%> >Discon</a>                
-                <% }
-               	 }
-                }else{%>
-                  <%=prescriptDrug.getArchivedReason()%>
-                <%}%>
-            </td>
-  <%-- DRUG REASON --%>          
-            <td style="vertical-align:top;">
-            	<% 	
-            		List<DrugReason> drugReasons  = drugReasonDao.getReasonsForDrugID(prescriptDrug.getId(),true);            		            					        	
-			
-            		if (prescriptDrug.getRemoteFacilityId()==null && securityManager.hasWriteAccess("_rx",roleName$,true) )
-            		{
-            			%>
-			           	 	<a href="javascript:void(0);"  onclick="popupRxReasonWindow(<%=patient.getDemographicNo()%>,<%=prescriptIdInt%>);"  title="<%=displayDrugReason(codingSystemManager,drugReasons,true) %>">
-            			<%
-            		}
-            	%>
-            	<%=StringUtils.maxLenString(displayDrugReason(codingSystemManager,drugReasons,false), 4, 3, StringUtils.ELLIPSIS)%>
-				<%
-		      		if (prescriptDrug.getRemoteFacilityId()==null  && securityManager.hasWriteAccess("_rx",roleName$,true))
-		      		{
-		      			%>
-			            	</a>
-            			<%
-            		}
-				%>
-            </td>
-  <%-- END DRUG REASON --%> 		
-            <%
-            Boolean past_med = prescriptDrug.getPastMed();
+            <% }
+            }
             %>
-            
+            <td width="20px" align="center" valign="top">
+                <%
+                    if (!prescriptDrug.isDiscontinued()) {
+                        if (prescriptDrug.getRemoteFacilityId() == null) {
+
+                            if (securityManager.hasWriteAccess("_rx", roleName$, true)) {
+
+                %>
+                <a id="discont_<%=prescriptIdInt%>" href="javascript:void(0);"
+                   onclick="Discontinue(event,this);" <%=styleColor%> >Discon</a>
+                <% }
+                }
+                } else {%>
+                <%=prescriptDrug.getArchivedReason()%>
+                <%}%>
+            </td>
+            <%-- DRUG REASON --%>
+            <td style="vertical-align:top;">
+                <%
+                    List<DrugReason> drugReasons = drugReasonDao.getReasonsForDrugID(prescriptDrug.getId(), true);
+
+                    if (prescriptDrug.getRemoteFacilityId() == null && securityManager.hasWriteAccess("_rx", roleName$, true)) {
+                %>
+                <a href="javascript:void(0);"
+                   onclick="popupRxReasonWindow(<%=patient.getDemographicNo()%>,<%=prescriptIdInt%>);"
+                   title="<%=displayDrugReason(codingSystemManager,drugReasons,true) %>">
+                    <%
+                        }
+                    %>
+                    <%=StringUtils.maxLenString(displayDrugReason(codingSystemManager, drugReasons, false), 4, 3, StringUtils.ELLIPSIS)%>
+                    <%
+                        if (prescriptDrug.getRemoteFacilityId() == null && securityManager.hasWriteAccess("_rx", roleName$, true)) {
+                    %>
+                </a>
+                <%
+                    }
+                %>
+            </td>
+            <%-- END DRUG REASON --%>
+            <%
+                Boolean past_med = prescriptDrug.getPastMed();
+            %>
+
             <td align="center" valign="top">
-               	<% if( past_med == null) { %>                        		
-        			unk
-        		<% } else if(past_med) { %>
-        			yes                       		
-        		<% } else { %>
-        			no
-        		<% } %>
+                <% if (past_med == null) { %>
+                unk
+                <% } else if (past_med) { %>
+                yes
+                <% } else { %>
+                no
+                <% } %>
             </td>
 
-			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <td width="10px" align="center" valign="top">
-            	<% 	
-            		if (prescriptDrug.getRemoteFacilityId()==null)
-            		{
-            			%>
-		                <a href="javascript:void(0);" title="Annotation" onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=prescriptIdInt%>&amp;demo=<%=bean.getDemographicNo()%>&amp;drugSpecial=<%=StringEscapeUtils.escapeJavaScript(specialText)%>','anwin','width=400,height=500');">
-		                    <%if(!isPrevAnnotation){%> <img src="../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"><%} else{%><img src="../images/filledNotes.gif" height="16" width="13" alt="rxFilledNotes" border="0"> <%}%></a>
-            			<%
-            		}
-            	%>
-            </td>
-            <% } %>
-            
+            <%if (securityManager.hasWriteAccess("_rx", roleName$, true)) {%>
             <td width="10px" align="center" valign="top">
                 <%
-                if (prescriptDrug.getRemoteFacilityName() != null){ %>
-                    <span class="external"><%=prescriptDrug.getRemoteFacilityName()%></span>
-                <%}else if(  prescriptDrug.getOutsideProviderName() !=null && !prescriptDrug.getOutsideProviderName().equals("")  ){%>
-                    <span class="external"><%=prescriptDrug.getOutsideProviderName()%></span>
-                <%}else{%>
-                    local
+                    if (prescriptDrug.getRemoteFacilityId() == null) {
+                %>
+                <a href="javascript:void(0);" title="Annotation"
+                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=prescriptIdInt%>&amp;demo=<%=bean.getDemographicNo()%>&amp;drugSpecial=<%=StringEscapeUtils.escapeJavaScript(specialText)%>','anwin','width=400,height=500');">
+                    <%if (!isPrevAnnotation) {%> <img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
+                                                      width="13" border="0"><%} else {%><img
+                        src="<%= request.getContextPath() %>/images/filledNotes.gif" height="16" width="13" alt="rxFilledNotes" border="0"> <%}%></a>
+                <%
+                    }
+                %>
+            </td>
+            <% } %>
+
+            <td width="10px" align="center" valign="top">
+                <%
+                    if (prescriptDrug.getRemoteFacilityName() != null) { %>
+                <span class="external"><%=prescriptDrug.getRemoteFacilityName()%></span>
+                <%} else if (prescriptDrug.getOutsideProviderName() != null && !prescriptDrug.getOutsideProviderName().equals("")) {%>
+                <span class="external"><%=prescriptDrug.getOutsideProviderName()%></span>
+                <%} else {%>
+                local
                 <%}%>
 
 
             </td>
 
-			<td align="center" valign="top">
-				<%
-					boolean hideCpp = prescriptDrug.getHideFromCpp();
-					String checked="";
-					if(hideCpp) {
-						checked="checked=\"checked\"";
-					}
-				%>
-				<input type="checkbox" id="hidecpp_<%=prescriptIdInt%>" <%=checked%>/>
-			</td>
-			
-			<%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
-			<td align="center" valign="top">
-				<%
-					if(prescriptDrug.getDispenseInternal() != null && prescriptDrug.getDispenseInternal() == true ) {
-						if(securityManager.hasWriteAccess("_dispensing",roleName$,true)) {	
-							String dispensingStatus = drugDispensingManager.getStatus(prescriptDrug.getId());
-				               
-				%>
-					<a href="javascript:void(0)" onclick="javascript:popupWindow(720,700,'<%=request.getContextPath()%>/oscarRx/Dispense.do?method=view&id=<%=prescriptDrug.getId()%>','Dispense<%=prescriptIdInt %>'); return false;">Dispense (<%=dispensingStatus%>)</a>
-				<% 
-					} }
-				%>
-			</td>
-			<% } %>
-			
-			<td nowrap="nowrap" align="center" valign="top">
-				<%if(!(prescriptDrugs.get(prescriptDrugs.size()-1) == prescriptDrug)) {%>
-				<img border="0" src="<%=request.getContextPath()%>/images/icon_down_sort_arrow.png" onclick="moveDrugDown(<%=prescriptDrug.getId() %>,<%=prescriptDrugs.get(x+1).getId() %>,<%=prescriptDrug.getDemographicId()%>);return false;"/>
-				<% } %>
-				<%if(!(prescriptDrugs.get(0) == prescriptDrug)) {%>
-				<img border="0" src="<%=request.getContextPath()%>/images/icon_up_sort_arrow.png" onclick="moveDrugUp(<%=prescriptDrug.getId() %>,<%=prescriptDrugs.get(x-1).getId() %>,<%=prescriptDrug.getDemographicId()%>);return false;"/>
-				<%} %>
-			</td>
+            <td align="center" valign="top">
+                <%
+                    boolean hideCpp = prescriptDrug.getHideFromCpp();
+                    String checked = "";
+                    if (hideCpp) {
+                        checked = "checked=\"checked\"";
+                    }
+                %>
+                <input type="checkbox" id="hidecpp_<%=prescriptIdInt%>" <%=checked%>/>
+            </td>
+
+            <%if (OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing", "false").equals("true")) {%>
+            <td align="center" valign="top">
+                <%
+                    if (prescriptDrug.getDispenseInternal() != null && prescriptDrug.getDispenseInternal() == true) {
+                        if (securityManager.hasWriteAccess("_dispensing", roleName$, true)) {
+                            String dispensingStatus = drugDispensingManager.getStatus(prescriptDrug.getId());
+
+                %>
+                <a href="javascript:void(0)"
+                   onclick="javascript:popupWindow(720,700,'<%=request.getContextPath()%>/oscarRx/Dispense.do?method=view&id=<%=prescriptDrug.getId()%>','Dispense<%=prescriptIdInt %>'); return false;">Dispense
+                    (<%=dispensingStatus%>)</a>
+                <%
+                        }
+                    }
+                %>
+            </td>
+            <% } %>
+
+            <td nowrap="nowrap" align="center" valign="top">
+                <%if (!(prescriptDrugs.get(prescriptDrugs.size() - 1) == prescriptDrug)) {%>
+                <img border="0" src="<%=request.getContextPath()%>/images/icon_down_sort_arrow.png"
+                     onclick="moveDrugDown(<%=prescriptDrug.getId() %>,<%=prescriptDrugs.get(x+1).getId() %>,<%=prescriptDrug.getDemographicId()%>);return false;"/>
+                <% } %>
+                <%if (!(prescriptDrugs.get(0) == prescriptDrug)) {%>
+                <img border="0" src="<%=request.getContextPath()%>/images/icon_up_sort_arrow.png"
+                     onclick="moveDrugUp(<%=prescriptDrug.getId() %>,<%=prescriptDrugs.get(x-1).getId() %>,<%=prescriptDrug.getDemographicId()%>);return false;"/>
+                <%} %>
+            </td>
         </tr>
         <script>
-Event.observe('hidecpp_<%=prescriptIdInt%>', 'change', function(event) {
-	var val = $('hidecpp_<%=prescriptIdInt%>').checked;	
-	new Ajax.Request('<c:out value="${ctx}"/>/oscarRx/hideCpp.do?method=update&prescriptId=<%=prescriptIdInt%>&value='+val, {
-		  method: 'get',
-		  onSuccess: function(transport) {		   
-		  }
-		});
+            Event.observe('hidecpp_<%=prescriptIdInt%>', 'change', function (event) {
+                var val = $('hidecpp_<%=prescriptIdInt%>').checked;
+                new Ajax.Request('<c:out value="${ctx}"/>/oscarRx/hideCpp.do?method=update&prescriptId=<%=prescriptIdInt%>&value=' + val, {
+                    method: 'get',
+                    onSuccess: function (transport) {
+                    }
+                });
 
-});
+            });
 
-</script>
+        </script>
         <%}%>
     </table>
 
 </div>
-        <br>
+<br>
 
-        
-        <script type="text/javascript">
-sortables_init();
-            </script>
+
+<script type="text/javascript">
+    sortables_init();
+</script>
 <%!
 
-String getName(Drug prescriptDrug){
-    String searchString = prescriptDrug.getBrandName();
-    if (searchString == null) {
-        searchString = prescriptDrug.getCustomName();
+    String getName(Drug prescriptDrug) {
+        String searchString = prescriptDrug.getBrandName();
+        if (searchString == null) {
+            searchString = prescriptDrug.getCustomName();
+        }
+        if (searchString == null) {
+            searchString = prescriptDrug.getRegionalIdentifier();
+        }
+        if (searchString == null) {
+            searchString = prescriptDrug.getSpecial();
+        }
+        return searchString;
     }
-    if (searchString == null) {
-        searchString = prescriptDrug.getRegionalIdentifier();
-    }
-    if (searchString == null) {
-        searchString = prescriptDrug.getSpecial();
-    }
-    return searchString;
-}
 
-    String getClassColour(Drug drug, long referenceTime, long durationToSoon){
+    String getClassColour(Drug drug, long referenceTime, long durationToSoon) {
         StringBuilder sb = new StringBuilder("class=\"");
 
         if (!drug.isLongTerm() && (drug.isCurrent() && drug.getEndDate() != null && (drug.getEndDate().getTime() - referenceTime <= durationToSoon))) {
@@ -524,70 +578,70 @@ String getName(Drug prescriptDrug){
             sb.append("archivedDrug ");
         }
 
-        if(!drug.isLongTerm() && !drug.isCurrent()) {
+        if (!drug.isLongTerm() && !drug.isCurrent()) {
             sb.append("expiredDrug ");
         }
 
-        if(drug.isLongTerm()){
+        if (drug.isLongTerm()) {
             sb.append("longTermMed ");
         }
 
-        if(drug.isDiscontinued()){
+        if (drug.isDiscontinued()) {
             sb.append("discontinued ");
         }
 
-        if(drug.isDeleted()){
-                sb.append("deleted ");
+        if (drug.isDeleted()) {
+            sb.append("deleted ");
 
         }
-        
-        if(drug.getOutsideProviderName() !=null && !drug.getOutsideProviderName().equals("")  ) {
-        	sb = new StringBuilder("class=\"");
-        	sb.append("external ");
+
+        if (drug.getOutsideProviderName() != null && !drug.getOutsideProviderName().equals("")) {
+            sb = new StringBuilder("class=\"");
+            sb.append("external ");
         }
-        if (drug.getRemoteFacilityName() != null){
-        	sb = new StringBuilder("class=\"");
-        	sb.append("external ");
+        if (drug.getRemoteFacilityName() != null) {
+            sb = new StringBuilder("class=\"");
+            sb.append("external ");
         }
         String retval = sb.toString();
 
-        if(retval.equals("class=\"")){
+        if (retval.equals("class=\"")) {
             return "";
         }
 
-        return retval.substring(0,retval.length())+"\"";
+        return retval.substring(0, retval.length()) + "\"";
 
     }
 
 %><%!
 
-String displayDrugReason(CodingSystemManager codingSystemManager, List<DrugReason> drugReasons,boolean title){
-	StringBuilder sb = new StringBuilder();
-	boolean multiLoop = false;
-	
-	for(DrugReason drugReason:drugReasons){
-		if(multiLoop){
-			sb.append(", ");
-		}
-		String codeDescr = null;
-		if(drugReason.getCodingSystem() != null && ! drugReason.getCodingSystem().isEmpty()) {
-            codeDescr = codingSystemManager.getCodeDescription( drugReason.getCodingSystem(), drugReason.getCode() );
+    String displayDrugReason(CodingSystemManager codingSystemManager, List<DrugReason> drugReasons, boolean title) {
+        StringBuilder sb = new StringBuilder();
+        boolean multiLoop = false;
+
+        for (DrugReason drugReason : drugReasons) {
+            if (multiLoop) {
+                sb.append(", ");
+            }
+            String codeDescr = null;
+            if (drugReason.getCodingSystem() != null && !drugReason.getCodingSystem().isEmpty()) {
+                codeDescr = codingSystemManager.getCodeDescription(drugReason.getCodingSystem(), drugReason.getCode());
+            }
+            if (codeDescr != null) {
+                sb.append(StringEscapeUtils.escapeHtml(codeDescr));
+            } else {
+                sb.append(drugReason.getCode());
+            }
+            multiLoop = true;
         }
-		if(codeDescr != null) {
-			sb.append(StringEscapeUtils.escapeHtml(codeDescr));
-		} else {
-			sb.append( drugReason.getCode() );
-		}
-		multiLoop = true;
-	}
-	if(sb.toString().equals("")){
-		if(title) {
-			return "No diseases are associated with this medication";
-		}
-		return "+";
-	}
-	
-	return sb.toString();
-}
+        if (sb.toString().equals("")) {
+            if (title) {
+                return "No diseases are associated with this medication";
+            }
+            return "+";
+        }
+
+        return sb.toString();
+    }
 
 %>

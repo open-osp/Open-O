@@ -24,55 +24,60 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_dxresearch" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_dxresearch");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_dxresearch");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%@ page
-	import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*, oscar.oscarResearch.oscarDxResearch.bean.*"%>
+        import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*, ca.openosp.openo.dxresearch.bean.*" %>
+<%@ page import="ca.openosp.openo.dxresearch.bean.dxResearchBean" %>
+<%@ page import="ca.openosp.openo.dxresearch.bean.dxResearchBeanHandler" %>
 <ul
-	<%
-   String demoNO = request.getParameter("demographicNo");
-   String maxlen = request.getParameter("maxlen");
-   int len = -1;
-   
-   try{
-      len = Integer.parseInt(maxlen);         
-   }catch(Exception e){}   
-      
-   dxResearchBeanHandler dxResearchBeanHand = new dxResearchBeanHandler(demoNO);
-   Vector patientDx = dxResearchBeanHand.getDxResearchBeanVector();
-   
-   ArrayList<dxResearchBean> patientDxA = new ArrayList<dxResearchBean>();
-   for (int i=0; i<patientDx.size(); i++) {
-      dxResearchBean code = (dxResearchBean)patientDx.get(i);
-      //sort the list by descriptions
-   	  int j=0;
-   	  for (j=0; j<patientDxA.size(); j++) {
-   		  if (patientDxA.get(j).getDescription().compareToIgnoreCase(code.getDescription())>=0) {
-   			  patientDxA.add(j, code); break;
-   		  }
-   	  }
-   	  if (j==patientDxA.size()) patientDxA.add(code);
-   }
-   for (int i=0; i<patientDxA.size(); i++) {
-      String desc = patientDxA.get(i).getDescription();
-      if (len != -1){
-         desc = org.apache.commons.lang.StringUtils.abbreviate(desc,len) ;
-      }
-   %>>
-	<li>- <%=desc%></li<%
+        <%
+            String demoNO = request.getParameter("demographicNo");
+            String maxlen = request.getParameter("maxlen");
+            int len = -1;
+
+            try {
+                len = Integer.parseInt(maxlen);
+            } catch (Exception e) {
+            }
+
+            dxResearchBeanHandler dxResearchBeanHand = new dxResearchBeanHandler(demoNO);
+            Vector patientDx = dxResearchBeanHand.getDxResearchBeanVector();
+
+            ArrayList<dxResearchBean> patientDxA = new ArrayList<dxResearchBean>();
+            for (int i = 0; i < patientDx.size(); i++) {
+                dxResearchBean code = (dxResearchBean) patientDx.get(i);
+                //sort the list by descriptions
+                int j = 0;
+                for (j = 0; j < patientDxA.size(); j++) {
+                    if (patientDxA.get(j).getDescription().compareToIgnoreCase(code.getDescription()) >= 0) {
+                        patientDxA.add(j, code);
+                        break;
+                    }
+                }
+                if (j == patientDxA.size()) patientDxA.add(code);
+            }
+            for (int i = 0; i < patientDxA.size(); i++) {
+                String desc = patientDxA.get(i).getDescription();
+                if (len != -1) {
+                    desc = org.apache.commons.lang.StringUtils.abbreviate(desc, len);
+                }
+        %>>
+    <li>- <%=desc%>
+    </li<%
    }%>
->
+    >
 </ul>

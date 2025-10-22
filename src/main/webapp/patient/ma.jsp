@@ -25,26 +25,27 @@
 --%>
 
 <%
-  if(session.getValue("patient") == null)    response.sendRedirect("logout.jsp");
+    if (session.getValue("patient") == null) response.sendRedirect("logout.jsp");
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>PATIENT SUMMARY</title>
-<link rel="stylesheet" href="../web.css">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>PATIENT SUMMARY</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">MAKE
-		APPOINTMENT</font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">MAKE
+            APPOINTMENT</font></th>
+    </tr>
 </table>
 
 <P>
 <center>Please call your clinic receptionist to obtain
-permission for Internet Booking.</center>
+    permission for Internet Booking.
+</center>
 </body>
 </html>

@@ -23,70 +23,69 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.log.LogAction"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.log.LogAction" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
-  if (session.getAttribute("user") == null)    response.sendRedirect("../logout.jsp");
+    if (session.getAttribute("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
-	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-%>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-</head>
-<body onload="start()">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		<bean:message key="appointment.appointmentdeletearecord.msgLabel" /></font></th>
-	</tr>
-</table>
-<%
-	Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
-	if(appt.getLastUpdateUser() == null || "".equals(appt.getLastUpdateUser())) {
-		appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
-	}
-	appointmentArchiveDao.archiveAppointment(appt);
-	int rowsAffected=0;
-	if(appt != null) {
-		LogAction.addLogSynchronous(loggedInInfo,"Appointment.delete", "id="+appt.getId());
-		appointmentDao.remove(appt.getId());
-		rowsAffected=1;
-	}
-	if (rowsAffected == 1) {
-%>
-<p>
-<h1><bean:message
-	key="appointment.appointmentdeletearecord.msgDeleteSuccess" /></h1>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script LANGUAGE="JavaScript">
-	self.opener.refresh();
-	self.close();
-</script> <%
-	} else {
-%>
-<p>
-<h1><bean:message
-	key="appointment.appointmentdeletearecord.msgDeleteFailure" /></h1>
-
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-	}
+    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
-<p></p>
-<hr width="90%"/>
-<form>
-<input type="button" value="<bean:message key="global.btnClose"/>" onClick="closeit()">
-</form>
-</center>
-</body>
-</html:html>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    </head>
+    <body onload="start()">
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="90%">
+            <tr bgcolor="#486ebd">
+                <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.appointmentdeletearecord.msgLabel"/></font></th>
+            </tr>
+        </table>
+        <%
+            Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
+            if (appt.getLastUpdateUser() == null || "".equals(appt.getLastUpdateUser())) {
+                appt.setLastUpdateUser(loggedInInfo.getLoggedInProviderNo());
+            }
+            appointmentArchiveDao.archiveAppointment(appt);
+            int rowsAffected = 0;
+            if (appt != null) {
+                LogAction.addLogSynchronous(loggedInInfo, "Appointment.delete", "id=" + appt.getId());
+                appointmentDao.remove(appt.getId());
+                rowsAffected = 1;
+            }
+            if (rowsAffected == 1) {
+        %>
+        <p>
+        <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.appointmentdeletearecord.msgDeleteSuccess"/></h1>
+
+        <script LANGUAGE="JavaScript">
+            self.opener.refresh();
+            self.close();
+        </script>
+        <%
+        } else {
+        %>
+        <p>
+        <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.appointmentdeletearecord.msgDeleteFailure"/></h1>
+
+        <%
+            }
+        %>
+        <p></p>
+        <hr width="90%"/>
+        <form>
+            <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>" onClick="closeit()">
+        </form>
+    </center>
+    </body>
+</html>

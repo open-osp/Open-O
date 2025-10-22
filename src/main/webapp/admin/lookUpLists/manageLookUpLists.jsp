@@ -24,21 +24,21 @@
 
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-	<c:choose>
-		<c:when test="${ not empty requestScope.lookupLists }">
-			<c:forEach var="lookuplistit" items="${ requestScope.lookupLists }" >	
-				<c:set value="${ lookuplistit }" var="lookuplist" scope="request" />	
-				<c:import url="./lookupList.jsp" />
-			</c:forEach>
-		</c:when>
-		<c:when test="${ not empty requestScope.lookupListSingle }">
-			<c:set value="${ requestScope.lookupListSingle }" var="lookuplist" scope="request" />
-			<c:import url="./lookupList.jsp" />
-		</c:when>
-		<c:otherwise>
-			<bean:message key="admin.admin.lookuplists.nonfound" />
-		</c:otherwise>
-	</c:choose>	
+<c:choose>
+    <c:when test="${ not empty requestScope.lookupLists }">
+        <c:forEach var="lookuplistit" items="${ requestScope.lookupLists }">
+            <c:set value="${ lookuplistit }" var="lookuplist" scope="request"/>
+            <c:import url="./lookupList.jsp"/>
+        </c:forEach>
+    </c:when>
+    <c:when test="${ not empty requestScope.lookupListSingle }">
+        <c:set value="${ requestScope.lookupListSingle }" var="lookuplist" scope="request"/>
+        <c:import url="./lookupList.jsp"/>
+    </c:when>
+    <c:otherwise>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.lookuplists.nonfound"/>
+    </c:otherwise>
+</c:choose>

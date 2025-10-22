@@ -26,12 +26,14 @@
 <div class="flex emotional-row w-full items-center" style="padding-top: 2px;">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_emotional" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_emotional" data-score="1">
         <strong class="highlight" data-field-name="emotional">Emotional</strong>
     </div>
 
-    <div class="mandatory tt font-bold ml-4 highlight" data-field-name="low_mood" data-toggle="tooltip" title="Low Mood" rel="low_mood" data-names="y,n">
+    <div class="mandatory tt font-bold ml-4 highlight" data-field-name="low_mood" data-toggle="tooltip" title="Low Mood"
+         rel="low_mood" data-names="y,n">
         <font size="4" style="line-height:10px;">&#8595;</font>
         Mood
     </div>
@@ -48,7 +50,7 @@
 
 
     <div class="tt mandatory font-bold ml-2 highlight" data-toggle="tooltip" data-field-name="depression"
-        title="Clinical diagnosis of depression, not low mood" rel="depression" data-names="y,n">
+         title="Clinical diagnosis of depression, not low mood" rel="depression" data-names="y,n">
         Depression
     </div>
 
@@ -62,7 +64,8 @@
         <span class="pl-1">N</span>
     </label>
 
-    <div class="tt mandatory font-bold ml-2 highlight" data-field-name="anxiety" data-toggle="tooltip" title="Clinical diagnosis of anxiety disorder" data-names="y,n">Anxiety
+    <div class="tt mandatory font-bold ml-2 highlight" data-field-name="anxiety" data-toggle="tooltip"
+         title="Clinical diagnosis of anxiety disorder" data-names="y,n">Anxiety
     </div>
     <div class="pl-1 flex">
         <label class="flex items-center font-normal">
@@ -85,8 +88,10 @@
             <span class="pl-1">N</span>
         </label>
     </div>
-    <div class="tt mandatory ml-2 font-bold highlight" data-toggle="tooltip" data-field-name="hallucination" title="Visual or Auditory" rel="hallucination"
-        data-names="y,n">Hallucination</div>
+    <div class="tt mandatory ml-2 font-bold highlight" data-toggle="tooltip" data-field-name="hallucination"
+         title="Visual or Auditory" rel="hallucination"
+         data-names="y,n">Hallucination
+    </div>
     <div class="pl-1 flex items-center">
         <label class="font-normal flex items-center">
             <input type="radio" name="hallucination" value="1" class="m-0" autocomplete="off" data-score="1">
@@ -97,8 +102,10 @@
             <span class="pl-1">N</span>
         </label>
     </div>
-    <div class="tt mandatory ml-2 font-bold highlight" data-field-name="delusion" data-toggle="tooltip" title="Visual or Auditory" rel="delusion"
-        data-names="y,n">Delusion</div>
+    <div class="tt mandatory ml-2 font-bold highlight" data-field-name="delusion" data-toggle="tooltip"
+         title="Visual or Auditory" rel="delusion"
+         data-names="y,n">Delusion
+    </div>
     <div class="pl-1 flex items-center">
         <label class="font-normal flex items-center">
             <input type="radio" name="delusion" value="1" class="m-0" autocomplete="off" data-score="1">

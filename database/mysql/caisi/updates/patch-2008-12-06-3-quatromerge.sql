@@ -64,7 +64,7 @@ INSERT INTO `app_lookuptable` VALUES('SIT', 1.000000000000000e+000, 'secSite', '
 INSERT INTO `app_lookuptable` VALUES('SRT', 3.000000000000000e+000, 'lst_service_restriction', 'Reason for Service Restriction', 0, 0.000000000000000e+000, 1, 0);
 INSERT INTO `app_lookuptable` VALUES('TLT', 1.000000000000000e+000, 'lst_title', 'Title', 0, 0.000000000000000e+000, 1, 0);
 INSERT INTO `app_lookuptable` VALUES('TPT', 4.000000000000000e+000, 'lst_transportation_type', 'Transportation Type', 0, 0.000000000000000e+000, 1, 0);
-INSERT INTO `app_lookuptable` VALUES('USR', 1.000000000000000e+000, 'provider', 'Users', 0, 0.000000000000000e+000, 0, 0);
+INSERT INTO `app_lookuptable` VALUES('USR', 1.000000000000000e+000, 'providers', 'Users', 0, 0.000000000000000e+000, 0, 0);
 UNLOCK TABLES;
 
 delete from app_lookuptable_fields;

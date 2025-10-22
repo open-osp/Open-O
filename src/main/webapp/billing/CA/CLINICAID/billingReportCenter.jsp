@@ -17,11 +17,10 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%    
-if(
-	((String)session.getAttribute("userrole")).indexOf("admin") >=0 ||
-	((String)session.getAttribute("userrole")).indexOf("doctor") >=0) 
-{
-	response.sendRedirect("billingClinicaidReport.jsp");
-}
+<%
+    if (
+            ((String) session.getAttribute("userrole")).indexOf("admin") >= 0 ||
+                    ((String) session.getAttribute("userrole")).indexOf("doctor") >= 0) {
+        response.sendRedirect("billingClinicaidReport.jsp");
+    }
 %>

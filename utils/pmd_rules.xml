@@ -1,27 +1,59 @@
-<?xml version="1.0"?>
-<ruleset name="Custom ruleset" xmlns="http://pmd.sf.net/ruleset/1.0.0"
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="OSCAR EMR Custom Ruleset" 
+	xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
-	xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd"
->
+	xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
 
 	<description>
-		our basic custom rules
+		OSCAR EMR PMD Rules - Focus on dead code detection and critical issues for Java 21
 	</description>
 
-	<rule ref="rulesets/basic.xml">
-		<exclude name="CollapsibleIfStatements" />
-		<exclude name="EmptyCatchBlock" />
-		<exclude name="AvoidThreadGroup" />
-	</rule>
-	 
-	<rule ref="rulesets/unusedcode.xml" />
+	<!-- ============================================ -->
+	<!-- DEAD CODE DETECTION - HIGHEST PRIORITY      -->
+	<!-- ============================================ -->
 	
-	<rule ref="rulesets/imports.xml" />
+	<!-- Dead code and unused code detection from best practices -->
+	<rule ref="category/java/bestpractices.xml/UnusedPrivateField" />
+	<rule ref="category/java/bestpractices.xml/UnusedPrivateMethod" />
+	<rule ref="category/java/bestpractices.xml/UnusedLocalVariable" />
+	<rule ref="category/java/bestpractices.xml/UnusedFormalParameter" />
 	
-	<rule ref="rulesets/braces.xml">
-		<exclude name="IfStmtsMustUseBraces" />
-		<exclude name="IfElseStmtsMustUseBraces" />
-	</rule>
+	<!-- Other important best practices -->
+	<rule ref="category/java/bestpractices.xml/AvoidReassigningParameters" />
+	<rule ref="category/java/bestpractices.xml/LooseCoupling" />
+	<rule ref="category/java/bestpractices.xml/MethodReturnsInternalArray" />
+	<rule ref="category/java/bestpractices.xml/ArrayIsStoredDirectly" />
+	
+	<!-- ============================================ -->
+	<!-- CODE STYLE - IMPORTS AND CONTROL           -->
+	<!-- ============================================ -->
+	
+	<rule ref="category/java/codestyle.xml/UnnecessaryImport" />
+	<rule ref="category/java/codestyle.xml/ControlStatementBraces" />
+	
+	<!-- ============================================ -->
+	<!-- ERROR PRONE - CRITICAL BUGS                -->
+	<!-- ============================================ -->
+	
+	<rule ref="category/java/errorprone.xml/EmptyCatchBlock" />
+	<rule ref="category/java/errorprone.xml/CloseResource" />
+	<rule ref="category/java/errorprone.xml/BrokenNullCheck" />
+	<rule ref="category/java/errorprone.xml/AvoidCatchingNPE" />
+	
+	<!-- ============================================ -->
+	<!-- SECURITY - HEALTHCARE CRITICAL             -->
+	<!-- ============================================ -->
+	
+	<rule ref="category/java/security.xml" />
+	
+	<!-- ============================================ -->
+	<!-- PERFORMANCE - MAJOR ISSUES                 -->
+	<!-- ============================================ -->
+	
+	<rule ref="category/java/performance.xml/BigIntegerInstantiation" />
+	<rule ref="category/java/performance.xml/StringInstantiation" />
+	<rule ref="category/java/performance.xml/StringToString" />
+	<rule ref="category/java/performance.xml/AppendCharacterWithChar" />
+	<rule ref="category/java/performance.xml/InsufficientStringBufferDeclaration" />
 
 </ruleset>

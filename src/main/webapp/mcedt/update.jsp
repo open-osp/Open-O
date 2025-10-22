@@ -24,97 +24,92 @@
 
 --%>
 
-<%@ page errorPage="error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-
-<html:html>
-<head>
-
-<jsp:include page="head-includes.jsp" />
-
-<script language="javascript">
-	function cancel(control) {
-		return submitForm('cancel', control);
-	}
-	
-	function modifyResource(resourceId) {
-		window.location.href = "updateUpload.jsp?resourceId=" + resourceId;
-		return false;
-	}
-	
-	function modify(control) {
-		return submitForm('sendUpdateRequest', control);
-	}
-
-	function submitForm(methodType, control){
-		if (control) {
-			control.disabled = true;
-		}
-		
-		var method = jQuery("#method");
-		method.val(methodType);
-		
-		var form = jQuery("form");
-		form.submit();
-		return true;
-	}
-</script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 
-<title>MCEDT: Updates</title>
 
-<html:base />
-</head>
+<html>
+    <head>
 
-<body>
-	<div class="container-fluid">
-		<div class="row-fluid">
+        <jsp:include page="head-includes.jsp"/>
 
-			<h2>Update Resource</h2>
+        <script language="javascript">
+            function cancel(control) {
+                return submitForm('cancel', control);
+            }
 
-			<html:form action="/mcedt/update.do" method="post" styleId="form">
+            function modifyResource(resourceId) {
+                window.location.href = "updateUpload.jsp?resourceId=" + resourceId;
+                return false;
+            }
 
-				<html:errors />
-				
-				<html:messages id="message" bundle="mcedt" message="true">
-					<c:out value="${message}" />
-				</html:messages>
+            function modify(control) {
+                return submitForm('sendUpdateRequest', control);
+            }
 
-				<input id="method" name="method" type="hidden" value="cancel" />
+            function submitForm(methodType, control) {
+                if (control) {
+                    control.disabled = true;
+                }
 
-				<table class="table table-striped  table-condensed">
-					<c:forEach var="d" items="${mcedtUploadDetails.data}" varStatus="i">
-						<tr>
-							<td><c:out value="${d.resourceID}" /> <c:out
-									value="${d.resourceType}" /> <c:out value="${d.description}" />
-							</td>
-							<td><c:choose>
-									<c:when test="${empty d.modifyTimestamp}">
-										<button class="btn" onclick="return modifyResource(${d.resourceID})">Modify</button>
-									</c:when>
-									<c:otherwise>
-										<button class="btn" disabled="disabled">Modify</button>
-									</c:otherwise>
-								</c:choose></td>
-						</tr>
-					</c:forEach>
-				</table>
+                var method = jQuery("#method");
+                method.val(methodType);
 
-				<div>
-					<button class="btn btn-primary" onclick="modify(this)">Save Changes</button>
-					<button class="btn" onclick="return cancel(this)">Cancel</button>
-				</div>
+                var form = jQuery("form");
+                form.submit();
+                return true;
+            }
+        </script>
 
-			</html:form>
-		</div>
-	</div>
-</body>
-</html:html>
+
+        <title>MCEDT: Updates</title>
+
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
+
+    <body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <h2>Update Resource</h2>
+
+            <form action="${pageContext.request.contextPath}/mcedt/update.do" method="post" id="form">
+
+                <jsp:include page="messages.jsp"/>
+
+                <input id="method" name="method" type="hidden" value="cancel"/>
+
+                <table class="table table-striped  table-condensed">
+                    <c:forEach var="d" items="${mcedtUploadDetails.data}" varStatus="i">
+                        <tr>
+                            <td><c:out value="${d.resourceID}"/> <c:out
+                                    value="${d.resourceType}"/> <c:out value="${d.description}"/>
+                            </td>
+                            <td><c:choose>
+                                <c:when test="${empty d.modifyTimestamp}">
+                                    <button class="btn" onclick="return modifyResource(${d.resourceID})">Modify</button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button class="btn" disabled="disabled">Modify</button>
+                                </c:otherwise>
+                            </c:choose></td>
+                        </tr>
+                    </c:forEach>
+                </table>
+
+                <div>
+                    <button class="btn btn-primary" onclick="modify(this)">Save Changes</button>
+                    <button class="btn" onclick="return cancel(this)">Cancel</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    </body>
+</html>

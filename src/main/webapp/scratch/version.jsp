@@ -25,100 +25,110 @@
 --%>
 <html>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.common.model.ScratchPad" %>
-<%@ page import="oscar.util.DateUtils" %>
-<%@ page import="oscar.oscarProvider.data.ProviderColourUpdater"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ page import="ca.openosp.openo.commn.model.ScratchPad" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderColourUpdater" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%
-String date = null;
-String id = null;
-String title = "";
-boolean deleted = false;
-ScratchPad scratchPad = null;
+    String date = null;
+    String id = null;
+    String title = "";
+    boolean deleted = false;
+    ScratchPad scratchPad = null;
 
-String user_no = (String) request.getSession().getAttribute("user");
-String userfirstname = (String) request.getSession().getAttribute("userfirstname");
-String userlastname = (String) request.getSession().getAttribute("userlastname");
+    String user_no = (String) request.getSession().getAttribute("user");
+    String userfirstname = (String) request.getSession().getAttribute("userfirstname");
+    String userlastname = (String) request.getSession().getAttribute("userlastname");
 
-String userColour = null;
+    String userColour = null;
 
-ProviderColourUpdater colourUpdater = new ProviderColourUpdater(user_no);
-userColour = colourUpdater.getColour();
+    ProviderColourUpdater colourUpdater = new ProviderColourUpdater(user_no);
+    userColour = colourUpdater.getColour();
 
-if(request.getAttribute("actionDeleted")!=null){
-	deleted = true;	
-}else{
-	scratchPad = (ScratchPad)request.getAttribute("ScratchPad");    		
-	date = DateUtils.formatDateTime(scratchPad.getDateTime(), request.getLocale());
-	id = scratchPad.getId().toString();
-	title = "Version from " + date;
-}
+    if (request.getAttribute("actionDeleted") != null) {
+        deleted = true;
+    } else {
+        scratchPad = (ScratchPad) request.getAttribute("ScratchPad");
+        date = DateUtils.formatDateTime(scratchPad.getDateTime(), request.getLocale());
+        id = scratchPad.getId().toString();
+        title = "Version from " + date;
+    }
 %>
 
 <head>
-<title><bean:message key="ScratchPad.title"/> <%=title%></title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-<%if(userColour!=null){%>
-<style>
-.TopStatusBar{background-color:<%=userColour%>}
-</style>
-<%}%>
+    <title><fmt:setBundle basename="oscarResources"/><fmt:message key="ScratchPad.title"/> <%=title%>
+    </title>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
+    <%if (userColour != null) {%>
+    <style>
+        .TopStatusBar {
+            background-color: <%=userColour%>
+        }
+    </style>
+    <%}%>
 </head>
 <body class="BodyStyle">
 <table class="MainTable" id="scrollNumber1">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message key="ScratchPad.title"/></td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td><h1><%=userfirstname%> <%=userlastname%></h1></td>
-				<td style="text-align:center"><bean:message key="ScratchPad.title"/> <%=title%></td>				
-				<td style="text-align: right">
-				<oscar:help keywords="pad" key="app.top1"/> |
-				<a href="javascript:void(0)" onclick="javascript:popup(600,700,'../oscarEncounter/About.jsp')"><bean:message key="global.about" /></a> 
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-	<%if(!deleted){ %>
-	<td valign="top" class="MainTableLeftColumn"><button name="deleteVersion" onclick="deleteVersion('<%=id%>')">Delete</button></td>
-	<td class="MainTableRightColumn" style="height:900px; width:655px; margin:10px 25px 10px 25px; border-style:groove; background-color:#CCCCCC; overflow:auto;">
-		<%=scratchPad.getText().replaceAll("\n","<br>")%>	
-	</td>
-	<%}else{%>
-	<td class="MainTableLeftColumn"></td>
-	<td class="MainTableRightColumn">
-	<h2>Success! <bean:message key="ScratchPad.title"/> <%=request.getAttribute("actionDeleted")%></h2>
-	<button name="updateScratchBtn" onclick="updateScratch()">Close</button>
-	
-	</td>
-	<%}%>
-	</tr>
-	
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
-		<td class="MainTableBottomRowRightColumn" valign="top">&nbsp;</td>
-	</tr>
+    <tr class="MainTableTopRow">
+        <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="ScratchPad.title"/></td>
+        <td class="MainTableTopRowRightColumn">
+            <table class="TopStatusBar">
+                <tr>
+                    <td><h1><%=userfirstname%> <%=userlastname%>
+                    </h1></td>
+                    <td style="text-align:center"><fmt:setBundle basename="oscarResources"/><fmt:message key="ScratchPad.title"/> <%=title%>
+                    </td>
+                    <td style="text-align: right">
+
+                        <a href="javascript:void(0)"
+                           onclick="javascript:popup(600,700,'<%= request.getContextPath() %>/oscarEncounter/About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <%if (!deleted) { %>
+        <td valign="top" class="MainTableLeftColumn">
+            <button name="deleteVersion" onclick="deleteVersion('<%=id%>')">Delete</button>
+        </td>
+        <td class="MainTableRightColumn"
+            style="height:900px; width:655px; margin:10px 25px 10px 25px; border-style:groove; background-color:#CCCCCC; overflow:auto;">
+            <%=scratchPad.getText().replaceAll("\n", "<br>")%>
+        </td>
+        <%} else {%>
+        <td class="MainTableLeftColumn"></td>
+        <td class="MainTableRightColumn">
+            <h2>Success! <fmt:setBundle basename="oscarResources"/><fmt:message key="ScratchPad.title"/> <%=request.getAttribute("actionDeleted")%>
+            </h2>
+            <button name="updateScratchBtn" onclick="updateScratch()">Close</button>
+
+        </td>
+        <%}%>
+    </tr>
+
+    <tr>
+        <td class="MainTableBottomRowLeftColumn">&nbsp;</td>
+        <td class="MainTableBottomRowRightColumn" valign="top">&nbsp;</td>
+    </tr>
 </table>
 
 <script>
-function deleteVersion(id) {
-	var action = confirm("Are you sure you would like to delete this entry?");
-	
-	var url = "Scratch.do?method=delete&id="+id;
-	
-	if(action){
-		window.location = url;
-	}
-}
+    function deleteVersion(id) {
+        var action = confirm("Are you sure you would like to delete this entry?");
 
-function updateScratch(){
-	window.opener.location.reload();
-	window.close();
-}
+        var url = "Scratch.do?method=delete&id=" + id;
+
+        if (action) {
+            window.location = url;
+        }
+    }
+
+    function updateScratch() {
+        window.opener.location.reload();
+        window.close();
+    }
 </script>
 </body>
 </html>

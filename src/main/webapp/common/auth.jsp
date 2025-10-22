@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,36 +24,37 @@
 --%>
 
 
-
-<%@ include file="/taglibs.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ include file="/taglibs.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<html:base />
-<title>Program Management Module</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<body>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <title>Program Management Module</title>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
+    <body>
 
 
-<div class="composite">
-<table border="0" cellspacing="0" cellpadding="18" width="100%">
-	<tr valign="top">
-		<td id="leftcol" width="20%"><jsp:include page="/navigation.jsp" />
-		</td>
-		<td>
-		<div class=body><br />
-		<br />
-		<h4>Authorization Failed</h4>
-		<p>You do not have the proper permissions to perform this action.
-		Please speak to your administrator.</p>
-		<p><a href="javascript:history.go(-1);">back</a></p>
-		</div>
-		</td>
-	</tr>
-</table>
-</div>
+    <div class="composite">
+        <table border="0" cellspacing="0" cellpadding="18" width="100%">
+            <tr valign="top">
+                <td id="leftcol" width="20%">
+                    <jsp:include page="/navigation.jsp"/>
+                </td>
+                <td>
+                    <div class=body><br/>
+                        <br/>
+                        <h4>Authorization Failed</h4>
+                        <p>You do not have the proper permissions to perform this action.
+                            Please speak to your administrator.</p>
+                        <p><a href="javascript:history.go(-1);">back</a></p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-</body>
-</html:html>
+    </body>
+</html>

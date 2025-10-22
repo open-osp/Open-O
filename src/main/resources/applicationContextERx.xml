@@ -13,7 +13,7 @@
 
 	<!-- ========================= SCHEDULED JOBS ========================= -->
 
-	 <bean id="erxScheduledTimerTask" class="org.oscarehr.oscarRx.erx.ERxScheduler" />
+	 <bean id="erxScheduledTimerTask" class="ca.openosp.openo.rx.erx.ERxScheduler" />
 
     <!-- Define the scheduled executor factory bean -->
     <bean id="schedulerERx" class="org.springframework.scheduling.concurrent.ScheduledExecutorFactoryBean">
@@ -21,7 +21,7 @@
             <list>
                 <!-- Configure the scheduled task -->
                 <bean class="org.springframework.scheduling.concurrent.ScheduledExecutorTask">
-                    <property name="delay" value="1000" />
+                    <property name="delay" value="1000" 1/>
                     <property name="period" value="60000" />
                     <property name="runnable" ref="erxScheduledTimerTask" />
                 </bean>
@@ -29,7 +29,7 @@
         </property>
     </bean>
 	
-	<!-- === EventManager: Action Listeners specific for the external prescription provider service === -->
-	<bean id="ERxPatientCheckedInListener" class="org.oscarehr.oscarRx.erx.listeners.PatientCheckedInListener" />
+	<!-- === EventManager: Action Listeners specific for the external prescription providers service === -->
+	<bean id="ERxPatientCheckedInListener" class="ca.openosp.openo.rx.erx.listeners.PatientCheckedInListener" />
 		
 </beans>
