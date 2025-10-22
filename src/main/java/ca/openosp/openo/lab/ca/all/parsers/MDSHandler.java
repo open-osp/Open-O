@@ -44,22 +44,29 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
-import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.DynamicHapiLoaderUtils;
 import ca.openosp.openo.utility.MiscUtils;
 
+import ca.openosp.openo.lab.ca.all.util.HL7VersionFixer;
 import ca.openosp.openo.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.Segment;
+import ca.uhn.hl7v2.model.Structure;
+import ca.uhn.hl7v2.parser.PipeParser;
+import ca.uhn.hl7v2.util.Terser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * @author wrighd
  */
 public class MDSHandler implements MessageHandler {
 
-    Object msg = null;
-    Object terser;
+    Message msg = null;
+    Terser terser = null;
     ArrayList obrGroups = null;
     HashMap<String, String> headerMaps = new HashMap<String, String>();
     Logger logger = MiscUtils.getLogger();
+    String rawHL7Body = null; // Store raw HL7 for Z-segment access
 
     /**
      * Creates a new instance of CMLHandler
@@ -75,63 +82,112 @@ public class MDSHandler implements MessageHandler {
         }
 
         try {
+            // Fix for MDS lab messages using version 2.3.0 which HAPI doesn't recognize
+            // HAPI only supports 2.3 and 2.3.1, not 2.3.0
+            hl7Body = HL7VersionFixer.fixHL7Version(hl7Body);
 
-            msg = DynamicHapiLoaderUtils.parseMdsMsg(hl7Body.replace("\n", "\r\n"));
-            terser = DynamicHapiLoaderUtils.getMdsTerser(msg);
+            // Store raw HL7 for direct Z-segment parsing (official HAPI can't access Z-segments reliably)
+            this.rawHL7Body = hl7Body;
+
+            PipeParser parser = new PipeParser();
+            parser.setValidationContext(new NoValidation());
+            msg = parser.parse(hl7Body.replace("\n", "\r\n"));
+            terser = new Terser(msg);
 
             int obrCount = getOBRCount();
-            int obrNum;
-            boolean obrFlag;
-            String segmentName;
-            String[] segments = DynamicHapiLoaderUtils.terser_getFinder_getCurrentGroup_getNames(terser);
+            String[] segments = terser.getFinder().getCurrentGroup().getNames();
             obrGroups = new ArrayList();
+
             /*
              *  Fill the OBX array list for use by future methods
+             *  Build groups by iterating through all OBX segments and associating them with their parent OBR
              */
+
+            // Initialize empty lists for each OBR
             for (int i = 0; i < obrCount; i++) {
-                ArrayList<String> obxSegs = new ArrayList<String>();
-                int count = 0;
-
-                if (i == 0) {
-                    try {
-                        while (DynamicHapiLoaderUtils.terserGet(terser, "/.OBX(" + count + ")-1-1") != null) {
-                            obxSegs.add("/.OBX(" + count + ")");
-                            count++;
-                        }
-                    } catch (Exception e) {
-                        //ignore exception
-                    }
-                }
-
-                obrNum = i + 1;
-                obrFlag = false;
-                for (int k = 0; k < segments.length; k++) {
-
-                    segmentName = segments[k].substring(0, 3);
-
-                    if (obrFlag && segmentName.equals("OBX")) {
-                        if (!segments[k].equals("OBX")) // would have already been added to first array
-                            obxSegs.add("/." + segments[k]);
-                    } else if (obrFlag && segmentName.equals("OBR")) {
-                        break;
-                    } else if (segments[k].equals("OBR" + obrNum) || (obrNum == 1 && segments[k].equals("OBR"))) {
-                        obrFlag = true;
-                    }
-
-                }
-                obrGroups.add(obxSegs);
+                obrGroups.add(new ArrayList<String>());
             }
-	        /*
-	        for(int i=0; i<obrGroups.size(); i++){
-	            ArrayList obxSegs = (ArrayList) obrGroups.get(i);
-	            for (int j=0; j < obxSegs.size(); j++){
-	                String obx = (String) obxSegs.get(j);
-	                //logger.info("OBRSEG("+i+") OBXSEG("+j+"): "+obx);
-	            }
-	        }
-	         */
+
+            // Iterate through all OBX segments using HAPI's RESPONSE group structure
+            // For ORU_R01 v2.3 messages, the structure is: RESPONSE -> ORDER_OBSERVATION -> OBSERVATION
+            try {
+                // Access the RESPONSE group which contains all ORDER_OBSERVATION groups
+                String responseGroupPath = "/RESPONSE";
+
+                // For each OBR, find its associated OBX segments
+                for (int obrIdx = 0; obrIdx < obrCount; obrIdx++) {
+                    ArrayList<String> obxList = (ArrayList<String>) obrGroups.get(obrIdx);
+
+                    // Build paths to access OBX segments within the ORDER_OBSERVATION group
+                    String orderObsPath = responseGroupPath + "/ORDER_OBSERVATION(" + obrIdx + ")";
+
+                    // Try to find OBX segments in the OBSERVATION group
+                    int obxCount = 0;
+                    final int MAX_OBX_PER_OBR = 1000; // Safety limit
+                    while (obxCount < MAX_OBX_PER_OBR) {
+                        try {
+                            String obxPath = orderObsPath + "/OBSERVATION(" + obxCount + ")/OBX";
+                            String testField = terser.get(obxPath + "-1");
+
+                            if (testField != null) {
+                                obxList.add(obxPath);
+                                obxCount++;
+                            } else {
+                                break;
+                            }
+                        } catch (Exception e) {
+                            // No more OBX segments for this OBR
+                            break;
+                        }
+                    }
+                    if (obxCount >= MAX_OBX_PER_OBR) {
+                        logger.warn("Reached maximum OBX count per OBR limit: " + MAX_OBX_PER_OBR);
+                    }
+
+                    // If no OBX found using the group structure, try alternative paths
+                    if (obxList.isEmpty()) {
+                        // Try direct OBX access (for messages that might not follow strict structure)
+                        try {
+                            String obxPath = orderObsPath + "/OBX";
+                            String testField = terser.get(obxPath + "-1");
+                            if (testField != null) {
+                                obxList.add(obxPath);
+                            }
+                        } catch (Exception e) {
+                            logger.debug("Could not find OBX for OBR index " + obrIdx + " using direct path", e);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Error grouping OBX segments with OBR segments", e);
+
+                // Fallback: try the old sequential approach if group structure fails
+                try {
+                    int globalObxIndex = 0;
+                    for (int obrIdx = 0; obrIdx < obrCount; obrIdx++) {
+                        ArrayList<String> obxList = (ArrayList<String>) obrGroups.get(obrIdx);
+
+                        // Try /.OBX path (flat structure)
+                        try {
+                            String obxPath = "/.OBX";
+                            if (globalObxIndex > 0) {
+                                obxPath = "/.OBX" + (globalObxIndex + 1);
+                            }
+                            String testField = terser.get(obxPath + "-1");
+                            if (testField != null) {
+                                obxList.add(obxPath);
+                                globalObxIndex++;
+                            }
+                        } catch (Exception ex) {
+                            logger.debug("Fallback OBX access failed for OBR " + obrIdx, ex);
+                        }
+                    }
+                } catch (Exception ex2) {
+                    logger.error("Fallback OBX grouping also failed", ex2);
+                }
+            }
         } catch (Exception e) {
-            throw new HL7Exception(e);
+            logger.error("Could not parse MDS message", e);
         }
     }
 
@@ -139,16 +195,41 @@ public class MDSHandler implements MessageHandler {
         return ("MDS");
     }
 
+    /**
+     * Helper method to get OBR field value using correct path syntax.
+     * Supports both group structure (official HAPI) and flat structure (legacy).
+     *
+     * @param obrIndex 0-based OBR index
+     * @param field OBR field number (e.g., "7-1" for observation date/time)
+     * @return field value or empty string if not found
+     */
+    private String getOBRField(int obrIndex, String field) {
+        try {
+            // Try group structure first (official HAPI for ORU_R01 v2.3)
+            String groupPath = "/RESPONSE/ORDER_OBSERVATION(" + obrIndex + ")/OBR-" + field;
+            String value = terser.get(groupPath);
+            if (value != null) {
+                return value;
+            }
+
+            // Fallback to flat structure (old HAPI)
+            String flatPath = (obrIndex == 0) ? "/.OBR-" + field : "/.OBR" + (obrIndex + 1) + "-" + field;
+            value = terser.get(flatPath);
+            return (value != null) ? value : "";
+        } catch (Exception e) {
+            logger.debug("Error getting OBR field " + field + " for index " + obrIndex, e);
+            return "";
+        }
+    }
+
     public String getMsgPriority() {
 
-        int i = 1;
+        int obrCount = getOBRCount();
         String priority = "R";
         try {
-            priority = DynamicHapiLoaderUtils.terserGet(terser, "/.OBR-27-1");
-            while (priority != null) {
-                i++;
-                priority = DynamicHapiLoaderUtils.terserGet(terser, "/.OBR" + i + "-27-1");
-                if (!priority.equalsIgnoreCase("R")) {
+            for (int i = 0; i < obrCount; i++) {
+                priority = getOBRField(i, "27-1");
+                if (priority != null && !priority.equalsIgnoreCase("R")) {
                     break;
                 }
             }
@@ -169,18 +250,41 @@ public class MDSHandler implements MessageHandler {
         if (obrGroups != null) {
             return (obrGroups.size());
         } else {
-            int i = 1;
+            int i = 0;
             String test;
             try {
-                test = DynamicHapiLoaderUtils.terserGet(terser, "/.OBR-2-1");
-                while (test != null) {
-                    i++;
-                    test = DynamicHapiLoaderUtils.terserGet(terser, "/.OBR" + i + "-2-1");
+                // For ORU_R01 v2.3 messages, OBR segments are in RESPONSE/ORDER_OBSERVATION groups
+                // Try group structure first (official HAPI)
+                test = terser.get("/RESPONSE/ORDER_OBSERVATION(0)/OBR-2-1");
+                if (test != null) {
+                    // Successfully found OBR using group structure, count all ORDER_OBSERVATION groups
+                    // Safety limit to prevent infinite loops
+                    final int MAX_OBR_COUNT = 1000;
+                    while (test != null && i < MAX_OBR_COUNT) {
+                        i++;
+                        test = terser.get("/RESPONSE/ORDER_OBSERVATION(" + i + ")/OBR-2-1");
+                    }
+                    if (i >= MAX_OBR_COUNT) {
+                        logger.warn("Reached maximum OBR count limit: " + MAX_OBR_COUNT);
+                    }
+                } else {
+                    // Fallback to flat structure (old HAPI compatibility)
+                    test = terser.get("/.OBR-2-1");
+                    i = 1;
+                    final int MAX_OBR_COUNT = 1000;
+                    while (test != null && i < MAX_OBR_COUNT) {
+                        i++;
+                        test = terser.get("/.OBR" + i + "-2-1");
+                    }
+                    if (i >= MAX_OBR_COUNT) {
+                        logger.warn("Reached maximum OBR count limit: " + MAX_OBR_COUNT);
+                    }
+                    i = i - 1;
                 }
             } catch (Exception e) {
-                // ignore exceptions
+                logger.debug("Error counting OBR segments", e);
             }
-            return (i - 1);
+            return i;
         }
     }
 
@@ -209,15 +313,9 @@ public class MDSHandler implements MessageHandler {
     }
 
     public String getTimeStamp(int i, int j) {
-        String timeStamp;
-        i++;
         try {
-            if (i == 1) {
-                timeStamp = formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.OBR-7-1")));
-            } else {
-                timeStamp = formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.OBR" + i + "-7-1")));
-            }
-            return (timeStamp);
+            String timeStamp = formatDateTime(getString(getOBRField(i, "7-1")));
+            return (timeStamp != null && !timeStamp.isEmpty()) ? timeStamp : getMsgDate();
         } catch (Exception e) {
             return getMsgDate();
         }
@@ -243,7 +341,6 @@ public class MDSHandler implements MessageHandler {
     }
 
     public int getOBXCount(int i) {
-
         ArrayList obxSegs = (ArrayList) obrGroups.get(i);
         return (obxSegs.size());
     }
@@ -354,55 +451,82 @@ public class MDSHandler implements MessageHandler {
 
 
     /**
-     * Retrieve the possible segment headers from the OBX fields
+     * Retrieve the possible segment headers from the OBX fields.
+     * Parse ZRG segments directly from raw HL7 since official HAPI can't access Z-segments reliably.
      */
     public ArrayList<String> getHeaders() {
         ArrayList<String> headers = new ArrayList<String>();
         String currentHeader = "";
-        String nextHeader;
-        String headerNum;
-        String nextHeaderNum;
-        int i = 0;
+        String headerNum = null;
 
-        try {
-
-            nextHeaderNum = DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(0)-2-1");
-            nextHeader = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(0)-7-1"));
-            headerNum = nextHeaderNum;
-            while (nextHeaderNum != null) {
-
-                if (headerNum.equals(nextHeaderNum)) {
-                    if (currentHeader.equals(""))
-                        currentHeader = nextHeader;
-                    else
-                        currentHeader = currentHeader + "<br />" + nextHeader;
-                } else {
-
-                    if (currentHeader.equals(""))
-                        currentHeader = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(" + (i - 1) + ")-5-1"));
-
-                    headerMaps.put(headerNum, currentHeader);
-                    headers.add(currentHeader);
-                    currentHeader = nextHeader;
-                    headerNum = nextHeaderNum;
-                }
-
-                i++;
-                nextHeaderNum = DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(" + i + ")-2-1");
-                nextHeader = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(" + i + ")-7-1"));
-
-            }
-            if (currentHeader.equals(""))
-                currentHeader = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZRG(" + (i - 1) + ")-5-1"));
-
-            headerMaps.put(headerNum, currentHeader);
-            headers.add(currentHeader);
-
-        } catch (Exception e) {
-
+        if (rawHL7Body == null) {
+            logger.warn("rawHL7Body is null in getHeaders()");
+            return headers;
         }
 
-        return (headers);
+        try {
+            // Parse ZRG segments directly from raw HL7 message
+            String[] lines = rawHL7Body.split("\r?\n");
+            ArrayList<String[]> zrgSegments = new ArrayList<String[]>();
+
+            // Collect all ZRG segments
+            for (String line : lines) {
+                if (line.startsWith("ZRG|")) {
+                    String[] fields = line.split("\\|", -1);
+                    zrgSegments.add(fields);
+                }
+            }
+
+            // Process ZRG segments to build headers
+            // ZRG format: ZRG|1.1|4000|||ROUTINE CHEMISTRY I|1|
+            // Field 0: ZRG
+            // Field 1: sequence (e.g., "1.1")
+            // Field 2: group number (e.g., "4000")
+            // Field 5: header name (e.g., "ROUTINE CHEMISTRY I")
+            // Field 7: display name (if present)
+
+            String prevGroupNum = null;
+            for (String[] fields : zrgSegments) {
+                if (fields.length > 2) {
+                    String groupNum = (fields.length > 2) ? fields[2] : "";
+                    String headerName = (fields.length > 5) ? fields[5] : "";
+                    String displayName = (fields.length > 7) ? fields[7] : "";
+
+                    // Use display name if available, otherwise use header name
+                    String headerText = !displayName.isEmpty() ? displayName : headerName;
+
+                    if (prevGroupNum != null && !groupNum.equals(prevGroupNum)) {
+                        // New group - save current header and start new one
+                        if (!currentHeader.isEmpty()) {
+                            headerMaps.put(prevGroupNum, currentHeader);
+                            headers.add(currentHeader);
+                        }
+                        currentHeader = headerText;
+                    } else {
+                        // Same group - append to current header
+                        if (currentHeader.isEmpty()) {
+                            currentHeader = headerText;
+                        } else {
+                            currentHeader = currentHeader + "<br />" + headerText;
+                        }
+                    }
+
+                    prevGroupNum = groupNum;
+                    headerNum = groupNum;
+                }
+            }
+
+            // Add final header
+            if (!currentHeader.isEmpty() && headerNum != null) {
+                headerMaps.put(headerNum, currentHeader);
+                headers.add(currentHeader);
+            }
+
+        } catch (Exception e) {
+            logger.error("Error parsing headers from ZRG segments", e);
+        }
+
+        return headers;
     }
 
     /**
@@ -420,111 +544,178 @@ public class MDSHandler implements MessageHandler {
 
     /**
      * Methods to get information from observation notes
+     * For MDS labs, this counts all comment lines including ZMC segments
      */
     public int getOBXCommentCount(int i, int j) {
         try {
             // jth obx of the ith obr
 
-            String[] segments = DynamicHapiLoaderUtils.terser_getFinder_getCurrentGroup_getNames(terser);
+            // For MDS messages with RESPONSE group structure, we need to handle this differently
+            // The old code tried to find OBX in the flat segments array, but now OBX is nested
+            // in RESPONSE/ORDER_OBSERVATION/OBSERVATION groups
+
             ArrayList obxSegs = (ArrayList) obrGroups.get(i);
-            String obxSeg = ((String) obxSegs.get(j)).substring(2);
+            if (obxSegs == null || j >= obxSegs.size()) {
+                return 0;
+            }
 
-            // if the obxSeg is part of the first obx array
-            if (obxSeg.charAt(3) == '(') {
+            String obxPath = (String) obxSegs.get(j);
 
-                if (j + 1 == obxSegs.size()) {
-                    obxSeg = obxSeg.substring(0, 3);
-                } else {
-                    String nextObxSeg = ((String) obxSegs.get(j + 1)).substring(2);
-                    if (nextObxSeg.charAt(3) == '(') {
-                        return (0);
-                    } else {
-                        obxSeg = obxSeg.substring(0, 3);
+            // Try to find NTE segments following this OBX in the OBSERVATION group
+            // Extract the observation index from the path
+            // Path format: /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/OBX
+            try {
+                // Count NTE segments that follow this OBX
+                int totalCommentLines = 0;
+
+                // Build the path to potential NTE segments
+                // They would be at /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/NTE(k)
+                String basePath = obxPath.substring(0, obxPath.lastIndexOf("/"));
+
+                // First, find all NTE segments for this OBX
+                ArrayList<String> commentCodes = new ArrayList<String>();
+                int nteIndex = 0;
+                final int MAX_NTE_COUNT = 500; // Safety limit
+                while (nteIndex < MAX_NTE_COUNT) {
+                    String ntePath = basePath + "/NTE(" + nteIndex + ")";
+                    try {
+                        String commentType = terser.get(ntePath + "-2-1");
+                        if (commentType == null) {
+                            // No more NTE segments
+                            break;
+                        }
+                        if (commentType.equals("MC")) {
+                            // This is a matched code - get the code and count ZMC segments
+                            // NTE-3 field format: ^CODE means component 1 is empty, component 2 is CODE
+                            String commentCode = terser.get(ntePath + "-3-2");
+                            if (commentCode != null) {
+                                commentCodes.add(commentCode);
+                            }
+                        } else {
+                            // Direct text comment
+                            String nteText = terser.get(ntePath + "-3-1");
+                            if (nteText != null && !nteText.isEmpty()) {
+                                totalCommentLines++;
+                            }
+                        }
+                        nteIndex++;
+                    } catch (HL7Exception e) {
+                        // No more NTE segments
+                        break;
+                    }
+                }
+                if (nteIndex >= MAX_NTE_COUNT) {
+                    logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT);
+                }
+
+                // Now count all ZMC segments for each comment code
+                if (!commentCodes.isEmpty() && rawHL7Body != null) {
+                    String[] lines = rawHL7Body.split("\r?\n");
+                    for (String line : lines) {
+                        if (line.startsWith("ZMC|")) {
+                            String[] fields = line.split("\\|", -1);
+                            if (fields.length > 2) {
+                                String zmcCode = fields[2];
+                                for (String commentCode : commentCodes) {
+                                    if (zmcCode.equals(commentCode)) {
+                                        totalCommentLines++;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
+                return totalCommentLines;
+            } catch (Exception e) {
+                // If we can't parse the structure, return 0
+                logger.debug("Error counting comments", e);
+                return 0;
             }
-
-            int k = 0;
-            while (!obxSeg.equals(segments[k])) {
-                k++;
-            }
-
-            int count = 0;
-            k++;
-            while (k < segments.length && segments[k].substring(0, 3).equals("NTE")) {
-                k++;
-                count++;
-            }
-
-            return (count);
         } catch (Exception e) {
-            logger.error("Unexpected error", e);
-            return (-1);
+            logger.error("Unexpected error in getOBXCommentCount", e);
+            return 0;
         }
     }
 
     public String getOBXComment(int i, int j, int k) {
-
         try {
-            String[] segments = DynamicHapiLoaderUtils.terser_getFinder_getCurrentGroup_getNames(terser);
+            // For MDS messages with RESPONSE group structure
             ArrayList obxSegs = (ArrayList) obrGroups.get(i);
-            String obxSeg = ((String) obxSegs.get(j)).substring(2);
-
-            // if the obxSeg is part of the first obx array
-            if (obxSeg.charAt(3) == '(') {
-                obxSeg = obxSeg.substring(0, 3);
+            if (obxSegs == null || j >= obxSegs.size()) {
+                return "";
             }
 
-            int l = 0;
-            while (!obxSeg.equals(segments[l])) {
-                l++;
-            }
+            String obxPath = (String) obxSegs.get(j);
 
-            l = l + k + 1; // at this point, l is pointing at the NTE segment
+            // Build the path to NTE segments
+            // Path format: /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/NTE(k)
+            String basePath = obxPath.substring(0, obxPath.lastIndexOf("/"));
 
-            try {
-                Object[] nteSegs = DynamicHapiLoaderUtils.terser_getFinder_getRoot_getAll(terser, segments[l]);
-                if (getString(DynamicHapiLoaderUtils.terserGet(terser, "/." + segments[l] + "-2-1")).equals("MC")) {
-                    String comment = "";
-                    for (int x = 0; x < nteSegs.length; x++) {
+            // Build a complete list of all comment lines for this OBX
+            ArrayList<String> allCommentLines = new ArrayList<String>();
 
-                        int m = 0;
-                        Object nteSeg = nteSegs[x];
-                        String commentCode = getString(DynamicHapiLoaderUtils.terserGet(terser, nteSeg, 3, 0, 2, 1));
-                        String matchCommentCode = DynamicHapiLoaderUtils.terserGet(terser, "/.ZMC(" + m + ")-2-1");
-                        while (matchCommentCode != null) {
+            // First, find all NTE segments and their associated comments
+            int nteIndex = 0;
+            final int MAX_NTE_COUNT = 500; // Safety limit
+            while (nteIndex < MAX_NTE_COUNT) {
+                String ntePath = basePath + "/NTE(" + nteIndex + ")";
+                try {
+                    String commentType = terser.get(ntePath + "-2-1");
+                    if (commentType == null) {
+                        // No more NTE segments
+                        break;
+                    }
 
-                            if (matchCommentCode.equals(commentCode)) {
-                                if (comment.equals(""))
-                                    comment = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZMC(" + m + ")-6-1"));
-                                else
-                                    comment = comment + "<br />" + getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZMC(" + m + ")-6-1"));
+                    if (commentType.equals("MC")) {
+                        // This is a matched code - get all ZMC segments for this code
+                        // NTE-3 field format: ^CODE means component 1 is empty, component 2 is CODE
+                        String commentCode = terser.get(ntePath + "-3-2");
+
+                        if (commentCode != null && rawHL7Body != null) {
+                            // Parse all ZMC segments from raw HL7 for this code
+                            String[] lines = rawHL7Body.split("\r?\n");
+                            for (String line : lines) {
+                                if (line.startsWith("ZMC|")) {
+                                    String[] fields = line.split("\\|", -1);
+                                    if (fields.length > 6) {
+                                        String zmcCode = fields[2];
+                                        if (zmcCode.equals(commentCode)) {
+                                            // Add this ZMC comment line
+                                            String commentText = fields[6];
+                                            allCommentLines.add(commentText);
+                                        }
+                                    }
+                                }
                             }
-
-                            m++;
-                            matchCommentCode = DynamicHapiLoaderUtils.terserGet(terser, "/.ZMC(" + m + ")-2-1");
+                        }
+                    } else {
+                        // Direct text comment from NTE
+                        String nteText = terser.get(ntePath + "-3-1");
+                        if (nteText != null && !nteText.isEmpty()) {
+                            allCommentLines.add(nteText);
                         }
                     }
-                    return (comment);
-
-                } else {
-                    //return(getString(DynamicHapiLoaderUtils.terserGet(terser,"/."+segments[l]+"-3-2")));
-                    String comment = null;
-                    for (int x = 0; x < nteSegs.length; x++) {
-                        String commentCode = getString(DynamicHapiLoaderUtils.terserGet(terser, nteSegs[x], 3, 0, 2, 1));
-                        comment = (comment == null) ? commentCode : comment + "<br/>" + commentCode;
-                    }
-                    return comment;
+                    nteIndex++;
+                } catch (HL7Exception e) {
+                    // No more NTE segments
+                    break;
                 }
-            } catch (Exception e) {
-                logger.error("Could not retrieve OBX comments", e);
-
-                return ("");
             }
+            if (nteIndex >= MAX_NTE_COUNT) {
+                logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT);
+            }
+
+            // Return the kth comment line
+            if (k < allCommentLines.size()) {
+                return getString(allCommentLines.get(k));
+            }
+
+            return "";
         } catch (Exception e) {
-            logger.error("Unexpected error", e);
-            return (null);
+            logger.error("Unexpected error in getOBXComment", e);
+            return "";
         }
     }
 
@@ -538,7 +729,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getFirstName() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-5-2")));
+            return (getString(terser.get("/.PID-5-2")));
         } catch (Exception ex) {
             return ("");
         }
@@ -546,7 +737,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getLastName() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-5-1")));
+            return (getString(terser.get("/.PID-5-1")));
         } catch (Exception ex) {
             return ("");
         }
@@ -554,7 +745,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getMiddleName() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-5-3")));
+            return (getString(terser.get("/.PID-5-3")));
         } catch (Exception ex) {
             return ("");
         }
@@ -566,7 +757,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getDOB() {
         try {
-            return (formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-7-1"))).substring(0, 10));
+            return (formatDateTime(getString(terser.get("/.PID-7-1"))).substring(0, 10));
         } catch (Exception e) {
             logger.error("Error retrieving date of birth", e);
             return ("");
@@ -590,7 +781,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getSex() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-8-1")));
+            return (getString(terser.get("/.PID-8-1")));
         } catch (Exception e) {
             return ("");
         }
@@ -598,7 +789,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getHealthNum() {
         try {
-            String healthNum = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-19-1"));
+            String healthNum = getString(terser.get("/.PID-19-1"));
             int end = healthNum.indexOf(" ");
             if (end > 0)
                 return (healthNum.substring(1, end));
@@ -611,7 +802,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getHealthNumVersion() {
         try {
-            String healthNum = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-19-1"));
+            String healthNum = getString(terser.get("/.PID-19-1"));
             return (healthNum.substring(healthNum.indexOf(" ") + 1));
         } catch (Exception e) {
             return ("");
@@ -620,7 +811,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getHomePhone() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.PID-13-1")));
+            return (getString(terser.get("/.PID-13-1")));
         } catch (Exception e) {
             return ("");
         }
@@ -632,7 +823,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getPatientLocation() {
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-3-1")));
+            return (getString(terser.get("/.MSH-3-1")));
             //return(getString(terser.get("/.PV1-3-1-1")));
         } catch (Exception e) {
             return ("");
@@ -649,15 +840,9 @@ public class MDSHandler implements MessageHandler {
     }
 
     public String getRequestDate(int i) {
-        String requestDate;
-        i++;
         try {
-            if (i == 1) {
-                requestDate = formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.OBR-14-1")));
-            } else {
-                requestDate = formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.OBR" + i + "-14-1")));
-            }
-            return (requestDate);
+            String requestDate = formatDateTime(getString(getOBRField(i, "14-1")));
+            return (requestDate != null && !requestDate.isEmpty()) ? requestDate : getMsgDate();
         } catch (Exception e) {
             return getMsgDate();
         }
@@ -667,30 +852,39 @@ public class MDSHandler implements MessageHandler {
 
         String ret = "F";
         try {
-            if (getString(DynamicHapiLoaderUtils.terserGet(terser, "/.ZFR-3-1")).equals("0"))
+            String firstZfrStatus = getString(terser.get("/.ZFR-3-1"));
+            if (firstZfrStatus != null && firstZfrStatus.equals("0"))
                 return ("P");
 
             String status = "";
             int i = 0;
+            final int MAX_ZFR_COUNT = 100; // Safety limit
 
             // If one of the zfr segments says partial, the lab should be marked
             // as a partial lab
-            while ((status = DynamicHapiLoaderUtils.terserGet(terser, "/.ZFR(" + i + ")-3-1")) != null) {
+            while (i < MAX_ZFR_COUNT && (status = terser.get("/.ZFR(" + i + ")-3-1")) != null) {
                 if (status.equals("0")) {
                     ret = "P";
                     break;
                 }
                 i++;
             }
+            if (i >= MAX_ZFR_COUNT) {
+                logger.warn("Reached maximum ZFR count limit: " + MAX_ZFR_COUNT);
+            }
+        } catch (HL7Exception e) {
+            // ZFR segments may not be found if they were moved to end of message
+            // This is expected with official HAPI - default to Final status
+            logger.debug("Could not retrieve ZFR segments for order status - defaulting to Final", e);
         } catch (Exception e) {
-            logger.error("Exception retrieving order status", e);
+            logger.warn("Unexpected exception retrieving order status - defaulting to Final", e);
         }
         return ret;
     }
 
     public String getClientRef() {
         try {
-            String clientNum = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-10-1"));
+            String clientNum = getString(terser.get("/.MSH-10-1"));
             int firstDash = clientNum.indexOf("-");
             return (clientNum.substring(0, firstDash));
         } catch (Exception e) {
@@ -700,7 +894,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getDocNum() {
         try {
-            return (DynamicHapiLoaderUtils.terserGet(terser, "/.PV1-8-1").replace("-", ""));
+            return (terser.get("/.PV1-8-1").replace("-", ""));
         } catch (Exception e) {
             return ("");
         }
@@ -708,7 +902,7 @@ public class MDSHandler implements MessageHandler {
 
     public String getAccessionNum() {
         try {
-            String accessionNum = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-10-1"));
+            String accessionNum = getString(terser.get("/.MSH-10-1"));
             int firstDash = accessionNum.indexOf("-");
             int secondDash = accessionNum.indexOf("-", firstDash + 1);
             return (accessionNum.substring(firstDash + 1, secondDash));
@@ -730,6 +924,7 @@ public class MDSHandler implements MessageHandler {
         try {
             String tmp = "";
             int x = 0;
+            final int MAX_CC_DOCS = 100; // Safety limit to prevent infinite loops
             do {
                 tmp = getFullDocName("/.PV1-9(" + x + ")-");
                 if (tmp.length() > 0) {
@@ -740,13 +935,19 @@ public class MDSHandler implements MessageHandler {
                     }
                 }
                 x++;
-            } while (!tmp.equals(""));
+            } while (!tmp.equals("") && x < MAX_CC_DOCS);
+
+            if (x >= MAX_CC_DOCS) {
+                logger.warn("Reached maximum CC docs limit: " + MAX_CC_DOCS);
+            }
+
             if (docs.equals(""))
                 docs = getFullDocName("/.PV1-17-");
             else
                 docs = docs + ", " + getFullDocName("/.PV1-17-");
             return (docs);
         } catch (Exception e) {
+            logger.debug("Error retrieving CC docs", e);
             return ("");
         }
     }
@@ -755,13 +956,13 @@ public class MDSHandler implements MessageHandler {
         ArrayList<String> nums = new ArrayList<String>();
         String docNum;
         try {
-            if ((docNum = DynamicHapiLoaderUtils.terserGet(terser, "/.PV1-8-1")) != null) {
+            if ((docNum = terser.get("/.PV1-8-1")) != null) {
                 nums.add(docNum.replace("-", ""));
             }
-            if ((docNum = DynamicHapiLoaderUtils.terserGet(terser, "/.PV1-9-1")) != null) {
+            if ((docNum = terser.get("/.PV1-9-1")) != null) {
                 nums.add(docNum.replace("-", ""));
             }
-            if ((docNum = DynamicHapiLoaderUtils.terserGet(terser, "/.PV1-17-1")) != null) {
+            if ((docNum = terser.get("/.PV1-17-1")) != null) {
                 nums.add(docNum.replace("-", ""));
             }
         } catch (Exception e) {
@@ -777,7 +978,7 @@ public class MDSHandler implements MessageHandler {
         String retVal = "";
 
         try {
-            String typeField = getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-10-1"));
+            String typeField = getString(terser.get("/.MSH-10-1"));
             char typeNum = typeField.charAt(typeField.indexOf('-', typeField.indexOf('-') + 1) + 1);
 
             switch (typeNum) {
@@ -812,7 +1013,7 @@ public class MDSHandler implements MessageHandler {
     public String getMsgDate() {
 
         try {
-            String dateString = formatDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-7-1")));
+            String dateString = formatDateTime(getString(terser.get("/.MSH-7-1")));
             return (dateString);
         } catch (Exception e) {
             return ("");
@@ -823,7 +1024,7 @@ public class MDSHandler implements MessageHandler {
     public Date getMsgDateAsDate() {
         Date date = null;
         try {
-            date = getDateTime(getString(DynamicHapiLoaderUtils.terserGet(terser, "/.MSH-7-1")));
+            date = getDateTime(getString(terser.get("/.MSH-7-1")));
         } catch (Exception e) {
             //Not sure what to do here
             MiscUtils.getLogger().error("Error", e);
@@ -834,42 +1035,59 @@ public class MDSHandler implements MessageHandler {
     private String getOBXField(String field, int i, int j) {
         ArrayList obxSegs = (ArrayList) obrGroups.get(i);
         String obxSeg = (String) obxSegs.get(j);
+        String fullPath = obxSeg + "-" + field;
 
         try {
-            return (getString(DynamicHapiLoaderUtils.terserGet(terser, obxSeg + "-" + field)));
+            String value = getString(terser.get(fullPath));
+            return value;
         } catch (Exception e) {
+            logger.debug("Error retrieving OBX field " + field + " for OBR=" + i + ", OBX=" + j, e);
             return ("");
         }
     }
 
     private String matchOBXToHeader(String obxSeg) {
-
-        int i = 0;
         String headerNum = "null";
+
         try {
-            String zmnNum = DynamicHapiLoaderUtils.terserGet(terser, "/.ZMN(0)-8-1");
+            // Get the OBX observation identifier (field 4)
+            String obxNum = terser.get(obxSeg + "-4-1");
 
-            String obxNum = DynamicHapiLoaderUtils.terserGet(terser, obxSeg + "-4-1");
-            // we only need the last section of the headerNum
-            obxNum = obxNum.substring(obxNum.indexOf("-", obxNum.indexOf("-") + 1) + 1);
+            // Extract LOINC code - it's the last section after the last hyphen
+            // Example: "43856-1-43856" -> "43856"
+            if (obxNum != null && obxNum.contains("-")) {
+                obxNum = obxNum.substring(obxNum.lastIndexOf("-") + 1);
+            }
 
-            while (zmnNum != null) {
-                if (zmnNum.equals(obxNum)) {
-                    headerNum = DynamicHapiLoaderUtils.terserGet(terser, "/.ZMN(" + i + ")-10-1");
-                    break;
+            if (rawHL7Body == null) {
+                logger.warn("rawHL7Body is null in matchOBXToHeader()");
+                return null;
+            }
+
+            // Parse ZMN segments directly from raw HL7 message
+            // ZMN format: ZMN||NAME||DISPLAY|UNITS|VAL|RANGE|LOINC|FLAG|GROUPNUM
+            // Field 8 = LOINC code, Field 10 = group number
+            String[] lines = rawHL7Body.split("\r?\n");
+            for (String line : lines) {
+                if (line.startsWith("ZMN|")) {
+                    String[] fields = line.split("\\|", -1);
+                    if (fields.length > 10) {
+                        String zmnLoinc = fields[8];  // LOINC code
+                        String groupNum = fields[10]; // Group number
+
+                        if (zmnLoinc.equals(obxNum)) {
+                            headerNum = groupNum;
+                            break;
+                        }
+                    }
                 }
-                i++;
-                zmnNum = DynamicHapiLoaderUtils.terserGet(terser, "/.ZMN(" + i + ")-8-1");
             }
 
         } catch (Exception e) {
-            logger.error("error retrieving header", e);
-
+            logger.error("Error retrieving header", e);
         }
 
-
-        return (headerMaps.get(headerNum));
-
+        return headerMaps.get(headerNum);
     }
 
     private String getFullDocName(String docSeg) {
@@ -879,12 +1097,12 @@ public class MDSHandler implements MessageHandler {
 
         try {
             // get name prefix ie/ DR.
-            temp = DynamicHapiLoaderUtils.terserGet(terser, docSeg + "6");
+            temp = terser.get(docSeg + "6");
             if (temp != null)
                 docName = temp;
 
             // get the name
-            temp = DynamicHapiLoaderUtils.terserGet(terser, docSeg + "2");
+            temp = terser.get(docSeg + "2");
             if (temp != null) {
                 if (docName.equals("")) {
                     docName = temp;
