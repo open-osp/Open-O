@@ -46,7 +46,7 @@
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
+<%@page import="org.owasp.encoder.Encode"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ page import="ca.openosp.openo.log.*" %>
@@ -63,15 +63,16 @@
 <%@ page import="ca.openosp.openo.mds.data.ReportStatus" %>
 <%@ page import="ca.openosp.openo.commn.dao.*" %>
 <%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
-
     ProviderInboxRoutingDao providerInboxRoutingDao = SpringUtils.getBean(ProviderInboxRoutingDao.class);
     UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 
-    String providerNo = request.getParameter("providerNo");
-    UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
+    LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
+    String providerNo = loggedInInfo.getLoggedInProviderNo();
+    UserProperty uProp = userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);                        
     boolean skipComment = false;
 
     if (uProp != null && uProp.getValue().equalsIgnoreCase("yes")) {
@@ -86,8 +87,7 @@
 
     String demoName = request.getParameter("demoName");
     String documentNo = request.getParameter("segmentID");
-
-
+    
     String searchProviderNo = request.getParameter("searchProviderNo");
     String status = request.getParameter("status");
     String inQueue = request.getParameter("inQueue");
@@ -111,30 +111,24 @@
     EDoc curdoc = EDocUtil.getDoc(documentNo);
 
     String demographicID = curdoc.getModuleId();
-
-    // Ensure that demographic id is not null, empty, or negative default value of "-1"
+    String mrpProviderName = "";
     if ((demographicID != null) && !demographicID.isEmpty() && !demographicID.equals("-1")) {
-        // If demographic number does not equal to providers number (only for patient tickler), get the patient name
-        // Else get the providers name (only for doctor tickler)
-        if (!demographicID.equals(providerNo)) {
-            DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
-            Demographic demographic = demographicDao.getDemographic(demographicID);
-            demoName = demographic.getLastName() + "," + demographic.getFirstName();
-        } else {
-            demoName = EDocUtil.getProviderName(providerNo);
-        }
-        LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(), demographicID);
-    }
-
-    String docId = curdoc.getDocId();
-
-    String ackFunc;
-    if (skipComment) {
-        ackFunc = "updateStatus('acknowledgeForm_" + docId + "'," + inQueueB + ");";
+        DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+        Demographic demographic = demographicDao.getDemographic(demographicID);  
+				demoName = demographic.getLastName()+","+demographic.getFirstName();
+        mrpProviderName = demographic.getProviderNo() == null || demographic.getProviderNo().isEmpty() ? "Unknown" : providerDao.getProviderNameLastFirst(demographic.getProviderNo());
+        mrpProviderName = " (MRP: " + Encode.forHtmlContent(mrpProviderName) + ")";
     } else {
-        ackFunc = "getDocComment('" + docId + "','" + providerNo + "'," + inQueueB + ");";
+      demoName = EDocUtil.getProviderName(providerNo);
     }
-
+    LogAction.addLog((String) session.getAttribute("user"), LogConst.READ, LogConst.CON_DOCUMENT, documentNo, request.getRemoteAddr(),demographicID);
+    String docId = curdoc.getDocId();
+    String ackFunc;
+    if(skipComment) {
+      ackFunc = "updateStatus('acknowledgeForm_" + docId + "'," + inQueueB + ");";
+    } else {
+      ackFunc = "getDocComment('" + docId + "','" + providerNo + "'," + inQueueB + ");";
+    }
 
     int slash = 0;
     String contentType = "";
@@ -158,7 +152,10 @@
     String url2 = cp + "/documentManager/ManageDocument.do?method=display&doc_no=" + docId;
     String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-            Integer docCurrentFiledQueue = null;
+    Integer docCurrentFiledQueue = null;
+
+    request.setAttribute("mrpProviderName", mrpProviderName);
+    request.setAttribute("demoName", demoName);
 %>
 
 <fmt:setBundle basename="oscarResources"/>

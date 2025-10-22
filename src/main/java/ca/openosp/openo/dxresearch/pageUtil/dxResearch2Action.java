@@ -118,9 +118,9 @@ public class dxResearch2Action extends ActionSupport {
                 }
 
                 if (count == 0) {
-                    String daoName = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDao.codingSystem.valueOf(codingSystem));
+                    Class<?> daoClass = AbstractCodeSystemDao.getDaoName(AbstractCodeSystemDao.codingSystem.valueOf(codingSystem));
                     @SuppressWarnings("unchecked")
-                    AbstractCodeSystemDao<AbstractCodeSystemModel<?>> csDao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(daoName);
+                    AbstractCodeSystemDao<AbstractCodeSystemModel<?>> csDao = (AbstractCodeSystemDao<AbstractCodeSystemModel<?>>) SpringUtils.getBean(daoClass);
 
                     AbstractCodeSystemModel<?> codingSystemEntity = csDao.findByCodingSystem(codingSystem);
                     boolean isCodingSystemAvailable = codingSystemEntity == null;

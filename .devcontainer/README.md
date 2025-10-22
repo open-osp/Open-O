@@ -38,7 +38,7 @@ and VS-Code.
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/cc-ar-emr/Open-O.git
+   git clone https://github.com/openo-beta/Open-O.git
    cd open-osp
    ```
 
@@ -76,6 +76,7 @@ Once you've built it for the first time, a subsequent full build should take abo
 minutes on Windows, as we'll have managed to cache a bunch of Maven compilation artifacts.
 
    ```zsh
+   make clean
    make install
    ```
 

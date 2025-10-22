@@ -681,7 +681,6 @@
             }
         })
 
-
         <%--   Removed during OMD Re-Evaluation.  This function auto set the LongTerm field
         if number of refills more than 0.  This is not a definitive Long Term drug.
             jQuery("input[id^='repeats_']").keyup(function(){
@@ -692,9 +691,7 @@
                     jQuery(".med-term").trigger('change');
                 }
             }); --%>
-
-
-    });
+       });
 </script>
 
 

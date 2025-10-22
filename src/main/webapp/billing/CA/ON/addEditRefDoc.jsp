@@ -42,8 +42,7 @@
     }
 %>
 <%@ page errorPage="/errorpage.jsp"
-         import="java.util.*,
-                 java.sql.*" %>
+         import="java.util.*, java.sql.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Billingreferral" %>

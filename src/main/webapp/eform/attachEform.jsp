@@ -78,7 +78,7 @@
 
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-// "Module" and "function" is the same thing (old documentManager module)
+    // "Module" and "function" is the same thing (old documentManager module)
     String module = "demographic";
     String demoNo = request.getParameter("demo");
     String requestId = request.getParameter("requestId");
