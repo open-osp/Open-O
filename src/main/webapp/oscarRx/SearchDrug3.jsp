@@ -296,6 +296,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
                        var data = "rand="+rand;
                        new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
                     	   // updateCurrentInteractions();
+                    	   updateDrugrefInteractions();			
                         }});
             }
             function onPrint(cfgPage) {
@@ -1168,8 +1169,9 @@ body {
 <%-- End List Drugs Prescribed --%>
 
                 </td>
-                <td width="300px" valign="top" >
+                <td style="width:300px; vertical-align:top">
                     <div id="interactionsRxMyD" style="float:right;"></div>
+                    <div id="interactionsRx" style="float:right;"></div>
                 </td>
             </tr>
 
@@ -1532,6 +1534,7 @@ body {
                var data = "rand=" + Math.floor(Math.random()*10001);
                new Ajax.Request(url, {method: 'post',parameters:data,onSuccess:function(transport){
                             // updateCurrentInteractions();
+                            updateDrugrefInteractions();	
             }});
                $('rxText').innerHTML="";//make pending prescriptions disappear.
                $("searchString").focus();
@@ -1542,6 +1545,7 @@ body {
         new Ajax.Updater('rxText',url, {method:'get',parameters:data,asynchronous:true,evalScripts:true,
             insertion: Insertion.Bottom,onSuccess:function(transport){
                 // updateCurrentInteractions();
+                updateDrugrefInteractions();
         }});
 
     }
@@ -1570,6 +1574,7 @@ body {
         var url="<c:out value="${ctx}"/>" + "/oscarRx/rxStashDelete.do?parameterValue=deletePrescribe";
         new Ajax.Request(url, {method: 'get',parameters:data,onSuccess:function(transport){
                 // updateCurrentInteractions();
+                updateDrugrefInteractions();
                 if($('deleteOnCloseRxBox').value=='true'){
                     deleteRxOnCloseRxBox(randomId);
                 }
@@ -1595,6 +1600,7 @@ body {
                              $(discont).style.textDecoration='line-through';
                              $(prescrip).style.textDecoration='line-through';
 			     // updateCurrentInteractions();
+			     updateDrugrefInteractions();
                     }
                 }});
 
@@ -1654,6 +1660,7 @@ var skipParseInstr = false;
                   $(discont).style.textDecoration='line-through';
                   $(prescrip).style.textDecoration='line-through';
 		  // updateCurrentInteractions();
+		  updateDrugrefInteractions();
             }});
         }
         return false;
@@ -1751,6 +1758,7 @@ var skipParseInstr = false;
                   $('discont_'+json.id).innerHTML = json.reason;
                   $('prescrip_'+json.id).style.textDecoration='line-through';
                   // updateCurrentInteractions();
+                  updateDrugrefInteractions();
             }});
 
     }
@@ -1771,6 +1779,11 @@ var skipParseInstr = false;
                                         }});
                             }});
     }
+    function updateDrugrefInteractions(){
+        <oscar:oscarPropertiesCheck property="HOLBROOK" value="yes">
+            callReplacementWebService("InteractionDisplay.jsp",'interactionsRx');
+        </oscar:oscarPropertiesCheck>
+    }
 //represcribe long term meds
     function RePrescribeLongTerm(){
        var demoNo='<%=patient.getDemographicNo()%>';
@@ -1778,6 +1791,7 @@ var skipParseInstr = false;
         var url= "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=repcbAllLongTerm";
         new Ajax.Updater('rxText',url, {method:'get',parameters:data,asynchronous:true,insertion: Insertion.Bottom,onSuccess:function(transport){
                             // updateCurrentInteractions();
+                            updateDrugrefInteractions();
             }});
         return false;
     }
@@ -1946,6 +1960,7 @@ YAHOO.example.FnMultipleFields = function(){
                    new Ajax.Updater('rxText',url, {method:'get',parameters:params,evalScripts:true,
                         insertion: Insertion.Bottom,onSuccess:function(transport){
                             // updateCurrentInteractions();
+                            updateDrugrefInteractions();
                         }});
 
                     $('searchString').value = "";
@@ -2107,6 +2122,7 @@ function setSearchedDrug(drugId,name){
     var params = "demographicNo=<%=demoNo%>&drugId="+drugId+"&text="+name+"&randomId="+ran_number;
     new Ajax.Updater('rxText',url, {method:'get',parameters:params,asynchronous:true,evalScripts:true,insertion: Insertion.Bottom,onSuccess:function(transport){
                             // updateCurrentInteractions();
+                            updateDrugrefInteractions();
             }});
     $('searchString').value = "";
 }
@@ -2147,6 +2163,7 @@ function represcribe(element, toArchive){
         new Ajax.Updater('rxText',url, {method:'get',parameters:data,asynchronous:false,evalScripts:true,
             insertion: Insertion.Bottom,onSuccess:function(transport){
                 // updateCurrentInteractions();
+                updateDrugrefInteractions();
             }});
     }else if(drugId!=null){
         var dataUpdateId="reRxDrugId="+toArchive+"&action=addToReRxDrugIdList&rand="+Math.floor(Math.random()*10001);
@@ -2158,6 +2175,7 @@ function represcribe(element, toArchive){
         new Ajax.Updater('rxText',url, {method:'get',parameters:data,evalScripts:true,
             insertion: Insertion.Bottom,onSuccess:function(transport){
                 // updateCurrentInteractions();
+                updateDrugrefInteractions();
             }});
 
    }
