@@ -33,6 +33,7 @@ import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import oscar.OscarProperties;
 import oscar.util.StringUtils;
 
 /*
@@ -119,9 +120,13 @@ public class EmailComposeManager {
     }
 
     public List<EmailAttachment> prepareHRMAttachments(LoggedInInfo loggedInInfo, String[] attachedHRMDocuments) throws PDFGenerationException {
+        if (!OscarProperties.getInstance().isOntarioBillingRegion()) {
+            return new ArrayList<>();
+        }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_hrm)");
-		}
+            logger.warn("missing required security object (_hrm)");
+            return new ArrayList<>();
+        }
 
         List<String> attachedHRMIds = convertToList(attachedHRMDocuments);
 
