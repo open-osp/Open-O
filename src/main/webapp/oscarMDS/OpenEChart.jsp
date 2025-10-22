@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.*"%>
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ page import="java.net.URLEncoder"%>
@@ -40,6 +41,12 @@ int curMonth = (cal.get(Calendar.MONTH)+1);
 int curDay = cal.get(Calendar.DAY_OF_MONTH);
 
 %>
+
+<c:if test="${param.mrpAttached == 'true'}">
+if (window.opener && !window.opener.closed) {
+    window.opener.location.reload();
+}
+</c:if>
 
 location.href = '../oscarEncounter/IncomingEncounter.do?demographicNo=<%=request.getParameter("demographicNo")%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=';
 window.resizeTo(980,700);

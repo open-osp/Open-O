@@ -60,6 +60,9 @@ public class ProviderManager2 {
 
 	@Autowired
 	private ProviderExtDao providerExtDao;
+
+	@Autowired
+	private SecurityInfoManager securityInfoManager;
 	
 	public List<Provider> getProviders(LoggedInInfo loggedInInfo, Boolean active) {
 		List<Provider> results = null;
@@ -746,5 +749,36 @@ public class ProviderManager2 {
 		//--- log action ---
 		LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.updateProvider, providerNo=" + provider.getProviderNo(), null);
 
+	}
+
+	public boolean updateProviderLinkingRulesProperty(LoggedInInfo loggedInInfo, String value) {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object (_admin or _lab)");
+		}
+
+		List<Property> properties = propertyDao.findGlobalByName(Property.PROPERTY_KEY.provider_linking_rules);
+		if (properties.size() > 0) {
+			for (Property property: properties) {
+				property.setValue(value);
+				propertyDao.merge(property);
+			}
+		} else {
+			Property property = new Property();
+			property.setName(Property.PROPERTY_KEY.provider_linking_rules.name());
+			property.setValue(value);
+			propertyDao.persist(property);
+		}
+
+		return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+	}
+
+	public boolean viewProviderLinkingRulesPropertyStatus(LoggedInInfo loggedInInfo) {
+		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.READ, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("missing required security object (_admin or _lab)");
+		}
+
+		return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
 	}
 }

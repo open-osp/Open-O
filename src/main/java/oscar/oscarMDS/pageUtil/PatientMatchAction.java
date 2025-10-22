@@ -35,17 +35,23 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.ProviderManager2;
 import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 
+import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 
 
 public class PatientMatchAction extends Action {
    
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+	private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
+	private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	
    public PatientMatchAction() {
    }
@@ -63,13 +69,27 @@ public class PatientMatchAction extends Action {
       String demographicNo = request.getParameter("demographicNo");
       String labNo = request.getParameter("labNo");
       String labType = request.getParameter("labType");
+      LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
       
       String newURL = "";
 
       try {
          CommonLabResultData.updatePatientLabRouting(labNo, demographicNo,labType);
+         boolean mrpAttached = false;
+
+         // Check if provider linking rules are enabled
+         if (providerManager2.viewProviderLinkingRulesPropertyStatus(loggedInInfo)) {
+            // Get the demographic's MRP
+            Provider mrp = demographicManager.getMRP(loggedInInfo, Integer.parseInt(demographicNo));
+            if (mrp != null) {
+               mrpAttached = true;
+               ProviderLabRouting routing = new ProviderLabRouting();
+               routing.route(labNo, mrp.getProviderNo(), null, labType);
+            }
+         }
+         
          newURL = mapping.findForward("success").getPath();
-         newURL = newURL + "?demographicNo="+demographicNo;
+         newURL = newURL + "?demographicNo="+demographicNo + "&mrpAttached=" + mrpAttached;
       } catch (Exception e) {
          MiscUtils.getLogger().debug("exception in ReportReassignAction:"+e);
          newURL = mapping.findForward("failure").getPath();
