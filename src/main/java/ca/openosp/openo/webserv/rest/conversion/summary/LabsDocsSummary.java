@@ -180,7 +180,7 @@ public class LabsDocsSummary implements Summary {
             //item.setLinkTitle(title + serviceDateStr);
             //item.setTitle(title);
             //key = StringUtils.maxLenString(curDoc.getDescription(), MAX_LEN_KEY, CROP_LEN_KEY, ELLIPSES) + "(" + serviceDateStr + ")";
-            ///key = StringEscapeUtils.escapeJavaScript(key);
+            ///key = StringEscapeUtils.escapeEcmaScript(key);
 
             list.add(summaryItem);
             count++;

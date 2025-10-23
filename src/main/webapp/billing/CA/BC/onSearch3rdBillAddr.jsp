@@ -66,13 +66,13 @@
         if ("search_name".equals(search_mode)) {
             String[] temp = keyword.split("\\,\\p{Space}*");
             if (temp.length > 1) {
-                where = "company_name like '" + StringEscapeUtils.escapeSql(temp[0]) + "%' and company_name like '"
-                        + StringEscapeUtils.escapeSql(temp[1]) + "%'";
+                where = "company_name like '" + temp[0] + "%' and company_name like '"
+                        + temp[1] + "%'";
             } else {
-                where = "company_name like '" + StringEscapeUtils.escapeSql(temp[0]) + "%'";
+                where = "company_name like '" + temp[0] + "%'";
             }
         } else {
-            where = search_mode + " like '" + StringEscapeUtils.escapeSql(keyword) + "%'";
+            where = search_mode + " like '" + keyword + "%'";
         }
         String sql = "select * from billing_on_3rdPartyAddress where " + where + " order by " + orderBy;// + " limit "
 //						+ strLimit1 + "," + strLimit2;

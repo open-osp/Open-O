@@ -1419,14 +1419,6 @@
     "optional" : false,
     "integrity" : "sha512:jS/pp1UkHNV2rZTiwbhz3IExY9W7mT4/Z30Bkms9clWW54rE0xCBNv9fhFvidgaL2gSr69RHvzgeCxb8EMmJDw=="
   }, {
-    "groupId" : "net.sf.ezmorph",
-    "artifactId" : "ezmorph",
-    "version" : "1.0.6",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:FtML5WRyO3TzErTn0G80k3D7ZyazFid4yGnNcj7KKkDElywnV7PhB+GCDOwNcLC9K5bvzUZlGPxkSV9675eWeg=="
-  }, {
     "groupId" : "net.sf.jasperreports",
     "artifactId" : "jasperreports",
     "version" : "6.17.0",
@@ -1442,15 +1434,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:OVOQC+vjj0JCSZ0QbVlCX1S3PAR4wwUPDcCRfVw2zDX5TM/qlua/hemxKCvVcvVa/vG0hfgfXtlJPMTTgo9aCw=="
-  }, {
-    "groupId" : "net.sf.json-lib",
-    "artifactId" : "json-lib",
-    "version" : "2.4",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:yfYt9YnRrRZoSzWE4dSuzMO8bfphnTvQkyQGKftPV1dqnGK9hOOw7L3+dFRfGXYNJ1s/GUryIK7zT3HZ/y7Dsw==",
-    "classifier" : "jdk15"
   }, {
     "groupId" : "net.shibboleth.utilities",
     "artifactId" : "java-support",
