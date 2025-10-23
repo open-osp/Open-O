@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.EncounterFormDao;
 import ca.openosp.openo.commn.dao.ReportTableFieldCaptionDao;
@@ -63,7 +62,7 @@ public class RptTableFieldNameCaption {
     public boolean insertOrUpdateRecord() {
         boolean ret;
         String sql = "select id from reportTableFieldCaption where table_name = '"
-                + StringEscapeUtils.escapeSql(table_name) + "' and name='" + StringEscapeUtils.escapeSql(name) + "'";
+                + table_name + "' and name='" + name + "'";
         try {
             ResultSet rs = DBHelp.searchDBRecord(sql);
             if (rs.next()) {
@@ -119,7 +118,7 @@ public class RptTableFieldNameCaption {
     public Properties getNameCaptionProp(String tableName) {
         Properties ret = new Properties();
         String sql = "select name, caption from reportTableFieldCaption where table_name = '"
-                + StringEscapeUtils.escapeSql(tableName) + "'";
+                + tableName + "'";
         try {
             ResultSet rs = DBHelp.searchDBRecord(sql);
             while (rs.next()) {

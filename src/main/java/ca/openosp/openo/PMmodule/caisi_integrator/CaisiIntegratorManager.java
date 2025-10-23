@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 import ca.openosp.openo.caisi_integrator.ws.transfer.FacilityConsentPair;
 import ca.openosp.openo.caisi_integrator.ws.transfer.SetConsentTransfer;
 import ca.openosp.openo.utility.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import ca.openosp.openo.caisi_integrator.ws.CachedDemographicNote;

@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -232,22 +231,21 @@ public class ReportManager {
             for (int i = 0; i < reports.size(); i++) {
                 Element report = reports.get(i);
 
-                String templateid = StringEscapeUtils.escapeSql(report.getAttributeValue("id"));
+                String templateid = report.getAttributeValue("id");
                 if (templateid == null) return "Error: Attribute 'id' missing in <report> tag";
 
-                String templateTitle = StringEscapeUtils.escapeSql(report.getAttributeValue("title"));
+                String templateTitle = report.getAttributeValue("title");
                 if (templateTitle == null) return "Error: Attribute 'title' missing in <report> tag";
 
-                String templateDescription = StringEscapeUtils.escapeSql(report.getAttributeValue("description"));
+                String templateDescription = report.getAttributeValue("description");
                 if (templateDescription == null) return "Error: Attribute 'description' missing in <report> tag";
 
-                String querysql = StringEscapeUtils.escapeSql(report.getChildText("query"));
+                String querysql = report.getChildText("query");
                 if (querysql == null || querysql.length() == 0)
                     return "Error: The sql query is missing in <report> tag";
                 XMLOutputter reportout = new XMLOutputter();
                 String reportXML = reportout.outputString(report).trim();
                 reportXML = UtilXML.unescapeXML(reportXML);
-                reportXML = StringEscapeUtils.escapeSql(reportXML);
                 String active = report.getAttributeValue("active");
                 int activeint;
                 try {

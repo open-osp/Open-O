@@ -1418,7 +1418,7 @@ public class RxUtil {
                 //get date discontinued
                 //get reason for discontinued
                 Date archivedDate = drug.getArchivedDate();
-                // String archDate = rs.getString("archived_date");
+                // String archDate = rs.getProperty("archived_date");
                 String archDate = RxUtil.DateToString(archivedDate);
                 String archReason = drug.getArchivedReason();
 
