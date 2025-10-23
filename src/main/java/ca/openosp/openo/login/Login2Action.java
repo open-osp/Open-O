@@ -57,6 +57,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -252,14 +254,26 @@ public final class Login2Action extends ActionSupport {
 
             logger.debug("nextPage: " + nextPage);
             if (nextPage != null) {
-                // set current facility
-                String facilityIdString = request.getParameter(SELECTED_FACILITY_ID);
-                Facility facility = facilityDao.find(Integer.parseInt(facilityIdString));
-                request.getSession().setAttribute(SessionConstants.CURRENT_FACILITY, facility);
-                String username = (String) request.getSession().getAttribute("user");
-                LogAction.addLog(username, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIdString, ip);
-                response.sendRedirect(nextPage);
-                return NONE;
+                try {
+                    URI url = new URI(nextPage);
+
+                    if (url.isAbsolute()) {
+                        logger.warn("Rejected absolute redirect URL: " + nextPage);
+                        return NONE;
+                    } else {
+                        // set current facility
+                        String facilityIdString = request.getParameter(SELECTED_FACILITY_ID);
+                        Facility facility = facilityDao.find(Integer.parseInt(facilityIdString));
+                        request.getSession().setAttribute(SessionConstants.CURRENT_FACILITY, facility);
+                        String username = (String) request.getSession().getAttribute("user");
+                        LogAction.addLog(username, LogConst.LOGIN, LogConst.CON_LOGIN, "facilityId=" + facilityIdString, ip);
+                        response.sendRedirect(nextPage);
+                        return NONE;
+                    }
+                } catch (URISyntaxException e) {
+                    MiscUtils.getLogger().error("Invalid nextPage parameter: " + nextPage, e);
+                    return NONE;
+                }
             }
 
             if (cl.isBlock(ip, userName)) {
