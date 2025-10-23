@@ -27,9 +27,8 @@ package ca.openosp.openo.encounter.pageUtil;
 
 import ca.openosp.openo.services.security.SecurityManager;
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -96,6 +95,9 @@ public class EctDisplayAction extends ActionSupport {
         }
 
     }
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws IOException, ServletException {
         EctSessionBean bean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean");
@@ -193,9 +195,7 @@ public class EctDisplayAction extends ActionSupport {
                                 forward = "error";
                             }
                         } else if (isJsonRequest) {
-                            JsonConfig config = new JsonConfig();
-                            config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
-                            JSONObject json = JSONObject.fromObject(Dao.getMap(), config);
+                            ObjectNode json = objectMapper.valueToTree(Dao.getMap());
                             response.getOutputStream().write(json.toString().getBytes());
                             return null;
                         } else {

@@ -25,8 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ca.openosp.OscarProperties;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -59,6 +60,9 @@ public class DocumentUpload2Action extends ActionSupport {
 
     private static Logger logger = MiscUtils.getLogger();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws Exception {
         return executeUpload();
@@ -171,8 +175,8 @@ public class DocumentUpload2Action extends ActionSupport {
                 docFile = null;
             }
         }
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = JSONObject.fromObject(map);
+        ArrayNode jsonArray = objectMapper.createArrayNode();
+        ObjectNode jsonObject = objectMapper.valueToTree(map);
         jsonArray.add(jsonObject);
         response.getOutputStream().write(jsonArray.toString().getBytes());
         return null;

@@ -40,7 +40,7 @@ import javax.persistence.Entity;
 import javax.persistence.PostUpdate;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.drools.FactException;
 import org.drools.RuleBase;

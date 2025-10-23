@@ -31,7 +31,8 @@ import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
-import net.sf.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.dao.DemographicDao;
@@ -52,6 +53,9 @@ public class DemographicPatientStatusRosterStatusHandler {
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     DemographicExtArchiveDao demographicExtArchiveDao = SpringUtils.getBean(DemographicExtArchiveDao.class);
 
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public Boolean setPatientStatusInactiveJson(String jsonString) {
         Boolean result = false;
         if (jsonString == null || jsonString.isEmpty()) return false;
@@ -64,10 +68,10 @@ public class DemographicPatientStatusRosterStatusHandler {
         if (!jsonString.endsWith("]")) {
             jsonString = jsonString + "]";
         }
-        JSONArray jsonArray = JSONArray.fromObject(jsonString);
+        ArrayNode jsonArray = objectMapper.valueToTree(jsonString);
         Integer arraySize = jsonArray.size();
         for (int i = 0; i < arraySize; i++) {
-            result = setPatientStatusInactive(jsonArray.getString(i));
+            result = setPatientStatusInactive(jsonArray.get(i).asText());
             if (!result) return false;
         }
         return true;

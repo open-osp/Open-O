@@ -26,9 +26,10 @@
 package ca.openosp.openo.encounter.oscarMeasurements.pageUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringEscapeUtils;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.struts2.ServletActionContext;
@@ -67,6 +68,9 @@ public class EctMeasurements2Action extends ActionSupport {
 
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws ServletException, IOException {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_measurement", "w",
@@ -223,7 +227,6 @@ public class EctMeasurements2Action extends ActionSupport {
                 inputType = request.getParameter(inputTypeName);
                 mInstrc = request.getParameter(mInstrcName);
                 comments = request.getParameter(commentsName);
-                comments = org.apache.commons.lang.StringEscapeUtils.escapeSql(comments);
                 validation = request.getParameter(validationName);
                 dateObserved = request.getParameter(dateName);
 
@@ -279,10 +282,10 @@ public class EctMeasurements2Action extends ActionSupport {
             System.out.println("=== END DEBUG ===");
 
             if (ajax) {
-                JSONObject obj = new JSONObject();
-                JSONArray errorObj = new JSONArray();
+                ObjectNode obj = objectMapper.createObjectNode();
+                ArrayNode errorObj = objectMapper.createArrayNode();
                 obj.put("errors", errorObj);
-                obj.write(response.getWriter());
+                response.getWriter().print(obj.toString());
                 return null;
             }
 
@@ -326,12 +329,12 @@ public class EctMeasurements2Action extends ActionSupport {
         } // create note
 
         if (ajax) {
-            JSONObject json = new JSONObject();
+            ObjectNode json = objectMapper.createObjectNode();
             json.put("encounterText", textOnEncounter);
-            json.write(response.getWriter());
+            response.getWriter().print(json.toString());
             return null;
         } else {
-            request.setAttribute("textOnEncounter", StringEscapeUtils.escapeJavaScript(textOnEncounter));
+            request.setAttribute("textOnEncounter", StringEscapeUtils.escapeEcmaScript(textOnEncounter));
             return SUCCESS;
         }
     }

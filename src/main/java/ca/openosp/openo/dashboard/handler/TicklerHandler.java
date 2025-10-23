@@ -39,7 +39,8 @@ import ca.openosp.openo.commn.model.Tickler;
 import ca.openosp.openo.managers.TicklerManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
-import net.sf.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 
 public class TicklerHandler {
@@ -64,6 +65,9 @@ public class TicklerHandler {
      * String taskAssignedTo
      * String ticklerCategoryId
      */
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public void createMasterTickler(Map<String, String[]> ticklerParameters) {
 
         Tickler tickler = new Tickler();
@@ -188,13 +192,13 @@ public class TicklerHandler {
             jsonString = jsonString + "]";
         }
 
-        JSONArray jsonArray = JSONArray.fromObject(jsonString);
+        ArrayNode jsonArray = objectMapper.valueToTree(jsonString);
 
         Integer arraySize = jsonArray.size();
         Integer[] demographicArray = new Integer[arraySize];
 
         for (int i = 0; i < arraySize; i++) {
-            demographicArray[i] = jsonArray.getInt(i);
+            demographicArray[i] = jsonArray.get(i).asInt();
         }
 
         setDemographicArray(demographicArray);

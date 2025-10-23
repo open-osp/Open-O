@@ -26,7 +26,7 @@ package ca.openosp.openo.documentManager;
 
 import com.lowagie.text.DocumentException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
