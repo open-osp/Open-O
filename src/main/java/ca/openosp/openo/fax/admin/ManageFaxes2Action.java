@@ -121,7 +121,8 @@ public class ManageFaxes2Action extends ActionSupport {
             if (faxJob.getStatus().equals(FaxJob.STATUS.SENT)) {
                 faxJob.setStatus(FaxJob.STATUS.CANCELLED);
                 faxJobDao.merge(faxJob);
-                result = "{success:true}";
+                result = objectMapper.createObjectNode();
+                result.put("success", true);
 
             }
 
@@ -141,7 +142,8 @@ public class ManageFaxes2Action extends ActionSupport {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
                             HttpEntity httpEntity = httpResponse.getEntity();
-                            result = EntityUtils.toString(httpEntity);
+                            result = objectMapper.createObjectNode();
+                            result = (ObjectNode) objectMapper.readTree(EntityUtils.toString(httpEntity));
 
                             faxJob.setStatus(FaxJob.STATUS.CANCELLED);
                             faxJobDao.merge(faxJob);
