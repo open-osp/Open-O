@@ -47,7 +47,7 @@
 <%@ page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.util.StringUtils" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
 <%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
 <%@ page import="ca.openosp.openo.form.FrmBCAR2020Record" %>
@@ -191,7 +191,7 @@
                         {
                             value = StringUtils.lineBreaks(value);
                         }
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         
                         out.println("info = '" + value + "'");
                     %>
@@ -205,7 +205,7 @@
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         out.println("info = '" + value + "'");
                     %>
                         break;
@@ -218,7 +218,7 @@
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         out.println("info = '" + value + "'");
                     %>
                         break;
@@ -231,7 +231,7 @@
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         out.println("info = '" + value + "'");
                     %>
                         break;
@@ -244,7 +244,7 @@
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         out.println("info = '" + value + "'");
                     %>
                         break;
@@ -257,7 +257,7 @@
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeJavaScript(value);
+                        value = StringEscapeUtils.escapeEcmaScript(value);
                         out.println("info = '" + value + "'");
                     %>
                         break;

@@ -31,7 +31,7 @@
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.MeasurementHelper" %>
@@ -321,7 +321,7 @@
                                       demoNo="<%=bean.demographicNo%>" programId="<%=pgId%>">
                 <tr>
                     <td><a href="javascript:void(0)"
-                           onClick="popupPage('<%=bsurl%>/tickler/ticklerAdd.jsp?demographic_no=<%=bean.demographicNo%>&name=<%=StringEscapeUtils.escapeJavaScript(bean.getPatientLastName() +"," + bean.getPatientFirstName())%>');return false;">Add
+                           onClick="popupPage('<%=bsurl%>/tickler/ticklerAdd.jsp?demographic_no=<%=bean.demographicNo%>&name=<%=StringEscapeUtils.escapeEcmaScript(bean.getPatientLastName() +"," + bean.getPatientFirstName())%>');return false;">Add
                         Tickler</a></td>
                 </tr>
             </caisirole:SecurityAccess>

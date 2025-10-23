@@ -44,7 +44,7 @@
         import="java.util.*, java.net.URLEncoder, ca.openosp.openo.db.*, ca.openosp.MyDateFormat, ca.openosp.openo.waitinglist.WaitingList, ca.openosp.openo.commn.OtherIdManager" %>
 <%@ page import="ca.openosp.openo.log.*" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 
 <%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
 <%@page import="ca.openosp.openo.PMmodule.service.AdmissionManager" %>

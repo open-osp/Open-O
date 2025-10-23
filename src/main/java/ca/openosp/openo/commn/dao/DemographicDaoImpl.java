@@ -1854,13 +1854,11 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
 
         if (bean.getFirstName() != null && bean.getFirstName().length() > 0) {
             firstName = bean.getFirstName();
-            // firstName = StringEscapeUtils.escapeSql(firstName);
             firstNameL = firstName + "%";
         }
 
         if (bean.getLastName() != null && bean.getLastName().length() > 0) {
             lastName = bean.getLastName();
-            // lastName = StringEscapeUtils.escapeSql(lastName);
             lastNameL = lastName + "%";
         }
 

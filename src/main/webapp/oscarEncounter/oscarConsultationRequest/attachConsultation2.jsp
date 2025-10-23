@@ -39,7 +39,7 @@ String userlastname = (String) session.getAttribute("userlastname");
 	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
 <%@ page import="ca.openosp.openo.lab.ca.on.*"%>
 <%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData"%>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@ page import="org.apache.commons.text.StringEscapeUtils"%>
 <%@page import="ca.openosp.openo.utility.SessionConstants"%>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao"%>
@@ -315,7 +315,7 @@ function toggleSelectAll() {
                                 String onClick = "";
 
                                 if (curDoc.isPDF()) {
-                                    onClick = "javascript:previewPDF('" + curDoc.getDocId() + "','" + StringEscapeUtils.escapeJavaScript(url) + "');";
+                                    onClick = "javascript:previewPDF('" + curDoc.getDocId() + "','" + StringEscapeUtils.escapeEcmaScript(url) + "');";
                                 } else if (curDoc.isImage()) {
                                     onClick = "javascript:previewImage('" + url + "');";
                                 } else {

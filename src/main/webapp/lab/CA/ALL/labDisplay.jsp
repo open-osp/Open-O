@@ -33,7 +33,7 @@
 <%@ page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
 <%@ page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@ page import="org.apache.commons.lang.builder.ReflectionToStringBuilder" %>
+<%@ page import="org.apache.commons.lang3.builder.ReflectionToStringBuilder" %>
 <%@ page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="org.w3c.dom.Document" %>
 <%@ page import="ca.openosp.openo.caisi_integrator.ws.CachedDemographicLabResult" %>
@@ -55,7 +55,7 @@
 <%@ page import="ca.openosp.openo.commn.model.MeasurementMap, ca.openosp.openo.commn.dao.MeasurementMapDao" %>
 <%@ page import="ca.openosp.openo.commn.model.Tickler" %>
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page
         import="ca.openosp.openo.casemgmt.service.CaseManagementManager, ca.openosp.openo.commn.dao.Hl7TextMessageDao, ca.openosp.openo.commn.model.Hl7TextMessage,ca.openosp.openo.commn.dao.Hl7TextInfoDao,ca.openosp.openo.commn.model.Hl7TextInfo" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session"/>

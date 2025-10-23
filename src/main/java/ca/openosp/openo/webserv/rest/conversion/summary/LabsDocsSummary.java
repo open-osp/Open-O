@@ -142,7 +142,7 @@ public class LabsDocsSummary implements Summary {
 
         for (int i = 0; i < docList.size(); i++) {
             EDoc curDoc = docList.get(i);
-            String dispFilename = org.apache.commons.lang.StringUtils.trimToEmpty(curDoc.getFileName());
+            String dispFilename = org.apache.commons.lang3.StringUtils.trimToEmpty(curDoc.getFileName());
             String dispStatus = String.valueOf(curDoc.getStatus());
 
             if (dispStatus.equals("A")) dispStatus = "active";

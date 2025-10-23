@@ -35,7 +35,7 @@
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="java.util.List" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.DrugDao,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.utility.MiscUtils,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.PMmodule.dao.ProviderDao,ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 

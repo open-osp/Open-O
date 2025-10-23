@@ -43,7 +43,7 @@
 <%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
 <%@ page import="ca.openosp.openo.managers.FaxManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.PMmodule.service.ProviderManager" %>
 <%@ page import="ca.openosp.openo.commn.model.*" %>
 <%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
@@ -266,7 +266,7 @@
                 useSC = true;
                 <%for(int i=0; i<vecAddressName.size(); i++) {%>
                 if (document.getElementById("addressSel").value == "<%=i%>") {
-                    scAddress = "<%=Encode.forUriComponent(StringEscapeUtils.unescapeHtml((String)vecAddress.get(i)))%>";
+                    scAddress = "<%=Encode.forUriComponent(StringEscapeUtils.unescapeHtml4((String)vecAddress.get(i)))%>";
                 }
                 <%}
             }%>
@@ -343,7 +343,7 @@
                         <%--    	 <% if(echartPreferencesMap.getOrDefault("echart_paste_fax_note", false)) {--%>
                         <% String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime()); %>
                         // %>
-                        text = "[Rx faxed to " + '<%= pharmacy!=null?StringEscapeUtils.escapeJavaScript(pharmacy.getName()):""%>' + " Fax#: " + '<%= pharmacy!=null?pharmacy.getFax():""%>';
+                        text = "[Rx faxed to " + '<%= pharmacy!=null?StringEscapeUtils.escapeEcmaScript(pharmacy.getName()):""%>' + " Fax#: " + '<%= pharmacy!=null?pharmacy.getFax():""%>';
 
                         <%--    	 <% if (rxPreferencesMap.getOrDefault("rx_paste_provider_to_echart", false)) { %>--%>
                         text += " prescribed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>";

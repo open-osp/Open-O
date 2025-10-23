@@ -40,7 +40,7 @@
 %>
 
 
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page
         import="ca.openosp.openo.encounter.pageUtil.NavBarDisplayDAO, ca.openosp.openo.util.*, java.util.ArrayList, java.util.Date, java.util.Calendar, java.io.IOException" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>

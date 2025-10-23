@@ -354,7 +354,7 @@ public class NotesService extends AbstractServiceImpl {
         }
 
         String noteTxt = note.getNote();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = org.apache.commons.lang3.StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return null;
 
         caseMangementNote.setNote(noteTxt);
@@ -656,7 +656,7 @@ public class NotesService extends AbstractServiceImpl {
         }
 
         String noteTxt = note.getNote();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = org.apache.commons.lang3.StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return null;
 
         caseMangementNote.setNote(noteTxt);

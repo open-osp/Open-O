@@ -25,7 +25,7 @@
 --%>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean, ca.openosp.openo.commn.model.Facility" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.PMmodule.model.Program" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>

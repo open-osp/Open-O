@@ -23,7 +23,7 @@
     Ontario, Canada
 
 --%>
-<%@page import="com.indivica.olis.parameters.*,com.indivica.olis.*,com.indivica.olis.queries.*,org.apache.commons.lang.time.DateUtils" %>
+<%@page import="com.indivica.olis.parameters.*,com.indivica.olis.*,com.indivica.olis.queries.*,org.apache.commons.lang3.time.DateUtils" %>
 <%@page
         import="ca.openosp.OscarProperties,java.net.InetAddress,java.io.*,java.util.List,java.util.*,javax.net.ssl.*,java.security.*,java.security.cert.*" %>
 <%@page
@@ -134,7 +134,7 @@
     <%
             }
         } catch (Exception e) {
-            error = org.apache.commons.lang.exception.ExceptionUtils.getStackTrace(e);
+            error = org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace(e);
         }
     %>
 </table>

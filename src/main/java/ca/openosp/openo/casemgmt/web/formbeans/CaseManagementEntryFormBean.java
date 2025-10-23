@@ -30,6 +30,8 @@ import ca.openosp.openo.casemgmt.web.CheckIssueBoxBean;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class CaseManagementEntryFormBean {
     private CaseManagementNote caseNote;
     private CaseManagementCPP cpp;
@@ -338,7 +340,7 @@ public class CaseManagementEntryFormBean {
     }
 
     public String getTrimmedNoteText() {
-        return org.apache.commons.lang.StringUtils.trimToNull(this.getCaseNote_note());
+        return StringUtils.trimToNull(this.getCaseNote_note());
     }
 
     public Integer getHourOfEncounterTime() {

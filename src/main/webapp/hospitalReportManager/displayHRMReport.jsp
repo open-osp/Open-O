@@ -9,7 +9,7 @@
 
 --%>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
-<%@page import="org.apache.commons.lang.StringUtils,ca.openosp.openo.log.*" %>
+<%@page import="org.apache.commons.lang3.StringUtils,ca.openosp.openo.log.*" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@ page import="ca.openosp.OscarProperties" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>

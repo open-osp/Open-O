@@ -27,7 +27,7 @@
 
 <%@ include file="/casemgmt/taglibs.jsp" %>
 
-<%@page import="java.util.Enumeration, org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="java.util.Enumeration, org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.casemgmt.web.formbeans.*, ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.OscarProperties" %>
 <%@page import="ca.openosp.openo.commn.model.UserProperty" %>
@@ -211,7 +211,7 @@
                      paramValue = request.getParameter(paramName);
 
                  %>
-                params += "&<%=paramName%>=<%=StringEscapeUtils.escapeJavaScript(paramValue)%>";
+                params += "&<%=paramName%>=<%=StringEscapeUtils.escapeEcmaScript(paramValue)%>";
                 <%
 
                  }

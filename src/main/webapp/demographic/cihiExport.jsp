@@ -40,7 +40,7 @@
     }
 %>
 <%@page import="ca.openosp.openo.commn.dao.DataExportDao" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
 <%@page import="ca.openosp.openo.report.data.DemographicSets" %>
 <%@page import="java.util.List" %>
 <%@page import="ca.openosp.openo.commn.model.DataExport" %>

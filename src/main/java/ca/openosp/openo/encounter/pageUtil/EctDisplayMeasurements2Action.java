@@ -302,7 +302,7 @@ public class EctDisplayMeasurements2Action extends EctDisplayAction {
             int maxsize = (str.length() - overflow) > 0 ? str.length() - overflow : 1;
             int minsize = maxsize > 3 ? maxsize - 3 : 0;
             String ellipses = new String();
-            ellipses = org.apache.commons.lang.StringUtils.rightPad(ellipses, maxsize - minsize, '.');
+            ellipses = org.apache.commons.lang3.StringUtils.rightPad(ellipses, maxsize - minsize, '.');
             tmp = StringUtils.maxLenString(str, maxsize, minsize, ellipses);
         } else tmp = str;
 

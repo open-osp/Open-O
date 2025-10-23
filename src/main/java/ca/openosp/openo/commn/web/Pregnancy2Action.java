@@ -31,7 +31,7 @@ import com.opensymphony.xwork2.ActionSupport;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.utility.LoggedInInfo;

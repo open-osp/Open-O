@@ -42,7 +42,7 @@
 <%@page import="java.text.SimpleDateFormat" %>
 <%@ page
         import="ca.openosp.openo.utility.WebUtils" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -441,7 +441,7 @@
                                     %>
                                 </oscar:oscarPropertiesCheck>
                                 <div style="<%=updatableContent==true?"":"visibility: hidden"%>">
-                                    <input onclick="split('<%=docId%>','<%=StringEscapeUtils.escapeJavaScript(demoName) %>')"
+                                    <input onclick="split('<%=docId%>','<%=StringEscapeUtils.escapeEcmaScript(demoName) %>')"
                                            type="button" value="<fmt:message key="inboxmanager.document.split"/>"/>
                                     <input id="rotate180btn_<%=docId %>" onclick="rotate180('<%=docId %>')"
                                            type="button"

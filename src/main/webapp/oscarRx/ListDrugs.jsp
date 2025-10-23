@@ -25,7 +25,7 @@
 --%>
 
 <%@page import="ca.openosp.openo.commn.model.PartialDate" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.casemgmt.web.PrescriptDrug" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -462,7 +462,7 @@
                     if (prescriptDrug.getRemoteFacilityId() == null) {
                 %>
                 <a href="javascript:void(0);" title="Annotation"
-                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=prescriptIdInt%>&amp;demo=<%=bean.getDemographicNo()%>&amp;drugSpecial=<%=StringEscapeUtils.escapeJavaScript(specialText)%>','anwin','width=400,height=500');">
+                   onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=prescriptIdInt%>&amp;demo=<%=bean.getDemographicNo()%>&amp;drugSpecial=<%=StringEscapeUtils.escapeEcmaScript(specialText)%>','anwin','width=400,height=500');">
                     <%if (!isPrevAnnotation) {%> <img src="<%= request.getContextPath() %>/images/notes.gif" alt="rxAnnotation" height="16"
                                                       width="13" border="0"><%} else {%><img
                         src="<%= request.getContextPath() %>/images/filledNotes.gif" height="16" width="13" alt="rxFilledNotes" border="0"> <%}%></a>
@@ -628,7 +628,7 @@
                 codeDescr = codingSystemManager.getCodeDescription(drugReason.getCodingSystem(), drugReason.getCode());
             }
             if (codeDescr != null) {
-                sb.append(StringEscapeUtils.escapeHtml(codeDescr));
+                sb.append(StringEscapeUtils.escapeHtml4(codeDescr));
             } else {
                 sb.append(drugReason.getCode());
             }

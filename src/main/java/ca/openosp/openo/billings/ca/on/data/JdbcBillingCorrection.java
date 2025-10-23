@@ -107,7 +107,7 @@ public class JdbcBillingCorrection {
 
 				+ "'," + " demographic_no='" + ch1Obj.getDemographic_no() + "'," + " provider_no='"
 				+ ch1Obj.getProviderNo() + "'," + " appointment_no='" + ch1Obj.getAppointment_no() + "',"
-				+ " demographic_name='" + StringEscapeUtils.escapeSql(ch1Obj.getDemographic_name()) + "'," + " sex='"
+				+ " demographic_name='" + StringEscapeUtilsch1Obj.getDemographic_name() + "'," + " sex='"
 				+ ch1Obj.getSex() + "'," + " province='" + ch1Obj.getProvince() + "'," + " billing_date='"
 				+ ch1Obj.getBilling_date() + "'," + " billing_time='" + ch1Obj.getBilling_time() + "'," + " total='"
 				+ ch1Obj.getTotal() + "'," + " paid='" + ch1Obj.getPaid() + "'," + " status='" + ch1Obj.getStatus()

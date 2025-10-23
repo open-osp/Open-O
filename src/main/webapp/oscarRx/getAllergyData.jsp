@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Allergy" %>
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.RemoteDrugAllergyHelper" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
@@ -122,7 +122,7 @@
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        objectMapper.writeValue(out, result)
+        objectMapper.writeValue(out, result);
 
     }
 %>
