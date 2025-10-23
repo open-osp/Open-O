@@ -663,7 +663,11 @@ public class Flowsheet2Action extends ActionSupport {
         ObjectNode obj = objectMapper.createObjectNode();
         obj.put("success", true);
         obj.put("id", id);
-        response.getWriter().write(obj.toString());
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getWriter(), obj);
 
         MeasurementTemplateFlowSheetConfig.getInstance().reloadFlowsheets();
 

@@ -421,7 +421,10 @@ public class MeasurementData2Action extends ActionSupport {
             }
         }
 
-        response.getOutputStream().write(json.toString().getBytes());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getWriter(), json);
         return null;
     }
 

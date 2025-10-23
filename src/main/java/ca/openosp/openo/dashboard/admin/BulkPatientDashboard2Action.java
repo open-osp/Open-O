@@ -185,6 +185,8 @@ public class BulkPatientDashboard2Action extends ActionSupport {
     }
 
     public String getICD9Description() {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         String icd9code = getICD9Code(request);
         String description = diseaseRegistryHandler.getDescription(icd9code);
@@ -194,7 +196,7 @@ public class BulkPatientDashboard2Action extends ActionSupport {
         jsonObject.put("description", description);
 
         try {
-            response.getWriter().write(jsonObject.toString());
+            objectMapper.writeValue(response.getWriter(), jsonObject);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
             logger.error("Error generating JSON response", e);

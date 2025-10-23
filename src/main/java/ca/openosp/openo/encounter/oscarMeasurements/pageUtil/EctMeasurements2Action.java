@@ -331,7 +331,11 @@ public class EctMeasurements2Action extends ActionSupport {
         if (ajax) {
             ObjectNode json = objectMapper.createObjectNode();
             json.put("encounterText", textOnEncounter);
-            response.getWriter().write(json.toString());
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+
+            objectMapper.writeValue(response.getWriter(), json);
             return null;
         } else {
             request.setAttribute("textOnEncounter", StringEscapeUtils.escapeEcmaScript(textOnEncounter));

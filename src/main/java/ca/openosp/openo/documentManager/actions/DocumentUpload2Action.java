@@ -178,7 +178,11 @@ public class DocumentUpload2Action extends ActionSupport {
         ArrayNode jsonArray = objectMapper.createArrayNode();
         ObjectNode jsonObject = objectMapper.valueToTree(map);
         jsonArray.add(jsonObject);
-        response.getOutputStream().write(jsonArray.toString().getBytes());
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(response.getOutputStream(), jsonObject);
         return null;
     }
 

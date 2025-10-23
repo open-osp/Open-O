@@ -58,7 +58,7 @@
     String atcCode = request.getParameter("atcCode");
     String id = request.getParameter("id");
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper = new ObjectMapper();
 
     String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
     if (disabled.equals("false")) {
@@ -92,7 +92,7 @@
         if (allergyWarnings != null && allergyWarnings.length > 0) {
             highestSeverityAllergy = allergyWarnings[0];
             for (Allergy allergy : allergyWarnings) {
-                ObjectNode allergyResult = objectMapper.createObjectNode()
+                ObjectNode allergyResult = objectMapper.createObjectNode();
                 allergyResult.put("DESCRIPTION", StringUtils.trimToEmpty(allergy.getDescription()));
                 allergyResult.put("reaction", StringUtils.trimToEmpty(allergy.getReaction()));
                 allergyResult.put("severity", StringUtils.trimToEmpty(allergy.getSeverityOfReactionDesc()));
