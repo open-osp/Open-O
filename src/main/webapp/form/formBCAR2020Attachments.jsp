@@ -186,79 +186,73 @@
                     case "MedicalHistory":
                     <%
                         value = cmgmtMgr.listNotes("MedHistory", providerNo, demoNoStr);
-                        
+
                         if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        
-                        out.println("info = '" + value + "'");
+
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                     case "ongoingConcerns":
                     <%
                         value = cmgmtMgr.listNotes("Concerns", providerNo, demoNoStr);
 
-                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))                      
+                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        out.println("info = '" + value + "'");
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                     case "FamilyHistory":
                     <%
                         value = cmgmtMgr.listNotes("FamHistory", providerNo, demoNoStr);
 
-                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))                      
+                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        out.println("info = '" + value + "'");
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                     case "SocialHistory":
                     <%
                         value = cmgmtMgr.listNotes("SocHistory", providerNo, demoNoStr);
 
-                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))                      
+                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        out.println("info = '" + value + "'");
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                     case "OtherMeds":
                     <%
                         value = cmgmtMgr.listNotes("OMeds", providerNo, demoNoStr);
 
-                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))                      
+                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        out.println("info = '" + value + "'");
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                     case "Reminders":
                     <%
                         value = cmgmtMgr.listNotes("Reminders", providerNo, demoNoStr);
 
-                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))                      
+                        if (pasteFmt == null || pasteFmt.equalsIgnoreCase("single"))
                         {
                             value = StringUtils.lineBreaks(value);
                         }
 
-                        value = StringEscapeUtils.escapeEcmaScript(value);
-                        out.println("info = '" + value + "'");
+                        out.println("info = '" + Encode.forJavaScript(value) + "'");
                     %>
                         break;
                 }

@@ -48,6 +48,7 @@
 <%@ page import="java.util.*,java.text.*,java.net.*,ca.openosp.*,ca.openosp.openo.util.*" %>
 <%@ page import="org.apache.commons.lang3.*" %>
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
+<%@ page import="org.apache.commons.text.WordUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.*" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="ca.openosp.openo.managers.*" %>

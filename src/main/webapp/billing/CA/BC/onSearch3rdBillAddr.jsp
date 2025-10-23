@@ -97,7 +97,7 @@
 <%@ page errorPage="/errorpage.jsp"
          import="java.util.*,java.sql.*,java.net.*" %>
 <%@ page import="org.apache.commons.text.StringEscapeUtils" %>
-<%@ page import="org.apache.commons.lang3.text.WordUtils" %>
+<%@ page import="org.apache.commons.text.WordUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 

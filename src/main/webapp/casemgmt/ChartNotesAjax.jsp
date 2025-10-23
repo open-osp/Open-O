@@ -72,6 +72,7 @@
 <%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 <%@ page import="ca.openosp.openo.util.StringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.Facility" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -1123,7 +1124,7 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
             encounterText = "\n[" + apptDate + " .: " + reason + "]\n";
         }
 
-        encounterText = org.apache.commons.text.StringEscapeUtils.escapeEcmaScript(encounterText);
+        encounterText = Encode.forJavaScript(encounterText);
         return encounterText;
     }
 

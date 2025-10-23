@@ -41,6 +41,7 @@
 <%@page import="ca.openosp.openo.rx.StaticScriptBean" %>
 <%@page import="ca.openosp.openo.prescript.util.RxUtil" %>
 <%@page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@page import="java.util.ArrayList" %>
 <%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
@@ -321,7 +322,7 @@
                                    onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');"/>
                             <input type="button" align="top" value="Add to Favorites" style="width: 100px"
                                    class="ControlPushButton"
-                                   onclick="javascript:addFavorite2(<%=drug.localDrugId%>, '<%=StringEscapeUtils.escapeEcmaScript((drug.customName!=null&&(!drug.customName.equalsIgnoreCase("null")))?drug.customName:drug.brandName)%>');"/>
+                                   onclick="javascript:addFavorite2(<%=drug.localDrugId%>, '<%=Encode.forJavaScript((drug.customName!=null&&(!drug.customName.equalsIgnoreCase("null")))?drug.customName:drug.brandName)%>');"/>
 
 
                             <%

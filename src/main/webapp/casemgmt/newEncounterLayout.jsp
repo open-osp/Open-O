@@ -42,6 +42,7 @@
 <%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %>
 <%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteExt" %>
 <%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 
 <%
@@ -211,7 +212,7 @@
                      paramValue = request.getParameter(paramName);
 
                  %>
-                params += "&<%=paramName%>=<%=StringEscapeUtils.escapeEcmaScript(paramValue)%>";
+                params += "&<%=paramName%>=<%=Encode.forJavaScript(paramValue)%>";
                 <%
 
                  }

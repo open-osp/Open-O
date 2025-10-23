@@ -45,6 +45,7 @@
 <%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicWs" %>
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager" %>
 <%@page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*, ca.openosp.openo.db.*" errorPage="/errorpage.jsp" %>
 <%@ page
@@ -181,10 +182,10 @@
                 if (value) {
                     //show deleted
                     //appt_history_w_deleted
-                    location.href = '<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&last_name=<%=StringEscapeUtils.escapeEcmaScript(demolastname)%>&first_name=<%=StringEscapeUtils.escapeEcmaScript(demofirstname)%>&orderby=<%=orderby%>&displaymode=appt_history&dboperation=appt_history_w_deleted&limit1=<%=strLimit1%>&limit2=<%=strLimit2%>&deleted=true';
+                    location.href = '<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&last_name=<%=Encode.forUriComponent(demolastname)%>&first_name=<%=Encode.forUriComponent(demofirstname)%>&orderby=<%=orderby%>&displaymode=appt_history&dboperation=appt_history_w_deleted&limit1=<%=strLimit1%>&limit2=<%=strLimit2%>&deleted=true';
                 } else {
                     //don't show deleted
-                    location.href = '<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&last_name=<%=StringEscapeUtils.escapeEcmaScript(demolastname)%>&first_name=<%=StringEscapeUtils.escapeEcmaScript(demofirstname)%>&orderby=<%=orderby%>&displaymode=appt_history&dboperation=appt_history&limit1=<%=strLimit1%>&limit2=<%=strLimit2%>';
+                    location.href = '<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&last_name=<%=Encode.forUriComponent(demolastname)%>&first_name=<%=Encode.forUriComponent(demofirstname)%>&orderby=<%=orderby%>&displaymode=appt_history&dboperation=appt_history&limit1=<%=strLimit1%>&limit2=<%=strLimit2%>';
                 }
             }
 
