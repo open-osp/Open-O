@@ -171,7 +171,7 @@ public class SearchDemographicAutoComplete2Action extends ActionSupport {
             response.getWriter().flush();
         } else {
             String jsonString = objectMapper.writeValueAsString(d);
-            response.getWriter().print(jsonString);
+            response.getWriter().write(jsonString);
         }
         return null;
 

@@ -1989,7 +1989,6 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
 
         if (bean.getLastName() != null && bean.getLastName().length() > 0) {
             lastName = bean.getLastName();
-            // SQL escaping removed - Hibernate handles parameterized queries automatically
             lastNameL = "%" + lastName + "%";
         }
 

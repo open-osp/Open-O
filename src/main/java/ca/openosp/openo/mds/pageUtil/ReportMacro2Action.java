@@ -80,7 +80,7 @@ public class ReportMacro2Action extends ActionSupport {
         if (name == null) {
             result.put("success", false);
             result.put("error", "No macro name provided");
-            response.getWriter().print(result.toString());
+            response.getWriter().write(result.toString());
             return null;
         }
 
@@ -103,13 +103,13 @@ public class ReportMacro2Action extends ActionSupport {
         } else {
             result.put("success", false);
             result.put("error", "No macros defined in provider preferences");
-            response.getWriter().print(result.toString());
+            response.getWriter().write(result.toString());
             return null;
         }
 
 
         result.put("success", success);
-        response.getWriter().print(result.toString());
+        response.getWriter().write(result.toString());
         return null;
     }
 

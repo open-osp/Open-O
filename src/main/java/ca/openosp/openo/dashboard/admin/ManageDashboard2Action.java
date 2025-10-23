@@ -183,7 +183,11 @@ public class ManageDashboard2Action extends ActionSupport {
 
             if (isOscarXml) {
                 message = dashboardManager.importIndicatorTemplate(loggedInInfo, filebytes);
-                json = objectMapper.valueToTree(message);
+                try {
+                    json = (ObjectNode) objectMapper.readTree(message);
+                } catch (Exception e) {
+                    MiscUtils.getLogger().error("Failed to read json. ", e);
+                }
             } else {
                 json = objectMapper.createObjectNode();
                 json.put("status", "error");
@@ -284,7 +288,7 @@ public class ManageDashboard2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("JSON response failed", e);
             return "error";

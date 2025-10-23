@@ -71,7 +71,7 @@ public class SearchProviderAutoComplete2Action extends ActionSupport {
 
         response.setContentType("text/x-json");
         ObjectNode jsonArray = objectMapper.valueToTree(d);
-        response.getWriter().print(jsonArray.toString());
+        response.getWriter().write(jsonArray.toString());
         return null;
 
     }

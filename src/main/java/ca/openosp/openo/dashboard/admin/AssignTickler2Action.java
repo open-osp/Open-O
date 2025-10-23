@@ -26,6 +26,7 @@ package ca.openosp.openo.dashboard.admin;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,7 +44,6 @@ import ca.openosp.openo.utility.SpringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
@@ -107,7 +107,7 @@ public class AssignTickler2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("JSON response failed", e);
             return "error";

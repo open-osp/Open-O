@@ -204,7 +204,7 @@ public class ConfigureFax2Action extends ActionSupport {
 
         try {
             MiscUtils.getLogger().info("JSON: " + jsonObject);
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("JSON WRITER ERROR", e);
         }

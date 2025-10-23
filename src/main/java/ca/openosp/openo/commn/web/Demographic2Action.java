@@ -123,7 +123,7 @@ public class Demographic2Action extends ActionSupport {
             }
         }
 
-        response.getWriter().print(results.toString());
+        response.getWriter().write(results.toString());
 
         return null;
     }
@@ -175,7 +175,7 @@ public class Demographic2Action extends ActionSupport {
             }
         }
 
-        response.getWriter().print(results.toString());
+        response.getWriter().write(results.toString());
 
         return null;
     }

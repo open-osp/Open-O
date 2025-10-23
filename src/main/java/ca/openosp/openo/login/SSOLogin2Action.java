@@ -191,7 +191,7 @@ public final class SSOLogin2Action extends ActionSupport {
                 json.put("success", false);
                 json.put("error", "Database connect error" + e.getMessage() + ".");
                 response.setContentType("text/x-json");
-                response.getWriter().print(json.toString());
+                response.getWriter().write(json.toString());
                 return null;
             }
             response.sendRedirect(newURL);

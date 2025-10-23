@@ -118,7 +118,7 @@ public class ReportStatusUpdate2Action extends ActionSupport {
         }
     }
 
-    public String addComment() throws JsonProcessingException, JsonMappingException {
+    public String addComment() {
         int labNo = Integer.parseInt(request.getParameter("segmentID"));
         String providerNo = request.getParameter("providerNo");
         char status = request.getParameter("status").charAt(0);
@@ -136,7 +136,13 @@ public class ReportStatusUpdate2Action extends ActionSupport {
 
         String now = ConversionUtils.toDateString(Calendar.getInstance().getTime(), "dd-MMM-yy HH mm");
         String jsonStr = "{date:" + now + "}";
-        ObjectNode json = (ObjectNode) objectMapper.readTree(jsonStr);
+        ObjectNode json = objectMapper.createObjectNode();
+        try {
+            json = (ObjectNode) objectMapper.readTree(jsonStr);
+        }
+        catch (Exception e) {
+            logger.error("FAILED TO CREATE JSON", e);
+        } 
         logger.info("JSON " + json.toString());
         response.setContentType("application/json");
         try {

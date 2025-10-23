@@ -557,8 +557,10 @@ public class CaisiIntegratorUpdateTask extends TimerTask {
             providerCommunicationList = CaisiIntegratorManager.getProviderCommunication(systemLoggedInInfo);
             receivedMessages = messengerIntegratorManager.receiveIntegratedMessages(systemLoggedInInfo,
                     providerCommunicationList);
-        } catch (java.io.IOException e) {
+        } catch (MalformedURLException e) {
             MiscUtils.getLogger().error("Error while retreiving messages for Oscar Messaging members", e);
+        } catch (IOException e) {
+            MiscUtils.getLogger().error("Error while retreiving integreted messages for Oscar Messaging members", e);
         }
 
         try {

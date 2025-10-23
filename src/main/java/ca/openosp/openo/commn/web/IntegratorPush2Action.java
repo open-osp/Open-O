@@ -94,7 +94,7 @@ public class IntegratorPush2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Couldn't return result", e);
         }
@@ -141,7 +141,7 @@ public class IntegratorPush2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Couldn't return result", e);
         }
@@ -182,7 +182,7 @@ public class IntegratorPush2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Couldn't return result", e);
         }

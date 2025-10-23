@@ -105,7 +105,7 @@ public class Renal2Action extends ActionSupport {
     }
 
 
-    public String checkForDx() throws JsonProcessingException, JsonMappingException {
+    public String checkForDx() {
         String demographicNo = request.getParameter("demographicNo");
         String codingSystem = request.getParameter("codingSystem");
         String code = request.getParameter("code");
@@ -116,7 +116,7 @@ public class Renal2Action extends ActionSupport {
         jsonArray.put("result", exists);
         response.setContentType("text/x-json");
         try {
-            response.getWriter().print(jsonArray.toString());
+            response.getWriter().write(jsonArray.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error", e);
         }
@@ -124,7 +124,7 @@ public class Renal2Action extends ActionSupport {
         return null;
     }
 
-    public String addtoDx() throws JsonProcessingException, JsonMappingException {
+    public String addtoDx() {
         String demographicNo = request.getParameter("demographicNo");
         String codingSystem = request.getParameter("codingSystem");
         String code = request.getParameter("code");
@@ -157,7 +157,7 @@ public class Renal2Action extends ActionSupport {
         jsonArray.put("result", id);
         response.setContentType("text/x-json");
         try {
-            response.getWriter().print(jsonArray.toString());
+            response.getWriter().write(jsonArray.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error", e);
         }
@@ -262,7 +262,7 @@ public class Renal2Action extends ActionSupport {
         jsonArray.put("result", StringEscapeUtils.escapeEcmaScript(nextSteps));
         response.setContentType("text/x-json");
         try {
-            response.getWriter().print(jsonArray.toString());
+            response.getWriter().write(jsonArray.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error", e);
         }

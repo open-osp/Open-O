@@ -194,8 +194,8 @@ public class SplitDocument2Action extends ActionSupport {
                 }
 
                 if (result.isEmpty() || result2.isEmpty()) {
-                    String json = "{newDocNum:" + newDocNo + "}";
-                    ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(json);
+                    ObjectNode jsonObject = objectMapper.createObjectNode();
+                    jsonObject.put("newDocNum", newDocNo);
                     response.setContentType("application/json");
                     PrintWriter printWriter = response.getWriter();
                     printWriter.print(jsonObject);

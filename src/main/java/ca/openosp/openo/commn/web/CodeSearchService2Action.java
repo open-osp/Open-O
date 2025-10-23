@@ -66,7 +66,7 @@ public class CodeSearchService2Action extends ActionSupport {
         }
         response.setContentType("text/x-json");
         ArrayNode jsonArray = objectMapper.valueToTree(results);
-        response.getWriter().print(jsonArray.toString());
+        response.getWriter().write(jsonArray.toString());
 
         return null;
     }

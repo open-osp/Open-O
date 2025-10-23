@@ -69,7 +69,7 @@ public class RxUpdateDrugref2Action extends ActionSupport {
         response.setContentType("text/x-json;charset=UTF-8");
 
         ObjectNode jsonArray = (ObjectNode) objectMapper.valueToTree(d);
-        response.getWriter().print(jsonArray.toString());
+        response.getWriter().write(jsonArray.toString());
         return null;
     }
 
@@ -80,7 +80,7 @@ public class RxUpdateDrugref2Action extends ActionSupport {
         d.put("lastUpdate", s);
         //response.setContentType("text/x-json;charset=UTF-8");
         ObjectNode jsonArray = (ObjectNode) objectMapper.valueToTree(d);
-        response.getWriter().print(jsonArray.toString());
+        response.getWriter().write(jsonArray.toString());
         return null;
     }
 }

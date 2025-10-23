@@ -74,8 +74,8 @@ public final class BillingEditCode2Action extends ActionSupport {
         map.put("val", val);
         map.put("billService", billingServiceDate);
         map.put("termDate", termDate);
-        ObjectNode jsonObject = objectMapper.valueToTree(itemCode);  //(ObjectNode) objectMapper.valueToTree(itemCode);//
-        jsonObject.put("id", id); // Jackson uses put() instead of accumulate()
+        ObjectNode jsonObject = objectMapper.valueToTree(itemCode);
+        jsonObject.put("id", id);
         MiscUtils.getLogger().debug(jsonObject.toString());
         response.getOutputStream().write(jsonObject.toString().getBytes());
         return null;

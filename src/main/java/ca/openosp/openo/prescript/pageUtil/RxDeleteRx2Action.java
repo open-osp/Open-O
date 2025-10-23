@@ -393,7 +393,7 @@ public final class RxDeleteRx2Action extends ActionSupport {
         d.put("reason", reason);
         response.setContentType("text/x-json");
         ObjectNode jsonArray = (ObjectNode) objectMapper.valueToTree(d);
-        response.getWriter().print(jsonArray.toString());
+        response.getWriter().write(jsonArray.toString());
 
         return null;
     }

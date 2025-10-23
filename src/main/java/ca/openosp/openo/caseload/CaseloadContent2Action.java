@@ -155,7 +155,7 @@ public class CaseloadContent2Action extends ActionSupport {
         LogAction.addLogSynchronous(LoggedInInfo.getLoggedInInfoFromSession(request), "CaseloadContent2Action", "view caseload");
 
         try {
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Couldn't get data for caseload", e);
         }
@@ -428,7 +428,7 @@ public class CaseloadContent2Action extends ActionSupport {
         }
 
         try {
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Couldn't get data for caseload", e);
         }

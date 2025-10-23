@@ -29,7 +29,7 @@
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.RemoteDrugAllergyHelper" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
-<%@page import="java.util.*,net.sf.json.*,java.lang.reflect.*,java.io.*,org.apache.xmlrpc.*,ca.openosp.openo.rx.util.*,ca.openosp.openo.rx.data.*" %>
+<%@page import="java.util.*,com.fasterxml.jackson.databind.*,java.lang.reflect.*,java.io.*,org.apache.xmlrpc.*,ca.openosp.openo.rx.util.*,ca.openosp.openo.rx.data.*" %>
 <%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
@@ -58,6 +58,8 @@
     String atcCode = request.getParameter("atcCode");
     String id = request.getParameter("id");
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
     if (disabled.equals("false")) {
 
@@ -84,13 +86,13 @@
 
         Allergy highestSeverityAllergy = null;
 
-        JSONObject result = new JSONObject();
+        ObjectNode result = objectMapper.createObjectNode();
         result.put("id", id);
-        JSONArray allergyResultArray = new JSONArray();
+        ArrayNode allergyResultArray = objectMapper.createArrayNode();
         if (allergyWarnings != null && allergyWarnings.length > 0) {
             highestSeverityAllergy = allergyWarnings[0];
             for (Allergy allergy : allergyWarnings) {
-                JSONObject allergyResult = new JSONObject();
+                ObjectNode allergyResult = objectMapper.createObjectNode()
                 allergyResult.put("DESCRIPTION", StringUtils.trimToEmpty(allergy.getDescription()));
                 allergyResult.put("reaction", StringUtils.trimToEmpty(allergy.getReaction()));
                 allergyResult.put("severity", StringUtils.trimToEmpty(allergy.getSeverityOfReactionDesc()));
@@ -106,7 +108,7 @@
             }
         }
         if (rxShowAllAllergyWarnings && highestSeverityAllergy != null) {
-            JSONObject allergyResult = new JSONObject();
+            ObjectNode allergyResult = objectMapper.createObjectNode();
             allergyResult.put("DESCRIPTION", StringUtils.trimToEmpty(highestSeverityAllergy.getDescription()));
             allergyResult.put("reaction", StringUtils.trimToEmpty(highestSeverityAllergy.getReaction()));
             allergyResult.put("severity", StringUtils.trimToEmpty(highestSeverityAllergy.getSeverityOfReactionDesc()));

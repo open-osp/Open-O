@@ -126,7 +126,7 @@ public final class RxManagePharmacy2Action extends ActionSupport {
 
         response.setContentType("text/x-json");
         ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(retVal);
-        response.getWriter().print(jsonObject.toString());
+        response.getWriter().write(jsonObject.toString());
 
         return null;
     }
@@ -145,7 +145,7 @@ public final class RxManagePharmacy2Action extends ActionSupport {
             response.setContentType("text/x-json");
             String retVal = "{\"id\":\"" + pharmId + "\"}";
             ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(retVal);
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
         } catch (Exception e) {
             MiscUtils.getLogger().error("CANNOT UNLINK PHARMACY", e);
         }
@@ -186,7 +186,7 @@ public final class RxManagePharmacy2Action extends ActionSupport {
         return null;
     }
 
-    public String add() throws JsonProcessingException, JsonMappingException {
+    public String add() {
         RxPharmacyData pharmacy = new RxPharmacyData();
 
         String status = "{\"success\":true}";
@@ -200,11 +200,17 @@ public final class RxManagePharmacy2Action extends ActionSupport {
             status = "{\"success\":false}";
         }
 
-        ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(status);
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+
+        try {
+            jsonObject = (ObjectNode) objectMapper.readTree(status);
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Cannot parse status json", e);
+        }
 
         try {
             response.setContentType("text/x-json");
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Cannot write response", e);
         }

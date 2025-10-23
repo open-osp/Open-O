@@ -38,6 +38,8 @@ import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import ca.openosp.openo.log.LogAction;
@@ -192,7 +194,7 @@ public class BulkPatientDashboard2Action extends ActionSupport {
         jsonObject.put("description", description);
 
         try {
-            response.getWriter().print(jsonObject.toString());
+            response.getWriter().write(jsonObject.toString());
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
             logger.error("Error generating JSON response", e);
@@ -252,8 +254,13 @@ public class BulkPatientDashboard2Action extends ActionSupport {
             jsonString = jsonString + "]";
         }
 
-        ArrayNode jsonArray = objectMapper.valueToTree(jsonString);
-        return jsonArray;
+        try {
+            ArrayNode jsonArray = (ArrayNode) objectMapper.readTree(jsonString);
+            return jsonArray;
+        } catch (Exception e) {
+            logger.error("Error parsing JSON array: " + jsonString, e);
+            return objectMapper.createArrayNode();
+        }
     }
 
 /*	private List<Integer> parseIntegers(String jsonString) {

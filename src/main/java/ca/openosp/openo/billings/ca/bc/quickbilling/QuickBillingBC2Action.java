@@ -80,7 +80,7 @@ public class QuickBillingBC2Action extends ActionSupport {
 
         if (request.getParameter("data") != null) {
 
-            billingEntry = objectMapper.valueToTree(request.getParameter("data"));
+            billingEntry = (ObjectNode) objectMapper.readTree(request.getParameter("data"));
             billingEntry.put("creator", creator);
 
             // check if the main header items are set.

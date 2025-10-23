@@ -31,6 +31,7 @@ import ca.openosp.openo.utility.*;
 import com.opensymphony.xwork2.ActionSupport;
 import ca.openosp.openo.model.security.Secrole;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -88,6 +89,12 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
     
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(java.sql.Date.class, new JsDateSerializer());
+        objectMapper.registerModule(module);
+    }
 
     public String execute() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -3162,7 +3169,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
         CaseManagementNoteLink link = caseManagementNoteLinkDao.getLastLinkByTableId(CaseManagementNoteLink.TICKLER, Long.valueOf(ticklerNo));
-        ObjectNode json = objectMapper.valueToTree("{}");
+        ObjectNode json = (ObjectNode) objectMapper.readTree("{}");
 
         if (link != null) {
             Long noteId = link.getNoteId();
@@ -3171,7 +3178,6 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
             if (note != null) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                // Jackson handles date formatting automatically - no config needed
 
                 Map<String, Serializable> hashMap = new HashMap<String, Serializable>();
                 hashMap.put("noteId", note.getId().toString());
@@ -3179,7 +3185,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
                 hashMap.put("revision", note.getRevision());
                 hashMap.put("obsDate", formatter.format(note.getObservation_date()));
                 hashMap.put("editor", this.providerMgr.getProvider(note.getProviderNo()).getFormattedName());
-                json = objectMapper.valueToTree(hashMap); // Jackson: no config parameter
+                json = objectMapper.valueToTree(hashMap);
             }
         }
         response.getOutputStream().write(json.toString().getBytes());

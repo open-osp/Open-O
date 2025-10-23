@@ -285,7 +285,7 @@ public class EctMeasurements2Action extends ActionSupport {
                 ObjectNode obj = objectMapper.createObjectNode();
                 ArrayNode errorObj = objectMapper.createArrayNode();
                 obj.put("errors", errorObj);
-                response.getWriter().print(obj.toString());
+                response.getWriter().write(obj.toString());
                 return null;
             }
 
@@ -331,7 +331,7 @@ public class EctMeasurements2Action extends ActionSupport {
         if (ajax) {
             ObjectNode json = objectMapper.createObjectNode();
             json.put("encounterText", textOnEncounter);
-            response.getWriter().print(json.toString());
+            response.getWriter().write(json.toString());
             return null;
         } else {
             request.setAttribute("textOnEncounter", StringEscapeUtils.escapeEcmaScript(textOnEncounter));

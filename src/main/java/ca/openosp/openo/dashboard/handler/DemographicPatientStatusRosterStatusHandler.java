@@ -31,6 +31,8 @@ import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -56,7 +58,7 @@ public class DemographicPatientStatusRosterStatusHandler {
     
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public Boolean setPatientStatusInactiveJson(String jsonString) {
+    public Boolean setPatientStatusInactiveJson(String jsonString) throws JsonParseException, JsonMappingException, Exception {
         Boolean result = false;
         if (jsonString == null || jsonString.isEmpty()) return false;
         String providerNo = getProviderNo();
@@ -68,7 +70,7 @@ public class DemographicPatientStatusRosterStatusHandler {
         if (!jsonString.endsWith("]")) {
             jsonString = jsonString + "]";
         }
-        ArrayNode jsonArray = objectMapper.valueToTree(jsonString);
+        ArrayNode jsonArray = (ArrayNode) objectMapper.readTree(jsonString);
         Integer arraySize = jsonArray.size();
         for (int i = 0; i < arraySize; i++) {
             result = setPatientStatusInactive(jsonArray.get(i).asText());
