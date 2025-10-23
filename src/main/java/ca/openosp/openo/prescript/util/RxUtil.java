@@ -578,10 +578,10 @@ public class RxUtil {
                 frequency = changeToStandardFrequencyCode(frequency);
                 String origFrequency = (instructions.substring(matcher.start(), matcher.end())).trim();
 
-                Pattern p2 = Pattern.compile("\\s*\\d*\\.*\\d+\\s+" + origFrequency); //allow to detect decimal number.
+                Pattern p2 = Pattern.compile("\\s*\\d*\\.*\\d+\\s+" + Pattern.quote(origFrequency)); //allow to detect decimal number.
                 Matcher m2 = p2.matcher(instructions);
 
-                Pattern p4 = Pattern.compile("\\s*\\d*\\.*\\d+-\\s*\\d*\\.*\\d+\\s+" + frequency); //use * after the first \s because "1 OD", 1 doesn't have a space in front.
+                Pattern p4 = Pattern.compile("\\s*\\d*\\.*\\d+-\\s*\\d*\\.*\\d+\\s+" + Pattern.quote(frequency)); //use * after the first \s because "1 OD", 1 doesn't have a space in front.
                 Matcher m4 = p4.matcher(instructions);
                 //     p("here11", instructions);
                 //since "\\s+[0-9]+-[0-9]+\\s+" is a case in "\\s+[0-9]+\\s+", check the latter regex first.

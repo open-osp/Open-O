@@ -260,9 +260,10 @@ public class Renal2Action extends ActionSupport {
 
         ObjectNode jsonArray = objectMapper.createObjectNode();
         jsonArray.put("result", StringEscapeUtils.escapeEcmaScript(nextSteps));
-        response.setContentType("text/x-json");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         try {
-            response.getWriter().write(jsonArray.toString());
+             objectMapper.writeValue(response.getWriter(), jsonArray);
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error", e);
         }

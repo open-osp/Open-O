@@ -117,8 +117,12 @@
             allergyResult.put("severity", StringUtils.trimToEmpty(highestSeverityAllergy.getSeverityOfReactionDesc()));
             allergyResultArray.add(allergyResult);
         }
-        result.put("results", allergyResultArray);
-        result.write(out);
+        result.set("results", allergyResultArray);
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        objectMapper.writeValue(out, result)
 
     }
 %>
