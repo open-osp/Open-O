@@ -25,7 +25,6 @@
 <%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
 <%@ page import="com.fasterxml.jackson.databind.SerializationFeature" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="net.sf.json.JSONObject" %>
 <%@ page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
 <%@ page import="ca.openosp.openo.prescript.data.*,
     ca.openosp.openo.demographic.data.DemographicData,

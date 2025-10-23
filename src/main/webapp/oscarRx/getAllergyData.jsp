@@ -29,7 +29,10 @@
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.RemoteDrugAllergyHelper" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
-<%@page import="java.util.*,com.fasterxml.jackson.databind.*,java.lang.reflect.*,java.io.*,org.apache.xmlrpc.*,ca.openosp.openo.rx.util.*,ca.openosp.openo.rx.data.*" %>
+<%@page import="java.util.*,java.lang.reflect.*,java.io.*,org.apache.xmlrpc.*,ca.openosp.openo.rx.util.*,ca.openosp.openo.rx.data.*" %>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper" %>
+<%@page import="com.fasterxml.jackson.databind.node.ObjectNode" %>
+<%@page import="com.fasterxml.jackson.databind.node.ArrayNode" %>
 <%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
