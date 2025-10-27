@@ -47,6 +47,7 @@ import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.SendingUtils;
 import ca.openosp.openo.commn.model.enumerator.DocumentType;
 import ca.openosp.openo.commn.model.enumerator.ModuleType;
 import ca.openosp.openo.documentManager.DocumentAttachmentManager;
+import com.itextpdf.text.DocumentException;
 import ca.openosp.openo.documentManager.EDoc;
 import ca.openosp.openo.documentManager.EDocUtil;
 import ca.openosp.openo.fax.core.FaxRecipient;
@@ -581,7 +582,7 @@ public class EctConsultationFormRequest2Action extends ActionSupport {
                 int statusCode = SendingUtils.send(loggedInInfo, hl7Message, professionalSpecialist);
                 if (HttpServletResponse.SC_OK != statusCode)
                     throw (new ServletException("Error, received status code:" + statusCode));
-            } catch (com.lowagie.text.DocumentException e) {
+            } catch (DocumentException e) {
                 logger.error("Unexpected error.", e);
             }
         }

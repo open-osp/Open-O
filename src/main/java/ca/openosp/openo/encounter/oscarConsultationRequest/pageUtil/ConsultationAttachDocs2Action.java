@@ -216,7 +216,7 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
                 generateResponse(response, getBase64(byteOutputStream.getBytes()));
             }
             tempLabPDF.delete();
-        } catch (IOException e) {
+        } catch (DocumentException | IOException e) {
             logger.error("An error occurred: " + e.getMessage(), e);
         }
     }

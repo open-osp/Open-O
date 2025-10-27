@@ -408,7 +408,7 @@ public class ConsultationManagerImpl implements ConsultationManager {
      * 	oscar/oscarEncounter/oscarConsultationRequest/pageUtil/EctConsultationFormRequest2Action.java
      */
     @Override
-    public void doHl7Send(LoggedInInfo loggedInInfo, Integer consultationRequestId) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, IOException, HL7Exception, ServletException, com.lowagie.text.DocumentException {
+    public void doHl7Send(LoggedInInfo loggedInInfo, Integer consultationRequestId) throws InvalidKeyException, SignatureException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException, IOException, HL7Exception, ServletException, DocumentException {
         checkPrivilege(loggedInInfo, securityInfoManager.READ);
 
         ConsultationRequest consultationRequest = consultationRequestDao.find(consultationRequestId);

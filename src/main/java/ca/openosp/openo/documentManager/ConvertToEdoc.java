@@ -24,7 +24,7 @@
  */
 package ca.openosp.openo.documentManager;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
@@ -347,7 +347,12 @@ public final class ConvertToEdoc {
         
         renderer.setDocumentFromString(doc.outerHtml(), null);
         renderer.layout();
-        renderer.createPDF(os, true);
+        try {
+            renderer.createPDF(os, true);
+        } catch (com.lowagie.text.DocumentException e) {
+            // Flying Saucer still uses old lowagie library, wrap the exception
+            throw new DocumentException(e);
+        }
     }
 
     /**
