@@ -172,6 +172,9 @@ public class LabPDFCreator extends PdfPageEventHelper {
 
             document.close();
         } catch (com.lowagie.text.DocumentException e) {
+            // RTF writer uses old lowagie library, wrap the exception
+            // Log the original exception to preserve stack trace for debugging
+            MiscUtils.getLogger().error("Failed to import RTF document", e);
             throw new DocumentException(e);
         }
     }

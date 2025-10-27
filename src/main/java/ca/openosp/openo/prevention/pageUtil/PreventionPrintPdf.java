@@ -474,7 +474,7 @@ public class PreventionPrintPdf {
         return headerPhrase.getLeading() * 4f;
     }
 
-    private float goToNewPage(Phrase header, Font font) throws DocumentException, IOException {
+    private float goToNewPage(Phrase headerPhrase, Font font) throws DocumentException, IOException {
         ColumnText.showTextAligned(cb, Phrase.ALIGN_CENTER, new Phrase("-" + curPage + "-"), document.right() / 2f, document.bottom() - (document.bottomMargin() / 2f), 0f);
         addPromoText(); // Assuming this method is accessible within your class
         float upperYcoord = document.top() - getHeaderHeight() - font.getCalculatedLeading(LINESPACING);
