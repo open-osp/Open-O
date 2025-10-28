@@ -42,7 +42,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.XmlUtils;
@@ -226,7 +226,7 @@ public class SearchConfig {
             for (FilterDefinition fd : filters) {
                 if ("org.oscarehr.appointment.search.filters.OpenAccessFilter".equals(fd.getFilterClassName())) {
                     Map<String, String> params = new HashMap<String, String>();
-                    params.put("codes", org.apache.commons.lang.StringUtils.join(openAccessCodes, ","));
+                    params.put("codes", StringUtils.join(openAccessCodes, ","));
                     fd.setParams(params);
                 }
             }
@@ -292,7 +292,7 @@ public class SearchConfig {
                 for (Map.Entry<String, Character[]> apptTypeEnt : p.appointmentTypes.entrySet()) {
                     Element allowedAppt = doc.createElement("allowed_appointment");
                     allowedAppt.setAttribute("id", apptTypeEnt.getKey());
-                    allowedAppt.setAttribute("appointment_codes", org.apache.commons.lang.StringUtils.join(apptTypeEnt.getValue(), ","));
+                    allowedAppt.setAttribute("appointment_codes", StringUtils.join(apptTypeEnt.getValue(), ","));
                     Integer duration = p.getAppointmentDurations().get(Long.parseLong(apptTypeEnt.getKey()));
                     if (duration != null) {
                         allowedAppt.setAttribute("duration", "" + duration);
@@ -420,7 +420,7 @@ public class SearchConfig {
         for (Map.Entry<String, Character[]> apptTypeEnt : allowedApptSet) {
             Element allowedAppt = doc.createElement("allowed_appointment");
             allowedAppt.setAttribute("id", apptTypeEnt.getKey());
-            allowedAppt.setAttribute("appointment_codes", org.apache.commons.lang.StringUtils.join(apptTypeEnt.getValue(), ","));
+            allowedAppt.setAttribute("appointment_codes", StringUtils.join(apptTypeEnt.getValue(), ","));
             Integer duration = extDurations.get(Long.parseLong(apptTypeEnt.getKey()));
             if (duration != null) {
                 allowedAppt.setAttribute("duration", "" + duration);

@@ -255,10 +255,10 @@ print_help() {
       echo "  jspc                                          Compile JSPs only (no deployment)."
       echo "  docs                                          Generate all documentation and build static site for production."
       echo "  docs-serve                                    Start Docusaurus development server (http://localhost:3000)."
-      echo "  lock [--modern|--all]                        Update dependency lock file(s):"
-      echo "                                                  (default) - Update legacy lock file"
+      echo "  lock [--modern|--legacy]                        Update dependency lock file(s):"
+      echo "                                                  (default) - Update both lock files"
       echo "                                                  --modern - Update modern tests lock file"
-      echo "                                                  --all - Update both lock files"
+      echo "                                                  --legacy - Update legacy lock file"
       echo "  help                                          Display this help message."
 }
 
@@ -347,15 +347,15 @@ for arg in "$@"; do
       if [ "$2" = "--modern" ]; then
         echo "Updating modern dependencies lock file (dependencies-lock-modern.json)..."
         mvn se.vandmo:dependency-lock-maven-plugin:lock -Pmodern-tests -Ddependency.lock.filename=dependencies-lock-modern.json
-      elif [ "$2" = "--all" ]; then
+      elif [ "$2" = "--legacy" ]; then        
+        echo "Updating legacy dependency lock file (dependencies-lock.json)..."
+        mvn se.vandmo:dependency-lock-maven-plugin:lock -DskipModernTests=true
+      else
         echo "Updating both dependency lock files..."
         echo "1. Updating legacy lock file (dependencies-lock.json)..."
         mvn se.vandmo:dependency-lock-maven-plugin:lock -DskipModernTests=true
         echo "2. Updating modern lock file (dependencies-lock-modern.json)..."
         mvn se.vandmo:dependency-lock-maven-plugin:lock -Pmodern-tests -Ddependency.lock.filename=dependencies-lock-modern.json
-      else
-        echo "Updating legacy dependency lock file (dependencies-lock.json)..."
-        mvn se.vandmo:dependency-lock-maven-plugin:lock -DskipModernTests=true
       fi
       ;;
     help)

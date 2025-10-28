@@ -181,7 +181,7 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerNo)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="to/AbstractSearchResponse.html" title="class in ca.openosp.openo.webserv.rest.to">AbstractSearchResponse</a><wbr>&lt;<a href="to/model/ProviderTo1.html" title="class in ca.openosp.openo.webserv.rest.to.model">ProviderTo1</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#search(net.sf.json.JSONObject,java.lang.Integer,java.lang.Integer)" class="member-name-link">search</a><wbr>(net.sf.json.JSONObject&nbsp;json,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#search(com.fasterxml.jackson.databind.node.ObjectNode,java.lang.Integer,java.lang.Integer)" class="member-name-link">search</a><wbr>(com.fasterxml.jackson.databind.node.ObjectNode&nbsp;json,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;startIndex,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;itemsToReturn)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -312,13 +312,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="search(net.sf.json.JSONObject,java.lang.Integer,java.lang.Integer)">
+<section class="detail" id="search(com.fasterxml.jackson.databind.node.ObjectNode,java.lang.Integer,java.lang.Integer)">
 <h3>search</h3>
 <div class="member-signature"><span class="annotations">@POST
 @Path("/providers/search")
 @Produces("application/json")
 @Consumes("application/json")
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="to/AbstractSearchResponse.html" title="class in ca.openosp.openo.webserv.rest.to">AbstractSearchResponse</a>&lt;<a href="to/model/ProviderTo1.html" title="class in ca.openosp.openo.webserv.rest.to.model">ProviderTo1</a>&gt;</span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(net.sf.json.JSONObject&nbsp;json,
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="to/AbstractSearchResponse.html" title="class in ca.openosp.openo.webserv.rest.to">AbstractSearchResponse</a>&lt;<a href="to/model/ProviderTo1.html" title="class in ca.openosp.openo.webserv.rest.to.model">ProviderTo1</a>&gt;</span>&nbsp;<span class="element-name">search</span><wbr><span class="parameters">(com.fasterxml.jackson.databind.node.ObjectNode&nbsp;json,
  @QueryParam("startIndex")
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&nbsp;startIndex,
  @QueryParam("itemsToReturn")

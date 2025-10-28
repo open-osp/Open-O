@@ -41,7 +41,7 @@
 <%@ page import="ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ page import="ca.openosp.openo.commn.web.Pregnancy2Action" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.util.LabelValueBean" %>
 <%@ page import="ca.openosp.openo.util.UtilMisc" %>
@@ -926,16 +926,16 @@
                 jQuery.ajax({
                     url: 'onarenhanced_obxhx.jsp?n=' +<%=x%>, async: false, success: function (data) {
                         jQuery("#obxhx_container tbody").append(data);
-                        setInput(<%=x%>, "pg1_year", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_year"+x, "")) %>');
-                        setInput(<%=x%>, "pg1_sex", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_sex"+x, "")) %>');
-                        setInput(<%=x%>, "pg1_oh_gest", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_oh_gest"+x, "")) %>');
-                        setInput(<%=x%>, "pg1_weight", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_weight"+x, "")) %>');
-                        setInput(<%=x%>, "pg1_length", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_length"+x, "")) %>');
-                        setInput(<%=x%>, "pg1_place", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_place"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_year", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_year"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_sex", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_sex"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_oh_gest", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_oh_gest"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_weight", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_weight"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_length", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_length"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_place", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_place"+x, "")) %>');
                         setCheckbox(<%=x%>, "pg1_svb", '<%= (props.getProperty("pg1_svb"+x, "").length()>0)?"true":"false" %>');
                         setCheckbox(<%=x%>, "pg1_cs", '<%= (props.getProperty("pg1_cs"+x, "").length()>0)?"true":"false" %>');
                         setCheckbox(<%=x%>, "pg1_ass", '<%= (props.getProperty("pg1_ass"+x, "").length()>0)?"true":"false" %>');
-                        setInput(<%=x%>, "pg1_oh_comments", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_oh_comments"+x, "")) %>');
+                        setInput(<%=x%>, "pg1_oh_comments", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_oh_comments"+x, "")) %>');
                     }
                 });
                 <%
@@ -970,7 +970,7 @@
                     url: "<%=request.getContextPath()%>/Pregnancy.do",
                     data: {
                         method: "getLatestFormIdByPregnancy",
-                        episodeId: '<%=StringEscapeUtils.escapeJavaScript(props.getProperty("episodeId","0"))%>'
+                        episodeId: '<%=StringEscapeUtils.escapeEcmaScript(props.getProperty("episodeId","0"))%>'
                     },
                     dataType: 'json',
                     success: function (data, textStatus) {
@@ -1807,7 +1807,7 @@
                             $(this).dialog("close");
                             var ferritin = $("#ferritin").attr('checked');
                             var hbElectrophoresis = $("#hbElectrophoresis").attr('checked');
-                            var demographic = '<%=StringEscapeUtils.escapeJavaScript(props.getProperty("demographic_no", "0"))%>';
+                            var demographic = '<%=StringEscapeUtils.escapeEcmaScript(props.getProperty("demographic_no", "0"))%>';
                             var user = '<%=session.getAttribute("user")%>';
                             url = '<%=request.getContextPath()%>/form/formlabreq<%=labReqVer%>.jsp?demographic_no=' + demographic + '&formId=0&provNo=' + user + '&fromSession=true';
                             jQuery.ajax({

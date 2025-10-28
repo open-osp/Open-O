@@ -32,7 +32,8 @@ import ca.openosp.openo.commn.model.*;
 import com.itextpdf.text.pdf.PdfReader;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.io.RandomAccessFile;
@@ -96,6 +97,8 @@ import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 
 public class ManageDocument2Action extends ActionSupport {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
@@ -263,7 +266,7 @@ public class ManageDocument2Action extends ActionSupport {
 
         HashMap hm = new HashMap();
         hm.put("patientId", demog);
-        JSONObject jsonObject = JSONObject.fromObject(hm);
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
         try {
             response.getOutputStream().write(jsonObject.toString().getBytes());
         } catch (IOException e) {
@@ -281,7 +284,7 @@ public class ManageDocument2Action extends ActionSupport {
 
         HashMap hm = new HashMap();
         hm.put("demoName", getDemoName(LoggedInInfo.getLoggedInInfoFromSession(request), dn));
-        JSONObject jsonObject = JSONObject.fromObject(hm);
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
         try {
             response.getOutputStream().write(jsonObject.toString().getBytes());
         } catch (IOException e) {
@@ -302,7 +305,7 @@ public class ManageDocument2Action extends ActionSupport {
         HashMap hm = new HashMap();
         hm.put("linkedProviders", providerInboxRoutingDAO.getProvidersWithRoutingForDocument(docType, Integer.parseInt(docId)));
 
-        JSONObject jsonObject = JSONObject.fromObject(hm);
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
         try {
             response.getOutputStream().write(jsonObject.toString().getBytes());
         } catch (IOException e) {
@@ -771,7 +774,7 @@ public class ManageDocument2Action extends ActionSupport {
 
             HashMap hm = new HashMap();
             hm.put("numOfPage", numOfPage);
-            JSONObject jsonObject = JSONObject.fromObject(hm);
+            ObjectNode jsonObject = objectMapper.valueToTree(hm);
             response.getOutputStream().write(jsonObject.toString().getBytes());
         } catch (IOException e) {
             MiscUtils.getLogger().error("Error", e);

@@ -56,10 +56,10 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.WordUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
@@ -3439,8 +3439,8 @@ public class DemographicExportAction42Action extends ActionSupport {
             // Disable XInclude
             factory.setXIncludeAware(false);
             
-            // enabled expansion of entity references
-            factory.setExpandEntityReferences(true);
+            // Disabled expansion of entity references
+            factory.setExpandEntityReferences(false);
         } catch (ParserConfigurationException e) {
             logger.error("Failed to configure XML parser security features", e);
             return false;

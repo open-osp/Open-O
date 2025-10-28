@@ -24,16 +24,16 @@
 
 --%>
 
-<%@page import="net.sf.json.JSONException" %>
-<%@page import="net.sf.json.JSONSerializer" %>
-<%@page import="net.sf.json.JSONArray" %>
-<%@page import="net.sf.json.JSONObject" %>
+<%@page import="com.fasterxml.jackson.databind.ObjectMapper" %>
+<%@page import="com.fasterxml.jackson.databind.node.ObjectNode" %>
+<%@page import="com.fasterxml.jackson.databind.node.ArrayNode" %>
+<%@page import="com.fasterxml.jackson.databind.JsonNode" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@ page import="ca.openosp.openo.commn.dao.PatientLabRoutingDao" %>
 <%@ page import="ca.openosp.openo.commn.model.PatientLabRouting" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@ page import="org.apache.commons.lang.builder.ReflectionToStringBuilder" %>
+<%@ page import="org.apache.commons.lang3.builder.ReflectionToStringBuilder" %>
 <%@ page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="org.w3c.dom.Document" %>
 <%@ page import="ca.openosp.openo.caisi_integrator.ws.CachedDemographicLabResult" %>
@@ -55,7 +55,7 @@
 <%@ page import="ca.openosp.openo.commn.model.MeasurementMap, ca.openosp.openo.commn.dao.MeasurementMapDao" %>
 <%@ page import="ca.openosp.openo.commn.model.Tickler" %>
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page
         import="ca.openosp.openo.casemgmt.service.CaseManagementManager, ca.openosp.openo.commn.dao.Hl7TextMessageDao, ca.openosp.openo.commn.model.Hl7TextMessage,ca.openosp.openo.commn.dao.Hl7TextInfoDao,ca.openosp.openo.commn.model.Hl7TextInfo" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session"/>
@@ -1214,19 +1214,20 @@ request.setAttribute("missingTests", missingTests);
                                     <div class="dropdown-content">
                                         <%
                                             try {
-                                                JSONArray macros = (JSONArray) JSONSerializer.toJSON(up.getValue());
-                                                if (macros != null) {
+                                                ObjectMapper mapper = new ObjectMapper();
+                                                JsonNode macros = mapper.readTree(up.getValue());
+                                                if (macros != null && macros.isArray()) {
                                                     for (int x = 0; x < macros.size(); x++) {
-                                                        JSONObject macro = macros.getJSONObject(x);
-                                                        String name = macro.getString("name");
-                                                        boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.getBoolean("closeOnSuccess");
+                                                        JsonNode macro = macros.get(x);
+                                                        String name = macro.get("name").asText();
+                                                        boolean closeOnSuccess = macro.has("closeOnSuccess") && macro.get("closeOnSuccess").asBoolean();
 
                                         %><a href="javascript:void(0);"
                                              onClick="runMacro('<%=name%>','acknowledgeForm_<%=Encode.forJavaScript(segmentID)%>',<%=closeOnSuccess%>)"><%=name %>
                                     </a><%
                                                 }
                                             }
-                                        } catch (JSONException e) {
+                                        } catch (Exception e) {
                                             MiscUtils.getLogger().warn("Invalid JSON for lab macros", e);
                                         }
                                     %>

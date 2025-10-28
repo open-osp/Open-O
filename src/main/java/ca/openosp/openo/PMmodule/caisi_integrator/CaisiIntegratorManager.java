@@ -39,7 +39,7 @@ import javax.servlet.http.HttpSession;
 import ca.openosp.openo.caisi_integrator.ws.transfer.FacilityConsentPair;
 import ca.openosp.openo.caisi_integrator.ws.transfer.SetConsentTransfer;
 import ca.openosp.openo.utility.*;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import ca.openosp.openo.caisi_integrator.ws.CachedDemographicNote;
@@ -101,12 +101,12 @@ public class CaisiIntegratorManager {
     /**
      * only non-audited data should be cached in here
      */
-    private static QueueCache<String, Object> basicDataCache = new QueueCache<String, Object>(4, 100, org.apache.commons.lang.time.DateUtils.MILLIS_PER_HOUR, null);
+    private static QueueCache<String, Object> basicDataCache = new QueueCache<String, Object>(4, 100, org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR, null);
 
     /**
      * data put here should be segmented by the requesting providers as part of the cache key
      */
-    private static QueueCache<String, Object> segmentedDataCache = new QueueCache<String, Object>(4, 100, org.apache.commons.lang.time.DateUtils.MILLIS_PER_HOUR, null);
+    private static QueueCache<String, Object> segmentedDataCache = new QueueCache<String, Object>(4, 100, org.apache.commons.lang3.time.DateUtils.MILLIS_PER_HOUR, null);
 
     public static void setIntegratorOffline(HttpSession session, boolean status) {
         if (status) {

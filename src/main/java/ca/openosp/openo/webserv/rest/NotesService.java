@@ -42,7 +42,7 @@ import javax.ws.rs.core.Response;
 
 import ca.openosp.openo.daos.security.SecroleDao;
 import ca.openosp.openo.model.security.Secrole;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.dao.ProgramAccessDAO;
 import ca.openosp.openo.PMmodule.dao.ProgramProviderDAO;
@@ -98,8 +98,8 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ca.openosp.openo.encounter.pageUtil.EctSessionBean;
 
 
@@ -140,7 +140,7 @@ public class NotesService extends AbstractServiceImpl {
     @Path("/{demographicNo}/all")
     @Produces("application/json")
     @Consumes("application/json")
-    public NoteSelectionTo1 getNotesWithFilter(@PathParam("demographicNo") Integer demographicNo, @DefaultValue("20") @QueryParam("numToReturn") Integer numToReturn, @DefaultValue("0") @QueryParam("offset") Integer offset, JSONObject jsonobject) {
+    public NoteSelectionTo1 getNotesWithFilter(@PathParam("demographicNo") Integer demographicNo, @DefaultValue("20") @QueryParam("numToReturn") Integer numToReturn, @DefaultValue("0") @QueryParam("offset") Integer offset, ObjectNode jsonobject) {
         NoteSelectionTo1 returnResult = new NoteSelectionTo1();
         LoggedInInfo loggedInInfo = getLoggedInInfo();
         logger.debug("The config " + jsonobject.toString());
@@ -324,11 +324,11 @@ public class NotesService extends AbstractServiceImpl {
     @Path("/{demographicNo}/save")
     @Consumes("application/json")
     @Produces("application/json")
-    public NoteTo1 saveNote(@PathParam("demographicNo") Integer demographicNo, JSONObject jsonNote) throws Exception {
+    public NoteTo1 saveNote(@PathParam("demographicNo") Integer demographicNo, ObjectNode jsonNote) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         NoteTo1 note = null;
         if (jsonNote != null) {
-            if (jsonNote.containsKey("encounterNote")) {
+            if (jsonNote.has("encounterNote")) {
                 note = objectMapper.readValue(jsonNote.get("encounterNote").toString(), NoteTo1.class);
             } else {
                 note = objectMapper.readValue(jsonNote.toString(), NoteTo1.class);
@@ -354,7 +354,7 @@ public class NotesService extends AbstractServiceImpl {
         }
 
         String noteTxt = note.getNote();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = org.apache.commons.lang3.StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return null;
 
         caseMangementNote.setNote(noteTxt);
@@ -503,7 +503,7 @@ public class NotesService extends AbstractServiceImpl {
         Date observationDate = note.getObservationDate();
         if (observationDate != null && !observationDate.equals("")) {
             if (observationDate.getTime() > now.getTime()) {
-                //request.setAttribute("DateError", props.getString("oscarEncounter.futureDate.Msg"));
+                //request.setAttribute("DateError", props.getProperty("oscarEncounter.futureDate.Msg"));
                 caseMangementNote.setObservation_date(now);
             } else {
                 caseMangementNote.setObservation_date(observationDate);
@@ -656,7 +656,7 @@ public class NotesService extends AbstractServiceImpl {
         }
 
         String noteTxt = note.getNote();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = org.apache.commons.lang3.StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return null;
 
         caseMangementNote.setNote(noteTxt);
@@ -818,7 +818,7 @@ public class NotesService extends AbstractServiceImpl {
         Date observationDate = note.getObservationDate();
         if (observationDate != null && !observationDate.equals("")) {
             if (observationDate.getTime() > now.getTime()) {
-                //request.setAttribute("DateError", props.getString("oscarEncounter.futureDate.Msg"));
+                //request.setAttribute("DateError", props.getProperty("oscarEncounter.futureDate.Msg"));
                 caseMangementNote.setObservation_date(now);
             } else {
                 caseMangementNote.setObservation_date(observationDate);
@@ -1099,9 +1099,9 @@ public class NotesService extends AbstractServiceImpl {
     }
 
 
-    private String getString(JSONObject jsonobject, String key) {
-        if (jsonobject.containsKey(key)) {
-            return jsonobject.getString(key);
+    private String getString(ObjectNode jsonobject, String key) {
+        if (jsonobject.has(key)) {
+            return jsonobject.get(key).asText();
         }
         return null;
     }
@@ -1110,7 +1110,7 @@ public class NotesService extends AbstractServiceImpl {
     @Path("/{demographicNo}/getCurrentNote")
     @Consumes("application/json")
     @Produces("application/json")
-    public NoteTo1 getCurrentNote(@PathParam("demographicNo") Integer demographicNo, JSONObject jsonobject) {
+    public NoteTo1 getCurrentNote(@PathParam("demographicNo") Integer demographicNo, ObjectNode jsonobject) {
         logger.debug("getCurrentNote " + jsonobject);
         LoggedInInfo loggedInInfo = getLoggedInInfo(); //LoggedInInfo.loggedInInfo.get();
 
@@ -1361,11 +1361,11 @@ public class NotesService extends AbstractServiceImpl {
     }
 
 
-    private void processJsonArray(JSONObject jsonobject, String key, List<String> list) {
-        if (jsonobject != null && jsonobject.containsKey(key)) {
-            JSONArray arr = jsonobject.getJSONArray(key);
+    private void processJsonArray(ObjectNode jsonobject, String key, List<String> list) {
+        if (jsonobject != null && jsonobject.has(key)) {
+            ArrayNode arr = (ArrayNode) jsonobject.get(key);
             for (int i = 0; i < arr.size(); i++) {
-                list.add(arr.getString(i));
+                list.add(arr.get(i).asText());
             }
         }
 
@@ -1589,7 +1589,7 @@ public class NotesService extends AbstractServiceImpl {
     @Path("/ticklerSaveNote")
     @Produces("application/json")
     @Consumes("application/json")
-    public GenericRESTResponse ticklerSaveNote(JSONObject json) {
+    public GenericRESTResponse ticklerSaveNote(ObjectNode json) {
 
         if (!securityInfoManager.hasPrivilege(getLoggedInInfo(), "_tickler", "w", null)) {
             throw new RuntimeException("Access Denied");
@@ -1600,14 +1600,14 @@ public class NotesService extends AbstractServiceImpl {
 
         logger.info("The config " + json.toString());
 
-        String strNote = json.getString("note");
-        Integer noteId = json.getInt("noteId");
+        String strNote = json.get("note") != null ? json.get("note").asText() : null;
+        Integer noteId = json.get("noteId") != null ? json.get("noteId").asInt() : null;
 
         logger.info("want to save note id " + noteId + " with value " + strNote);
 
-        JSONObject tickler = json.getJSONObject("tickler");
-        Integer ticklerId = tickler.getInt("id");
-        Integer demographicNo = tickler.getInt("demographicNo");
+        ObjectNode tickler = (ObjectNode) json.get("tickler");
+        Integer ticklerId = tickler.get("id") != null ? tickler.get("id").asInt() : null;
+        Integer demographicNo = tickler.get("demographicNo") != null ? tickler.get("demographicNo").asInt() : null;
 
         logger.info("tickler id " + ticklerId + ", demographicNo " + demographicNo);
 
@@ -1801,16 +1801,16 @@ public class NotesService extends AbstractServiceImpl {
     @Path("/searchIssues")
     @Produces("application/json")
     @Consumes("application/json")
-    public AbstractSearchResponse<IssueTo1> search(JSONObject json, @QueryParam("startIndex") Integer startIndex, @QueryParam("itemsToReturn") Integer itemsToReturn) {
+    public AbstractSearchResponse<IssueTo1> search(ObjectNode json, @QueryParam("startIndex") Integer startIndex, @QueryParam("itemsToReturn") Integer itemsToReturn) {
         AbstractSearchResponse<IssueTo1> response = new AbstractSearchResponse<IssueTo1>();
 
         //if(!securityInfoManager.hasPrivilege(getLoggedInInfo(), "_demographic", "r", null)) {
         //	throw new RuntimeException("Access Denied");
         //}
 
-        String term = json.getString("term");
+        String term = json.get("term") != null ? json.get("term").asText() : null;
 
-        if (json.getString("term").length() >= 1) {
+        if (term != null && term.length() >= 1) {
 
             ProgramProvider pp = programManager2.getCurrentProgramInDomain(getLoggedInInfo(), getLoggedInInfo().getLoggedInProviderNo());
 

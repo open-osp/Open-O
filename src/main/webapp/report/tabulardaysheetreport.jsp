@@ -13,14 +13,14 @@
     }
 %>
 
-<%@page import="org.apache.commons.lang.time.DateUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
 
     String orderby = request.getParameter("orderby") != null ? request.getParameter("orderby") : ("a.start_time");
 %>
 <%@ page
-        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,ca.openosp.openo.commn.model.*,org.apache.commons.lang.time.*"
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*,ca.openosp.openo.commn.model.*,org.apache.commons.lang3.time.*"
         errorPage="/errorpage.jsp" %>
 <%@ page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
 <jsp:useBean id="daySheetBean" class="ca.openosp.AppointmentMainBean" scope="page"/>

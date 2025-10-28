@@ -25,7 +25,7 @@
 
 package ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil;
 
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.commn.dao.ConsultationRequestDao;
 import ca.openosp.openo.commn.dao.ConsultationRequestExtDao;

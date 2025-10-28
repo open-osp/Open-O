@@ -39,7 +39,7 @@
     }
 %>
 
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*, ca.openosp.openo.util.*, ca.openosp.OscarProperties" %>
 <!DOCTYPE HTML >
@@ -2438,7 +2438,7 @@
     var typeDocLab = initTypeDocLab('<%=typeDocLab%>');   //{DOC=[357, 317, 316], HL7=[38, 33, 30, 28]}
     var docType = initDocType('<%=docType%>');   //{357=DOC, 38=HL7, 317=DOC, 316=DOC, 33=HL7, 30=HL7, 28=HL7}
     var patientDocs = initPatientDocs('<%=patientDocs%>');//{2=[316, 30, 28], 1=[33], -1=[357, 317, 38]}
-    var patientIdNames = initPatientIdNames('<%=StringEscapeUtils.escapeJavaScript(patientIdNamesStr)%>');//;2=TEST2, PATIENT2;1=Zrrr, Srrr;-1=Not, Assigned
+    var patientIdNames = initPatientIdNames('<%=StringEscapeUtils.escapeEcmaScript(patientIdNamesStr)%>');//;2=TEST2, PATIENT2;1=Zrrr, Srrr;-1=Not, Assigned
     var docStatus = initDocStatus('<%=docStatus%>');//{357=A, 38=N, 317=A, 316=A, 33=N, 30=N, 28=N}
     var normals = initNormals('<%=normals%>');//[357, 317, 316, 38, 33, 30, 28]
     var abnormals = initAbnormals('<%=abnormals%>');//[123,567]

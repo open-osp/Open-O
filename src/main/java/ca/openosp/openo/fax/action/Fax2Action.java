@@ -26,7 +26,8 @@
 package ca.openosp.openo.fax.action;
 
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.commn.model.FaxConfig;
@@ -62,6 +63,7 @@ public class Fax2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final Logger logger = MiscUtils.getLogger();
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
@@ -322,7 +324,7 @@ public class Fax2Action extends ActionSupport {
             pageCount = faxManager.getPageCount(loggedInInfo, Integer.parseInt(jobId));
         }
 
-        JSONObject jsonObject = new JSONObject();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put("jobId", jobId);
         jsonObject.put("pageCount", pageCount);
 

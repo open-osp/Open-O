@@ -34,10 +34,11 @@ import ca.openosp.openo.util.UtilDateUtilities;
 import com.opensymphony.xwork2.ActionSupport;
 import ca.openosp.openo.model.security.Secrole;
 import ca.openosp.openo.services.security.RolesManager;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager;
@@ -57,6 +58,7 @@ import ca.openosp.openo.provider.web.CppPreferencesUIBean;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.CppUtils;
+import ca.openosp.openo.utility.JsDateSerializer;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.casemgmt.web.CaseManagementViewAction.IssueDisplay;
 import ca.openosp.OscarProperties;
@@ -111,6 +113,14 @@ public class CaseManagementView2Action extends ActionSupport {
         }
     }
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(java.sql.Date.class, new JsDateSerializer());
+        objectMapper.registerModule(module);
+    }
+    
     public String execute() throws Exception {
         this.setFilter_provider("");
         request.setAttribute("patientCppPrintPreview", "false");
@@ -1277,9 +1287,7 @@ public class CaseManagementView2Action extends ActionSupport {
             hashMap.put("RightURL", addUrl);
             hashMap.put("Issues", issues);
 
-            JsonConfig config = new JsonConfig();
-            config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
-            JSONObject json = JSONObject.fromObject(hashMap, config);
+            ObjectNode json = objectMapper.valueToTree(hashMap);
             response.getOutputStream().write(json.toString().getBytes());
             return null;
         }
@@ -1711,7 +1719,7 @@ public class CaseManagementView2Action extends ActionSupport {
                 if (key.contains(" Date")) {
                     val = UtilDateUtilities.DateToString(cme.getDateValue(), "yyyy-MM-dd");
                 } else {
-                    val = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(cme.getValue());
+                    val = StringEscapeUtils.escapeEcmaScript(cme.getValue());
                 }
                 return val;
             }

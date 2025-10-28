@@ -26,7 +26,7 @@
 <%@ page errorPage="/errorpage.jsp"
          import="java.util.*,java.sql.*,ca.openosp.*,java.text.*, java.lang.*,java.net.*" %>
 
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page
         import="ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.dao.CSSStylesDAO, ca.openosp.openo.commn.model.CssStyle, java.util.List" %>
 <%@ page import="ca.openosp.openo.commn.model.BillingService" %>

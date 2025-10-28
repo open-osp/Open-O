@@ -27,7 +27,7 @@
 
 package ca.openosp.openo.commn.dao;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ca.openosp.openo.PMmodule.model.Program;
 import ca.openosp.openo.commn.NativeSql;
 import ca.openosp.openo.commn.model.Appointment;

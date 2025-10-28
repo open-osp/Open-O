@@ -25,7 +25,7 @@
 --%>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.utility.LocaleUtils" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.prescript.pageUtil.AllergyHelperBean" %>
 <%@page import="ca.openosp.openo.prescript.pageUtil.AllergyDisplay" %>
 <%@page import="java.util.List" %>
@@ -374,19 +374,19 @@
                                                     </td>
                                                     <td><%=labelStatus%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getEntryDate())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getEntryDate())%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getDescription())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getDescription())%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getTypeDesc())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getTypeDesc())%>
                                                     </td>
-                                                    <td bgcolor="<%=sevColour%>"><%=StringEscapeUtils.escapeHtml(displayAllergy.getSeverityDesc())%>
+                                                    <td bgcolor="<%=sevColour%>"><%=StringEscapeUtils.escapeHtml4(displayAllergy.getSeverityDesc())%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getOnSetDesc())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getOnSetDesc())%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getReaction())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getReaction())%>
                                                     </td>
-                                                    <td><%=StringEscapeUtils.escapeHtml(displayAllergy.getStartDate())%>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getStartDate())%>
                                                     </td>
                                                     <td>
                                                         <%

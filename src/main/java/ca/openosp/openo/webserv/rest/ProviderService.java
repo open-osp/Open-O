@@ -43,9 +43,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import ca.openosp.openo.webserv.rest.to.OscarSearchResponse;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
@@ -55,6 +55,7 @@ import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.managers.OscarLogManager;
 import ca.openosp.openo.managers.ProviderManager2;
 import ca.openosp.openo.managers.model.ProviderSettings;
+import ca.openosp.openo.utility.JsDateSerializer;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.web.PatientListApptBean;
 import ca.openosp.openo.web.PatientListApptItemBean;
@@ -80,6 +81,14 @@ import org.springframework.stereotype.Component;
 public class ProviderService extends AbstractServiceImpl {
 
     private static final Logger logger = MiscUtils.getLogger();
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(java.sql.Date.class, new JsDateSerializer());
+        objectMapper.registerModule(module);
+    }
 
     @Autowired
     ProviderDao providerDao;
@@ -141,8 +150,6 @@ public class ProviderService extends AbstractServiceImpl {
         try {
             logger.debug("Retrieving active providers as JSON");
 
-            JsonConfig config = new JsonConfig();
-            config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
 
             List<ProviderTo1> providers = new ProviderConverter().getAllAsTransferObjects(getLoggedInInfo(), providerDao.getActiveProviders());
 
@@ -182,7 +189,6 @@ public class ProviderService extends AbstractServiceImpl {
             return ProviderTransfer.toTransfer(provider);
         }
 
-
     /**
      * Retrieves the currently logged-in provider.
      *
@@ -198,7 +204,7 @@ public class ProviderService extends AbstractServiceImpl {
 
             if (provider == null) {
                 // build a JSON error payload
-                JSONObject error = new JSONObject();
+                ObjectNode error = objectMapper.createObjectNode();
                 error.put("error", "Provider not found");
                 return Response.status(Status.NOT_FOUND)
                                .entity(error.toString())
@@ -207,9 +213,7 @@ public class ProviderService extends AbstractServiceImpl {
             }
 
             // serialize the provider to JSON
-            JsonConfig config = new JsonConfig();
-            config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
-            String body = JSONObject.fromObject(provider, config).toString();
+            String body = objectMapper.valueToTree(provider).toString();
 
             logger.info("Successfully retrieved logged-in provider: {}", provider.getProviderNo());
             return Response.ok(body, "application/json").build();
@@ -242,10 +246,8 @@ public class ProviderService extends AbstractServiceImpl {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
 
-        JsonConfig config = new JsonConfig();
-        config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
         logger.info("Successfully retrieved provider {} as JSON", id);
-        return JSONObject.fromObject(provider, config).toString();
+        return objectMapper.valueToTree(provider).toString();
     }
 
 
@@ -268,7 +270,7 @@ public class ProviderService extends AbstractServiceImpl {
     @Produces("application/json")
     @Consumes("application/json")
     public AbstractSearchResponse<ProviderTo1> search(
-        JSONObject json,
+        ObjectNode json,
         @QueryParam("startIndex") Integer startIndex,
         @QueryParam("itemsToReturn") Integer itemsToReturn
     ) {
@@ -296,7 +298,7 @@ public class ProviderService extends AbstractServiceImpl {
             // 2) Sanitize 'searchTerm'
             String term = null;
             if (json.has("searchTerm")) {
-                term = json.optString("searchTerm", null);
+                term = json.has("searchTerm") ? json.get("searchTerm").asText() : null;
                 if (term != null) {
                     term = term.replaceAll("[^\\w\\s\\-\\.]", "").trim();
                     if (term.length() > 100) {

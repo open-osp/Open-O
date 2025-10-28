@@ -27,7 +27,8 @@
 
 package ca.openosp.openo.managers;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.ClinicDAO;
 import ca.openosp.openo.commn.dao.FaxClientLogDao;
@@ -88,6 +89,8 @@ public class FaxManagerImpl implements FaxManager {
     private Logger logger = MiscUtils.getLogger();
 
     // public enum TransactionType {CONSULTATION, EFORM, FORM, RX, DOCUMENT}
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public Path renderFaxDocument(LoggedInInfo loggedInInfo, TransactionType transactionType, FormTransportContainer formTransportContainer) {
@@ -360,9 +363,13 @@ public class FaxManagerImpl implements FaxManager {
              *  assumes that the recipient entry is a JSONObject
              */
             copytoRecipient = "{" + copytoRecipient + "}";
-            JSONObject copytoRecipientJson = JSONObject.fromObject(copytoRecipient);
-            FaxRecipient faxRecipient = new FaxRecipient(copytoRecipientJson);
-            faxRecipientArray.add(faxRecipient);
+            try {
+                ObjectNode copytoRecipientJson = (ObjectNode) objectMapper.readTree(copytoRecipient);
+                FaxRecipient faxRecipient = new FaxRecipient(copytoRecipientJson);
+                faxRecipientArray.add(faxRecipient);
+            } catch (Exception e) {
+                logger.error("failed to parse fax recipient json: " + copytoRecipient, e);
+            }
         }
         return addRecipients(loggedInInfo, faxJob, faxRecipientArray);
     }
@@ -726,7 +733,7 @@ public class FaxManagerImpl implements FaxManager {
         faxSchedulerJob.restartTask();
     }
 
-    public JSONObject getFaxSchedularStatus(LoggedInInfo loggedInInfo) {
+    public ObjectNode getFaxSchedularStatus(LoggedInInfo loggedInInfo) {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.fax.restart", SecurityInfoManager.READ, null)) {
             throw new RuntimeException("missing required sec object (_admin.fax.restart)");
         }
@@ -734,7 +741,7 @@ public class FaxManagerImpl implements FaxManager {
         if (FaxSchedulerJob.isRunning()) {
             status = "No uncaught exception - connection is likely up";
         }
-        JSONObject jsonObject = new JSONObject();
+        ObjectNode jsonObject = objectMapper.createObjectNode();
         jsonObject.put("faxSchedularStatus", status);
         jsonObject.put("isRunning", FaxSchedulerJob.isRunning());
         return jsonObject;

@@ -43,7 +43,7 @@
 %>
 <%@ page errorPage="/errorpage.jsp"
          import="java.util.*, java.sql.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Billingreferral" %>
 <%@page import="ca.openosp.openo.commn.dao.BillingreferralDao" %>

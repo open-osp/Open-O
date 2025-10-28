@@ -24,8 +24,9 @@
 package ca.openosp.openo.fax.admin;
 
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.commn.dao.FaxConfigDao;
 import ca.openosp.openo.commn.model.FaxConfig;
@@ -50,12 +51,15 @@ public class ConfigureFax2Action extends ActionSupport {
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private static final String PASSWORD_BLANKET = "**********";
 
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public String execute() {
         return configure();
     }
 
     public String configure() {
-        JSONObject jsonObject;
+        ObjectNode jsonObject;
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "r", null)) {
             throw new SecurityException("missing required sec object (_admin)");
@@ -189,16 +193,18 @@ public class ConfigureFax2Action extends ActionSupport {
                 faxConfigDao.saveEntity(faxConfig);
             }
 
-            jsonObject = JSONObject.fromObject("{success:true}");
+            jsonObject = objectMapper.createObjectNode();
+            jsonObject.put("success", true);
         } catch (Exception ex) {
-            jsonObject = JSONObject.fromObject("{success:false}");
+                jsonObject = objectMapper.createObjectNode();
+                jsonObject.put("success", false);
             MiscUtils.getLogger().error("COULD NOT SAVE FAX CONFIGURATION", ex);
         }
 
 
         try {
             MiscUtils.getLogger().info("JSON: " + jsonObject);
-            jsonObject.write(response.getWriter());
+            response.getWriter().write(jsonObject.toString());
         } catch (IOException e) {
             MiscUtils.getLogger().error("JSON WRITER ERROR", e);
         }

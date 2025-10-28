@@ -24,7 +24,7 @@
  */
 package ca.openosp.openo.managers;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ca.openosp.openo.commn.dao.AbstractCodeSystemDao;
 import ca.openosp.openo.commn.dao.AbstractCodeSystemDaoImpl;
 import ca.openosp.openo.commn.model.AbstractCodeSystemModel;

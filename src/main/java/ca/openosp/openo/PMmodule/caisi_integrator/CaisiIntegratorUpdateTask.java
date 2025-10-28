@@ -74,7 +74,7 @@ import ca.openosp.openo.utility.*;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.tika.io.IOUtils;
 import ca.openosp.openo.PMmodule.dao.ProgramDao;
@@ -559,6 +559,8 @@ public class CaisiIntegratorUpdateTask extends TimerTask {
                     providerCommunicationList);
         } catch (MalformedURLException e) {
             MiscUtils.getLogger().error("Error while retreiving messages for Oscar Messaging members", e);
+        } catch (IOException e) {
+            MiscUtils.getLogger().error("Error while retreiving integreted messages for Oscar Messaging members", e);
         }
 
         try {

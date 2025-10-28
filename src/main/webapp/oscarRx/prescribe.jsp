@@ -719,7 +719,7 @@
     }
 
     var specArr = new Array();
-    var specStr = '<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(specStr)%>';
+    var specStr = '<%=org.apache.commons.text.StringEscapeUtils.escapeEcmaScript(specStr)%>';
 
     specArr = specStr.split("*");// * is used as delimiter
     //oscarLog("specArr="+specArr);
