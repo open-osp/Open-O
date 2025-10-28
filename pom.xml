@@ -460,7 +460,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>
-            <version>5.8.16</version>
+            <version>6.3.9</version>
         </dependency>
 
         <!-- Spring Cache Support with EhCache 2.x -->

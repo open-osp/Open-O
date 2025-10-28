@@ -3509,11 +3509,11 @@
   }, {
     "groupId" : "org.springframework.security",
     "artifactId" : "spring-security-crypto",
-    "version" : "5.8.16",
+    "version" : "6.3.9",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:uuIy7D74iKO0pCZJz+3aZLYGLhE0UyiEnvUdLlsp+V+ldIzgD93YLd0HxjfAwn9DaZNyKjoQbo1G/y0RTqFtAw=="
+    "integrity" : "sha512:miq5ftqPiXgbLMVicLUvnSO53a62SqSXA5TPH9Xl7CrSptRriFpGDMPMCbp1Jx48tphBzJ3Z+AHoNgvC2b57Dw=="
   }, {
     "groupId" : "org.springframework",
     "artifactId" : "spring-aop",
