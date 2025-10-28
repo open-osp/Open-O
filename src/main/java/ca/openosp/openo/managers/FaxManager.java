@@ -28,7 +28,7 @@
 
 package ca.openosp.openo.managers;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ca.openosp.openo.commn.dao.FaxConfigDao;
 import ca.openosp.openo.commn.model.FaxConfig;
 import ca.openosp.openo.commn.model.FaxJob;
@@ -208,7 +208,7 @@ public interface FaxManager {
 
     public void restartFaxScheduler(LoggedInInfo loggedInInfo);
 
-    public JSONObject getFaxSchedularStatus(LoggedInInfo loggedInInfo);
+    public ObjectNode getFaxSchedularStatus(LoggedInInfo loggedInInfo);
 
     /**
      * Check if fax services are enabled.

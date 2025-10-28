@@ -56,7 +56,7 @@
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Site" %>
 
-<%@ page import="org.apache.commons.lang.StringEscapeUtils,ca.openosp.openo.providers.data.ProviderBillCenter" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils,ca.openosp.openo.providers.data.ProviderBillCenter" %>
 
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.commn.model.Provider" %>

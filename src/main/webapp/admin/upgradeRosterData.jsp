@@ -38,7 +38,7 @@
 <%@page import="ca.openosp.openo.db.*" %>
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");

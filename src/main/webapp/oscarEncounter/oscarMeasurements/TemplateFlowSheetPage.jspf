@@ -562,7 +562,7 @@ div.recommendations ul{
                 for ( int i = 0; i < patientDx.size(); i++){
                     dxResearchBean code = (dxResearchBean)patientDx.get(i);  // code.getEnd_date() code.getStart_date()
                     String desc = code.getDescription();
-                    desc = org.apache.commons.lang.StringUtils.abbreviate(desc,lim) ;
+                    desc = org.apache.commons.lang3.StringUtils.abbreviate(desc,lim) ;
                     HashMap<String,String> dxMap = flowSheetDxDao.getFlowSheetDxMap( temp, Integer.parseInt(demographic_no));
 
                     String pDx = dxMap.get(code.getType()+""+code.getDxSearchCode());
@@ -607,7 +607,7 @@ div.recommendations ul{
                     %>
                     <li title="<%=rxD%> - <%=rxP%>">
                             <a href="FlowSheetDrugAction.do?method=save&flowsheet=<%=temp%>&demographic=<%=demographic_no%>&atcCode=<%=arr[i].getAtcCode()%>">
-                            - <%= org.apache.commons.lang.StringUtils.abbreviate(rxP, 12)%>
+                            - <%= org.apache.commons.lang3.StringUtils.abbreviate(rxP, 12)%>
                             </a>
                     </li>
                     <%  }
@@ -640,7 +640,7 @@ div.recommendations ul{
                         String rxP = allergies[i].getDescription();
                     %>
                     <li title="<%=rxD%> - <%=rxP%>">
-                            - <%= org.apache.commons.lang.StringUtils.abbreviate(rxP, 12)%>
+                            - <%= org.apache.commons.lang3.StringUtils.abbreviate(rxP, 12)%>
                     </li>
                     <%}%>
                 </ul>

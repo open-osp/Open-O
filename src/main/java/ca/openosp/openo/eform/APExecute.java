@@ -28,7 +28,8 @@ package ca.openosp.openo.eform;
 
 import java.util.ArrayList;
 
-import net.sf.json.JSONArray;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -45,6 +46,9 @@ public class APExecute {
     public APExecute() {
     }
 
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public String execute(String ap, String demographicNo) {
         EFormLoader.getInstance();
         DatabaseAP dap = EFormLoader.getAP(ap);
@@ -55,7 +59,7 @@ public class APExecute {
         sql = DatabaseAP.parserClean(sql);  //replaces all other ${apName} expressions with 'apName'
 
         if (dap.isJsonOutput()) {
-            JSONArray values = EFormUtil.getJsonValues(names, sql);
+            ArrayNode values = EFormUtil.getJsonValues(names, sql);
             output = values.toString(); //in case of JsonOutput, return the whole JSONArray and let the javascript deal with it
         } else {
             ArrayList<String> values = EFormUtil.getValues(names, sql);

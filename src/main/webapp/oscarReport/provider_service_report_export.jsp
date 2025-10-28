@@ -47,7 +47,7 @@
 <%@page import="ca.openosp.openo.commn.model.*" %>
 <%@page import="ca.openosp.openo.utility.*" %>
 <%@page import="java.text.*" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%
     String agencyName = ca.openosp.OscarProperties.getInstance().getProperty("db_name", "");
     String startDateString = request.getParameter("startDate");

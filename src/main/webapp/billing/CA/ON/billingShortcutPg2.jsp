@@ -45,7 +45,7 @@
 <%@ page errorPage="/errorpage.jsp" import="java.util.*,java.math.*,java.net.*,java.sql.*, ca.openosp.openo.util.*, ca.openosp.*" %>
 
 <%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 <jsp:useBean id="providerBean" class="java.util.Properties" scope="session"/>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
@@ -629,7 +629,7 @@
                 String temp = e.nextElement().toString();
         %>
         <input type="hidden" name="<%= temp %>"
-               value="<%=StringEscapeUtils.escapeHtml(request.getParameter(temp))%>">
+               value="<%=StringEscapeUtils.escapeHtml4(request.getParameter(temp))%>">
         <%
             }
         %>

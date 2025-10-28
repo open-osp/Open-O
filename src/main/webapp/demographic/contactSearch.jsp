@@ -27,8 +27,8 @@
 <%@ page import="java.util.*,java.sql.*, java.net.*" %>
 <%@ page import="ca.openosp.openo.commn.web.Contact2Action" %>
 <%@ page import="ca.openosp.openo.commn.model.Contact" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.apache.commons.lang.WordUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.WordUtils" %>
 
 <%@ include file="/taglibs.jsp" %>
 
@@ -143,9 +143,9 @@
                 </td>
             </tr>
         </table>
-        <input type='hidden' name='form' value="<%=StringEscapeUtils.escapeHtml(form)%>"/>
-        <input type='hidden' name='elementName' value="<%=StringEscapeUtils.escapeHtml(elementName)%>"/>
-        <input type='hidden' name='elementId' value="<%=StringEscapeUtils.escapeHtml(elementId)%>"/>
+        <input type='hidden' name='form' value="<%=StringEscapeUtils.escapeHtml4(form)%>"/>
+        <input type='hidden' name='elementName' value="<%=StringEscapeUtils.escapeHtml4(elementName)%>"/>
+        <input type='hidden' name='elementId' value="<%=StringEscapeUtils.escapeHtml4(elementId)%>"/>
     </form>
 
     <table bgcolor="#C0C0C0" width="100%">
@@ -163,7 +163,7 @@
                 String bgColor = i.getIndex() % 2 == 0 ? "#EEEEFF" : "ivory";
 
                 String strOnClick;
-                strOnClick = "selectResult('" + contact.getId() + "','" + StringEscapeUtils.escapeJavaScript(contact.getLastName() + "," + contact.getFirstName()) + "')";
+                strOnClick = "selectResult('" + contact.getId() + "','" + StringEscapeUtils.escapeEcmaScript(contact.getLastName() + "," + contact.getFirstName()) + "')";
 
             %>
             <tr bgcolor="<%=bgColor%>"

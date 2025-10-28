@@ -251,7 +251,11 @@ public class AddEForm2Action extends ActionSupport {
              * Doing this ensures the image links get saved correctly into the HTML
              * of the eform_data database table.
              */
-            curForm.addImagePathPlaceholders(imagePathPlaceHolders);
+            try {
+                curForm.addImagePathPlaceholders(imagePathPlaceHolders);
+            } catch (Exception e) {
+                logger.error("Error retrieving image path placeholders from eForm submission.", e);
+            }
 
             String fdid = eformDataManager.saveEformData(loggedInInfo, curForm) + "";
 

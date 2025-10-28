@@ -25,7 +25,7 @@
 --%>
 <%@page import="ca.openosp.openo.managers.IntegratorFileLogManager" %>
 <%@page import="ca.openosp.openo.commn.model.IntegratorFileLog" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="java.text.SimpleDateFormat" %>
 <%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>

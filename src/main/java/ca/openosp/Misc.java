@@ -32,8 +32,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import ca.openosp.openo.utility.MiscUtils;
 
 public final class Misc {
@@ -61,7 +61,7 @@ public final class Misc {
     }
 
     public static String htmlEscape(String s) {
-        return (StringEscapeUtils.escapeHtml(s));
+        return (StringEscapeUtils.escapeHtml4(s));
 
 //		if (null == S) return S;
 //		int N = S.length();
@@ -92,7 +92,7 @@ public final class Misc {
     }
 
     public static String htmlJsEscape(String s) {
-        return (StringEscapeUtils.escapeHtml(s).replaceAll("\\n", "<br/>"));
+        return (StringEscapeUtils.escapeHtml4(s).replaceAll("\\n", "<br/>"));
 
 //		if (null == S) return S;
 //		int N = S.length();

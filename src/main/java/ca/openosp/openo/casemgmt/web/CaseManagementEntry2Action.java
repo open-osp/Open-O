@@ -30,11 +30,11 @@ import ca.openosp.openo.commn.model.*;
 import ca.openosp.openo.utility.*;
 import com.opensymphony.xwork2.ActionSupport;
 import ca.openosp.openo.model.security.Secrole;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.JsDateJsonBeanProcessor;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
@@ -86,6 +86,15 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
     private IssueDAO issueDao = (IssueDAO) SpringUtils.getBean(IssueDAO.class);
     private CasemgmtNoteLockDao casemgmtNoteLockDao = SpringUtils.getBean(CasemgmtNoteLockDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    static {
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(java.sql.Date.class, new JsDateSerializer());
+        objectMapper.registerModule(module);
+    }
 
     public String execute() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -602,7 +611,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         Map<String, String> jsonMap = new HashMap<String, String>();
         jsonMap.put("isNoteEdited", ret);
-        JSONObject json = JSONObject.fromObject(jsonMap);
+        ObjectNode json = objectMapper.valueToTree(jsonMap);
         response.getOutputStream().write(json.toString().getBytes());
         return null;
     }
@@ -661,7 +670,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         Date noteDate = new Date();
 
-        strNote = org.apache.commons.lang.StringUtils.trimToNull(strNote);
+        strNote = StringUtils.trimToNull(strNote);
         if ((archived == null || !archived.equalsIgnoreCase("true")) && (strNote == null || strNote.equals("")))
             return null;
 
@@ -788,7 +797,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         HashMap<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put("id", note.getId());
-        JSONObject json = JSONObject.fromObject(hashMap);
+        ObjectNode json = objectMapper.valueToTree(hashMap);
         response.getOutputStream().write(json.toString().getBytes());
 
         return null;
@@ -817,7 +826,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         String[] extKeys = {CaseManagementNoteExt.STARTDATE, CaseManagementNoteExt.RESOLUTIONDATE, CaseManagementNoteExt.PROCEDUREDATE, CaseManagementNoteExt.AGEATONSET, CaseManagementNoteExt.PROBLEMSTATUS, CaseManagementNoteExt.TREATMENT, CaseManagementNoteExt.EXPOSUREDETAIL, CaseManagementNoteExt.RELATIONSHIP, CaseManagementNoteExt.LIFESTAGE, CaseManagementNoteExt.HIDECPP, CaseManagementNoteExt.PROBLEMDESC, CaseManagementNoteExt.PROCEDURE};
 
         logger.debug("Saving: " + strNote);
-        strNote = org.apache.commons.lang.StringUtils.trimToNull(strNote);
+        strNote = StringUtils.trimToNull(strNote);
         if (strNote == null || strNote.equals("")) return null;
 
         String userName = loggedInInfo.getLoggedInProvider().getFullName();
@@ -1231,7 +1240,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         CaseManagementNote note = sessionFrm.getCaseNote();
         String noteTxt = this.getCaseNote_note();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return -1L;
 
         note.setNote(noteTxt);
@@ -1649,7 +1658,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         if (session.getAttribute("userrole") == null) return "expired";
 
         String noteTxt = request.getParameter("noteTxt");
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = StringUtils.trimToNull(noteTxt);
         if (noteTxt == null || noteTxt.equals("")) return null;
 
         logger.debug("Saving Note" + request.getParameter("nId"));
@@ -2069,7 +2078,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         CaseManagementEntryFormBean sessionFrm = (CaseManagementEntryFormBean) session.getAttribute(sessionFrmName);
         CaseManagementNote note = sessionFrm.getCaseNote();
         String noteTxt = this.getCaseNote_note();
-        noteTxt = org.apache.commons.lang.StringUtils.trimToNull(noteTxt);
+        noteTxt = StringUtils.trimToNull(noteTxt);
         note.setNote(noteTxt);
 
         request.setAttribute("demoName", getDemoName(demono));
@@ -3160,7 +3169,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
         CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
         CaseManagementNoteLink link = caseManagementNoteLinkDao.getLastLinkByTableId(CaseManagementNoteLink.TICKLER, Long.valueOf(ticklerNo));
-        JSONObject json = JSONObject.fromObject("{}");
+        ObjectNode json = (ObjectNode) objectMapper.readTree("{}");
 
         if (link != null) {
             Long noteId = link.getNoteId();
@@ -3169,8 +3178,6 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
 
             if (note != null) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                JsonConfig config = new JsonConfig();
-                config.registerJsonBeanProcessor(java.sql.Date.class, new JsDateJsonBeanProcessor());
 
                 Map<String, Serializable> hashMap = new HashMap<String, Serializable>();
                 hashMap.put("noteId", note.getId().toString());
@@ -3178,7 +3185,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
                 hashMap.put("revision", note.getRevision());
                 hashMap.put("obsDate", formatter.format(note.getObservation_date()));
                 hashMap.put("editor", this.providerMgr.getProvider(note.getProviderNo()).getFormattedName());
-                json = JSONObject.fromObject(hashMap, config);
+                json = objectMapper.valueToTree(hashMap);
             }
         }
         response.getOutputStream().write(json.toString().getBytes());
@@ -3769,7 +3776,7 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
     }
 
     public String getTrimmedNoteText() {
-        return org.apache.commons.lang.StringUtils.trimToNull(this.getCaseNote_note());
+        return StringUtils.trimToNull(this.getCaseNote_note());
     }
 
     public Integer getHourOfEncounterTime() {

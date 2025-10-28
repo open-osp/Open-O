@@ -28,7 +28,8 @@ package ca.openosp.openo.prescript.pageUtil;
 
 import ca.openosp.openo.commn.model.*;
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.casemgmt.model.CaseManagementNote;
@@ -67,6 +68,7 @@ public final class RxWriteScript2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private static final String PRIVILEGE_READ = "r";
@@ -717,7 +719,7 @@ public final class RxWriteScript2Action extends ActionSupport {
                 hm.put("calQuantity", rx.getQuantity());
                 hm.put("unitName", rx.getUnitName());
                 hm.put("policyViolations", rx.getPolicyViolations());
-                JSONObject jsonObject = JSONObject.fromObject(hm);
+                ObjectNode jsonObject = objectMapper.valueToTree(hm);
                 logger.debug("jsonObject:" + jsonObject.toString());
                 response.getOutputStream().write(jsonObject.toString().getBytes());
             } catch (Exception e) {
@@ -801,7 +803,7 @@ public final class RxWriteScript2Action extends ActionSupport {
                 hm.put("prn", rx.getPrn());
                 hm.put("calQuantity", rx.getQuantity());
                 hm.put("unitName", rx.getUnitName());
-                JSONObject jsonObject = JSONObject.fromObject(hm);
+                ObjectNode jsonObject = objectMapper.valueToTree(hm);
                 response.getOutputStream().write(jsonObject.toString().getBytes());
             } catch (Exception e) {
                 logger.error("Error", e);
@@ -1194,7 +1196,7 @@ public final class RxWriteScript2Action extends ActionSupport {
             hm.put("patientName", "Unknown");
             hm.put("patientHIN", "Unknown");
         }
-        JSONObject jo = JSONObject.fromObject(hm);
+        ObjectNode jo = objectMapper.valueToTree(hm);
         response.getOutputStream().write(jo.toString().getBytes());
         return null;
     }
@@ -1232,7 +1234,7 @@ public final class RxWriteScript2Action extends ActionSupport {
 
             hm.put("success", saveStatus);
         }
-        JSONObject jsonObject = JSONObject.fromObject(hm);
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
         response.getOutputStream().write(jsonObject.toString().getBytes());
         return null;
     }
@@ -1335,7 +1337,7 @@ public final class RxWriteScript2Action extends ActionSupport {
         int n = bean.getStashSize();
         HashMap hm = new HashMap();
         hm.put("NoStashItem", n);
-        JSONObject jsonObject = JSONObject.fromObject(hm);
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
 
         response.setContentType("application/json");
 

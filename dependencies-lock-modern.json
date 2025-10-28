@@ -592,6 +592,14 @@
     "optional" : false,
     "integrity" : "sha512:8pABxOt8NNDHDSOvvM6Wzq52K2kfUIycb2s9GjnICv5DR2frjHowOd2CYdJqLqHr0dn8+rWUP8oX/7dtl3QcgQ=="
   }, {
+    "groupId" : "com.lowagie",
+    "artifactId" : "itext",
+    "version" : "2.1.7.js8",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:3+yd01GfcFodtjzeXNDF5SN9uFQXr716b3BjOYV+0Hdf1fEQGeFoJhXBKFnWQpAptlA4QndrKL9Ub3hCU9RqUA=="
+  }, {
     "groupId" : "com.medseek.clinical.service",
     "artifactId" : "SSOClinicalConnect",
     "version" : "20171101",
@@ -1419,14 +1427,6 @@
     "optional" : false,
     "integrity" : "sha512:jS/pp1UkHNV2rZTiwbhz3IExY9W7mT4/Z30Bkms9clWW54rE0xCBNv9fhFvidgaL2gSr69RHvzgeCxb8EMmJDw=="
   }, {
-    "groupId" : "net.sf.ezmorph",
-    "artifactId" : "ezmorph",
-    "version" : "1.0.6",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:FtML5WRyO3TzErTn0G80k3D7ZyazFid4yGnNcj7KKkDElywnV7PhB+GCDOwNcLC9K5bvzUZlGPxkSV9675eWeg=="
-  }, {
     "groupId" : "net.sf.jasperreports",
     "artifactId" : "jasperreports",
     "version" : "6.17.0",
@@ -1442,15 +1442,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:OVOQC+vjj0JCSZ0QbVlCX1S3PAR4wwUPDcCRfVw2zDX5TM/qlua/hemxKCvVcvVa/vG0hfgfXtlJPMTTgo9aCw=="
-  }, {
-    "groupId" : "net.sf.json-lib",
-    "artifactId" : "json-lib",
-    "version" : "2.4",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:yfYt9YnRrRZoSzWE4dSuzMO8bfphnTvQkyQGKftPV1dqnGK9hOOw7L3+dFRfGXYNJ1s/GUryIK7zT3HZ/y7Dsw==",
-    "classifier" : "jdk15"
   }, {
     "groupId" : "net.shibboleth.utilities",
     "artifactId" : "java-support",
@@ -2566,27 +2557,35 @@
   }, {
     "groupId" : "org.bouncycastle",
     "artifactId" : "bcpkix-jdk18on",
-    "version" : "1.78.1",
+    "version" : "1.79",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:1xpFhEp5RranAxUlToKjNdLfXkArLVo7SW+mmzVRhDOAEbScXxx2Amdkp29i8rwUDCXbKIG8qR3elneiXG1Yew=="
+    "integrity" : "sha512:EraxjWu4nUyC1hYhBGf7fDlR0bap3/ELS3Yz7HCKq+oHoPOcSDRKsY/f7Cl19u+JEbosqRif91xSJXS2129KvA=="
+  }, {
+    "groupId" : "org.bouncycastle",
+    "artifactId" : "bcprov-jdk15on",
+    "version" : "1.64",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:paBnE0LGSW4CZv4ZRCMoUgHKfcrXMrSY0gYzC6CnVIYMo5Tw6HP3yDe7cF22eZhuQWcJal0YmIRoEr/8M5hoOA=="
   }, {
     "groupId" : "org.bouncycastle",
     "artifactId" : "bcprov-jdk18on",
-    "version" : "1.78.1",
+    "version" : "1.79",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:+xDDwImSHIFzrShTKfcw4OeN4XXRtQub3XnGqFomWvmzMxyqDB7Vfl9HBHMZzjsPO7Xe8KPbnMzydVzJXhReUg=="
+    "integrity" : "sha512:J7xUFY2oFlpVp+2un9CZgHlZec7gmemNgfrbS9Tc5NXIa4pjXR6JLihmdtI7auWWGnYvrfOoZFE8jgxtu979Og=="
   }, {
     "groupId" : "org.bouncycastle",
     "artifactId" : "bcutil-jdk18on",
-    "version" : "1.78.1",
+    "version" : "1.79",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:ajOMUNZimTyfALuiP5hEPJI7mpX/YdxlOQb1GFf4r67MV6U2v69oSKyOfpzgoh+E7AaIFYUyYSaPl+lRUmvHZg=="
+    "integrity" : "sha512:o+x8IvbnFuLAa56TsZkr2iPrkuoMw/Ovxb165EqSNf8iFtDACXeZow/S4t1hjn8wzCEAB9ph4d7i5yuPuw3hbw=="
   }, {
     "groupId" : "org.brotli",
     "artifactId" : "dec",
@@ -3526,11 +3525,11 @@
   }, {
     "groupId" : "org.springframework.security",
     "artifactId" : "spring-security-crypto",
-    "version" : "5.8.16",
+    "version" : "6.3.9",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:uuIy7D74iKO0pCZJz+3aZLYGLhE0UyiEnvUdLlsp+V+ldIzgD93YLd0HxjfAwn9DaZNyKjoQbo1G/y0RTqFtAw=="
+    "integrity" : "sha512:miq5ftqPiXgbLMVicLUvnSO53a62SqSXA5TPH9Xl7CrSptRriFpGDMPMCbp1Jx48tphBzJ3Z+AHoNgvC2b57Dw=="
   }, {
     "groupId" : "org.springframework",
     "artifactId" : "spring-aop",

@@ -27,11 +27,11 @@
 <%@page import="java.text.ParseException" %>
 <%@page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
 <%@page import="ca.openosp.OscarProperties" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.ConsentDao" %>
 <%@page import="ca.openosp.openo.commn.dao.CVCImmunizationDao" %>
 <%@page import="ca.openosp.openo.commn.dao.CVCMappingDao" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.managers.CanadianVaccineCatalogueManager" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.providers.data.ProviderData" %>
@@ -729,7 +729,7 @@
                 <table class="TopStatusBar">
                     <tr>
                         <td>
-                            <%=StringEscapeUtils.escapeHtml(nameage)%>
+                            <%=StringEscapeUtils.escapeHtml4(nameage)%>
                         </td>
                         <td>&nbsp;
 
@@ -1515,7 +1515,7 @@
         } else if (second != null) {
             ret = second;
         }
-        return StringEscapeUtils.escapeHtml(ret);
+        return StringEscapeUtils.escapeHtml4(ret);
     }
 
     String checked(String first, String second) {

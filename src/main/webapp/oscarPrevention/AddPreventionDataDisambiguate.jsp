@@ -30,7 +30,7 @@
 <%@page import="ca.openosp.openo.commn.dao.CVCImmunizationDao" %>
 <%@page import="ca.openosp.openo.commn.dao.CVCMappingDao" %>
 <%@page import="ca.openosp.openo.commn.model.CVCMedicationLotNumber" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.CVCImmunization" %>
 <%@page import="ca.openosp.openo.managers.CanadianVaccineCatalogueManager" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>

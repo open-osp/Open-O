@@ -4,7 +4,7 @@ package ca.openosp.openo.casemgmt.service;
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.encounter.data.EctProviderData;
 import ca.openosp.openo.encounter.pageUtil.EctSessionBean;
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import ca.openosp.openo.PMmodule.model.ProgramProvider;
@@ -65,7 +65,7 @@ public class CaseManagementPrint {
      *This method was in CaseManagementEntry2Action but has been moved out so that both the classic Echart and the flat echart can use the same printing method.
      *
      */
-    public void doPrint(LoggedInInfo loggedInInfo, Integer demographicNo, boolean printAllNotes, String[] noteIds, boolean printCPP, boolean printRx, boolean printLabs, boolean printPreventions, boolean useDateRange, Calendar startDate, Calendar endDate, HttpServletRequest request, OutputStream os) throws IOException, com.lowagie.text.DocumentException, com.itextpdf.text.DocumentException {
+    public void doPrint(LoggedInInfo loggedInInfo, Integer demographicNo, boolean printAllNotes, String[] noteIds, boolean printCPP, boolean printRx, boolean printLabs, boolean printPreventions, boolean useDateRange, Calendar startDate, Calendar endDate, HttpServletRequest request, OutputStream os) throws IOException, DocumentException {
 
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 

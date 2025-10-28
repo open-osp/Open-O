@@ -42,7 +42,7 @@
 <%@ page
         import="java.sql.*, java.util.*, ca.openosp.MyDateFormat, ca.openosp.openo.waitinglist.util.WLWaitingListUtil, ca.openosp.openo.log.*, ca.openosp.openo.commn.OtherIdManager" %>
 
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 

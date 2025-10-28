@@ -41,10 +41,11 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpStatus;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -71,6 +72,8 @@ import ca.openosp.openo.form.JSONUtil;
 import ca.openosp.OscarProperties;
 
 public class ManageFaxes2Action extends ActionSupport {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
@@ -106,7 +109,8 @@ public class ManageFaxes2Action extends ActionSupport {
         FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
         FaxJob faxJob = faxJobDao.find(Integer.parseInt(jobId));
         FaxConfig faxConfig = faxConfigDao.getConfigByNumber(faxJob.getFax_line());
-        String result = "{success:false}";
+        ObjectNode result = objectMapper.createObjectNode();
+        result.put("success", false);
 
         log.info("TRYING TO CANCEL FAXJOB " + faxJob.getJobId());
 
@@ -117,7 +121,8 @@ public class ManageFaxes2Action extends ActionSupport {
             if (faxJob.getStatus().equals(FaxJob.STATUS.SENT)) {
                 faxJob.setStatus(FaxJob.STATUS.CANCELLED);
                 faxJobDao.merge(faxJob);
-                result = "{success:true}";
+                result = objectMapper.createObjectNode();
+                result.put("success", true);
 
             }
 
@@ -137,7 +142,8 @@ public class ManageFaxes2Action extends ActionSupport {
                         if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 
                             HttpEntity httpEntity = httpResponse.getEntity();
-                            result = EntityUtils.toString(httpEntity);
+                            result = objectMapper.createObjectNode();
+                            result = (ObjectNode) objectMapper.readTree(EntityUtils.toString(httpEntity));
 
                             faxJob.setStatus(FaxJob.STATUS.CANCELLED);
                             faxJobDao.merge(faxJob);
@@ -150,7 +156,7 @@ public class ManageFaxes2Action extends ActionSupport {
             }
         }
 
-        JSONUtil.jsonResponse(response, JSONObject.fromObject(result));
+        JSONUtil.jsonResponse(response, result);
 
         return null;
 
@@ -159,7 +165,8 @@ public class ManageFaxes2Action extends ActionSupport {
     @SuppressWarnings("unused")
     public String ResendFax() {
 
-        JSONObject jsonObject = JSONObject.fromObject("{success:false}");
+        ObjectNode jsonObject = objectMapper.createObjectNode();
+        jsonObject.put("success", false);
         String JobId = request.getParameter("jobId");
         String faxNumber = request.getParameter("faxNumber");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -177,7 +184,10 @@ public class ManageFaxes2Action extends ActionSupport {
             success = faxManager.resendFax(loggedInInfo, JobId, faxNumber);
         }
 
-        JSONUtil.jsonResponse(response, JSONObject.fromObject("{success:" + success + "}"));
+        ObjectNode jsonObjectResponse = objectMapper.createObjectNode();
+        jsonObjectResponse.put("success", success);
+
+        JSONUtil.jsonResponse(response, jsonObjectResponse);
 
         return null;
     }

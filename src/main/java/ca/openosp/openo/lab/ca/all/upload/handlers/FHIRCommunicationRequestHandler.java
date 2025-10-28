@@ -25,7 +25,7 @@
 
 package ca.openosp.openo.lab.ca.all.upload.handlers;
 
-import com.lowagie.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfReader;
 
 import ca.uhn.fhir.context.FhirContext;
 

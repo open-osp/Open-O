@@ -56,7 +56,7 @@
 <%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.CachedProvider" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
 <%@page import="java.util.List" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>

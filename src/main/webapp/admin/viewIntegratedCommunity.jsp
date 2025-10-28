@@ -40,7 +40,7 @@
 %>
 
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.CachedFacility" %>
 <%@page import="java.util.List" %>

@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -210,21 +210,21 @@
                                 %>
                                 <b style="font-size:14pt"><%=firstLine %>
                                 </b><br/>
-                                <%=StringEscapeUtils.escapeHtml(provider.getSpecialty()) %><br/>
+                                <%=StringEscapeUtils.escapeHtml4(provider.getSpecialty()) %><br/>
                                 <br/>
-                                <%=StringEscapeUtils.escapeHtml(clinic.getClinicAddress()) %><br/>
-                                <%=StringEscapeUtils.escapeHtml(clinic.getClinicCity()) %>
-                                , <%=StringEscapeUtils.escapeHtml(clinic.getClinicProvince()) %>  <%=StringEscapeUtils.escapeHtml(clinic.getClinicPostal()) %>
+                                <%=StringEscapeUtils.escapeHtml4(clinic.getClinicAddress()) %><br/>
+                                <%=StringEscapeUtils.escapeHtml4(clinic.getClinicCity()) %>
+                                , <%=StringEscapeUtils.escapeHtml4(clinic.getClinicProvince()) %>  <%=StringEscapeUtils.escapeHtml4(clinic.getClinicPostal()) %>
                                 <br/>
-                                <%=StringEscapeUtils.escapeHtml(phone) %><br/>
-                                Fax <%=StringEscapeUtils.escapeHtml(fax) %> <br/>
+                                <%=StringEscapeUtils.escapeHtml4(phone) %><br/>
+                                Fax <%=StringEscapeUtils.escapeHtml4(fax) %> <br/>
                             </td>
                         </tr>
 
                         <tr> <!-- patient name -->
                             <td colspan="2">
                                 <b>Name</b>: <span
-                                    style="text-decoration: underline;"><%=StringEscapeUtils.escapeHtml(appt.getName()) %></span>
+                                    style="text-decoration: underline;"><%=StringEscapeUtils.escapeHtml4(appt.getName()) %></span>
                             </td>
                         </tr>
 

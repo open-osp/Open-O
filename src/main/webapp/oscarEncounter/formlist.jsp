@@ -129,7 +129,6 @@
                 for (int j = 0; j < forms.length; j++) {
                     EctFormData.Form frm = forms[j];
                     String table = frm.getFormTable();
-                    table = org.apache.commons.lang.StringEscapeUtils.escapeSql(table);
 
                     EctFormData.PatientForm[] pforms;
                     if (table.length() == 0) {

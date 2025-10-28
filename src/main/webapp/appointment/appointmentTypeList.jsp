@@ -40,7 +40,7 @@
 <%@ page import="ca.openosp.openo.util.*" %>
 <%@ page import="ca.openosp.openo.login.*" %>
 <%@ page import="ca.openosp.openo.log.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <html>
 <head>

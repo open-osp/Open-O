@@ -53,8 +53,8 @@
 <%@page import="ca.openosp.openo.caisi_integrator.ws.CachedProvider" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.FacilityIdStringCompositePk" %>
 <%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 <%@page import="ca.openosp.openo.util.DateUtils" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.DemographicTransfer" %>
 <%@page import="ca.openosp.openo.caisi_integrator.ws.MatchingDemographicTransferScore" %>
