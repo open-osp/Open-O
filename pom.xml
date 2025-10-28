@@ -867,11 +867,11 @@
             <version>20111111</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on-->
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
-            <version>1.78.1</version>
+            <version>1.79</version>
         </dependency>
 
         <!-- Added for axis2 1.8.0 -->
