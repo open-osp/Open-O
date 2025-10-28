@@ -3439,8 +3439,8 @@ public class DemographicExportAction42Action extends ActionSupport {
             // Disable XInclude
             factory.setXIncludeAware(false);
             
-            // enabled expansion of entity references
-            factory.setExpandEntityReferences(true);
+            // Disabled expansion of entity references
+            factory.setExpandEntityReferences(false);
         } catch (ParserConfigurationException e) {
             logger.error("Failed to configure XML parser security features", e);
             return false;
