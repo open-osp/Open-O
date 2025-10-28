@@ -44,6 +44,25 @@ public class OscarProperties extends Properties {
     private static final Set<String> activeMarkers = new HashSet<String>(Arrays.asList(new String[]{"true", "yes", "on"}));
 
     /**
+     * Blacklisted namespace patterns for property values that should be ignored.
+     * These represent deprecated package names from the namespace migration.
+     */
+    private static final List<String> BLACKLISTED_NAMESPACES = Arrays.asList(
+        "org.oscarehr.",
+        "oscar."
+    );
+
+    /**
+     * Default values for properties that may have blacklisted values.
+     * These provide fallback values when properties contain deprecated namespaces
+     * (org.oscarehr.* or oscar.*) that need to be migrated to the new ca.openosp.openo.* namespace.
+     */
+    private static final Map<String, String> PROPERTY_DEFAULTS = new HashMap<String, String>() {{
+        put("hibernate.dialect", "ca.openosp.openo.util.persistence.OscarMySQL5Dialect");
+        put("ColourClass", "ca.openosp.openo.casemgmt.common.Colour");
+    }};
+
+    /**
      * @return OscarProperties the instance of OscarProperties
      */
     public static OscarProperties getInstance() {
@@ -51,26 +70,65 @@ public class OscarProperties extends Properties {
     }
 
     /**
-     * Override for filtering properties
+     * Override for filtering properties.
+     * Applies validation to detect and ignore deprecated namespace values.
      *
-     * @param key the property key.
+     * @param key the property key
+     * @return String the validated property value
      */
     public String getProperty(String key) {
-        if ("FORMS_PROMOTEXT".equals(key)) {
+        if (key.equals("FORMS_PROMOTEXT") || key.equals("")) {
             return "";
         }
-        return super.getProperty(key);
+
+        String value = super.getProperty(key);
+
+        // If no value, return the default if one is configured
+        if (value == null) {
+            return getDefaultValue(key);
+        }
+
+        // Check if the value contains a blacklisted namespace
+        if (isValueBlacklisted(value)) {
+            MiscUtils.getLogger().warn(
+                "Property '" + key + "' has blacklisted value '" + value + "' (deprecated namespace). " +
+                "This value has been ignored. Using default value instead."
+            );
+            return getDefaultValue(key);
+        }
+
+        return value;
     }
 
-    /* If cant find the file, inform and continue */
-    /*
-     * private OscarProperties() {
+    /**
+     * Checks if a property value contains a blacklisted namespace pattern.
      *
-     * InputStream is = getClass().getResourceAsStream("/oscar_mcmaster.properties"); try { load(is); } catch (Exception e) { MiscUtils.getLogger().debug("Error, file oscar_mcmaster.properties not found.");
-     * MiscUtils.getLogger().debug("This file must be placed at WEB-INF/classes."); }
-     *
-     * try{ is.close(); } catch (IOException e) { MiscUtils.getLogger().debug("IO error."); MiscUtils.getLogger().error("Error", e); } } //OscarProperties - end
+     * @param value the property value to check
+     * @return boolean true if the value contains a blacklisted namespace
      */
+    private boolean isValueBlacklisted(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return false;
+        }
+
+        for (String blacklistedNamespace : BLACKLISTED_NAMESPACES) {
+            if (value.startsWith(blacklistedNamespace)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the default value for a property key if one is configured.
+     *
+     * @param key the property key
+     * @return String the default value, or null if no default is configured
+     */
+    private String getDefaultValue(String key) {
+        return PROPERTY_DEFAULTS.get(key);
+    }
 
     /* Do not use this constructor. Use getInstance instead */
     private OscarProperties() {
