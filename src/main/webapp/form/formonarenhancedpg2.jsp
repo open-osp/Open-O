@@ -41,7 +41,7 @@
 <%@ page import="ca.openosp.openo.form.graphic.*, ca.openosp.openo.util.*, ca.openosp.openo.form.*, ca.openosp.openo.form.data.*" %>
 <%@ page import="ca.openosp.openo.commn.web.Pregnancy2Action" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.util.LabelValueBean" %>
 <%@ page import="ca.openosp.openo.util.UtilMisc" %>
@@ -339,11 +339,11 @@
             }
 
             $(document).ready(function () {
-                $("select[name='ar2_strep']").val('<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_strep", "")) %>');
+                $("select[name='ar2_strep']").val('<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_strep", "")) %>');
                 $("select[name='ar2_bloodGroup']").val('<%= abo %>');
                 $("select[name='ar2_rh']").val('<%= rh %>');
-                $("select[name='ar2_labCustom1Label']").val('<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_labCustom1Label", "")) %>');
-                $("select[name='ar2_labCustom2Label']").val('<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_labCustom2Label", "")) %>');
+                $("select[name='ar2_labCustom1Label']").val('<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_labCustom1Label", "")) %>');
+                $("select[name='ar2_labCustom2Label']").val('<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_labCustom2Label", "")) %>');
 
 
                 if ($("select[name='ar2_rh']").val() == 'NEG'/* && getGAWeek() >= 9*/) {
@@ -356,11 +356,11 @@
                     $("#rhogam_warn").hide();
                 }
 
-                if ('<%=StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_labRubella", ""))%>' == 'Non-Immune') {
+                if ('<%=StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_labRubella", ""))%>' == 'Non-Immune') {
                     $("#rubella_warn").show();
                 }
 
-                if ('<%=StringEscapeUtils.escapeJavaScript(props.getProperty("pg1_labHBsAg", ""))%>' == 'POS') {
+                if ('<%=StringEscapeUtils.escapeEcmaScript(props.getProperty("pg1_labHBsAg", ""))%>' == 'POS') {
                     $("#hbsag_warn").show();
                 }
 
@@ -583,8 +583,8 @@
                 jQuery.ajax({
                     url: 'onarenhanced_rf.jsp?n=' +<%=y%>, async: false, success: function (data) {
                         jQuery("#rf_container tbody").append(data);
-                        setInput(<%=y%>, "c_riskFactors", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("c_riskFactors"+y, "")) %>');
-                        setInput(<%=y%>, "c_planManage", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("c_planManage"+y, "")) %>');
+                        setInput(<%=y%>, "c_riskFactors", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_riskFactors"+y, "")) %>');
+                        setInput(<%=y%>, "c_planManage", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_planManage"+y, "")) %>');
                     }
                 });
                 <%
@@ -616,16 +616,16 @@
                 jQuery.ajax({
                     url: 'onarenhanced_sv.jsp?n=' +<%=y%>, async: false, success: function (data) {
                         jQuery("#sv_tbody").append(data);
-                        setInput(<%=y%>, "pg2_date", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_date"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_gest", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_gest"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_wt", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_wt"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_BP", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_BP"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_urinePr", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_urinePr"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_date", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_date"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_gest", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_gest"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_wt", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_wt"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_BP", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_BP"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_urinePr", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_urinePr"+y, "")) %>');
                         //removed urineGl
-                        setInput(<%=y%>, "pg2_ht", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_ht"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_presn", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_presn"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_FHR", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_FHR"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_comments", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("pg2_comments"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_ht", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_ht"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_presn", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_presn"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_FHR", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_FHR"+y, "")) %>');
+                        setInput(<%=y%>, "pg2_comments", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_comments"+y, "")) %>');
                     }
                 });
                 <%
@@ -657,9 +657,9 @@ for(int x=1;x<usNum+1;x++) {
                 jQuery.ajax({
                     url: 'onarenhanced_us.jsp?n=' +<%=x%>, async: false, success: function (data) {
                         jQuery("#us_container tbody").append(data);
-                        setInput(<%=x%>, "ar2_uDate", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_uDate"+x, "")) %>');
-                        setInput(<%=x%>, "ar2_uGA", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_uGA"+x, "")) %>');
-                        setInput(<%=x%>, "ar2_uResults", '<%= StringEscapeUtils.escapeJavaScript(props.getProperty("ar2_uResults"+x, "")) %>');
+                        setInput(<%=x%>, "ar2_uDate", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uDate"+x, "")) %>');
+                        setInput(<%=x%>, "ar2_uGA", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uGA"+x, "")) %>');
+                        setInput(<%=x%>, "ar2_uResults", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uResults"+x, "")) %>');
                     }
                 });
                 <%

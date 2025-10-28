@@ -26,7 +26,7 @@
 package ca.openosp.openo.documentManager;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.CtlDocument;
 import ca.openosp.openo.commn.model.CtlDocumentPK;

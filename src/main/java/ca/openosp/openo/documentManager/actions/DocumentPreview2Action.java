@@ -1,9 +1,11 @@
 //CHECKSTYLE:OFF
 package ca.openosp.openo.documentManager.actions;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import ca.openosp.openo.eform.EFormUtil;
 import ca.openosp.openo.encounter.data.EctFormData;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.OscarProperties;
@@ -46,6 +48,7 @@ public class DocumentPreview2Action extends ActionSupport {
     private static final Logger logger = MiscUtils.getLogger();
     private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
     private final FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private List<EDoc> allDocuments = new ArrayList<>();
     private List<EFormData> allEForms = new ArrayList<>();
@@ -245,7 +248,7 @@ public class DocumentPreview2Action extends ActionSupport {
     }
 
     private void generateResponse(HttpServletResponse response, Path pdfPath) throws PDFGenerationException {
-        JSONObject json = new JSONObject();
+        ObjectNode json = objectMapper.createObjectNode();
         String base64Data = documentAttachmentManager.convertPDFToBase64(pdfPath);
         json.put("base64Data", base64Data);
         response.setContentType("text/javascript");
@@ -257,7 +260,7 @@ public class DocumentPreview2Action extends ActionSupport {
     }
 
     private void generateResponse(HttpServletResponse response, String errorMessage) {
-        JSONObject json = new JSONObject();
+        ObjectNode json = objectMapper.createObjectNode();
         json.put("errorMessage", errorMessage);
         response.setContentType("text/javascript");
         try {

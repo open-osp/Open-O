@@ -29,7 +29,7 @@
 <%@page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.managers.CodingSystemManager" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 <%@page import="ca.openosp.openo.casemgmt.model.Issue" %>
 <%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
@@ -99,7 +99,7 @@
 
                 if (codeDescr != null) {
         %>
-        <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml(codeDescr)%>
+        <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml4(codeDescr)%>
         </p>
         <%
                 }
@@ -122,7 +122,7 @@
                 if (!note.isLocked() && !note.isArchived()) {
 
         %>
-        <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml(note.getNote()) %>
+        <p class="PropSheetMenuItemLevel1"><%=StringEscapeUtils.escapeHtml4(note.getNote()) %>
         </p>
         <%
                 }

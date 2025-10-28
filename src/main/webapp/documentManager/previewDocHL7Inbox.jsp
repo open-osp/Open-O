@@ -48,7 +48,7 @@
 
 <%@ page
         import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, ca.openosp.openo.util.*, java.net.*,ca.openosp.MyDateFormat, ca.openosp.openo.demographic.data.DemographicData" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@ page import="ca.openosp.openo.mds.data.*,ca.openosp.openo.lab.ca.on.*" %>
 <%@page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@ page import="ca.openosp.openo.documentManager.EDoc" %>

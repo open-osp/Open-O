@@ -34,7 +34,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import ca.openosp.openo.commn.NativeSql;
 import ca.openosp.openo.commn.model.Drug;
 import ca.openosp.openo.utility.MiscUtils;

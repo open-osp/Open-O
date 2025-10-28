@@ -35,8 +35,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.ProviderLabRoutingFavoritesDao;
 import ca.openosp.openo.commn.model.ProviderLabRoutingFavorite;
@@ -54,7 +55,7 @@ public class ReportReassign2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
-
+    private ObjectMapper objectMapper = new ObjectMapper();
     private final Logger logger = MiscUtils.getLogger();
     private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
@@ -73,7 +74,7 @@ public class ReportReassign2Action extends ActionSupport {
         String ajax = request.getParameter("ajax");
         String providerNo = loggedInInfo.getLoggedInProviderNo();
         String searchProviderNo = request.getParameter("searchProviderNo");
-        JSONArray jsonArray = null;
+        ArrayNode jsonArray = null;
         String[] selectedProvidersArray = new String[0];
         String[] arrNewFavs = new String[0];
         ArrayList<String[]> flaggedLabsList = new ArrayList<>();
@@ -84,12 +85,19 @@ public class ReportReassign2Action extends ActionSupport {
          */
         String newFavorites = request.getParameter("selectedFavorites");
         if (newFavorites != null && !newFavorites.isEmpty()) {
-            JSONObject jsonObject = JSONObject.fromObject(newFavorites);
-            jsonArray = (JSONArray) jsonObject.get("favorites");
+            try {
+                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(newFavorites);
+                jsonArray = (ArrayNode) jsonObject.get("favorites");
+            } catch (Exception e) {
+                logger.error("Failed to parse selectedFavorites JSON", e);
+            }
         }
 
         if (jsonArray != null) {
-            arrNewFavs = (String[]) jsonArray.toArray(new String[jsonArray.size()]);
+            arrNewFavs = new String[jsonArray.size()];
+            for (int i = 0; i < jsonArray.size(); i++) {
+                arrNewFavs[i] = jsonArray.get(i).asText();
+            }
         }
 
         /*
@@ -100,12 +108,19 @@ public class ReportReassign2Action extends ActionSupport {
         logger.info("selected providers to forward labs to " + selectedProviders);
 
         if (selectedProviders != null && !selectedProviders.isEmpty()) {
-            JSONObject jsonObject = JSONObject.fromObject(selectedProviders);
-            jsonArray = jsonObject.getJSONArray("providers");
+            try {
+                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(selectedProviders);
+                jsonArray = (ArrayNode) jsonObject.get("providers");
+            } catch (Exception e) {
+                logger.error("Failed to parse selectedProviders JSON", e);
+            }
         }
 
         if (jsonArray != null) {
-            selectedProvidersArray = (String[]) jsonArray.toArray(new String[jsonArray.size()]);
+            selectedProvidersArray = new String[jsonArray.size()];
+            for (int i = 0; i < jsonArray.size(); i++) {
+                selectedProvidersArray[i] = jsonArray.get(i).asText();
+            }
         }
 
         /*
@@ -114,14 +129,18 @@ public class ReportReassign2Action extends ActionSupport {
          */
         String flaggedLabs = request.getParameter("flaggedLabs");
         if (flaggedLabs != null && !flaggedLabs.isEmpty()) {
-            JSONObject jsonObject = JSONObject.fromObject(flaggedLabs);
-            jsonArray = (JSONArray) jsonObject.get("files");
+            try {
+                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(flaggedLabs);
+                jsonArray = (ArrayNode) jsonObject.get("files");
+            } catch (Exception e) {
+                logger.error("Failed to parse flaggedLabs JSON", e);
+            }
         }
 
         if (jsonArray != null) {
             String[] labid;
             for (int i = 0; i < jsonArray.size(); i++) {
-                labid = jsonArray.getString(i).split(":");
+                labid = jsonArray.get(i).asText().split(":");
                 flaggedLabsList.add(labid);
             }
         }
@@ -200,9 +219,9 @@ public class ReportReassign2Action extends ActionSupport {
         }
 
         if (ajax != null && ajax.equals("yes")) {
-            JSONObject jsonResponse = new JSONObject();
+            ObjectNode jsonResponse = objectMapper.createObjectNode();
             jsonResponse.put("success", success);
-            jsonResponse.put("files", jsonArray);
+            jsonResponse.set("files", jsonArray);
             try {
                 PrintWriter out = response.getWriter();
                 response.setContentType("application/json");

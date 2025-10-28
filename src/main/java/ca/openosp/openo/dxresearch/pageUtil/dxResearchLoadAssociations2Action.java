@@ -33,8 +33,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAO;
 import ca.openosp.openo.casemgmt.dao.IssueDAO;
@@ -66,6 +66,9 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
     private static final String PRIVILEGE_READ = "r";
     private static final String PRIVILEGE_UPDATE = "u";
     private static final String PRIVILEGE_WRITE = "w";
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws Exception {
         getAllAssociations();
@@ -99,7 +102,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
         }
 
         //serialize and return
-        JSONArray jsonArray = JSONArray.fromObject(associations);
+        ArrayNode jsonArray = objectMapper.valueToTree(associations);
         response.getWriter().print(jsonArray);
         return null;
     }
@@ -118,7 +121,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         map.put("recordsUpdated", recordsUpdated);
-        response.getWriter().print(JSONObject.fromObject(map));
+        response.getWriter().print(objectMapper.valueToTree(map));
         return null;
     }
 
@@ -135,7 +138,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
 
         Map<String, String> map = new HashMap<String, String>();
         map.put("result", "success");
-        response.getWriter().print(JSONObject.fromObject(map));
+        response.getWriter().print(objectMapper.valueToTree(map));
         return null;
     }
 
@@ -199,7 +202,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         map.put("recordsAdded", rowsInserted);
-        response.getWriter().print(JSONObject.fromObject(map));
+        response.getWriter().print(objectMapper.valueToTree(map));
 
         return SUCCESS;
     }
@@ -233,7 +236,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
 
         Map<String, Integer> map = new HashMap<String, Integer>();
         map.put("recordsAdded", recordsAdded);
-        response.getWriter().print(JSONObject.fromObject(map));
+        response.getWriter().print(objectMapper.valueToTree(map));
 
         return null;
     }

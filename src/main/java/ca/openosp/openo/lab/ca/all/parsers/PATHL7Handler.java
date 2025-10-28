@@ -49,7 +49,7 @@ import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.parser.XMLParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.util.UtilDateUtilities;

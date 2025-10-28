@@ -45,7 +45,7 @@
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@page
         import="ca.openosp.openo.encounter.pageUtil.*,ca.openosp.openo.encounter.data.*" %>
-<%@ page import="org.apache.commons.lang.StringUtils" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
 <%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
 <%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil" %>

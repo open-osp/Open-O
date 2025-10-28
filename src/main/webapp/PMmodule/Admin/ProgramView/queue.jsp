@@ -29,7 +29,7 @@
 <%@ page import="ca.openosp.openo.PMmodule.model.ProgramQueue" %>
 <%@ page import="ca.openosp.openo.PMmodule.web.admin.ProgramManager2Action.RemoteQueueEntry" %>
 <%@ page import="java.net.URLEncoder" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProgramProviderDAO" %>

@@ -27,7 +27,8 @@ package ca.openosp.openo.form.eCARES;
 
 import com.Ostermiller.util.ExcelCSVPrinter;
 import com.opensymphony.xwork2.ActionSupport;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.managers.FormeCARESManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -40,6 +41,7 @@ import ca.openosp.openo.form.JSONUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,6 +49,7 @@ public class EcaresForm2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final FormeCARESManager formeCARESManager = SpringUtils.getBean(FormeCARESManager.class);
     private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     ;
@@ -79,7 +82,7 @@ public class EcaresForm2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         Integer demographicNo = demographicNumberToInteger(request);
         Integer formId = Integer.parseInt(request.getParameter(Constants.Cares.FormField.formId.name()));
-        JSONObject formData = formeCARESManager.getData(loggedInInfo, demographicNo, formId);
+        ObjectNode formData = formeCARESManager.getData(loggedInInfo, demographicNo, formId);
         JSONUtil.jsonResponse(response, formData);
 
     }
@@ -88,7 +91,7 @@ public class EcaresForm2Action extends ActionSupport {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String formData = request.getParameter(Constants.Cares.FormField.formData.name());
-        JSONObject responseMessage = formeCARESManager.save(loggedInInfo, formData);
+        ObjectNode responseMessage = formeCARESManager.save(loggedInInfo, formData);
         JSONUtil.jsonResponse(response, responseMessage);
 
     }
@@ -96,7 +99,7 @@ public class EcaresForm2Action extends ActionSupport {
     public void createTickler() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String tickler = request.getParameter(Constants.Cares.FormField.tickler.name());
-        JSONObject responseMessage = formeCARESManager.createTickler(loggedInInfo, tickler);
+        ObjectNode responseMessage = formeCARESManager.createTickler(loggedInInfo, tickler);
         JSONUtil.jsonResponse(response, responseMessage);
     }
 
@@ -122,7 +125,7 @@ public class EcaresForm2Action extends ActionSupport {
 
         Integer demographicNo = demographicNumberToInteger(request);
         Integer formId = Integer.parseInt(request.getParameter(Constants.Cares.FormField.formId.name()));
-        JSONObject formData = formeCARESManager.getData(loggedInInfo, demographicNo, formId);
+        ObjectNode formData = formeCARESManager.getData(loggedInInfo, demographicNo, formId);
         ExcelCSVPrinter printer = null;
 
         try {
@@ -130,13 +133,14 @@ public class EcaresForm2Action extends ActionSupport {
             response.setHeader("Content-Disposition", "attachment; filename=\"ecga_form_data.csv\"");
             printer = new ExcelCSVPrinter(response.getWriter());
             printer.writeln(new String[]{"Element", "Value"});
-            Set keys = formData.keySet();
-            for (Object key : keys) {
-                printer.writeln(new String[]{(String) key, formData.getString((String) key)});
+            Iterator<String> fieldNames = formData.fieldNames();
+            while (fieldNames.hasNext()) {
+                String key = fieldNames.next();
+                printer.writeln(new String[]{key, formData.get(key).asText()});
             }
         } catch (Exception e) {
             MiscUtils.getLogger().warn("Export failed for ecga form id " + formId, e);
-            JSONObject responseMessage = new JSONObject();
+            ObjectNode responseMessage = objectMapper.createObjectNode();
             responseMessage.put("success", "false");
             JSONUtil.jsonResponse(response, responseMessage);
         } finally {

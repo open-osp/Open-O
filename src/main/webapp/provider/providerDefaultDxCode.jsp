@@ -29,7 +29,7 @@
 
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@page import="org.apache.commons.lang.time.DateFormatUtils" %>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils" %>
 
 
 <script type="text/javascript">

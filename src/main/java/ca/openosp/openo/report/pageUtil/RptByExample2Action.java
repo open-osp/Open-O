@@ -116,8 +116,6 @@ public class RptByExample2Action extends ActionSupport {
             //query = exampleData.replaceSQLString (";","",query);
             //query = exampleData.replaceSQLString("\"", "\'", query);
 
-            // query = StringEscapeUtils.escapeSql(query);
-
             ReportByExamples r = new ReportByExamples();
             r.setProviderNo(providerNo);
             r.setQuery(query);

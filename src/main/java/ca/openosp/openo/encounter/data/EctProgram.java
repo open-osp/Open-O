@@ -28,7 +28,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import ca.openosp.openo.util.LabelValueBean;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 /**

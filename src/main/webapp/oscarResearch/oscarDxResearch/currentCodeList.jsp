@@ -73,7 +73,7 @@
             for (int i = 0; i < patientDxA.size(); i++) {
                 String desc = patientDxA.get(i).getDescription();
                 if (len != -1) {
-                    desc = org.apache.commons.lang.StringUtils.abbreviate(desc, len);
+                    desc = org.apache.commons.lang3.StringUtils.abbreviate(desc, len);
                 }
         %>>
     <li>- <%=desc%>

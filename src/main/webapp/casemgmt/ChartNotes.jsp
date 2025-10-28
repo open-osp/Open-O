@@ -32,7 +32,7 @@
 <%@page import="java.util.Enumeration" %>
 <%@page import="ca.openosp.openo.encounter.pageUtil.NavBarDisplayDAO" %>
 <%@page import="java.util.Arrays,java.util.Properties,java.util.List,java.util.Set,java.util.ArrayList,java.util.Enumeration,java.util.HashSet,java.util.Iterator,java.text.SimpleDateFormat,java.util.Calendar,java.util.Date,java.text.ParseException" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.casemgmt.model.*,ca.openosp.openo.casemgmt.service.* " %>
 <%@page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 <%@page import="ca.openosp.openo.PMmodule.model.*" %>
@@ -492,7 +492,7 @@
                         List<EncounterTemplate> allTemplates = encounterTemplateDao.findAll();
 
                         for (EncounterTemplate encounterTemplate : allTemplates) {
-                            String templateName = StringEscapeUtils.escapeHtml(encounterTemplate.getEncounterTemplateName());
+                            String templateName = StringEscapeUtils.escapeHtml4(encounterTemplate.getEncounterTemplateName());
                     %>
                     <option value="<%=request.getContextPath()+"/admin/providertemplate.jsp?dboperation=Edit&name="+templateName%>"><%=templateName%>
                     </option>

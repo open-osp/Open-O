@@ -104,7 +104,7 @@
 <%@page
         import="ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.dxresearch.bean.*,ca.openosp.openo.util.*" %>
 <%@page
-        import="ca.openosp.openo.eform.*, org.apache.commons.lang.StringEscapeUtils" %>
+        import="ca.openosp.openo.eform.*, org.apache.commons.text.StringEscapeUtils" %>
 
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
 
@@ -304,7 +304,7 @@
            for(int j=0; j<bean.templateNames.size(); j++) {
               String encounterTmp = bean.templateNames.get(j);
               encounterTmp = StringUtils.maxLenString(encounterTmp, MaxLen, TruncLen, ellipses);
-              encounterTmp = StringEscapeUtils.escapeJavaScript(encounterTmp);
+              encounterTmp = StringEscapeUtils.escapeEcmaScript(encounterTmp);
             %>
             autoCompleted["<%=encounterTmp%>"] = "ajaxInsertTemplate('<%=encounterTmp%>')";
             autoCompList.push("<%=encounterTmp%>");

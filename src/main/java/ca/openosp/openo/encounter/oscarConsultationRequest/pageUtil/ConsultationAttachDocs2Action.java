@@ -39,7 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.itextpdf.text.DocumentException;
 import com.sun.xml.messaging.saaj.util.ByteOutputStream;
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.ConsultDocs;
 import ca.openosp.openo.commn.model.EFormData;
@@ -71,6 +72,9 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
 
     private final Logger logger = MiscUtils.getLogger();
     FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+
+    
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() {
         return fetchAll();
@@ -278,7 +282,7 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
     }
 
     private void generateResponse(HttpServletResponse response, String base64Data) {
-        JSONObject json = new JSONObject();
+        ObjectNode json = objectMapper.createObjectNode();
         json.put("base64Data", base64Data);
         response.setContentType("text/javascript");
         try {

@@ -14,7 +14,7 @@
 %>
 
 <%@ page errorPage="/errorpage.jsp" import="java.util.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 <%
     int nS = 1;
     int nE = 7;
@@ -91,7 +91,7 @@
             }
     %>
     <input type="hidden" name="<%= temp %>"
-           value="<%=StringEscapeUtils.escapeHtml(request.getParameter(temp))%>"/>
+           value="<%=StringEscapeUtils.escapeHtml4(request.getParameter(temp))%>"/>
     <%
         }
     %>
@@ -117,7 +117,7 @@
             String temp = e.nextElement().toString();
     %>
     <input type="hidden" name="<%= temp %>"
-           value="<%=StringEscapeUtils.escapeHtml(prop.getProperty(temp, ""))%>"/>
+           value="<%=StringEscapeUtils.escapeHtml4(prop.getProperty(temp, ""))%>"/>
     <%
         }
     %>

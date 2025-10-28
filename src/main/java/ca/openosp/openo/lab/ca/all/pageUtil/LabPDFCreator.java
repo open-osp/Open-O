@@ -54,7 +54,7 @@ import com.lowagie.text.html.simpleparser.HTMLWorker;
 import com.lowagie.text.pdf.*;
 import com.lowagie.text.rtf.RtfWriter2;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.io.IOUtils;
 import ca.openosp.openo.commn.dao.Hl7TextMessageDao;
 import ca.openosp.openo.commn.model.Hl7TextMessage;

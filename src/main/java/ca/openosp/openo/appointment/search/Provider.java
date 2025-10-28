@@ -32,7 +32,7 @@ import java.util.Map;
 
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.XmlUtils;

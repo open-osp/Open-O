@@ -45,7 +45,7 @@
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.commn.model.Provider" %>
-<%@page import="org.apache.commons.lang.StringUtils" %>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
 
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
