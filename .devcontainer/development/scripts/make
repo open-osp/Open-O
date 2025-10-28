@@ -131,7 +131,15 @@ build_and_deploy() {
 
   # Setup hot reload symlinks for instant JSP/CSS/JS updates
   if [ -x "/setup-dir/setup-hot-reload.sh" ]; then
-    /setup-dir/setup-hot-reload.sh
+    echo "========================================="
+    echo "Starting hot reload file watcher..."
+    echo "========================================="
+    nohup /setup-dir/setup-hot-reload.sh > /tmp/webapp-watcher.log 2>&1 &
+    WATCHER_PID=$!
+    echo "   Hot reload watcher started (PID: $WATCHER_PID)"
+    echo "   JSP/CSS/JS changes will auto-sync (~1 second)"
+    echo "   View live log: tail -f /tmp/webapp-watcher.log"
+    echo "========================================="
   fi
 
   # Start the Catalina server by calling the `server` script located in the same directory as this script.

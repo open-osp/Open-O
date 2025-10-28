@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
     python3 python3-pip \
+    inotify-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (latest LTS)
