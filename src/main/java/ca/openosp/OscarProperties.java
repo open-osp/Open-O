@@ -57,10 +57,10 @@ public class OscarProperties extends Properties {
      * These provide fallback values when properties contain deprecated namespaces
      * (org.oscarehr.* or oscar.*) that need to be migrated to the new ca.openosp.openo.* namespace.
      */
-    private static final Map<String, String> PROPERTY_DEFAULTS = new HashMap<String, String>() {{
-        put("hibernate.dialect", "ca.openosp.openo.util.persistence.OscarMySQL5Dialect");
-        put("ColourClass", "ca.openosp.openo.casemgmt.common.Colour");
-    }};
+    private static final Map<String, String> PROPERTY_DEFAULTS = Map.of(
+        "hibernate.dialect", "ca.openosp.openo.util.persistence.OscarMySQL5Dialect",
+        "ColourClass", "ca.openosp.openo.casemgmt.common.Colour"
+    );
 
     /**
      * @return OscarProperties the instance of OscarProperties
@@ -77,23 +77,37 @@ public class OscarProperties extends Properties {
      * @return String the validated property value
      */
     public String getProperty(String key) {
-        if (key.equals("FORMS_PROMOTEXT") || key.equals("")) {
+        if (key.equals("FORMS_PROMOTEXT")) {
             return "";
+        }
+
+        if (key == null || key.trim().isEmpty()) {
+            MiscUtils.getLogger().warn("Attempted to retrieve property with blank key.");
+            throw new IllegalArgumentException("Property key cannot be blank.");
         }
 
         String value = super.getProperty(key);
 
         // If no value, return the default if one is configured
         if (value == null) {
+            String warning = new StringBuilder()
+                .append("Property '").append(key)
+                .append("' is missing or not configured. Using default value: '")
+                .append(getDefaultValue(key)).append("'.")
+                .toString();
+            MiscUtils.getLogger().warn(warning);
             return getDefaultValue(key);
         }
 
         // Check if the value contains a blacklisted namespace
         if (isValueBlacklisted(value)) {
-            MiscUtils.getLogger().warn(
-                "Property '" + key + "' has blacklisted value '" + value + "' (deprecated namespace). " +
-                "This value has been ignored. Using default value instead."
-            );
+            String warning = new StringBuilder()
+                .append("Property '").append(key)
+                .append("' has blacklisted value '").append(value)
+                .append("' (deprecated namespace). ")
+                .append("This value has been ignored. Using default value instead.")
+                .toString();
+            MiscUtils.getLogger().warn(warning);
             return getDefaultValue(key);
         }
 
