@@ -25,18 +25,20 @@
 <%
     //Make sure user has logged in first and username is in the session
     if (session.getAttribute("userName") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
 %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<fmt:setBundle basename="oscarResources"/>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><bean:message key="loginApplication.title"/></title>
+    <title><fmt:message key="loginApplication.title"/></title>
 
     <c:set var="ctx" value="${ pageContext.request.contextPath }" scope="page"/>
     <link rel="stylesheet" href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" type="text/css"/>
@@ -54,7 +56,7 @@
 
                 <!-- Card Header -->
                 <div class="card-header bg-transparent text-center">
-                    <strong><bean:message key="mfa.handler.title"/></strong>
+                    <strong><fmt:message key="mfa.handler.title"/></strong>
                 </div>
 
                 <!-- Card Body -->

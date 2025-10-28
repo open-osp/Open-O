@@ -25,117 +25,128 @@
 --%>
 
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ page import="java.util.*,oscar.oscarReport.pageUtil.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="../encounterStyles.css">
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarEncounter.Measurements.msgAddMeasurementInstruction" /></title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script type="text/javascript">
-    function set(target) {
-     document.forms[0].forward.value=target;
-};
-</script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgAddMeasurementInstruction"/></title>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-</head>
+        <script type="text/javascript">
+            function set(target) {
+                document.forms[0].forward.value = target;
+            };
+        </script>
 
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
-<html:errors />
-<html:form
-	action="/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.do">
-	<table class="MainTable" id="scrollNumber1" name="encounterTable">
-		<tr class="MainTableTopRow">
-			<td class="MainTableTopRowLeftColumn"><bean:message
-				key="oscarEncounter.Measurements.msgMeasurements" /></td>
-			<td class="MainTableTopRowRightColumn">
-			<table class="TopStatusBar">
-				<tr>
-					<td><bean:message
-						key="oscarEncounter.Measurements.msgAddMeasurementInstruction" /></td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableLeftColumn"></td>
-			<td class="MainTableRightColumn">
-			<table border=0 cellspacing=4 width=400>
-				<tr>
-					<td>
-					<table>
-						<tr>
-							<td>
-						<tr>
-							<td colspan="2"><logic:present name="messages">
-								<logic:iterate id="msg" name="messages">
-									<bean:write name="msg" />
-									<br>
-								</logic:iterate>
-							</logic:present></td>
-						</tr>
-						<tr>
-							<th align="left" class="td.tite"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingType" />
-							</th>
-							<td><html:select property="typeDisplayName">
-								<html:options collection="typeDisplayNames"
-									property="typeDisplayName" labelProperty="typeDisplayName" />
-							</html:select></td>
-						</tr>
-						<tr>
-							<th align="left" class="td.tite"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc" />
-							</th>
-							<td><html:text property="measuringInstrc" /></td>
-						</tr>
-						<tr>
-							<th align="left" class="td.tite"><bean:message
-								key="oscarEncounter.oscarMeasurements.Measurements.headingValidation" />
-							</th>
-							<td><html:select property="validation">
-								<html:options collection="validations" property="id"
-									labelProperty="name" />
-							</html:select> <input type="hidden" name="msgBetween"
-								value="<bean:message key="oscarEncounter.oscarMeasurements.AddMeasurementType.successful"/>" />
-							</td>
-						</tr>
-						<tr>
-							<td>
-							<table>
-								<tr>
-									<td><input type="button" name="Button"
-										value="<bean:message key="global.btnClose"/>"
-										onClick="window.close()" /></td>
-									<td><input type="button" name="Button"
-										value="<bean:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.addBtn"/>"
-										onclick="submit();" /></td>
-								<tr>
-							</table>
-							</td>
-							<td></td>
-						</tr>
-						</td>
-						</tr>
-					</table>
-					</td>
-				</tr>
-			</table>
-			</td>
-		</tr>
-		<tr>
-			<td class="MainTableBottomRowLeftColumn"></td>
-			<td class="MainTableBottomRowRightColumn"></td>
-		</tr>
-	</table>
-</html:form>
-</body>
-</html:html>
+    </head>
+
+    <body class="BodyStyle" vlink="#0000FF">
+    <!--  -->
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <form action="${pageContext.request.contextPath}/oscarEncounter/oscarMeasurements/AddMeasuringInstruction.do" method="post">
+        <table class="MainTable" id="scrollNumber1" name="encounterTable">
+            <tr class="MainTableTopRow">
+                <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgMeasurements"/></td>
+                <td class="MainTableTopRowRightColumn">
+                    <table class="TopStatusBar">
+                        <tr>
+                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgAddMeasurementInstruction"/></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="MainTableLeftColumn"></td>
+                <td class="MainTableRightColumn">
+                    <table border=0 cellspacing=4 width=400>
+                        <tr>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                    <tr>
+                                        <td colspan="2">
+                                            <c:if test="${not empty messages}">
+                                                <c:forEach var="msg" items="${messages}">
+                                                    <c:out value="${msg}"/>
+                                                    <br>
+                                                </c:forEach>
+                                            </c:if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th align="left" class="td.tite"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.Measurements.headingType"/>
+                                        </th>
+                                        <td><select name="typeDisplayName" id="typeDisplayName">
+                                            <c:forEach var="typeDisplayName" items="${typeDisplayNames}">
+                                                <option value="${typeDisplayName.typeDisplayName}">
+                                                        ${typeDisplayName.typeDisplayName}
+                                                </option>
+                                            </c:forEach>
+                                        </select></td>
+                                    </tr>
+                                    <tr>
+                                        <th align="left" class="td.tite"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.Measurements.headingMeasuringInstrc"/>
+                                        </th>
+                                        <td><input type="text" name="measuringInstrc" id="measuringInstrc" /></td>
+                                    </tr>
+                                    <tr>
+                                        <th align="left" class="td.tite"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.Measurements.headingValidation"/>
+                                        </th>
+                                        <td><select name="validation" id="validation">
+                                            <c:forEach var="validation" items="${validations}">
+                                                <option value="${validation.id}">
+                                                        ${validation.name}
+                                                </option>
+                                            </c:forEach>
+                                        </select> <input type="hidden" name="msgBetween"
+                                                              value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.AddMeasurementType.successful"/>"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table>
+                                                <tr>
+                                                    <td><input type="button" name="Button"
+                                                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>"
+                                                               onClick="window.close()"/></td>
+                                                    <td><input type="button" name="Button"
+                                                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarMeasurements.MeasurementsAction.addBtn"/>"
+                                                               onclick="submit();"/></td>
+                                                <tr>
+                                            </table>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+        </table>
+    </form>
+    </body>
+</html>

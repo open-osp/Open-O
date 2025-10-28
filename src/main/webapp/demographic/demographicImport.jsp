@@ -25,202 +25,207 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarDemographic.pageUtil.Util"%>
-<%@page import="org.oscarehr.PMmodule.dao.ProgramDao, org.oscarehr.util.SpringUtils,org.oscarehr.PMmodule.model.Program"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.demographic.pageUtil.Util" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProgramDao, ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <%
-	ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
-	List<Program> programs = programDao.getAllPrograms();
-	List<Program> courses = new ArrayList<Program>();
-	for(Program p:programs) {
-		if(p.getSiteSpecificField()!=null && p.getSiteSpecificField().equals("course")) {
-			courses.add(p);
-		}
-	}
-
-%>
-<html:html lang="en">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
-<head>
-<!--I18n-->
-<title><bean:message key="admin.admin.DemoImport"/></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
-
-
-<script>
-$(document).ready(function () {
-	$("form[name='ImportDemographicDataForm']").submit(function (event) {
-		event.preventDefault();
-		
-		const files = $("#importFile")[0].files;
-
-		if (files.length === 0) {
-			alert("Please select at least one file.");
-			return;
-		}
-
-		$('#result').empty();
-		uploadFiles(files, this).then(() => {            
-            $('#importFile').val('');
-        }).catch(error => {            
-            console.error("Error in file upload:", error);
-        });
-
-	});
-});
-
-async function uploadFiles(files, form) {
-	// Loop through each selected file
-	for (let i = 0; i < files.length; i++) {
-		ShowSpin(true);
-		const cloneForm = $(form).clone();
-		const file = files[i];
-		let newImportFile = $("<input type='file' name='importFile'>");
-		let newFileList = new DataTransfer();
-		newFileList.items.add(file);
-		newImportFile[0].files = newFileList.files;
-		cloneForm.find("#importFile").replaceWith(newImportFile);
-
-		try {
-			await uploadFile(file, cloneForm);
-		} catch (error) {
-			//console.error("Error in AJAX call:", error);
-		}
-	}
-}
-
-function uploadFile(file, formData) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: formData.attr('action'),
-            type: "POST",
-            data: new FormData(formData[0]),
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                HideSpin();
-				const jsondata = JSON.parse(response.substring(response.indexOf('{'), response.indexOf('}') + 1));
-				showResponse(file.name, jsondata.warnings, jsondata.importLog);
-                resolve(jsondata);
-            },
-            error: function (error) {
-				HideSpin();
-				showError(file.name, error.responseText);
-                reject(error);
-            }
-        });
-    });
-}
-
-function showResponse(fileName, warnings, importLog) {
-    const resultDiv = $('<div>');
-
-    resultDiv.append($('<h4>').text('File Name: ' + fileName));
-
-	resultDiv.append($('<h5>').text('Imported Successfully').css('color', 'green'));
-
-    if (warnings && warnings.length > 0) {
-        resultDiv.append($('<h5>').text('Warnings:'));
-        const warningsList = $('<ul>');
-        warnings.forEach(warning => {
-            warningsList.append($('<li>').text(warning));
-        });
-        resultDiv.append(warningsList);
+    ProgramDao programDao = (ProgramDao) SpringUtils.getBean(ProgramDao.class);
+    List<Program> programs = programDao.getAllPrograms();
+    List<Program> courses = new ArrayList<Program>();
+    for (Program p : programs) {
+        if (p.getSiteSpecificField() != null && p.getSiteSpecificField().equals("course")) {
+            courses.add(p);
+        }
     }
 
-	resultDiv.append($('<a>').attr('href', '<%=request.getContextPath() %>/form/importLogDownload.do?importlog=' + encodeURIComponent(importLog)).attr('target', '_blank').text('Download Import Event Log'));
-	resultDiv.append($('<hr>'));
-
-    $('#result').append(resultDiv);
-}
-
-function showError(fileName, responseText) {
-    const errorDiv = $('<div>');
-
-    errorDiv.append($('<h4>').text('File Name: ' + fileName));
-
-    errorDiv.append($('<h5>').text('500 Server Error: Invalid file').css('color', 'red'));
-	errorDiv.append($('<hr>'));
-
-    $('#result').append(errorDiv);
-}
-
-$(document).ready(function(){
-	$("#uploadWarn").tooltip();
-});
-</script>
-
-</head>
-<jsp:include page="../images/spinner.jsp" flush="true"/>
-<body vlink="#0000FF">
-
-<%
-oscar.OscarProperties op = oscar.OscarProperties.getInstance();
-String learningEnabled = op.getProperty("OSCAR_LEARNING");
-if (!Util.checkDir(op.getProperty("TMP_DIR"))) { %>
-<p>
-<h2>Error! Cannot perform demographic import. Please contact support.</h2>
-
-<%
-} else {
 %>
+<html>
+    <script src="${pageContext.request.contextPath}/csrfguard"></script>
+    <head>
+        <!--I18n-->
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DemoImport"/></title>
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-<div class="container-fluid well">
-	<h3><bean:message key="admin.admin.DemoImport"/></h3>
-		
-		<html:form action="/form/importUpload.do" method="POST"
-			enctype="multipart/form-data">
-                        <p><input type="file" name="importFile" id="importFile" multiple="multiple"/>
-                        <span id="uploadWarn" title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
-        
-                        </p>
-						<%if(learningEnabled != null && learningEnabled.equalsIgnoreCase("yes")) { %>
-							<!-- Drop Down box of courses -->
-							Course:&nbsp;<html:select property="courseId">
-								<option value="0">Choose One</option>
-								<%for(Program course:courses) { %>
-									<option value="<%=course.getId().intValue()%>"><%=course.getName()%></option>
-								<% } %>
-							</html:select><br/>
-							Timeshift (in days +/-):&nbsp;<html:text property="timeshiftInDays" value="0" size="5"/></br/>
-						<%} %> 				
-                        If patient's providers do not have OHIP numbers:<br>
-                        <html:radio property="matchProviderNames" value="true">
-                            Match providers in database by first and last names (Recommended)
-                        </html:radio><br>
-                        <html:radio property="matchProviderNames" value="false">
-                            Import as new - same provider may have multiple entries
-                        </html:radio><br><br>
-                        <p><input class="btn btn-primary" type="submit" name="Submit" value="Import (EMR DM 5.0)"></p>
-		</html:form>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-		<div id="result"></div>
-                
-<% } %>
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css"
+              href="<%=request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
+        <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
 
-</body>
-</html:html>
+
+        <script>
+            $(document).ready(function () {
+                $("form[name='ImportDemographicDataForm']").submit(function (event) {
+                    event.preventDefault();
+
+                    const files = $("#importFile")[0].files;
+
+                    if (files.length === 0) {
+                        alert("Please select at least one file.");
+                        return;
+                    }
+
+                    $('#result').empty();
+                    uploadFiles(files, this).then(() => {
+                        $('#importFile').val('');
+                    }).catch(error => {
+                        console.error("Error in file upload:", error);
+                    });
+
+                });
+            });
+
+            async function uploadFiles(files, form) {
+                // Loop through each selected file
+                for (let i = 0; i < files.length; i++) {
+                    ShowSpin(true);
+                    const cloneForm = $(form).clone();
+                    const file = files[i];
+                    let newImportFile = $("<input type='file' name='importFile'>");
+                    let newFileList = new DataTransfer();
+                    newFileList.items.add(file);
+                    newImportFile[0].files = newFileList.files;
+                    cloneForm.find("#importFile").replaceWith(newImportFile);
+
+                    try {
+                        await uploadFile(file, cloneForm);
+                    } catch (error) {
+                        //console.error("Error in AJAX call:", error);
+                    }
+                }
+            }
+
+            function uploadFile(file, formData) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: formData.attr('action'),
+                        type: "POST",
+                        data: new FormData(formData[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            HideSpin();
+                            const jsondata = JSON.parse(response.substring(response.indexOf('{'), response.indexOf('}') + 1));
+                            showResponse(file.name, jsondata.warnings, jsondata.importLog);
+                            resolve(jsondata);
+                        },
+                        error: function (error) {
+                            HideSpin();
+                            showError(file.name, error.responseText);
+                            reject(error);
+                        }
+                    });
+                });
+            }
+
+            function showResponse(fileName, warnings, importLog) {
+                const resultDiv = $('<div>');
+
+                resultDiv.append($('<h4>').text('File Name: ' + fileName));
+
+                resultDiv.append($('<h5>').text('Imported Successfully').css('color', 'green'));
+
+                if (warnings && warnings.length > 0) {
+                    resultDiv.append($('<h5>').text('Warnings:'));
+                    const warningsList = $('<ul>');
+                    warnings.forEach(warning => {
+                        warningsList.append($('<li>').text(warning));
+                    });
+                    resultDiv.append(warningsList);
+                }
+
+                resultDiv.append($('<a>').attr('href', '<%=request.getContextPath() %>/form/importLogDownload.do?importlog=' + encodeURIComponent(importLog)).attr('target', '_blank').text('Download Import Event Log'));
+                resultDiv.append($('<hr>'));
+
+                $('#result').append(resultDiv);
+            }
+
+            function showError(fileName, responseText) {
+                const errorDiv = $('<div>');
+
+                errorDiv.append($('<h4>').text('File Name: ' + fileName));
+
+                errorDiv.append($('<h5>').text('500 Server Error: Invalid file').css('color', 'red'));
+                errorDiv.append($('<hr>'));
+
+                $('#result').append(errorDiv);
+            }
+
+            $(document).ready(function () {
+                $("#uploadWarn").tooltip();
+            });
+        </script>
+
+    </head>
+    <jsp:include page="/images/spinner.jsp" flush="true"/>
+    <body vlink="#0000FF">
+
+    <%
+        OscarProperties op = OscarProperties.getInstance();
+        String learningEnabled = op.getProperty("OSCAR_LEARNING");
+        if (!Util.checkDir(op.getProperty("TMP_DIR"))) { %>
+    <p>
+    <h2>Error! Cannot perform demographic import. Please contact support.</h2>
+
+    <%
+    } else {
+    %>
+
+    <div class="container-fluid well">
+        <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DemoImport"/></h3>
+
+        <form action="${pageContext.request.contextPath}/form/importUpload.do" method="POST"
+                   enctype="multipart/form-data">
+        <p><input type="file" name="importFile" id="importFile" multiple="multiple"/>
+            <span id="uploadWarn" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
+                  style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
+                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
+
+        </p>
+                <%if(learningEnabled != null && learningEnabled.equalsIgnoreCase("yes")) { %>
+        <!-- Drop Down box of courses -->
+        Course:&nbsp;<select name="courseId" id="courseId">
+        <option value="0">Choose One</option>
+                <%for(Program course:courses) { %>
+        <option value="<%=course.getId().intValue()%>"><%=course.getName()%>
+        </option>
+                <% } %>
+        </select><br/>
+        Timeshift (in days +/-):&nbsp;<input type="text" name="timeshiftInDays" value="0" size="5"/></br/>
+                <%} %>
+        If patient's providers do not have OHIP numbers:<br>
+        <input type="radio" name="matchProviderNames" value="true"/>
+        Match providers in database by first and last names (Recommended)
+        <br>
+        <input type="radio" name="matchProviderNames" value="false"/>
+        Import as new - same provider may have multiple entries
+        <br><br>
+        <p><input class="btn btn-primary" type="submit" name="Submit" value="Import (EMR DM 5.0)"></p>
+        </form>
+
+        <div id="result"></div>
+
+                <% } %>
+        <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+
+    </body>
+</html>

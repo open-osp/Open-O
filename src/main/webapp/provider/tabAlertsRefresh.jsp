@@ -24,24 +24,27 @@
 
 --%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     String curUser_no = (String) session.getAttribute("user");
     String tab = request.getParameter("id");
-    
+
     if (tab.equals("oscar_new_lab")) { %>
-	<%@page import="oscar.OscarProperties"%>
-<oscar:newLab providerNo="<%=curUser_no%>"><bean:message key="global.lab"/></oscar:newLab>
-<%  }
+<%@page import="ca.openosp.OscarProperties" %>
+<oscar:newLab providerNo="<%=curUser_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.lab"/></oscar:newLab>
+<% }
     if (tab.equals("oscar_new_msg")) { %>
-        <oscar:newMessage providerNo="<%=curUser_no%>"><bean:message key="global.msg"/></oscar:newMessage>
-<%  }
+<oscar:newMessage providerNo="<%=curUser_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.msg"/></oscar:newMessage>
+<% }
     if (tab.equals("oscar_new_tickler")) { %>
-        <oscar:newTickler providerNo="<%=curUser_no%>"><bean:message key="global.btntickler"/></oscar:newTickler>
-<%  }
+<oscar:newTickler providerNo="<%=curUser_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.btntickler"/></oscar:newTickler>
+<% }
     if (tab.equals("oscar_aged_consults")) { %>
-        <oscar:agedConsult providerNo="<%=curUser_no%>"><bean:message key="global.con"/></oscar:agedConsult>
-  <%}
-    if (!OscarProperties.getInstance().isTorontoRFQ() && tab.equals("oscar_scratch") ) { %>
-	<img src='<oscar:filledScratch providerNo="<%=curUser_no%>"></oscar:filledScratch>' border='0' align="absbottom" title='Scratch Pad'>
-<%  } %>
+<oscar:agedConsult providerNo="<%=curUser_no%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.con"/></oscar:agedConsult>
+<%
+    }
+    if (!OscarProperties.getInstance().isTorontoRFQ() && tab.equals("oscar_scratch")) {
+%>
+<img src='<oscar:filledScratch providerNo="<%=curUser_no%>"></oscar:filledScratch>' border='0' align="absbottom"
+     title='Scratch Pad'>
+<% } %>

@@ -1,7 +1,8 @@
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.EFormDao" %>
-<%@page import="org.oscarehr.common.model.EForm" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.EFormDao" %>
+<%@page import="ca.openosp.openo.commn.model.EForm" %>
 <%@page import="java.util.List" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%
 	EFormDao eformDao = SpringUtils.getBean(EFormDao.class);
@@ -21,7 +22,7 @@
 
 
 <select style="width:100px;">
-	<option><bean:message key="oscarEncounter.Header.Calculators"/></option>
+	<option><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Header.Calculators"/></option>
 	<option>----------------------</option>
 
 	<option onclick="popperup(650,775,'https://bilitool.org/index.php','NeonatalBilirubin');">
@@ -37,14 +38,14 @@
 	</option>
 
 	<option onclick="popperup(650,775,'http://www.mcw.edu/calculators/body-mass-index.htm','BodyMassIndex');">
-		<bean:message key="oscarEncounter.Index.bodyMass"/>
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.bodyMass"/>
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','CoronaryArteryDiseaseRisk');">
-		<bean:message key="oscarEncounter.Index.coronary"/>
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','CoronaryArteryDiseaseRisk');">
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.coronary"/>
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/riskcalc/index.html?sex=<%=bean.patientSex%>&age=<%=pAge%>','Framingham');">
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/riskcalc/index.html?sex=<%=bean.patientSex%>&age=<%=pAge%>','Framingham');">
 		Framingham/UKPDS Risk Calculator
 	</option>
 
@@ -52,19 +53,19 @@
 		CV Risk
 	</option>
 
-	<option onclick="popperup(525,775,'../oscarEncounter/calculators/OsteoporoticFracture.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','OsteoporoticFracture');">
-		<bean:message key="oscarEncounter.Index.msgOsteoporotic"/>
+	<option onclick="popperup(525,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/OsteoporoticFracture.jsp?sex=<%=bean.patientSex%>&age=<%=pAge%>','OsteoporoticFracture');">
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.msgOsteoporotic"/>
 	</option>
 
 	<option onclick="popperup(650,775,'http://www.mcw.edu/calculators/pregnancydate.htm','PregancyCalculator');">
-		<bean:message key="oscarEncounter.Index.pregnancy"/>
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.pregnancy"/>
 	</option>
 
-	<option onclick="popperup(400,500,'../oscarEncounter/calculators/SimpleCalculator.jsp','SimpleCalc');">
-		<bean:message key="oscarEncounter.Index.simpleCalculator"/>
+	<option onclick="popperup(400,500,'<%= request.getContextPath() %>/oscarEncounter/calculators/SimpleCalculator.jsp','SimpleCalc');">
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.simpleCalculator"/>
 	</option>
 
-	<option onclick="popperup(650,775,'../oscarEncounter/calculators/GeneralCalculators.jsp','GeneralConversions'); ">
-		<bean:message key="oscarEncounter.Index.generalConversions"/>
+	<option onclick="popperup(650,775,'<%= request.getContextPath() %>/oscarEncounter/calculators/GeneralCalculators.jsp','GeneralConversions'); ">
+		<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.generalConversions"/>
 	</option>
 </select>

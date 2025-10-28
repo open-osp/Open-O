@@ -19,149 +19,152 @@
 --%>
 <%
 
-boolean billSaved = false;
-String total = "0.00";
-String content = "", rd="", rdohip="", hctype="";
-String demoNo = request.getParameter("functionid");
-rd = request.getParameter("rd").equals("null")?"":request.getParameter("rd");
-rdohip = request.getParameter("rdohip").equals("null")?"000000":request.getParameter("rdohip");
-hctype = request.getParameter("demo_hctype").equals("null")?"ON":request.getParameter("demo_hctype").equals("")?"ON":request.getParameter("demo_hctype");
-content = content + "<rdohip>" + rdohip+"</rdohip>" + "<rd>" +  rd + "</rd>";
-content = content + "<hctype>" + hctype+"</hctype>" + "<demosex>" + request.getParameter("demo_sex") + "</demosex>";
-content = content + "<specialty>flu</specialty>";
+    boolean billSaved = false;
+    String total = "0.00";
+    String content = "", rd = "", rdohip = "", hctype = "";
+    String demoNo = request.getParameter("functionid");
+    rd = request.getParameter("rd").equals("null") ? "" : request.getParameter("rd");
+    rdohip = request.getParameter("rdohip").equals("null") ? "000000" : request.getParameter("rdohip");
+    hctype = request.getParameter("demo_hctype").equals("null") ? "ON" : request.getParameter("demo_hctype").equals("") ? "ON" : request.getParameter("demo_hctype");
+    content = content + "<rdohip>" + rdohip + "</rdohip>" + "<rd>" + rd + "</rd>";
+    content = content + "<hctype>" + hctype + "</hctype>" + "<demosex>" + request.getParameter("demo_sex") + "</demosex>";
+    content = content + "<specialty>flu</specialty>";
 
-String curUser_no,userfirstname,userlastname;
-curUser_no = (String) session.getAttribute("user");
-userfirstname = (String) session.getAttribute("userfirstname");
-userlastname = (String) session.getAttribute("userlastname");
+    String curUser_no, userfirstname, userlastname;
+    curUser_no = (String) session.getAttribute("user");
+    userfirstname = (String) session.getAttribute("userfirstname");
+    userlastname = (String) session.getAttribute("userlastname");
 %>
 
-<%@ page import="java.sql.*"%>
+<%@ page import="java.sql.*" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="org.oscarehr.common.model.BillingService" %>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail"%>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao"%>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
-	BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
-	BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
+    BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
 %>
 
 <%
-String billNo = null, svcDesc = null, svcPrice = null, sPrice = null ;
+    String billNo = null, svcDesc = null, svcPrice = null, sPrice = null;
 
-for(BillingService bs: billingServiceDao.findByServiceCode(request.getParameter("svcCode"))) {
-	svcDesc = bs.getDescription();
-	svcPrice = bs.getValue();
-}
-
-
-sPrice = svcPrice.substring(0,svcPrice.indexOf(".")) + svcPrice.substring(svcPrice.indexOf(".")+1);
-
-Billing b = new Billing();
-b.setClinicNo(Integer.parseInt(request.getParameter("clinicNo")));
-b.setDemographicNo(Integer.parseInt(request.getParameter("functionid").trim()));
-b.setProviderNo(request.getParameter("provider").substring(7));
-b.setAppointmentNo(Integer.parseInt(request.getParameter("appointment_no")));
-b.setOrganizationSpecCode("V03G");
-b.setDemographicName(request.getParameter("demo_name"));
-b.setHin(request.getParameter("demo_hin"));
-b.setUpdateDate(oscar.MyDateFormat.getSysDate(request.getParameter("docdate")));
-b.setUpdateTime(new java.util.Date());
-b.setBillingDate(oscar.MyDateFormat.getSysDate(request.getParameter("apptDate")));
-b.setBillingTime(oscar.MyDateFormat.getSysTime(request.getParameter("start_time")));
-b.setClinicRefCode(request.getParameter("clinic_ref_code"));
-b.setContent(content);
-b.setTotal(svcPrice);
-b.setStatus(request.getParameter("xml_billtype"));
-b.setDob(request.getParameter("demo_dob"));
-b.setVisitDate(null);
-b.setVisitType(request.getParameter("xml_visittype"));
-b.setProviderOhipNo(request.getParameter("provider").substring(0,6));
-b.setProviderRmaNo("");
-b.setApptProviderNo(request.getParameter("apptProvider"));
-b.setAsstProviderNo("0");
-b.setCreator(request.getParameter("doccreator"));
-billingDao.persist(b);
-int rowsAffected=1;
-
-billNo = String.valueOf(billingDao.search_billing_no_by_appt(Integer.parseInt(request.getParameter("functionid")), Integer.parseInt(request.getParameter("appointment_no"))));
+    for (BillingService bs : billingServiceDao.findByServiceCode(request.getParameter("svcCode"))) {
+        svcDesc = bs.getDescription();
+        svcPrice = bs.getValue();
+    }
 
 
-int recordAffected=0;
+    sPrice = svcPrice.substring(0, svcPrice.indexOf(".")) + svcPrice.substring(svcPrice.indexOf(".") + 1);
 
-   BillingDetail bd = new BillingDetail();
-   bd.setBillingNo(Integer.parseInt(billNo));
-   bd.setServiceCode(request.getParameter("svcCode"));
-   bd.setServiceDesc(svcDesc);
-   bd.setBillingAmount(sPrice);
-   bd.setDiagnosticCode(request.getParameter("dxCode"));
-   bd.setAppointmentDate(oscar.MyDateFormat.getSysDate(request.getParameter("apptDate")));
-   bd.setStatus(request.getParameter("xml_billtype"));
-   bd.setBillingUnit("1");
-   billingDetailDao.persist(bd);
-   rowsAffected=1;
+    Billing b = new Billing();
+    b.setClinicNo(Integer.parseInt(request.getParameter("clinicNo")));
+    b.setDemographicNo(Integer.parseInt(request.getParameter("functionid").trim()));
+    b.setProviderNo(request.getParameter("providers").substring(7));
+    b.setAppointmentNo(Integer.parseInt(request.getParameter("appointment_no")));
+    b.setOrganizationSpecCode("V03G");
+    b.setDemographicName(request.getParameter("demo_name"));
+    b.setHin(request.getParameter("demo_hin"));
+    b.setUpdateDate(MyDateFormat.getSysDate(request.getParameter("docdate")));
+    b.setUpdateTime(new java.util.Date());
+    b.setBillingDate(MyDateFormat.getSysDate(request.getParameter("apptDate")));
+    b.setBillingTime(MyDateFormat.getSysTime(request.getParameter("start_time")));
+    b.setClinicRefCode(request.getParameter("clinic_ref_code"));
+    b.setContent(content);
+    b.setTotal(svcPrice);
+    b.setStatus(request.getParameter("xml_billtype"));
+    b.setDob(request.getParameter("demo_dob"));
+    b.setVisitDate(null);
+    b.setVisitType(request.getParameter("xml_visittype"));
+    b.setProviderOhipNo(request.getParameter("providers").substring(0, 6));
+    b.setProviderRmaNo("");
+    b.setApptProviderNo(request.getParameter("apptProvider"));
+    b.setAsstProviderNo("0");
+    b.setCreator(request.getParameter("doccreator"));
+    billingDao.persist(b);
+    int rowsAffected = 1;
 
-if (rowsAffected ==1) {
-	
-	if(billingDao.search_billing_no(Integer.parseInt(request.getParameter("functionid"))) != null) {
-		billSaved=true;
-	}
+    billNo = String.valueOf(billingDao.search_billing_no_by_appt(Integer.parseInt(request.getParameter("functionid")), Integer.parseInt(request.getParameter("appointment_no"))));
 
-   if ( request.getParameter("goPrev") != null && request.getParameter("goPrev").equals("goPrev") && billSaved){
-      response.sendRedirect("../../../../../oscarPrevention/AddPreventionData.jsp?prevention=Flu&demographic_no="+demoNo);
-   }
-}
+
+    int recordAffected = 0;
+
+    BillingDetail bd = new BillingDetail();
+    bd.setBillingNo(Integer.parseInt(billNo));
+    bd.setServiceCode(request.getParameter("svcCode"));
+    bd.setServiceDesc(svcDesc);
+    bd.setBillingAmount(sPrice);
+    bd.setDiagnosticCode(request.getParameter("dxCode"));
+    bd.setAppointmentDate(MyDateFormat.getSysDate(request.getParameter("apptDate")));
+    bd.setStatus(request.getParameter("xml_billtype"));
+    bd.setBillingUnit("1");
+    billingDetailDao.persist(bd);
+    rowsAffected = 1;
+
+    if (rowsAffected == 1) {
+
+        if (billingDao.search_billing_no(Integer.parseInt(request.getParameter("functionid"))) != null) {
+            billSaved = true;
+        }
+
+        if (request.getParameter("goPrev") != null && request.getParameter("goPrev").equals("goPrev") && billSaved) {
+            response.sendRedirect(request.getContextPath() + "/oscarPrevention/AddPreventionData.jsp?prevention=Flu&demographic_no=" + demoNo);
+        }
+    }
 %>
-
 
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    function closeit() {
-    	//self.opener.refresh();
-      //self.close();
-    }
-    //-->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
+
+        function closeit() {
+            //self.opener.refresh();
+            //self.close();
+        }
+
+        //-->
+    </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		ADD A BILLING RECORD</font></th>
-	</tr>
-</table>
-<%if (billSaved) { %>
-<p>
-<h1>Successful Addition of a billing Record.</h1>
-</p>
-<script LANGUAGE="JavaScript">
-              self.close();
-              self.opener.refresh();
-        </script> <%}  else {%>
-<p>
-<h1>Sorry, addition has failed.</h1>
-</p>
-<%}%>
-<p></p>
-<hr width="90%"></hr>
-<form><input type="button" value="Close this window"
-	onClick="window.close()"></form>
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                ADD A BILLING RECORD</font></th>
+        </tr>
+    </table>
+    <%if (billSaved) { %>
+    <p>
+    <h1>Successful Addition of a billing Record.</h1>
+    </p>
+    <script LANGUAGE="JavaScript">
+        self.close();
+        self.opener.refresh();
+    </script>
+    <%} else {%>
+    <p>
+    <h1>Sorry, addition has failed.</h1>
+    </p>
+    <%}%>
+    <p></p>
+    <hr width="90%"></hr>
+    <form><input type="button" value="Close this window"
+                 onClick="window.close()"></form>
 </center>
 </body>
 </html>

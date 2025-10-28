@@ -1,20 +1,14 @@
-<%@ page import="org.oscarehr.managers.TicklerManager" %>
-<%@ page import="org.oscarehr.common.model.Tickler" %>
-
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
-
-<%@ page import="oscar.*, org.oscarehr.util.*,oscar.util.*,java.net.URLEncoder"%>
-
-<logic:equal name="infirmaryView_isOscar" value="false">
-
+<%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
+<%@ page import="ca.openosp.*,ca.openosp.openo.utility.*,ca.openosp.openo.util.*,java.net.URLEncoder"%>
+<c:if test="${infirmaryView_isOscar == 'false'}">
 <%
 	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
 	session.setAttribute("case_program_id", session.getAttribute(SessionConstants.CURRENT_PROGRAM_ID));
-	org.caisi.core.web.InfirmAction.updateCurrentProgram((String)session.getAttribute(SessionConstants.CURRENT_PROGRAM_ID),loggedInInfo.getLoggedInProviderNo());
 	java.util.Date todayDate=new java.util.Date();
 	todayDate.setHours(23);
 	todayDate.setMinutes(59);
@@ -36,9 +30,9 @@
 			<p><b>no client in this program.</b></p>
 		<%if(session.getAttribute("archiveView")==null || session.getAttribute("archiveView")=="false") { %>
 			<b>You are in Case Management View! </b>
-			&nbsp; <a href="<html:rewrite action="/ArchiveView.do"/>">Click here for Archive View</a>
+			&nbsp; <a href="<%=request.getContextPath() %>/ArchiveView.do">Click here for Archive View</a>
 		<%} else {%>
-			<b>You are in the archive view ! </b>&nbsp; <a href="<html:rewrite action="/ArchiveView.do"/>?method=cmm">Back to Case Management View</a>
+			<b>You are in the archive view ! </b>&nbsp; <a href="<%=request.getContextPath() %>/ArchiveView.do?method=cmm">Back to Case Management View</a>
 		<%} %>
 	 <%}else{
 		int k=0;
@@ -49,9 +43,9 @@
 		<tr>
 			<td>
 			<%if(session.getAttribute("archiveView")==null || session.getAttribute("archiveView")=="false") { %>
-			<b>You are in Case Management View! </b> &nbsp; <a href="<html:rewrite action="/ArchiveView.do"/>">Click here for Archive View</a>
+			<b>You are in Case Management View! </b> &nbsp; <a href="<%=request.getContextPath() %>/ArchiveView.do">Click here for Archive View</a>
 			<%} else {%> <b>You are in Archive View ! </b>&nbsp; <a
-				href="<html:rewrite action="/ArchiveView.do"/>?method=cmm">Back
+				href="<%=request.getContextPath() %>/ArchiveView.do?method=cmm">Back
 			to Case Management View</a> <%} %>
 			</td>
 		</tr>
@@ -63,129 +57,62 @@
 	<table border="1" cellpadding="0"
 		bgcolor="<%=userAvail?"#486ebd":"silver"%>" cellspacing="0"
 		width="100%">
-		<logic:iterate id="de" name="infirmaryView_demographicBeans"
-			type="org.apache.struts.util.LabelValueBean">
+		<c:forEach var="de" items="${infirmaryView_demographicBeans}">
 			<tr>
-				<td width='1' title='null'><font color='white'></font></td>
-				<% k++;
-java.util.Date apptime=new java.util.Date();
-int demographic_no = (new Integer(de.getValue())).intValue();
-String demographic_name=de.getLabel();
+				<td width="1" title="null"><font color="white"></font></td>
 
-%><c:if test="${empty sessionScope.archiveView or sessionScope.archiveView != true}"><%
-String tickler_no = "";
-String tickler_note="";
-for(Tickler t: ticklerManager.search_tickler(loggedInInfo,demographic_no,MyDateFormat.getSysDate(strDate))) {
-	tickler_no = t.getId().toString();
-    tickler_note = t.getMessage()==null?tickler_note:tickler_note + "\n" + t.getMessage();
-}
+				<%
+					k++;
+					java.util.Date apptime = new java.util.Date();
+					int demographic_no = Integer.parseInt(de.value);
+					String demographic_name = de.label;
+					String tickler_no = "";
+					String tickler_note = "";
+					// Using your ticklerManager logic in JSP to retrieve ticklers.
+					for (Tickler t : ticklerManager.search_tickler(loggedInInfo, demographic_no, MyDateFormat.getSysDate(strDate))) {
+						tickler_no = t.getId().toString();
+						tickler_note = t.getMessage() == null ? tickler_note : tickler_note + "\n" + t.getMessage();
+					}
+				%>
 
-%></c:if><%
+				<c:set var="bgColor" value="${k % 2 == 0 ? '#FDFEC7' : '#FFBBFF'}"/>
+				<td bgcolor="${bgColor}" rowspan="1" nowrap>
+					<img src="<%= request.getContextPath() %>/images/todo.gif" border="0" height="10" title="appointment">
 
-String ver = "";
-String roster = "";
-StringBuffer study_no = new StringBuffer("");
-StringBuffer study_link = new StringBuffer("");
-StringBuffer studyDescription = new StringBuffer("");
-String reason ="";
-String notes = "";
-String status = "T";
-boolean bFirstTimeRs=true;
-//as.setApptStatus(status);
+					<!-- Handling tickler logic with JSP logic embedded in JSTL -->
+					<c:if test="${demographic_no == 0}">
+						<c:choose>
+							<c:when test="${not empty tickler_no}">
+									<a href="#" onClick="popupPage(700, 1000, '<%= request.getContextPath() %>/tickler/ticklerDemoMain.jsp?demoview=0'); return false;" title="${tickler_note}">
+										<font color="red">!</font>
+									</a>
+							</c:when>
+							<c:otherwise>
+								<b><c:out value="${de.label}"/></b>
+							</c:otherwise>
+						</c:choose>
+					</c:if>
 
-String rsAppointNO="0";
-if ((k/2)*2==k){ %>
-				<td bgcolor='#FDFEC7' rowspan="1" nowrap>
-				<%}else{ %>
-				
-				<td bgcolor='#FFBBFF' rowspan="1" nowrap>
-				<%}%> <img src="../images/todo.gif" border="0" height="10"
-					title="appointment"> <% if(demographic_no==0) {   
-    if (tickler_no.compareTo("") != 0) { %> <caisi:isModuleLoad
-					moduleName="ticklerplus" reverse="true">
-					<a href="#"
-						onClick="popupPage(700,1000, '../tickler/ticklerDemoMain.jsp?demoview=0');return false;"
-						title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=UtilMisc.htmlEscape(tickler_note)%>">
-					<font color="red">!</font></a>
-				</caisi:isModuleLoad> <caisi:isModuleLoad moduleName="ticklerplus">
-					<a href="#"
-						onClick="popupPage(700,1000, '../ticklerPlus/index.jsp?demoview=0');return false;"
-						title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=UtilMisc.htmlEscape(tickler_note)%>">
-					<font color="red">!</font></a>
-				</caisi:isModuleLoad> <%  } %> <b>.<%=de.getLabel()%></b> <%}else {
-    if (tickler_no.compareTo("") != 0) { %> <caisi:isModuleLoad
-					moduleName="ticklerplus" reverse="true">
-					<a href="#"
-						onClick="popupPage(700,1000, '../tickler/ticklerDemoMain.jsp?demoview=<%=demographic_no%>');return false;"
-						title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=UtilMisc.htmlEscape(tickler_note)%>">
-					<font color="red">!</font></a>
-				</caisi:isModuleLoad> <caisi:isModuleLoad moduleName="ticklerplus">
-					<a href="#"
-						onClick="popupPage(700,1000, '../Tickler.do?method=filter&filter.client=<%=demographic_no %>');return false;"
-						title="<bean:message key="provider.appointmentProviderAdminDay.ticklerMsg"/>: <%=UtilMisc.htmlEscape(tickler_note)%>">
-					<font color="red">!</font></a>
-				</caisi:isModuleLoad> <%  } %> <!-- doctor code block --> <% if(bShowDocLink) { %> <!-- security:oscarSec roleName="<%--=roleName$--%>" objectName="_appointment.doctorLink" rights="r" -->
-				<% if (study_no.toString().compareTo("") != 0) {%> <a href="#"
-					onClick="popupPage(700,1000, '../form/study/forwardstudyname.jsp?study_link=<%=study_link.toString()%>&demographic_no=<%=demographic_no%>&study_no=<%=study_no%>');return false;"
-					title="<bean:message key="provider.appointmentProviderAdminDay.study"/>: <%=UtilMisc.htmlEscape(studyDescription.toString())%>"><%="<font color='red'>"+"\u03A3"+"</font>"%></a>
-				<%} %> <% if (ver.toString().compareTo("##") == 0){%><a href="#"
-					title="<bean:message key="provider.appointmentProviderAdminDay.versionMsg"/> <%=UtilMisc.htmlEscape(ver)%>">
-				<font color="red">*</font>
-				<%}%> <% if (roster.equalsIgnoreCase("FS")){%> <a href="#"
-					title="<bean:message key="provider.appointmentProviderAdminDay.rosterMsg"/> <%=UtilMisc.htmlEscape(roster)%>"><font
-					color="red">$</font>
-				<%}%> <!-- /security:oscarSec --> <% } %> <!-- doctor code block --> <a
-					href="#"
-					onclick="location.href='../PMmodule/ClientManager.do?id=<%=demographic_no%>'">
-				<%=de.getLabel()%></a> <!-- doctor code block --> <% if(bShowEncounterLink) {
-		String eURL= base_eURL +"&appointmentNo="+rsAppointNO+"&demographicNo="+demographic_no + "&reason="+URLEncoder.encode(reason) + "&startTime="+apptime.getHours()+":"+apptime.getMinutes()+"&status="+status;
-	%>
-				<!-- open CME in current window
-        <a href="#" onclick="location.href='../oscarSurveillance/CheckSurveillance.do?demographicNo=<%=demographic_no%>&proceed=<%=URLEncoder.encode(eURL)%>'" title="<bean:message key="global.encounter"/>">  
-        --> <a href=#
-					onClick="popupWithApptNo(710, 1024,'../oscarSurveillance/CheckSurveillance.do?demographicNo=<%=demographic_no%>&proceed=<%=URLEncoder.encode(eURL)%>','encounter');return false;"
-					title="<bean:message key="global.encounter"/>"> |<bean:message
-					key="provider.appointmentProviderAdminDay.btnE" /></a> <% } %> <!-- billing code block -->
-				<security:oscarSec roleName="<%=roleName$%>" objectName="_billing"
-					rights="r">
+					<!-- Display demographic link -->
+					<a href="#" onclick="location.href="<%= request.getContextPath() %>/PMmodule/ClientManager.do?id=${demographic_no}"">
+						<c:out value="${de.label}"/>
+					</a>
 
-					<%String appointment_no=rsAppointNO;%>
-					
-					 <jsp:include page="appointmentFormsLinks.jspf">	  	
-					  	<jsp:param value="<%=demographic_no %>" name="demographic_no"/>
-					  	<jsp:param value="<%=appointment_no %>" name="appointment_no"/>
-					  </jsp:include>
-	  
-					
-				</security:oscarSec> <!-- billing code block --> <security:oscarSec
-					roleName="<%=roleName$%>" objectName="_masterLink" rights="r">
-					
-					<a href=#
-						onClick="popupPage2('../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search_detail');return false;"
-						title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>">|<bean:message
-						key="provider.appointmentProviderAdminDay.btnM" /></a>
-					
-				</security:oscarSec> <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
-					
-					<!-- doctor code block -->
-					<security:oscarSec roleName="<%=roleName$%>"
-						objectName="_appointment.doctorLink" rights="r">
-						<a href=#
-							onClick="popupOscarRx(700,1027,'../oscarRx/choosePatient.do?providerNo=<%=loggedInInfo.getLoggedInProviderNo()%>&demographicNo=<%=demographic_no%>')">|<bean:message
-							key="global.rx" /></a>
-						<oscar:oscarPropertiesCheck property="SHOW_APPT_REASON"
-							value="yes">| <b><%=reason%></b>
-						</oscar:oscarPropertiesCheck>
-					</security:oscarSec>
-					
-					<!-- doctor code block -->
-				</caisi:isModuleLoad> <%}%> 
-				
-				<td width='1'></td>
+					<!-- Conditionally add encounter link based on bShowEncounterLink -->
+					<c:if test="${bShowEncounterLink}">
+						<%
+							String eURL = base_eURL + "&appointmentNo=" + rsAppointNO + "&demographicNo=" + demographic_no + "&reason=" + URLEncoder.encode(reason) + "&startTime=" + apptime.getHours() + ":" + apptime.getMinutes() + "&status=" + status;
+						%>
+						<a href="#" onClick="popupWithApptNo(710, 1024, '${eURL}', 'encounter'); return false;" title="<fmt:setBundle basename='oscarResources'/><fmt:message key='global.encounter'/>">
+							|<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.btnE"/>
+						</a>
+					</c:if>
+				</td>
 			</tr>
-		</logic:iterate>
+		</c:forEach>
+
 	</table>
 	<%
 	}
 }%>
-</logic:equal>
+</c:if>

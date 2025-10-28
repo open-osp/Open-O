@@ -24,97 +24,99 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_lab");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="java.io.Serializable"%>
-<%@page import="java.util.*,oscar.oscarLab.ca.on.*,oscar.util.*"%>
+<%@page import="java.io.Serializable" %>
+<%@page import="java.util.*,ca.openosp.openo.lab.ca.on.*,ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.CommonLabTestValues" %>
+<%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
 <%
-    
 
-    String ran = ""+Math.random();
-    
+
+    String ran = "" + Math.random();
+
     String demoNo = request.getParameter("demographicNo");
     String labType = request.getParameter("labType");
     String testName = request.getParameter("testName");
     String identCode = request.getParameter("identCode");
-   
-    ArrayList<Map<String, Serializable>> list   = CommonLabTestValues.findValuesForTest(labType, Integer.valueOf(demoNo), testName, identCode);
-             
-    %>
+
+    ArrayList<Map<String, Serializable>> list = CommonLabTestValues.findValuesForTest(labType, Integer.valueOf(demoNo), testName, identCode);
+
+%>
 <div class="preventionSection" id="preventionSection<%=ran%>">
-<div class="headPrevention" id="headPrevention<%=ran%>">
-<p><a id="ahead<%=ran%>"
-	title="fade=[on] header=[<%=testName%>] body=[]"
-	href="javascript: function myFunction() {return false; }"> <span
-	title="<%=""%>" style="font-weight: bold;"> <%=StringUtils.maxLenString(testName, 10, 8, "...")%>
+    <div class="headPrevention" id="headPrevention<%=ran%>">
+        <p><a id="ahead<%=ran%>"
+              title="fade=[on] header=[<%=testName%>] body=[]"
+              href="javascript: function myFunction() {return false; }"> <span
+                title="<%=""%>" style="font-weight: bold;"> <%=StringUtils.maxLenString(testName, 10, 8, "...")%>
 <%=""/*testName*/%> </span> </a> <!--&nbsp;
-               <a href="">#</a--> <br />
-</p>
-</div>
-<%     
-            for (int k = 0; k < list.size(); k++){
-                HashMap hMap = (HashMap) list.get(k);
-                String labDisplayLink = "";
-                if ( labType.equals(LabResultData.MDS) ){
-                    labDisplayLink = "../oscarMDS/SegmentDisplay.jsp?segmentID="+hMap.get("lab_no")+"&providerNo="+session.getValue("user");
-                }else if (labType.equals(LabResultData.CML)){ 
-                    labDisplayLink = "../lab/CA/ON/CMLDisplay.jsp?segmentID="+hMap.get("lab_no")+"&providerNo="+session.getValue("user");
-                }else if (labType.equals(LabResultData.HL7TEXT)){
-                    labDisplayLink = "../lab/CA/ALL/labDisplay.jsp?segmentID="+hMap.get("lab_no")+"&providerNo="+session.getValue("user");
-                }else if (labType.equals(LabResultData.EXCELLERIS)) {
-                    labDisplayLink = "../lab/CA/BC/labDisplay.jsp?segmentID="+hMap.get("lab_no")+"&providerNo="+session.getValue("user");
-                }
+               <a href="">#</a--> <br/>
+        </p>
+    </div>
+    <%
+        for (int k = 0; k < list.size(); k++) {
+            HashMap hMap = (HashMap) list.get(k);
+            String labDisplayLink = "";
+            if (labType.equals(LabResultData.MDS)) {
+                labDisplayLink = request.getContextPath() + "/oscarMDS/SegmentDisplay.jsp?segmentID=" + hMap.get("lab_no") + "&providerNo=" + session.getValue("user");
+            } else if (labType.equals(LabResultData.CML)) {
+                labDisplayLink = request.getContextPath() + "/lab/CA/ON/CMLDisplay.jsp?segmentID=" + hMap.get("lab_no") + "&providerNo=" + session.getValue("user");
+            } else if (labType.equals(LabResultData.HL7TEXT)) {
+                labDisplayLink = request.getContextPath() + "/lab/CA/ALL/labDisplay.jsp?segmentID=" + hMap.get("lab_no") + "&providerNo=" + session.getValue("user");
+            } else if (labType.equals(LabResultData.EXCELLERIS)) {
+                labDisplayLink = request.getContextPath() + "/lab/CA/BC/labDisplay.jsp?segmentID=" + hMap.get("lab_no") + "&providerNo=" + session.getValue("user");
+            }
 
-            %>
-<div style="text-align: justify;"
-	title="fade=[on] header=[<%=hMap.get("result")%>] body=[<%=hMap.get("units")%> <%=hMap.get("range")%>]"
-	class="preventionProcedure" id="preventionProcedure<%=""+k+""+ran%>"
-	onclick="javascript:popup(660,960,'<%= labDisplayLink %>','labReport')">
-<p <%=r(hMap.get("abn"))%>><%=hMap.get("result")%>
-&nbsp;&nbsp;&nbsp; <%=hMap.get("collDate")%></p>
+    %>
+    <div style="text-align: justify;"
+         title="fade=[on] header=[<%=hMap.get("result")%>] body=[<%=hMap.get("units")%> <%=hMap.get("range")%>]"
+         class="preventionProcedure" id="preventionProcedure<%=""+k+""+ran%>"
+         onclick="javascript:popup(660,960,'<%= labDisplayLink %>','labReport')">
+        <p <%=r(hMap.get("abn"))%>><%=hMap.get("result")%>
+            &nbsp;&nbsp;&nbsp; <%=hMap.get("collDate")%>
+        </p>
+    </div>
+    <%}%>
 </div>
-<%}%>
-</div>
-
-
 
 
 <script type="text/javascript">
-          ///alert("HI");
-          //var ele = document.getElementById("preventionSection<%=ran%>");
-          //alert(ele);
-          <%for (int k =0; k < list.size(); k++){ %>
-          Rounded("div#preventionProcedure<%=""+k+""+ran%>","all","#CCF","#efeadc","small border blue");
-          scanDOM(document.getElementById("preventionProcedure<%=""+k+""+ran%>"));
-          <%}%>
-          Rounded("div#headPrevention<%=ran%>","all","transparent","#F0F0E7","small border #999");
-          
-          scanDOM(document.getElementById("ahead<%=ran%>"));
-      </script>
+    ///alert("HI");
+    //var ele = document.getElementById("preventionSection<%=ran%>");
+    //alert(ele);
+    <%for (int k =0; k < list.size(); k++){ %>
+    Rounded("div#preventionProcedure<%=""+k+""+ran%>", "all", "#CCF", "#efeadc", "small border blue");
+    scanDOM(document.getElementById("preventionProcedure<%=""+k+""+ran%>"));
+    <%}%>
+    Rounded("div#headPrevention<%=ran%>", "all", "transparent", "#F0F0E7", "small border #999");
+
+    scanDOM(document.getElementById("ahead<%=ran%>"));
+</script>
 
 
 <%!
-String r(Object re){ 
+    String r(Object re) {
         String ret = "";
-        if (re instanceof java.lang.String){                
-           if (re != null && re.equals("A")){
-              ret = "style=\"background: #FFDDDD;\"";
-           }else if(re !=null && re.equals("2")){
-              ret = "style=\"background: #FFCC24;\""; 
-           }
+        if (re instanceof java.lang.String) {
+            if (re != null && re.equals("A")) {
+                ret = "style=\"background: #FFDDDD;\"";
+            } else if (re != null && re.equals("2")) {
+                ret = "style=\"background: #FFCC24;\"";
+            }
         }
         return ret;
     }

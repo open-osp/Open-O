@@ -138,6 +138,12 @@ CREATE TABLE IF NOT EXISTS billactivity (
   sentdate datetime
 ) ;
 
+CREATE TABLE IF NOT EXISTS billcenter (
+  billcenter_code char(2) NOT NULL DEFAULT '',
+  billcenter_desc varchar(20) default NULL,
+  primary key(billcenter_code)
+) ;
+
 --
 -- Table structure for table `billcenter`
 --
@@ -7623,7 +7629,7 @@ CREATE TABLE IF NOT EXISTS scheduletemplatecode (
 ) ;
 
 --
--- Table structure for table `security`
+-- Table structure for table `sec`
 --
 
 CREATE TABLE IF NOT EXISTS security (

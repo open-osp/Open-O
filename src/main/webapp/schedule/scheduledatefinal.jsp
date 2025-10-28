@@ -25,119 +25,117 @@
 --%>
 
 <%
-  
-  String user_no = (String) session.getAttribute("user");
-  String creator = (String) session.getAttribute("userlastname")+","+ (String) session.getAttribute("userfirstname");
+
+    String user_no = (String) session.getAttribute("user");
+    String creator = (String) session.getAttribute("userlastname") + "," + (String) session.getAttribute("userfirstname");
 %>
 <%@ page
-	import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*"
-	errorPage="../appointment/errorpage.jsp"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+        import="java.util.*, java.sql.*, ca.openosp.*, java.text.*, java.lang.*,java.net.*"
+        errorPage="/errorpage.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <jsp:useBean id="scheduleDateBean" class="java.util.Hashtable"
-	scope="session" />
+             scope="session"/>
 <%
-  //String provider_name = URLDecoder.decode(request.getParameter("provider_name"));
-  String sdate ="";
-  String provider_no = request.getParameter("provider_no");
-  String available = "";
-  String priority = "c";
-  String reason = "";
-  String hour = "";
+    //String provider_name = URLDecoder.decode(request.getParameter("provider_name"));
+    String sdate = "";
+    String provider_no = request.getParameter("provider_no");
+    String available = "";
+    String priority = "c";
+    String reason = "";
+    String hour = "";
 
 %>
 
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="schedule.scheduledatefinal.title" /></title>
-<link rel="stylesheet" href="../web.css" />
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.title"/></title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
 
-<script language="JavaScript">
-<!--
-function setfocus() {
-  this.focus();
-  //document.schedule.keyword.focus();
-  //document.schedule.keyword.select();
-}
-function upCaseCtrl(ctrl) {
-	ctrl.value = ctrl.value.toUpperCase();
-}
+        <script language="JavaScript">
+            <!--
+            function setfocus() {
+                this.focus();
+                //document.schedule.keyword.focus();
+                //document.schedule.keyword.select();
+            }
 
-
-//-->
-</script>
-</head>
-<body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
-	topmargin="0" leftmargin="0" rightmargin="0">
-<form method="post" name="schedule" action="schedulecreatedate.jsp">
-
-<table border="0" width="100%">
-	<tr>
-		<td width="150" bgcolor="#009966"><!--left column-->
-		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<tr bgcolor="#486ebd">
-				<th align="CENTER" bgcolor="#009966">
-				<p>&nbsp;</p>
-				<p><font face="Helvetica" color="#FFFFFF"><bean:message
-					key="schedule.scheduledatefinal.msgMainLabel" /></font></p>
-				</th>
-			</tr>
-		</table>
-		<table width="98%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td>
-				<p>&nbsp;</p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduledatefinal.msgStepOne" /></font></p>
-				<p><font size="-1"><bean:message
-					key="schedule.scheduledatefinal.msgStepTwo" /></font></p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				</td>
-			</tr>
-		</table>
-
-		</td>
-		<td><br>
-		<center>
-		<p>
-		<table width="95%" border="0" cellspacing="0" cellpadding="0">
-			<tr>
-				<td><bean:message
-					key="schedule.scheduledatefinal.msgSettingFinished" /></td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td bgcolor="#CCFFCC">
-				<div align="right"><input type="button" name="Button"
-					value='<bean:message key="schedule.scheduledatefinal.btnDoAgain"/>'
-					onclick="self.location.href='scheduletemplatesetting.jsp'">
-				</div>
-				</td>
-			</tr>
-		</table>
-		<p>
-		<p>&nbsp;</p>
-		</center>
-		</td>
-	</tr>
-</table>
-
-</form>
+            function upCaseCtrl(ctrl) {
+                ctrl.value = ctrl.value.toUpperCase();
+            }
 
 
-</body>
-</html:html>
+            //-->
+        </script>
+    </head>
+    <body bgcolor="ivory" bgproperties="fixed" onLoad="setfocus()"
+          topmargin="0" leftmargin="0" rightmargin="0">
+    <form method="post" name="schedule" action="schedulecreatedate.jsp">
+
+        <table border="0" width="100%">
+            <tr>
+                <td width="150" bgcolor="#009966"><!--left column-->
+                    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <tr bgcolor="#486ebd">
+                            <th align="CENTER" bgcolor="#009966">
+                                <p>&nbsp;</p>
+                                <p><font face="Helvetica" color="#FFFFFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.msgMainLabel"/></font></p>
+                            </th>
+                        </tr>
+                    </table>
+                    <table width="98%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                            <td>
+                                <p>&nbsp;</p>
+                                <p><font size="-1"><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.msgStepOne"/></font></p>
+                                <p><font size="-1"><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.msgStepTwo"/></font></p>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                </td>
+                <td><br>
+                    <center>
+                        <p>
+                        <table width="95%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.msgSettingFinished"/></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td bgcolor="#CCFFCC">
+                                    <div align="right"><input type="button" name="Button"
+                                                              value='<fmt:setBundle basename="oscarResources"/><fmt:message key="schedule.scheduledatefinal.btnDoAgain"/>'
+                                                              onclick="self.location.href='scheduletemplatesetting.jsp'">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <p>
+                        <p>&nbsp;</p>
+                    </center>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+
+    </body>
+</html>

@@ -25,11 +25,13 @@
 --%>
 <div class="flex border-bottom-gray">
     <label for="eGFR" class="tt" data-toggle="tooltip" title="eGFR">
-        <svg height="10" width="10"  data-html="true">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_crcl" data-score="1">
+        <svg height="10" width="10" data-html="true">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_crcl" data-score="1">
         <strong class="highlight" data-field-name="crcl">CrCl (Creatine Clearance mL/sec)</strong>
     </label>
-    <input type="number" step="0.1" name="crcl" id="eGFR" title="eGFR" min="1.5" max="2.3" class="bottom-line ecares-input h-si inline-block ml-2" style="width:10%;">
+    <input type="number" step="0.1" name="crcl" id="eGFR" title="eGFR" min="1.5" max="2.3"
+           class="bottom-line ecares-input h-si inline-block ml-2" style="width:10%;">
     <!-- expected units 1.5-2.3 millilitres per second (mL/sec) -->
 </div>

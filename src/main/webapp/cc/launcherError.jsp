@@ -23,21 +23,22 @@
     Ontario, Canada
 
 --%>
-<%@page import="java.util.List"%>
+<%@page import="java.util.List" %>
 <html>
 <head></head>
 <body>
 There were errors launching the viewer
 
-<ul style="color:red" >
-	<%
-		List<String> errors = (List<String>)request.getAttribute("errors");
-		for(String error:errors) {
-			%>
-				<li><%=error %></li>
-			<% 
-		}
-	%>
+<ul style="color:red">
+    <%
+        List<String> errors = (List<String>) request.getAttribute("errors");
+        for (String error : errors) {
+    %>
+    <li><%=error %>
+    </li>
+    <%
+        }
+    %>
 </ul>
 
 </body>

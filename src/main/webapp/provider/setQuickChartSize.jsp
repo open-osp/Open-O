@@ -24,61 +24,69 @@
 
 --%>
 
-<%@page contentType="text/html"%>
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@page contentType="text/html" %>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%@page import="java.util.*" %>
+<%@ page import="java.util.ResourceBundle"%>
 <%
-if(session.getValue("user") == null)
-    response.sendRedirect("../logout.htm");
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.htm");
+
+    ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
+
+    String providertitle = (String) request.getAttribute("providertitle");
+    String providermsgPrefs = (String) request.getAttribute("providermsgPrefs");
+    String providermsgProvider = (String) request.getAttribute("providermsgProvider");
+    String providermsgEdit = (String) request.getAttribute("providermsgEdit");
 %>
-
 <!DOCTYPE html>
-<c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
-<html:html>
-	<head>
-		<html:base />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title><bean-el:message key="${providertitle}" /></title>
-        <script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"	></script>
+<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
+<html>
+    <head>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title><%=bundle.getString(providertitle)%></title>
+        <script src="<c:out value="${ctx}"/>/share/javascript/provider_form_validations.js"></script>
         <script src="<%= request.getContextPath() %>/js/global.js"></script>
-		<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
-	</head>
-<body class="BodyStyle">
+        <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"> <!-- Bootstrap 2.3.1 -->
+    </head>
+    <body class="BodyStyle">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">
-			<h4><bean-el:message key="${providermsgPrefs}" /></h4>
-		</td>
-		<td class="MainTableTopRowRightColumn">
-			<h4>&nbsp;&nbsp;<bean-el:message key="${providermsgProvider}" /></h4>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<%if( request.getAttribute("status") == null ){%>
-			<bean-el:message key="${providermsgEdit}" />
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn">
+                <h4><%=bundle.getString(providermsgPrefs)%></h4>
+            </td>
+            <td class="MainTableTopRowRightColumn">
+                <h4>&nbsp;&nbsp;<%=bundle.getString(providermsgProvider)%></h4>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <%if (request.getAttribute("status") == null) {%>
+                <%=bundle.getString(providermsgEdit)%>
 
-            <html:form styleId="providerForm" action="/setProviderStaleDate.do">
-				<input type="hidden" name="method" value="<c:out value="${method}"/>">
-				<p id="errorMessage" class="alert alert-danger" style="display: none; color: red;">
-					Invalid input.
-				</p>
-				Number of Notes : <html:text styleId="numericFormField" property="quickChartSize.value" size="5"/>
-                <br/>
-                <html:submit styleClass="btn btn-primary" property="btnApply"/>
-			</html:form>
+                <form styleId="providerForm" action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
+                    <input type="hidden" name="method" value="<c:out value="${method}"/>">
+                    <p id="errorMessage" class="alert alert-danger" style="display: none; color: red;">
+                        Invalid input.
+                    </p>
+                    Number of Notes : <input type="text" id="numericFormField" name="quickChartSize.value" value="<c:out value='${size.value}'/>" size="5"/>
+                    <br/>
+                    <input type="submit" name="submit" value="Apply"class="btn btn-primary" />
+                </form>
 
-		<%}else {%>
-			<div class="alert alert-success" style="width:100%"><bean-el:message key="${providermsgSuccess}" /> <br></div>
-		<%}%>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+                <%} else {%>
+                <div class="alert alert-success" style="width:100%"><%=bundle.getString(providermsgPrefs)%> <br>
+                </div>
+                <%}%>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

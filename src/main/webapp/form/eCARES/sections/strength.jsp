@@ -26,10 +26,11 @@
 <div class="flex items-center">
     <div style="width: 80px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_strength" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_strength" data-score="1">
         <strong class="tt highlight" data-field-name="strength" data-toggle="tooltip"
-            title="Especially Hip Flexors">Strength</strong>
+                title="Especially Hip Flexors">Strength</strong>
     </div>
 
     <label class="flex items-center font-normal pl-4">
@@ -44,34 +45,40 @@
 
     <span class="inline-block font-bold ml-6 highlight" data-field-name="upper_proximal">Upper Proximal:</span>
     <label class="flex items-center font-normal ml-2"><input type="radio" name="upper_proximal" class="m-0"
-            autocomplete="off" value="proximal">
+                                                             autocomplete="off" value="proximal">
         <span class="pl-1" rel="upper" data-names="proximal">Y</span></label>
     <label class="flex items-center font-normal ml-2"><input type="radio" name="upper_proximal" class="m-0"
-            autocomplete="off" value="distal">
+                                                             autocomplete="off" value="distal">
         <span class="pl-1" rel="upper" data-names="distal">N</span></label>
 
     <span class="inline-block font-bold  ml-3 highlight w-9" data-field-name="upper_distal">Distal:</span>
-    <label class="flex items-center font-normal" style="margin-left: 2px;"><input type="radio" name="upper_distal" class="m-0" autocomplete="off"
-            value="proximal">
+    <label class="flex items-center font-normal" style="margin-left: 2px;"><input type="radio" name="upper_distal"
+                                                                                  class="m-0" autocomplete="off"
+                                                                                  value="proximal">
         <span class="pl-1" rel="upper" data-names="proximal">Y</span></label>
-    <label class="flex items-center font-normal ml-4"><input type="radio" name="upper_distal" class="m-0" autocomplete="off"
-            value="distal">
+    <label class="flex items-center font-normal ml-4"><input type="radio" name="upper_distal" class="m-0"
+                                                             autocomplete="off"
+                                                             value="distal">
         <span class="pl-1" rel="upper" data-names="distal">N</span></label>
 
     <span class="inline-block ml-2 highlight font-bold" data-field-name="lower_proximal">Lower Proximal:</span>
-    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_proximal" class="m-0" data-score="1"
-            autocomplete="off" value="1">
+    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_proximal" class="m-0"
+                                                             data-score="1"
+                                                             autocomplete="off" value="1">
         <span class="pl-1" rel="upper" data-names="proximal">Y</span></label>
-    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_proximal" class="m-0" data-score="0"
-            autocomplete="off" value="0">
+    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_proximal" class="m-0"
+                                                             data-score="0"
+                                                             autocomplete="off" value="0">
         <span class="pl-1" rel="upper" data-names="distal">N</span></label>
 
     <span class="inline-block font-bold  font-bold ml-2 highlight" data-field-name="lower_distal">Distal:</span>
-    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_distal" class="m-0" autocomplete="off"
-            value="proximal">
+    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_distal" class="m-0"
+                                                             autocomplete="off"
+                                                             value="proximal">
         <span class="pl-1" rel="upper" data-names="proximal">Y</span></label>
-    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_distal" class="m-0" autocomplete="off"
-            value="distal">
+    <label class="flex items-center font-normal ml-2"><input type="radio" name="lower_distal" class="m-0"
+                                                             autocomplete="off"
+                                                             value="distal">
         <span class="pl-1" rel="upper" data-names="distal">N</span></label>
 
 

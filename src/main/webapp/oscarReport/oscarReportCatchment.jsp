@@ -24,157 +24,159 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"
-	scope="request" />
+       scope="request"/>
 
 <%
-	String user_no = (String) session.getAttribute("user");
-	int nItems = 0;
-	String strLimit1 = "0";
-	String strLimit2 = "30";
-	if (request.getParameter("limit1") != null)
-		strLimit1 = request.getParameter("limit1");
-	if (request.getParameter("limit2") != null)
-		strLimit2 = request.getParameter("limit2");
-	String providerview = request.getParameter("providerview") == null ? "all"
-			: request.getParameter("providerview");
+    String user_no = (String) session.getAttribute("user");
+    int nItems = 0;
+    String strLimit1 = "0";
+    String strLimit2 = "30";
+    if (request.getParameter("limit1") != null)
+        strLimit1 = request.getParameter("limit1");
+    if (request.getParameter("limit2") != null)
+        strLimit2 = request.getParameter("limit2");
+    String providerview = request.getParameter("providerview") == null ? "all"
+            : request.getParameter("providerview");
 %>
 <%@ page
-	import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*"%>
-<%@ include file="../admin/dbconnection.jsp"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
-<%@ page import="org.oscarehr.common.model.Demographic"%>
-<%@ page import="org.oscarehr.common.dao.DemographicDao"%>
+        import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*" %>
+<%@ include file="/admin/dbconnection.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%
-	DemographicDao demographicDao = SpringUtils
-			.getBean(DemographicDao.class);
+    DemographicDao demographicDao = SpringUtils
+            .getBean(DemographicDao.class);
 %>
 <%
-	GregorianCalendar now = new GregorianCalendar();
-	int curYear = now.get(Calendar.YEAR);
-	int curMonth = (now.get(Calendar.MONTH) + 1);
-	int curDay = now.get(Calendar.DAY_OF_MONTH);
-	String clinic = "";
-	String clinicview = oscarVariables.getProperty("clinic_view");
+    GregorianCalendar now = new GregorianCalendar();
+    int curYear = now.get(Calendar.YEAR);
+    int curMonth = (now.get(Calendar.MONTH) + 1);
+    int curDay = now.get(Calendar.DAY_OF_MONTH);
+    String clinic = "";
+    String clinicview = oscarVariables.getProperty("clinic_view");
 
-	int[] itemp1 = new int[2];
-	itemp1[0] = Integer.parseInt(strLimit1);
-	itemp1[1] = Integer.parseInt(strLimit2);
+    int[] itemp1 = new int[2];
+    itemp1[0] = Integer.parseInt(strLimit1);
+    itemp1[1] = Integer.parseInt(strLimit2);
 %>
 <%
-	int flag = 0, rowCount = 0;
-	String reportAction = request.getParameter("reportAction") == null ? ""
-			: request.getParameter("reportAction");
-	String xml_vdate = request.getParameter("xml_vdate") == null ? ""
-			: request.getParameter("xml_vdate");
-	String xml_appointment_date = request
-			.getParameter("xml_appointment_date") == null ? ""
-			: request.getParameter("xml_appointment_date");
+    int flag = 0, rowCount = 0;
+    String reportAction = request.getParameter("reportAction") == null ? ""
+            : request.getParameter("reportAction");
+    String xml_vdate = request.getParameter("xml_vdate") == null ? ""
+            : request.getParameter("xml_vdate");
+    String xml_appointment_date = request
+            .getParameter("xml_appointment_date") == null ? ""
+            : request.getParameter("xml_appointment_date");
 %>
 
 <div class="page-header">
-	<h4>
-		<bean:message key="oscarReport.oscarReportCatchment.title" />
-		<div class="pull-right">
-			<button name='print' onClick='window.print()' class="btn">
-				<i class="icon-print icon-black"></i>
-				<bean:message key="global.btnPrint" />
-			</button>
-		</div>
-	</h4>
+    <h4>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.title"/>
+        <div class="pull-right">
+            <button name='print' onClick='window.print()' class="btn">
+                <i class="icon-print icon-black"></i>
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/>
+            </button>
+        </div>
+    </h4>
 </div>
 
 <table class="table table-bordered table-striped table-condensed table-hover">
-	<thead>
-		<tr>
-			<th><bean:message
-					key="oscarReport.oscarReportCatchment.msgDemographic" /></th>
-			<th><bean:message key="oscarReport.oscarReportCatchment.msgSex" />
-			</th>
-			<th><bean:message key="oscarReport.oscarReportCatchment.msgDOB" />
-			</th>
-			<th><bean:message key="oscarReport.oscarReportCatchment.msgCity" />
-			</th>
-			<th><bean:message
-					key="oscarReport.oscarReportCatchment.msgProvince" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportCatchment.msgPostal" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportCatchment.msgStatus" /></th>
-		</tr>
-	</thead>
-	<%
-		for (Demographic d : demographicDao.search_catchment("RO",
-				Integer.parseInt(strLimit1), Integer.parseInt(strLimit2))) {
-			nItems++;
-	%>
-	<tr>
-		<td><%=d.getLastName()%>,<%=d.getFirstName()%></td>
-		<td><%=d.getSex()%></td>
-		<td><%=d.getDateOfBirth()%>-<%=d.getMonthOfBirth()%>-<%=d.getYearOfBirth()%></td>
-		<td><%=d.getCity()%></td>
-		<td><%=d.getProvince()%></td>
-		<td><%=d.getPostal()%></td>
-		<td><%=d.getPatientStatus()%></td>
-	</tr>
-	<%
-		}
-	%>
+    <thead>
+    <tr>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgDemographic"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgSex"/>
+        </th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgDOB"/>
+        </th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgCity"/>
+        </th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgProvince"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgPostal"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgStatus"/></th>
+    </tr>
+    </thead>
+    <%
+        for (Demographic d : demographicDao.search_catchment("RO",
+                Integer.parseInt(strLimit1), Integer.parseInt(strLimit2))) {
+            nItems++;
+    %>
+    <tr>
+        <td><%=d.getLastName()%>,<%=d.getFirstName()%>
+        </td>
+        <td><%=d.getSex()%>
+        </td>
+        <td><%=d.getDateOfBirth()%>-<%=d.getMonthOfBirth()%>-<%=d.getYearOfBirth()%>
+        </td>
+        <td><%=d.getCity()%>
+        </td>
+        <td><%=d.getProvince()%>
+        </td>
+        <td><%=d.getPostal()%>
+        </td>
+        <td><%=d.getPatientStatus()%>
+        </td>
+    </tr>
+    <%
+        }
+    %>
 </table>
 
 <%
-	int nLastPage = 0, nNextPage = 0;
-	nNextPage = Integer.parseInt(strLimit2)
-			+ Integer.parseInt(strLimit1);
-	nLastPage = Integer.parseInt(strLimit1)
-			- Integer.parseInt(strLimit2);
+    int nLastPage = 0, nNextPage = 0;
+    nNextPage = Integer.parseInt(strLimit2)
+            + Integer.parseInt(strLimit1);
+    nLastPage = Integer.parseInt(strLimit1)
+            - Integer.parseInt(strLimit2);
 %>
 
 <ul class="pager">
-	<li class="previous <%=nLastPage >= 0 ? "" : "disabled"%>"><a
-		href="${ctx}/oscarReport/oscarReportCatchment.jsp?limit1=<%=nLastPage%>&limit2=<%=strLimit2%>"
-		class="contentLink"> &larr; Previous Page
-	</a></li>
-	<li
-		class="next <%=nItems == Integer.parseInt(strLimit2) ? "" : "disabled"%>">
-		<a
-		href="${ctx}/oscarReport/oscarReportCatchment.jsp?limit1=<%=nNextPage%>&limit2=<%=strLimit2%>"
-		class="contentLink"> <bean:message
-				key="oscarReport.oscarReportCatchment.msgNextPage" /> &rarr;
-	</a>
-	</li>
+    <li class="previous <%=nLastPage >= 0 ? "" : "disabled"%>"><a
+            href="${ctx}/oscarReport/oscarReportCatchment.jsp?limit1=<%=nLastPage%>&limit2=<%=strLimit2%>"
+            class="contentLink"> &larr; Previous Page
+    </a></li>
+    <li
+            class="next <%=nItems == Integer.parseInt(strLimit2) ? "" : "disabled"%>">
+        <a
+                href="${ctx}/oscarReport/oscarReportCatchment.jsp?limit1=<%=nNextPage%>&limit2=<%=strLimit2%>"
+                class="contentLink"> <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgNextPage"/> &rarr;
+        </a>
+    </li>
 </ul>
 
 <script>
-	$(document).ready(function() {
-		$("a.contentLink").click(function(e) {
-			//alert('link click')
-			e.preventDefault();
-			//alert("You clicked the link");
-			$("#dynamic-content").load($(this).attr("href"), 
-				function(response, status, xhr) {
-			  		if (status == "error") {
-				    	var msg = "Sorry but there was an error: ";
-				    	$("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
-					}
-				}
-			);
-		});
-	});
+    $(document).ready(function () {
+        $("a.contentLink").click(function (e) {
+            //alert('link click')
+            e.preventDefault();
+            //alert("You clicked the link");
+            $("#dynamic-content").load($(this).attr("href"),
+                function (response, status, xhr) {
+                    if (status == "error") {
+                        var msg = "Sorry but there was an error: ";
+                        $("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
+                    }
+                }
+            );
+        });
+    });
 </script>

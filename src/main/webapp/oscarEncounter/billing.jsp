@@ -26,8 +26,8 @@
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>billing</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>billing</title>
 </head>
 <body>
 <h1>This would be the link to the billing page</h1>

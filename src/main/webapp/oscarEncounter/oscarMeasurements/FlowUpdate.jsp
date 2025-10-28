@@ -12,7 +12,7 @@
 
 <head>
 
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/newCaseManagementView.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/newCaseManagementView.js"></script>
 
 </head>
 

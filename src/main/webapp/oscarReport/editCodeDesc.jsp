@@ -19,75 +19,72 @@
 --%>
 <!DOCTYPE html>
 
-<%@ include file="/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
+<html>
     <head>
 
         <title>Dx Register Report</title>
 
 
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/jquery.autocomplete.css"/>
+        <script src="<%= request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+        <script src="<%= request.getContextPath() %>/js/jquery.autocomplete.js"></script>
 
-     
-        
-        
-    <link rel="stylesheet" type="text/css" href="../css/jquery.autocomplete.css" />
-	<script src="http://www.google.com/jsapi"></script>
-	<script>
-		google.load("jquery", "1");
-	</script>
-	<script src="../js/jquery.autocomplete.js"></script>
-	
-	<style>
-		input { font-size: 100%; }
-	</style>
-	
-	<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            input {
+                font-size: 100%;
+            }
+        </style>
+
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
     </head>
-	
-<%
-	String editingCodeType = (String) session.getAttribute("editingCodeType");
-	String editingCodeCode = (String) session.getAttribute("editingCodeCode");
-	String editingCodeDesc = (String) session.getAttribute("editingCodeDesc");
 
-%>
-<body>
+    <%
+        String editingCodeType = (String) session.getAttribute("editingCodeType");
+        String editingCodeCode = (String) session.getAttribute("editingCodeCode");
+        String editingCodeDesc = (String) session.getAttribute("editingCodeDesc");
 
-<nested:form action="/report/DxresearchReport?method=editDesc">
+    %>
+    <body>
 
-		 <input type="hidden" name="editingCodeType" value=<%=editingCodeType%> /> 
-		 <input type="hidden" name="editingCodeCode" value=<%=editingCodeCode%> />
-		
-	<table class="table">
-		<tr>
-			<th>Code type</th>
-			<th>Code</th>
-			<th>Description</th>
-			<th>Action</th>
-		</tr>
-        <tr>
-            <td> <%=editingCodeType%> </td>
-            <td> <%=editingCodeCode%> </td>
-            <td> <input name="editingCodeDesc" value=<%=editingCodeDesc%> class="span4"> </td>
-            <td> <input type="submit" name="submit" class="btn btn-primary" value="Modify"> </td>
-        </tr>
-	</table>
-	
-</nested:form>	
+    <nested:form action="/report/DxresearchReport?method=editDesc">
 
-</body>
-</html:html>
+        <input type="hidden" name="editingCodeType" value=<%=editingCodeType%>/>
+        <input type="hidden" name="editingCodeCode" value=<%=editingCodeCode%>/>
+
+        <table class="table">
+            <tr>
+                <th>Code type</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+            <tr>
+                <td><%=editingCodeType%>
+                </td>
+                <td><%=editingCodeCode%>
+                </td>
+                <td><input name="editingCodeDesc" value=<%=editingCodeDesc%> class="span4"></td>
+                <td><input type="submit" name="submit" class="btn btn-primary" value="Modify"></td>
+            </tr>
+        </table>
+
+    </nested:form>
+
+    </body>
+</html>

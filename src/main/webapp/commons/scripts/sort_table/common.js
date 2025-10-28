@@ -5,61 +5,61 @@
  * http://dean.edwards.name/weblog/2005/10/add-event/
  **/
 function addEvent(element, type, handler) {
-	// assign each event handler a unique ID
-	if (!handler.$$guid) handler.$$guid = addEvent.guid++;
-	// create a hash table of event types for the element
-	if (!element.events) element.events = {};
-	// create a hash table of event handlers for each element/event pair
-	var handlers = element.events[type];
-	if (!handlers) {
-		handlers = element.events[type] = {};
-		// store the existing event handler (if there is one)
-		if (element["on" + type]) {
-			handlers[0] = element["on" + type];
-		}
-	}
-	// store the event handler in the hash table
-	handlers[handler.$$guid] = handler;
-	// assign a global event handler to do all the work
-	element["on" + type] = handleEvent;
+    // assign each event handler a unique ID
+    if (!handler.$$guid) handler.$$guid = addEvent.guid++;
+    // create a hash table of event types for the element
+    if (!element.events) element.events = {};
+    // create a hash table of event handlers for each element/event pair
+    var handlers = element.events[type];
+    if (!handlers) {
+        handlers = element.events[type] = {};
+        // store the existing event handler (if there is one)
+        if (element["on" + type]) {
+            handlers[0] = element["on" + type];
+        }
+    }
+    // store the event handler in the hash table
+    handlers[handler.$$guid] = handler;
+    // assign a global event handler to do all the work
+    element["on" + type] = handleEvent;
 };
 // a counter used to create unique IDs
 addEvent.guid = 1;
 
 function removeEvent(element, type, handler) {
-	// delete the event handler from the hash table
-	if (element.events && element.events[type]) {
-		delete element.events[type][handler.$$guid];
-	}
+    // delete the event handler from the hash table
+    if (element.events && element.events[type]) {
+        delete element.events[type][handler.$$guid];
+    }
 };
 
 function handleEvent(event) {
-	var returnValue = true;
-	// grab the event object (IE uses a global event object)
-	event = event || fixEvent(window.event);
-	// get a reference to the hash table of event handlers
-	var handlers = this.events[event.type];
-	// execute each event handler
-	for (var i in handlers) {
-		this.$$handleEvent = handlers[i];
-		if (this.$$handleEvent(event) === false) {
-			returnValue = false;
-		}
-	}
-	return returnValue;
+    var returnValue = true;
+    // grab the event object (IE uses a global event object)
+    event = event || fixEvent(window.event);
+    // get a reference to the hash table of event handlers
+    var handlers = this.events[event.type];
+    // execute each event handler
+    for (var i in handlers) {
+        this.$$handleEvent = handlers[i];
+        if (this.$$handleEvent(event) === false) {
+            returnValue = false;
+        }
+    }
+    return returnValue;
 };
 
 function fixEvent(event) {
-	// add W3C standard event methods
-	event.preventDefault = fixEvent.preventDefault;
-	event.stopPropagation = fixEvent.stopPropagation;
-	return event;
+    // add W3C standard event methods
+    event.preventDefault = fixEvent.preventDefault;
+    event.stopPropagation = fixEvent.stopPropagation;
+    return event;
 };
-fixEvent.preventDefault = function() {
-	this.returnValue = false;
+fixEvent.preventDefault = function () {
+    this.returnValue = false;
 };
-fixEvent.stopPropagation = function() {
-	this.cancelBubble = true;
+fixEvent.stopPropagation = function () {
+    this.cancelBubble = true;
 };
 
 // end from Dean Edwards
@@ -70,16 +70,16 @@ fixEvent.stopPropagation = function() {
  * From http://simon.incutio.com/archive/2003/06/15/javascriptWithXML
  *
  * @param element the element type to be created.
- *				e.g. ul (no angle brackets)
+ *                e.g. ul (no angle brackets)
  **/
 function createElement(element) {
-	if (typeof document.createElementNS != 'undefined') {
-		return document.createElementNS('http://www.w3.org/1999/xhtml', element);
-	}
-	if (typeof document.createElement != 'undefined') {
-		return document.createElement(element);
-	}
-	return false;
+    if (typeof document.createElementNS != 'undefined') {
+        return document.createElementNS('http://www.w3.org/1999/xhtml', element);
+    }
+    if (typeof document.createElement != 'undefined') {
+        return document.createElement(element);
+    }
+    return false;
 }
 
 /**
@@ -87,19 +87,18 @@ function createElement(element) {
  * from http://www.quirksmode.org/js/events_properties.html
  **/
 function getEventTarget(e) {
-	var targ;
-	if (!e) {
-		e = window.event;
-	}
-	if (e.target) {
-		targ = e.target;
-	} else if (e.srcElement) {
-		targ = e.srcElement;
-	}
-	if (targ.nodeType == 3) { // defeat Safari bug
-		targ = targ.parentNode;
-	}
+    var targ;
+    if (!e) {
+        e = window.event;
+    }
+    if (e.target) {
+        targ = e.target;
+    } else if (e.srcElement) {
+        targ = e.srcElement;
+    }
+    if (targ.nodeType == 3) { // defeat Safari bug
+        targ = targ.parentNode;
+    }
 
-	return targ;
+    return targ;
 }
-

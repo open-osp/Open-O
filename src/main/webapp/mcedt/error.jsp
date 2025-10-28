@@ -23,36 +23,36 @@
     Ontario, Canada
 
 --%>
-<%@ page isErrorPage="true"%>
+<%@ page isErrorPage="true" %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <!DOCTYPE html>
 
 <html>
 <head>
-<jsp:include page="head-includes.jsp" />
-<title>MCEDT: Error Page</title>
+    <jsp:include page="head-includes.jsp"/>
+    <title>MCEDT: Error Page</title>
 </head>
 <body>
-	<div class="container-fluid">
-		<div class="row-fluid">
+<div class="container-fluid">
+    <div class="row-fluid">
 
-			<h4 style="color: red">We are sorry, there was an error
-				processing your request</h4>
+        <h4 style="color: red">We are sorry, there was an error
+            processing your request</h4>
 
-			<h5>
-				<c:out
-					value="${exception.message}" />
-			</h5>
+        <h5>
+            <c:out
+                    value="${exception.message}"/>
+        </h5>
 
-			<jsp:include page="messages.jsp" />
-		</div>
-	</div>
+        <jsp:include page="messages.jsp"/>
+    </div>
+</div>
 </body>
 </html>

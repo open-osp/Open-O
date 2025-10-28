@@ -19,26 +19,26 @@
 --%>
 
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingServicePremium" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServicePremiumDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingServicePremium" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServicePremiumDao" %>
 <%
-	CtlBillingServicePremiumDao dao = SpringUtils.getBean(CtlBillingServicePremiumDao.class);
+    CtlBillingServicePremiumDao dao = SpringUtils.getBean(CtlBillingServicePremiumDao.class);
 %>
 <%
-String temp;
-int recordAffected = -100;
-for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
-	temp=e.nextElement().toString();
-	if( temp.indexOf("service")==-1 ) continue; 
+    String temp;
+    int recordAffected = -100;
+    for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+        temp = e.nextElement().toString();
+        if (temp.indexOf("service") == -1) continue;
 
-	 for(CtlBillingServicePremium b:dao.findByServiceCode(request.getParameter(temp))) {
-     	dao.remove(b.getId());
-     }
-}
+        for (CtlBillingServicePremium b : dao.findByServiceCode(request.getParameter(temp))) {
+            dao.remove(b.getId());
+        }
+    }
 
-response.sendRedirect("manageBillingform.jsp"); 
+    response.sendRedirect("manageBillingform.jsp");
 %>

@@ -24,72 +24,74 @@
     
 --%>
 
-<%@ page errorPage="../error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<html:html>
-<head>
-
-	<jsp:include page="../head-includes.jsp" />
-
-	<link href="<%= request.getContextPath() %>/mcedt/mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-	<script language="javascript">
-		function cancel(control) {
-			if (control) {
-				control.disabled = true;
-			}
-			window.location.href = '<%= request.getContextPath() %>/mcedt/kaimcedt.do?tab=upload';
-			return false;
-		}
-	
-		function create(control) {
-			if (control) {
-				control.disabled = true;
-			}
-			var method = jQuery("#methodAddUpload");
-			method.val('addUpload');
-			var form = jQuery("#formAddUpload");
-			form.submit();
-			return true;
-		}
-	</script>
-	
-	
-	<title>MCEDT: Upload</title>
+<html>
+    <head>
 
-<html:base />
-</head>
+        <jsp:include page="/mcedt/head-includes.jsp"/>
 
-<body>
-    <div class="greyBox">    
-		<div class="center">
-			<h1>Upload Details</h1>
-		
-			<html:form action="/mcedt/addUpload.do" method="post" styleId="formAddUpload"
-				enctype="multipart/form-data">
-				
-				<jsp:include page="../messages.jsp" />
-		
-				<input id="methodAddUpload" name="method" type="hidden" value="" />
-		      	<label for="addUploadFile">Upload your file</label>
-		      	<input type="file" name="addUploadFile" id="addUploadFile" style="width:95%; margin-top:5px;"/>
-		      	<div class="row topMargin30">
-			      	<button class="noBorder greenBox flatLink font12 rightMargin5" onclick="return create(this);">Create</button>
-					<button class="noBorder blackBox flatLink font12" onclick="return cancel();">Cancel</button>
-				</div>
-			</html:form>
-		</div>
-	</div>
-</body>
-</html:html>
+        <link href="<%= request.getContextPath() %>/mcedt/mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
+
+
+        <script language="javascript">
+            function cancel(control) {
+                if (control) {
+                    control.disabled = true;
+                }
+                window.location.href = '<%= request.getContextPath() %>/mcedt/kaimcedt.do?tab=upload';
+                return false;
+            }
+
+            function create(control) {
+                if (control) {
+                    control.disabled = true;
+                }
+                var method = jQuery("#methodAddUpload");
+                method.val('addUpload');
+                var form = jQuery("#formAddUpload");
+                form.submit();
+                return true;
+            }
+        </script>
+
+
+        <title>MCEDT: Upload</title>
+
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
+
+    <body>
+    <div class="greyBox">
+        <div class="center">
+            <h1>Upload Details</h1>
+
+            <form action="${pageContext.request.contextPath}/mcedt/addUpload.do" method="post" id="formAddUpload"
+                       enctype="multipart/form-data">
+
+                <jsp:include page="/mcedt/messages.jsp"/>
+
+                <input id="methodAddUpload" name="method" type="hidden" value=""/>
+                <label for="addUploadFile">Upload your file</label>
+                <input type="file" name="addUploadFile" id="addUploadFile" style="width:95%; margin-top:5px;"/>
+                <div class="row topMargin30">
+                    <button class="noBorder greenBox flatLink font12 rightMargin5" onclick="return create(this);">
+                        Create
+                    </button>
+                    <button class="noBorder blackBox flatLink font12" onclick="return cancel();">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </body>
+</html>

@@ -18,85 +18,88 @@
 
 --%>
 
-<%@page import="oscar.util.ConversionUtils"%>
-<%@page import="java.util.Date"%>
-<%@page import="org.oscarehr.util.DateRange"%>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, oscar.oscarBilling.ca.on.OHIP.*, java.net.*" errorPage="/errorpage.jsp"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="java.util.Date" %>
+<%@page import="ca.openosp.openo.utility.DateRange" %>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.billing.ca.on.OHIP.*, java.net.*"
+         errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.OHIP.ExtractBean" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 
 <%
-	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 %>
 
 <%
-String errorMsg = "";
-int PROVIDER_BILLINGNO_LENGTH = 6;
-int PROVIDER_SPECIALTYCODE_LENGTH = 2;
-int PROVIDER_GROUPNO_LENGTH = 4;
+    String errorMsg = "";
+    int PROVIDER_BILLINGNO_LENGTH = 6;
+    int PROVIDER_SPECIALTYCODE_LENGTH = 2;
+    int PROVIDER_GROUPNO_LENGTH = 4;
 
-int bCount = 1;
-String batchCount = "0";
-String provider = request.getParameter("provider");
-if (provider.length() != PROVIDER_BILLINGNO_LENGTH) errorMsg = "The provider's billing code is not correct!<br>";
+    int bCount = 1;
+    String batchCount = "0";
+    String provider = request.getParameter("providers");
+    if (provider.length() != PROVIDER_BILLINGNO_LENGTH) errorMsg = "The providers's billing code is not correct!<br>";
 
-String proOHIP=""; 
-String specialty_code; 
-String billinggroup_no;
-   
-DateRange dateRange = null;
-String htmlValue="";
+    String proOHIP = "";
+    String specialty_code;
+    String billinggroup_no;
 
-
-Date dateBegin = ConversionUtils.fromDateString(request.getParameter("xml_vdate"));
-Date dateEnd = ConversionUtils.fromDateString(request.getParameter("xml_appointment_date"));
-if (dateEnd == null) {
-	dateEnd = ConversionUtils.fromDateString(request.getParameter("curDate"));
-}
-
-dateRange = new DateRange(dateBegin, dateEnd);
-
-for(Provider p:providerDao.getActiveProviders()) {
-	if(p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
-		proOHIP =p.getOhipNo();
-		billinggroup_no= SxmlMisc.getXmlContent(p.getComments(),"<xml_p_billinggroup_no>","</xml_p_billinggroup_no>");
-		specialty_code = SxmlMisc.getXmlContent(p.getComments(),"<xml_p_specialty_code>","</xml_p_specialty_code>");
-
-		if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null")==0 || specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH){
-			//error msg here
-			errorMsg += "The provider's specialty code is not correct!<br>";
-			specialty_code = "00"; 
-		}
-
-		if (billinggroup_no == null ||  billinggroup_no.compareTo("") == 0 ||  billinggroup_no.compareTo("null")==0 || billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH){
-			//error msg here
-			errorMsg += "The provider's group no is not correct!<br>";
-			billinggroup_no = "0000";
-		} 
-
-		oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
-		//extract.setOscarHome(oscar_home);
-		extract.seteFlag("0");
-		extract.setDateRange(dateRange);
-		extract.setOhipVer(request.getParameter("verCode"));
-		extract.setProviderNo(proOHIP);
-		extract.setOhipCenter(request.getParameter("billcenter"));
-		extract.setGroupNo(billinggroup_no);
-		extract.setSpecialty(specialty_code);
-		extract.setBatchCount(String.valueOf(bCount));
-		extract.dbQuery();
-
-		htmlValue = "<font color='red'>" + errorMsg + "</font>" + extract.getHtmlValue();		
-	}
-}
+    DateRange dateRange = null;
+    String htmlValue = "";
 
 
-request.setAttribute("html",htmlValue);
+    Date dateBegin = ConversionUtils.fromDateString(request.getParameter("xml_vdate"));
+    Date dateEnd = ConversionUtils.fromDateString(request.getParameter("xml_appointment_date"));
+    if (dateEnd == null) {
+        dateEnd = ConversionUtils.fromDateString(request.getParameter("curDate"));
+    }
+
+    dateRange = new DateRange(dateBegin, dateEnd);
+
+    for (Provider p : providerDao.getActiveProviders()) {
+        if (p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
+            proOHIP = p.getOhipNo();
+            billinggroup_no = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_billinggroup_no>", "</xml_p_billinggroup_no>");
+            specialty_code = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_specialty_code>", "</xml_p_specialty_code>");
+
+            if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null") == 0 || specialty_code.length() != PROVIDER_SPECIALTYCODE_LENGTH) {
+                //error msg here
+                errorMsg += "The providers's specialty code is not correct!<br>";
+                specialty_code = "00";
+            }
+
+            if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0 || billinggroup_no.length() != PROVIDER_GROUPNO_LENGTH) {
+                //error msg here
+                errorMsg += "The providers's group no is not correct!<br>";
+                billinggroup_no = "0000";
+            }
+
+            ExtractBean extract = new ExtractBean();
+            //extract.setOscarHome(oscar_home);
+            extract.seteFlag("0");
+            extract.setDateRange(dateRange);
+            extract.setOhipVer(request.getParameter("verCode"));
+            extract.setProviderNo(proOHIP);
+            extract.setOhipCenter(request.getParameter("billcenter"));
+            extract.setGroupNo(billinggroup_no);
+            extract.setSpecialty(specialty_code);
+            extract.setBatchCount(String.valueOf(bCount));
+            extract.dbQuery();
+
+            htmlValue = "<font color='red'>" + errorMsg + "</font>" + extract.getHtmlValue();
+        }
+    }
+
+
+    request.setAttribute("html", htmlValue);
 %>
 
 <jsp:forward page='billingOHIPsimulation.jsp'>
-	<jsp:param name="xml_appointment_date" value='<%=dateEnd%>' />
-	<jsp:param name="xml_v_date" value='<%=dateBegin%>' />
-	<jsp:param name="provider" value='<%=provider%>' />
+    <jsp:param name="xml_appointment_date" value='<%=dateEnd%>'/>
+    <jsp:param name="xml_v_date" value='<%=dateBegin%>'/>
+    <jsp:param name="provider" value='<%=provider%>'/>
 </jsp:forward>

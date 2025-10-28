@@ -24,152 +24,160 @@
     
 --%>
 
-<%@ page errorPage="../error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-  
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="java.math.BigInteger,java.util.*,org.oscarehr.integration.mcedt.mailbox.DetailDataCustom,org.oscarehr.integration.mcedt.mailbox.ActionUtils" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page
+        import="java.math.BigInteger,java.util.*,ca.openosp.openo.integration.mcedt.mailbox.DetailDataCustom,ca.openosp.openo.integration.mcedt.mailbox.ActionUtils" %>
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<script src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js" type="application/javascript"></script>
-<script language="javascript">	
-$(window).load(function(){
-	$('input[type="checkbox"]').click(function () {
-   	 var pass = 5; //5 files at a time
-   	 var numOfFiles = $('input[type="checkbox"]:checked').length;
-   	 if (numOfFiles == pass) {
-        $('input[type="checkbox"]').not(':checked').prop('disabled', true);
-   	 } else {
-        $('input[type="checkbox"]').not(':checked').prop('disabled', false);
-   	 }
-   	 if (numOfFiles>0) {
-  	  	$("#unSelDL").prop('disabled', false);
-  	  	$("#userDL").prop('disabled', false);  	  	
-    	} else {
-   	 	$("#unSelDL").prop('disabled', true);
-   	 	$("#userDL").prop('disabled', true);   	 	
-  	  }
-	})
-	
-	$("#unSelDL").click(function(){	
-		$('input[type="checkbox"]').filter(':checked').prop('checked', false);
-		$('input[type="checkbox"]').filter(':disabled').prop('disabled', false);
-		$("#unSelDL").prop('disabled', true);
-		$("#userDL").prop('disabled', true);		
-	})
-});
+    <script src="${pageContext.request.contextPath}/js/jquery-1.7.1.min.js" type="application/javascript"></script>
+    <script language="javascript">
+        $(window).load(function () {
+            $('input[type="checkbox"]').click(function () {
+                var pass = 5; //5 files at a time
+                var numOfFiles = $('input[type="checkbox"]:checked').length;
+                if (numOfFiles == pass) {
+                    $('input[type="checkbox"]').not(':checked').prop('disabled', true);
+                } else {
+                    $('input[type="checkbox"]').not(':checked').prop('disabled', false);
+                }
+                if (numOfFiles > 0) {
+                    $("#unSelDL").prop('disabled', false);
+                    $("#userDL").prop('disabled', false);
+                } else {
+                    $("#unSelDL").prop('disabled', true);
+                    $("#userDL").prop('disabled', true);
+                }
+            })
 
-	function changeDisplayDL(control) {
-		//submitFormSent("changeDisplay", control);
-		var method = jQuery("#methodDownload");
-		method.val('changeDisplay');
-		
-		var form = jQuery("#formDownload");
-		form.submit();
-		return true;
-	}	
-	
-	function downloadSelected(control) {
-		return submitFormDownload('userDownload', control);
-	}			
-	
-	function submitFormDownload(methodType, control){
-		if (control) {
-			control.disabled = true;
-		}
-		
-		var method = jQuery("#methodDownload");
-		method.val(methodType);
-		
-		var form = jQuery("#formDownload");
-		form.submit();
-		return true;
-	}
-	
-</script>
-<title>Download</title>
+            $("#unSelDL").click(function () {
+                $('input[type="checkbox"]').filter(':checked').prop('checked', false);
+                $('input[type="checkbox"]').filter(':disabled').prop('disabled', false);
+                $("#unSelDL").prop('disabled', true);
+                $("#userDL").prop('disabled', true);
+            })
+        });
+
+        function changeDisplayDL(control) {
+            //submitFormSent("changeDisplay", control);
+            var method = jQuery("#methodDownload");
+            method.val('changeDisplay');
+
+            var form = jQuery("#formDownload");
+            form.submit();
+            return true;
+        }
+
+        function downloadSelected(control) {
+            return submitFormDownload('userDownload', control);
+        }
+
+        function submitFormDownload(methodType, control) {
+            if (control) {
+                control.disabled = true;
+            }
+
+            var method = jQuery("#methodDownload");
+            method.val(methodType);
+
+            var form = jQuery("#formDownload");
+            form.submit();
+            return true;
+        }
+
+    </script>
+    <title>Download</title>
 </head>
 <body>
-	<c:set var="resourceListDL" value="${sessionScope.resourceListDL}" />
-	<c:set var="resultSize" value="${sessionScope.resultSize}" />
+<c:set var="resourceListDL" value="${sessionScope.resourceListDL}"/>
+<c:set var="resultSize" value="${sessionScope.resultSize}"/>
 
-	<html:form action="/mcedt/download" method="post" styleId="formDownload">
-		<jsp:include page="../messages.jsp" />		
-		<input id="methodDownload" name="method" type="hidden" value="" />	
-	<div>
-	<div>
-			Billing Number:
-		<html:select property="serviceId" styleId="serviceId"
-			styleClass="serviceId">
-			<c:forEach var="r" items="${serviceIds}">
-            	<html:option value="${r}" >
-					<c:out value="${r}" />
-				</html:option>
-							</c:forEach>
-		</html:select>
-		Page #:
-		<html:select property="pageNo" styleId="pageNo">
-			<c:forEach var="i" begin="1"
-				end="${resultSize}">
-				<html:option value="${i}">
-					<c:out value="${i}" />
-				</html:option>
-			</c:forEach>
-		</html:select>
-		<button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true); return changeDisplayDL();">Load Page</button>
-	</div>
-	* You may select a maximum of 5 files at a time to download from MC-EDT
-	<br />** to process downloads, click <a href="<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp">here to view MOH files</a>
-	<c:choose>
-		<c:when test="${not empty resourceListDL}">
-			<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
-				<thead>
-					<tr class="greenBox">
-						<th>Select</th>
-						<th>ID</th>
-						<th>Date</th>
-						<th>Type</th>
-						<!-- <th>Result</th>
-						<th>Status</th> -->
-						<th>File Name</th>
-						<th>Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					<c:forEach var="r" items="${resourceListDL}" varStatus="loopStatus">
-						<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
-							<td><input type="checkbox" value="${r.resourceID}" name="resourceId" /></td>
-							<td><c:out value="${r.resourceID}" /></td>
-							<td>
-								<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
-							</td>
-							<td><c:out value="${r.resourceType}" /></td>
-							<td><c:out value="${r.description}" /></td>
-							<td><c:out value="${r.status}" /></td>
-						</tr>
-					</c:forEach>
-				</tbody>
-			</table>
-		</c:when>
-		<c:otherwise>
-			<h3>No new documents to download.</h3>
-		</c:otherwise>
-	</c:choose>
-	</div>
-	<div>
-		<button type="button"  id="unSelDL" class="noBorder blackBox flatLink font12 rightMargin5" disabled="true">Un-Select All</button>
-		<button type="button"  id="userDL" class="noBorder blackBox flatLink font12" disabled="true" onclick="ShowSpin(true);return downloadSelected();">Download</button>		
-	</div>
-		
-	</html:form>
+<form action="${pageContext.request.contextPath}/mcedt/download.do" method="post" id="formDownload">
+    <jsp:include page="/mcedt/messages.jsp"/>
+    <input id="methodDownload" name="method" type="hidden" value=""/>
+    <div>
+        <div>
+            Billing Number:
+            <select name="serviceId" id="serviceId" class="serviceId">
+                <c:forEach var="r" items="${serviceIds}">
+                    <option value="${r}" <c:if test="${r == serviceId}">selected</c:if>>
+                        <c:out value="${r}" />
+                    </option>
+                </c:forEach>
+            </select>
+
+            Page #:
+            <select name="pageNo" id="pageNo">
+                <c:forEach var="i" begin="1" end="${resultSize}">
+                    <option value="${i}" <c:if test="${i == pageNo}">selected</c:if>>
+                        <c:out value="${i}" />
+                    </option>
+                </c:forEach>
+            </select>
+            <button class="noBorder blackBox flatLink font12 small" onclick="ShowSpin(true); return changeDisplayDL();">
+                Load Page
+            </button>
+        </div>
+        * You may select a maximum of 5 files at a time to download from MC-EDT
+        <br/>** to process downloads, click <a href="<%= request.getContextPath() %>/billing/CA/ON/viewMOHFiles.jsp">here
+        to view MOH files</a>
+        <c:choose>
+            <c:when test="${not empty resourceListDL}">
+                <table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5"
+                       style="margin:5px 0 15px;">
+                    <thead>
+                    <tr class="greenBox">
+                        <th>Select</th>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <!-- <th>Result</th>
+                        <th>Status</th> -->
+                        <th>File Name</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="r" items="${resourceListDL}" varStatus="loopStatus">
+                        <tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
+                            <td><input type="checkbox" value="${r.resourceID}" name="resourceId"/></td>
+                            <td><c:out value="${r.resourceID}"/></td>
+                            <td>
+                                <fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
+                            </td>
+                            <td><c:out value="${r.resourceType}"/></td>
+                            <td><c:out value="${r.description}"/></td>
+                            <td><c:out value="${r.status}"/></td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+            <c:otherwise>
+                <h3>No new documents to download.</h3>
+            </c:otherwise>
+        </c:choose>
+    </div>
+    <div>
+        <button type="button" id="unSelDL" class="noBorder blackBox flatLink font12 rightMargin5" disabled="true">
+            Un-Select All
+        </button>
+        <button type="button" id="userDL" class="noBorder blackBox flatLink font12" disabled="true"
+                onclick="ShowSpin(true);return downloadSelected();">Download
+        </button>
+    </div>
+
+</form>
 </body>
 </html>

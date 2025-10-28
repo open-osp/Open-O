@@ -93,11 +93,11 @@ UPDATE secObjectName set description = 'Administration - Lookup Field Editor'
 
 UPDATE secObjectName set description = 'Administration - Provider'
 
-  WHERE objectname= '_admin.provider';
+  WHERE objectname= '_admin.providers';
 
 UPDATE secObjectName set description = 'Administration - Security'
 
-  WHERE objectname= '_admin.security';
+  WHERE objectname= '_admin.sec';
 
 UPDATE secObjectName set description = 'Administration - Security Log Report'
 

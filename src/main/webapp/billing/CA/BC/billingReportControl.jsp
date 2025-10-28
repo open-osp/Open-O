@@ -24,9 +24,9 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -35,7 +35,7 @@
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting,_admin" rights="r"
                    reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../../../securityError.jsp?type=_report&type=_admin.reporting&type=_admin");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting&type=_admin");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -53,18 +53,19 @@
     String providerview = request.getParameter("providerview") == null ? "all" : request.getParameter("providerview");
 %>
 <% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
-<%@ page import="java.math.*,java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.ReportProvider" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.common.dao.ReportProviderDao" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao" %>
-<%@ page import="org.oscarehr.common.model.Appointment" %>
-<%@ page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@ page import="java.math.*,java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.ReportProvider" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.commn.dao.ReportProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@ page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 
 <%
@@ -88,7 +89,7 @@
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-    <html:base/>
+    <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
     <title>Billing Report</title>
 
     <script language="JavaScript">
@@ -120,7 +121,7 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr bgcolor="#FFFFFF">
         <div align="right"><a href=#
-                              onClick="popupPage(700,720,'../oscarReport/manageProvider.jsp?action=billingreport')"><font
+                              onClick="popupPage(700,720,'<%= request.getContextPath() %>/oscarReport/manageProvider.jsp?action=billingreport')"><font
                 face="Arial, Helvetica, sans-serif" size="1">Manage Provider
             List </font></a></div>
     </tr>

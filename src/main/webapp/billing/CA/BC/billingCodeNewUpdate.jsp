@@ -24,133 +24,142 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-  String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@page	import="java.util.*, java.sql.*, oscar.*, java.net.*,oscar.oscarBilling.ca.bc.pageUtil.*"%>
+<%@page import="java.util.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.BillingService" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.BillingService" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.ServiceCodeAssociation" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingAssociationPersistence" %>
 <%
-	BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
+    BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Billing Summary</title>
-<script LANGUAGE="JavaScript">
-<!--
-<%
-      boolean multipage = false;
-      String formName = request.getParameter("formName");
-      String formElement = request.getParameter("formElement");
-      if ( formName != null && !formName.equals("") && formElement != null && !formElement.equals("") ){
-         multipage = true;
-      }
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Billing Summary</title>
+    <script LANGUAGE="JavaScript">
+        <!--
+        <%
+              boolean multipage = false;
+              String formName = request.getParameter("formName");
+              String formElement = request.getParameter("formElement");
+              if ( formName != null && !formName.equals("") && formElement != null && !formElement.equals("") ){
+                 multipage = true;
+              }
 
-      if (multipage){%>
-function CodeAttach(File0, File1, File2) {
+              if (multipage){%>
 
-      self.close();
-      self.opener.document.<%=formName%>.<%=formElement%>.value = File0;
-}
-      <%}else{%>
-function CodeAttach(File0, File1, File2,dx1,dx2,dx3) {
+        function CodeAttach(File0, File1, File2) {
 
-      self.close();
-      self.opener.document.BillingCreateBillingForm.xml_other1.value = File0;
-      self.opener.document.BillingCreateBillingForm.xml_other2.value = File1;
-      self.opener.document.BillingCreateBillingForm.xml_other3.value = File2;
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail1.value =dx1;
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail2.value =dx2;
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail3.value =dx3;
-}
-    <%}%>
+            self.close();
+            self.opener.document
+        .<%=formName%>.<%=formElement%>.
+            value = File0;
+        }
 
--->
-</script>
+        <%}else{%>
+
+        function CodeAttach(File0, File1, File2, dx1, dx2, dx3) {
+
+            self.close();
+            self.opener.document.BillingCreateBillingForm.xml_other1.value = File0;
+            self.opener.document.BillingCreateBillingForm.xml_other2.value = File1;
+            self.opener.document.BillingCreateBillingForm.xml_other3.value = File2;
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail1.value = dx1;
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail2.value = dx2;
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail3.value = dx3;
+        }
+
+        <%}%>
+
+        -->
+    </script>
 </head>
 <body>
 <%
-  if (request.getParameter("update").equals("Confirm")) {
-    String temp = "";
-    String[] param = new String[10];
-    param[0] = "";
-    param[1] = "";
-    param[2] = "";
-    int Count = 0;
-    for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
-      temp = e.nextElement().toString();
-      if (temp.indexOf("code_") == -1)continue;
-      param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
-      Count = Count + 1;
-    }
-    if (Count == 1) {
-      param[1] = "";
-      param[2] = "";
-    }
-    if (Count == 2) {
-      param[2] = "";
-    }
-    if (Count == 0) {
+    if (request.getParameter("update").equals("Confirm")) {
+        String temp = "";
+        String[] param = new String[10];
+        param[0] = "";
+        param[1] = "";
+        param[2] = "";
+        int Count = 0;
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+            temp = e.nextElement().toString();
+            if (temp.indexOf("code_") == -1) continue;
+            param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
+            Count = Count + 1;
+        }
+        if (Count == 1) {
+            param[1] = "";
+            param[2] = "";
+        }
+        if (Count == 2) {
+            param[2] = "";
+        }
+        if (Count == 0) {
 %>
 <p>No input selected</p>
 <input type="button" name="back" value="back"
-	onClick="javascript:history.go(-1);return false;">
+       onClick="javascript:history.go(-1);return false;">
 <%
-  } else {
-    String[] diags = {"","",""};
+} else {
+    String[] diags = {"", "", ""};
     BillingAssociationPersistence per = new BillingAssociationPersistence();
     for (int i = 0; i < param.length; i++) {
-      ServiceCodeAssociation assoc = per.getServiceCodeAssocByCode(param[i]);
-      List dxcodes = assoc.getDxCodes();
-      if(!dxcodes.isEmpty()){
-        diags[i]=(String)dxcodes.get(0);
-      }
+        ServiceCodeAssociation assoc = per.getServiceCodeAssocByCode(param[i]);
+        List dxcodes = assoc.getDxCodes();
+        if (!dxcodes.isEmpty()) {
+            diags[i] = (String) dxcodes.get(0);
+        }
     }
 %>
 <script LANGUAGE="JavaScript">
     <!--
-     CodeAttach('<%=param[0]%>','<%=param[1]%>', '<%=param[2]%>', '<%=diags[0]%>', '<%=diags[1]%>', '<%=diags[2]%>' );
+    CodeAttach('<%=param[0]%>', '<%=param[1]%>', '<%=param[2]%>', '<%=diags[0]%>', '<%=diags[1]%>', '<%=diags[2]%>');
     -->
 
 </script>
 <%
-  }
-  } else {
+    }
+} else {
 %>
 <%
-  String code = request.getParameter("update");
-  code = code.substring(code.length() - 5);
-  int rowsAffected = 0;
-	for( BillingService bs:billingServiceDao.findByServiceCode(code)) {
-  		bs.setDescription(request.getParameter(code));
-  		billingServiceDao.merge(bs);
-  		rowsAffected++;
-  	}
+    String code = request.getParameter("update");
+    code = code.substring(code.length() - 5);
+    int rowsAffected = 0;
+    for (BillingService bs : billingServiceDao.findByServiceCode(code)) {
+        bs.setDescription(request.getParameter(code));
+        billingServiceDao.merge(bs);
+        rowsAffected++;
+    }
 %>
 
 <p>
 <h1>Successful Addition of a billing Record.</h1>
 </p>
 <script LANGUAGE="JavaScript">
-    history.go(-1);return false;
+    history.go(-1);
+    return false;
     self.opener.refresh();
 </script>
 <%}%>

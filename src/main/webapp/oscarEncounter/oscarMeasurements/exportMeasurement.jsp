@@ -24,19 +24,22 @@
 
 --%>
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@page contentType="text/xml"%>
+<%@page contentType="text/xml" %>
 <%@page
-	import="oscar.oscarEncounter.oscarMeasurements.bean.*,oscar.oscarEncounter.oscarMeasurements.data.*"%>
+        import="ca.openosp.openo.encounter.oscarMeasurements.bean.*,ca.openosp.openo.encounter.oscarMeasurements.data.*" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypeBeanHandler" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.data.ExportMeasurementType" %>
 <%
-   String mstring = request.getParameter("mType");
-   String export ="<ERROR>";
-   if (mstring != null){
-       EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
-       EctMeasurementTypesBean measurementTypesBean = mType.getMeasurementType(mstring);
+    String mstring = request.getParameter("mType");
+    String export = "<ERROR>";
+    if (mstring != null) {
+        EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
+        EctMeasurementTypesBean measurementTypesBean = mType.getMeasurementType(mstring);
 
-       ExportMeasurementType emt = new ExportMeasurementType();
-       export = emt.export(measurementTypesBean);
-   }
+        ExportMeasurementType emt = new ExportMeasurementType();
+        export = emt.export(measurementTypesBean);
+    }
 %><%=export%>

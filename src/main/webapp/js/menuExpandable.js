@@ -4,7 +4,9 @@
  */
 
 if (!document.getElementById) {
-    document.getElementById = function() { return null; }
+    document.getElementById = function () {
+        return null;
+    }
 }
 
 var menuCookie = "menusToExpand";
@@ -16,54 +18,52 @@ function initializeMenu(menuId, actuatorId) {
 
     if (menu == null || actuator == null) return;
 
-    //if (window.opera) return; // I'm too tired
-    
     actuator.parentNode.style.backgroundImage = "url(../images/plus.gif)";
 
     //expand all nodes at init
     var menusToExpand = getCookie(menuCookie);
     if (menusToExpand == null) {
-      setCookie(menuCookie,menuId);
+        setCookie(menuCookie, menuId);
     } else if (menusToExpand.indexOf(menuId) == -1) {
-      setCookie(menuCookie,menusToExpand+","+menuId);
+        setCookie(menuCookie, menusToExpand + "," + menuId);
     }
 
-    
-    actuator.onclick = function() {
+
+    actuator.onclick = function () {
         var display = menu.style.display;
         this.parentNode.style.backgroundImage =
             (display == "block") ? "url(../images/plus.gif)" : "url(../images/minus.gif)";
         menu.style.display = (display == "block") ? "none" : "block";
-        
+
         // Begin custom code for remembering expanded menus with cookies
         var menusToExpand = getCookie(menuCookie);
 
         if (menu.style.display == "block") {
             // set a cookie to keep the menu expanded
             if (menusToExpand == null) {
-                setCookie(menuCookie,menuId);
+                setCookie(menuCookie, menuId);
             } else if (menusToExpand.indexOf(menuId) == -1) {
-                setCookie(menuCookie,menusToExpand+","+menuId);
+                setCookie(menuCookie, menusToExpand + "," + menuId);
             }
         } else {
             // remove it from the expanded cookie list
             if (menusToExpand.indexOf(menuId) != -1) {
                 // check for comma after menu
-                if (menusToExpand.indexOf(menuId+",") != -1) {
-                    menusToExpand = menusToExpand.replace(menuId+",","");
+                if (menusToExpand.indexOf(menuId + ",") != -1) {
+                    menusToExpand = menusToExpand.replace(menuId + ",", "");
                 } else {
-                    menusToExpand = menusToExpand.replace(menuId,"");
+                    menusToExpand = menusToExpand.replace(menuId, "");
                 }
                 if (menusToExpand == "") {
                     deleteCookie(menuCookie);
                 } else {
-                    setCookie(menuCookie,menusToExpand);
+                    setCookie(menuCookie, menusToExpand);
                 }
             }
         }
 
         // End custom code
-        
+
         return false;
     }
 }
@@ -89,7 +89,7 @@ function decorateMenu(menu) {
     var actuators = new Array();
     var nonActuators = new Array();
     // build an array of actuators
-    for (i=0; i < links.length; i++) {
+    for (i = 0; i < links.length; i++) {
         if (links[i].className == "actuator") {
             actuators[actuators.length] = links[i];
         } else {
@@ -99,31 +99,31 @@ function decorateMenu(menu) {
 
     var menus = new Array();
     // build an array of menus
-    for (i=0; i < lists.length; i++) {
+    for (i = 0; i < lists.length; i++) {
         if (lists[i].className == "menu" || lists[i].className == "submenu") {
             menus[menus.length] = lists[i];
         }
     }
 
     // initialize actuators and menus (number should be the same)
-    for (i=0; i < actuators.length; i++) {
+    for (i = 0; i < actuators.length; i++) {
         initializeMenu(menus[i].id, actuators[i].id);
     }
-    
+
     // Begin custom code to remember last item clicked (with cookies)
     // add an onclick event to set a cookie on the non-actuators
-    for (i=0; i < nonActuators.length; i++) {
+    for (i = 0; i < nonActuators.length; i++) {
         // retain any existing onclick handlers from menu-config.xml
         if (nonActuators[i].onclick) {
-            nonActuators[i].onclick=function() {
-                setCookie(itemCookie,this.href);
+            nonActuators[i].onclick = function () {
+                setCookie(itemCookie, this.href);
                 if (eval(this.getAttribute("onclick")) == false) {
                     return false;
                 }
             };
         } else {
-            nonActuators[i].onclick=function() {
-                setCookie(itemCookie,this.href);
+            nonActuators[i].onclick = function () {
+                setCookie(itemCookie, this.href);
             };
         }
     }
@@ -148,17 +148,17 @@ function expandMenus() {
         // create an array of menusToExpanded menus
         if (menusToExpand.indexOf(",") != -1) {
             menuArray = menusToExpand.split(",");
-            for (var i=0; i < menuArray.length; i++) {
+            for (var i = 0; i < menuArray.length; i++) {
                 openMenu(menuArray[i]);
             }
-         } else {
+        } else {
             openMenu(menusToExpand);
-         }
+        }
     }
     var itemToHighlight = getCookie(itemCookie);
     var links = document.getElementsByTagName("a");
     // add an onclick event to set a cookie on the non-actuators
-    for (i=0; i < links.length; i++) {
+    for (i = 0; i < links.length; i++) {
         if (links[i].href == itemToHighlight) {
             links[i].className += " highlight";
         }
@@ -169,39 +169,39 @@ function expandMenus() {
 //                          Cookie functions 
 // =========================================================================
 /* This function is used to set cookies */
-function setCookie(name,value,expires,path,domain,secure) {
-  document.cookie = name + "=" + escape (value) +
-    ((expires) ? "; expires=" + expires.toGMTString() : "") +
-    ((path) ? "; path=" + path : "") +
-    ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
+function setCookie(name, value, expires, path, domain, secure) {
+    document.cookie = name + "=" + escape(value) +
+        ((expires) ? "; expires=" + expires.toGMTString() : "") +
+        ((path) ? "; path=" + path : "") +
+        ((domain) ? "; domain=" + domain : "") + ((secure) ? "; secure" : "");
 }
 
 /* This function is used to get cookies */
 function getCookie(name) {
-	var prefix = name + "=" 
-	var start = document.cookie.indexOf(prefix) 
+    var prefix = name + "="
+    var start = document.cookie.indexOf(prefix)
 
-	if (start==-1) {
-		return null;
-	}
-	
-	var end = document.cookie.indexOf(";", start+prefix.length) 
-	if (end==-1) {
-		end=document.cookie.length;
-	}
+    if (start == -1) {
+        return null;
+    }
 
-	var value=document.cookie.substring(start+prefix.length, end) 
-	return unescape(value);
+    var end = document.cookie.indexOf(";", start + prefix.length)
+    if (end == -1) {
+        end = document.cookie.length;
+    }
+
+    var value = document.cookie.substring(start + prefix.length, end)
+    return unescape(value);
 }
 
 /* This function is used to delete cookies */
-function deleteCookie(name,path,domain) {
-  if (getCookie(name)) {
-    document.cookie = name + "=" +
-      ((path) ? "; path=" + path : "") +
-      ((domain) ? "; domain=" + domain : "") +
-      "; expires=Thu, 01-Jan-70 00:00:01 GMT";
-  }
+function deleteCookie(name, path, domain) {
+    if (getCookie(name)) {
+        document.cookie = name + "=" +
+            ((path) ? "; path=" + path : "") +
+            ((domain) ? "; domain=" + domain : "") +
+            "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+    }
 }
 
 /* You can call initializeMenus() manually from your JSP if this doesn't work.

@@ -25,125 +25,133 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_demographic,_demographicExport" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_demographic,_demographicExport" rights="r"
+                   reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%@page
-	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.report.data.RptSearchData" %>
+<%@ page import="ca.openosp.openo.report.data.DemographicSets" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 
 <%
-  if(session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
-  String demographic_no = request.getParameter("demographic_no");
+    if (session.getAttribute("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String demographic_no = request.getParameter("demographic_no");
 
-  DemographicSets  ds = new DemographicSets();
-  List<String> sets = ds.getDemographicSets();
+    DemographicSets ds = new DemographicSets();
+    List<String> sets = ds.getDemographicSets();
 
-  RptSearchData searchData  = new RptSearchData();
-  ArrayList queryArray = searchData.getQueryTypes();
+    RptSearchData searchData = new RptSearchData();
+    ArrayList queryArray = searchData.getQueryTypes();
 
-  String userRole = (String)session.getAttribute("userrole");
+    String userRole = (String) session.getAttribute("userrole");
 %>
 
-<html:html lang="en">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
-<head>
-<!--I18n-->
-<title>Reporting of Diabetes</title>
+<html>
+    <script src="${pageContext.request.contextPath}/csrfguard"></script>
+    <head>
+        <!--I18n-->
+        <title>Reporting of Diabetes</title>
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
-<script type="text/javascript"
-	src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-<script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
+        <script type="text/javascript"
+                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
 
-<SCRIPT LANGUAGE="JavaScript">
+        <SCRIPT LANGUAGE="JavaScript">
 
-function checkSelect(slct) {
-    if (slct==-1) {
-	alert("Please select a Patient Set");
-	return false;
-    }
-    else return true;
-}
+            function checkSelect(slct) {
+                if (slct == -1) {
+                    alert("Please select a Patient Set");
+                    return false;
+                } else return true;
+            }
 
-function checkAll() {
-    var frm = document.forms.DiabetesExportForm;
-    if (!checkSelect(frm.patientSet.value)) return false;
-    if (frm.startDate.value=="") {
-	alert("Please enter a valid start date");
-	return false;
-    }
-    if (frm.endDate.value=="") {
-	alert("Please enter a valid end date");
-	return false;
-    }
-    return true;
-}
-</SCRIPT>
+            function checkAll() {
+                var frm = document.forms.DiabetesExportForm;
+                if (!checkSelect(frm.patientSet.value)) return false;
+                if (frm.startDate.value == "") {
+                    alert("Please enter a valid start date");
+                    return false;
+                }
+                if (frm.endDate.value == "") {
+                    alert("Please enter a valid end date");
+                    return false;
+                }
+                return true;
+            }
+        </SCRIPT>
 
-</head>
+    </head>
 
-<body>
-<div class="container-fluid well">
-<%
-if (!userRole.toLowerCase().contains("admin")) { %>
-<p>
-<h2>Sorry! Only administrators can report diabetes.</h2>
-</p>
-<%
-} else {
-%>
+    <body>
+    <div class="container-fluid well">
+        <%
+            if (!userRole.toLowerCase().contains("admin")) { %>
+        <p>
+        <h2>Sorry! Only administrators can report diabetes.</h2>
+        </p>
+        <%
+        } else {
+        %>
 
-<h3>Reporting of Diabetes <small><oscar:help keywords="export" key="app.top1"/></small></h3>
+        <h3>Reporting of Diabetes </h3>
 
-<html:form action="/demographic/DiabetesExport" method="get"
-	onsubmit="return checkAll();">
+        <form action="${pageContext.request.contextPath}/demographic/DiabetesExport.do" method="get"
+                   onsubmit="return checkAll();">
 
-<table><tr>
-	<% if (demographic_no!= null) { %>
-		<td><input type="hidden" name="demographicNo" value="<%=demographic_no%>"/>
-		Reporting :
-	<%} else {%>
-	    Patient Set: <html:select property="patientSet">
-			<html:option value="-1">--Select Set--</html:option>
-	<%
-	    for (int i=0; i<sets.size(); i++) {
-		String setName = sets.get(i);
-	%>
-		<html:option value="<%=setName%>"><%=setName%></html:option>
-	    <%}%>
-	    </html:select>
-    <%}%>
-    </td></tr><tr>
-	<td align="right" width=73>Start Date: </td>
-	<td><html:text property="startDate" size="10" /> (YYYY-MM-DD)</td>
-    </tr><tr>
-	<td align="right">End Date: </td>
-	<td><html:text property="endDate" size="10" /> (YYYY-MM-DD)</td>
-</tr></table>
-<p><input class="btn btn-primary" type="submit" value="Export" />
-</html:form>
+        <table>
+            <tr>
+                <% if (demographic_no != null) { %>
+                <td><input type="hidden" name="demographicNo" value="<%=demographic_no%>"/>
+                    Reporting :
+                    <%} else {%>
+                    Patient Set: <select name="patientSet" id="patientSet">
+                        <option value="-1">--Select Set--</option>
+                        <%
+                            for (int i = 0; i < sets.size(); i++) {
+                                String setName = sets.get(i);
+                        %>
+                        <option value="<%=setName%>"><%=setName%>
+                        </option>
+                        <%}%>
+                    </select>
+                    <%}%>
+                </td>
+            </tr>
+            <tr>
+                <td align="right" width=73>Start Date:</td>
+                <td><input type="checkbox" name="startDate" size="10" /> (YYYY-MM-DD)</td>
+            </tr>
+            <tr>
+                <td align="right">End Date:</td>
+                <td><input type="checkbox" name="endDate" size="10" /> (YYYY-MM-DD)</td>
+            </tr>
+        </table>
+        <p><input class="btn btn-primary" type="submit" value="Export"/>
+            </form>
 
-<%}%>
-</div>
-</body>
-</html:html>
+                    <%}%>
+    </div>
+    </body>
+</html>
 <%!
 
 %>

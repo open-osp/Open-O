@@ -26,12 +26,13 @@
 <div class="flex immunization-row items-center">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_immunizations" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_immunizations" data-score="1">
         <strong>Immunizations</strong>
     </div>
     <div class="mandatory ml-4 font-bold highlight tt" data-field-name="zoster" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Zoster">
+         title="Immunizations: Zoster">
         Zoster
     </div>
     <div class="pl-1 flex items-center">
@@ -45,8 +46,9 @@
             <span class="pl-1">N</span>
         </label>
     </div>
-    <div class="mandatory font-bold ml-2 influenza highlight tt" data-field-name="influenza" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Influenza">
+    <div class="mandatory font-bold ml-2 influenza highlight tt" data-field-name="influenza" data-names="y,n"
+         data-toggle="tooltip"
+         title="Immunizations: Influenza">
         Influenza
     </div>
     <div class="flex items-center pl-1">
@@ -59,8 +61,9 @@
             <span class="pl-1">N</span>
         </label>
     </div>
-    <div class="mandatory font-bold ml-2 tt highlight" data-field-name="pneumococcal" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Pneumococca">
+    <div class="mandatory font-bold ml-2 tt highlight" data-field-name="pneumococcal" data-names="y,n"
+         data-toggle="tooltip"
+         title="Immunizations: Pneumococca">
         Pneumococcal
     </div>
     <div class="pl-1 flex items-center">
@@ -73,8 +76,9 @@
             <span class="pl-1">N</span>
         </label>
     </div>
-    <div class="mandatory font-bold ml-2 tt highlight" data-field-name="tetanus_and_diphtheria" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Tetanus & Diphtheria">
+    <div class="mandatory font-bold ml-2 tt highlight" data-field-name="tetanus_and_diphtheria" data-names="y,n"
+         data-toggle="tooltip"
+         title="Immunizations: Tetanus & Diphtheria">
         Tetanus and Diphtheria
     </div>
     <div class="pl-1 flex items-center">
@@ -88,7 +92,7 @@
         </label>
     </div>
     <div class="mandatory font-bold ml-4 highlight tt" data-field-name="hep_a" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Hepatitis A">
+         title="Immunizations: Hepatitis A">
         Hep A
     </div>
     <div class="pl-1 flex items-center">
@@ -102,7 +106,7 @@
         </label>
     </div>
     <div class="mandatory font-bold ml-4 tt highlight" data-field-name="hep_b" data-names="y,n" data-toggle="tooltip"
-        title="Immunizations: Hepatitis B">
+         title="Immunizations: Hepatitis B">
         Hep B
     </div>
     <div class="pl-1 flex items-center">

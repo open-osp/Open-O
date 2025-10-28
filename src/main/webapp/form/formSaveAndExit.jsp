@@ -24,66 +24,63 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ page import="java.sql.*, java.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ page import="java.sql.*, java.util.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title></title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
+    <script language="javascript">
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title></title>
-<html:base />
-</head>
-<script language="javascript">
+        function write2Parent(text) {
 
-function write2Parent(text){
-    
-    self.window.close();    
-    opener.document.encForm.enTextarea.value = opener.document.encForm.enTextarea.value + "\n" + text;
-    opener.setTimeout("document.encForm.enTextarea.scrollTop=document.encForm.enTextarea.scrollHeight", 0);  // setTimeout is needed to allow browser to realize that text field has been updated 
-    opener.focus();
-    opener.document.encForm.enTextarea.focus();
- }
+            self.window.close();
+            opener.document.encForm.enTextarea.value = opener.document.encForm.enTextarea.value + "\n" + text;
+            opener.setTimeout("document.encForm.enTextarea.scrollTop=document.encForm.enTextarea.scrollHeight", 0);  // setTimeout is needed to allow browser to realize that text field has been updated
+            opener.focus();
+            opener.document.encForm.enTextarea.focus();
+        }
 
- function closePopup(){
-    if(self.window && self.open.window && !self.closed){
-        self.open.window.close();
-        self.close();        
-    }
- }
-</script>
+        function closePopup() {
+            if (self.window && self.open.window && !self.closed) {
+                self.open.window.close();
+                self.close();
+            }
+        }
+    </script>
 
 
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onunload="javascript: closePopup()">
-<table>
-	<tr>
-		<td><script>
-            write2Parent("<%=request.getAttribute("diagnosisVT")%>");            
-        </script></td>
-	</tr>
-</table>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF"
+          onunload="javascript: closePopup()">
+    <table>
+        <tr>
+            <td>
+                <script>
+                    write2Parent("<%=request.getAttribute("diagnosisVT")%>");
+                </script>
+            </td>
+        </tr>
+    </table>
 
 
-
-
-</body>
-</html:html>
+    </body>
+</html>

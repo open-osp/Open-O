@@ -1,37 +1,32 @@
 {
-	"name": "Open-OSP EMR Dev",
-	"workspaceFolder": "/workspace",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "open-o",
-	"postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
-	"shutdownAction": "stopCompose",
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"waderyan.gitblame",
-				"redhat.vscode-community-server-connector@0.25.7",
-				"redhat.fabric8-analytics",
-				"vscjava.vscode-java-pack"
-			],
-			"settings": {
-				"terminal.integrated.shell.linux": "/bin/bash"
-			}
-		}
-	},
-	"mounts": [
-		{
-			"type": "bind",
-			"source": "${localEnv:SSH_AUTH_SOCK}",
-			"target": "/ssh-agent"
-		}
-	],
-	"containerEnv": {
-		"SSH_AUTH_SOCK": "/ssh-agent"
-	},
-	"forwardPorts": [
-		8080,
-		3306
-	],
-	"containerUser": "root",
-	"remoteUser": "root"
+    "name": "Open-OSP EMR Dev",
+    "dockerComposeFile": ["docker-compose.yml"],
+    "service": "open-o",
+    "workspaceFolder": "/workspace",
+    "shutdownAction": "stopCompose",
+    "dockerComposeOptions": ["--project-name", "openo-emr"],
+    "postCreateCommand": "sh .devcontainer/development/setup/seed_data.sh && cd /workspace && mvn -B dependency:go-offline dependency:sources dependency:resolve -Dclassifier=javadoc",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "waderyan.gitblame",
+                "redhat.vscode-community-server-connector",
+                "redhat.fabric8-analytics",
+                "vscjava.vscode-java-pack",
+                "anthropic.claude-code"
+            ],
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash",
+                "java.compile.nullAnalysis.mode": "automatic",
+                "java.configuration.updateBuildConfiguration": "interactive",
+                "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms512m -Xlog:disable",
+                "java.maven.downloadSources": false
+              }
+        }
+    },
+
+    "forwardPorts": [8080, 8000, 3306, 3000],
+    "containerUser": "root",
+    "remoteUser": "root"
 }

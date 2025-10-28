@@ -24,39 +24,38 @@
 
 --%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingType" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingTypeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingType" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingTypeDao" %>
 <%
-	CtlBillingTypeDao ctlBillingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
+    CtlBillingTypeDao ctlBillingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
 %>
 <%
-String servicetype="", billtype="", billtype_old="";
-String[] param = new String[2];
+    String servicetype = "", billtype = "", billtype_old = "";
+    String[] param = new String[2];
 
-servicetype = request.getParameter("servicetype");
-billtype = request.getParameter("billtype");
-billtype_old = request.getParameter("billtype_old");
+    servicetype = request.getParameter("servicetype");
+    billtype = request.getParameter("billtype");
+    billtype_old = request.getParameter("billtype_old");
 
-if (billtype.equals("no")) {
-    ctlBillingTypeDao.remove(servicetype);
-    
-}
-else if (billtype_old.equals("no")) {
-    CtlBillingType cbt = new CtlBillingType();
-    cbt.setId(servicetype);
-    cbt.setBillType(billtype);
-    ctlBillingTypeDao.persist(cbt);
-} else {
-    CtlBillingType cbt = ctlBillingTypeDao.find(servicetype);
-    if(cbt != null) {
-    	cbt.setBillType(billtype);
-    	ctlBillingTypeDao.merge(cbt);
+    if (billtype.equals("no")) {
+        ctlBillingTypeDao.remove(servicetype);
+
+    } else if (billtype_old.equals("no")) {
+        CtlBillingType cbt = new CtlBillingType();
+        cbt.setId(servicetype);
+        cbt.setBillType(billtype);
+        ctlBillingTypeDao.persist(cbt);
+    } else {
+        CtlBillingType cbt = ctlBillingTypeDao.find(servicetype);
+        if (cbt != null) {
+            cbt.setBillType(billtype);
+            ctlBillingTypeDao.merge(cbt);
+        }
     }
-}
 %>
 
 <script LANGUAGE="JavaScript">

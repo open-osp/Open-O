@@ -24,19 +24,19 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="oscarEncounter.error.title" /></title>
-</head>
-<body style="width: 600px">
-<h2><bean:message key="oscarEncounter.error.msgExpired" /></h2>
-<p><bean:message key="oscarEncounter.error.msgSessionFailed" />
-<p><input type="button"
-	value="<bean:message key="global.btnClose"/>" onclick="window.close();">
-</body>
-</html:html>
+
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.error.title"/></title>
+    </head>
+    <body style="width: 600px">
+    <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.error.msgExpired"/></h2>
+    <p><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.error.msgSessionFailed"/>
+    <p><input type="button"
+              value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/>" onclick="window.close();">
+    </body>
+</html>

@@ -9,7 +9,7 @@
 
 <tag>
   <name>preventionWarnings</name>
-  <tagclass>oscar.oscarPrevention.tld.PreventionTag</tagclass>
+  <tagclass>ca.openosp.openo.prevention.tld.PreventionTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>demographicNo</name>
@@ -20,7 +20,7 @@
 
 <tag>
   <name>newLab</name>
-  <tagclass>oscar.oscarLab.tld.LabTag</tagclass>
+  <tagclass>ca.openosp.openo.lab.tld.LabTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>providerNo</name>
@@ -31,7 +31,7 @@
 
 <tag>
   <name>agedConsult</name>
-  <tagclass>oscar.oscarEncounter.oscarConsultationRequest.tld.ConsultTag</tagclass>
+  <tagclass>ca.openosp.openo.encounter.oscarConsultationRequest.tld.ConsultTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>providerNo</name>
@@ -42,13 +42,13 @@
 
 <tag>
   <name>newUnclaimedLab</name>
-  <tagclass>oscar.oscarLab.tld.UnclaimedLabTag</tagclass>
+  <tagclass>ca.openosp.openo.lab.tld.UnclaimedLabTag</tagclass>
   <bodycontent>jsp</bodycontent>  
 </tag>
 
 <tag>
   <name>filledScratch</name>
-  <tagclass>oscar.scratch.tld.ScratchTag</tagclass>
+  <tagclass>ca.openosp.openo.scratch.tld.ScratchTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>providerNo</name>
@@ -59,7 +59,7 @@
 
 <tag>
   <name>newMessage</name>
-  <tagclass>oscar.oscarMessenger.tld.MsgNewMessageTag</tagclass>
+  <tagclass>ca.openosp.openo.messenger.tld.MsgNewMessageTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>providerNo</name>
@@ -70,7 +70,7 @@
 
 <tag>
    <name>oscarPropertiesCheck</name>
-   <tagclass>oscar.util.OscarPropertiesCheck</tagclass>
+   <tagclass>ca.openosp.openo.util.OscarPropertiesCheck</tagclass>
    <bodycontent>JSP</bodycontent>       
    <attribute>
      <name>property</name>
@@ -91,7 +91,7 @@
 
 <tag>
   <name>newTickler</name>
-  <tagclass>oscar.oscarTickler.tld.TicklerTag</tagclass>
+  <tagclass>ca.openosp.openo.tickler.tld.TicklerTag</tagclass>
   <bodycontent>jsp</bodycontent>
   <attribute>
     <name>providerNo</name>
@@ -102,7 +102,7 @@
 
 <tag>
   <name>nameage</name>
-  <tagclass>oscar.oscarDemographic.tld.DemographicNameAgeTag</tagclass>
+  <tagclass>ca.openosp.openo.demographic.tld.DemographicNameAgeTag</tagclass>
   <bodycontent>empty</bodycontent>
   <attribute>
     <name>demographicNo</name>
@@ -129,7 +129,7 @@
 
 <tag>
   <name>nextAppt</name>
-  <tagclass>oscar.appt.tld.NextApptTag</tagclass>
+  <tagclass>ca.openosp.openo.appt.tld.NextApptTag</tagclass>
   <bodycontent>empty</bodycontent>
   <attribute>
     <name>demographicNo</name>
@@ -150,39 +150,8 @@
 
 
 <tag>
-  <name>help</name>
-  <tagclass>org.oscarehr.util.HelpTag</tagclass>
-  <bodycontent>empty</bodycontent>
-  <attribute>
-    <name>keywords</name>
-    <required>false</required>
-    <rtexprvalue>true</rtexprvalue>
-  </attribute>
-  <attribute>
-    <name>classString</name>
-    <required>false</required>
-    <rtexprvalue>true</rtexprvalue>
-  </attribute>
-  <attribute>
-    <name>searchLink</name>
-    <required>false</required>
-    <rtexprvalue>true</rtexprvalue>
-  </attribute>
-  <attribute>
-    <name>key</name>
-    <required>false</required>
-    <rtexprvalue>true</rtexprvalue>
-  </attribute>
-  <attribute>
-    <name>style</name>
-    <required>false</required>
-    <rtexprvalue>true</rtexprvalue>
-  </attribute>
-</tag>
-
-<tag>
   <name>customInterface</name>
-  <tagclass>org.oscarehr.util.CustomInterfaceTag</tagclass>
+  <tagclass>ca.openosp.openo.utility.CustomInterfaceTag</tagclass>
   <bodycontent>empty</bodycontent>
   <attribute>
     <name>section</name>

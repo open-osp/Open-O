@@ -18,71 +18,72 @@
 
 --%>
 <%
-  String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 
 %>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="../errorpage.jsp"%>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Billing Summary</title>
-<script LANGUAGE="JavaScript">
-<!--
-function CodeAttach(File0, File1, File2) {
-      
-      self.close();
-      self.opener.document.serviceform.xml_research1.value = File0;
-      self.opener.document.serviceform.xml_research2.value = File1;
-      self.opener.document.serviceform.xml_research3.value = File2;
-}
--->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Billing Summary</title>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function CodeAttach(File0, File1, File2) {
+
+            self.close();
+            self.opener.document.serviceform.xml_research1.value = File0;
+            self.opener.document.serviceform.xml_research2.value = File1;
+            self.opener.document.serviceform.xml_research3.value = File2;
+        }
+
+        -->
+    </script>
 
 </head>
 <body>
 <%
-        String temp="";
-        String[] param =new String[10];
-        param[0] = "";
-        param[1] = "";
-        param[2] = "";
-	
-	int Count = 0;
-	
-	for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
-		temp=e.nextElement().toString();
-		if( temp.indexOf("code_")==-1 ) continue; 
-                 param[Count] = temp.substring(5).toUpperCase();
-                 Count = Count + 1;
-                 
-      }
-    
-    if (Count == 1) {
+    String temp = "";
+    String[] param = new String[10];
+    param[0] = "";
     param[1] = "";
     param[2] = "";
+
+    int Count = 0;
+
+    for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+        temp = e.nextElement().toString();
+        if (temp.indexOf("code_") == -1) continue;
+        param[Count] = temp.substring(5).toUpperCase();
+        Count = Count + 1;
+
     }
-        if (Count == 2) {
+
+    if (Count == 1) {
+        param[1] = "";
         param[2] = "";
-       
     }
-    
-    if (Count ==0) {
-    %>
+    if (Count == 2) {
+        param[2] = "";
+
+    }
+
+    if (Count == 0) {
+%>
 <p>No input selected</p>
 <input type="button" name="back" value="back"
-	onClick="javascript:history.go(-1);return false;">
+       onClick="javascript:history.go(-1);return false;">
 <%
-    }else{
-    %>
+} else {
+%>
 <script LANGUAGE="JavaScript">
     <!--
-     CodeAttach('<%=param[0]%>','<%=param[1]%>', '<%=param[2]%>' ); 
+    CodeAttach('<%=param[0]%>', '<%=param[1]%>', '<%=param[2]%>');
     -->
-    
+
 </script>
 <%
-}
+    }
 %>
 </body>
 </html>

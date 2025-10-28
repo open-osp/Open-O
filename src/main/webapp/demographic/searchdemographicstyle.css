@@ -24,7 +24,7 @@
 
 * {
     font-size: 12px;
-    line-height:1;
+    line-height: 1;
 }
 
 form {
@@ -35,66 +35,80 @@ form {
 ul {
     margin: 0px;
     padding: 0px;
-    list-style:none;
+    list-style: none;
 }
 
 a:active {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 a:link {
-	text-decoration: none;
-	color: #0066CC
+    text-decoration: none;
+    color: #0066CC
 }
 
 a:visited {
-	text-decoration: none;
-	color: #0080c0;
+    text-decoration: none;
+    color: #0080c0;
 }
 
 a:hover {
-	color:#000;
-	TEXT-DECORATION: underline;
+    color: #000;
+    TEXT-DECORATION: underline;
 }
 
-.deep { /*background-color: #B7B18D; */}
-.weak { background-color: #EEEEFF; }
+.deep { /*background-color: #B7B18D; */
+}
+
+.weak {
+    background-color: #EEEEFF;
+}
 
 .title {
-    text-align:left;
+    text-align: left;
     font-weight: bold;
-    height:12px
+    height: 12px
 }
 
 #cancelButton, #backButton, #searchPopUpButton {
-    display:none;
+    display: none;
 }
 
 #searchResults table {
-	background-color: white;
-	width:100%;
-	border-collapse:collapse;
+    background-color: white;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .header {
-    position:absolute;
-    top:0px;
-    left:0px;
-    width:100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
 }
 
 #searchResults table td {
-	text-align:left;
-	vertical-align:middle;
-	border: thin solid #BDBDBD;
+    text-align: left;
+    vertical-align: middle;
+    border: thin solid #BDBDBD;
 }
 
 
-.odd{background-color:#fff;}
-.even{background-color:#EEEEFF;}
+.odd {
+    background-color: #fff;
+}
 
-.odd:hover {background-color:#FACC2E;}
-.even:hover {background-color:#FACC2E;}
+.even {
+    background-color: #EEEEFF;
+}
+
+.odd:hover {
+    background-color: #FACC2E;
+}
+
+.even:hover {
+    background-color: #FACC2E;
+}
 
 
 #searchResults {
@@ -102,15 +116,27 @@ a:hover {
 }
 
 #searchResults tr.tableHeadings {
-    font-weight:bold;
+    font-weight: bold;
 }
 
 .demoId {
     border-left: 1px solid #c0c0c0;
 }
 
-.createNew{font-size:16px;font-weight:bold;text-align:right;}
-.goBackToSchedule{font-size:16px;font-weight:bold;text-align:left;}
+.createNew {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: right;
+}
+
+.goBackToSchedule {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
 
 
-.dateFormat{font-size:12px;font-weight:normal;}
+.dateFormat {
+    font-size: 12px;
+    font-weight: normal;
+}

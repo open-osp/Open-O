@@ -19,7 +19,7 @@ We would like to split the oscar code structure into packages and directories ac
 	- org.oscarehr.utils
 	- org.oscarehr.dao
 	- org.oscarehr.web
-	- org.oscarehr.ws
+	- org.oscarehr.webserv
 
 Specifically, we should not be splitting the code up by components as it is now, i.e. pmmodule/dao, pmmodule/web, eforms/dao, eforms/web, etc, It should be org.oscarehr.web.eforms, org.oscarehr.web.pmmodule etc. Note also that everything should be under org.oscarehr regardless of who submits the code, i.e. com.quatro.*, ca.caisi.*, and oscar.* should all go away.
 

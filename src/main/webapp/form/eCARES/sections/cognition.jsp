@@ -26,11 +26,12 @@
 <div class="flex items-center">
     <div>
         <svg height="10" width="10" class="tt" data-toggle="tooltip" data-html="true" data-container="body"
-            title="CIND: Cognitive Impairment Non-Dementia<br>MCI: Mild Cognitive Impairment">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_cognition" data-score="1">
+             title="CIND: Cognitive Impairment Non-Dementia<br>MCI: Mild Cognitive Impairment">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_cognition" data-score="1">
         <strong class="tt highlight" data-toggle="tooltip" data-html="true" data-field-name="cognition"
-            title="CIND: Cognitive Impairment Non-Dementia<br><br>MCI: Mild Cognitive Impairment">Cognition</strong>
+                title="CIND: Cognitive Impairment Non-Dementia<br><br>MCI: Mild Cognitive Impairment">Cognition</strong>
     </div>
     <div class="pl-4">
         <label class="font-normal flex items-center">
@@ -51,7 +52,8 @@
         </label>
     </div>
     <div class="pl-2 flex">
-        <span class="mandatory font-bold ml-4 flex highlight" rel="delirium" data-names="y,n" data-field-name="delirium">Delirium</span>
+        <span class="mandatory font-bold ml-4 flex highlight" rel="delirium" data-names="y,n"
+              data-field-name="delirium">Delirium</span>
         <label class="pl-2 font-normal flex items-center">
             <input type="radio" name="delirium" value="1" class="m-0 p-0" autocomplete="off" data-score="1">
             <span class="ml-1">Y</span>
@@ -73,13 +75,13 @@
         <label for="fast" class="inline-block font-bold highlight" data-field-name="fast">FAST:</label>
         <select id="fast" name="fast" class="ecares-input" style="width: 150px;">
             <option disabled selected></option>
-            <option data-score="0" value="1" >1 - No functional decline</option>
-            <option data-score="0" value="2" >2 - Personal awareness of some functional decline</option>
-            <option data-score="0.5" value="3" >3 - Noticeable deficits in demanding tasks</option>
-            <option data-score="0.5" value="4" >4 - Requires assistance in complicated tasks</option>
-            <option data-score="1" value="5" >5 - Requires assistance in simple tasks</option>
-            <option data-score="1" value="6" >6 - Requires assistance with daily living</option>
-            <option data-score="1" value="7" >7 -Dependency</option>
+            <option data-score="0" value="1">1 - No functional decline</option>
+            <option data-score="0" value="2">2 - Personal awareness of some functional decline</option>
+            <option data-score="0.5" value="3">3 - Noticeable deficits in demanding tasks</option>
+            <option data-score="0.5" value="4">4 - Requires assistance in complicated tasks</option>
+            <option data-score="1" value="5">5 - Requires assistance in simple tasks</option>
+            <option data-score="1" value="6">6 - Requires assistance with daily living</option>
+            <option data-score="1" value="7">7 -Dependency</option>
         </select>
     </div>
 </div>

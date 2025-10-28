@@ -22,83 +22,142 @@
     Hamilton
     Ontario, Canada
 
+    Migrated from Apache CXF to ScribeJava OAuth1 implementation.
 --%>
-<%@page import="org.apache.cxf.rs.security.oauth.client.OAuthClientUtils,org.apache.cxf.jaxrs.client.WebClient,java.util.*,java.net.*,org.oscarehr.common.dao.*,org.oscarehr.common.model.*,org.oscarehr.util.*,org.oscarehr.app.*"%><%
 
-AppUserDao appUserDao = SpringUtils.getBean(AppUserDao.class);
-AppDefinitionDao appDefinitionDao = SpringUtils.getBean(AppDefinitionDao.class);
+<%@ page import="com.github.scribejava.core.model.OAuth1RequestToken" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppUserDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.AppDefinitionDao" %>
+<%@ page import="ca.openosp.openo.commn.model.AppUser" %>
+<%@ page import="ca.openosp.openo.commn.model.AppDefinition" %>
+<%@ page import="ca.openosp.openo.app.AppOAuth1Config" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="javax.servlet.http.*" %>
+<%@ page import="org.slf4j.Logger, org.slf4j.LoggerFactory" %>
 
-Integer appId = null;
-if (request.getParameter("id") != null){
-	try{
-	appId = Integer.parseInt(request.getParameter("id"));
-	}catch(Exception e){
-		if("K2A".equals(request.getParameter("id"))){
-			AppDefinition k2aApp = appDefinitionDao.findByName("K2A");
-			if(k2aApp != null){
-				appId = k2aApp.getId();
-			}
-		}
-	}
-}else if(session.getAttribute("appId") != null ){
-	appId = (Integer) session.getAttribute("appId");
-}
+<%!
+  // Declare a JSP-level logger
+  private static final Logger log = LoggerFactory.getLogger("oauth1_jsp");
+%>
 
-if(appId == null){
-	response.sendRedirect("close.jsp");
-}
+<%
+    // Lookup DAOs
+    AppUserDao appUserDao      = SpringUtils.getBean(AppUserDao.class);
+    AppDefinitionDao appDefDao = SpringUtils.getBean(AppDefinitionDao.class);
 
-AppDefinition appDef = appDefinitionDao.find(appId);
+    // Determine which app we’re handling
+    Integer appId = null;
+    String idParam = request.getParameter("id");
+    if (idParam != null) {
+        try {
+            appId = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            // K2A handling removed
+        }
+    } else if (session.getAttribute("appId") != null) {
+        appId = (Integer) session.getAttribute("appId");
+    }
 
-AppOAuth1Config oauth1config = (AppOAuth1Config) AppOAuth1Config.fromDocument(appDef.getConfig());
-OAuthClientUtils.Consumer consumer = new OAuthClientUtils.Consumer(oauth1config.getConsumerKey(),oauth1config.getConsumerSecret());
+    if (appId == null) {
+        response.sendRedirect("close.jsp");
+        return;
+    }
 
-if(request.getParameter("oauth_verifier") == null){	  //need to request a token
-	try{
-		WebClient requestTokenService = WebClient.create(oauth1config.getRequestTokenService()).encoding("text/plain;charset=UTF-8"); // /oauth/request_token
-		requestTokenService = requestTokenService.accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-		URI callback = new URI(""+request.getRequestURL());
-		MiscUtils.getLogger().error(""+request.getRequestURL());
-		Map<String,String> extraParams  = null;
-		String authorizationServiceURI = oauth1config.getAuthorizationServiceURI();
-	
-		OAuthClientUtils.Token requestToken = OAuthClientUtils.getRequestToken(requestTokenService,consumer,callback,extraParams);
-		session.setAttribute("requestToken",requestToken);
-		session.setAttribute("appId",appId);
-		URI authUrl = OAuthClientUtils.getAuthorizationURI(authorizationServiceURI, requestToken.getToken());
-		response.sendRedirect(authUrl.toString());
-	}catch(Exception e){
-		MiscUtils.getLogger().error("Error getting Request Token from app "+appId+" for user "+(String)session.getAttribute("user"),e);
-		session.setAttribute("oauthMessage","Error requesting token from app");		
-		response.sendRedirect("close.jsp");
-	}
-}else{
-	try{
-	WebClient accessTokenService  = WebClient.create(oauth1config.getAccessTokenService()).encoding("text/plain;charset=UTF-8"); // /oauth/request_token
-	accessTokenService = accessTokenService.accept("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-	String oauthVerifier = request.getParameter("oauth_verifier");
-	OAuthClientUtils.Token requestToken = (OAuthClientUtils.Token) session.getAttribute("requestToken");
-	OAuthClientUtils.Token accessToken = OAuthClientUtils.getAccessToken(accessTokenService, consumer, requestToken, oauthVerifier);
-	
-	//appUserDao
-	AppUser appuser = new AppUser();
-	appuser.setAppId(appId); 
-	appuser.setProviderNo((String)session.getAttribute("user"));
+    // Load our OAuth1 app configuration
+    AppDefinition   appDef      = appDefDao.find(appId);
+    AppOAuth1Config oauthConfig = AppOAuth1Config.fromDocument(appDef.getConfig());
 
-	String authenticationData = AppOAuth1Config.getTokenXML(accessToken.getToken(),accessToken.getSecret());
-	appuser.setAuthenticationData(authenticationData);
-	
-	appuser.setAdded(new Date());
-	appUserDao.saveEntity(appuser);
-	}catch(Exception e){
-		session.setAttribute("oauthMessage","Error with verifing authentication");
-		MiscUtils.getLogger().error("Error returning from app "+appId+" for user "+(String)session.getAttribute("user"),e);
-		response.sendRedirect("close.jsp");
-	}
-	
-	session.setAttribute("oauthMessage","Success");
-	session.removeAttribute("requestToken");
-	session.removeAttribute("appId");
-	response.sendRedirect("close.jsp");
-}
+    // Check if we’re in the “request token” phase or “access token” phase
+    String oauthVerifier = request.getParameter("oauth_verifier");
+    if (oauthVerifier == null) {
+        // --- Phase 1: redirect client to providers’s auth URL ---
+        try {
+            OAuth1RequestToken requestToken =
+                (OAuth1RequestToken) request.getAttribute("requestToken");
+
+            // Build context for logging
+            String appIdContext = (session != null && session.getAttribute("appId") != null)
+                ? "appId=" + session.getAttribute("appId") + ", "
+                : "";
+            String userContext = (session != null && session.getAttribute("user") != null)
+                ? "user=" + session.getAttribute("user") + ", "
+                : "";
+            String contextMsg = appIdContext + userContext + "requestURI=" + request.getRequestURI();
+
+            if (requestToken == null) {
+                // Warn and redirect to a friendly error page
+                log.warn("Missing requestToken: {}", contextMsg);
+                session.setAttribute("oauthErrorMessage",
+                    "Authentication failed: missing request token.");
+                response.sendRedirect(request.getContextPath() + "/errorpage.jsp");
+                return;
+            }
+
+            // Persist for phase 2
+            session.setAttribute("requestToken", requestToken);
+            session.setAttribute("appId", appId);
+
+            // Authorization URL was prepared by the service layer
+            String authUrl = (String) request.getAttribute("authorizationUrl");
+            response.sendRedirect(authUrl);
+            return;
+
+        } catch (Exception e) {
+            log.debug("Entering OAuth callback, sessionId={}, requestURI={}"
+                , session.getId(), request.getRequestURI());
+            session.setAttribute("oauthMessage", "Error requesting token");
+            response.sendRedirect("close.jsp");
+            return;
+        }
+    } else {
+        // --- Phase 2: handling callback, exchange for access token ---
+        try {
+            OAuth1RequestToken requestToken =
+                (OAuth1RequestToken) session.getAttribute("requestToken");
+            if (requestToken == null) {
+                throw new IllegalStateException("No requestToken in session");
+            }
+
+            // These were set by your service layer
+            String accessTokenString = (String) request.getAttribute("accessToken");
+            String accessTokenSecret = (String) request.getAttribute("accessTokenSecret");
+
+            // guard against missing values
+            if (accessTokenString == null || accessTokenSecret == null) {
+                log.warn("Missing OAuth1 access token: token={} secret={}"
+                        , accessTokenString, accessTokenSecret);
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                                    "OAuth flow failed: missing access token");
+                return;
+            }
+
+            // Persist the authorized user
+            AppUser appUser = new AppUser();
+            appUser.setAppId(appId);
+            appUser.setProviderNo((String) session.getAttribute("user"));
+
+            // Build the XML blob of token & secret
+            String authData = AppOAuth1Config.getTokenXML(accessTokenString, accessTokenSecret);
+            appUser.setAuthenticationData(authData);
+            appUser.setAdded(new Date());
+
+            appUserDao.saveEntity(appUser);
+
+        } catch (Exception e) {
+            log.error("Failed to persist AppUser for appId={}"
+                , appId, e);
+            session.setAttribute("oauthMessage", "Error verifying authentication");
+            response.sendRedirect("close.jsp");
+            return;
+        }
+
+        // Success!
+        session.setAttribute("oauthMessage", "Success");
+        session.removeAttribute("requestToken");
+        session.removeAttribute("appId");
+        response.sendRedirect("close.jsp");
+        return;
+    }
 %>

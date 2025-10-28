@@ -15,13 +15,13 @@
 // full day names
 Calendar._DN = new Array
 ("söndag",
- "måndag",
- "tisdag",
- "onsdag",
- "torsdag",
- "fredag",
- "lördag",
- "söndag");
+    "måndag",
+    "tisdag",
+    "onsdag",
+    "torsdag",
+    "fredag",
+    "lördag",
+    "söndag");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -38,13 +38,13 @@ Calendar._DN = new Array
 // short day names
 Calendar._SDN = new Array
 ("sön",
- "mån",
- "tis",
- "ons",
- "tor",
- "fre",
- "lör",
- "sön");
+    "mån",
+    "tis",
+    "ons",
+    "tor",
+    "fre",
+    "lör",
+    "sön");
 
 // First day of the week. "0" means display Sunday first, "1" means display
 // Monday first, etc.
@@ -53,52 +53,52 @@ Calendar._FD = 0;
 // full month names
 Calendar._MN = new Array
 ("januari",
- "februari",
- "mars",
- "april",
- "maj",
- "juni",
- "juli",
- "augusti",
- "september",
- "oktober",
- "november",
- "december");
+    "februari",
+    "mars",
+    "april",
+    "maj",
+    "juni",
+    "juli",
+    "augusti",
+    "september",
+    "oktober",
+    "november",
+    "december");
 
 // short month names
 Calendar._SMN = new Array
 ("jan",
- "feb",
- "mar",
- "apr",
- "maj",
- "jun",
- "jul",
- "aug",
- "sep",
- "okt",
- "nov",
- "dec");
+    "feb",
+    "mar",
+    "apr",
+    "maj",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "okt",
+    "nov",
+    "dec");
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "Om kalendern";
 
 Calendar._TT["ABOUT"] =
-"DHTML Datum/tid-väljare\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"För senaste version gå till: http://www.dynarch.com/projects/calendar/\n" +
-"Distribueras under GNU LGPL.  Se http://gnu.org/licenses/lgpl.html för detaljer." +
-"\n\n" +
-"Val av datum:\n" +
-"- Använd knapparna \xab, \xbb för att välja år\n" +
-"- Använd knapparna " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " för att välja månad\n" +
-"- Håll musknappen nedtryckt på någon av ovanstående knappar för snabbare val.";
+    "DHTML Datum/tid-väljare\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "För senaste version gå till: http://www.dynarch.com/projects/calendar/\n" +
+    "Distribueras under GNU LGPL.  Se http://gnu.org/licenses/lgpl.html för detaljer." +
+    "\n\n" +
+    "Val av datum:\n" +
+    "- Använd knapparna \xab, \xbb för att välja år\n" +
+    "- Använd knapparna " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " för att välja månad\n" +
+    "- Håll musknappen nedtryckt på någon av ovanstående knappar för snabbare val.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Val av tid:\n" +
-"- Klicka på en del av tiden för att öka den delen\n" +
-"- eller skift-klicka för att minska den\n" +
-"- eller klicka och drag för snabbare val.";
+    "Val av tid:\n" +
+    "- Klicka på en del av tiden för att öka den delen\n" +
+    "- eller skift-klicka för att minska den\n" +
+    "- eller klicka och drag för snabbare val.";
 
 Calendar._TT["PREV_YEAR"] = "Föregående år (håll för menu)";
 Calendar._TT["PREV_MONTH"] = "Föregående månad (håll för menu)";

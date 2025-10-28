@@ -19,23 +19,27 @@ div.noswfupload {
     padding: 2px;
     background: #F2F7FF;
 }
+
 div.noswfupload,
 div.noswfupload a {
     text-decoration: none;
     cursor: default;
     color: #000;
 }
+
 div.noswfupload,
 div.noswfupload a,
 div.noswfupload input {
     font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Verdana, Tahoma, sans-serif;
     font-size: 8pt;
 }
+
 div.noswfupload input {
     width: 240px !important;
     width: 236px;
     border: 0;
 }
+
 div.noswfupload .total,
 div.noswfupload .current {
     display: block;
@@ -48,6 +52,7 @@ div.noswfupload .current {
     height: 100px;
     background: #999;
 }
+
 div.noswfupload ul {
     display: block;
     float: left;
@@ -60,6 +65,7 @@ div.noswfupload ul {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 div.noswfupload li {
     display: block;
     padding: 1px 0 1px 18px;
@@ -67,11 +73,13 @@ div.noswfupload li {
     height: 16px;
     white-space: nowrap;
 }
+
 div.noswfupload .info {
     display: block;
     clear: left;
     background: #F2F7FF;
 }
+
 div.noswfupload .hidden {
     visibility: hidden;
     position: absolute;

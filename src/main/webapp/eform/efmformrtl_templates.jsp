@@ -8,24 +8,25 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@ page import="java.io.*, java.util.*, oscar.eform.*, oscar.eform.EFormUtil"%>
+<%@ page import="java.io.*, java.util.*, ca.openosp.openo.eform.*, ca.openosp.openo.eform.EFormUtil" %>
 
 <option value="">template</option>
 
 <%
-ArrayList<String> templates = EFormUtil.listRichTextLetterTemplates();
-Collections.sort(templates);
-File file = null;
-for (String template : templates) {
-	String name = template;
-	// Stripping extension from name if appropriate.
-	if (name.lastIndexOf('.') > 0) {
-		name  = template.substring(0, name.lastIndexOf('.'));
-	}
+    ArrayList<String> templates = EFormUtil.listRichTextLetterTemplates();
+    Collections.sort(templates);
+    File file = null;
+    for (String template : templates) {
+        String name = template;
+        // Stripping extension from name if appropriate.
+        if (name.lastIndexOf('.') > 0) {
+            name = template.substring(0, name.lastIndexOf('.'));
+        }
 %>
 
-<option value="<%=template%>"><%=name%></option>
+<option value="<%=template%>"><%=name%>
+</option>
 
-<%		
-}
+<%
+    }
 %>

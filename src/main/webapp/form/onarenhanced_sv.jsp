@@ -24,43 +24,43 @@
 
 --%>
 <%
-	int n = Integer.parseInt(request.getParameter("n"));
+    int n = Integer.parseInt(request.getParameter("n"));
 %>
 
 <tr align="center" id="sv_<%=n%>">
-	<td>
-		<a href="javascript:void(0)" onclick="deleteSubsequentVisit('<%=n%>'); return false;">[x]</a>
-	</td>
-	<td nowrap><input type="text" name="pg2_date<%=n%>" id="pg2_date<%=n%>"
-		class="spe" size="9" maxlength="10" onDblClick="calToday(this)"></td>
-	<td><input type="text" name="pg2_gest<%=n%>" class="spe" size="6"
-		maxlength="6" style="width: 90%"
-		onDblClick="calcWeek(this)"></td>
-	<td><input type="text" name="pg2_wt<%=n%>" size="6" maxlength="6"
-		onDblClick="wtEnglish2Metric(this);" style="width: 90%"
-		></td>
-	<td><input type="text" name="pg2_BP<%=n%>" size="6" maxlength="8"
-		style="width: 100%"
-		></td>
-	<td width="4%" colspan="2"><input type="text" name="pg2_urinePr<%=n%>" size="2"
-		maxlength="3" style="width: 90%"
-		></td>
-		
-		<!-- 
-	<td width="4%"><input type="text" name="pg2_urineGl<=n>" size="2"
-		maxlength="3" style="width: 90%"
-		></td>
-		-->
-	<td><input type="text" name="pg2_ht<%=n%>" size="6" maxlength="6"
-		onDblClick="htEnglish2Metric(this);" style="width: 90%"
-		></td>
-	<td><input type="text" name="pg2_presn<%=n%>" size="6" maxlength="6"
-		style="width: 90%"
-		></td>
-	<td><input type="text" name="pg2_FHR<%=n%>" size="6" maxlength="6"
-		style="width: 90%"
-		></td>
-	<td><input type="text" name="pg2_comments<%=n%>" size="20"
-		maxlength="70" style="width: 100%"
-		></td>
+    <td>
+        <a href="javascript:void(0)" onclick="deleteSubsequentVisit('<%=n%>'); return false;">[x]</a>
+    </td>
+    <td nowrap><input type="text" name="pg2_date<%=n%>" id="pg2_date<%=n%>"
+                      class="spe" size="9" maxlength="10" onDblClick="calToday(this)"></td>
+    <td><input type="text" name="pg2_gest<%=n%>" class="spe" size="6"
+               maxlength="6" style="width: 90%"
+               onDblClick="calcWeek(this)"></td>
+    <td><input type="text" name="pg2_wt<%=n%>" size="6" maxlength="6"
+               onDblClick="wtEnglish2Metric(this);" style="width: 90%"
+    ></td>
+    <td><input type="text" name="pg2_BP<%=n%>" size="6" maxlength="8"
+               style="width: 100%"
+    ></td>
+    <td width="4%" colspan="2"><input type="text" name="pg2_urinePr<%=n%>" size="2"
+                                      maxlength="3" style="width: 90%"
+    ></td>
+
+    <!--
+<td width="4%"><input type="text" name="pg2_urineGl<=n>" size="2"
+    maxlength="3" style="width: 90%"
+    ></td>
+    -->
+    <td><input type="text" name="pg2_ht<%=n%>" size="6" maxlength="6"
+               onDblClick="htEnglish2Metric(this);" style="width: 90%"
+    ></td>
+    <td><input type="text" name="pg2_presn<%=n%>" size="6" maxlength="6"
+               style="width: 90%"
+    ></td>
+    <td><input type="text" name="pg2_FHR<%=n%>" size="6" maxlength="6"
+               style="width: 90%"
+    ></td>
+    <td><input type="text" name="pg2_comments<%=n%>" size="20"
+               maxlength="70" style="width: 100%"
+    ></td>
 </tr>

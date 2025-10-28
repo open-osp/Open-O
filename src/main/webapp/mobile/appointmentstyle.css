@@ -22,22 +22,28 @@
  * Ontario, Canada
  */
 html {
-     -webkit-text-size-adjust:none; /* doesn't allow text-changing on orientation */
+    -webkit-text-size-adjust: none; /* doesn't allow text-changing on orientation */
 }
+
 body {
-    padding:0; margin:0;
+    padding: 0;
+    margin: 0;
     background: #c8c8c8 url(../mobile/pinstripes.png);
 }
 
-li { padding:0px; margin:0; list-style: none; }
+li {
+    padding: 0px;
+    margin: 0;
+    list-style: none;
+}
 
 body, body > div {
-     font-family:"Helvetica";
-     height:100%;
+    font-family: "Helvetica";
+    height: 100%;
 }
 
 form {
-    margin:0px;
+    margin: 0px;
 }
 
 A {
@@ -47,13 +53,13 @@ A {
     cursor: pointer;
 }
 
-input,select,textarea {
+input, select, textarea {
     font-size: 13px;
     background-color: #E8E8E8;
     border: 1px solid #999999;
-    padding:2px 0;
-    margin:2px 0;
-    width:100%;
+    padding: 2px 0;
+    margin: 2px 0;
+    width: 100%;
 }
 
 input[readonly] {
@@ -62,9 +68,9 @@ input[readonly] {
 }
 
 input[type="submit"], input[type="button"], input[type="reset"] {
-    font-size:12px;
-    width:auto;
-    -webkit-appearance:button; /* for iPhone */
+    font-size: 12px;
+    width: auto;
+    -webkit-appearance: button; /* for iPhone */
 }
 
 /* Adjustments made to prevent further additions to jsp's from being displayed in the mobile version */
@@ -72,39 +78,49 @@ input[type="submit"], input[type="button"], input[type="reset"] {
 body > *:not(#viewAppointment):not(#editAppointment):not([NAME="ADDAPPT"]),
 table.buttonBar input:not(#addButton):not(#backButton):not(#updateButton):not(#deleteButton),
 .header > *:not(.rightButton):not(.leftButton):not(.title),
-.space, #bottomInfo
-{
-    display:none;
+.space, #bottomInfo {
+    display: none;
 }
 
 .title {
-    position:absolute;
-    width:100%;
-    text-align:center;
+    position: absolute;
+    width: 100%;
+    text-align: center;
     padding: 0;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
     text-align: center;
-    font-size:17px;
-    top:10px;
+    font-size: 17px;
+    top: 10px;
     background-color: transparent;
-    left:0px;
+    left: 0px;
 }
 
 .header {
     background: #6d84a2 repeat-x;
     font-size: medium;
     font-weight: bold;
-    -webkit-box-sizing:border-box;
+    -webkit-box-sizing: border-box;
     height: 45px;
     border-bottom: 1px black solid;
 }
 
-.leftButton { left:10px; }
-.rightButton { right:10px; }
-.top { position:absolute !important; }
-#deleteButton { width: 100%;}
+.leftButton {
+    left: 10px;
+}
+
+.rightButton {
+    right: 10px;
+}
+
+.top {
+    position: absolute !important;
+}
+
+#deleteButton {
+    width: 100%;
+}
 
 .button, .leftButton, .rightButton {
     position: relative;
@@ -115,7 +131,7 @@ table.buttonBar input:not(#addButton):not(#backButton):not(#updateButton):not(#d
     border-width: 0 5px;
     padding: 0 3px;
     width: auto;
-    min-width:30px;
+    min-width: 30px;
     min-height: 30px;
     line-height: 30px;
     font-size: 12px;
@@ -124,9 +140,9 @@ table.buttonBar input:not(#addButton):not(#backButton):not(#updateButton):not(#d
     text-shadow: rgba(0, 0, 0, 0.6) 0px -1px 0;
     text-overflow: ellipsis;
     text-decoration: none;
-    text-align:center;
+    text-align: center;
     white-space: nowrap;
-    z-index:1;
+    z-index: 1;
     -webkit-border-image: url(../mobile/toolButton.png) 0 5 0 5;
     -moz-border-image: url(../mobile/toolButton.png) 0 5 0 5;
 }
@@ -146,7 +162,7 @@ body .panel {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     padding: 10px;
-    min-height:100%;
+    min-height: 100%;
 }
 
 .panel ul,
@@ -163,8 +179,8 @@ body .panel {
 }
 
 .panel > ul .mainInfo {
-    font-weight:bold;
-    font-size:20px;
+    font-weight: bold;
+    font-size: 20px;
     padding-bottom: 5px;
 }
 
@@ -174,34 +190,35 @@ body .panel {
 }
 
 .panel ul li,
-.row  {
+.row {
     position: relative;
     font-size: 13px;
-    padding-left:10px;
-    padding-right:10px;
+    padding-left: 10px;
+    padding-right: 10px;
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     text-align: left;
 }
 
 .label {
-    display:block;
-    font-weight:bold;
+    display: block;
+    font-weight: bold;
 }
 
 #viewAppointment .label {
-    clear:both;
+    clear: both;
     color: #6D84A2;
-    padding-right:6px;
-    width:84px;
-    text-align:right;
-    display:table-cell;
+    padding-right: 6px;
+    width: 84px;
+    text-align: right;
+    display: table-cell;
     font-size: 14px !important;
     padding-bottom: 2px;
 }
+
 #viewAppointment .info {
-    text-align:left;
+    text-align: left;
     font-size: 14px !important;
-    display:table-cell;
+    display: table-cell;
     padding-bottom: 2px;
 }

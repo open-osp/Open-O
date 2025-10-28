@@ -26,30 +26,36 @@
 <div class="flex items-center w-full">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_caregiver_stress" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_caregiver_stress" data-score="1">
         <strong class="tt" data-toggle="tooltip" title="Caregiver Stress">
             Caregiver Stress
         </strong>
     </div>
     <div class="pl-4 flex items-center">
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0" autocomplete="off" value="none">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0"
+                                                                 autocomplete="off" value="none">
             <span class="pl-1">None</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0" autocomplete="off" value="low">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0"
+                                                                 autocomplete="off" value="low">
             <span class="pl-1">Low</span></label>
 
         <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0"
-                autocomplete="off" value="moderate"> <span class="pl-1">Moderate</span></label>
+                                                                 autocomplete="off" value="moderate"> <span
+                class="pl-1">Moderate</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0" autocomplete="off" value="high">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="caregiver_stress" class="m-0"
+                                                                 autocomplete="off" value="high">
             <span class="pl-1">High</span></label>
     </div>
     <div class="flex pl-2 items-center">
-        <label for="caregiver_occupation" class="tt control-label font-bold"  data-toggle="tooltip"
-            title="Caregiver Occupation">Caregiver Occupation:</label>
+        <label for="caregiver_occupation" class="tt control-label font-bold" data-toggle="tooltip"
+               title="Caregiver Occupation">Caregiver Occupation:</label>
 
-        <input type="text" name="caregiver_occupation" style="width: 200px; height: 18px;" id="caregiver_occupation" maxlength="50"
-            class="bottom-line form-control ecares-input">
+        <input type="text" name="caregiver_occupation" style="width: 200px; height: 18px;" id="caregiver_occupation"
+               maxlength="50"
+               class="bottom-line form-control ecares-input">
     </div>
 </div>

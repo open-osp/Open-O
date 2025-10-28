@@ -24,114 +24,114 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="oscar.util.StringUtils"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.util.StringUtils" %>
 <%@ page
-	import="oscar.oscarDemographic.data.*, org.oscarehr.common.model.Demographic"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+        import="ca.openosp.openo.demographic.data.*, ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <%
-String sex=request.getParameter("sex");
-String age=request.getParameter("age");
-String demo=request.getParameter("demo");
+    String sex = request.getParameter("sex");
+    String age = request.getParameter("age");
+    String demo = request.getParameter("demo");
 
 
-if(!StringUtils.isNullOrEmpty(demo)){
-    DemographicData dd = new DemographicData();
-    Demographic d = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);  
-    sex = d.getSex();
-    age = d.getAge();
-}
+    if (!StringUtils.isNullOrEmpty(demo)) {
+        DemographicData dd = new DemographicData();
+        Demographic d = dd.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
+        sex = d.getSex();
+        age = d.getAge();
+    }
 %>
 
 
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <link rel="stylesheet" type="text/css" href="encounterStyles.css">
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <script type="text/javascript" language=javascript>
+            function popperup(vheight, vwidth, varpage, pageName) { //open a new popup window
+                var page = varpage;
+                windowprops = "height=" + vheight + ",width=" + vwidth + ",status=yes,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=100,left=100";
+                var popup = window.open(varpage, pageName, windowprops);
+                popup.pastewin = opener;
+                popup.focus();
+                close();
+            }
+        </script>
+    </head>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<html:base />
-<script type="text/javascript" language=javascript>
-   function popperup(vheight,vwidth,varpage,pageName) { //open a new popup window
-     var page = varpage;
-     windowprops = "height="+vheight+",width="+vwidth+",status=yes,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=100,left=100";
-     var popup=window.open(varpage, pageName, windowprops);
-     popup.pastewin = opener;     
-     popup.focus();
-     close();
-   }
-  </script>
-</head>
-
-<body>
-<table border=0 cellpadding="0" cellspacing="1" width="100%"
-	class="layerTable" bgcolor="#FFFFFF">
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(650,775,'http://www.mcw.edu/calculators/body-mass-index.htm','BodyMassIndex');">
-		<bean:message key="oscarEncounter.Index.bodyMass" /> </a></td>
-	</tr>
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(525,775,'calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%= sex%>&age=<%=age%>','CoronaryArteryDiseaseRisk');">
-		<bean:message key="oscarEncounter.Index.coronary" /> </a></td>
-	</tr>
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(525,775,'calculators/riskcalc/index.html?sex=<%= sex%>&age=<%=age%>','CoronaryArteryDiseaseRisk');">
-		Framingham/UKPDS Risk Calculator </a></td>
-	</tr>
+    <body>
+    <table border=0 cellpadding="0" cellspacing="1" width="100%"
+           class="layerTable" bgcolor="#FFFFFF">
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(650,775,'http://www.mcw.edu/calculators/body-mass-index.htm','BodyMassIndex');">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.bodyMass"/> </a></td>
+        </tr>
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(525,775,'calculators/CoronaryArteryDiseaseRiskPrediction.jsp?sex=<%= sex%>&age=<%=age%>','CoronaryArteryDiseaseRisk');">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.coronary"/> </a></td>
+        </tr>
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(525,775,'calculators/riskcalc/index.html?sex=<%= sex%>&age=<%=age%>','CoronaryArteryDiseaseRisk');">
+                Framingham/UKPDS Risk Calculator </a></td>
+        </tr>
         <tr>
             <td align="center" class="menuLayer">
-                <a href="javascript: function myFunction() {return false; }" onclick="popperup(525,775,'http://cvrisk.mvm.ed.ac.uk/calculator/calc.asp','CVRisk');">CV Risk</a>
+                <a href="javascript: function myFunction() {return false; }"
+                   onclick="popperup(525,775,'http://cvrisk.mvm.ed.ac.uk/calculator/calc.asp','CVRisk');">CV Risk</a>
             </td>
-	</tr>
-        
-        
-        
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(525,775,'calculators/OsteoporoticFracture.jsp?sex=<%=sex%>&age=<%=age%>','OsteoporoticFracture');">
-		<bean:message key="oscarEncounter.Index.msgOsteoporotic" /> </a></td>
-	</tr>
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(650,775,'http://www.mcw.edu/calculators/pregnancydate.htm','PregancyCalculator');">
-		<bean:message key="oscarEncounter.Index.pregnancy" /> </a></td>
-	</tr>
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(400,500,'calculators/SimpleCalculator.jsp','SimpleCalc');">
-		<bean:message key="oscarEncounter.Index.simpleCalculator" /> </a></td>
-	</tr>
-	<tr>
-		<td align="center" class="menuLayer"><a
-			href="javascript: function myFunction() {return false; }"
-			onclick="popperup(650,775,'calculators/GeneralCalculators.jsp','GeneralConversions'); ">
-		<bean:message key="oscarEncounter.Index.generalConversions" /> </a></td>
-	</tr>
-</table>
-</body>
-</html:html>
+        </tr>
+
+
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(525,775,'calculators/OsteoporoticFracture.jsp?sex=<%=sex%>&age=<%=age%>','OsteoporoticFracture');">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.msgOsteoporotic"/> </a></td>
+        </tr>
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(650,775,'http://www.mcw.edu/calculators/pregnancydate.htm','PregancyCalculator');">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.pregnancy"/> </a></td>
+        </tr>
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(400,500,'calculators/SimpleCalculator.jsp','SimpleCalc');">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.simpleCalculator"/> </a></td>
+        </tr>
+        <tr>
+            <td align="center" class="menuLayer"><a
+                    href="javascript: function myFunction() {return false; }"
+                    onclick="popperup(650,775,'calculators/GeneralCalculators.jsp','GeneralConversions'); ">
+                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.generalConversions"/> </a></td>
+        </tr>
+    </table>
+    </body>
+</html>

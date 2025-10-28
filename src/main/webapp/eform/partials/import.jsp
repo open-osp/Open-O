@@ -25,13 +25,13 @@
 --%>
 <!DOCTYPE html>
 <html>
-<%@ page import="oscar.eform.data.*, oscar.eform.*, java.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.openo.eform.*, java.util.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
-String status = (String) request.getAttribute("status");
+    String status = (String) request.getAttribute("status");
 %>
 <head>
     <script src="${pageContext.request.contextPath}/js/global.js"></script>
@@ -43,78 +43,95 @@ String status = (String) request.getAttribute("status");
     <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
     <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
-	<style>
-	body{background-color:#f5f5f5;}
-	</style>
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 
 <body>
 
 <c:if test="${ not empty status }">
     <div class="alert alert-success">
-    	<button type="button" class="close" data-dismiss="alert">&times;</button>
-    	<strong>Success!</strong> Your eform was imported.
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Success!</strong> Your eform was imported.
     </div>
 
-	<script>
-	window.top.location.href = "<%=request.getContextPath()%>/administration/?show=Forms";
-	</script>
+    <script>
+        window.top.location.href = "<%=request.getContextPath()%>/administration/?show=Forms";
+    </script>
 
 </c:if>
 <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST" enctype="multipart/form-data" id="eformImportForm">
 
-    	<input type="hidden" name="method" value="importEForm">
+    <input type="hidden" name="method" value="importEForm">
 
-    	<%List<String> importErrors = (List<String>) request.getAttribute("importErrors");
-        if (importErrors != null && importErrors.size() > 0) {%>
-	        <div class="row-fluid">
-	        	<html:errors />
-	        	<ul>
-	                <%for (String importError: importErrors) {%>
-	                <li class="text-error"><%=importError%></li>
-	                <%}%>
-	          	</ul>
-	        </div>
-        <%}%>
+    <%
+        List<String> importErrors = (List<String>) request.getAttribute("importErrors");
+        if (importErrors != null && importErrors.size() > 0) {
+    %>
+    <div class="row-fluid">
+        <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+        <ul>
+            <%for (String importError : importErrors) {%>
+            <li class="text-error"><%=importError%>
+            </li>
+            <%}%>
+        </ul>
+    </div>
+    <%}%>
 
-        <div class="control-group">
-        	<div class="controls">
-        		<label class="control-label" for="zippedForm">Import eForm:</label>
-		        <input type="file" class="input-file" id="zippedForm" name="zippedForm" size="50" required/>
-		        <span style="color:red;">
-		         <i class="icon-warning-sign" title="<bean:message key="global.uploadWarningBody"/>" ></i>
+    <div class="control-group">
+        <div class="controls">
+            <label class="control-label" for="zippedForm">Import eForm:</label>
+            <input type="file" class="input-file" id="zippedForm" name="zippedForm" size="50" required/>
+            <span style="color:red;">
+		         <i class="icon-warning-sign" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"></i>
 		         </span>
-		        <input type="submit" name="subm" value="Import" class="btn btn-primary upload" disabled>
-	        </div>
+            <input type="submit" name="subm" value="Import" class="btn btn-primary upload" disabled>
         </div>
-        <div class="row-fluid">
-	        <span class="label label-info">Info: </span>
-	        <span>Zip file format only</span>
-        </div>
+    </div>
+
+    <div class="row-fluid">
+        <span class="label label-info">Info: </span>
+        <span>Zip file format only</span>
+    </div>
 
 </form>
 
 <script type="text/javascript">
-$( document ).ready(function() {
-	$(".input-file").on("change",validate).keyup(validate);
-});
+    $(document).ready(function () {
+        $(".input-file").on("change", validate).keyup(validate);
+    });
 
-function validate() {
-	var v = $(this).val();
-	var id = $(this).attr("id");
-	var formHtml = $("#zippedForm").val();
+    function validate() {
+        var v = $(this).val();
+        var id = $(this).attr("id");
+        var formHtml = $("#zippedForm").val();
 
-	if (v && formHtml) {
-	    $('.upload').removeAttr("disabled");
-		$('.upload').addClass("btn-success");
-    } else if(inputCheck=="exists"){
-	    $('.upload').attr("disabled", "disabled");
-		$('.upload').removeClass("btn-success");
-    }else{
-	    $('.upload').attr("disabled", "disabled");
-		$('.upload').removeClass("btn-success");
+        if (v && formHtml) {
+            $('.upload').removeAttr("disabled");
+            $('.upload').addClass("btn-success");
+        } else if (inputCheck == "exists") {
+            $('.upload').attr("disabled", "disabled");
+            $('.upload').removeClass("btn-success");
+        } else {
+            $('.upload').attr("disabled", "disabled");
+            $('.upload').removeClass("btn-success");
+        }
     }
-}
 
 
 </script>

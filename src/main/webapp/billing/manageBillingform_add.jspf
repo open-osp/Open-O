@@ -25,8 +25,9 @@
 -->
 
 <%@page import="java.util.List" %>
-<%@page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <form name="servicetypeform" method="post">
 <table width="75%" border="0" height="285">
@@ -34,48 +35,42 @@
 		<td width="74%" valign="top">
 		<table width="100%" border="0">
 			<tr>
-				<td colspan="2" class="white"><bean:message
-					key="billing.manageBillingform_add.msgAdd" /></td>
+				<td colspan="2" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.msgAdd"/></td>
 			</tr>
 			<tr>
-				<td width="26%" class="white"><bean:message
-					key="billing.manageBillingform_add.formServiceID" />:</td>
+				<td width="26%" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formServiceID"/>:</td>
 				<td width="74%" class="white"><input type="text" name="typeid"
 					maxlength="3"></td>
 			</tr>
 			<tr>
-				<td width="26%" class="white"><bean:message
-					key="billing.manageBillingform_add.formServiceName" />:</td>
+				<td width="26%" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formServiceName"/>:</td>
 				<td width="74%" class="white"><input type="text" name="type"
 					value=""
-					<bean:message key="billing.manageBillingform_add.formServiceName"/>>
+					<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formServiceName"/>>
 				</td>
 			</tr>
 			<tr>
-				<td width="26%" class="white"><bean:message
-					key="billing.manageBillingform_add.formGroup1Name" />:</td>
+				<td width="26%" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup1Name"/>:</td>
 				<td width="74%" class="white"><input type="text" name="group1"
-					value="<bean:message key="billing.manageBillingform_add.formGroup1Name"/>">
+					value="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup1Name"/>">
 				</td>
 			</tr>
 			<tr>
-				<td width="26%" class="white"><bean:message
-					key="billing.manageBillingform_add.formGroup2Name" />:</td>
+				<td width="26%" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup2Name"/>:</td>
 				<td width="74%" class="white"><input type="text" name="group2"
-					value="<bean:message key="billing.manageBillingform_add.formGroup2Name"/>">
+					value="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup2Name"/>">
 				</td>
 			</tr>
 			<tr>
-				<td width="26%" class="white"><bean:message
-					key="billing.manageBillingform_add.formGroup3Name" />:</td>
+				<td width="26%" class="white"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup3Name"/>:</td>
 				<td width="74%" class="white"><input type="text" name="group3"
-					value="<bean:message key="billing.manageBillingform_add.formGroup3Name"/>">
+					value="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.formGroup3Name"/>">
 				</td>
 			</tr>
 			<tr>
 				<td width="26%" class="white"><input type="button"
 					name="addForm"
-					value="<bean:message key="billing.manageBillingform_add.btnAdd"/>"
+					value="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.btnAdd"/>"
 					onClick="valid(this.form)"></td>
 				<td width="74%" class="white">&nbsp;</td>
 			</tr>
@@ -84,8 +79,7 @@
 		<td width="26%" bgcolor="#336699" valign="top">
 		<table width="100%" border="0">
 			<tr>
-				<td colspan="2" valign="top" class="black"><bean:message
-					key="billing.manageBillingform_add.msgDeleteType" /></td>
+				<td colspan="2" valign="top" class="black"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingform_add.msgDeleteType"/></td>
 			</tr>
 
 			<% 

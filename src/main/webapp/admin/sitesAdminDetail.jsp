@@ -20,106 +20,148 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <%-- This JSP is the multi-site admin site detail page --%>
-<%@ include file="/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-	objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+                   objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.common.model.Site"%>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Clinic</title>
-<link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css">
+<%@page import="ca.openosp.openo.commn.model.Site" %>
+<%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Clinic</title>
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
 
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/prototype.js"></script>
-<script type="text/javascript" language="JavaScript"
-	src="../share/javascript/Oscar.js"></script>
-<link href="<html:rewrite page='/css/displaytag.css'/>" rel="stylesheet" ></link>
-<style>.button {border:1px solid #666666;} </style>
+        <script type="text/javascript" language="JavaScript"
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+        <link href="${request.contextPath}/css/displaytag.css" rel="stylesheet"></link>
+        <style>.button {
+            border: 1px solid #666666;
+        } </style>
 
-</head>
+    </head>
 
-<body vlink="#0000FF" class="BodyStyle" onload="$('colorField').style.backgroundColor=$('colorField').value;">
-<nested:form action="/admin/ManageSites">
-<table class="MainTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">admin</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar" style="width: 100%;">
-			<tr>
-				<td>Add New Satellite Site</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top" width="160px;">
-		&nbsp;</td>
-		<td class="MainTableRightColumn" valign="top">
-			<html:messages id="errors" header="errors.header" footer="errors.footer">
-				<li><bean:write name="errors" /></li>
-			</html:messages>
+    <body vlink="#0000FF" class="BodyStyle" onload="document.getElementById('colorField').style.backgroundColor = document.getElementById('colorField').value;">
+    <nested:form action="/admin/ManageSites">
+        <table class="MainTable">
+            <tr class="MainTableTopRow">
+                <td class="MainTableTopRowLeftColumn">admin</td>
+                <td class="MainTableTopRowRightColumn">
+                    <table class="TopStatusBar" style="width: 100%;">
+                        <tr>
+                            <td>Add New Satellite Site</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="MainTableLeftColumn" valign="top" width="160px;">
+                    &nbsp;
+                </td>
+                <td class="MainTableRightColumn" valign="top">
+                    <c:if test="${not empty savedMessage}">
+                        <div class="messages">
+                                ${savedMessage}
+                        </div>
+                    </c:if>
 
-	<table>
-	<tr><td>Site Name:<sup style="color:red">*</sup></td><td><nested:text property="site.name" maxlength="30"></nested:text></td></tr>
-	<tr><td>Short Name:<sup style="color:red">*</sup></td><td><nested:text property="site.shortName" maxlength="10"></nested:text></td></tr>
-	<tr><td>Theme Color:<sup style="color:red">*</sup></td><td><nested:text styleId="colorField" property="site.bgColor" onclick="popup(350,450,'../colorpicker/colorpicker.htm','colorpicker');return false;"></nested:text>
-	</td></tr>
-	<tr><td>Active:</td><td><nested:checkbox property="site.status" value="1"/></td></tr>
-	<tr><td>Telephone:</td><td><nested:text property="site.phone"></nested:text></td></tr>
-	<tr><td>FAX:</td><td><nested:text property="site.fax"></nested:text></td></tr>
-	<tr><td>Address:</td><td><nested:text property="site.address"></nested:text></td></tr>
-	<tr><td>City:</td><td><nested:text property="site.city"></nested:text></td></tr>
-	<tr><td>Province:</td><td><nested:select property="site.province">
-					<html:option value="AB" >AB-Alberta</html:option>
-					<html:option value="BC" >BC-British Columbia</html:option>
-					<html:option value="MB" >MB-Manitoba</html:option>
-					<html:option value="NB" >NB-New Brunswick</html:option>
-					<html:option value="NL" >NL-Newfoundland & Labrador</html:option>
-					<html:option value="NT" >NT-Northwest Territory</html:option>
-					<html:option value="NS" >NS-Nova Scotia</html:option>
-					<html:option value="NU" >NU-Nunavut</html:option>
-					<html:option value="ON" >ON-Ontario</html:option>
-					<html:option value="PE" >PE-Prince Edward Island</html:option>
-					<html:option value="QC" >QC-Quebec</html:option>
-					<html:option value="SK" >SK-Saskatchewan</html:option>
-					<html:option value="YT" >YT-Yukon</html:option>	
-	</nested:select></td></tr>
-	<tr><td>Postal Code:</td><td><nested:text property="site.postal"></nested:text></td></tr>
-   <% if (org.oscarehr.common.IsPropertiesOn.isProviderFormalizeEnable()) { %>  	
-		<tr><td>ProviderID From:</td><td><nested:text property="site.providerIdFrom"></nested:text></td></tr>
-		<tr><td>ProviderID To:</td><td><nested:text property="site.providerIdTo"></nested:text></td></tr>
-	<% } %>
-	</table>
+                    <table>
+                        <tr>
+                            <td>Site Name:<sup style="color:red">*</sup></td>
+                            <td><nested:text property="site.name" maxlength="30"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>Short Name:<sup style="color:red">*</sup></td>
+                            <td><nested:text property="site.shortName" maxlength="10"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>Theme Color:<sup style="color:red">*</sup></td>
+                            <td><nested:text styleId="colorField" property="site.bgColor" type="color"
+                                             onchange="this.style.backgroundColor = this.value;"></nested:text>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Active:</td>
+                            <td><nested:checkbox property="site.status" value="1"/></td>
+                        </tr>
+                        <tr>
+                            <td>Telephone:</td>
+                            <td><nested:text property="site.phone"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>FAX:</td>
+                            <td><nested:text property="site.fax"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>Address:</td>
+                            <td><nested:text property="site.address"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>City:</td>
+                            <td><nested:text property="site.city"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>Province:</td>
+                            <td><nested:select property="site.province">
+                                <option value="AB">AB-Alberta</option>
+                                <option value="BC">BC-British Columbia</option>
+                                <option value="MB">MB-Manitoba</option>
+                                <option value="NB">NB-New Brunswick</option>
+                                <option value="NL">NL-Newfoundland & Labrador</option>
+                                <option value="NT">NT-Northwest Territory</option>
+                                <option value="NS">NS-Nova Scotia</option>
+                                <option value="NU">NU-Nunavut</option>
+                                <option value="ON">ON-Ontario</option>
+                                <option value="PE">PE-Prince Edward Island</option>
+                                <option value="QC">QC-Quebec</option>
+                                <option value="SK">SK-Saskatchewan</option>
+                                <option value="YT">YT-Yukon</option>
+                            </nested:select></td>
+                        </tr>
+                        <tr>
+                            <td>Postal Code:</td>
+                            <td><nested:text property="site.postal"></nested:text></td>
+                        </tr>
+                        <% if (IsPropertiesOn.isProviderFormalizeEnable()) { %>
+                        <tr>
+                            <td>ProviderID From:</td>
+                            <td><nested:text property="site.providerIdFrom"></nested:text></td>
+                        </tr>
+                        <tr>
+                            <td>ProviderID To:</td>
+                            <td><nested:text property="site.providerIdTo"></nested:text></td>
+                        </tr>
+                        <% } %>
+                    </table>
 
-	<nested:hidden property="site.siteId"/>
-	<input name="method" type="hidden" value="save"></input>
-	<nested:submit styleClass="button" >Save</nested:submit> <nested:submit styleClass="button" onclick="this.form.method.value='view'">Cancel</nested:submit>
+                    <nested:hidden property="site.siteId"/>
+                    <input name="method" type="hidden" value="save"></input>
+                    <nested:submit styleClass="button">Save</nested:submit> <nested:submit styleClass="button"
+                                                                                           onclick="this.form.method.value='view'">Cancel</nested:submit>
 
-  		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn">&nbsp;</td>
+                </td>
+            </tr>
+            <tr>
+                <td class="MainTableBottomRowLeftColumn">&nbsp;</td>
 
-		<td class="MainTableBottomRowRightColumn">&nbsp;</td>
-	</tr>
-</table>
-</nested:form>
+                <td class="MainTableBottomRowRightColumn">&nbsp;</td>
+            </tr>
+        </table>
+    </nested:form>
 
 
-</html:html>
+</html>

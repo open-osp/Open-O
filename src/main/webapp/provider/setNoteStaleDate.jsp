@@ -24,44 +24,44 @@
 
 --%>
 
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 
 <%
-if(session.getValue("user") == null)
-    response.sendRedirect("../logout.htm");
-  String curUser_no;
-  curUser_no = (String) session.getAttribute("user");
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.htm");
+    String curUser_no;
+    curUser_no = (String) session.getAttribute("user");
 
-  boolean bFirstLoad = request.getAttribute("status") == null;
+    boolean bFirstLoad = request.getAttribute("status") == null;
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 <c:set var="ctx" value="${pageContext.request.contextPath}"
-	scope="request" />
-<html:html>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<html:base />
-<title><bean:message key="provider.setNoteStaleDate.title" /></title>
+       scope="request"/>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.title"/></title>
 
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
-<!-- calendar stylesheet -->
-<link rel="stylesheet" type="text/css" media="all"
-	href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
-	title="win2k-cold-1">
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+        <!-- calendar stylesheet -->
+        <link rel="stylesheet" type="text/css" media="all"
+              href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
+              title="win2k-cold-1">
 
-<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"
-	type="text/javascript"></script>
-<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"
-	type="text/javascript"></script>
+        <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"
+                type="text/javascript"></script>
+        <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"
+                type="text/javascript"></script>
 
-<script type="text/javascript">
+        <script type="text/javascript">
 
             function validate() {
                 var date = document.getElementById("staleDate");
-                if( date.value == "" ) {
+                if (date.value == "") {
                     alert("Please select a date before saving");
                     return false;
                 }
@@ -70,101 +70,64 @@ if(session.getValue("user") == null)
             }
         </script>
 
-</head>
+    </head>
 
-<body class="BodyStyle" vlink="#0000FF">
+    <body class="BodyStyle" vlink="#0000FF">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message
-			key="provider.setNoteStaleDate.msgPrefs" /></td>
-		<td style="color: white" class="MainTableTopRowRightColumn"><bean:message
-			key="provider.setNoteStaleDate.msgProviderStaleDate" /></td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<%
-               if( request.getAttribute("status") == null )
-               {
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.msgPrefs"/></td>
+            <td style="color: white" class="MainTableTopRowRightColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.msgProviderStaleDate"/></td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <%
+                    if (request.getAttribute("status") == null) {
 
-            %> <html:form styleId="frmProperty"
-			action="/setProviderStaleDate.do">
-			<input type="hidden" id="method" name="method" value="save">
-			<html:hidden property="dateProperty.name" />
-			<html:hidden property="dateProperty.providerNo" />
-			<html:hidden property="dateProperty.id" />
-			<bean:message key="provider.setNoteStaleDate.msgEdit" />
-			<html:select property="dateProperty.value" styleId="staleDate">
-				<html:option value="A">All</html:option>
-				<html:option value="0">0</html:option>
-				<html:option value="-1">1</html:option>
-				<html:option value="-2">2</html:option>
-				<html:option value="-3">3</html:option>
-				<html:option value="-4">4</html:option>
-				<html:option value="-5">5</html:option>
-				<html:option value="-6">6</html:option>
-				<html:option value="-7">7</html:option>
-				<html:option value="-8">8</html:option>
-				<html:option value="-9">9</html:option>
-				<html:option value="-10">10</html:option>
-				<html:option value="-11">11</html:option>
-				<html:option value="-12">12</html:option>
-				<html:option value="-13">13</html:option>
-				<html:option value="-14">14</html:option>
-				<html:option value="-15">15</html:option>
-				<html:option value="-16">16</html:option>
-				<html:option value="-17">17</html:option>
-				<html:option value="-18">18</html:option>
-				<html:option value="-19">19</html:option>
-				<html:option value="-20">20</html:option>
-				<html:option value="-21">21</html:option>
-				<html:option value="-22">22</html:option>
-				<html:option value="-23">23</html:option>
-				<html:option value="-24">24</html:option>
-				<html:option value="-25">25</html:option>
-				<html:option value="-26">26</html:option>
-				<html:option value="-27">27</html:option>
-				<html:option value="-28">28</html:option>
-				<html:option value="-29">29</html:option>
-				<html:option value="-30">30</html:option>
-				<html:option value="-31">31</html:option>
-				<html:option value="-32">32</html:option>
-				<html:option value="-33">33</html:option>
-				<html:option value="-34">34</html:option>
-				<html:option value="-35">35</html:option>
-				<html:option value="-36">36</html:option>
-			</html:select>
-			<br/>
-			<html:hidden property="singleViewProperty.name" />
-			<html:hidden property="singleViewProperty.providerNo" />
-			<html:hidden property="singleViewProperty.id" />
-			Use Single Line View:
-			<html:select property="singleViewProperty.value" styleId="staleDate">
-				<html:option value="no">No</html:option>
-				<html:option value="yes">Yes</html:option>
-			</html:select>
+                %> 
+                <form style="frmProperty" action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
+                    <input type="hidden" id="method" name="method" value="save">
+                    <input type="hidden" name="dateProperty.name" value="staleNoteDate"/>
+                    <input type="hidden" name="dateProperty.providerNo" value="${providerNo}"/>
 
-			<br/>
-			<input type="submit"
-				value="<bean:message key="provider.setNoteStaleDate.btnSubmit"/>" />
-			<input type="submit" onclick="$('method').value='remove';"
-				value="<bean:message key="provider.setNoteStaleDate.btnReset"/>" />
-		</html:form> <%
-               }
-               else {
-            %> <bean:message key="provider.setNoteStaleDate.msgSuccess" />
-		<br>
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.msgEdit"/>
+                    <select name="dateProperty.value" id="dateProperty.value">
+                        <c:forEach var="opt" items="${staleDateOptions}">
+                            <option value="${opt.value}" <c:if test="${opt.value == dateProperty.value}">selected</c:if>>${opt.label}</option>
+                        </c:forEach>
+                    </select>
+                    <br/>
 
-		<%
-               }
-            %>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+                    <input type="hidden" name="singleViewProperty.name" value="staleFormat"/>
+                    <input type="hidden" name="singleViewProperty.providerNo" value="${providerNo}"/>
+
+                    Use Single Line View:
+                    <select name="singleViewProperty.value" id="singleViewProperty.value">
+                        <c:forEach var="opt" items="${viewOptions}">
+                            <option value="${opt.value}" <c:if test="${opt.value == singleViewProperty.value}">selected</c:if>>${opt.label}</option>
+                        </c:forEach>
+                    </select>
+                    <br/>
+
+                    <input type="submit"
+                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.btnSubmit"/>"/>
+                    <input type="submit" onclick="$('method').value='remove';"
+                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.btnReset"/>"/>
+                </form> <%
+            } else {
+            %>  <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.setNoteStaleDate.msgSuccess"/>
+                <br>
+
+                <%
+                    }
+                %>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

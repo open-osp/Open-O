@@ -54,14 +54,14 @@ INSERT INTO ctl_doctype (module,doctype,status) VALUES ('demographic','radiology
 INSERT INTO ctl_doctype (module,doctype,status) VALUES ('demographic','pathology','A');
 INSERT INTO ctl_doctype (module,doctype,status) VALUES ('demographic','others','A');
 INSERT INTO ctl_doctype (module,doctype,status) VALUES ('demographic','photo','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','resource','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','desktop','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','handout','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','forms','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','others','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','share','A');
-INSERT INTO ctl_doctype (module,doctype,status) VALUES ('provider','photo','A');
-INSERT INTO `ctl_doctype` (`module`, `doctype`, `status`, `id`) VALUES('provider','invoice letterhead','A',null);
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','resource','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','desktop','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','handout','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','forms','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','others','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','share','A');
+INSERT INTO ctl_doctype (module,doctype,status) VALUES ('providers','photo','A');
+INSERT INTO `ctl_doctype` (`module`, `doctype`, `status`, `id`) VALUES('providers','invoice letterhead','A',null);
 
 --
 -- Dumping data for table 'ctl_doc_class'
@@ -231,8 +231,8 @@ insert into ctl_doc_class (reportclass,subclass) values ("Consultant ReportB","P
 -- Dumping data for table 'ctl_document'
 --
 
-INSERT INTO ctl_document VALUES ('provider',999998,4953,'A');
-INSERT INTO ctl_document VALUES ('provider',999998,4954,'H');
+INSERT INTO ctl_document VALUES ('providers',999998,4953,'A');
+INSERT INTO ctl_document VALUES ('providers',999998,4954,'H');
 INSERT INTO ctl_document VALUES ('demographic',2147483647,4955,'A');
 
 --
@@ -1261,7 +1261,6 @@ INSERT INTO `measurementType` (`type`, `typeDisplayName`, `typeDescription`, `me
 ( 'RETI', 'Retinopathy', 'null', 'Discussed', '7', '2013-02-01 00:00:00'),
 ( 'RF', 'RF', 'Rheumatoid Factor', 'result', '17', '2014-05-09 00:00:00'),
 ( 'Rh', 'Rh', 'RhD blood type group', 'result', '11', '2014-05-09 00:00:00'),
-( 'RPHR', 'Review PHR', 'Review PHR', 'Yes/No', '7', '2013-02-01 00:00:00'),
 ( 'RPPT', 'Review Pathophysiology, Prognosis, Treatment with Patient', 'Review Pathophysiology, Prognosis, Treatment with Patient', 'Yes/No', '7', '2013-02-01 00:00:00'),
 ( 'RUB', 'Rubella', 'Rubella titre', 'titre', '11', '2014-05-09 00:00:00'),
 ( 'RVTN', 'Revascularization', 'Revascularization', 'Yes/No', '7', '2013-02-01 00:00:00'),
@@ -1346,7 +1345,7 @@ insert into ProviderPreference (providerNo, startHour, endHour, everyMin, myGrou
 -- Dumping data for table 'provider'
 --
 
-INSERT INTO provider VALUES ('999998','oscardoc','doctor','doctor',null,'','','','0001-01-01','','','','','','','','1','','','','','','','','',now(),'0001-01-01','');
+INSERT INTO provider VALUES ('999998','openodoc','doctor','doctor',null,'','','','0001-01-01','','','','','','','','1','','','','','','','','',now(),'0001-01-01','');
 
 --
 -- Dumping data for table 'quickList'
@@ -1427,7 +1426,7 @@ INSERT INTO scheduletemplatecode (code,description,duration,color,confirm,bookin
 -- Dumping data for table 'security'
 --
 
-INSERT INTO security(security_no,user_name,password,provider_no,pin,forcePasswordReset) VALUES (128,'oscardoc','-51-282443-97-5-9410489-60-1021-45-127-12435464-32','999998','1117',1);
+INSERT INTO security(security_no,user_name,password,provider_no,pin,forcePasswordReset) VALUES (128,'openodoc','{bcrypt}$2b$12$9mdpjGHFmuVrW7uv7HlZter.6Gdqx.V/i.ba52e9VP6ZYnwJR6h96','999998','2025',1);
 
 --
 -- Dumping data for table 'specialistsJavascript'

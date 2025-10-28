@@ -24,279 +24,265 @@
 
 --%>
 
-<%@ page import="java.util.*, org.w3c.dom.*, oscar.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ page import="java.util.*, org.w3c.dom.*, ca.openosp.openo.util.*" %>
+<%@ page import="ca.openosp.openo.encounter.immunization.config.data.EctImmImmunizationSetData" %>
+<%@ page import="ca.openosp.openo.util.UtilXML" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarEncounter.immunization.config.immunizationSetDisplay.title" />
-</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.immunizationSetDisplay.title"/>
+        </title>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-<script language="javascript">
-    function edit(nodeName)
-    {
-        window.open('../ScheduleEdit.jsp?node=' + nodeName);
-    }
-	
-     function returnEdit(nodeName, givenDate, refusedDate, lot, provider, comments)
-    {
-        var frm = document.forms[0];
-
-        var label;
-        if(givenDate != null)
-        {
-            label = givenDate;
-        }
-        else
-        {
-            if(refusedDate != null)
-            {
-                label = "Refused";
+        <script language="javascript">
+            function edit(nodeName) {
+                window.open('<%= request.getContextPath() %>/oscarEncounter/immunization/ScheduleEdit.jsp/ScheduleEdit.jsp?node=' + nodeName);
             }
-        }
 
-        document.getElementById(nodeName + '_label').innerHTML = label;
+            function returnEdit(nodeName, givenDate, refusedDate, lot, provider, comments) {
+                var frm = document.forms[0];
 
-        eval('frm.' + nodeName + '_givenDate').value   = givenDate;
-        eval('frm.' + nodeName + '_refusedDate').value = refusedDate;
-        eval('frm.' + nodeName + '_lot').value         = lot;
-        eval('frm.' + nodeName + '_provider').value    = provider;
-        eval('frm.' + nodeName + '_comments').value    = comments;
-    }
-    
+                var label;
+                if (givenDate != null) {
+                    label = givenDate;
+                } else {
+                    if (refusedDate != null) {
+                        label = "Refused";
+                    }
+                }
 
+                document.getElementById(nodeName + '_label').innerHTML = label;
 
-    function showSet(tblName, ev)
-    {
-        var tbl = document.getElementById(tblName);
-        var b = false;
-
-        if(ev.target!=null)
-        {
-            if(ev.target.checked)
-            {
-                b = true;
+                eval('frm.' + nodeName + '_givenDate').value = givenDate;
+                eval('frm.' + nodeName + '_refusedDate').value = refusedDate;
+                eval('frm.' + nodeName + '_lot').value = lot;
+                eval('frm.' + nodeName + '_provider').value = provider;
+                eval('frm.' + nodeName + '_comments').value = comments;
             }
-        }
-        else
-        {
-            if(event.srcElement.checked)
-            {
-                b = true;
+
+
+            function showSet(tblName, ev) {
+                var tbl = document.getElementById(tblName);
+                var b = false;
+
+                if (ev.target != null) {
+                    if (ev.target.checked) {
+                        b = true;
+                    }
+                } else {
+                    if (event.srcElement.checked) {
+                        b = true;
+                    }
+                }
+
+                if (b == true) {
+                    tbl.style.display = '';
+                } else {
+                    tbl.style.display = 'none';
+                }
             }
-        }
 
-        if(b==true)
-        {
-            tbl.style.display='';
-        }
-        else
-        {
-            tbl.style.display='none';
-        }
-    }
+        </script>
 
-</script>
+    </head>
+    <body onload="window.focus();">
 
-</head>
-<body onload="window.focus();">
+    <form name="schedule">
+        <%
+            String setId = (String) request.getAttribute("setId");
+            EctImmImmunizationSetData setData = new EctImmImmunizationSetData();
+            String xmlString = setData.getSetXMLDoc(setId);
 
-<form name="schedule">
-<%
-String setId = (String) request.getAttribute("setId");
-oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData setData = new oscar.oscarEncounter.immunization.config.data.EctImmImmunizationSetData();
-String xmlString = setData.getSetXMLDoc(setId);
+            Document xmlDoc = UtilXML.parseXML(xmlString);
+            Element set = xmlDoc.getDocumentElement();
+            String setNamed = set.getAttribute("name");
 
-Document xmlDoc = UtilXML.parseXML(xmlString);
-Element set = xmlDoc.getDocumentElement();
-String setNamed = set.getAttribute("name");
+            int i = 0;
+        %>
+        <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.immunizationSetDisplay.msgSet"/>:
+            <%=setNamed%>
+        </h1>
+        <table cellpadding=2 cellspacing=0 border="2px" rules="all"
+               id="tblSet<%=i%>" style="margin-bottom: 10px">
+            <%
+                int colCount = -1;
 
-int i = 0;
-%>
-<h1><bean:message
-	key="oscarEncounter.immunization.config.immunizationSetDisplay.msgSet" />:
-<%=setNamed%></h1>
-<table cellpadding=2 cellspacing=0 border="2px" rules="all"
-	id="tblSet<%=i%>" style="margin-bottom: 10px">
-	<%
-    int colCount = -1;
+                if (set.getAttribute("headers").equalsIgnoreCase("true")) {
+            %>
+            <tr>
+                <td class="head">&nbsp;</td>
+                <%
 
-if(set.getAttribute("headers").equalsIgnoreCase("true"))
-    {
-        %><tr>
-		<td class="head">&nbsp;</td>
-		<%
+                    Element columnList = (Element) set.getElementsByTagName("columnList").item(0);
+                    NodeList columns = columnList.getElementsByTagName("column");
 
-        Element columnList = (Element)set.getElementsByTagName("columnList").item(0);
-        NodeList columns = columnList.getElementsByTagName("column");
+                    for (int j = 0; j < columns.getLength(); j++) {
+                        Element column = (Element) columns.item(j);
 
-        for(int j=0; j<columns.getLength(); j++){
-            Element column = (Element)columns.item(j);
+                %>
+                <td class="head"><%= column.getAttribute("name") %>&nbsp;</td>
+                <%
 
-            %><td class="head"><%= column.getAttribute("name") %>&nbsp;</td>
-		<%
+                        colCount = j + 2;
+                    }
 
-            colCount = j+2;
-        }
+                %>
+                <td class="head">Comments</td>
+            </tr>
+            <%
+                }
 
-        %><td class="head">Comments</td>
-	</tr>
-	<%
-    }
+                Element rowList = (Element) set.getElementsByTagName("rowList").item(0);
+                NodeList rows = rowList.getElementsByTagName("row");
+                for (int j = 0; j < rows.getLength(); j++) {
+                    Element row = (Element) rows.item(j);
 
-    Element rowList = (Element)set.getElementsByTagName("rowList").item(0);
-    NodeList rows = rowList.getElementsByTagName("row");
-    for(int j=0; j<rows.getLength(); j++)
-    {
-        Element row = (Element)rows.item(j);
-
-        String sName = row.getAttribute("name");
-        if(sName.length()<1){
-            String s = "tdSet" + i + "_Row" + j + "_name";
-            %><tr>
-		<td class="head" id="<%=s%>"><%=genText(s)%></td>
-		<%
+                    String sName = row.getAttribute("name");
+                    if (sName.length() < 1) {
+                        String s = "tdSet" + i + "_Row" + j + "_name";
+            %>
+            <tr>
+                <td class="head" id="<%=s%>"><%=genText(s)%>
+                </td>
+                        <%
         }else{
             %>
-	
-	<tr>
-		<td class="head"><%= sName %></td>
-		<%
-        }
 
-        if(colCount>0){
-            int n=0;
-            NodeList cells = row.getElementsByTagName("cell");
-            for(int k=1; k<colCount; k++){
-                Element cell = (Element)cells.item(n);
-                    if (cell != null){
-                        if (String.valueOf(k).equals(cell.getAttribute("index") ) ){
-                            String s = "tdSet" + i + "_Row" + j + "_Col" + k;
-                            %><td id="<%=s%>"><%= genCell(s, cell)%></td>
-		<%
-                            n++;
-                        }else{
-                            %><td class="grey">&nbsp;</td>
-		<%
-                        }
-                    }else{
-                            %><td class="grey">&nbsp;</td>
-		<%
+            <tr>
+                <td class="head"><%= sName %>
+                </td>
+                <%
                     }
-            }
-        }
-        else
-        {
-            NodeList cells = row.getElementsByTagName("cell");
-            for(int k=0; k<cells.getLength(); k++)
-            {
-                Element cell = (Element)cells.item(k);
-                if(cell.getAttribute("index").equals(String.valueOf(k+1))){
-                    String s = "tdSet" + i + "_Row" + j + "_Col" + (k+1);
-                    %><td id="<%=s%>"><%= genCell(s, cell)%></td>
-		<%
+
+                    if (colCount > 0) {
+                        int n = 0;
+                        NodeList cells = row.getElementsByTagName("cell");
+                        for (int k = 1; k < colCount; k++) {
+                            Element cell = (Element) cells.item(n);
+                            if (cell != null) {
+                                if (String.valueOf(k).equals(cell.getAttribute("index"))) {
+                                    String s = "tdSet" + i + "_Row" + j + "_Col" + k;
+                %>
+                <td id="<%=s%>"><%= genCell(s, cell)%>
+                </td>
+                <%
+                    n++;
+                } else {
+                %>
+                <td class="grey">&nbsp;</td>
+                <%
+                    }
+                } else {
+                %>
+                <td class="grey">&nbsp;</td>
+                <%
+                        }
+                    }
+                } else {
+                    NodeList cells = row.getElementsByTagName("cell");
+                    for (int k = 0; k < cells.getLength(); k++) {
+                        Element cell = (Element) cells.item(k);
+                        if (cell.getAttribute("index").equals(String.valueOf(k + 1))) {
+                            String s = "tdSet" + i + "_Row" + j + "_Col" + (k + 1);
+                %>
+                <td id="<%=s%>"><%= genCell(s, cell)%>
+                </td>
+                <%
+                } else {
+                %>
+                <td class="grey">&nbsp;</td>
+                <%
+                            }
+                        }
+                    }
+
+                    String s = "tdSet" + i + "_Row" + j + "_comments";
+
+                %>
+                <td id="<%=s%>"><%= genText(s)%>
+                </td>
+                <%
+
+
+                %>
+            </tr>
+            <%
                 }
-                else{
-                    %><td class="grey">&nbsp;</td>
-		<%
+
+            %>
+        </table>
+        <%
+
+
+        %> <%!
+        String genText(String id) {
+            String s = "<span style='width:100%'>";
+
+            //  s += "<input type=text style='width:100%;' id='" + id + "_text'></input>";
+            s += "&nbsp;";
+            s += "</span>";
+
+            return s;
+        }
+
+        String genCell(String id, Element cell) {
+            String s = "<span style='width:100%'>";
+
+            String givenDate = cell.getAttribute("givenDate");
+            String refusedDate = cell.getAttribute("refusedDate");
+            String lot = cell.getAttribute("lot");
+            String provider = cell.getAttribute("providers");
+            String comments = cell.getAttribute("comments");
+
+            s += "<input type=hidden id='" + id + "_givenDate'>"
+                    + givenDate + "</input>"
+                    + "<input type=hidden id='" + id + "_refusedDate'>"
+                    + refusedDate + "</input>"
+                    + "<input type=hidden id='" + id + "_lot'>"
+                    + lot + "</input>"
+                    + "<input type=hidden id='" + id + "_provider'>"
+                    + provider + "</input>"
+                    + "<input type=hidden id='" + id + "_comments'>"
+                    + comments + "</input>";
+
+            s += "<span id='" + id + "_label'>";
+            if (givenDate.length() > 0) {
+                s += givenDate;
+            } else {
+                if (refusedDate.length() > 0) {
+                    s += "Refused";
                 }
             }
+            s += "</span>";
+
+            s += "<span style='width:100%; text-align:right'><a href=\"javascript:edit('" + id + "');\"><img border=0 src='../img/edit.gif' /></a></span>";
+
+            s += "</span>";
+
+            return s;
         }
 
-        String s = "tdSet" + i + "_Row" + j + "_comments";
 
-        %><td id="<%=s%>"><%= genText(s)%></td>
-		<%
+    %> <%/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/%>
+    </form>
 
-
-        %>
-	</tr>
-	<%
-    }
-
-    %>
-</table>
-<%
-
-
-%> <%!
-String genText(String id)
-{
-    String s = "<span style='width:100%'>";
-
-  //  s += "<input type=text style='width:100%;' id='" + id + "_text'></input>";
-    s += "&nbsp;";
-    s += "</span>";
-
-    return s;
-}
-
-String genCell(String id, Element cell)
-{
-    String s = "<span style='width:100%'>";
-
-    String givenDate = cell.getAttribute("givenDate");
-    String refusedDate = cell.getAttribute("refusedDate");
-    String lot = cell.getAttribute("lot");
-    String provider = cell.getAttribute("provider");
-	String comments = cell.getAttribute("comments");
-	
-    s += "<input type=hidden id='" + id + "_givenDate'>"
-             + givenDate + "</input>"
-             + "<input type=hidden id='" + id + "_refusedDate'>"
-             + refusedDate + "</input>"
-             + "<input type=hidden id='" + id + "_lot'>"
-             + lot + "</input>"
-             + "<input type=hidden id='" + id + "_provider'>"
-             + provider + "</input>"
-             +"<input type=hidden id='" + id + "_comments'>"
-             + comments + "</input>";
-
-    s += "<span id='" + id + "_label'>";
-    if(givenDate.length()>0)
-    {
-        s += givenDate;
-    }
-    else
-    {
-        if(refusedDate.length()>0)
-        {
-            s += "Refused";
-        }
-    }
-    s += "</span>";
-
-    s += "<span style='width:100%; text-align:right'><a href=\"javascript:edit('" + id + "');\"><img border=0 src='../img/edit.gif' /></a></span>";
-
-    s += "</span>";
-
-    return s;
-}
-
-
-
-
-%> <%/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/%>
-</form>
-
-</body>
-</html:html>
+    </body>
+</html>

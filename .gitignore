@@ -29,4 +29,17 @@ tmp/
 .aider*
 /hs_err_pid*.log
 /release
+*.venv
+__pycache__/
+/scripts/ai_cli_automation_tools/output/
+.env
 /.smarttomcat/
+.editorconfig
+.claude
+CLAUDE.md
+
+# Docusaurus
+/website/node_modules/
+/node_modules/
+/website/build/
+/website/.docusaurus/

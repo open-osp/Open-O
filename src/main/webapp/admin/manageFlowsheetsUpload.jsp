@@ -26,82 +26,82 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <%-- This JSP is the first page you see when you enter 'report by template' --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-	objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+                   objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ page import="org.apache.commons.fileupload.DiskFileUpload" %>
 <%@ page import="org.apache.commons.fileupload.FileUpload" %>
 <%@ page import="org.apache.commons.fileupload.FileItem" %>
 <%@ page import="org.apache.commons.fileupload.FileUploadException" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.io.StringWriter" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
-<%@ page import="oscar.oscarEncounter.oscarMeasurements.MeasurementFlowSheet" %>
-<%@ page import="org.oscarehr.common.model.Flowsheet" %>
-<%@ page import="org.oscarehr.common.dao.FlowsheetDao" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.commn.model.Flowsheet" %>
+<%@ page import="ca.openosp.openo.commn.dao.FlowsheetDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%
-boolean isMultipart = FileUpload.isMultipartContent(request);
-DiskFileUpload upload = new DiskFileUpload();
+    boolean isMultipart = FileUpload.isMultipartContent(request);
+    DiskFileUpload upload = new DiskFileUpload();
 
-try {
-    //           Parse the request
-    @SuppressWarnings("unchecked")
-    List<FileItem> items = upload.parseRequest(request);
-    //Process the uploaded items
-    Iterator<FileItem> iter = items.iterator();
-    while (iter.hasNext()) {
-        FileItem item = iter.next();
+    try {
+        //           Parse the request
+        @SuppressWarnings("unchecked")
+        List<FileItem> items = upload.parseRequest(request);
+        //Process the uploaded items
+        Iterator<FileItem> iter = items.iterator();
+        while (iter.hasNext()) {
+            FileItem item = iter.next();
 
-        if (item.isFormField()) {           
-        } else {
-            String contents = item.getString();
-            
-            //validate the data
-            //TODO: make sure no duplicates
-            MeasurementFlowSheet fs = null;
-            fs = MeasurementTemplateFlowSheetConfig.getInstance().validateFlowsheet(contents);
-            if(fs != null) {
-            	//save to db
-            	Flowsheet f = new Flowsheet();
-            	f.setContent(contents);
-            	f.setCreatedDate(new java.util.Date());
-            	f.setEnabled(true);
-            	f.setExternal(false);
-            	f.setName(fs.getName());
-            	
-            	FlowsheetDao flowsheetDao = (FlowsheetDao)SpringUtils.getBean(FlowsheetDao.class);
-            	flowsheetDao.persist(f);
-            	MeasurementTemplateFlowSheetConfig.getInstance().reloadFlowsheets();            	
+            if (item.isFormField()) {
             } else {
-            	//error            	
-            }                                   
-        }
-    }
-} catch (FileUploadException e) {
-    
-} catch (Exception e) {
-    
-}   
+                String contents = item.getString();
 
-response.sendRedirect("manageFlowsheets.jsp");
+                //validate the data
+                //TODO: make sure no duplicates
+                MeasurementFlowSheet fs = null;
+                fs = MeasurementTemplateFlowSheetConfig.getInstance().validateFlowsheet(contents);
+                if (fs != null) {
+                    //save to db
+                    Flowsheet f = new Flowsheet();
+                    f.setContent(contents);
+                    f.setCreatedDate(new java.util.Date());
+                    f.setEnabled(true);
+                    f.setExternal(false);
+                    f.setName(fs.getName());
+
+                    FlowsheetDao flowsheetDao = (FlowsheetDao) SpringUtils.getBean(FlowsheetDao.class);
+                    flowsheetDao.persist(f);
+                    MeasurementTemplateFlowSheetConfig.getInstance().reloadFlowsheets();
+                } else {
+                    //error
+                }
+            }
+        }
+    } catch (FileUploadException e) {
+
+    } catch (Exception e) {
+
+    }
+
+    response.sendRedirect("manageFlowsheets.jsp");
 %>

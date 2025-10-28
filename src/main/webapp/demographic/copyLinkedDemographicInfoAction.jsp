@@ -24,28 +24,28 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.ConformanceTestHelper"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.ConformanceTestHelper" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	Integer demographicId=Integer.parseInt(request.getParameter("demographicId"));
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    Integer demographicId = Integer.parseInt(request.getParameter("demographicId"));
 
-	ConformanceTestHelper.copyLinkedDemographicsPropertiesToLocal(loggedInInfo, demographicId);
-	
-	response.sendRedirect("demographiccontrol.jsp?"+request.getQueryString());
+    ConformanceTestHelper.copyLinkedDemographicsPropertiesToLocal(loggedInInfo, demographicId);
+
+    response.sendRedirect("demographiccontrol.jsp?" + request.getQueryString());
 %>

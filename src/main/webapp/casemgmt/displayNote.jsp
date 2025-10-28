@@ -25,12 +25,12 @@
 --%>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%
-    String noteStr = (String)request.getAttribute("noteStr");
+    String noteStr = (String) request.getAttribute("noteStr");
     noteStr = Encode.forHtmlContent(noteStr);
-    Boolean raw = (Boolean)request.getAttribute("raw");
-    if( raw ) {
- %>
-        <%=noteStr%>
-    <% } else { %>
-        <%=noteStr.replaceAll("\n","<br>")%>
-    <%}%>
+    Boolean raw = (Boolean) request.getAttribute("raw");
+    if (raw) {
+%>
+<%=noteStr%>
+<% } else { %>
+<%=noteStr.replaceAll("\n", "<br>")%>
+<%}%>

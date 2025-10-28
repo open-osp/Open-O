@@ -24,51 +24,53 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
-%>
-
-<%@ page import="oscar.form.*"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-%>
-<security:oscarSec roleName="<%=roleName$%>"
-	objectName="_formMentalHealth" rights="o" reverse="<%=true%>">
-
-	<%
-    int demoNo = Integer.parseInt(request.getParameter("demographic_no"));
-    int formId = Integer.parseInt(request.getParameter("formId"));
-    //int provNo = Integer.parseInt(request.getParameter("provNo"));
-
-	if(true) {
-        out.clear();
-		if (formId == 0) {
-			pageContext.forward("formmhreferral.jsp?demographic_no=" + demoNo + "&formId=" + formId) ;
- 		} else {
-			FrmRecord rec = (new FrmRecordFactory()).factory("MentalHealth");
-			java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request),demoNo, formId);
-
-			pageContext.forward("formmh" + props.getProperty("c_lastVisited", "referral")
-				+ ".jsp?demographic_no=" + demoNo + "&formId=" + formId) ;
-		}
-
-		return;
+    if (!authed) {
+        return;
     }
 %>
+
+<%@ page import="ca.openosp.openo.form.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+%>
+<security:oscarSec roleName="<%=roleName$%>"
+                   objectName="_formMentalHealth" rights="o" reverse="<%=true%>">
+
+    <%
+        int demoNo = Integer.parseInt(request.getParameter("demographic_no"));
+        int formId = Integer.parseInt(request.getParameter("formId"));
+        //int provNo = Integer.parseInt(request.getParameter("provNo"));
+
+        if (true) {
+            out.clear();
+            if (formId == 0) {
+                pageContext.forward("formmhreferral.jsp?demographic_no=" + demoNo + "&formId=" + formId);
+            } else {
+                FrmRecord rec = (new FrmRecordFactory()).factory("MentalHealth");
+                java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo, formId);
+
+                pageContext.forward("formmh" + props.getProperty("c_lastVisited", "referral")
+                        + ".jsp?demographic_no=" + demoNo + "&formId=" + formId);
+            }
+
+            return;
+        }
+    %>
 </security:oscarSec>
 You have no rights to view the page.

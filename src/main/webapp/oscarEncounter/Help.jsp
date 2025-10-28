@@ -24,32 +24,32 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Template</title>
-</head>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable"
-	height="95%" width="100" cellpadding="10">
-	<tr bgcolor="#000099" height="20">
-		<td><font color="white" size="+1"><b>Help</b></font></td>
-	</tr>
-	<tr>
-		<form action="">
-		<td height="95%">
-		<center>This feature is under construction.<br>
-		<br>
-		<input type="button" value="Close" onClick="window.close()"></center>
-		</td>
-		</form>
-	</tr>
-</table>
-</body>
-</html:html>
+
+<link rel="stylesheet" type="text/css" href="encounterStyles.css">
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Template</title>
+    </head>
+
+    <body class="BodyStyle" vlink="#0000FF">
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1" name="encounterTable"
+           height="95%" width="100" cellpadding="10">
+        <tr bgcolor="#000099" height="20">
+            <td><font color="white" size="+1"><b>Help</b></font></td>
+        </tr>
+        <tr>
+            <form action="">
+                <td height="95%">
+                    <center>This feature is under construction.<br>
+                        <br>
+                        <input type="button" value="Close" onClick="window.close()"></center>
+                </td>
+            </form>
+        </tr>
+    </table>
+    </body>
+</html>

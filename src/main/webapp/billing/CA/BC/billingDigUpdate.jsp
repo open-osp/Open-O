@@ -24,83 +24,85 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.billing,_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../../securityError.jsp?type=_admin&type=_admin.billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
 <%
-	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
+    DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    function closeit() {
-    	//self.opener.refresh();
-      //self.close();
-    }
-    //-->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
+
+        function closeit() {
+            //self.opener.refresh();
+            //self.close();
+        }
+
+        //-->
+    </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		ADD A BILLING RECORD</font></th>
-	</tr>
-</table>
-<%
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                ADD A BILLING RECORD</font></th>
+        </tr>
+    </table>
+    <%
 
 
+        String code = request.getParameter("update");
+        code = code.substring(code.length() - 3);
 
-  String code = request.getParameter("update");
-  code = code.substring(code.length()-3);
+        List<DiagnosticCode> dcodes = diagnosticCodeDao.findByDiagnosticCode(code);
+        for (DiagnosticCode dcode : dcodes) {
+            dcode.setDescription(request.getParameter(code));
+            diagnosticCodeDao.merge(dcode);
+        }
 
-	 List<DiagnosticCode> dcodes = diagnosticCodeDao.findByDiagnosticCode(code);
-	 for(DiagnosticCode dcode:dcodes) {
-		 dcode.setDescription(request.getParameter(code));
-		diagnosticCodeDao.merge(dcode);
-	 }
-
-%> <%
+    %> <%
 %>
-<p>
-<h1>Successful Addition of a billing Record.</h1>
-</p>
-<script LANGUAGE="JavaScript">
-    history.go(-1);return false;
-    self.opener.refresh();
-</script>
+    <p>
+    <h1>Successful Addition of a billing Record.</h1>
+    </p>
+    <script LANGUAGE="JavaScript">
+        history.go(-1);
+        return false;
+        self.opener.refresh();
+    </script>
 
-<p>
-<h1>Sorry, addition has failed.</h1>
-</p>
+    <p>
+    <h1>Sorry, addition has failed.</h1>
+    </p>
 
-<p></p>
-<hr width="90%"></hr>
-<form><input type="button" value="Close this window"
-	onClick="window.close()"></form>
+    <p></p>
+    <hr width="90%"></hr>
+    <form><input type="button" value="Close this window"
+                 onClick="window.close()"></form>
 </center>
 </body>
 </html>

@@ -23,105 +23,104 @@
     Ontario, Canada
 
 --%>
-<%@page import="java.net.URLEncoder"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="java.net.URLEncoder" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String curProvider_no = (String) session.getAttribute("user");
-    boolean isSiteAccessPrivacy=false;
-    boolean authed=true;
+    boolean isSiteAccessPrivacy = false;
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="/errorpage.jsp" %>
-<%@ page import="oscar.log.LogAction,oscar.log.LogConst"%>
-<%@ page import="oscar.log.*, oscar.oscarDB.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.log.LogAction,ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.log.*, ca.openosp.openo.db.*" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.PreventionsLotNrs"%>
-<%@ page import="org.oscarehr.common.dao.PreventionsLotNrsDao"%>
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.PreventionsLotNrs" %>
+<%@ page import="ca.openosp.openo.commn.dao.PreventionsLotNrsDao" %>
 <%
-PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao)SpringUtils.getBean(PreventionsLotNrsDao.class);
+    PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao) SpringUtils.getBean(PreventionsLotNrsDao.class);
 %>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="admin.lotaddrecord.title" /></title>
-<link rel="stylesheet" href="../web.css">
-</head>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.title"/></title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
+    </head>
 
-<body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th><font face="Helvetica" color="#FFFFFF">
-			<bean:message key="admin.lotaddrecord.description" />
-		</font></th>
-	</tr>
-</table>
-<%
-String curUser_no = (String)session.getAttribute("user");
-String prevention = request.getParameter("prevention");
-String lotnr = request.getParameter("lotnr");
-List<String> currentLotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
-List<String> deletedLotnrs = PreventionsLotNrsDao.findLotNrs(prevention, true);
+    <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr bgcolor="#486ebd">
+                <th><font face="Helvetica" color="#FFFFFF">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.description"/>
+                </font></th>
+            </tr>
+        </table>
+        <%
+            String curUser_no = (String) session.getAttribute("user");
+            String prevention = request.getParameter("prevention");
+            String lotnr = request.getParameter("lotnr");
+            List<String> currentLotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
+            List<String> deletedLotnrs = PreventionsLotNrsDao.findLotNrs(prevention, true);
 
-if (deletedLotnrs.contains(lotnr))
-{
-	PreventionsLotNrs p =  PreventionsLotNrsDao.findByName(prevention, lotnr, true);
-	if(p != null) {
-		p.setDeleted(false);
-		PreventionsLotNrsDao.merge(p);
-		%>
-		<bean:message key="admin.lotaddrecord.msgAdditionSuccess" />
-		<%
-	}
-}
-else if (currentLotnrs.contains(lotnr))
-{
-  %>
-	<bean:message key="admin.lotaddrecord.msgDuplicateLotnr"/>
-	<%
-}
-else
-{
-PreventionsLotNrs p = new PreventionsLotNrs();
-p.setPreventionType(prevention);
-p.setLotNr(lotnr);
-p.setProviderNo((String)session.getAttribute("user"));
-p.setCreationDate(new java.util.Date());
-p.setDeleted(false);
+            if (deletedLotnrs.contains(lotnr)) {
+                PreventionsLotNrs p = PreventionsLotNrsDao.findByName(prevention, lotnr, true);
+                if (p != null) {
+                    p.setDeleted(false);
+                    PreventionsLotNrsDao.merge(p);
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.msgAdditionSuccess"/>
+        <%
+            }
+        } else if (currentLotnrs.contains(lotnr)) {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.msgDuplicateLotnr"/>
+        <%
+        } else {
+            PreventionsLotNrs p = new PreventionsLotNrs();
+            p.setPreventionType(prevention);
+            p.setLotNr(lotnr);
+            p.setProviderNo((String) session.getAttribute("user"));
+            p.setCreationDate(new java.util.Date());
+            p.setDeleted(false);
 
-PreventionsLotNrsDao.persist(p);
+            PreventionsLotNrsDao.persist(p);
 
-if (p.getId() != null) {
-	%>
-	<bean:message key="admin.lotaddrecord.msgAdditionSuccess" />
-	<%
-	  } else {
-	%>
-	<bean:message key="admin.lotaddrecord.msgAdditionFailure" />
-	<%
-	}
-}
-%>
-<br/>
-<a href="lotnraddrecordhtm.jsp?prevention=<%=URLEncoder.encode(prevention,"UTF-8")%>">Add Another Lot # to <%=prevention %></a> <br/>
-<a href="lotnrsearchresults.jsp?search_mode=search_prev&keyword=<%=URLEncoder.encode(prevention,"UTF-8")%>&orderby=prevention_type&dboperation=lotnr_search_prevention&limit1=0&limit2=10&button=submit">View Lots for <%=prevention %></a>
-</center>
-</body>
-</html:html>
+            if (p.getId() != null) {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.msgAdditionSuccess"/>
+        <%
+        } else {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotaddrecord.msgAdditionFailure"/>
+        <%
+                }
+            }
+        %>
+        <br/>
+        <a href="lotnraddrecordhtm.jsp?prevention=<%=URLEncoder.encode(prevention,"UTF-8")%>">Add Another Lot #
+            to <%=prevention %>
+        </a> <br/>
+        <a href="lotnrsearchresults.jsp?search_mode=search_prev&keyword=<%=URLEncoder.encode(prevention,"UTF-8")%>&orderby=prevention_type&dboperation=lotnr_search_prevention&limit1=0&limit2=10&button=submit">View
+            Lots for <%=prevention %>
+        </a>
+    </center>
+    </body>
+</html>

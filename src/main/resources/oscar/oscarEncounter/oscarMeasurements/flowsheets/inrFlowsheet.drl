@@ -10,7 +10,7 @@
 
     <rule name="COUM 1">
         <parameter identifier="m">
-            <class>oscar.oscarEncounter.oscarMeasurements.MeasurementInfo</class>
+            <class>ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo</class>
         </parameter>
         <java:condition>m.getLastDateRecordedInMonths("COUM") &gt;= 3</java:condition>
         
@@ -22,7 +22,7 @@
 
     <rule name="INR 1">
         <parameter identifier="m">
-            <class>oscar.oscarEncounter.oscarMeasurements.MeasurementInfo</class>
+            <class>ca.openosp.openo.encounter.oscarMeasurements.MeasurementInfo</class>
         </parameter>
         <java:condition>m.getLastDateRecordedInMonths("INR") &gt;= 3</java:condition>        
         <java:consequence>              

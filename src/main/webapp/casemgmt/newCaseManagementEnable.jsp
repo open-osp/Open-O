@@ -22,148 +22,142 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="org.oscarehr.common.model.Security"%>
-<%@page import="org.oscarehr.common.dao.SecurityDao"%>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.commn.model.Security" %>
+<%@page import="ca.openosp.openo.commn.dao.SecurityDao" %>
 <%@page
-	import="java.util.Collections, java.util.Arrays, java.util.ArrayList"%>
+        import="java.util.Collections, java.util.Arrays, java.util.ArrayList" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
-   "http://www.w3.org/TR/html4/strict.dtd">
+"http://www.w3.org/TR/html4/strict.dtd">
 
-<%@page import="org.oscarehr.util.MiscUtils"%>
-<%@page import="org.oscarehr.common.dao.ProviderPreferenceDao"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.model.ProviderPreference"%><html>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ProviderPreferenceDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<html>
 <head>
-	<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-	<title>New Encounter Access</title>
-	
-	<script type="text/javascript" LANGUAGE="JavaScript">
-		function checkAll(formId){
-			var f = document.getElementById(formId);
-			var val = f.checkA.checked;
-			for (i =0; i < f.encTesters.length; i++){
-				f.encTesters[i].checked = val;
-			}
-		}
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>New Encounter Access</title>
+
+    <script type="text/javascript" LANGUAGE="JavaScript">
+        function checkAll(formId) {
+            var f = document.getElementById(formId);
+            var val = f.checkA.checked;
+            for (i = 0; i < f.encTesters.length; i++) {
+                f.encTesters[i].checked = val;
+            }
+        }
     </script>
 </head>
 <body>
 
-<%  
-	String userNo = (String) session.getAttribute("user");
-    ArrayList<String> newDocArr = (ArrayList<String>)request.getSession().getServletContext().getAttribute("CaseMgmtUsers");    
-    
-    ProviderPreferenceDao providerPreferenceDao=(ProviderPreferenceDao)SpringUtils.getBean(ProviderPreferenceDao.class);
-    ProviderPreference providerPreference=providerPreferenceDao.find(userNo);
-    
-	
+<%
+    String userNo = (String) session.getAttribute("user");
+    ArrayList<String> newDocArr = (ArrayList<String>) request.getSession().getServletContext().getAttribute("CaseMgmtUsers");
 
-	String newCME = null;
-	if(providerPreference!=null){
-		newCME = providerPreference.getDefaultNewOscarCme();			
-	}
-	
-	if(newDocArr.isEmpty()) {
-		if("enabled".equals(newCME)){
-			newDocArr.add(userNo);
-			request.getSession().getServletContext().setAttribute("CaseMgmtUsers",newDocArr);
-		}
+    ProviderPreferenceDao providerPreferenceDao = (ProviderPreferenceDao) SpringUtils.getBean(ProviderPreferenceDao.class);
+    ProviderPreference providerPreference = providerPreferenceDao.find(userNo);
+
+
+    String newCME = null;
+    if (providerPreference != null) {
+        newCME = providerPreference.getDefaultNewOscarCme();
     }
-    
 
-    if( userNo != null && newDocArr != null ) {
-        
-        if( request.getMethod().equalsIgnoreCase("get") ) {
+    if (newDocArr.isEmpty()) {
+        if ("enabled".equals(newCME)) {
+            newDocArr.add(userNo);
+            request.getSession().getServletContext().setAttribute("CaseMgmtUsers", newDocArr);
+        }
+    }
+
+
+    if (userNo != null && newDocArr != null) {
+
+        if (request.getMethod().equalsIgnoreCase("get")) {
 %>
 <h3>Assign New Casemanagement Screen to:</h3>
 
 <form method="post" action="newCaseManagementEnable.jsp" id="sbForm">
-<%            
-				SecurityDao dao = SpringUtils.getBean(SecurityDao.class);
-				for(Object[] o : dao.findProviders()) {
-					Security s = (Security) o[0];
-					Provider p = (Provider) o[1];
-                    String provNo = p.getProviderNo();
-                    if(!userNo.equals(provNo)) 
-                    	continue;
-                    if( newDocArr.contains("all") || newDocArr.contains(provNo)) {
-%> <input type="checkbox" name="encTesters" value="<%=provNo%>" checked><%=p.getLastName()%>,
-<%=p.getFirstName()%><br>
-<%
-                    }
-                    else {
-%> <input type="checkbox" name="encTesters" value="<%=provNo%>"><%=p.getLastName()%>,
-<%=p.getFirstName()%><br>
-<%                   
-                    }                
-                }
-%> <input type="submit" value="Update">
+    <%
+        SecurityDao dao = SpringUtils.getBean(SecurityDao.class);
+        for (Object[] o : dao.findProviders()) {
+            Security s = (Security) o[0];
+            Provider p = (Provider) o[1];
+            String provNo = p.getProviderNo();
+            if (!userNo.equals(provNo))
+                continue;
+            if (newDocArr.contains("all") || newDocArr.contains(provNo)) {
+    %> <input type="checkbox" name="encTesters" value="<%=provNo%>" checked><%=p.getLastName()%>,
+    <%=p.getFirstName()%><br>
+    <%
+    } else {
+    %> <input type="checkbox" name="encTesters" value="<%=provNo%>"><%=p.getLastName()%>,
+    <%=p.getFirstName()%><br>
+    <%
+            }
+        }
+    %> <input type="submit" value="Update">
 </form>
 <%
-        }
-        else {
-            String encTesters = request.getParameter("encTesters");
+} else {
+    String encTesters = request.getParameter("encTesters");
 
-            if( encTesters == null ) {                
-                
-                if( newDocArr.contains("all") ) {
-                    newDocArr.clear();
-                    SecurityDao dao = SpringUtils.getBean(SecurityDao.class);
-    				for(Object[] o : dao.findProviders()) {
-    					Security s = (Security) o[0];
-    					Provider p = (Provider) o[1];
-                    
-                        String provNo = p.getProviderNo();
-                        if( userNo.equals(provNo) ) 
-                            continue;
-                            
-                        newDocArr.add(provNo);
-                   }
-                }
-                else {
-                    newDocArr.remove(userNo);
-                }
-                
+    if (encTesters == null) {
+
+        if (newDocArr.contains("all")) {
+            newDocArr.clear();
+            SecurityDao dao = SpringUtils.getBean(SecurityDao.class);
+            for (Object[] o : dao.findProviders()) {
+                Security s = (Security) o[0];
+                Provider p = (Provider) o[1];
+
+                String provNo = p.getProviderNo();
+                if (userNo.equals(provNo))
+                    continue;
+
+                newDocArr.add(provNo);
             }
-            else
-                newDocArr.add(encTesters);
-            
-            Collections.sort(newDocArr);
-        
-            request.getSession().getServletContext().setAttribute("CaseMgmtUsers", newDocArr);
+        } else {
+            newDocArr.remove(userNo);
+        }
 
-            if (providerPreference==null)
-            {
-            	// insert a default preference
-				providerPreference=new ProviderPreference();
-            	providerPreference.setProviderNo(userNo);
-            	providerPreferenceDao.persist(providerPreference);
-            } 
-            	
-			if(encTesters!=null && !encTesters.isEmpty()) {
-				providerPreference.setDefaultNewOscarCme("enabled");
-			} else {
-				providerPreference.setDefaultNewOscarCme("disabled");
-			}
-			providerPreferenceDao.merge(providerPreference);
-			
+    } else
+        newDocArr.add(encTesters);
+
+    Collections.sort(newDocArr);
+
+    request.getSession().getServletContext().setAttribute("CaseMgmtUsers", newDocArr);
+
+    if (providerPreference == null) {
+        // insert a default preference
+        providerPreference = new ProviderPreference();
+        providerPreference.setProviderNo(userNo);
+        providerPreferenceDao.persist(providerPreference);
+    }
+
+    if (encTesters != null && !encTesters.isEmpty()) {
+        providerPreference.setDefaultNewOscarCme("enabled");
+    } else {
+        providerPreference.setDefaultNewOscarCme("disabled");
+    }
+    providerPreferenceDao.merge(providerPreference);
+
 %>
 <h3>Casemanagement Users Update Complete!</h3>
 
 <%
-        }
-
     }
-    else {
+
+} else {
 %>
 <p>You have to be logged in to use this form</p>
 
 <%
     }
-    
+
 %>
-	
+
 </body>
 </html>

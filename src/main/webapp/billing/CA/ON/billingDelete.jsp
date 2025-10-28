@@ -18,99 +18,101 @@
 
 --%>
 <%
-  String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
 
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
 <%
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    function closeit() {
-    	//self.opener.refresh();
-      //self.close();
-    }
-    //-->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
+
+        function closeit() {
+            //self.opener.refresh();
+            //self.close();
+        }
+
+        //-->
+    </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		DELETE A BILLING RECORD</font></th>
-	</tr>
-</table>
-<%
-   String billCode = request.getParameter("billCode");
-   if (billCode.substring(0,1).compareTo("B") == 0) {
-   %>
-<p>
-<h1>Sorry, cannot delete billed items.</h1>
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                DELETE A BILLING RECORD</font></th>
+        </tr>
+    </table>
+    <%
+        String billCode = request.getParameter("billCode");
+        if (billCode.substring(0, 1).compareTo("B") == 0) {
+    %>
+    <p>
+    <h1>Sorry, cannot delete billed items.</h1>
 
-<form><input type="button" value="Back to previous page"
-	onClick="history.go(-1);return false;"></form>
-<% }
-   else{
+    <form><input type="button" value="Back to previous page"
+                 onClick="history.go(-1);return false;"></form>
+    <% } else {
 
 
-	   int rowsAffected=0;
-	   Billing b = billingDao.find(request.getParameter("billing_no"));
-	   if(b != null) {
-	 	  b.setStatus("D");
-	 	  billingDao.merge(b);
-	 	  rowsAffected=1;
-	   }
-	   
-  if (rowsAffected ==1) {
-   	Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
-    appointmentArchiveDao.archiveAppointment(appt);
-    if(appt != null) {
-    	appt.setStatus("P");
-		appt.setLastUpdateUser((String)session.getAttribute("user"));
-		appointmentDao.merge(appt);
-    	rowsAffected=1;
-    }
-   
-%>
-<p>
-<h1>Successful Addition of a billing Record.</h1>
+        int rowsAffected = 0;
+        Billing b = billingDao.find(request.getParameter("billing_no"));
+        if (b != null) {
+            b.setStatus("D");
+            billingDao.merge(b);
+            rowsAffected = 1;
+        }
 
-<script LANGUAGE="JavaScript">
-      self.close();
-     	self.opener.refresh();
-</script> <%
-  //  break; //get only one billing_no
-  //  }//end of while
- }  else {
-%>
-<p>
-<h1>Sorry, addition has failed.</h1>
+        if (rowsAffected == 1) {
+            Appointment appt = appointmentDao.find(Integer.parseInt(request.getParameter("appointment_no")));
+            appointmentArchiveDao.archiveAppointment(appt);
+            if (appt != null) {
+                appt.setStatus("P");
+                appt.setLastUpdateUser((String) session.getAttribute("user"));
+                appointmentDao.merge(appt);
+                rowsAffected = 1;
+            }
 
-<%
-  }
-  }
-%>
-<p></p>
-<hr width="90%">
-<form><input type="button" value="Close this window"
-	onClick="window.close()"></form>
+    %>
+    <p>
+    <h1>Successful Addition of a billing Record.</h1>
+
+    <script LANGUAGE="JavaScript">
+        self.close();
+        self.opener.refresh();
+    </script>
+    <%
+        //  break; //get only one billing_no
+        //  }//end of while
+    } else {
+    %>
+    <p>
+    <h1>Sorry, addition has failed.</h1>
+
+    <%
+            }
+        }
+    %>
+    <p></p>
+    <hr width="90%">
+    <form><input type="button" value="Close this window"
+                 onClick="window.close()"></form>
 </center>
 </body>
 </html>

@@ -24,78 +24,74 @@
 
 --%>
 
-<%@ page errorPage="error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<html:html>
-<head>
-<jsp:include page="head-includes.jsp" />
-<script language="javascript">
-	function cancel(control) {
-		if (control) {
-			control.disabled = true;
-		}
-		window.location.href = "update.do";
-		return false;
-	}
-
-	function update(control) {
-		if (control) {
-			control.disabled = true;
-		}
-		var form = $("form");
-		form.submit();
-		return true;
-	}
-</script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<title>MCEDT: Update Upload</title>
+<html>
+    <head>
+        <jsp:include page="head-includes.jsp"/>
+        <script language="javascript">
+            function cancel(control) {
+                if (control) {
+                    control.disabled = true;
+                }
+                window.location.href = "<%= request.getContextPath() %>/mcedt/update.do";
+                return false;
+            }
 
-<html:base />
-</head>
+            function update(control) {
+                if (control) {
+                    control.disabled = true;
+                }
+                var form = $("form");
+                form.submit();
+                return true;
+            }
+        </script>
 
-<body>
-	<div class="container-fluid">
-		<div class="row-fluid">
-			<h2>Update Upload</h2>
 
-			<html:form action="/mcedt/update" method="post" styleId="form"
-				enctype="multipart/form-data">
+        <title>MCEDT: Update Upload</title>
 
-				<html:errors />
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
 
-				<html:messages id="message" bundle="mcedt" message="true">
-					<c:out value="${message}" />
-				</html:messages>
+    <body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <h2>Update Upload</h2>
 
-				<input id="method" name="method" type="hidden"
-					value="addUpdateRequest" />
+            <form action="${pageContext.request.contextPath}/mcedt/update.do" method="post" id="form"
+                       enctype="multipart/form-data">
 
-				<div class="form-group">
-					<label>Upload ID</label>
-					<html:text property="resourceId" readonly="true" />
-				</div>
+            <jsp:include page="messages.jsp"/>
 
-				<div class="form-group">
-					<label>File Upload</label>
-					<html:file property="content" />
-				</div>
+            <input id="method" name="method" type="hidden"
+                   value="addUpdateRequest"/>
 
-				<div class="control-group" style="margin-top: 1em;">
-					<div class="controls">
-						<button class="btn btn-primary" onclick="return update(this);">Update</button>
-						<button class="btn" onclick="return cancel(this);">Cancel</button>
-					</div>
-				</div>
-			</html:form>
-</body>
-</html:html>
+            <div class="form-group">
+                <label>Upload ID</label>
+                <input type="text" name="resourceId" readonly="true"/>
+            </div>
+
+            <div class="form-group">
+                <label>File Upload</label>
+                <input type="file" name="content" id="content"/>
+            </div>
+
+            <div class="control-group" style="margin-top: 1em;">
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="return update(this);">Update</button>
+                    <button class="btn" onclick="return cancel(this);">Cancel</button>
+                </div>
+            </div>
+            </form>
+    </body>
+</html>

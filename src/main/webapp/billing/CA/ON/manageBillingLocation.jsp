@@ -19,162 +19,178 @@
 
 --%>
 <%
-String user_no = (String) session.getAttribute("user");
-String asstProvider_no = "";
-String color ="";
-String premiumFlag="";
-String service_form="", service_name="";
+    String user_no = (String) session.getAttribute("user");
+    String asstProvider_no = "";
+    String color = "";
+    String premiumFlag = "";
+    String service_form = "", service_name = "";
 %>
 
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" errorPage="/errorpage.jsp"%>
-<%@ include file="../../../admin/dbconnection.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation" %>
-<%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.net.*" errorPage="/errorpage.jsp" %>
+<%@ include file="/admin/dbconnection.jsp" %>
+
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicLocation" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
+    ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean(ClinicLocationDao.class);
 %>
 <%
-String clinicview = request.getParameter("billingform")==null?oscarVariables.getProperty("default_view"):request.getParameter("billingform");
-String reportAction=request.getParameter("reportAction")==null?"":request.getParameter("reportAction");
+    String clinicview = request.getParameter("billingform") == null ? oscarVariables.getProperty("default_view") : request.getParameter("billingform");
+    String reportAction = request.getParameter("reportAction") == null ? "" : request.getParameter("reportAction");
 
-if (request.getParameter("submit") != null && request.getParameter("submit").equals("Delete")) {
-	clinicLocationDao.removeByClinicLocationNo(request.getParameter("location_no"));
-}
+    if (request.getParameter("submit") != null && request.getParameter("submit").equals("Delete")) {
+        clinicLocationDao.removeByClinicLocationNo(request.getParameter("location_no"));
+    }
 %>
 
-<html:html lang="en">
-<head>
-<title><bean:message key="admin.admin.btnAddBillingLocation" /></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-<script language="JavaScript">
-<!--
+<html>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnAddBillingLocation"/></title>
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+        <script language="JavaScript">
+            <!--
 
-function selectprovider(s) {
-  if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
-  else a = self.location.href;
-	self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
-}
-function openBrWindow(theURL,winName,features) {
-  window.open(theURL,winName,features);
-}
-function setfocus() {
-  this.focus();
-  document.ADDAPPT.keyword.focus();
-  document.ADDAPPT.keyword.select();
-}
+            function selectprovider(s) {
+                if (self.location.href.lastIndexOf("&providerview=") > 0) a = self.location.href.substring(0, self.location.href.lastIndexOf("&providerview="));
+                else a = self.location.href;
+                self.location.href = a + "&providerview=" + s.options[s.selectedIndex].value;
+            }
 
-function valid(form){
-if (validateServiceType(form)){
-form.action = "dbManageBillingform_add.jsp"
-form.submit()}
+            function openBrWindow(theURL, winName, features) {
+                window.open(theURL, winName, features);
+            }
 
-else{}
-}
-function validateServiceType() {
-  if (document.servicetypeform.typeid.value == "MFP") {
-alert("<bean:message key="billing.manageBillingLocation.msgServiceTypeExists"/>");
-	return false;
- }
- else{
- return true;
-}
+            function setfocus() {
+                this.focus();
+                document.ADDAPPT.keyword.focus();
+                document.ADDAPPT.keyword.select();
+            }
 
-}
-function refresh() {
-  var u = self.location.href;
-  if(u.lastIndexOf("view=1") > 0) {
-    self.location.href = u.substring(0,u.lastIndexOf("view=1")) + "view=0" + u.substring(eval(u.lastIndexOf("view=1")+6));
-  } else {
-    history.go(0);
-  }
-}
-function confirmthis(lno) {
-  if(confirm("Are you sure that you want to delete the location " + lno + "?")) {
-    return true;
-  } else {
-    return false;
-  }
-}
-//-->
-</script>
-</head>
+            function valid(form) {
+                if (validateServiceType(form)) {
+                    form.action = "<%= request.getContextPath() %>/billing/CA/ON/dbManageBillingform_add.jsp"
+                    form.submit()
+                } else {
+                }
+            }
 
-<body>
-<h3><bean:message key="admin.admin.btnAddBillingLocation" /></h3>
-<div class="container-fluid well">
-<table>
-	<tr>
-		<td width="3%"></td>
-		<td width="30%" align="left" valign="top">
-		<form name="serviceform" method="post"
-			action="dbManageBillingLocation.jsp"><B><bean:message
-			key="billing.manageBillingLocation.msgCodeDescription" /></B> <br>
-		<input style="width:40px" type="text" name="location1" size="4"> <input type="text" name="location1desc" size="30"> <br>
-		<input style="width:40px" type="text" name="location2" size="4"> <input type="text" name="location2desc" size="30"> <br>
-		<input style="width:40px" type="text" name="location3" size="4"> <input type="text" name="location3desc" size="30"> <br>
-		<input style="width:40px" type="text" name="location4" size="4"> <input type="text" name="location4desc" size="30"> <br>
-		<input style="width:40px" type="text" name="location5" size="4"> <input type="text" name="location5desc" size="30"> <br>
-		<br>
-		<input class="btn btn-primary" type="submit" name="action" value="<bean:message key="billing.manageBillingLocation.btnAdd"/>">
-		<br>
-		</p>
-		</form>
-		</td>
+            function validateServiceType() {
+                if (document.servicetypeform.typeid.value == "MFP") {
+                    alert("<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingLocation.msgServiceTypeExists"/>");
+                    return false;
+                } else {
+                    return true;
+                }
 
-		<td width="37%" valign="top">
+            }
 
-		<table class="table table-striped  table-condensed">
-			<tr>
-				<th width="6%"><bean:message
-					key="billing.manageBillingLocation.msgClinicLocation" /></th>
-				<th><bean:message
-					key="billing.manageBillingLocation.msgDescription" /></th>
-				<th>Action</th>
-			</tr>
+            function refresh() {
+                var u = self.location.href;
+                if (u.lastIndexOf("view=1") > 0) {
+                    self.location.href = u.substring(0, u.lastIndexOf("view=1")) + "view=0" + u.substring(eval(u.lastIndexOf("view=1") + 6));
+                } else {
+                    history.go(0);
+                }
+            }
 
-			<%
+            function confirmthis(lno) {
+                if (confirm("Are you sure that you want to delete the location " + lno + "?")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
-List<ClinicLocation> clinicLocations = clinicLocationDao.findByClinicNo(1);
-int rCount = 0;
-boolean bodd=false;
-String servicetype_name="";
+            //-->
+        </script>
+    </head>
 
-if(clinicLocations.size()==0) {
-	out.println("failed!!!");
-} else {
-%>
-			<%
-	for (ClinicLocation clinicLocation:clinicLocations) {
-		bodd=bodd?false:true; //for the color of rows
-%>
+    <body>
+    <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnAddBillingLocation"/></h3>
+    <div class="container-fluid well">
+        <table>
+            <tr>
+                <td width="3%"></td>
+                <td width="30%" align="left" valign="top">
+                    <form name="serviceform" method="post"
+                          action="dbManageBillingLocation.jsp"><B><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingLocation.msgCodeDescription"/></B> <br>
+                        <input style="width:40px" type="text" name="location1" size="4"> <input type="text"
+                                                                                                name="location1desc"
+                                                                                                size="30"> <br>
+                        <input style="width:40px" type="text" name="location2" size="4"> <input type="text"
+                                                                                                name="location2desc"
+                                                                                                size="30"> <br>
+                        <input style="width:40px" type="text" name="location3" size="4"> <input type="text"
+                                                                                                name="location3desc"
+                                                                                                size="30"> <br>
+                        <input style="width:40px" type="text" name="location4" size="4"> <input type="text"
+                                                                                                name="location4desc"
+                                                                                                size="30"> <br>
+                        <input style="width:40px" type="text" name="location5" size="4"> <input type="text"
+                                                                                                name="location5desc"
+                                                                                                size="30"> <br>
+                        <br>
+                        <input class="btn btn-primary" type="submit" name="action"
+                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingLocation.btnAdd"/>">
+                        <br>
+                        </p>
+                    </form>
+                </td>
 
-			<tr>
-				<form name="serviceform" method="post"
-					action="manageBillingLocation.jsp"
-					onsubmit="return confirmthis(<%=clinicLocation.getClinicLocationNo()%>);">
-				<td align="center"><%=clinicLocation.getClinicLocationNo()%></td>
-				<td><%=clinicLocation.getClinicLocationName()%></td>
-				<td align="center"><input class="btn" type="submit" name="submit"
-					value="Delete" /> <input type="hidden" name="location_no"
-					value="<%=clinicLocation.getClinicLocationNo()%>" /></td>
-				</form>
-			</tr>
-			<%
-	}
-}
-%>
+                <td width="37%" valign="top">
 
-		</table>
+                    <table class="table table-striped  table-condensed">
+                        <tr>
+                            <th width="6%"><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingLocation.msgClinicLocation"/></th>
+                            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.manageBillingLocation.msgDescription"/></th>
+                            <th>Action</th>
+                        </tr>
 
-		</td>
-	</tr>
+                        <%
 
-</table>
-</div>
-</body>
-</html:html>
+                            List<ClinicLocation> clinicLocations = clinicLocationDao.findByClinicNo(1);
+                            int rCount = 0;
+                            boolean bodd = false;
+                            String servicetype_name = "";
+
+                            if (clinicLocations.size() == 0) {
+                                out.println("failed!!!");
+                            } else {
+                        %>
+                        <%
+                            for (ClinicLocation clinicLocation : clinicLocations) {
+                                bodd = bodd ? false : true; //for the color of rows
+                        %>
+
+                        <tr>
+                            <form name="serviceform" method="post"
+                                  action="manageBillingLocation.jsp"
+                                  onsubmit="return confirmthis(<%=clinicLocation.getClinicLocationNo()%>);">
+                                <td align="center"><%=clinicLocation.getClinicLocationNo()%>
+                                </td>
+                                <td><%=clinicLocation.getClinicLocationName()%>
+                                </td>
+                                <td align="center"><input class="btn" type="submit" name="submit"
+                                                          value="Delete"/> <input type="hidden" name="location_no"
+                                                                                  value="<%=clinicLocation.getClinicLocationNo()%>"/>
+                                </td>
+                            </form>
+                        </tr>
+                        <%
+                                }
+                            }
+                        %>
+
+                    </table>
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    </body>
+</html>

@@ -25,11 +25,12 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Alerts Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -38,41 +39,41 @@
     <![endif]-->
 
 
-  </head>
-  <body>
+</head>
+<body>
 
-    <div class="container">
+<div class="container">
 
 
-	    	<h1>Hello, Alerts! <small><a href="index.jsp">view example list</a></small></h1>
+    <h1>Hello, Alerts! <small><a href="index.jsp">view example list</a></small></h1>
 
-      <div class="alert alert-warning fade in">
+    <div class="alert alert-warning fade in">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
         <strong>Holy warning!</strong> example text to display to user.
-      </div>
+    </div>
 
-      <div class="alert alert-success fade in">
+    <div class="alert alert-success fade in">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
         <strong>Holy success!</strong> example text to display to user.
-      </div>
+    </div>
 
-      <div class="alert alert-danger fade in">
+    <div class="alert alert-danger fade in">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
         <strong>Holy danger!</strong> example text to display to user.
-      </div>
+    </div>
 
-      <div class="alert alert-info fade in">
+    <div class="alert alert-info fade in">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">x</button>
         <strong>Holy info!</strong> example text to display to userd.
-      </div>
+    </div>
 
-    </div><!-- /.container -->
+</div><!-- /.container -->
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  </body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
 </html>
 

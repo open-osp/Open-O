@@ -22,81 +22,89 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.PMmodule.web.ManageLinkedClients.LinkedDemographicHolder"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="org.oscarehr.common.dao.DemographicDao"%>
-<%@page import="org.oscarehr.common.model.Demographic"%>
-<%@page import="org.oscarehr.PMmodule.web.ManageLinkedClients"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.PMmodule.web.ManageLinkedClients.LinkedDemographicHolder" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="java.util.ArrayList" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.PMmodule.web.ManageLinkedClients" %>
 
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	DemographicDao demographicDao=(DemographicDao)SpringUtils.getBean(DemographicDao.class);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 
-	int currentDemographicId=Integer.parseInt(request.getParameter("demographicId"));
-	
-	Demographic demographic=demographicDao.getDemographicById(currentDemographicId);
-	ArrayList<ManageLinkedClients.LinkedDemographicHolder> demographicsToDisplay=ManageLinkedClients.getDemographicsToDisplay(loggedInInfo, loggedInInfo.getCurrentFacility(), currentDemographicId);
+    int currentDemographicId = Integer.parseInt(request.getParameter("demographicId"));
+
+    Demographic demographic = demographicDao.getDemographicById(currentDemographicId);
+    ArrayList<ManageLinkedClients.LinkedDemographicHolder> demographicsToDisplay = ManageLinkedClients.getDemographicsToDisplay(loggedInInfo, loggedInInfo.getCurrentFacility(), currentDemographicId);
 %>
 
 <html>
-	<head>
-		<title>Manage Linked Clients</title>
-	</head>
-	<body>
+<head>
+    <title>Manage Linked Clients</title>
+</head>
+<body>
 
 <h3>Manage Linked Clients</h3>
 
 <h4>Demographic</h4>
 <form action="manage_linked_clients_action.jsp">
-	<input type="hidden" name="demographicId" value="<%=currentDemographicId%>" />
-	<table style="padding-left:20px" class="genericTable">
-		<tr class="genericTableRow">
-			<td class="genericTableHeader">Linked</td>
-			<td class="genericTableHeader">Score</td>
-			<td class="genericTableHeader">Last Name</td>
-			<td class="genericTableHeader">First Name</td>
-			<td class="genericTableHeader">Birth Date</td>
-			<td class="genericTableHeader">Gender</td>
-		</tr>
-		<tr class="genericTableRow" style="background-color:#ccffcc">
-			<td class="genericTableData">Local</td>
-			<td class="genericTableData">100</td>
-			<td class="genericTableData"><%=demographic.getLastName()%></td>
-			<td class="genericTableData"><%=demographic.getFirstName()%></td>
-			<td class="genericTableData"><%=demographic.getFormattedDob()%></td>
-			<td class="genericTableData"><%=demographic.getSex()%></td>
-		</tr>
-		<tr>
-			<td colspan="10"></td>
-		</tr>
-	
-		<%
-			if (demographicsToDisplay!=null)
-			{
-				for (LinkedDemographicHolder temp : demographicsToDisplay)
-				{
-					%>
-						<tr class="genericTableRow" style="background-color:#f3f3f3">
-							<td class="genericTableData">
-								<input type="checkbox" name="linked.<%=temp.linkDestination+'.'+temp.remoteLinkId%>" <%=temp.linked?"checked=\"on\"":""%> />
-							</td>
-							<td class="genericTableData"><%=temp.matchingScore%></td>
-							<td class="genericTableData"><%=temp.lastName%></td>
-							<td class="genericTableData"><%=temp.firstName%></td>
-							<td class="genericTableData"><%=temp.birthDate%></td>
-							<td class="genericTableData"><%=temp.gender%></td>
-						</tr>
-					<%
-				}
-			}
-		%>
-	</table>
-	<br />
-	<input type="submit" value="save" /> &nbsp;&nbsp; <input type="button" value="cancel" onclick="history.go(-1)" />
+    <input type="hidden" name="demographicId" value="<%=currentDemographicId%>"/>
+    <table style="padding-left:20px" class="genericTable">
+        <tr class="genericTableRow">
+            <td class="genericTableHeader">Linked</td>
+            <td class="genericTableHeader">Score</td>
+            <td class="genericTableHeader">Last Name</td>
+            <td class="genericTableHeader">First Name</td>
+            <td class="genericTableHeader">Birth Date</td>
+            <td class="genericTableHeader">Gender</td>
+        </tr>
+        <tr class="genericTableRow" style="background-color:#ccffcc">
+            <td class="genericTableData">Local</td>
+            <td class="genericTableData">100</td>
+            <td class="genericTableData"><%=demographic.getLastName()%>
+            </td>
+            <td class="genericTableData"><%=demographic.getFirstName()%>
+            </td>
+            <td class="genericTableData"><%=demographic.getFormattedDob()%>
+            </td>
+            <td class="genericTableData"><%=demographic.getSex()%>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="10"></td>
+        </tr>
+
+        <%
+            if (demographicsToDisplay != null) {
+                for (LinkedDemographicHolder temp : demographicsToDisplay) {
+        %>
+        <tr class="genericTableRow" style="background-color:#f3f3f3">
+            <td class="genericTableData">
+                <input type="checkbox"
+                       name="linked.<%=temp.linkDestination+'.'+temp.remoteLinkId%>" <%=temp.linked ? "checked=\"on\"" : ""%> />
+            </td>
+            <td class="genericTableData"><%=temp.matchingScore%>
+            </td>
+            <td class="genericTableData"><%=temp.lastName%>
+            </td>
+            <td class="genericTableData"><%=temp.firstName%>
+            </td>
+            <td class="genericTableData"><%=temp.birthDate%>
+            </td>
+            <td class="genericTableData"><%=temp.gender%>
+            </td>
+        </tr>
+        <%
+                }
+            }
+        %>
+    </table>
+    <br/>
+    <input type="submit" value="save"/> &nbsp;&nbsp; <input type="button" value="cancel" onclick="history.go(-1)"/>
 </form>
 
-	
-	</body>
+
+</body>
 </html>

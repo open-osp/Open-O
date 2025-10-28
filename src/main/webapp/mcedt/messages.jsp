@@ -23,20 +23,38 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
+
+<%@ taglib uri="/struts-tags" prefix="s"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%> 
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%> 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
 
-<html:errors bundle="mcedt" />
+<!-- Display field errors -->
+<s:if test="hasFieldErrors()">
+    <s:iterator value="fieldErrors">
+        <s:iterator value="value">
+            <div class="alert alert-danger">
+                <p><s:property escapeHtml="false" /></p>
+            </div>
+        </s:iterator>
+    </s:iterator>
+</s:if>
 
-<html:messages id="message" bundle="mcedt" message="true">
-	<div class="alert alert-info">
-		<p>
-			<c:out escapeXml="false" value="${message}" />
-		</p>
-	</div>
-</html:messages>
+<!-- Display action errors -->
+<s:if test="hasActionErrors()">
+    <s:iterator value="actionErrors">
+        <div class="alert alert-danger">
+            <p><s:property escapeHtml="false" /></p>
+        </div>
+    </s:iterator>
+</s:if>
+
+<!-- Display action messages -->
+<s:if test="hasActionMessages()">
+    <s:iterator value="actionMessages">
+        <div class="alert alert-info">
+            <p><s:property escapeHtml="false" /></p>
+        </div>
+    </s:iterator>
+</s:if>

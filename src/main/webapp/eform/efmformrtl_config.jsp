@@ -8,66 +8,70 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@ page import="java.util.*,oscar.oscarDemographic.data.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.data.*,oscar.oscarPrevention.pageUtil.*,oscar.oscarDemographic.pageUtil.*"%>
-<%@ page import="org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.EFormDao" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page
+        import="java.util.*,ca.openosp.openo.demographic.data.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,ca.openosp.openo.demographic.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.dao.EFormDao" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
-  if(session.getAttribute("user") == null) response.sendRedirect("../logout.jsp");
-  String userRole = (String)session.getAttribute("userrole");
-  String status = (String)request.getAttribute("status");
-  EFormDao efd = (EFormDao) SpringUtils.getBean(EFormDao.class);
+    if (session.getAttribute("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String userRole = (String) session.getAttribute("userrole");
+    String status = (String) request.getAttribute("status");
+    EFormDao efd = (EFormDao) SpringUtils.getBean(EFormDao.class);
 %>
 
-<html:html lang="en">
+<html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-<title>Rich Text Letter Settings</title>
-<script src="../share/javascript/Oscar.js"></script>
-
-
-</head>
-
-<body>
-
-<% if (!userRole.toLowerCase().contains("admin")) { %>
-<p>
-<h2>Sorry! Only administrators can change these settings..</h2>
-</p>
-<% } else { %>
-
-<div class="well">
-
-<h3>Rich Text Letter</h3>
-
-<% if (status != null) { %>
-Rich Text Letter is <%= status %>.
-<% } else { %>
-<form action="<%=request.getContextPath()%>/eform/IndivicaRichTextLetterSettings.do" method="post" class="form-inline" id="rtlConfigForm">
-				
-	<label for="indivica_rtl_enabled"><input type="checkbox" name="indivica_rtl_enabled" id="indivica_rtl_enabled" <%= efd.isIndivicaRTLEnabled() ? "checked" : "" %>/> Check to use Rich Text Letter</label>
-	<br/><br/>
-	
-	<input type="submit" class="btn btn-primary" value="Save"/> 
-</form>
-
-</div>
+        <title>Rich Text Letter Settings</title>
+        <script src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 
 
-<%}%>
+    </head>
 
-<%}%>
+    <body>
 
-<script>
-registerFormSubmit('rtlConfigForm', 'dynamic-content');
+    <% if (!userRole.toLowerCase().contains("admin")) { %>
+    <p>
+    <h2>Sorry! Only administrators can change these settings..</h2>
+    </p>
+    <% } else { %>
 
-</script>
-</body>
-</html:html>
+    <div class="well">
+
+        <h3>Rich Text Letter</h3>
+
+        <% if (status != null) { %>
+        Rich Text Letter is <%= status %>.
+        <% } else { %>
+        <form action="<%=request.getContextPath()%>/eform/IndivicaRichTextLetterSettings.do" method="post"
+              class="form-inline" id="rtlConfigForm">
+
+            <label for="indivica_rtl_enabled"><input type="checkbox" name="indivica_rtl_enabled"
+                                                     id="indivica_rtl_enabled" <%= efd.isIndivicaRTLEnabled() ? "checked" : "" %>/>
+                Check to use Rich Text Letter</label>
+            <br/><br/>
+
+            <input type="submit" class="btn btn-primary" value="Save"/>
+        </form>
+
+    </div>
+
+
+    <%}%>
+
+    <%}%>
+
+    <script>
+        registerFormSubmit('rtlConfigForm', 'dynamic-content');
+
+    </script>
+    </body>
+</html>
 <%!
 
 %>

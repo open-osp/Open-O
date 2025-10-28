@@ -26,41 +26,45 @@
 <div class="flex items-center">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_home" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_home" data-score="1">
         <strong>Home</strong>
     </div>
     <div class="pl-4 flex items-center">
         <label class="font-normal flex items-center ml-2"><input type="radio" name="home" class="m-0" autocomplete="off"
-                value="house"> 
-                <span class="pl-1">House</span></label>
+                                                                 value="house">
+            <span class="pl-1">House</span></label>
 
         <label class="font-normal flex items-center ml-2"><input type="radio" name="home" class="m-0" autocomplete="off"
-                value="apartment">
-                <span class="pl-1">Apartment</span></label>
+                                                                 value="apartment">
+            <span class="pl-1">Apartment</span></label>
 
         <label class="font-normal flex items-center ml-2"><input type="radio" name="home" class="m-0" autocomplete="off"
-                value="assisted living">
-                <span class="pl-1">Assisted Living</span></label>
+                                                                 value="assisted living">
+            <span class="pl-1">Assisted Living</span></label>
 
         <label class="font-normal flex items-center ml-2"><input type="radio" name="home" class="m-0" autocomplete="off"
-                value="nursing home">
-                <span class="pl-1">Nursing Home</span></label>
+                                                                 value="nursing home">
+            <span class="pl-1">Nursing Home</span></label>
 
         <label class="font-normal flex items-center ml-2"><input type="radio" name="home" class="m-0" autocomplete="off"
-                value="other"> <span class="pl-1">Other</span></label>
+                                                                 value="other"> <span class="pl-1">Other</span></label>
     </div>
     <div class="pl-4 flex items-center">
         <div class="inline-block">
             <svg height="10" width="10">
-                <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-            </svg><input type="checkbox" class="action-required" name="action_required_steps" data-score="1">
+                <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+            </svg>
+            <input type="checkbox" class="action-required" name="action_required_steps" data-score="1">
             <strong>Steps</strong>
         </div>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="steps" class="m-0" autocomplete="off"
-                value="y"> <span class="pl-1">Y</span> </label>
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="steps" class="m-0" autocomplete="off"
-                value="n"> <span class="pl-1">N</span></label>
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="steps" class="m-0"
+                                                                 autocomplete="off"
+                                                                 value="y"> <span class="pl-1">Y</span> </label>
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="steps" class="m-0"
+                                                                 autocomplete="off"
+                                                                 value="n"> <span class="pl-1">N</span></label>
     </div>
 </div>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--
+        Full Spring Test Context Configuration
+
+        This configuration file sets up a complete Spring context for integration testing
+        that closely mimics the production environment while using an in-memory H2 database.
+
+        Key Components:
+        - H2 in-memory database configured with MySQL compatibility mode
+        - Dual Hibernate SessionFactory and JPA EntityManagerFactory configuration
+        - Transaction management with automatic rollback for test isolation
+        - Manual bean definitions to avoid circular dependencies
+        - Mock security components for bypassing authentication
+
+        Database Configuration:
+        - Uses H2 with MODE=MySQL for MySQL compatibility
+        - DATABASE_TO_LOWER=TRUE to handle case-insensitive table/column names
+        - Connection pooling via Apache DBCP
+
+        Entity Management:
+        - Supports both .hbm.xml mappings (legacy) and JPA annotations
+        - Explicit entity listing in persistence.xml to prevent scanning issues
+        - Custom OscarMySQL5Dialect adapted for H2
+
+        Transaction Management:
+        - @Transactional support with automatic rollback
+        - Proper isolation between test methods
+        - EntityManager flush/clear support for testing detached entities
+    -->
+
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <context:annotation-config/>
+    <tx:annotation-driven proxy-target-class="true"/>
+
+    <!-- Properties -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="properties">
+            <props>
+                <prop key="db_driver">org.h2.Driver</prop>
+                <prop key="db_uri">jdbc:h2:mem:testdb</prop>
+                <prop key="db_name">;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE</prop>
+                <prop key="db_username">sa</prop>
+                <prop key="db_password"></prop>
+                <prop key="db_max_active">10</prop>
+                <prop key="db_max_idle">5</prop>
+                <prop key="db_max_wait">10000</prop>
+                <prop key="db_validationQuery">SELECT 1</prop>
+                <prop key="db_remove_abandoned">false</prop>
+                <prop key="db_remove_abandoned_timeout">300</prop>
+                <prop key="db_log_abandoned">false</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.generate_statistics">false</prop>
+                <prop key="casemgmt.note.password.enabled">false</prop>
+                <prop key="pmm.refer.temporaryAdmission.enabled">false</prop>
+                <prop key="pmm.client.search.outside.of.domain.enabled">false</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- DataSource -->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db_driver}" />
+        <property name="url" value="${db_uri}${db_name}" />
+        <property name="username" value="${db_username}" />
+        <property name="password" value="${db_password}" />
+        <property name="defaultAutoCommit" value="true" />
+        <property name="maxActive" value="${db_max_active}" />
+        <property name="maxIdle" value="${db_max_idle}" />
+        <property name="maxWait" value="${db_max_wait}" />
+        <property name="testOnBorrow" value="true" />
+        <property name="validationQuery" value="${db_validationQuery}" />
+        <property name="poolPreparedStatements" value="false" />
+    </bean>
+
+    <!-- Initialize lookup tables after EntityManagerFactory -->
+    <bean id="databaseInitializer" class="org.springframework.jdbc.datasource.init.DataSourceInitializer">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="databasePopulator">
+            <bean class="org.springframework.jdbc.datasource.init.ResourceDatabasePopulator">
+                <property name="scripts">
+                    <list>
+                        <value>classpath:test-lookup-tables.sql</value>
+                    </list>
+                </property>
+                <property name="sqlScriptEncoding" value="UTF-8"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- SessionFactory extracted from EntityManagerFactory for compatibility -->
+    <bean id="sessionFactory" factory-bean="&amp;entityManagerFactory" factory-method="getNativeEntityManagerFactory" />
+
+    <!-- Configure HibernateTemplate with AUTO flush mode for tests -->
+    <bean id="hibernateTemplate" class="org.springframework.orm.hibernate5.HibernateTemplate">
+        <property name="sessionFactory" ref="sessionFactory" />
+        <property name="checkWriteOperations" value="false" />
+    </bean>
+
+    <!-- JPA EntityManagerFactory - use the SessionFactory we configured -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="persistenceUnitName" value="entityManagerFactory" />
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+        </property>
+        <!-- Scan all packages with entities -->
+        <property name="packagesToScan">
+            <list>
+                <value>ca.openosp.openo</value>
+            </list>
+        </property>
+        <!-- Use same mappings as SessionFactory -->
+        <property name="mappingResources">
+            <list>
+                <value>ca/openosp/openo/commn/model/Provider.hbm.xml</value>
+                <value>ca/openosp/openo/commn/model/Demographic.hbm.xml</value>
+                <value>ca/openosp/openo/PMmodule/model/Program.hbm.xml</value>
+                <value>ca/openosp/openo/PMmodule/model/ProgramClientStatus.hbm.xml</value>
+                <value>ca/openosp/openo/PMmodule/model/ProgramTeam.hbm.xml</value>
+                <value>ca/openosp/openo/PMmodule/model/ProgramAccess.hbm.xml</value>
+                <value>ca/openosp/openo/PMmodule/model/AccessType.hbm.xml</value>
+                <value>com/quatro/model/security/Secrole.hbm.xml</value>
+            </list>
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="database" value="H2" />
+                <property name="showSql" value="false" />
+                <property name="generateDdl" value="true" />
+            </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</prop>
+                <prop key="hibernate.flushMode">AUTO</prop>
+                <prop key="org.hibernate.flushMode">COMMIT</prop>
+                <prop key="javax.persistence.flush-mode">AUTO</prop>
+                <prop key="hibernate.transaction.flush_before_completion">true</prop>
+                <prop key="hibernate.transaction.auto_close_session">false</prop>
+                <prop key="hibernate.cache.use_second_level_cache">false</prop>
+                <prop key="hibernate.id.new_generator_mappings">true</prop>
+                <prop key="hibernate.archive.autodetection">class,hbm</prop>
+                <prop key="hibernate.ejb.metamodel.population">enabled</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- JPA support -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <!-- TransactionManager - JpaTransactionManager handles both JPA and Hibernate -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager" autowire="byName">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <!-- Set default timeout for test transactions -->
+        <property name="defaultTimeout" value="60" />
+        <!-- Ensure Hibernate sessions are handled properly -->
+        <property name="nestedTransactionAllowed" value="true" />
+    </bean>
+
+    <!-- Enable annotation-driven transactions -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!-- Component scanning disabled - we'll manually define beans instead -->
+    <!-- This avoids issues with DAOs trying to access SpringUtils during initialization -->
+
+    <!-- Manually define DAOs needed for Tickler tests -->
+    <bean id="ticklerDao" class="ca.openosp.openo.commn.dao.TicklerDaoImpl" autowire="byName" />
+    <bean id="ticklerCommentDao" class="ca.openosp.openo.commn.dao.TicklerCommentDaoImpl" autowire="byName" />
+    <bean id="ticklerLinkDao" class="ca.openosp.openo.commn.dao.TicklerLinkDaoImpl" autowire="byName" />
+    <bean id="ticklerUpdateDao" class="ca.openosp.openo.commn.dao.TicklerUpdateDaoImpl" autowire="byName" />
+    <bean id="ticklerTextSuggestDao" class="ca.openosp.openo.commn.dao.TicklerTextSuggestDaoImpl" autowire="byName" />
+    <bean id="ticklerCategoryDao" class="ca.openosp.openo.commn.dao.TicklerCategoryDaoImpl" autowire="byName" />
+    <bean id="customFilterDao" class="ca.openosp.openo.commn.dao.CustomFilterDaoImpl" autowire="byName" />
+    <bean id="oscarLogDao" class="ca.openosp.openo.commn.dao.OscarLogDaoImpl" autowire="byName" />
+
+    <!-- Additional DAOs required by TicklerManager -->
+    <bean id="programAccessDAO" class="ca.openosp.openo.PMmodule.dao.ProgramAccessDAOImpl" autowire="byName" />
+    <bean id="ProgramAccessDAO" class="ca.openosp.openo.PMmodule.dao.ProgramAccessDAOImpl" autowire="byName" />
+    <bean id="programProviderDAO" class="ca.openosp.openo.PMmodule.dao.ProgramProviderDAOImpl" autowire="byName" />
+    <bean id="ProgramProviderDAO" class="ca.openosp.openo.PMmodule.dao.ProgramProviderDAOImpl" autowire="byName" />
+    <bean id="providerDao" class="ca.openosp.openo.PMmodule.dao.ProviderDaoImpl" autowire="byName" />
+    <bean id="providerExtDao" class="ca.openosp.openo.commn.dao.ProviderExtDaoImpl" autowire="byName" />
+    <bean id="hashAuditDao" class="ca.openosp.openo.commn.dao.HashAuditDaoImpl" autowire="byName" />
+
+    <!-- Manually define managers -->
+    <bean id="ticklerManager" class="ca.openosp.openo.managers.TicklerManagerImpl" autowire="byName" />
+    <!-- Use mock SecurityInfoManager that always grants access for tests -->
+    <bean id="securityInfoManager" class="ca.openosp.openo.test.mocks.MockSecurityInfoManager" />
+    <bean id="programManager" class="ca.openosp.openo.PMmodule.service.ProgramManagerImpl" autowire="byName">
+        <property name="enabled" value="${pmm.refer.temporaryAdmission.enabled}" />
+    </bean>
+    <bean id="caseManagementManager" class="ca.openosp.openo.casemgmt.service.CaseManagementManagerImpl" autowire="byName">
+        <property name="caseManagementNoteDAO" ref="CaseManagementNoteDAO" />
+        <property name="caseManagementNoteExtDAO" ref="CaseManagementNoteExtDAO" />
+        <property name="caseManagementNoteLinkDAO" ref="CaseManagementNoteLinkDAO" />
+        <property name="caseManagementIssueDAO" ref="CaseManagementIssueDAO" />
+        <property name="caseManagementTmpSaveDao" ref="CaseManagementTmpSaveDao" />
+        <property name="caseManagementCPPDAO" ref="CaseManagementCPPDAO" />
+        <property name="issueDAO" ref="IssueDAO" />
+        <property name="demographicDao" ref="demographicDao" />
+        <property name="roleProgramAccessDAO" ref="RoleProgramAccessDAO" />
+        <property name="userPropertyDAO" ref="UserPropertyDAO" />
+        <property name="rolesManager" ref="rolesManager" />
+        <property name="admissionManager" ref="admissionManager" />
+        <property name="enabled" value="${casemgmt.note.password.enabled}" />
+        <property name="programManager" ref="programManager" />
+        <property name="dxresearchDAO" ref="DxresearchDAO" />
+        <property name="programProviderDao" ref="programProviderDAO" />
+        <property name="programAccessDAO" ref="programAccessDAO" />
+        <property name="eChartDao" ref="eChartDao"/>
+        <property name="encounterWindowDao" ref="encounterWindowDao"/>
+        <property name="appointmentArchiveDao" ref="appointmentArchiveDao" />
+        <property name="dxDao" ref="DxDao" />
+    </bean>
+
+    <!-- Specific DAOs that might need manual configuration -->
+    <bean id="gstControlDao" class="ca.openosp.openo.billing.CA.dao.GstControlDaoImpl" autowire="byName" />
+
+    <bean id="demographicDao" class="ca.openosp.openo.commn.dao.DemographicDaoImpl" autowire="byName">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <bean id="programDao" class="ca.openosp.openo.PMmodule.dao.ProgramDaoImpl" autowire="byName" />
+    <bean id="programQueueDao" class="ca.openosp.openo.PMmodule.dao.ProgramQueueDaoImpl" autowire="byName" />
+    <bean id="clientReferralDAO" class="ca.openosp.openo.PMmodule.dao.ClientReferralDAOImpl" autowire="byName" />
+    <bean id="agencyDao" class="ca.openosp.openo.PMmodule.dao.AgencyDaoImpl" autowire="byName" />
+
+    <!-- Case Management DAOs -->
+    <bean id="CaseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
+    <bean id="caseManagementIssueDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementIssueDAOImpl" autowire="byName" />
+    <bean id="CaseManagementNoteDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
+    <bean id="caseManagementNoteDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteDAOImpl" autowire="byName" />
+    <bean id="CaseManagementTmpSaveDao" class="ca.openosp.openo.commn.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
+    <bean id="caseManagementTmpSaveDao" class="ca.openosp.openo.commn.dao.CaseManagementTmpSaveDaoImpl" autowire="byName" />
+    <bean id="CaseManagementNoteExtDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteExtDAOImpl" autowire="byName" />
+    <bean id="CaseManagementNoteLinkDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementNoteLinkDAOImpl" autowire="byName" />
+    <bean id="CaseManagementCPPDAO" class="ca.openosp.openo.casemgmt.dao.CaseManagementCPPDAOImpl" autowire="byName" />
+
+    <!-- More DAOs -->
+    <bean id="IssueDAO" class="ca.openosp.openo.casemgmt.dao.IssueDAOImpl" autowire="byName" />
+    <bean id="RoleProgramAccessDAO" class="ca.openosp.openo.casemgmt.dao.RoleProgramAccessDAOImpl" autowire="byName" />
+    <bean id="UserPropertyDAO" class="ca.openosp.openo.commn.dao.UserPropertyDAOImpl" autowire="byName" />
+    <bean id="DxresearchDAO" class="ca.openosp.openo.commn.dao.DxresearchDAOImpl" autowire="byName" />
+    <bean id="appointmentArchiveDao" class="ca.openosp.openo.commn.dao.AppointmentArchiveDaoImpl" autowire="byName" />
+    <bean id="DxDao" class="ca.openosp.openo.commn.dao.DxDaoImpl" autowire="byName" />
+    <bean id="eChartDao" class="ca.openosp.openo.commn.dao.EChartDaoImpl" autowire="byName" />
+    <bean id="encounterWindowDao" class="ca.openosp.openo.commn.dao.EncounterWindowDaoImpl" autowire="byName" />
+
+    <!-- Managers -->
+    <bean id="admissionManager" class="ca.openosp.openo.PMmodule.service.AdmissionManagerImpl" autowire="byType" />
+
+    <!-- Security DAOs -->
+    <bean id="secroleDao" class="ca.openosp.openo.daos.security.SecroleDaoImpl" autowire="byName"/>
+    <bean id="secobjprivilegeDao" class="ca.openosp.openo.daos.security.SecobjprivilegeDaoImpl" autowire="byName" />
+    <bean id="secUserRoleDao" class="ca.openosp.openo.daos.security.SecuserroleDaoImpl" autowire="byName" />
+
+    <bean id="rolesManager" class="ca.openosp.openo.services.security.RolesManagerImpl" autowire="byName">
+        <property name="secroleDao" ref="secroleDao" />
+        <property name="secobjprivilegeDao" ref="secobjprivilegeDao" />
+    </bean>
+
+    <!-- OscarSuperManager -->
+    <bean id="oscarSuperManager" class="ca.openosp.openo.service.OscarSuperManagerImpl" autowire="byName"/>
+
+</beans>

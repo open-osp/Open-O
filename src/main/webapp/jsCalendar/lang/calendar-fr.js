@@ -14,13 +14,13 @@
 // full day names
 Calendar._DN = new Array
 ("Dimanche",
- "Lundi",
- "Mardi",
- "Mercredi",
- "Jeudi",
- "Vendredi",
- "Samedi",
- "Dimanche");
+    "Lundi",
+    "Mardi",
+    "Mercredi",
+    "Jeudi",
+    "Vendredi",
+    "Samedi",
+    "Dimanche");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -37,71 +37,71 @@ Calendar._DN = new Array
 // short day names
 Calendar._SDN = new Array
 ("Dim",
- "Lun",
- "Mar",
- "Mar",
- "Jeu",
- "Ven",
- "Sam",
- "Dim");
+    "Lun",
+    "Mar",
+    "Mar",
+    "Jeu",
+    "Ven",
+    "Sam",
+    "Dim");
 
 // full month names
 Calendar._MN = new Array
 ("Janvier",
- "Février",
- "Mars",
- "Avril",
- "Mai",
- "Juin",
- "Juillet",
- "Août",
- "Septembre",
- "Octobre",
- "Novembre",
- "Décembre");
+    "Fï¿½vrier",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Aoï¿½t",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Dï¿½cembre");
 
 // short month names
 Calendar._SMN = new Array
 ("Jan",
- "Fev",
- "Mar",
- "Avr",
- "Mai",
- "Juin",
- "Juil",
- "Aout",
- "Sep",
- "Oct",
- "Nov",
- "Dec");
+    "Fev",
+    "Mar",
+    "Avr",
+    "Mai",
+    "Juin",
+    "Juil",
+    "Aout",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec");
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "A propos du calendrier";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Heure Selecteur\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"Pour la derniere version visitez : http://www.dynarch.com/projects/calendar/\n" +
-"Distribué par GNU LGPL.  Voir http://gnu.org/licenses/lgpl.html pour les details." +
-"\n\n" +
-"Selection de la date :\n" +
-"- Utiliser les bouttons \xab, \xbb  pour selectionner l\'annee\n" +
-"- Utiliser les bouttons " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " pour selectionner les mois\n" +
-"- Garder la souris sur n'importe quels boutons pour une selection plus rapide";
+    "DHTML Date/Heure Selecteur\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "Pour la derniere version visitez : http://www.dynarch.com/projects/calendar/\n" +
+    "Distribuï¿½ par GNU LGPL.  Voir http://gnu.org/licenses/lgpl.html pour les details." +
+    "\n\n" +
+    "Selection de la date :\n" +
+    "- Utiliser les bouttons \xab, \xbb  pour selectionner l\'annee\n" +
+    "- Utiliser les bouttons " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " pour selectionner les mois\n" +
+    "- Garder la souris sur n'importe quels boutons pour une selection plus rapide";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Selection de l\'heure :\n" +
-"- Cliquer sur heures ou minutes pour incrementer\n" +
-"- ou Maj-clic pour decrementer\n" +
-"- ou clic et glisser-deplacer pour une selection plus rapide";
+    "Selection de l\'heure :\n" +
+    "- Cliquer sur heures ou minutes pour incrementer\n" +
+    "- ou Maj-clic pour decrementer\n" +
+    "- ou clic et glisser-deplacer pour une selection plus rapide";
 
-Calendar._TT["PREV_YEAR"] = "Année préc. (maintenir pour menu)";
-Calendar._TT["PREV_MONTH"] = "Mois préc. (maintenir pour menu)";
+Calendar._TT["PREV_YEAR"] = "Annï¿½e prï¿½c. (maintenir pour menu)";
+Calendar._TT["PREV_MONTH"] = "Mois prï¿½c. (maintenir pour menu)";
 Calendar._TT["GO_TODAY"] = "Atteindre la date du jour";
 Calendar._TT["NEXT_MONTH"] = "Mois suiv. (maintenir pour menu)";
-Calendar._TT["NEXT_YEAR"] = "Année suiv. (maintenir pour menu)";
-Calendar._TT["SEL_DATE"] = "Sélectionner une date";
-Calendar._TT["DRAG_TO_MOVE"] = "Déplacer";
+Calendar._TT["NEXT_YEAR"] = "Annï¿½e suiv. (maintenir pour menu)";
+Calendar._TT["SEL_DATE"] = "Sï¿½lectionner une date";
+Calendar._TT["DRAG_TO_MOVE"] = "Dï¿½placer";
 Calendar._TT["PART_TODAY"] = " (Aujourd'hui)";
 
 // the following is to inform that "%s" is to be the first day of week

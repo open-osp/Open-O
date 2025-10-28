@@ -26,15 +26,15 @@
 
 <%@page import="java.net.URLEncoder" %>
 <%@page import="java.util.List" %>
-<%@page import="oscar.util.ConversionUtils" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
 
 <table width="100%" border="2" valign="top">
 	<% 
  String dateBegin = request.getParameter("xml_vdate");
    String dateEnd = request.getParameter("xml_appointment_date");
-   if (dateEnd.compareTo("") == 0) dateEnd = oscar.MyDateFormat.getMysqlStandardDate(curYear, curMonth, curDay);
+   if (dateEnd.compareTo("") == 0) dateEnd = MyDateFormat.getMysqlStandardDate(curYear, curMonth, curDay);
    if (dateBegin.compareTo("") == 0) dateBegin="1950-01-01"; // set to any early time to start search from beginning
 
    	List<Appointment> bs = appointmentDao.search_unbill_history_daterange(request.getParameter("providerview"),ConversionUtils.fromDateString(dateBegin),ConversionUtils.fromDateString(dateEnd));
@@ -83,7 +83,7 @@
 			face="Arial, Helvetica, sans-serif"><%=reason%> </font></b></TD>
 		<TD align="center" width="10%"><b> <font size="2"
 			face="Arial, Helvetica, sans-serif"><a href=#
-			onClick='popupPage(700,1000, "../../../billing.do?billRegion=<%=URLEncoder.encode(oscarVariables.getProperty("billregion"))%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=&appointment_no=<%=apptNo%>&demographic_name=<%=URLEncoder.encode(demoName)%>&status=<%=apptStatus%>&demographic_no=<%=demoNo%>&user_no=<%=userno%>&apptProvider_no=<%=providerview%>&appointment_date=<%=apptDate%>&start_time=<%=apptTime==null?"00:00:00":apptTime%>&bNewForm=1")'
+			onClick='popupPage(700,1000, "<%= request.getContextPath() %>/billing.do?billRegion=<%=URLEncoder.encode(oscarVariables.getProperty("billregion"))%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=&appointment_no=<%=apptNo%>&demographic_name=<%=URLEncoder.encode(demoName)%>&status=<%=apptStatus%>&demographic_no=<%=demoNo%>&user_no=<%=userno%>&apptProvider_no=<%=providerview%>&appointment_date=<%=apptDate%>&start_time=<%=apptTime==null?"00:00:00":apptTime%>&bNewForm=1")'
 			title="<%=reason%>">Bill |$|</a></font></b></TD>
 	</tr>
 	<%  rowCount = rowCount + 1;

@@ -24,43 +24,43 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-<%@page	import="org.springframework.web.context.WebApplicationContext" %>
+"http://www.w3.org/TR/html4/loose.dtd">
+<%@page import="org.springframework.web.context.WebApplicationContext" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNoteLink" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <%@page import="java.util.List" %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 
 <%
     String demo = request.getParameter("demo");
     String display = request.getParameter("display");
     String tid = request.getParameter("table_id");
     Long tableId = 0L;
-    if (tid!=null && !tid.trim().isEmpty()) tableId = Long.valueOf(tid);
+    if (tid != null && !tid.trim().isEmpty()) tableId = Long.valueOf(tid);
 
-    WebApplicationContext  ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
+    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
     CaseManagementManager cmm = (CaseManagementManager) ctx.getBean(CaseManagementManager.class);
 
     Integer tableName = cmm.getTableNameByDisplay(display);
@@ -70,37 +70,47 @@
 
         CaseManagementNote cmnote = cmm.getNote(link.getNoteId().toString());
         if (cmnote.getNote().startsWith("imported.cms4.2011.06")) {
-        	dump = cmnote.getNote().substring("imported.cms4.2011.06".length());
-        	break;
+            dump = cmnote.getNote().substring("imported.cms4.2011.06".length());
+            break;
         }
     }
     Boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
 %>
 
 
-<html:html lang="en">
-<head>
-    <title><%=display %> Import</title>
-    <% if (isMobileOptimized) { %>
-        <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width" />
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardMobileLayout.css" />
-    <% } else { %>
-    <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
+<html>
+    <head>
+        <title><%=display %> Import</title>
+        <% if (isMobileOptimized) { %>
+        <meta name="viewport"
+              content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width"/>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardMobileLayout.css"/>
+        <% } else { %>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
         <style type="text/css">
-            body { font-size: x-small; }
-            textarea { width: 100%; margin: 5px 0; }
-            div.label { float: left; }
+            body {
+                font-size: x-small;
+            }
+
+            textarea {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            div.label {
+                float: left;
+            }
         </style>
-    <% } %>
-</head>
+        <% } %>
+    </head>
 
-<body bgcolor="#EEEEFF" onload="document.forms[0].note.focus();">
-	<div class="header"></div>
-	<div class="panel">
-		Extra data from Import:<br>
-		<textarea rows="10" name="dump" readonly="readonly"><%=dump%></textarea>
-		<input type="button" value="Close" onclick="window.close();"/>
-	</div>
-</body>
+    <body bgcolor="#EEEEFF" onload="document.forms[0].note.focus();">
+    <div class="header"></div>
+    <div class="panel">
+        Extra data from Import:<br>
+        <textarea rows="10" name="dump" readonly="readonly"><%=dump%></textarea>
+        <input type="button" value="Close" onclick="window.close();"/>
+    </div>
+    </body>
 
-</html:html>
+</html>

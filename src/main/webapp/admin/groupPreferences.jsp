@@ -23,29 +23,29 @@
     Ontario, Canada
 
 --%>
- 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 
-<%@ page import="java.util.List"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup, org.oscarehr.common.dao.MyGroupDao"%>
-<%@ page import="org.oscarehr.common.model.MyGroupPrimaryKey" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingService, org.oscarehr.common.dao.CtlBillingServiceDao"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+
+<%@ page import="java.util.List" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup, ca.openosp.openo.commn.dao.MyGroupDao" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingService, ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.userAdmin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.userAdmin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
@@ -53,113 +53,117 @@ if(!authed) {
     CtlBillingServiceDao ctlBillingServiceDao = (CtlBillingServiceDao) SpringUtils.getBean(CtlBillingServiceDao.class);
     String currentForm = "";
 %>
-<html:html lang="en">
+<html>
     <head>
-            <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-            <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>          
-            <script type="text/javascript">
-		 function changeBillingForm() {
-                        document.forms["groupPreference"].method.value="setDefaultBillingForm";
-                        document.forms["groupPreference"].submit();
-                }
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript">
+            function changeBillingForm() {
+                document.getElementById('method').value = "setDefaultBillingForm";
+                document.getElementById('groupPreference').submit();
+            }
 
-                function savePreference() {
-                        document.forms["groupPreference"].method.value="save";
-                        document.forms["groupPreference"].submit();
-                }
-            </script>
-            <title><bean:message key="admin.grouppref.title" /></title>
+            function savePreference() {
+                document.getElementById('method').value = "save";
+                document.getElementById('groupPreference').submit();
+            }
+        </script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.grouppref.title"/></title>
     </head>
 
 
     <body topmargin="0" leftmargin="0" rightmargin="0">
 
-        <html:form method="post" action="/admin/GroupPreference">
-            
-            <input type="hidden" id="method" name="method"/>
-            
-            <%if(request.getAttribute("saved") != null) { %>
-            	<span style="color:red">Preference has been saved</span>
-            <% } %>
-            <!--Header-->
-            <table border=0 cellspacing=0 cellpadding=0 width="100%">
-		<tr bgcolor="#486ebd">
-                    <th align=CENTER NOWRAP>
-                        <font face="Helvetica" color="#FFFFFF">
-                                <bean:message key="admin.grouppref.title" />
-                        </font>
-                    </th>
-                </tr>
-            </table>
-            
-            <!--Group/Billing Form Content-->
-            <div style="text-align: center">
-                <table border="0" cellpadding="0" cellspacing="0" width="80%" style="margin-left:auto; margin-right:auto; text-align:left">
-                    <tr>
-                        <td width="100%">
+    <form id="groupPreference" method="post" action="${pageContext.request.contextPath}/admin/GroupPreference.do">
 
-                            <table BORDER="0" CELLPADDING="0" CELLSPACING="1" WIDTH="100%" BGCOLOR="#C0C0C0">
-                                <tr BGCOLOR="#CCFFFF">
-                                    <td ALIGN="center" style="font-weight:bold; font-family:sans-serif"><bean:message key="admin.grouppref.selectBillingForm" /></td>
-                                    <td ALIGN="center">					
-                                        <select id="chosenForm" name="chosenForm" onChange="changeBillingForm()">
-                                                    <option value=""></option>
-                                                    <%
-                                                        List<Object[]> forms = ctlBillingServiceDao.getUniqueServiceTypes();
-                                                        for(Object[] form:forms) {
-                                                            String serviceType = (String)form[0];
-                                                            String selected="";
-                                                            if(serviceType.equals(request.getParameter("chosenForm"))) {
-                                                                    currentForm = serviceType; 
-                                                                    selected=" selected=\"selected\" ";
-                                                            }
-                                                    %>
-                                                    <option value="<%=serviceType%>" <%=selected%>><%=(String)form[1]%></option>
-                                                    <%  } %>						
-                                            </select>
-                                    </td>
-                                </tr>
+        <input type="hidden" id="method" name="method"/>
 
-                                <%	
-                                    List<String> groups = myGroupDao.getGroups();
+        <%if (request.getAttribute("saved") != null) { %>
+        <span style="color:red">Preference has been saved</span>
+        <% } %>
+        <!--Header-->
+        <table border=0 cellspacing=0 cellpadding=0 width="100%">
+            <tr bgcolor="#486ebd">
+                <th align=CENTER NOWRAP>
+                    <font face="Helvetica" color="#FFFFFF">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.grouppref.title"/>
+                    </font>
+                </th>
+            </tr>
+        </table>
 
-                                    int i=0;
-                                    for(String group:groups) {
-
-                                        String selected="";
-                                        String defaultBillForm = myGroupDao.getDefaultBillingForm(group);
-                                        if(defaultBillForm != null && defaultBillForm.equals(currentForm)) {
-                                                selected=" checked=\"checked\" ";
-                                        }
-
-                                        i++;
-                                %>
-                                <tr BGCOLOR="<%=i%2==0?"ivory":"white"%>">
-                                    <td>&nbsp; <%=group%></td>
-                                    <td ALIGN="center">
-                                            <input type="checkbox" name="data" <%=selected%> value="<%=group%>"> 					
-                                </tr>
-                                <%  } %>	
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <!--footer-->
-            <table width="100%" BGCOLOR="#486ebd">
+        <!--Group/Billing Form Content-->
+        <div style="text-align: center">
+            <table border="0" cellpadding="0" cellspacing="0" width="80%"
+                   style="margin-left:auto; margin-right:auto; text-align:left">
                 <tr>
-                    <td align="center">
-			<input type="button" name="Submit" value="<bean:message key='admin.adminnewgroup.btnSubmit'/>" onClick="savePreference()"/>
-			
+                    <td width="100%">
+
+                        <table BORDER="0" CELLPADDING="0" CELLSPACING="1" WIDTH="100%" BGCOLOR="#C0C0C0">
+                            <tr BGCOLOR="#CCFFFF">
+                                <td ALIGN="center" style="font-weight:bold; font-family:sans-serif"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.grouppref.selectBillingForm"/></td>
+                                <td ALIGN="center">
+                                    <select id="chosenForm" name="chosenForm" onChange="changeBillingForm()">
+                                        <option value=""></option>
+                                        <%
+                                            List<Object[]> forms = ctlBillingServiceDao.getUniqueServiceTypes();
+                                            for (Object[] form : forms) {
+                                                String serviceType = (String) form[0];
+                                                String selected = "";
+                                                if (serviceType.equals(request.getParameter("chosenForm"))) {
+                                                    currentForm = serviceType;
+                                                    selected = " selected=\"selected\" ";
+                                                }
+                                        %>
+                                        <option value="<%=serviceType%>" <%=selected%>><%=(String) form[1]%>
+                                        </option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <%
+                                List<String> groups = myGroupDao.getGroups();
+
+                                int i = 0;
+                                for (String group : groups) {
+
+                                    String selected = "";
+                                    String defaultBillForm = myGroupDao.getDefaultBillingForm(group);
+                                    if (defaultBillForm != null && defaultBillForm.equals(currentForm)) {
+                                        selected = " checked=\"checked\" ";
+                                    }
+
+                                    i++;
+                            %>
+                            <tr BGCOLOR="<%=i%2==0?"ivory":"white"%>">
+                                <td>&nbsp; <%=group%>
+                                </td>
+                                <td ALIGN="center">
+                                    <input type="checkbox" name="data" <%=selected%> value="<%=group%>">
+                            </tr>
+                            <% } %>
+                        </table>
                     </td>
                 </tr>
             </table>
+        </div>
+        <!--footer-->
+        <table width="100%" BGCOLOR="#486ebd">
+            <tr>
+                <td align="center">
+                    <input type="button" name="Submit" value="<fmt:setBundle basename='oscarResources'/><fmt:message key='admin.adminnewgroup.btnSubmit'/>"
+                           onClick="savePreference()"/>
 
-        </html:form>
-        
-        <br>
-        
+                </td>
+            </tr>
+        </table>
+
+    </form>
+
+    <br>
+
     </body>
-</html:html>
+</html>
     
 

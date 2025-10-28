@@ -15,14 +15,14 @@
 		<version>07-15-2016</version>
 		<params>
 			<!-- 
-				Required parameter provider. Value options are: 
-					[ an individual providerNo, or provider range ] ie: value="370, 1001" 
+				Required parameter providers. Value options are:
+					[ an individual providerNo, or providers range ] ie: value="370, 1001"
 					"all" ie: value="all" including null.
 					"loggedInProvider" ie:
 				Default is "loggedInProvider"
-				Use this parameter in the query as ${provider}
+				Use this parameter in the query as ${providers}
 				This parameter should be used for fetching patient's assigned to a MRP.
-				ie: WHERE demographic.provider_no = ${provider}
+				ie: WHERE demographic.provider_no = ${providers}
 			-->
 			<parameter id="provider" name="Provider Number" value="loggedInProvider" />
 			<!-- 
@@ -86,14 +86,14 @@ AND d.demographic_no NOT IN ${excludedPatient}
 		<version>07-20-2016</version>
 		<params>
 			<!-- 
-				Required parameter provider. Value options are: 
-					[ an individual providerNo, or provider range ] ie: value="370, 1001" 
+				Required parameter providers. Value options are:
+					[ an individual providerNo, or providers range ] ie: value="370, 1001"
 					"clinic (all providers)" ie: value="all"
 					"loggedInProvider" ie:
 				Default is "loggedInProvider"
-				Use this parameter in the query as ${provider}
+				Use this parameter in the query as ${providers}
 				This parameter should be used for fetching patient's assigned to a MRP.
-				ie: WHERE demographic.provider_no = ${provider}
+				ie: WHERE demographic.provider_no = ${providers}
 			-->
 			<parameter id="provider" name="Provider Number" value="loggedInProvider" />
 			<!-- 

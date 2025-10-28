@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,97 +24,102 @@
 --%>
 
 
-
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <script>
-function search_provider(name) {
-	var url = '<html:rewrite action="/PMmodule/ProviderSearch.do"/>';
-		url += '?q=' + name;
-		url += '&formName=programManagerForm';
-		url += '&formElementId=function.providerNo';
-		url += '&formElementName=providerName';
-	
-	var name = document.programManagerForm.elements['providerName'].value;
-	
-	window.open(url, 'provider_search','width=500, height=400, scrollbars=yes');
-}
+    function search_provider(name) {
+        var url = '<%=request.getContextPath() %>/PMmodule/ProviderSearch.do';
+        url += '?q=' + name;
+        url += '&formName=programManagerForm';
+        url += '&formElementId=function.providerNo';
+        url += '&formElementName=providerName';
 
-function deleteFunctionalUser(id) {
-	if(!confirm("Are you sure you want to delete the functional user entry?")) {
-		return;
-	}
-	document.programManagerForm.elements['function.id'].value=id;
-	document.programManagerForm.method.value='delete_function';
-	document.programManagerForm.submit();
-}
+        var name = document.programManagerForm.elements['providerName'].value;
 
-function editFunctionalUser(id) {
-	document.programManagerForm.elements['function.id'].value=id;
-	document.programManagerForm.method.value='edit_function';
-	document.programManagerForm.submit();
-}
+        window.open(url, 'provider_search', 'width=500, height=400, scrollbars=yes');
+    }
 
-function add_functional_user(form) {
-	alert('temporarily disabled');
-	return false;
-/*
-	if(form.elements['function.providerNo'].value == '' || form.elements['function.providerNo'].value == 0) {
-		alert('You must choose a provider');
-		return false;
-	}
-	form.elements['function.id'].value='0';
-	form.method.value='save_function';
-	form.submit();
-*/
-}
+    function deleteFunctionalUser(id) {
+        if (!confirm("Are you sure you want to delete the functional user entry?")) {
+            return;
+        }
+        document.programManagerForm.elements['function.id'].value = id;
+        document.programManagerForm.method.value = 'delete_function';
+        document.programManagerForm.submit();
+    }
+
+    function editFunctionalUser(id) {
+        document.programManagerForm.elements['function.id'].value = id;
+        document.programManagerForm.method.value = 'edit_function';
+        document.programManagerForm.submit();
+    }
+
+    function add_functional_user(form) {
+        alert('temporarily disabled');
+        return false;
+        /*
+            if(form.elements['function.providerNo'].value == '' || form.elements['function.providerNo'].value == 0) {
+                alert('You must choose a providers');
+                return false;
+            }
+            form.elements['function.id'].value='0';
+            form.method.value='save_function';
+            form.submit();
+        */
+    }
 </script>
 <div class="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Programs">Functional Users</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Programs">Functional Users</th>
+        </tr>
+    </table>
 </div>
-<!--  show current staff -->
-<display:table class="simple" cellspacing="2" cellpadding="3" id="functional" name="functional_users" export="false" pagesize="0" requestURI="/PMmodule/ProgramManager.do">
-	<display:setProperty name="paging.banner.placement" value="bottom" />
-	<display:setProperty name="basic.msg.empty_list" value="No functional users defined for this program" />
-	<display:column sortable="false" title="">
-		<a onclick="deleteFunctionalUser('<c:out value="${functional.id}"/>');return false;" href="javascript:void(0);"> Delete </a>
-	</display:column>
-	<display:column property="userType.name" sortable="true" title="Functional User Type" />
-	<display:column property="provider.formattedName" sortable="true" title="Provider Name" />
+<!-- show current staff -->
+<display:table class="simple" cellspacing="2" cellpadding="3" id="functional" name="functional_users" export="false"
+               pagesize="0" requestURI="/PMmodule/ProgramManager.do">
+    <display:setProperty name="paging.banner.placement" value="bottom"/>
+    <display:setProperty name="basic.msg.empty_list" value="No functional users defined for this program"/>
+    <display:column sortable="false" title="">
+        <a onclick="deleteFunctionalUser('<c:out value="${functional.id}"/>');return false;" href="javascript:void(0);">
+            Delete </a>
+    </display:column>
+    <display:column property="userType.name" sortable="true" title="Functional User Type"/>
+    <display:column property="provider.formattedName" sortable="true" title="Provider Name"/>
 </display:table>
-<br />
-<br />
+<br/>
+<br/>
 <table width="100%" border="1" cellspacing="2" cellpadding="3">
-	<tr class="b">
-		<td width="20%">Provider :</td>
-		<td>
-			<html:hidden property="function.id" />
-			<html:hidden property="function.providerNo" />
-			<%
-			String providerName = (String) request.getAttribute("providerName");
-			if (providerName == null) {
-				providerName = "";
-			}
-			%>
-			<input type="text" name="providerName" size="30" value="<%=providerName%>" />
-			<input type="button" value="Search" onclick="search_provider(this.form.providerName.value);" />
-		</td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Functional User Type:</td>
-		<td>
-			<html:select property="function.userTypeId">
-				<html:options collection="functionalUserTypes" property="id" labelProperty="name" />
-			</html:select>
-		</td>
-	</tr>
-	<tr>
-		<td colspan="2">
-			<input type="button" value="Save" onclick="add_functional_user(this.form)" />
-			<html:cancel />
-		</td>
-	</tr>
+    <tr class="b">
+        <td width="20%">Provider :</td>
+        <td>
+            <input type="hidden" name="id" id="id"/>
+            <input type="hidden" name="providerNo" id="providerNo"/>
+            <%
+                String providerName = (String) request.getAttribute("providerName");
+                if (providerName == null) {
+                    providerName = "";
+                }
+            %>
+            <input type="text" name="providerName" size="30" value="<%=providerName%>"/>
+            <input type="button" value="Search" onclick="search_provider(this.form.providerName.value);"/>
+        </td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Functional User Type:</td>
+        <td>
+            <select name="function.userTypeId" id="function.userTypeId">
+                <c:forEach var="functionalUserType" items="${functionalUserTypes}">
+                    <option value="${functionalUserType.id}">
+                            ${functionalUserType.name}
+                    </option>
+                </c:forEach>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <input type="button" value="Save" onclick="add_functional_user(this.form)"/>
+            <button type="button" onclick="window.history.back();">Cancel</button>
+        </td>
+    </tr>
 </table>

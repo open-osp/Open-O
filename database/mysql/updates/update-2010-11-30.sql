@@ -1,16 +1,16 @@
 -- ET: Multiple Offices Support
 -- updated by vweng July 15, 2010
 
--- create security objects
+-- create sec objects
 insert into `secObjectName` 
 	(objectName, `description`, orgapplicable)
 	values
-	('_team_access_privacy', 'restrict access to only the same team of a provider', 0);
+	('_team_access_privacy', 'restrict access to only the same team of a providers', 0);
 
 insert into `secObjectName` 
 	(objectName, `description`, orgapplicable)
 	values
-	('_site_access_privacy', 'restrict access to only the assigned sites of a provider', 0);
+	('_site_access_privacy', 'restrict access to only the assigned sites of a providers', 0);
 
 -- create new roles
 insert into `secRole` 
@@ -27,7 +27,7 @@ SELECT
 	,'Partner Doctor' AS role_name
 	,'Partner Doctor' AS `description`;
 
--- add site provider id range
+-- add site providers id range
 
 ALTER TABLE site ADD providerId_from int null;
 ALTER TABLE site ADD providerId_to int null;

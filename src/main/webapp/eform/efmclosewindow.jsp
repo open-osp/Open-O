@@ -26,22 +26,21 @@
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 </head>
 <body>
 <center>Closing Window, Please Wait....</center>
-<%@page import="oscar.eform.data.*"%>
-<%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@page import="ca.openosp.openo.eform.data.*" %>
 <script type="text/javascript" language="javascript">
-   
-   if (!window.opener.closed) {
+
+    if (!window.opener.closed) {
         var parentAjaxId = "<%=request.getParameter("parentAjaxId")%>";
-        if( window.opener. writeToEncounterNote ) {
+        if (window.opener.writeToEncounterNote) {
             window.opener.reloadNav(parentAjaxId);
             //window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
             //window.opener.updateNeeded = true;
         } else {
-            if (window.opener.location.href.indexOf("efmpatientformlist.jsp")>=0)
+            if (window.opener.location.href.indexOf("efmpatientformlist.jsp") >= 0)
                 window.opener.location.reload();
         }
         window.opener.focus();

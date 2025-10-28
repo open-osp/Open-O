@@ -1,33 +1,33 @@
 <%--
 
-    Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
-    This software is published under the GPL GNU General Public License.
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of the GNU General Public License
-    as published by the Free Software Foundation; either version 2
-    of the License, or (at your option) any later version.
+Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
+This software is published under the GPL GNU General Public License.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-    This software was written for the
-    Department of Family Medicine
-    McMaster University
-    Hamilton
-    Ontario, Canada
+This software was written for the
+Department of Family Medicine
+McMaster University
+Hamilton
+Ontario, Canada
 
 --%>
 <!DOCTYPE html>
 <%
     //Lists forms available to add to patient
     if (session.getValue("user") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
     String demographic_no = request.getParameter("demographic_no");
     String country = request.getLocale().getCountry();
@@ -37,19 +37,23 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
-<%@ page import="java.util.*, oscar.eform.*" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="java.util.*, ca.openosp.openo.eform.*" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
+<%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO, ca.openosp.openo.commn.model.UserProperty" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@page import="org.oscarehr.common.dao.UserPropertyDAO, org.oscarehr.common.model.UserProperty" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%
     String user = (String) session.getAttribute("user");
     if (session.getAttribute("userrole") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
     String roleName$ = (String) session.getAttribute("userrole") + "," + user;
 
@@ -78,22 +82,20 @@
     DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 %>
 <%
-    pageContext.setAttribute("demographic", demographicManager.getDemographic(loggedInInfo, demographic_no));
+    Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographic_no);
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.managers.DemographicManager" %>
+<fmt:setBundle basename="oscarResources"/>
+
 <html>
     <head>
         <title>
-            <bean:message key="eform.myform.title"/>
+            <fmt:message key="eform.myform.title"/>
         </title>
 
         <link href="${pageContext.request.contextPath}/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/library/DataTables/datatables.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui-1.12.1.min.css" rel="stylesheet">
-
 
         <script src="${pageContext.request.contextPath}/js/global.js"></script>
         <script src="${pageContext.request.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
@@ -129,10 +131,10 @@
 
 				var table = jQuery('#efmTable').DataTable({
 					"pageLength": 15,
-					"lengthMenu": [[15, 30, 60, 120, -1], [15, 30, 60, 120, '<bean:message key="demographic.search.All"/>']],
+					"lengthMenu": [[15, 30, 60, 120, -1], [15, 30, 60, 120, "<fmt:message key='demographic.search.All'/>"]],
 					"order": [[0,'asc']],
 					"language": {
-						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:message key='global.i18nLanguagecode'/>.json"
 					}
 				});
 
@@ -183,42 +185,41 @@
                 <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"></path>
             </svg>
             Add eForm
-        </h2> <span><c:out value="${demographic.displayName}" /></span>
+        </h2> <span><%= Encode.forHtml(demographic.getDisplayName()) %></span>
         </div>
         <div class="menu-columns">
 
             <div class="left-column">
 
-                <a href="../demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail"><bean:message
-                        key="demographic.demographiceditdemographic.btnMasterFile"/></a>
+                <a href="${pageContext.request.contextPath}/demographic/demographiccontrol.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&displaymode=edit&dboperation=search_detail">
+                    <fmt:message key="demographic.demographiceditdemographic.btnMasterFile"/></a>
                 <a href="efmformslistadd.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"
-                   class="current"> <bean:message key="eform.showmyform.btnAddEForm"/></a>
+                   class="current"> <fmt:message key="eform.showmyform.btnAddEForm"/></a>
                 <jsp:include page="efmviewgroups.jsp">
-                    <jsp:param name="url" value="../eform/efmformslistadd.jsp"/>
+                    <jsp:param name="url" value="${pageContext.request.contextPath}/eform/efmformslistadd.jsp"/>
                     <jsp:param name="groupView" value="<%=groupView%>"/>
                 </jsp:include>
 
-                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-                        key="eform.calldeletedformdata.btnGoToForm"/></a>
-                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-                        key="eform.showmyform.btnDeleted"/></a>
+                <a href="efmpatientformlist.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>">
+                    <fmt:message key="eform.calldeletedformdata.btnGoToForm"/></a>
+                <a href="efmpatientformlistdeleted.jsp?demographic_no=<%=demographic_no%>&appointment=<%=appointment%>&parentAjaxId=<%=parentAjaxId%>">
+                    <fmt:message key="eform.showmyform.btnDeleted"/></a>
 
                 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.eform" rights="w"
                                    reverse="<%=false%>">
                     <a href="#"
-                       onclick="return popup(600, 1200, '../administration/?show=Forms', 'manageeforms');"
-                       style="color: #835921;"><bean:message key="eform.showmyform.msgManageEFrm"/></a>
+                       onclick="return popup(600, 1200, '${pageContext.request.contextPath}/administration/?show=Forms', 'manageeforms');"
+                       style="color: #835921;"><fmt:message key="eform.showmyform.msgManageEFrm"/></a>
                 </security:oscarSec>
 
             </div>
             <div class="right-column">
-
                 <table id="efmTable" class="table table-striped table-compact dataTable no-footer">
                     <thead>
                     <tr>
-                        <th><bean:message key="eform.showmyform.btnFormName"/></th>
-                        <th><bean:message key="eform.showmyform.btnSubject"/></th>
-                        <th><bean:message key="eform.showmyform.formDate"/></th>
+                        <th><fmt:message key="eform.showmyform.btnFormName"/></th>
+                        <th><fmt:message key="eform.showmyform.btnSubject"/></th>
+                        <th><fmt:message key="eform.showmyform.formDate"/></th>
                     </tr>
                     </thead>
                     <tbody>

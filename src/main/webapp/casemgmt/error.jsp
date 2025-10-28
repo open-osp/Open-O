@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,13 +24,13 @@
 --%>
 
 
+<%@page isErrorPage="true" %>
 
-<%@page isErrorPage="true"%>
 
-
-<%@page import="org.oscarehr.util.MiscUtils"%><head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Doh!</title>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<head>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Doh!</title>
 </head>
 
 An Error has occurred in this application.

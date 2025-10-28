@@ -24,157 +24,156 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
+<html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message
-	key="oscarEncounter.immunization.config.createImmunizationSetinit.title" />
-</title>
-<html:base />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.title"/>
+        </title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-</head>
-<script language="javascript">
-function BackToOscar()
-{
-       window.close();
-}
+    </head>
+    <script language="javascript">
+        function BackToOscar() {
+            window.close();
+        }
 
 
-</script>
+    </script>
 
 
-<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF"
-	onload="window.focus();">
-<html:errors />
-<table border="0" cellpadding="0" cellspacing="0"
-	style="border-collapse: collapse" bordercolor="#111111" width="100%"
-	id="AutoNumber1" height="100%">
-	<tr>
-		<td width="100%"
-			style="padding-left: 3; padding-right: 3; padding-top: 2; padding-bottom: 2"
-			height="0%" colspan="2">
-		
-		</td>
-	</tr>
-	<tr>
-		<td width="10%" height="37" bgcolor="#000000">&nbsp;</td>
-		<td width="100%" bgcolor="#000000"
-			style="border-left: 2px solid #A9A9A9; padding-left: 5" height="0%">
-		<p class="ScreenTitle"><bean:message
-			key="oscarEncounter.immunization.config.createImmunizationSetinit.msgCreateNewSet" /></p>
-		</td>
-	</tr>
-	<tr>
-		<td></td>
-		<td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
-			valign="top">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF"
+          onload="window.focus();">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <table border="0" cellpadding="0" cellspacing="0"
+           style="border-collapse: collapse" bordercolor="#111111" width="100%"
+           id="AutoNumber1" height="100%">
+        <tr>
+            <td width="100%"
+                style="padding-left: 3; padding-right: 3; padding-top: 2; padding-bottom: 2"
+                height="0%" colspan="2">
 
-			<!----Start new rows here-->
-			<tr>
-				<td>
-				<div><bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetinit.msgFollowSteps" />
-				</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				<div class="DivContentTitle"><br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep1" /><br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep2" /><br>
-				<bean:message
-					key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep3" /><br>
+            </td>
+        </tr>
+        <tr>
+            <td width="10%" height="37" bgcolor="#000000">&nbsp;</td>
+            <td width="100%" bgcolor="#000000"
+                style="border-left: 2px solid #A9A9A9; padding-left: 5" height="0%">
+                <p class="ScreenTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.msgCreateNewSet"/></p>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
+                valign="top">
+                <table cellpadding="0" cellspacing="2"
+                       style="border-collapse: collapse" bordercolor="#111111" width="100%"
+                       height="100%">
 
-				<br>
-				<br>
+                    <!----Start new rows here-->
+                    <tr>
+                        <td>
+                            <div><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.msgFollowSteps"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="DivContentTitle"><br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep1"/><br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep2"/><br>
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.msgStep3"/><br>
 
-
-				</div>
-				</td>
-			</tr>
-			<tr>
-				<td><html:form
-					action="/oscarEncounter/immunization/config/CreateInitImmunization">
-					<table cellspacing="1">
-						<tr>
-							<td class="cells"><bean:message
-								key="oscarEncounter.immunization.config.createImmunizationSetinit.formSetName" />:
-							</td>
-							<td class="cells"><html:text property="setName" /></td>
-						</tr>
-						<tr>
-							<td class="cells"><bean:message
-								key="oscarEncounter.immunization.config.createImmunizationSetinit.formNRows" />:
-							</td>
-							<td class="cells"><html:text property="numRows" /></td>
-						</tr>
-						<tr>
-							<td class="cells"><bean:message
-								key="oscarEncounter.immunization.config.createImmunizationSetinit.formNCol" />:
-							</td>
-							<td class="cells"><html:text property="numCols" /></td>
-						</tr>
-
-						<tr>
-							<td><input type="submit"
-								value="<bean:message key="oscarEncounter.immunization.config.createImmunizationSetinit.btnNext"/>" />
-							</td>
-						</tr>
-					</table>
-				</html:form></td>
-
-			</tr>
+                                <br>
+                                <br>
 
 
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><form action="${pageContext.request.contextPath}/oscarEncounter/immunization/config/CreateInitImmunization.do" method="post">
+                            <table cellspacing="1">
+                                <tr>
+                                    <td class="cells"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.formSetName"/>:
+                                    </td>
+                                    <td class="cells"><input type="text" name="setName" id="setName" /></td>
+                                </tr>
+                                <tr>
+                                    <td class="cells"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.formNRows"/>:
+                                    </td>
+                                    <td class="cells"><input type="text" name="numRows" id="numRows" /></td>
+                                </tr>
+                                <tr>
+                                    <td class="cells"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.formNCol"/>:
+                                    </td>
+                                    <td class="cells"><input type="text" name="numCols" id="numCols" /></td>
+                                </tr>
 
-			<!----End new rows here-->
+                                <tr>
+                                    <td><input type="submit"
+                                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.immunization.config.createImmunizationSetinit.btnNext"/>"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form></td>
 
-			<tr height="100%">
-				<td></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
+                    </tr>
 
-	<tr>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
-			colspan="2"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+
+                    <!----End new rows here-->
+
+                    <tr height="100%">
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+                colspan="2"></td>
+        </tr>
+    </table>
+    </body>
+</html>

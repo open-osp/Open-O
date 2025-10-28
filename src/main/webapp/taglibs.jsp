@@ -22,24 +22,14 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ page errorPage="/common/error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="http://struts.apache.org/tags-bean-el" prefix="bean-el"%>
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
-<%@ taglib uri="http://struts.apache.org/tags-html-el" prefix="html-el"%>
-<%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
-<%@ taglib uri="http://struts.apache.org/tags-logic-el" prefix="logic-el"%>
-<%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles"%>
-<%@ taglib uri="http://struts.apache.org/tags-tiles-el" prefix="tiles-el"%>
-<%@ taglib uri="http://struts.apache.org/tags-nested" prefix="nested"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
-<%@ taglib uri="http://displaytag.sf.net/el" prefix="display-el"%>
-<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
-<%@ taglib uri="/WEB-INF/caisirole-tag.tld" prefix="caisirole"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="http://struts-menu.sf.net/tag" prefix="menu"%>
-<%@ taglib uri="http://struts-menu.sf.net/tag-el" prefix="menu-el"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
+<%@ taglib uri="http://displaytag.sf.net/el" prefix="display-el" %>
+<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
+<%@ taglib uri="/WEB-INF/caisirole-tag.tld" prefix="caisirole" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>

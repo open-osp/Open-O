@@ -25,263 +25,249 @@
 --%>
 
 <%
-  //Make sure user has logged in first and username is in the session
+    //Make sure user has logged in first and username is in the session
 
-  if(session.getAttribute("userName") == null ) {
-	  response.sendRedirect("../logout.jsp");
-  }
-   String errormsg = "";
-   if (request.getParameter("errormsg") != null) {
-	   errormsg = request.getParameter("errormsg") ;
-   } 		
+    if (session.getAttribute("userName") == null) {
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    }
+    String errormsg = "";
+    if (request.getParameter("errormsg") != null) {
+        errormsg = request.getParameter("errormsg");
+    }
 %>
-
-
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-
-<%@ page import="org.springframework.web.util.JavaScriptUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="org.springframework.web.util.JavaScriptUtils" %>
 <%@ page
-	import="java.lang.*,oscar.*"
-	errorPage="/errorpage.jsp"%>
+        import="java.lang.*,ca.openosp.*"
+        errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
 <%!
-	OscarProperties op = OscarProperties.getInstance();
+    OscarProperties op = OscarProperties.getInstance();
 %>
 
-<html:html lang="en">
-<head>
-	<title><bean:message key="provider.providerchangepassword.title" /></title>
+<html>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.title"/></title>
 
-<script type="text/javascript">
-function setfocus(el) {
-	this.focus();
-	document.forms[0].elements[el].focus();
-	document.forms[0].elements[el].select();
-}
-function checkPwdPolicy() {
-		
-	if (document.forms[0].oldPassword.value == "") {
-		alert ('<bean:message key="provider.providerchangepassword.msgOldPasswordError"/>');
-		setfocus('oldPassword');
-		return false;
-	}
-	var pwd1=document.forms[0].newPassword.value;
-	var pwd2=document.forms[0].confirmPassword.value;
-		
-	if (!validatePassword(pwd1)) {
-		setfocus('newPassword');
-		return false;
-	}
-	if (pwd1 != pwd2) {
-		alert ('<bean:message key="provider.providerchangepassword.msgPasswordConfirmError"/>');
-		setfocus('confirmPassword');
-		return false;
-	}
-	return true;
-}
+        <script type="text/javascript">
+            function setfocus(el) {
+                this.focus();
+                document.forms[0].elements[el].focus();
+                document.forms[0].elements[el].select();
+            }
 
-function validatePassword(pwd) {
+            function checkPwdPolicy() {
 
-	var password_min_length = <%=op.getProperty("password_min_length")%>;
-	var password_min_groups = <%=op.getProperty("password_min_groups")%>;
-	var password_group_lower_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_lower_chars"))%>";
-	var password_group_upper_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_upper_chars"))%>";
-	var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
-	var password_group_special = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_special"))%>";
+                if (document.forms[0].oldPassword.value == "") {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgOldPasswordError"/>');
+                    setfocus('oldPassword');
+                    return false;
+                }
+                var pwd1 = document.forms[0].newPassword.value;
+                var pwd2 = document.forms[0].confirmPassword.value;
 
-	<%
-	if (!Boolean.parseBoolean(op.getProperty("IGNORE_PASSWORD_REQUIREMENTS")))
-	{
-		%>
-		if (pwd.length < password_min_length) {
-			alert('<bean:message key="password.policy.violation.msgPasswordLengthError"/> ' +
-				password_min_length + ' <bean:message key="password.policy.violation.msgSymbols"/>');
-			return false;
-		}
+                if (!validatePassword(pwd1)) {
+                    setfocus('newPassword');
+                    return false;
+                }
+                if (pwd1 != pwd2) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgPasswordConfirmError"/>');
+                    setfocus('confirmPassword');
+                    return false;
+                }
+                return true;
+            }
 
-		var lower = false;
-		var upper = false;
-		var digits = false;
-		var special = false;
-	
-		for (var i = 0; i < pwd.length; i++) {
-			var s = pwd.charAt(i);
-	
-			if (!lower && password_group_lower_chars.indexOf(s) > -1) {
-				lower = true;
-			}
-	
-			if (!upper && password_group_upper_chars.indexOf(s) > -1) {
-				upper = true;
-			}
-	
-			if (!digits && password_group_digits.indexOf(s) > -1) {
-				digits = true;
-			}
-	
-			if (!special && password_group_special.indexOf(s) > -1) {
-				special = true;
-			}
-		}
-	
-		var groups_used = parseInt(lower?1:0) + parseInt(upper?1:0) + parseInt(digits?1:0) + parseInt(special?1:0);
-		if (groups_used < password_min_groups) {
-			alert('<bean:message key="password.policy.violation.msgPasswordStrengthError"/> ' +
-				password_min_groups + ' <bean:message key="password.policy.violation.msgPasswordGroups"/>');
-			return false;
-		}
-		<%
-	}
-	%>
+            function validatePassword(pwd) {
 
-	return true;
-}
-function validatePassword(pwd) {
+                var password_min_length = <%=op.getProperty("password_min_length")%>;
+                var password_min_groups = <%=op.getProperty("password_min_groups")%>;
+                var password_group_lower_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_lower_chars"))%>";
+                var password_group_upper_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_upper_chars"))%>";
+                var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
+                var password_group_special = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_special"))%>";
 
-	var password_min_length = <%=op.getProperty("password_min_length")%>;
-	var password_min_groups = <%=op.getProperty("password_min_groups")%>;
-	var password_group_lower_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_lower_chars"))%>";
-	var password_group_upper_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_upper_chars"))%>";
-	var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
-	var password_group_special = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_special"))%>";
+                <%
+                if (!Boolean.parseBoolean(op.getProperty("IGNORE_PASSWORD_REQUIREMENTS")))
+                {
+                    %>
+                if (pwd.length < password_min_length) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordLengthError"/> ' +
+                        password_min_length + ' <fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgSymbols"/>');
+                    return false;
+                }
 
-	<%
-	if (!Boolean.parseBoolean(op.getProperty("IGNORE_PASSWORD_REQUIREMENTS")))
-	{
-		%>
-	if (pwd.length < password_min_length) {
-		alert('<bean:message key="password.policy.violation.msgPasswordLengthError"/> ' +
-			password_min_length + ' <bean:message key="password.policy.violation.msgSymbols"/>');
-		return false;
-	}
+                var lower = false;
+                var upper = false;
+                var digits = false;
+                var special = false;
 
-	var lower = false;
-	var upper = false;
-	var digits = false;
-	var special = false;
+                for (var i = 0; i < pwd.length; i++) {
+                    var s = pwd.charAt(i);
 
-	for (var i = 0; i < pwd.length; i++) {
-		var s = pwd.charAt(i);
+                    if (!lower && password_group_lower_chars.indexOf(s) > -1) {
+                        lower = true;
+                    }
 
-		if (!lower && password_group_lower_chars.indexOf(s) > -1) {
-			lower = true;
-		}
+                    if (!upper && password_group_upper_chars.indexOf(s) > -1) {
+                        upper = true;
+                    }
 
-		if (!upper && password_group_upper_chars.indexOf(s) > -1) {
-			upper = true;
-		}
+                    if (!digits && password_group_digits.indexOf(s) > -1) {
+                        digits = true;
+                    }
 
-		if (!digits && password_group_digits.indexOf(s) > -1) {
-			digits = true;
-		}
+                    if (!special && password_group_special.indexOf(s) > -1) {
+                        special = true;
+                    }
+                }
 
-		if (!special && password_group_special.indexOf(s) > -1) {
-			special = true;
-		}
-	}
+                var groups_used = parseInt(lower ? 1 : 0) + parseInt(upper ? 1 : 0) + parseInt(digits ? 1 : 0) + parseInt(special ? 1 : 0);
+                if (groups_used < password_min_groups) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordStrengthError"/> ' +
+                        password_min_groups + ' <fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordGroups"/>');
+                    return false;
+                }
+                <%
+            }
+            %>
 
-	var groups_used = parseInt(lower?1:0) + parseInt(upper?1:0) + parseInt(digits?1:0) + parseInt(special?1:0);
-	if (groups_used < password_min_groups) {
-		alert('<bean:message key="password.policy.violation.msgPasswordStrengthError"/> ' +
-			password_min_groups + ' <bean:message key="password.policy.violation.msgPasswordGroups"/>');
-		return false;
-	}
-	<%
-}
-%>
+                return true;
+            }
 
-	return true;
-}
+            function validatePassword(pwd) {
 
-function validatePin(pin) {
+                var password_min_length = <%=op.getProperty("password_min_length")%>;
+                var password_min_groups = <%=op.getProperty("password_min_groups")%>;
+                var password_group_lower_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_lower_chars"))%>";
+                var password_group_upper_chars = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_upper_chars"))%>";
+                var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
+                var password_group_special = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_special"))%>";
 
-	var password_pin_min_length = <%=op.getProperty("password_pin_min_length")%>;
-	var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
+                <%
+                if (!Boolean.parseBoolean(op.getProperty("IGNORE_PASSWORD_REQUIREMENTS")))
+                {
+                    %>
+                if (pwd.length < password_min_length) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordLengthError"/> ' +
+                        password_min_length + ' <fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgSymbols"/>');
+                    return false;
+                }
 
-	if (pin.length < password_pin_min_length) {
-		alert('<bean:message key="password.policy.violation.msgPinLengthError"/> ' +
-			password_pin_min_length + ' <bean:message key="password.policy.violation.msgDigits"/>');
-		return false;
-	}
+                var lower = false;
+                var upper = false;
+                var digits = false;
+                var special = false;
 
-	for (var i = 0; i < pin.length; i++) {
-		var s = pin.charAt(i);
+                for (var i = 0; i < pwd.length; i++) {
+                    var s = pwd.charAt(i);
 
-		if (password_group_digits.indexOf(s) == -1) {
-			alert('<bean:message key="password.policy.violation.msgPinGroups"/>');
-			return false;
-		}
-	}
+                    if (!lower && password_group_lower_chars.indexOf(s) > -1) {
+                        lower = true;
+                    }
 
-	return true;
-}
-</script>
-</head>
+                    if (!upper && password_group_upper_chars.indexOf(s) > -1) {
+                        upper = true;
+                    }
 
-<body onLoad="setfocus('oldPassword')" topmargin="0" leftmargin="0" rightmargin="0">
-<html:form method="post" action="login" onsubmit="return checkPwdPolicy();">
-<table border=0 cellspacing=0 cellpadding=0 width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF"><bean:message
-			key="provider.providerchangepassword.description" /></font></th>
-	</tr>
-</table>
+                    if (!digits && password_group_digits.indexOf(s) > -1) {
+                        digits = true;
+                    }
 
-<table width="100%" border="0" cellpadding="2" bgcolor="#eeeeee">
-	<tr>
-		<td><font face="arial" size="2"><bean:message
-			key="provider.providerchangepassword.msgInstructions" /> &nbsp; <b><bean:message
-			key="provider.providerchangepassword.msgUpdate" /></b> <bean:message
-			key="provider.providerchangepassword.msgClickButton" /></font></td>
-	</tr>
+                    if (!special && password_group_special.indexOf(s) > -1) {
+                        special = true;
+                    }
+                }
 
-</table>
-<center>
+                var groups_used = parseInt(lower ? 1 : 0) + parseInt(upper ? 1 : 0) + parseInt(digits ? 1 : 0) + parseInt(special ? 1 : 0);
+                if (groups_used < password_min_groups) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordStrengthError"/> ' +
+                        password_min_groups + ' <fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPasswordGroups"/>');
+                    return false;
+                }
+                <%
+            }
+            %>
 
-<p><b><font color='red'><%=errormsg%></font></b>
+                return true;
+            }
 
-<table border="0" width="100%" cellpadding="4" cellspacing="0">
-	<tr>
-		<td align="right" width="50%"><font face="arial"><bean:message
-			key="provider.providerchangepassword.msgEnterOld" /> &nbsp; <b><bean:message
-			key="provider.providerchangepassword.formOldPassword" />:</b></font></td>
-		<td><input type=password name="oldPassword" value="" size=20
-			maxlength=32></td>
-	</tr>
-	<tr>
-		<td width="50%" align="right"><font face="arial"><bean:message
-			key="provider.providerchangepassword.msgChooseNew" /> &nbsp; <b><bean:message
-			key="provider.providerchangepassword.formNewPassword" />:</b></font></td>
-		<td><input type=password name="newPassword" value="" size=20
-			maxlength=32> <font size="-2">(<bean:message
-			key="provider.providerchangepassword.msgAtLeast" />
-			<%=op.getProperty("password_min_length")%> <bean:message
-			key="provider.providerchangepassword.msgSymbols" />)</font></td>
-	</tr>
-	<tr>
-		<td width="50%" align="right"><font face="arial"><bean:message
-			key="provider.providerchangepassword.msgConfirm" /> &nbsp; <b><bean:message
-			key="provider.providerchangepassword.formNewPassword" />:</b></font></td>
-		<td><input type=password name="confirmPassword" value="" size=20
-			maxlength=32> <font size="-2">(<bean:message
-			key="provider.providerchangepassword.msgAtLeast" />
-			<%=op.getProperty("password_min_length")%> <bean:message
-			key="provider.providerchangepassword.msgSymbols" />)</font></td>
-	</tr>
-</table>
-</center>
-<table width="100%" border="0" cellpadding="4" cellspacing="0"
-	bgcolor="#486ebd">
-	<tr>
-		<TD align="center" width="50%"><INPUT TYPE="submit"
-			VALUE='<bean:message key="provider.providerchangepassword.btnSubmit"/>'
-			SIZE="7"> </TD>
-	</tr>
-</table>
+            function validatePin(pin) {
 
-    <input type=hidden name='forcedpasswordchange' value='true' />
+                var password_pin_min_length = <%=op.getProperty("password_pin_min_length")%>;
+                var password_group_digits = "<%=JavaScriptUtils.javaScriptEscape(op.getProperty("password_group_digits"))%>";
 
-</html:form>
-</body>
-</html:html>
+                if (pin.length < password_pin_min_length) {
+                    alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPinLengthError"/> ' +
+                        password_pin_min_length + ' <fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgDigits"/>');
+                    return false;
+                }
+
+                for (var i = 0; i < pin.length; i++) {
+                    var s = pin.charAt(i);
+
+                    if (password_group_digits.indexOf(s) == -1) {
+                        alert('<fmt:setBundle basename="oscarResources"/><fmt:message key="password.policy.violation.msgPinGroups"/>');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        </script>
+    </head>
+
+    <body onLoad="setfocus('oldPassword')" topmargin="0" leftmargin="0" rightmargin="0">
+    <form method="post" action="${pageContext.request.contextPath}/login.do" onsubmit="return checkPwdPolicy();">
+        <table border=0 cellspacing=0 cellpadding=0 width="100%">
+            <tr bgcolor="#486ebd">
+                <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.description"/></font></th>
+            </tr>
+        </table>
+
+        <table width="100%" border="0" cellpadding="2" bgcolor="#eeeeee">
+            <tr>
+                <td><font face="arial" size="2"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgInstructions"/> &nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgUpdate"/></b> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgClickButton"/></font></td>
+            </tr>
+
+        </table>
+        <center>
+
+            <p><b><font color='red'><%=errormsg%>
+            </font></b>
+
+            <table border="0" width="100%" cellpadding="4" cellspacing="0">
+                <tr>
+                    <td align="right" width="50%"><font face="arial"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgEnterOld"/> &nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.formOldPassword"/>:</b></font></td>
+                    <td><input type=password name="oldPassword" value="" size=20
+                               maxlength=32></td>
+                </tr>
+                <tr>
+                    <td width="50%" align="right"><font face="arial"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgChooseNew"/> &nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.formNewPassword"/>:</b></font></td>
+                    <td><input type=password name="newPassword" value="" size=20
+                               maxlength=32> <font size="-2">(<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgAtLeast"/>
+                        <%=op.getProperty("password_min_length")%> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgSymbols"/>)</font></td>
+                </tr>
+                <tr>
+                    <td width="50%" align="right"><font face="arial"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgConfirm"/> &nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.formNewPassword"/>:</b></font></td>
+                    <td><input type=password name="confirmPassword" value="" size=20
+                               maxlength=32> <font size="-2">(<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgAtLeast"/>
+                        <%=op.getProperty("password_min_length")%> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.msgSymbols"/>)</font></td>
+                </tr>
+            </table>
+        </center>
+        <table width="100%" border="0" cellpadding="4" cellspacing="0"
+               bgcolor="#486ebd">
+            <tr>
+                <TD align="center" width="50%"><INPUT TYPE="submit"
+                                                      VALUE='<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerchangepassword.btnSubmit"/>'
+                                                      SIZE="7"></TD>
+            </tr>
+        </table>
+
+        <input type=hidden name='forcedpasswordchange' value='true'/>
+
+    </form>
+    </body>
+</html>

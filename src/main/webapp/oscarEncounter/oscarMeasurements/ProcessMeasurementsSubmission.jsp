@@ -24,34 +24,45 @@
 
 --%>
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="java.lang.*,oscar.oscarEncounter.oscarMeasurements.pageUtil.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html:html lang="en">
-<head>
-<title><bean:message key="oscarEncounter.Measurements.msgProcessMeasurementsSubmission" /></title>
-<html:base />
-</head>
 
-<script language="javascript"> 
-function closeWin() {
-   //  self.opener.location.reload(); 
-     self.close();     
-}
-</script>
+<%@ page import="java.lang.*,ca.openosp.openo.encounter.oscarMeasurements.pageUtil.*" %>
 
-<body onload="closeWin();">
-<html:errors />
-Processing...
+<html>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Measurements.msgProcessMeasurementsSubmission"/></title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
 
-<%
-//clear so values don't repeat after added to note
-session.setAttribute("textOnEncounter", null);
+    <script language="javascript">
+        function closeWin() {
+            //  self.opener.location.reload();
+            self.close();
+        }
+    </script>
+
+    <body onload="closeWin();">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
 %>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    Processing...
 
-</body>
-</html:html>
+    <%
+        //clear so values don't repeat after added to note
+        session.setAttribute("textOnEncounter", null);
+    %>
+
+    </body>
+</html>

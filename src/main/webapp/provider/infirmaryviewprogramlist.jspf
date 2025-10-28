@@ -3,27 +3,28 @@
 
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
-<%@ page import="org.oscarehr.util.*"%>
+<%@ page import="ca.openosp.openo.utility.*"%>
+<%@ page import="ca.openosp.openo.caisi.CaisiUtil" %>
 
 <%
 String questr=(String)session.getAttribute("infirmaryView_OscarQue"); 
 
 
 //remove "infirmaryView_programId" from querystring
-questr=oscar.caisi.CaisiUtil.removeAttr(questr,"infirmaryView_programId=");
-questr=oscar.caisi.CaisiUtil.removeAttr(questr,"infirmaryView_clientStatusId=");
-questr=oscar.caisi.CaisiUtil.removeAttr(questr,"viewall");
+questr= CaisiUtil.removeAttr(questr,"infirmaryView_programId=");
+questr= CaisiUtil.removeAttr(questr,"infirmaryView_clientStatusId=");
+questr= CaisiUtil.removeAttr(questr,"viewall");
 questr += "&viewall=1";
 
 String providerurlString="providercontrol.jsp?"+questr;
 
 //remove "infirmaryView_isOscar" from querystring
-questr=oscar.caisi.CaisiUtil.removeAttr(questr,"infirmaryView_isOscar=");
+questr= CaisiUtil.removeAttr(questr,"infirmaryView_isOscar=");
 
 //remove "GoToCaisiViewFromOscarView" from querystring
-questr=oscar.caisi.CaisiUtil.removeAttr(questr,"GoToCaisiViewFromOscarView=");
+questr= CaisiUtil.removeAttr(questr,"GoToCaisiViewFromOscarView=");
 
 session.setAttribute("infirmaryView_OscarQue",questr);
 
@@ -41,7 +42,7 @@ function submitStatus(ctrl) {// only place other than infirmaction.java to set i
 }
 </script>
 
-<logic:notEqual name="infirmaryView_isOscar" value="true">
+<c:if test="${infirmaryView_isOscar != 'true'}">
 	<br>
 	<b>Program:</b>
 	<select id="bedprogram_no" name="bedprogram_no"
@@ -51,21 +52,18 @@ function submitStatus(ctrl) {// only place other than infirmaction.java to set i
 	if (programBean.size()==0 || programId.equalsIgnoreCase("0")){%>
 		<option value="0" selected>-No assigned program-</option>
 		<%}else{ %>
-		<logic:iterate id="pb" name="infirmaryView_programBeans"
-			type="org.apache.struts.util.LabelValueBean">
-			<logic:equal name="infirmaryView_programId"
-				value="<%=pb.getValue()%>">
+		<c:forEach var="pb" items="${infirmaryView_programBeans}">
+			<c:if test="${infirmaryView_programId == pb.value}">
 				<option value="<%=pb.getValue()%>" selected><%= pb.getLabel() %></option>
-			</logic:equal>
-			<logic:notEqual name="infirmaryView_programId"
-				value="<%=pb.getValue()%>">
+			</c:if>
+			<c:if test="${infirmaryView_programId != pb.value}">
 				<option value="<%=pb.getValue()%>"><%= pb.getLabel() %></option>
-			</logic:notEqual>
-		</logic:iterate>
+			</c:if>
+		</c:forEach>
 		<%} %>
 	</select>
-</logic:notEqual>
-<logic:notEqual name="infirmaryView_isOscar" value="false">
+</c:if>
+<c:if test="${infirmaryView_isOscar != 'false'}">
 	<br>
 		<b>Program:</b>
 		<select id="bedprogram_no" name="bedprogram_no"
@@ -75,22 +73,19 @@ function submitStatus(ctrl) {// only place other than infirmaction.java to set i
 	if (programBean.size()==0 || programId.equalsIgnoreCase("0")){%>
 			<option value="0" selected>-No assigned program-</option>
 			<%}else{ %>
-			<logic:iterate id="pb" name="infirmaryView_programBeans"
-				type="org.apache.struts.util.LabelValueBean">
-				<logic:equal name="infirmaryView_programId"
-					value="<%=pb.getValue()%>">
+			<c:forEach var="pb" items="${infirmaryView_programBeans}">
+				<c:if test="${infirmaryView_programId == pb.value}">
 					<option value="<%=pb.getValue()%>" selected><%= pb.getLabel() %></option>
-				</logic:equal>
-				<logic:notEqual name="infirmaryView_programId"
-					value="<%=pb.getValue()%>">
+				</c:if>
+				<c:if test="${infirmaryView_programId != pb.value}">
 					<option value="<%=pb.getValue()%>"><%= pb.getLabel() %></option>
-				</logic:notEqual>
-			</logic:iterate>
+				</c:if>
+			</c:forEach>
 			<%} %>
 		</select>
-</logic:notEqual>
+</c:if>
 
-<logic:notEqual name="infirmaryView_isOscar" value="true">
+<c:if test="${infirmaryView_isOscar != 'true'}">
   &nbsp;
   <select id="program_clientstatus" name="program_clientstatus"
 		onchange="submitStatus(this)">
@@ -124,17 +119,15 @@ function submitStatus(ctrl) {// only place other than infirmaction.java to set i
 			Oscar View</a>
 		</caisi:ProgramExclusiveView>
 	</caisi:isModuleLoad>
-</logic:notEqual>
+</c:if>
 
-<logic:equal name="infirmaryView_isOscar" value="true">
+<c:if test="${infirmaryView_isOscar == 'true'}">
 	<caisi:ProgramExclusiveView providerNo="<%=((LoggedInInfo)LoggedInInfo.getLoggedInInfoFromSession(request)).getLoggedInProviderNo()%>" value="no">
-		<caisi:isModuleLoad moduleName="oscarClinic" reverse="true">
 		<div align="right"><a
 			href='providercontrol.jsp?infirmaryView_isOscar=false&GoToCaisiViewFromOscarView=true&<%=session.getAttribute("infirmaryView_OscarQue") %>'>|
 		Case Management View</a></div>
-		</caisi:isModuleLoad>
 	</caisi:ProgramExclusiveView>
-</logic:equal>
+</c:if>
 </td>
 </tr>
 </table>

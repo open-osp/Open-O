@@ -27,8 +27,9 @@
 
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_sleep" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_sleep" data-score="1">
         <strong class="highlight" data-field-name="sleep">Sleep</strong>
     </div>
 
@@ -42,7 +43,7 @@
     </label>
 
     <span class="mandatory font-bold ml-8 highlight tt" rel="daytime_drowsiness" data-names="y,n"
-        data-toggle="tooltip" title="Daytime Drowsiness" data-field-name="daytime_drowsiness">
+          data-toggle="tooltip" title="Daytime Drowsiness" data-field-name="daytime_drowsiness">
         Daytime Drowsiness
     </span>
     <label class="flex items-center font-normal pl-2">
@@ -55,16 +56,16 @@
     </label>
 
     <span class="tt font-bold pl-8" data-toggle="tooltip" data-html="true"
-        title="From the pain scale:<br>1-2: None to Low<br>2-5: Moderate Over<br>5: Extreme">
+          title="From the pain scale:<br>1-2: None to Low<br>2-5: Moderate Over<br>5: Extreme">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
         </svg><input type="checkbox" class="action-required" name="action_required_pain" data-score="1">
         <strong class="highlight" data-field-name="pain">Pain</strong>
     </span>
 
     <label class="flex items-center font-normal pl-4">
         <input type="radio" name="pain" value="none" class="m-0" autocomplete="off" data-score="0">
-        <span class="pl-1" >
+        <span class="pl-1">
             None
         </span>
     </label>
