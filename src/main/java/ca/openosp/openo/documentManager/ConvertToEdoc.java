@@ -350,8 +350,8 @@ public final class ConvertToEdoc {
         try {
             renderer.createPDF(os, true);
         } catch (com.lowagie.text.DocumentException e) {
-            // Flying Saucer still uses old lowagie library, wrap the exception
-            // Log the original exception to preserve stack trace for debugging
+            // Flying Saucer uses OpenPDF library which has a different DocumentException class
+            // Wrap it to maintain API consistency with iText-based PDF generation
             logger.error("Failed to create PDF with Flying Saucer", e);
             throw new DocumentException(e);
         }
