@@ -592,6 +592,14 @@
     "optional" : false,
     "integrity" : "sha512:8pABxOt8NNDHDSOvvM6Wzq52K2kfUIycb2s9GjnICv5DR2frjHowOd2CYdJqLqHr0dn8+rWUP8oX/7dtl3QcgQ=="
   }, {
+    "groupId" : "com.lowagie",
+    "artifactId" : "itext",
+    "version" : "2.1.7.js8",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:3+yd01GfcFodtjzeXNDF5SN9uFQXr716b3BjOYV+0Hdf1fEQGeFoJhXBKFnWQpAptlA4QndrKL9Ub3hCU9RqUA=="
+  }, {
     "groupId" : "com.medseek.clinical.service",
     "artifactId" : "SSOClinicalConnect",
     "version" : "20171101",
@@ -2554,6 +2562,14 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:1xpFhEp5RranAxUlToKjNdLfXkArLVo7SW+mmzVRhDOAEbScXxx2Amdkp29i8rwUDCXbKIG8qR3elneiXG1Yew=="
+  }, {
+    "groupId" : "org.bouncycastle",
+    "artifactId" : "bcprov-jdk15on",
+    "version" : "1.64",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:paBnE0LGSW4CZv4ZRCMoUgHKfcrXMrSY0gYzC6CnVIYMo5Tw6HP3yDe7cF22eZhuQWcJal0YmIRoEr/8M5hoOA=="
   }, {
     "groupId" : "org.bouncycastle",
     "artifactId" : "bcprov-jdk18on",
