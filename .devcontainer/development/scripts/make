@@ -129,17 +129,38 @@ build_and_deploy() {
     ln -s "/usr/local/tomcat/webapps/$snapshot_dest_dir" "target/$snapshot_src_dir"
   fi
 
-  # Setup hot reload symlinks for instant JSP/CSS/JS updates
-  if [ -x "/setup-dir/setup-hot-reload.sh" ]; then
-    echo "========================================="
-    echo "Starting hot reload file watcher..."
-    echo "========================================="
-    nohup /setup-dir/setup-hot-reload.sh > /tmp/webapp-watcher.log 2>&1 &
-    WATCHER_PID=$!
-    echo "   Hot reload watcher started (PID: $WATCHER_PID)"
-    echo "   JSP/CSS/JS changes will auto-sync (~1 second)"
-    echo "   View live log: tail -f /tmp/webapp-watcher.log"
-    echo "========================================="
+  # Setup hot reload for fast JSP/HTML/CSS/JS updates when refreshing the browser.
+  if [ -f "/setup-dir/setup-hot-reload.sh" ]; then
+    # Only start if it is not already running
+    if ! pgrep -f "setup-hot-reload.sh" > /dev/null; then
+      echo "========================================="
+      echo "Starting hot reload file watcher..."
+      echo "========================================="
+
+      # Fix permissions if not set
+      chmod +x /setup-dir/setup-hot-reload.sh
+      
+      # Clear old log
+      > /tmp/webapp-watcher.log
+      
+      # Setup hot reload script and logging functionality
+      nohup /setup-dir/setup-hot-reload.sh > /tmp/webapp-watcher.log 2>&1 &
+      WATCHER_PID=$!
+      
+      echo "   Hot reload watcher started (PID: $WATCHER_PID)"
+      echo "   JSP/HTML/CSS/JS changes will auto-sync (~1 second)"
+      echo "   View live log: tail -f /tmp/webapp-watcher.log"
+      echo "========================================="
+      
+      # Verify it has started
+      sleep 1
+      if ! kill -0 "$WATCHER_PID" 2>/dev/null; then
+        echo "   WARNING: Watcher may have failed to start!"
+        echo "   Check: cat /tmp/webapp-watcher.log"
+      fi
+    else
+      echo "Hot reload watcher is already running, skipping start."
+    fi
   fi
 
   # Start the Catalina server by calling the `server` script located in the same directory as this script.
