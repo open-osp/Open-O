@@ -129,7 +129,7 @@ build_and_deploy() {
     ln -s "/usr/local/tomcat/webapps/$snapshot_dest_dir" "target/$snapshot_src_dir"
   fi
 
-  # Setup hot reload for fast JSP/HTML/CSS/JS updates when refreshing the browser.
+  # Setup hot reload for fast JSP/HTML/CSS updates when refreshing the browser.
   if [ -f "/setup-dir/setup-hot-reload.sh" ]; then
     # Check if inotify-tools is available
     if [ ! -x "/usr/bin/inotifywait" ]; then
@@ -164,7 +164,7 @@ build_and_deploy() {
         echo "$WATCHER_PID" > "$WATCHER_PID_FILE"
       
         echo "   Hot reload watcher started (PID: $WATCHER_PID)"
-        echo "   JSP/HTML/CSS/JS changes will auto-sync"
+        echo "   JSP/HTML/CSS changes will auto-sync"
         echo "   View live log: tail -f /tmp/webapp-watcher.log"
         echo "========================================="
       
