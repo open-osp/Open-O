@@ -53,8 +53,6 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import com.itextpdf.text.pdf.*;
-// RTF support uses the old com.lowagie library (com.lowagie:itext-rtf:2.1.7)
-// as RTF was never migrated to iText 5.x
 import com.lowagie.text.rtf.RtfWriter2;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -172,8 +170,8 @@ public class LabPDFCreator extends PdfPageEventHelper {
 
             document.close();
         } catch (com.lowagie.text.DocumentException e) {
-            // RTF writer uses old lowagie library, wrap the exception
-            // Log the original exception to preserve stack trace for debugging
+            // OpenRTF uses OpenPDF library which has a different DocumentException class
+            // Wrap it to maintain API consistency with iText-based PDF generation
             MiscUtils.getLogger().error("Failed to import RTF document", e);
             throw new DocumentException(e);
         }
