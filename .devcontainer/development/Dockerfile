@@ -117,7 +117,7 @@ RUN dos2unix /scripts/* \
     && dos2unix /setup-dir/setup.sh
 
 # Make scripts executable and add to PATH
-RUN chmod +x /scripts/* /setup-dir/* && /setup-dir/setup.sh
+RUN chmod +x /scripts/* /setup-dir/*.sh && /setup-dir/setup.sh
 ENV PATH="/scripts:${PATH}"
 
 # Expose Tomcat port
