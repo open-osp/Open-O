@@ -274,7 +274,6 @@ public class EForm extends EFormBase {
                     if (!setAP2nd) saveFieldValue(html, markerLoc);
                     continue;
                 }
-                int apNameLen = apName.length();
                 apName = EFormUtil.removeQuotes(apName);
 
                 log.debug("AP ==== " + apName);
@@ -285,9 +284,11 @@ public class EForm extends EFormBase {
                 if ((fieldType == null || fieldType.equals("")) || (apName == null || apName.equals(""))) continue;
 
                 // sets up the pointer where to write the value
-                int pointer = markerLoc + EFormUtil.getAttributePos(marker, fieldHeader) + marker.length() + 1;
-                if (!fieldType.equals("textarea")) {
-                    pointer += apNameLen;
+                // Use getAttributeEndPos to get the position right after the oscardb attribute (including closing quote)
+                int pointer = markerLoc + EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                if (fieldType.equals("textarea")) {
+                    // For textarea, we need to find the closing > and insert after it
+                    pointer = fieldHeader.indexOf(">", pointer - markerLoc) + markerLoc + 1;
                 }
                 EFormLoader.getInstance();
                 DatabaseAP curAP = EFormLoader.getAP(apName);
