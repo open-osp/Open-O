@@ -141,8 +141,8 @@ build_and_deploy() {
       echo "Starting hot reload watcher"
       echo "View live logs: tail -f /tmp/webapp-watcher.log"
       
-      # Start the hot-reload script in the background using nohup
-      nohup /setup-dir/setup-hot-reload.sh > /dev/null 2>&1 &
+      # Start the hot-reload script in the background
+      /setup-dir/setup-hot-reload.sh > /dev/null 2>&1 &
     fi
   fi
 

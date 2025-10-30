@@ -24,15 +24,21 @@ check_already_running() {
   if [ -f "$PID_FILE" ]; then
     OLD_PID=$(cat "$PID_FILE")
     if kill -0 "$OLD_PID" 2>/dev/null; then
-      echo "========================================="
-      echo "Hot reload watcher already running (PID: $OLD_PID) ✓"
-      echo "View live log: tail -f $LOG_FILE"
-      echo "========================================="
+      echo "Hot reload watcher already running (PID: $OLD_PID)" | tee -a "$LOG_FILE"
       exit 0
     else
       echo "Stale PID file found, starting fresh watcher..."
       rm -f "$PID_FILE"
     fi
+  fi
+
+  # Backup check: look for ANY running instance
+  EXISTING=$(pgrep -f "setup-hot-reload.sh" | grep -v $$)
+  if [ -n "$EXISTING" ]; then
+    echo "Found instances: $EXISTING"
+    echo "Cleaning up..."
+    kill -9 $EXISTING 2>/dev/null
+    sleep 1
   fi
 }
 
@@ -53,6 +59,12 @@ rotate_log() {
 
 # Cleanup function for graceful shutdown
 cleanup() {
+  # Clean up script PID file
+  if [ -f "$PID_FILE" ]; then
+    rm -f "$PID_FILE"
+    echo "[$(date +'%H:%M:%S')] Removed PID file" | tee -a "$LOG_FILE"
+  fi
+
   echo "" | tee -a "$LOG_FILE"
   echo "[$(date +'%H:%M:%S')] Shutting down hot-reload watcher..." | tee -a "$LOG_FILE"
   
@@ -65,18 +77,9 @@ cleanup() {
   # Wait for all child processes to finish
   wait
   
-  # Clean up script PID file
-  if [ -f "$PID_FILE" ]; then
-    rm -f "$PID_FILE"
-    echo "[$(date +'%H:%M:%S')] Removed PID file" | tee -a "$LOG_FILE"
-  fi
-  
   echo "=========================================" | tee -a "$LOG_FILE"
   exit 0
 }
-
-# Set up signal handlers
-trap cleanup INT TERM EXIT
 
 # ============================================================================
 # Main File Processing Logic
@@ -173,6 +176,9 @@ process_file_event() {
 main() {
   # Check if already running (singleton behavior)
   check_already_running
+
+  # Set up signal handlers
+  trap cleanup INT TERM EXIT
 
   > "$LOG_FILE"  # Clear log file on start
   
