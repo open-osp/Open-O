@@ -294,6 +294,10 @@ public class EForm extends EFormBase {
                 if (fieldType.equals("textarea")) {
                     // For textarea, we need to find the closing > and insert after it
                     pointer = fieldHeader.indexOf(">", pointer - markerLoc) + markerLoc + 1;
+                    if (pointer == -1) {
+                        log.error("Failed to find closing '>' for textarea marker: " + marker + " in fieldHeader: " + fieldHeader);
+                        continue;
+                    }
                 }
                 EFormLoader.getInstance();
                 DatabaseAP curAP = EFormLoader.getAP(apName);
