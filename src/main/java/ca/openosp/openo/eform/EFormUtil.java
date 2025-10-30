@@ -1191,6 +1191,7 @@ public class EFormUtil {
 
         Matcher m = getAttributeMatcher(key, htmlTag, false);
         if (m == null) return pos;
+        if (!m.find()) return pos;
 
         return m.end();
     }

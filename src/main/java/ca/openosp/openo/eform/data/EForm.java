@@ -285,7 +285,12 @@ public class EForm extends EFormBase {
 
                 // sets up the pointer where to write the value
                 // Use getAttributeEndPos to get the position right after the oscardb attribute (including closing quote)
-                int pointer = markerLoc + EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                if (attributeEndPos == -1) {
+                    log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
+                    continue;
+                }
+                int pointer = markerLoc + attributeEndPos;
                 if (fieldType.equals("textarea")) {
                     // For textarea, we need to find the closing > and insert after it
                     pointer = fieldHeader.indexOf(">", pointer - markerLoc) + markerLoc + 1;
