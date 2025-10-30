@@ -218,7 +218,7 @@ main() {
   # Use --format to properly handle filenames with spaces
   inotifywait -m -r -e close_write,moved_to,delete \
     --format '%w%f %e' \
-    --exclude '(\.git|\.svn|node_modules|target|\.class$|WEB-INF/classes|WEB-INF/lib)' \
+    --exclude '(^|/)(\.git|\.svn|node_modules|target|WEB-INF/classes|WEB-INF/lib)(/|$)|\.class$'  \
     "$SOURCE_DIR" 2>> "$LOG_FILE" |
   while read -r full_path events; do
     process_file_event "$full_path" "$events"
