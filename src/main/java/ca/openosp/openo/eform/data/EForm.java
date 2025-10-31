@@ -283,28 +283,17 @@ public class EForm extends EFormBase {
                 String fieldType = getFieldType(fieldHeader); // textarea, text, hidden etc..
                 if ((fieldType == null || fieldType.equals("")) || (apName == null || apName.equals(""))) continue;
 
-                int pointer = 0;
-                if (fieldType.equals("textarea")) {
-                    // For textarea, we need to find the attribute position of the marker
-                    // Use getAttributePos to get the position of the marker attribute
-                    // Which then will be processed and put inside of the text area in the putValuesFromAP method
-                    int attributePos = EFormUtil.getAttributePos(marker, fieldHeader);
-                    if (attributePos == -1) {
-                        log.error("Failed to find attribute position for marker: " + marker + " in field: " + fieldHeader);
-                        continue;
-                    }
-                    attributePos += marker.length() + 1;
-                    pointer = markerLoc + attributePos;
-                } else {
-                    // For other field types, insert right after the marker attribute
-                    // Use getAttributeEndPos to get the position right after the attribute
-                    int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
-                    if (attributeEndPos == -1) {
-                        log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
-                        continue;
-                    }
-                    pointer = markerLoc + attributeEndPos;
+                // Position pointer right after the oscardb attribute's closing quote
+                // This works for all field types, which then handle insertion differently in putValuesFromAP():
+                // - textarea: searches forward for closing > and inserts content inside the tags
+                // - select: searches forward for matching option value and adds "selected" attribute
+                // - input: directly inserts value="" attribute at this position
+                int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                if (attributeEndPos == -1) {
+                    log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
+                    continue;
                 }
+                int pointer = markerLoc + attributeEndPos;
                 EFormLoader.getInstance();
                 DatabaseAP curAP = EFormLoader.getAP(apName);
 
