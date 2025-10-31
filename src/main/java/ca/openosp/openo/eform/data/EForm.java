@@ -283,21 +283,26 @@ public class EForm extends EFormBase {
                 String fieldType = getFieldType(fieldHeader); // textarea, text, hidden etc..
                 if ((fieldType == null || fieldType.equals("")) || (apName == null || apName.equals(""))) continue;
 
-                // sets up the pointer where to write the value
-                // Use getAttributeEndPos to get the position right after the oscardb attribute (including closing quote)
-                int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
-                if (attributeEndPos == -1) {
-                    log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
-                    continue;
-                }
-                int pointer = markerLoc + attributeEndPos;
+                int pointer = 0;
                 if (fieldType.equals("textarea")) {
                     // For textarea, we need to find the closing > and insert after it
-                    pointer = fieldHeader.indexOf(">", pointer - markerLoc) + markerLoc + 1;
-                    if (pointer == -1) {
-                        log.error("Failed to find closing '>' for textarea marker: " + marker + " in fieldHeader: " + fieldHeader);
+                    // to insert the value after it (inside the textarea content area)
+                    int attributePos = EFormUtil.getAttributePos(marker, fieldHeader);
+                    if (attributePos == -1) {
+                        log.error("Failed to find attribute position for marker: " + marker + " in field: " + fieldHeader);
                         continue;
                     }
+                    attributePos += marker.length() + 1;
+                    pointer = markerLoc + attributePos;
+                } else {
+                    // For other field types, insert right after the marker attribute
+                    // Use getAttributeEndPos to get the position right after the attribute
+                    int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                    if (attributeEndPos == -1) {
+                        log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
+                        continue;
+                    }
+                    pointer = markerLoc + attributeEndPos;
                 }
                 EFormLoader.getInstance();
                 DatabaseAP curAP = EFormLoader.getAP(apName);
