@@ -44,7 +44,7 @@
 
     String redirectURL;
     if ("true".equals(useNewCaseMgmt)) {
-        redirectURL = request.getContextPath() + "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list&demographicNo=" + request.getParameter("demographicNo") + "&providerNo=" + request.getParameter("providerNo") + "&reason=" + (request.getParameter("reason") != null ? java.net.URLEncoder.encode(request.getParameter("reason"), "UTF-8") : "") + "&reasonCode=" + (request.getParameter("reasonCode") != null ? request.getParameter("reasonCode") : "") + "&appointmentNo=" + (request.getParameter("appointmentNo") != null ? request.getParameter("appointmentNo") : "") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
+        redirectURL = request.getContextPath() + "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list&demographicNo=" + request.getParameter("demographicNo") + "&providerNo=" + request.getParameter("providerNo") + "&reason=" + (request.getParameter("reason") != null ? java.net.URLEncoder.encode(request.getParameter("reason"), "UTF-8") : "") + "&reasonCode=" + (request.getParameter("reasonCode") != null ? java.net.URLEncoder.encode(request.getParameter("reasonCode"), "UTF-8") : "") + "&appointmentNo=" + (request.getParameter("appointmentNo") != null ? java.net.URLEncoder.encode(request.getParameter("appointmentNo"), "UTF-8") : "") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
     } else {
         redirectURL = request.getContextPath() + "/CaseManagementView.do";
     }
