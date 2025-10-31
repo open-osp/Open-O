@@ -285,8 +285,9 @@ public class EForm extends EFormBase {
 
                 int pointer = 0;
                 if (fieldType.equals("textarea")) {
-                    // For textarea, we need to find the closing > and insert after it
-                    // to insert the value after it (inside the textarea content area)
+                    // For textarea, we need to find the attribute position of the marker
+                    // Use getAttributePos to get the position of the marker attribute
+                    // Which then will be processed and put inside of the text area in the putValuesFromAP method
                     int attributePos = EFormUtil.getAttributePos(marker, fieldHeader);
                     if (attributePos == -1) {
                         log.error("Failed to find attribute position for marker: " + marker + " in field: " + fieldHeader);
