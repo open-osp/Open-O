@@ -139,8 +139,21 @@
         String strBeanName = "casemgmt_oscar_bean" + bean.getDemographicNo();
         session.setAttribute(strBeanName, bean);
         session.setAttribute("casemgmt_bean_flag", "true");
-        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + URLEncoder.encode(bean.userName) + "&appointmentNo=" + (bean.appointmentNo != null ? bean.appointmentNo : "") + "&reason=" + URLEncoder.encode(bean.reason != null ? bean.reason : "") + "&reasonCode=" + (bean.reasonCode != null ? bean.reasonCode : "") + "&appointmentDate=" + (bean.appointmentDate != null ? bean.appointmentDate : "") + "&start_time=" + (bean.startTime != null ? bean.startTime : "") + "&apptProvider=" + (bean.curProviderNo != null ? bean.curProviderNo : "") + "&providerview=" + (bean.curProviderNo != null ? bean.curProviderNo : "") +
-                "&msgType=" + request.getParameter("msgType") + "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&noteId=" + request.getParameter("noteId") + (request.getParameter("noteId") != null ? "&forceNote=true" : "");
+        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view" +
+        "&demographicNo=" + bean.demographicNo +
+        "&providerNo=" + bean.providerNo +
+        "&providerName=" + URLEncoder.encode(bean.userName) +
+        "&appointmentNo=" + (bean.appointmentNo != null ? bean.appointmentNo : "") +
+        "&reason=" + URLEncoder.encode(bean.reason != null ? bean.reason : "") +
+        "&reasonCode=" + (bean.reasonCode != null ? bean.reasonCode : "") +
+        "&appointmentDate=" + (bean.appointmentDate != null ? bean.appointmentDate : "") +
+        "&start_time=" + (bean.startTime != null ? bean.startTime : "") +
+        "&apptProvider=" + (bean.curProviderNo != null ? bean.curProviderNo : "") +
+        "&providerview=" + (bean.curProviderNo != null ? bean.curProviderNo : "") +
+        "&msgType=" + request.getParameter("msgType") +
+        "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") +
+        "&noteId=" + request.getParameter("noteId") +
+        (request.getParameter("noteId") != null ? "&forceNote=true" : "");
 
         if (request.getParameter("noteBody") != null)
             hrefurl += "&noteBody=" + request.getParameter("noteBody");
