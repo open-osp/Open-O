@@ -34,15 +34,13 @@ package ca.openosp.openo.prevention.pageUtil;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import ca.openosp.openo.commn.model.Demographic;
-import ca.openosp.openo.commn.printing.FontSettings;
-import ca.openosp.openo.commn.printing.PdfWriterFactory;
 import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.SpringUtils;
@@ -52,7 +50,6 @@ import ca.openosp.openo.prevention.PreventionDisplayConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -135,8 +132,7 @@ public class PreventionPrintPdf {
 
         //Create the document we are going to write to
         document = new Document();
-        // PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-        PdfWriter writer = PdfWriterFactory.newInstance(document, outputStream, FontSettings.HELVETICA_10PT);
+        PdfWriter writer = PdfWriter.getInstance(document, outputStream);
         document.setPageSize(PageSize.LETTER);
 
         //Create the font we are going to print to       
@@ -172,6 +168,8 @@ public class PreventionPrintPdf {
 
         // Store header phrase for height calculations (HeaderFooter removed in iText 5.x)
         this.headerPhrase = titlePhrase;
+        HeaderPageEvent headerFooter = new HeaderPageEvent(headerPhrase);
+        writer.setPageEvent(headerFooter);
         document.open();
         cb = writer.getDirectContent();
 
