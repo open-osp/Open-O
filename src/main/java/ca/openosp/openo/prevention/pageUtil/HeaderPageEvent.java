@@ -50,8 +50,8 @@ public class HeaderPageEvent extends PdfPageEventHelper {
                 // Draw border line at the bottom of the header
                 contentByte.saveState();
                 contentByte.setLineWidth(0.90f);
-                contentByte.moveTo(document.left(), document.top() + 6);
-                contentByte.lineTo(document.right(), document.top() + 6);
+                contentByte.moveTo(document.left(), document.top() + 7);
+                contentByte.lineTo(document.right(), document.top() + 7);
                 contentByte.stroke();
                 contentByte.restoreState();
             }
