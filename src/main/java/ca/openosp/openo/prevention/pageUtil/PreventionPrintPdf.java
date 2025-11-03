@@ -166,16 +166,13 @@ public class PreventionPrintPdf {
             titlePhrase.add(new Chunk("MRP: " + prop.getProperty(mrp, "unknown"), FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, BaseColor.BLACK)));
         }
 
-        // Store header phrase, border flag, and header size for header calculations
+        // Store header phrase, border flag, header padding, and border spacing for the header
         this.headerPhrase = titlePhrase;
         boolean hasBorder = true;
-        float x1 = document.left();
-        float x2 = document.right();
-        float y1 = document.top();
-        float y2 = document.top() + 60;
-        Rectangle headerSize = new Rectangle(x1, y1, x2, y2);
+        float headerPadding = 20f;
+        float borderSpacing = 5f;
 
-        HeaderPageEvent header = new HeaderPageEvent(headerPhrase, hasBorder, headerSize);
+        HeaderPageEvent header = new HeaderPageEvent(headerPhrase, hasBorder, headerPadding, borderSpacing);
         writer.setPageEvent(header);
         document.open();
         cb = writer.getDirectContent();
