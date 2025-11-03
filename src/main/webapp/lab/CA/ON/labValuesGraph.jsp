@@ -214,7 +214,7 @@
                     </td>
                 </tr>
             </table>
-            <form action="labValuesGraph.jsp">
+            <form action="<%= request.getContextPath() %>/lab/CA/ON/labValuesGraph.jsp">
                 <input type="hidden" name="labType" value="<%=labType%>"/>
                 <input type="hidden" name="demographic_no" value="<%=demographicNo%>"/>
                 <input type="hidden" name="testName" value="<%=testName%>"/>

@@ -280,7 +280,7 @@
                                                                                      value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnPrint"/> "
                                                                                      onClick="window.print()">
                                 <input type="button" value="Plot" class="btn btn-primary DoNotPrint"
-                                       onclick="window.location = 'labValuesGraph.jsp?demographic_no=<%=demographicNo%>&labType=<%=labType%>&identifier=<%=identifier%>&testName=<%=testName%>';"/>
+                                       onclick="window.location = '<%= request.getContextPath() %>/lab/CA/ON/labValuesGraph.jsp?demographic_no=<%=demographicNo%>&labType=<%=labType%>&identifier=<%=identifier%>&testName=<%=testName%>';"/>
 
                             </td>
                         </tr>
