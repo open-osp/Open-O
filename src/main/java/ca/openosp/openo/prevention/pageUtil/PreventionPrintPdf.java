@@ -32,8 +32,6 @@
 
 package ca.openosp.openo.prevention.pageUtil;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
@@ -134,6 +132,7 @@ public class PreventionPrintPdf {
         document = new Document();
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
         document.setPageSize(PageSize.LETTER);
+        document.setMargins(36, 36, 80, 36);
 
         //Create the font we are going to print to       
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, BaseColor.BLACK);
@@ -166,10 +165,10 @@ public class PreventionPrintPdf {
             titlePhrase.add(new Chunk("MRP: " + prop.getProperty(mrp, "unknown"), FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, BaseColor.BLACK)));
         }
 
-        // Store header phrase for height calculations (HeaderFooter removed in iText 5.x)
+        // Store header phrase for height calculations
         this.headerPhrase = titlePhrase;
-        HeaderPageEvent headerFooter = new HeaderPageEvent(headerPhrase);
-        writer.setPageEvent(headerFooter);
+        HeaderPageEvent header = new HeaderPageEvent(headerPhrase);
+        writer.setPageEvent(header);
         document.open();
         cb = writer.getDirectContent();
 
