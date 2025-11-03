@@ -57,7 +57,7 @@ public class HeaderPageEvent extends PdfPageEventHelper {
             }
             
             if (hasBorder) {
-                float textBottom = calculateBorderSize(columnText);
+                float textBottom = calculateBorderYPosition(columnText);
 
                 // Draw border line at the bottom of the header
                 contentByte.saveState();
@@ -97,7 +97,7 @@ public class HeaderPageEvent extends PdfPageEventHelper {
      * @param columnText The ColumnText containing the header text.
      * @return The Y position for the border line.
      */
-    private float calculateBorderSize (ColumnText columnText) {
+    private float calculateBorderYPosition (ColumnText columnText) {
         // Get the Y position as to where the header text ended
         float textBottom = columnText.getYLine();
 
