@@ -4,6 +4,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
@@ -19,24 +20,23 @@ import ca.openosp.openo.caisi_integrator.util.MiscUtils;
  */
 public class HeaderPageEvent extends PdfPageEventHelper {
     private Phrase headerPhrase;
+    private boolean hasBorder;
+    private Rectangle headerSize;
     private Logger logger = MiscUtils.getLogger();
     
-    public HeaderPageEvent(Phrase headerPhrase) {
+    public HeaderPageEvent(Phrase headerPhrase, boolean hasBorder, Rectangle headerSize) {
         this.headerPhrase = headerPhrase;
+        this.hasBorder = hasBorder;
+        this.headerSize = headerSize;
     }
     
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
-        if (headerPhrase != null) {
+        if (headerPhrase != null || headerSize != null) {
             PdfContentByte contentByte = writer.getDirectContent();
             ColumnText columnText = new ColumnText(contentByte);
 
-            float x1 = document.left();
-            float x2 = document.right();
-            float y1 = document.top() + 5;   // Bottom of header (just above content)
-            float y2 = document.top() + 70;  // Top of header (use most of the 80pt margin)
-
-            columnText.setSimpleColumn(x1, y1, x2, y2);
+            columnText.setSimpleColumn(headerSize);
             columnText.setAlignment(Element.ALIGN_RIGHT);
             columnText.addText(headerPhrase);
 
@@ -46,15 +46,17 @@ public class HeaderPageEvent extends PdfPageEventHelper {
                 logger.error("Document exception error: " + e);
             }
             
-            // Draw border line at the bottom of the header
-            contentByte.saveState();
-            contentByte.setLineWidth(0.5f);
-            contentByte.moveTo(document.left(), document.top());
-            contentByte.lineTo(document.right(), document.top());
-            contentByte.stroke();
-            contentByte.restoreState();
+            if (hasBorder) {
+                // Draw border line at the bottom of the header
+                contentByte.saveState();
+                contentByte.setLineWidth(0.90f);
+                contentByte.moveTo(document.left(), document.top() + 6);
+                contentByte.lineTo(document.right(), document.top() + 6);
+                contentByte.stroke();
+                contentByte.restoreState();
+            }
         } else {
-            logger.error("Header phrase is null!");
+            logger.error("Header phrase or header size is null");
         }
     }
 }

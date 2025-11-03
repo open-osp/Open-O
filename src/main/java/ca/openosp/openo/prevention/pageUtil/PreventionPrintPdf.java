@@ -67,6 +67,7 @@ public class PreventionPrintPdf {
 
     private final int LINESPACING = 1;
     private final float LEADING = 12;
+    private final float HEADER_LEADING = 1;
 
     private final Map<String, String> readableStatuses = new HashMap<String, String>();
     private final Map<String, String> readableStatusesForHistoryTypeLayout = new HashMap<String, String>();
@@ -152,7 +153,7 @@ public class PreventionPrintPdf {
 
         //Header will be printed at top of every page beginning with p2
         String heading = ("true".equals(request.getParameter("immunizationOnly"))) ? "Immunizations" : "Immunizations and Screenings";
-        Phrase titlePhrase = new Phrase(16, heading, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD, BaseColor.BLACK));
+        Phrase titlePhrase = new Phrase(HEADER_LEADING, heading, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD, BaseColor.BLACK));
         titlePhrase.add(Chunk.NEWLINE);
         titlePhrase.add(new Chunk(demo.getFormattedName(), FontFactory.getFont(FontFactory.HELVETICA, 14, Font.NORMAL, BaseColor.BLACK)));
         titlePhrase.add(Chunk.NEWLINE);
@@ -165,9 +166,16 @@ public class PreventionPrintPdf {
             titlePhrase.add(new Chunk("MRP: " + prop.getProperty(mrp, "unknown"), FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, BaseColor.BLACK)));
         }
 
-        // Store header phrase for height calculations
+        // Store header phrase, border flag, and header size for header calculations
         this.headerPhrase = titlePhrase;
-        HeaderPageEvent header = new HeaderPageEvent(headerPhrase);
+        boolean hasBorder = true;
+        float x1 = document.left();
+        float x2 = document.right();
+        float y1 = document.top();
+        float y2 = document.top() + 60;
+        Rectangle headerSize = new Rectangle(x1, y1, x2, y2);
+
+        HeaderPageEvent header = new HeaderPageEvent(headerPhrase, hasBorder, headerSize);
         writer.setPageEvent(header);
         document.open();
         cb = writer.getDirectContent();
@@ -259,7 +267,7 @@ public class PreventionPrintPdf {
                 isScreeningsHeaderAdded = true;
             }
 
-            Phrase procHeader = new Phrase(LEADING, "Prevention " + preventionHeader + "\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.BOLD, BaseColor.BLACK));
+            Phrase procHeader = new Phrase(HEADER_LEADING, "Prevention " + preventionHeader + "\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.BOLD, BaseColor.BLACK));
             ct.addText(procHeader);
             ct.setAlignment(Element.ALIGN_LEFT);
             ct.setIndent(0);
@@ -408,7 +416,7 @@ public class PreventionPrintPdf {
                     //Title (if we are starting to print a new prevention, use the Prevention name as title, otherwise if we 
                     //are in the middle of printing a prevention that has multiple items, identify this as a continued prevention
                     if (subIdx != 0) {
-                        Phrase contdProcHeader = new Phrase(LEADING, "Prevention " + preventionHeader + " (cont'd)\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.ITALIC, BaseColor.BLACK));
+                        Phrase contdProcHeader = new Phrase(HEADER_LEADING, "Prevention " + preventionHeader + " (cont'd)\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.ITALIC, BaseColor.BLACK));
                         ct.setText(contdProcHeader);
                     } else {
                         ct.setText(procHeader);
