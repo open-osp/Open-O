@@ -35,6 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
     python3 python3-pip \
+    inotify-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (latest LTS)
@@ -84,6 +85,7 @@ RUN curl -sSL -o $TOMCAT_PATH/webapps/drugref2.war $DRUGREF_DOWNLOAD_URL
 # Copy scripts and config files
 COPY ./scripts /scripts
 COPY ./setup/setup.sh /setup-dir/setup.sh
+COPY ./setup/setup-hot-reload.sh /setup-dir/setup-hot-reload.sh
 COPY ./config/tomcat/conf/server.xml $TOMCAT_PATH/conf/server.xml
 COPY ./config/shared/volumes/*.properties /root/
 
@@ -115,7 +117,7 @@ RUN dos2unix /scripts/* \
     && dos2unix /setup-dir/setup.sh
 
 # Make scripts executable and add to PATH
-RUN chmod +x /scripts/* /setup-dir/setup.sh && /setup-dir/setup.sh
+RUN chmod +x /scripts/* /setup-dir/*.sh && /setup-dir/setup.sh
 ENV PATH="/scripts:${PATH}"
 
 # Expose Tomcat port
