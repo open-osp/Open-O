@@ -900,7 +900,13 @@
                 <table class="LeftTable">
                     <caisi:isModuleLoad moduleName="caisi">
                         <%
-                            String hrefurl2 = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName + "&appointmentNo=" + request.getParameter("appointmentNo") + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason")) + "&reasonCode=" + (request.getParameter("reasonCode") != null ? request.getParameter("reasonCode") : "");
+                            String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view"
+                                + "&demographicNo=" + bean.demographicNo
+                                + "&providerNo=" + bean.providerNo
+                                + "&providerName=" + bean.userName
+                                + "&appointmentNo=" + URLEncoder.encode(request.getParameter("appointmentNo") == null ? "" : request.getParameter("appointmentNo"))
+                                + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason"))
+                                + "&reasonCode=" + URLEncoder.encode(request.getParameter("reasonCode") == null ? "" : request.getParameter("reasonCode"));
                         %>
                         <tr>
                             <td><a href="<%=hrefurl2%>">Case Management Encounter</a></td>
