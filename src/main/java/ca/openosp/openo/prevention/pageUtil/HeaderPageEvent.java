@@ -23,7 +23,7 @@ public class HeaderPageEvent extends PdfPageEventHelper {
     private boolean hasBorder;
     private float headerPadding;
     private float borderSpacing;
-    private Logger logger = MiscUtils.getLogger();
+    private static final Logger logger = MiscUtils.getLogger();
     
     /**
      * Constructor for HeaderPageEvent.
