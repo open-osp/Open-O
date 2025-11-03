@@ -41,9 +41,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.Logger;
 
+import ca.openosp.openo.lab.ca.all.util.Hl7Utils;
 import ca.openosp.openo.util.StringUtils;
 import ca.openosp.openo.util.UtilDateUtilities;
 import ca.openosp.openo.utility.MiscUtils;
@@ -51,6 +55,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
+import ca.uhn.hl7v2.model.v23.segment.OBR;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
@@ -110,27 +115,15 @@ public class CMLHandler implements MessageHandler {
     }
 
     public String getOBRName(int i){
-        try{
-            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getText().getValue()));
-        }catch(Exception e){
-            return("");
-        }
+        return getObrField(i, obr -> obr.getUniversalServiceIdentifier().getText().getValue());
     }
 
     public String getOBRIdentifier(int i){
-        try{
-            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getUniversalServiceIdentifier().getCe1_Identifier().getValue()));
-        }catch(Exception e){
-            return("");
-        }
+        return getObrField(i, obr -> obr.getUniversalServiceIdentifier().getCe1_Identifier().getValue());
     }
 
     public String getTimeStamp(int i, int j){
-        try{
-            return(formatDateTime(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getObservationDateTime().getTimeOfAnEvent().getValue())));
-        }catch(Exception e){
-            return("");
-        }
+        return getObrField(i, obr -> formatDateTime(getString(obr.getObservationDateTime().getTimeOfAnEvent().getValue())));
     }
 
     public boolean isOBXAbnormal(int i, int j){
@@ -210,27 +203,15 @@ public class CMLHandler implements MessageHandler {
     }
 
     public String getOBXResult(int i, int j){
-        try{
-            return(getString(Terser.get(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX(),5,0,1,1)));
-        }catch(Exception e){
-            return("");
-        }
+        return getObxField(i, j, 5, 1); // OBX-5: Observation Value
     }
 
     public String getOBXReferenceRange(int i, int j){
-        try{
-            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getReferencesRange().getValue()));
-        }catch(Exception e){
-            return("");
-        }
+        return getObxField(i, j, 7, 1); // OBX-7: References Range
     }
 
     public String getOBXUnits(int i, int j){
-        try{
-            return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getUnits().getIdentifier().getValue()));
-        }catch(Exception e){
-            return("");
-        }
+        return getObxField(i, j, 6, 1); // OBX-6: Units
     }
 
     public String getOBXResultStatus(int i, int j){
@@ -276,7 +257,7 @@ public class CMLHandler implements MessageHandler {
 
                 for (j=0; j < msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps(); j++){
                     // only check the obx segment for a header if it is one that will be displayed
-                    if (!getOBXName(i, j).equals("")){
+                    if (getOBXName(i, j) != null && getOBXName(i, j).length() != 0) {
                         currentHeader = getObservationHeader(i, j);
 
                         if (!headers.contains(currentHeader)){
@@ -407,41 +388,15 @@ public class CMLHandler implements MessageHandler {
     }
 
     public String getHomePhone(){
-        String phone = "";
-        int i=0;
-        try{
-            while(!getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberHome(i).get9999999X99999CAnyText().getValue()).equals("")){
-                if (i==0){
-                    phone = getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberHome(i).get9999999X99999CAnyText().getValue());
-                }else{
-                    phone = phone + ", " + getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberHome(i).get9999999X99999CAnyText().getValue());
-                }
-                i++;
-            }
-            return(phone);
-        }catch(Exception e){
-            logger.error("Could not return phone number", e);
-            return("");
-        }
+        return joinRepeatingPhoneFields(10, i ->
+            msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberHome(i).get9999999X99999CAnyText().getValue()
+        );
     }
 
     public String getWorkPhone(){
-        String phone = "";
-        int i=0;
-        try{
-            while(!getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberBusiness(i).get9999999X99999CAnyText().getValue()).equals("")){
-                if (i==0){
-                    phone = getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberBusiness(i).get9999999X99999CAnyText().getValue());
-                }else{
-                    phone = phone + ", " + getString(msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberBusiness(i).get9999999X99999CAnyText().getValue());
-                }
-                i++;
-            }
-            return(phone);
-        }catch(Exception e){
-            logger.error("Could not return phone number", e);
-            return("");
-        }
+        return joinRepeatingPhoneFields(10, i ->
+            msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberBusiness(i).get9999999X99999CAnyText().getValue()
+        );
     }
 
     public String getPatientLocation(){
@@ -473,22 +428,10 @@ public class CMLHandler implements MessageHandler {
     }
 
     public String getClientRef(){
-        String docNum = "";
-        int i=0;
-        try{
-            while(!getString(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i).getIDNumber().getValue()).equals("")){
-                if (i==0){
-                    docNum = getString(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i).getIDNumber().getValue());
-                }else{
-                    docNum = docNum + ", " + getString(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i).getIDNumber().getValue());
-                }
-                i++;
-            }
-            return(docNum);
-        }catch(Exception e){
-            logger.error("Could not return doctor id numbers", e);
-            return("");
-        }
+        return joinRepeatingXcnFields(10,
+            i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i),
+            xcn -> xcn.getIDNumber().getValue()
+        );
     }
 
     public String getAccessionNum(){
@@ -506,41 +449,17 @@ public class CMLHandler implements MessageHandler {
     }
 
     public String getDocName(){
-        String docName = "";
-        int i=0;
-        try{
-            while(!getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i)).equals("")){
-                if (i==0){
-                    docName = getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i));
-                }else{
-                    docName = docName + ", " + getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i));
-                }
-                i++;
-            }
-            return(docName);
-        }catch(Exception e){
-            logger.error("Could not return doctor names", e);
-            return("");
-        }
+        return joinRepeatingXcnFields(10,
+            i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i),
+            this::getFullDocName
+        );
     }
 
     public String getCCDocs(){
-        String docName = "";
-        int i=0;
-        try{
-            while(!getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getResultCopiesTo(i)).equals("")){
-                if (i==0){
-                    docName = getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getResultCopiesTo(i));
-                }else{
-                    docName = docName + ", " + getFullDocName(msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getResultCopiesTo(i));
-                }
-                i++;
-            }
-            return(docName);
-        }catch(Exception e){
-            logger.error("Could not return cc'ed doctors", e);
-            return("");
-        }
+        return joinRepeatingXcnFields(10,
+            i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getResultCopiesTo(i),
+            this::getFullDocName
+        );
     }
 
     public ArrayList<String> getDocNums(){
@@ -578,31 +497,31 @@ public class CMLHandler implements MessageHandler {
             docName = docSeg.getPrefixEgDR().getValue();
 
         if(docSeg.getGivenName().getValue() != null){
-            if (docName.equals(""))
+            if (docName.isEmpty())
                 docName = docSeg.getGivenName().getValue();
             else
                 docName = docName +" "+ docSeg.getGivenName().getValue();
         }
         if(docSeg.getMiddleInitialOrName().getValue() != null){
-            if (docName.equals(""))
+            if (docName.isEmpty())
                 docName = docSeg.getMiddleInitialOrName().getValue();
             else
                 docName = docName +" "+ docSeg.getMiddleInitialOrName().getValue();
         }
         if(docSeg.getFamilyName().getValue() != null){
-            if (docName.equals(""))
+            if (docName.isEmpty())
                 docName = docSeg.getFamilyName().getValue();
             else
                 docName = docName +" "+ docSeg.getFamilyName().getValue();
         }
         if(docSeg.getSuffixEgJRorIII().getValue() != null){
-            if (docName.equals(""))
+            if (docName.isEmpty())
                 docName = docSeg.getSuffixEgJRorIII().getValue();
             else
                 docName = docName +" "+ docSeg.getSuffixEgJRorIII().getValue();
         }
         if(docSeg.getDegreeEgMD().getValue() != null){
-            if (docName.equals(""))
+            if (docName.isEmpty())
                 docName = docSeg.getDegreeEgMD().getValue();
             else
                 docName = docName +" "+ docSeg.getDegreeEgMD().getValue();
@@ -613,7 +532,7 @@ public class CMLHandler implements MessageHandler {
 
 
     protected String formatDateTime(String plain){
-        if (plain == null || plain.trim().equals("")) return "";
+        if (plain == null || plain.trim().isEmpty()) return "";
         String trimmed = plain.trim();
         // Acceptable lengths: 8 (yyyyMMdd), 12 (yyyyMMddHHmm), 14 (yyyyMMddHHmmss)
         if (!(trimmed.matches("\\d{8}") || trimmed.matches("\\d{12}") || trimmed.matches("\\d{14}"))) {
@@ -649,6 +568,88 @@ public class CMLHandler implements MessageHandler {
         }else{
             return("");
         }
+    }
+
+    /**
+     * Generic helper to get an OBX field value using Terser notation.
+     * Eliminates repetitive try-catch and null handling.
+     *
+     * @param obrIndex the ORDER_OBSERVATION index
+     * @param obxIndex the OBSERVATION index within the ORDER_OBSERVATION
+     * @param field the HL7 field number
+     * @param component the component index (usually 1)
+     * @return the field value as a trimmed string, or empty string if not found
+     */
+    private String getObxField(int obrIndex, int obxIndex, int field, int component) {
+        return Hl7Utils.safeHl7String(() ->
+            getString(Terser.get(
+                msg.getRESPONSE().getORDER_OBSERVATION(obrIndex).getOBSERVATION(obxIndex).getOBX(),
+                field, 0, component, 1))
+        );
+    }
+
+    /**
+     * Generic helper to get an OBR field value.
+     *
+     * @param obrIndex the ORDER_OBSERVATION index
+     * @param fieldExtractor lambda to extract the specific field from OBR
+     * @return the field value as a trimmed string, or empty string if not found
+     */
+    private String getObrField(int obrIndex, Function<OBR, String> fieldExtractor) {
+        return Hl7Utils.safeHl7String(() ->
+            getString(fieldExtractor.apply(msg.getRESPONSE().getORDER_OBSERVATION(obrIndex).getOBR()))
+        );
+    }
+
+    /**
+     * Functional interface for extracting XCN fields that may throw HL7Exception.
+     */
+    @FunctionalInterface
+    private interface XcnExtractor {
+        XCN apply(int index) throws HL7Exception;
+    }
+
+    /**
+     * Join repeating XCN (extended composite name) fields like providers.
+     *
+     * @param maxReps maximum number of repetitions to check
+     * @param fieldExtractor lambda to extract XCN field at index i (may throw HL7Exception)
+     * @param nameExtractor lambda to convert XCN to display name
+     * @return comma-separated string of names
+     */
+    private String joinRepeatingXcnFields(int maxReps,
+            XcnExtractor fieldExtractor,
+            Function<XCN, String> nameExtractor) {
+        return IntStream.range(0, maxReps)
+            .mapToObj(i -> Hl7Utils.safeHl7String(() -> {
+                XCN xcn = fieldExtractor.apply(i);
+                return nameExtractor.apply(xcn);
+            }))
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Functional interface for extracting phone fields that may throw HL7Exception.
+     */
+    @FunctionalInterface
+    private interface PhoneExtractor {
+        String apply(int index) throws HL7Exception;
+    }
+
+    /**
+     * Join repeating phone/XTN fields by checking each repetition until empty.
+     * Uses a stream approach to replace manual while loops.
+     *
+     * @param maxReps maximum number of repetitions to attempt (usually 10 is safe)
+     * @param fieldExtractor lambda to extract phone field value at index i (may throw HL7Exception)
+     * @return comma-separated string of phone numbers
+     */
+    private String joinRepeatingPhoneFields(int maxReps, PhoneExtractor fieldExtractor) {
+        return IntStream.range(0, maxReps)
+            .mapToObj(i -> Hl7Utils.safeHl7String(() -> getString(fieldExtractor.apply(i))))
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.joining(", "));
     }
 
     public String getFillerOrderNumber(){
