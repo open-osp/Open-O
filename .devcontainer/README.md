@@ -107,7 +107,7 @@ For developers who are not compiling for the first time in the dev container, it
 Hot Reload Functionality:
 
 - A feature that allows you to save changes to JSP/HTML/CSS files, and see the changes after refreshing the web application page
-  - This will automatically be setup on compilation of the project with `make install`. And will only need to be setup if it is not already running in the background
+  - This will automatically be set up on compilation of the project with `make install`. And will only need to be set up if it is not already running in the background
   - On other types of files with new changes that aren't listed with this functionality, you will need to fully rebuild the project with `make clean` and `make install`
 
 
