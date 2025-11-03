@@ -274,7 +274,6 @@ public class EForm extends EFormBase {
                     if (!setAP2nd) saveFieldValue(html, markerLoc);
                     continue;
                 }
-                int apNameLen = apName.length();
                 apName = EFormUtil.removeQuotes(apName);
 
                 log.debug("AP ==== " + apName);
@@ -284,11 +283,17 @@ public class EForm extends EFormBase {
                 String fieldType = getFieldType(fieldHeader); // textarea, text, hidden etc..
                 if ((fieldType == null || fieldType.equals("")) || (apName == null || apName.equals(""))) continue;
 
-                // sets up the pointer where to write the value
-                int pointer = markerLoc + EFormUtil.getAttributePos(marker, fieldHeader) + marker.length() + 1;
-                if (!fieldType.equals("textarea")) {
-                    pointer += apNameLen;
+                // Position pointer right after the oscardb attribute's closing quote
+                // This works for all field types, which then handle insertion differently in putValuesFromAP():
+                // - textarea: searches forward for closing > and inserts content inside the tags
+                // - select: searches forward for matching option value and adds "selected" attribute
+                // - input: directly inserts value="" attribute at this position
+                int attributeEndPos = EFormUtil.getAttributeEndPos(marker, fieldHeader);
+                if (attributeEndPos == -1) {
+                    log.error("Failed to find attribute end position for marker: " + marker + " in field: " + fieldHeader);
+                    continue;
                 }
+                int pointer = markerLoc + attributeEndPos;
                 EFormLoader.getInstance();
                 DatabaseAP curAP = EFormLoader.getAP(apName);
 
