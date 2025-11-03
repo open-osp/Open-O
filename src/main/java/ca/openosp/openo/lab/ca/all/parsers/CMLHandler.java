@@ -75,16 +75,19 @@ public class CMLHandler implements MessageHandler {
     public CMLHandler(){
     }
 
+    @Override
     public void init(String hl7Body) throws HL7Exception {
         Parser p = new PipeParser();
         p.setValidationContext(new NoValidation());
         msg = (ORU_R01) p.parse(hl7Body.replaceAll( "\n", "\r\n" ));
     }
 
+    @Override
     public String getMsgType(){
         return("CML");
     }
 
+    @Override
     public String getMsgDate(){
         try {
             //return(formatDateTime(msg.getMSH().getDateTimeOfMessage().getTimeOfAnEvent().getValue()));
@@ -95,6 +98,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getMsgPriority(){
         return("");
     }
@@ -102,10 +106,12 @@ public class CMLHandler implements MessageHandler {
     /**
      *  Methods to get information about the Observation Request
      */
+    @Override
     public int getOBRCount(){
         return(msg.getRESPONSE().getORDER_OBSERVATIONReps());
     }
 
+    @Override
     public int getOBXCount(int i){
         try{
             return(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps());
@@ -114,18 +120,22 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBRName(int i){
         return getObrField(i, obr -> obr.getUniversalServiceIdentifier().getText().getValue());
     }
 
+    @Override
     public String getOBRIdentifier(int i){
         return getObrField(i, obr -> obr.getUniversalServiceIdentifier().getCe1_Identifier().getValue());
     }
 
+    @Override
     public String getTimeStamp(int i, int j){
         return getObrField(i, obr -> formatDateTime(getString(obr.getObservationDateTime().getTimeOfAnEvent().getValue())));
     }
 
+    @Override
     public boolean isOBXAbnormal(int i, int j){
         try{
             if(getOBXAbnormalFlag(i, j).equals("A")){
@@ -139,6 +149,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXAbnormalFlag(int i, int j){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getAbnormalFlags(0).getValue()));
@@ -155,6 +166,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getObservationHeader(int i, int j){
         try{
             return (getString(Terser.get(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX(),4,0,1,1))+" "+
@@ -165,6 +177,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXIdentifier(int i, int j){
         try{
     		Segment obxSeg = msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX();
@@ -178,6 +191,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXValueType(int i, int j){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getValueType().getValue()));
@@ -186,6 +200,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXName(int i, int j){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getText().getValue()));
@@ -194,6 +209,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXNameLong(int i, int j){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATION(j).getOBX().getObservationIdentifier().getComponent(2).toString()));
@@ -202,18 +218,22 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOBXResult(int i, int j){
         return getObxField(i, j, 5, 1); // OBX-5: Observation Value
     }
 
+    @Override
     public String getOBXReferenceRange(int i, int j){
         return getObxField(i, j, 7, 1); // OBX-7: References Range
     }
 
+    @Override
     public String getOBXUnits(int i, int j){
         return getObxField(i, j, 6, 1); // OBX-6: Units
     }
 
+    @Override
     public String getOBXResultStatus(int i, int j){
         String status = "";
         try{
@@ -229,6 +249,7 @@ public class CMLHandler implements MessageHandler {
         return status;
     }
 
+    @Override
     public int getOBXFinalResultCount(){
         int obrCount = getOBRCount();
         int obxCount;
@@ -246,6 +267,7 @@ public class CMLHandler implements MessageHandler {
     /**
      *  Retrieve the possible segment headers from the OBX fields
      */
+    @Override
     public ArrayList<String> getHeaders(){
         int i;
         int j;
@@ -280,6 +302,7 @@ public class CMLHandler implements MessageHandler {
     /**
      *  Methods to get information from observation notes
      */
+    @Override
     public int getOBRCommentCount(int i){
         /*try {
             int lastOBX = msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps() - 1;
@@ -289,6 +312,7 @@ public class CMLHandler implements MessageHandler {
         // }
     }
 
+    @Override
     public String getOBRComment(int i, int j){
        /* try {
             int lastOBX = msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps() - 1;
@@ -301,6 +325,7 @@ public class CMLHandler implements MessageHandler {
     /**
      *  Methods to get information from observation notes
      */
+    @Override
     public int getOBXCommentCount(int i, int j){
         int count = 0;
         try {
@@ -320,6 +345,7 @@ public class CMLHandler implements MessageHandler {
         return count;
     }
 
+    @Override
     public String getOBXComment(int i, int j, int k){
         try {
             //int lastOBX = msg.getRESPONSE().getORDER_OBSERVATION(i).getOBSERVATIONReps() - 1;
@@ -333,18 +359,22 @@ public class CMLHandler implements MessageHandler {
     /**
      *  Methods to get information about the patient
      */
+    @Override
     public String getPatientName(){
         return(getFirstName()+" "+getLastName());
     }
 
+    @Override
     public String getFirstName(){
         return(getString(msg.getRESPONSE().getPATIENT().getPID().getPatientName().getGivenName().getValue()));
     }
 
+    @Override
     public String getLastName(){
         return(getString(msg.getRESPONSE().getPATIENT().getPID().getPatientName().getFamilyName().getValue()));
     }
 
+    @Override
     public String getDOB(){
         try{
             return(formatDateTime(getString(msg.getRESPONSE().getPATIENT().getPID().getDateOfBirth().getTimeOfAnEvent().getValue())));
@@ -353,6 +383,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getAge(){
         String age = "N/A";
         String dob = getDOB();
@@ -368,10 +399,12 @@ public class CMLHandler implements MessageHandler {
         return age;
     }
 
+    @Override
     public String getSex(){
         return(getString(msg.getRESPONSE().getPATIENT().getPID().getSex().getValue()));
     }
 
+    @Override
     public String getHealthNum(){
     	//International Student HIN - https://sourceforge.net/p/oscarmcmaster/feature-requests/1003/
     	String value = getString(msg.getRESPONSE().getPATIENT().getPID().getAlternatePatientID().getID().getValue());
@@ -387,22 +420,26 @@ public class CMLHandler implements MessageHandler {
         return(value);
     }
 
+    @Override
     public String getHomePhone(){
         return joinRepeatingPhoneFields(10, i ->
             msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberHome(i).get9999999X99999CAnyText().getValue()
         );
     }
 
+    @Override
     public String getWorkPhone(){
         return joinRepeatingPhoneFields(10, i ->
             msg.getRESPONSE().getPATIENT().getPID().getPhoneNumberBusiness(i).get9999999X99999CAnyText().getValue()
         );
     }
 
+    @Override
     public String getPatientLocation(){
         return(getString(msg.getMSH().getSendingFacility().getNamespaceID().getValue()));
     }
 
+    @Override
     public String getServiceDate(){
         try{
             return(formatDateTime(getString(msg.getRESPONSE().getORDER_OBSERVATION(0).getORC().getOrderEffectiveDateTime().getTimeOfAnEvent().getValue())));
@@ -411,6 +448,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getRequestDate(int i){
         try{
             return(formatDateTime(getString(msg.getRESPONSE().getORDER_OBSERVATION(i).getOBR().getRequestedDateTime().getTimeOfAnEvent().getValue())));
@@ -419,6 +457,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getOrderStatus(){
         try{
             return(getString(msg.getRESPONSE().getORDER_OBSERVATION(0).getORC().getOrderStatus().getValue()));
@@ -427,6 +466,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getClientRef(){
         return joinRepeatingXcnFields(10,
             i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i),
@@ -434,6 +474,7 @@ public class CMLHandler implements MessageHandler {
         );
     }
 
+    @Override
     public String getAccessionNum(){
         String accessionNum = "";
         try{
@@ -448,6 +489,7 @@ public class CMLHandler implements MessageHandler {
         }
     }
 
+    @Override
     public String getDocName(){
         return joinRepeatingXcnFields(10,
             i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getOrderingProvider(i),
@@ -455,6 +497,7 @@ public class CMLHandler implements MessageHandler {
         );
     }
 
+    @Override
     public String getCCDocs(){
         return joinRepeatingXcnFields(10,
             i -> msg.getRESPONSE().getORDER_OBSERVATION(0).getOBR().getResultCopiesTo(i),
@@ -462,6 +505,7 @@ public class CMLHandler implements MessageHandler {
         );
     }
 
+    @Override
     public ArrayList<String> getDocNums(){
         ArrayList<String> docNums = new ArrayList<String>();
         String id;
@@ -485,6 +529,7 @@ public class CMLHandler implements MessageHandler {
         return(docNums);
     }
 
+    @Override
     public String audit(){
         return "";
     }
@@ -652,21 +697,28 @@ public class CMLHandler implements MessageHandler {
             .collect(Collectors.joining(", "));
     }
 
+    @Override
     public String getFillerOrderNumber(){
 		return "";
 	}
 
+    @Override
     public String getEncounterId(){
     	return "";
     }
+
+    @Override
     public String getRadiologistInfo(){
 		return "";
 	}
 
+    @Override
     public String getNteForOBX(int i, int j){
 
     	return "";
     }
+
+    @Override
     public String getNteForPID() {
     	return "";
     }
@@ -676,13 +728,14 @@ public class CMLHandler implements MessageHandler {
     /*
      * for OMD validation (imported files)
      */
+    @Override
     public boolean isTestResultBlocked(int i, int j){
         try{
             String status = getOBXBlocked(i, j);
             return "BLOCKED".equals(status);
             
         }catch(Exception e){
-            logger.error("error returning obx identifier", e);
+            logger.error("Error checking if test result is blocked", e);
             return false;
         }
     }
