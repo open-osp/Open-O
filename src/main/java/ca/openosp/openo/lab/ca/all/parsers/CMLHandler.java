@@ -613,14 +613,33 @@ public class CMLHandler implements MessageHandler {
 
 
     protected String formatDateTime(String plain){
-    	if (plain==null || plain.trim().equals("")) return "";
-
-        String dateFormat = "yyyyMMddHHmmss";
-        dateFormat = dateFormat.substring(0, plain.length());
-        String stringFormat = "yyyy-MM-dd HH:mm:ss";
-        stringFormat = stringFormat.substring(0, stringFormat.lastIndexOf(dateFormat.charAt(dateFormat.length()-1))+1);
-
-        Date date = UtilDateUtilities.StringToDate(plain, dateFormat);
+        if (plain == null || plain.trim().equals("")) return "";
+        String trimmed = plain.trim();
+        // Acceptable lengths: 8 (yyyyMMdd), 12 (yyyyMMddHHmm), 14 (yyyyMMddHHmmss)
+        if (!(trimmed.matches("\\d{8}") || trimmed.matches("\\d{12}") || trimmed.matches("\\d{14}"))) {
+            // Unexpected format, return empty string or handle as needed
+            return "";
+        }
+        String dateFormat;
+        String stringFormat;
+        switch (trimmed.length()) {
+            case 8:
+                dateFormat = "yyyyMMdd";
+                stringFormat = "yyyy-MM-dd";
+                break;
+            case 12:
+                dateFormat = "yyyyMMddHHmm";
+                stringFormat = "yyyy-MM-dd HH:mm";
+                break;
+            case 14:
+                dateFormat = "yyyyMMddHHmmss";
+                stringFormat = "yyyy-MM-dd HH:mm:ss";
+                break;
+            default:
+                // Should not reach here due to regex check above
+                return "";
+        }
+        Date date = UtilDateUtilities.StringToDate(trimmed, dateFormat);
         return UtilDateUtilities.DateToString(date, stringFormat);
     }
 
