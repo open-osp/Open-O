@@ -626,8 +626,7 @@ public class CMLHandler implements MessageHandler {
 
     protected String getString(String retrieve){
         if (retrieve != null){
-            retrieve.replaceAll("^", " ");
-            return(retrieve.trim());
+            return retrieve.replaceAll("^", " ").trim();
         }else{
             return("");
         }
