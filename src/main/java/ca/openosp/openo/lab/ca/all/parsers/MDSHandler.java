@@ -593,7 +593,8 @@ public class MDSHandler implements MessageHandler {
                             }
                         } else {
                             // Direct text comment
-                            String nteText = terser.get(ntePath + "-3-1");
+                            // NTE-3 format: CODE^DESCRIPTION, we want component 2 (description)
+                            String nteText = terser.get(ntePath + "-3-2");
                             if (nteText != null && !nteText.isEmpty()) {
                                 totalCommentLines++;
                             }
@@ -615,7 +616,11 @@ public class MDSHandler implements MessageHandler {
                         if (line.startsWith("ZMC|")) {
                             String[] fields = line.split("\\|", -1);
                             if (fields.length > 2) {
+                                // ZMC field 2 may have components (CODE^EXTRA), extract component 1 only
                                 String zmcCode = fields[2];
+                                if (zmcCode.contains("^")) {
+                                    zmcCode = zmcCode.split("\\^")[0];
+                                }
                                 for (String commentCode : commentCodes) {
                                     if (zmcCode.equals(commentCode)) {
                                         totalCommentLines++;
@@ -680,9 +685,13 @@ public class MDSHandler implements MessageHandler {
                                 if (line.startsWith("ZMC|")) {
                                     String[] fields = line.split("\\|", -1);
                                     if (fields.length > 6) {
+                                        // ZMC field 2 may have components (CODE^EXTRA), extract component 1 only
                                         String zmcCode = fields[2];
+                                        if (zmcCode.contains("^")) {
+                                            zmcCode = zmcCode.split("\\^")[0];
+                                        }
                                         if (zmcCode.equals(commentCode)) {
-                                            // Add this ZMC comment line
+                                            // Add this ZMC comment line from field 6
                                             String commentText = fields[6];
                                             allCommentLines.add(commentText);
                                         }
@@ -692,7 +701,8 @@ public class MDSHandler implements MessageHandler {
                         }
                     } else {
                         // Direct text comment from NTE
-                        String nteText = terser.get(ntePath + "-3-1");
+                        // NTE-3 format: CODE^DESCRIPTION, we want component 2 (description)
+                        String nteText = terser.get(ntePath + "-3-2");
                         if (nteText != null && !nteText.isEmpty()) {
                             allCommentLines.add(nteText);
                         }
