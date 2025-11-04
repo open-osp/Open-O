@@ -125,7 +125,7 @@
         <title>Antenatal Record 2</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <script type="text/javascript" src="<%= ctx %>/js/global.js"></script>
-        <link rel="stylesheet" type="text/css" href="<%=bView?"arStyleView.css" : "arStyle.css"%>">
+        <link rel="stylesheet" type="text/css" href="<%=bView? request.getContextPath() + "/form/arStyleView.css" : request.getContextPath() + "/form/arStyle.css" %>">
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
