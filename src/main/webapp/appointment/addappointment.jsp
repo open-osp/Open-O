@@ -1667,7 +1667,7 @@ Ontario, Canada
                                 </td>
                                 <td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%>
                                 </td>
-                                <td style="background-color: #e8e8e8;"><%=a.getStatus() == null ? "" : (a.getStatus().equals("N") ? "No Show" : (a.getStatus().equals("C") ? "Cancelled" : ""))%>
+                                <td style="background-color: #e8e8e8;"><%=a.getStatus() == null ? "" : (a.getStatus().startsWith("N") ? "No Show" : (a.getStatus().startsWith("C") ? "Cancelled" : ""))%>
                                 </td>
                             </tr>
                             <%
@@ -1690,7 +1690,7 @@ Ontario, Canada
                                 </td>
                                 <td style="background-color: #e8e8e8; padding-right: 25px"><%=p.getFormattedName()%>
                                 </td>
-                                <td style="background-color: #e8e8e8;"><%=a.getStatus() == null ? "" : (a.getStatus().equals("N") ? "No Show" : (a.getStatus().equals("C") ? "Cancelled" : ""))%>
+                                <td style="background-color: #e8e8e8;"><%=a.getStatus() == null ? "" : (a.getStatus().startsWith("N") ? "No Show" : (a.getStatus().startsWith("C") ? "Cancelled" : ""))%>
                                 </td>
                             </tr>
                             <%
