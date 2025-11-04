@@ -440,7 +440,7 @@ public class FrmPDFServlet extends HttpServlet {
                 BaseFont bf; // = normFont;
                 String encoding;
 
-                cb.setRGBColorStroke(0, 0, 255);
+                cb.setRGBColorStroke(0, 0, 1);
                 //cb.setFontAndSize(bf, 8);
                 // LEFT/CENTER/RIGHT, X, Y,
                 //cb.showTextAligned(PdfContentByte.ALIGN_LEFT, "Cathy
@@ -716,7 +716,7 @@ public class FrmPDFServlet extends HttpServlet {
 
 	                            //draw the pic
 	                            cb.setLineWidth(1.5f);
-	                            //cb.setRGBColorStrokeF(0f, 255f, 0f); //cb.circle(52f,
+	                            //cb.setRGBColorStrokeF(0f, 1f, 0f); //cb.circle(52f,
 	                            // height - 751f, 1f);//cb.circle(52f, height - 609f,
 	                            // 1f);
 	                            for (Enumeration e = gProp.propertyNames(); e.hasMoreElements();) {
@@ -741,9 +741,9 @@ public class FrmPDFServlet extends HttpServlet {
 	                            //draw the pic
 	                            cb.setLineWidth(1.5f);
 	                            if (k % 2 == 0) {
-	                                cb.setRGBColorStrokeF(0f, 0f, 255f);
+	                                cb.setRGBColorStrokeF(0f, 0f, 1f);
 	                            } else {
-	                                cb.setRGBColorStrokeF(255f, 0f, 0f);
+	                                cb.setRGBColorStrokeF(1f, 0f, 0f);
 	                            }
 	                            for (Enumeration e = gProp.propertyNames(); e.hasMoreElements();) {
 	                                tempName = new StringBuilder(e.nextElement().toString());
