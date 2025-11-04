@@ -63,6 +63,7 @@ public class EctSessionBean implements java.io.Serializable {
     public String appointmentNo;
     public String curProviderNo;
     public String reason;
+    public String reasonCode;
     public String encType;
     public String appointmentDate;
     public String startTime;
@@ -250,6 +251,17 @@ public class EctSessionBean implements java.io.Serializable {
         demographicNo = "" + appt.getDemographicNo();
         this.appointmentNo = appointmentNo;
         reason = appt.getReason();
+        reasonCode = appt.getReasonCode() != null ? appt.getReasonCode().toString() : null;
+
+        // If reason text is empty but reasonCode exists, use the reasonCode label
+        if ((reason == null || reason.trim().isEmpty()) && appt.getReasonCode() != null) {
+            ca.openosp.openo.commn.dao.LookupListItemDao lookupListItemDao = SpringUtils.getBean(ca.openosp.openo.commn.dao.LookupListItemDao.class);
+            ca.openosp.openo.commn.model.LookupListItem item = lookupListItemDao.find(appt.getReasonCode());
+            if (item != null && item.getLabel() != null && !item.getLabel().trim().isEmpty()) {
+                reason = item.getLabel().trim();
+            }
+        }
+
         encType = new String("face to face encounter with client");
         appointmentDate = ConversionUtils.toDateString(appt.getAppointmentDate());
         startTime = ConversionUtils.toDateString(appt.getStartTime());
