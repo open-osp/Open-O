@@ -32,17 +32,13 @@
 
 package ca.openosp.openo.prevention.pageUtil;
 
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import ca.openosp.openo.commn.model.Demographic;
-import ca.openosp.openo.commn.printing.FontSettings;
-import ca.openosp.openo.commn.printing.PdfWriterFactory;
 import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.SpringUtils;
@@ -52,7 +48,6 @@ import ca.openosp.openo.prevention.PreventionDisplayConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
@@ -72,6 +67,7 @@ public class PreventionPrintPdf {
 
     private final int LINESPACING = 1;
     private final float LEADING = 12;
+    private final float HEADER_LEADING = 1;
 
     private final Map<String, String> readableStatuses = new HashMap<String, String>();
     private final Map<String, String> readableStatusesForHistoryTypeLayout = new HashMap<String, String>();
@@ -135,9 +131,9 @@ public class PreventionPrintPdf {
 
         //Create the document we are going to write to
         document = new Document();
-        // PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-        PdfWriter writer = PdfWriterFactory.newInstance(document, outputStream, FontSettings.HELVETICA_10PT);
+        PdfWriter writer = PdfWriter.getInstance(document, outputStream);
         document.setPageSize(PageSize.LETTER);
+        document.setMargins(36, 36, 80, 36);
 
         //Create the font we are going to print to       
         Font font = FontFactory.getFont(FontFactory.HELVETICA, 9, Font.NORMAL, BaseColor.BLACK);
@@ -157,7 +153,7 @@ public class PreventionPrintPdf {
 
         //Header will be printed at top of every page beginning with p2
         String heading = ("true".equals(request.getParameter("immunizationOnly"))) ? "Immunizations" : "Immunizations and Screenings";
-        Phrase titlePhrase = new Phrase(16, heading, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD, BaseColor.BLACK));
+        Phrase titlePhrase = new Phrase(HEADER_LEADING, heading, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 20, Font.BOLD, BaseColor.BLACK));
         titlePhrase.add(Chunk.NEWLINE);
         titlePhrase.add(new Chunk(demo.getFormattedName(), FontFactory.getFont(FontFactory.HELVETICA, 14, Font.NORMAL, BaseColor.BLACK)));
         titlePhrase.add(Chunk.NEWLINE);
@@ -170,8 +166,14 @@ public class PreventionPrintPdf {
             titlePhrase.add(new Chunk("MRP: " + prop.getProperty(mrp, "unknown"), FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD, BaseColor.BLACK)));
         }
 
-        // Store header phrase for height calculations (HeaderFooter removed in iText 5.x)
+        // Store header phrase, border flag, header padding, and border spacing for the header
         this.headerPhrase = titlePhrase;
+        boolean hasBorder = true;
+        float headerPadding = 20f;
+        float borderSpacing = 5f;
+
+        HeaderPageEvent header = new HeaderPageEvent(headerPhrase, hasBorder, headerPadding, borderSpacing);
+        writer.setPageEvent(header);
         document.open();
         cb = writer.getDirectContent();
 
@@ -262,7 +264,7 @@ public class PreventionPrintPdf {
                 isScreeningsHeaderAdded = true;
             }
 
-            Phrase procHeader = new Phrase(LEADING, "Prevention " + preventionHeader + "\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.BOLD, BaseColor.BLACK));
+            Phrase procHeader = new Phrase(HEADER_LEADING, "Prevention " + preventionHeader + "\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.BOLD, BaseColor.BLACK));
             ct.addText(procHeader);
             ct.setAlignment(Element.ALIGN_LEFT);
             ct.setIndent(0);
@@ -411,7 +413,7 @@ public class PreventionPrintPdf {
                     //Title (if we are starting to print a new prevention, use the Prevention name as title, otherwise if we 
                     //are in the middle of printing a prevention that has multiple items, identify this as a continued prevention
                     if (subIdx != 0) {
-                        Phrase contdProcHeader = new Phrase(LEADING, "Prevention " + preventionHeader + " (cont'd)\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.ITALIC, BaseColor.BLACK));
+                        Phrase contdProcHeader = new Phrase(HEADER_LEADING, "Prevention " + preventionHeader + " (cont'd)\n", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, Font.ITALIC, BaseColor.BLACK));
                         ct.setText(contdProcHeader);
                     } else {
                         ct.setText(procHeader);
