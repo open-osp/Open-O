@@ -203,9 +203,10 @@ public class FrmPDFServlet extends HttpServlet {
         String suffix = (multiple > 0) ? String.valueOf(multiple) : "";
 
         PdfWriter writer = null;
+        PdfReader reader = null;
 
         try {
-            writer = PdfWriterFactory.newInstance(document, baosPDF, FontSettings.HELVETICA_6PT);
+            writer = PdfWriter.getInstance(document, baosPDF);
 
             String title = req.getParameter("__title" + suffix) != null ? req.getParameter("__title" + suffix) : "Unknown";
 
@@ -406,27 +407,22 @@ public class FrmPDFServlet extends HttpServlet {
             // create a reader for a certain document
             //String propFilename = "../../OscarDocument/" + getProjectName() + "/form/" + template;
             String propFilename = OscarProperties.getInstance().getProperty("pdfFORMDIR", "") + "/" + template;
-            PdfReader reader = null;
             float height;
             int n;
             try {
-                try {
-                    reader = new PdfReader(propFilename);
-                    log.info("Found template at " + propFilename);
-                } catch (Exception dex) {
-                    log.debug("change path to inside oscar from :" + propFilename);
-                    reader = new PdfReader("/oscar/form/prop/" + template);
-                    log.debug("Found template at /oscar/form/prop/" + template);
-                }
-
-                // retrieve the total number of pages
-                n = reader.getNumberOfPages();
-                // retrieve the size of the first page
-                Rectangle pSize = reader.getPageSize(1);
-                height = pSize.getHeight();
-            } finally {
-                reader.close();
+                reader = new PdfReader(propFilename);
+                log.info("Found template at " + propFilename);
+            } catch (Exception dex) {
+                log.debug("change path to inside oscar from :" + propFilename);
+                reader = new PdfReader("/oscar/form/prop/" + template);
+                log.debug("Found template at /oscar/form/prop/" + template);
             }
+
+            // retrieve the total number of pages
+            n = reader.getNumberOfPages();
+            // retrieve the size of the first page
+            Rectangle pSize = reader.getPageSize(1);
+            height = pSize.getHeight();
 
             PdfContentByte cb = writer.getDirectContent();
             ColumnText ct = new ColumnText(cb);
@@ -686,9 +682,9 @@ public class FrmPDFServlet extends HttpServlet {
                         cb.setLineWidth(1.5f);
 
                         if (k % 2 == 0) {
-                            cb.setRGBColorStrokeF(0f, 0f, 255f);
+                            cb.setRGBColorStrokeF(0f, 0f, 1f);
                         } else {
-                            cb.setRGBColorStrokeF(255f, 0f, 0f);
+                            cb.setRGBColorStrokeF(1f, 0f, 0f);
                         }
 
 
@@ -764,7 +760,6 @@ public class FrmPDFServlet extends HttpServlet {
                 } //end if there are properties to process
 
             }
-
         } catch (DocumentException dex) {
             baosPDF.reset();
             throw dex;
@@ -773,6 +768,8 @@ public class FrmPDFServlet extends HttpServlet {
                 document.close();
             if (writer != null)
                 writer.close();
+            if (reader != null)
+                reader.close();
         }
 
         return baosPDF;
