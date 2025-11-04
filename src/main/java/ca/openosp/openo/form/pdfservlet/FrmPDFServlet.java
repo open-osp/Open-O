@@ -764,12 +764,29 @@ public class FrmPDFServlet extends HttpServlet {
             baosPDF.reset();
             throw dex;
         } finally {
-            if (document.isOpen())
-                document.close();
-            if (writer != null)
-                writer.close();
-            if (reader != null)
-                reader.close();
+            if (document.isOpen()) {
+                try {
+                    document.close();
+                }
+                catch (Exception e) {
+                    log.error("Error closing PDF document", e);
+                }
+            }
+            if (writer != null) {
+                try {
+                    writer.close();
+                }
+                catch (Exception e) {
+                    log.error("Error closing PDF writer", e);
+                }
+            }   
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (Exception e) {
+                    log.error("Error closing PDF reader", e);
+                }
+            }
         }
 
         return baosPDF;
