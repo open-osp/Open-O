@@ -909,7 +909,7 @@
                                 + "&reasonCode=" + URLEncoder.encode(request.getParameter("reasonCode") == null ? "" : request.getParameter("reasonCode"));
                         %>
                         <tr>
-                            <td><a href="<%=hrefurl2%>">Case Management Encounter</a></td>
+                            <td><a href="<%=hrefurl%>">Case Management Encounter</a></td>
                         </tr>
                     </caisi:isModuleLoad>
                     <tr class="Header">
