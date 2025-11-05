@@ -62,6 +62,7 @@
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.js"></script>
     <title>Planner</title>
     <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
     <script type="text/javascript" language="Javascript">
@@ -77,11 +78,12 @@
         String risk_content = darp.getRiskContent();
         String checklist_content = darp.getChecklistContent();
 %>
-<xml id="xml_list">
+<script type="text/xml" id="xml_list">
     <planner>
         <%=checklist_content%>
     </planner>
-</xml>
+</script>
+
 <%
         //set the riskdata bean from xml file
         Properties savedar1risk1 = risks.getRiskName(folderPath + "desannualreviewplannerrisk.xml");

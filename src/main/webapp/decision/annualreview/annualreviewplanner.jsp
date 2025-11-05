@@ -69,6 +69,7 @@
 <html>
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.js"></script>
     <title>ANNUAL HEALTH REVIEW PLANNER</title>
     <script type="text/javascript" language="Javascript">
         function onExit() {
@@ -94,50 +95,49 @@
 <body bgproperties="fixed" topmargin="0" leftmargin="1" rightmargin="1">
 <form name="planner" method="post"
       action="annualreviewplanner.jsp?demographic_no=<%=demographic_no%>&formId=<%=form_no%>">
-    <!--%@ include file="zgetarriskdata.jsp" % --> <%
-    //save risk&checklist data if required
-    if (request.getParameter("submit") != null &&
-            (request.getParameter("submit").equals(" Save ") || request.getParameter("submit").equals("Save and Exit"))) {
+    <%
+        //save risk&checklist data if required
+        if (request.getParameter("submit") != null &&
+                (request.getParameter("submit").equals(" Save ") || request.getParameter("submit").equals("Save and Exit"))) {
 
-        String risk_content = "", checklist_content = "";
+            String risk_content = "", checklist_content = "";
 
-        risk_content = SxmlMisc.createXmlDataString(request, "risk_");
-        checklist_content = SxmlMisc.createXmlDataString(request, "checklist_");
+            risk_content = SxmlMisc.createXmlDataString(request, "risk_");
+            checklist_content = SxmlMisc.createXmlDataString(request, "checklist_");
 
-        DesAnnualReviewPlan darp = new DesAnnualReviewPlan();
-        darp.setDesDate(new java.util.Date());
-        darp.setDesTime(new java.util.Date());
-        darp.setProviderNo(curUser_no);
-        darp.setRiskContent(risk_content);
-        darp.setChecklistContent(checklist_content);
-        darp.setDemographicNo(Integer.parseInt(demographic_no));
-        darp.setFormNo(Integer.parseInt(form_no));
-        desAnnualReviewPlanDao.persist(darp);
-    }
+            DesAnnualReviewPlan darp = new DesAnnualReviewPlan();
+            darp.setDesDate(new java.util.Date());
+            darp.setDesTime(new java.util.Date());
+            darp.setProviderNo(curUser_no);
+            darp.setRiskContent(risk_content);
+            darp.setChecklistContent(checklist_content);
+            darp.setDemographicNo(Integer.parseInt(demographic_no));
+            darp.setFormNo(Integer.parseInt(form_no));
+            desAnnualReviewPlanDao.persist(darp);
+        }
 
-    //save & exit if required
-    if (request.getParameter("submit") != null && request.getParameter("submit").equals("Save and Exit")) {
-        out.print("<script type='text/javascript' language='Javascript'>window.close();</script>");
+        //save & exit if required
+        if (request.getParameter("submit") != null && request.getParameter("submit").equals("Save and Exit")) {
+            out.print("<script type='text/javascript' language='Javascript'>window.close();</script>");
 
-        return;
-    }
+            return;
+        }
 
-    //initial prop bean with "0"
-    //  for(int i=0;i<riskdataname.length;i++) {
-    //	  riskDataBean.setProperty(riskdataname[i][0],"0");
-    //  }
-    //get the risk data from table desaprisk for other risk factors
+        //initial prop bean with "0"
+        //  for(int i=0;i<riskdataname.length;i++) {
+        //	  riskDataBean.setProperty(riskdataname[i][0],"0");
+        //  }
+        //get the risk data from table desaprisk for other risk factors
 
-    DesAnnualReviewPlan darp = desAnnualReviewPlanDao.search(Integer.parseInt(form_no), Integer.parseInt(demographic_no));
+        DesAnnualReviewPlan darp = desAnnualReviewPlanDao.search(Integer.parseInt(form_no), Integer.parseInt(demographic_no));
 
-    if (darp != null) {
-        String risk_content = darp.getRiskContent();
-        String checklist_content = darp.getChecklistContent();
-%>
-    <xml id="xml_list">
-        <planner><%= risk_content %> <%= checklist_content %>
-        </planner>
-    </xml>
+        if (darp != null) {
+            String risk_content = darp.getRiskContent();
+            String checklist_content = darp.getChecklistContent();
+    %>
+    <script type="text/xml" id="xml_list">
+        <planner><%= risk_content %> <%= checklist_content %></planner>
+    </script>
     <%
             //set the riskdata bean from xml file
             Properties savedar1risk1 = risks.getRiskName(folderPath + "desannualreviewplannerrisk.xml");
@@ -203,9 +203,9 @@
                 %>
             </td>
             <td>
-                    <%
-            out.println(checklist.doStuff(folderPath + "desannualreviewplannerriskchecklist.xml", riskDataBean));
-%>
+            <%
+                out.println(checklist.doStuff(folderPath + "desannualreviewplannerriskchecklist.xml", riskDataBean));
+            %>
 
         </tr>
     </table>
