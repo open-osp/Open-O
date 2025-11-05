@@ -674,7 +674,7 @@
                     // Hide delete links in view mode
                     <%if(bView) { %>
                     document.querySelectorAll('a').forEach(function(link) {
-                        if (link.innerHTML === '[x]') {
+                        if (link.textContent.trim() === '[x]') {
                             link.style.display = 'none';
                         }
                     });
