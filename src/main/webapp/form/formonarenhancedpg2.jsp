@@ -467,10 +467,14 @@
 
                 try {
                     const response = await fetch('form/onarenhanced_rf.jsp?n=' + total);
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                    }
                     const html = await response.text();
                     document.querySelector('#rf_container tbody').insertAdjacentHTML('beforeend', html);
                 } catch (error) {
                     console.error('Error adding risk factor:', error);
+                    alert('Error adding risk factor. Please try again.');
                 }
             }
 
@@ -514,10 +518,14 @@
 
                 try {
                     const response = await fetch('form/onarenhanced_sv.jsp?n=' + total);
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                    }
                     const html = await response.text();
                     document.querySelector('#sv_tbody').insertAdjacentHTML('beforeend', html);
                 } catch (error) {
                     console.error('Error adding subsequent visit:', error);
+                    alert('Error adding subsequent visit. Please try again.');
                 }
             }
 
@@ -540,6 +548,9 @@
 
                 try {
                     const response = await fetch('form/onarenhanced_us.jsp?n=' + total);
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                    }
                     const html = await response.text();
                     document.querySelector('#us_container tbody').insertAdjacentHTML('beforeend', html);
 
@@ -558,6 +569,7 @@
                     }
                 } catch (error) {
                     console.error('Error adding ultrasound:', error);
+                    alert('Error adding ultrasound. Please try again.');
                 }
             }
 
@@ -601,6 +613,9 @@
                             int y=x+1;
                     %>
                     const rfResponse<%=y%> = await fetch('form/onarenhanced_rf.jsp?n=<%=y%>');
+                    if (!rfResponse<%=y%>.ok) {
+                        throw new Error('HTTP error ' + rfResponse<%=y%>.status + ': ' + rfResponse<%=y%>.statusText);
+                    }
                     const rfHtml<%=y%> = await rfResponse<%=y%>.text();
                     document.querySelector('#rf_container tbody').insertAdjacentHTML('beforeend', rfHtml<%=y%>);
                     setInput(<%=y%>, "c_riskFactors", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_riskFactors"+y, "")) %>');
@@ -626,6 +641,9 @@
                             int y=x+1;
                     %>
                     const svResponse<%=y%> = await fetch('form/onarenhanced_sv.jsp?n=<%=y%>');
+                    if (!svResponse<%=y%>.ok) {
+                        throw new Error('HTTP error ' + svResponse<%=y%>.status + ': ' + svResponse<%=y%>.statusText);
+                    }
                     const svHtml<%=y%> = await svResponse<%=y%>.text();
                     document.querySelector('#sv_tbody').insertAdjacentHTML('beforeend', svHtml<%=y%>);
                     setInput(<%=y%>, "pg2_date", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_date"+y, "")) %>');
@@ -657,6 +675,9 @@
                         for(int x=1; x<usNum+1; x++) {
                     %>
                     const usResponse<%=x%> = await fetch('form/onarenhanced_us.jsp?n=<%=x%>');
+                    if (!usResponse<%=x%>.ok) {
+                        throw new Error('HTTP error ' + usResponse<%=x%>.status + ': ' + usResponse<%=x%>.statusText);
+                    }
                     const usHtml<%=x%> = await usResponse<%=x%>.text();
                     document.querySelector('#us_container tbody').insertAdjacentHTML('beforeend', usHtml<%=x%>);
                     setInput(<%=x%>, "ar2_uDate", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uDate"+x, "")) %>');
@@ -989,6 +1010,9 @@
                                 },
                                 body: $("form").serialize()
                             });
+                            if (!response.ok) {
+                                throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                            }
                             const data = await response.json();
 
                             if (data.value == 'error') {
@@ -1525,6 +1549,9 @@ if (!fedb.equals("") && fedb.length()==10 ) {
 
                             try {
                                 const response = await fetch('<%= context %>/Pregnancy.do?method=createGBSLabReq&demographicNo=' + demographic + '&penicillin=' + penicillin);
+                                if (!response.ok) {
+                                    throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                                }
                                 await response.text();
                                 popupRequisitionPage(url);
                             } catch (error) {
@@ -1837,6 +1864,9 @@ if (!fedb.equals("") && fedb.length()==10 ) {
 
                             try {
                                 const response = await fetch(pregUrl);
+                                if (!response.ok) {
+                                    throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                                }
                                 await response.text();
                                 popupRequisitionPage(url);
                             } catch (error) {
@@ -1868,6 +1898,9 @@ if (!fedb.equals("") && fedb.length()==10 ) {
 
                             try {
                                 const response = await fetch(pregUrl);
+                                if (!response.ok) {
+                                    throw new Error('HTTP error ' + response.status + ': ' + response.statusText);
+                                }
                                 await response.text();
                                 popupRequisitionPage(url);
                             } catch (error) {
