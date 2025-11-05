@@ -91,7 +91,7 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Antenatal Record 1</title>
-        <link rel="stylesheet" type="text/css" href="<%=bView?"arStyleView.css" : "arStyle.css"%>">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/form/<%=bView?"arStyleView.css" : "arStyle.css"%>">
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
@@ -3879,49 +3879,49 @@
             }
         };
 
-        Calendar.setup({
-            inputField: "pg1_menLMP",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "pg1_menLMP_cal",
-            singleClick: true,
-            step: 1
-        });
-        Calendar.setup({
-            inputField: "pg1_lastUsed",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "pg1_lastUsed_cal",
-            singleClick: true,
-            step: 1
-        });
-        Calendar.setup({
-            inputField: "pg1_menEDB",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "pg1_menEDB_cal",
-            singleClick: true,
-            step: 1
-        });
-        Calendar.setup({
-            inputField: "c_finalEDB",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "c_finalEDB_cal",
-            singleClick: true,
-            step: 1
-        });
-        Calendar.setup({
-            inputField: "pg1_labLastPapDate",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "pg1_labLastPapDate_cal",
-            singleClick: true,
-            step: 1
-        });
-
         //limit size of textareas
         $(document).ready(function () {
+            Calendar.setup({
+                inputField: "pg1_menLMP",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "pg1_menLMP_cal",
+                singleClick: true,
+                step: 1
+            });
+            Calendar.setup({
+                inputField: "pg1_lastUsed",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "pg1_lastUsed_cal",
+                singleClick: true,
+                step: 1
+            });
+            Calendar.setup({
+                inputField: "pg1_menEDB",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "pg1_menEDB_cal",
+                singleClick: true,
+                step: 1
+            });
+            Calendar.setup({
+                inputField: "c_finalEDB",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "c_finalEDB_cal",
+                singleClick: true,
+                step: 1
+            });
+            Calendar.setup({
+                inputField: "pg1_labLastPapDate",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "pg1_labLastPapDate_cal",
+                singleClick: true,
+                step: 1
+            });
+
 
             $(".limit-text").on('keypress keyup', function () {
                 mlength = $(this).attr('maxlength');

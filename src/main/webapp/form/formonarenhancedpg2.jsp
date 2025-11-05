@@ -125,7 +125,7 @@
         <title>Antenatal Record 2</title>
         <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <script type="text/javascript" src="<%= ctx %>/js/global.js"></script>
-        <link rel="stylesheet" type="text/css" href="<%=bView?"arStyleView.css" : "arStyle.css"%>">
+        <link rel="stylesheet" type="text/css" href="<%= ctx %>/form/<%=bView?"arStyleView.css" : "arStyle.css"%>">
         <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
         <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
@@ -455,7 +455,7 @@
                 return total;
             }
 
-            function addRiskFactor() {
+            async function addRiskFactor() {
                 if (adjustDynamicListTotalsRF("rf_", 20, false) >= 20) {
                     alert('Maximum number of rows is 20');
                     return;
@@ -464,11 +464,14 @@
                 var total = jQuery("#rf_num").val();
                 total++;
                 jQuery("#rf_num").val(total);
-                jQuery.ajax({
-                    url: 'onarenhanced_rf.jsp?n=' + total, async: false, success: function (data) {
-                        jQuery("#rf_container tbody").append(data);
-                    }
-                });
+
+                try {
+                    const response = await fetch('form/onarenhanced_rf.jsp?n=' + total);
+                    const html = await response.text();
+                    document.querySelector('#rf_container tbody').insertAdjacentHTML('beforeend', html);
+                } catch (error) {
+                    console.error('Error adding risk factor:', error);
+                }
             }
 
             function deleteRiskFactor(id) {
@@ -493,13 +496,13 @@
                 });
             }
 
-            function addBulkSubsequentVisit(times) {
+            async function addBulkSubsequentVisit(times) {
                 for (var x = 0; x < parseInt(times); x++) {
-                    addSubsequentVisit();
+                    await addSubsequentVisit();
                 }
             }
 
-            function addSubsequentVisit() {
+            async function addSubsequentVisit() {
                 if (adjustDynamicListTotalsSV("sv_", 70, false) >= 70) {
                     alert('Maximum number of rows is 70');
                     return;
@@ -508,11 +511,14 @@
                 var total = jQuery("#sv_num").val();
                 total++;
                 jQuery("#sv_num").val(total);
-                jQuery.ajax({
-                    url: 'onarenhanced_sv.jsp?n=' + total, async: false, success: function (data) {
-                        jQuery("#sv_tbody").append(data);
-                    }
-                });
+
+                try {
+                    const response = await fetch('form/onarenhanced_sv.jsp?n=' + total);
+                    const html = await response.text();
+                    document.querySelector('#sv_tbody').insertAdjacentHTML('beforeend', html);
+                } catch (error) {
+                    console.error('Error adding subsequent visit:', error);
+                }
             }
 
             function deleteSubsequentVisit(id) {
@@ -522,7 +528,7 @@
 
             }
 
-            function addUltraSound() {
+            async function addUltraSound() {
                 if (adjustDynamicListTotalsUS("us_", 12, false) >= 12) {
                     alert('Maximum number of rows is 12');
                     return;
@@ -531,35 +537,46 @@
                 var total = jQuery("#us_num").val();
                 total++;
                 jQuery("#us_num").val(total);
-                jQuery.ajax({
-                    url: 'onarenhanced_us.jsp?n=' + total, async: false, success: function (data) {
-                        jQuery("#us_container tbody").append(data);
-                    }
-                });
 
-                Calendar.setup({
-                    inputField: "ar2_uDate" + total,
-                    ifFormat: "%Y/%m/%d",
-                    showsTime: false,
-                    button: "ar2_uDate" + total + "_cal",
-                    singleClick: true,
-                    step: 1
-                });
+                try {
+                    const response = await fetch('form/onarenhanced_us.jsp?n=' + total);
+                    const html = await response.text();
+                    document.querySelector('#us_container tbody').insertAdjacentHTML('beforeend', html);
+
+                    // Initialize calendar immediately after DOM insertion - no setTimeout needed
+                    var inputField = "ar2_uDate" + total;
+                    var buttonField = inputField + "_cal";
+                    if (document.getElementById(inputField) && document.getElementById(buttonField)) {
+                        Calendar.setup({
+                            inputField: inputField,
+                            ifFormat: "%Y/%m/%d",
+                            showsTime: false,
+                            button: buttonField,
+                            singleClick: true,
+                            step: 1
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error adding ultrasound:', error);
+                }
             }
 
 
             function createCalendarSetupOnLoad() {
-                var numItems = $('.ar2uDate').length;
-                for (var x = 1; x <= numItems; x++) {
-                    Calendar.setup({
-                        inputField: "ar2_uDate" + x,
-                        ifFormat: "%Y/%m/%d",
-                        showsTime: false,
-                        button: "ar2_uDate" + x + "_cal",
-                        singleClick: true,
-                        step: 1
-                    });
-                }
+                $('.ar2uDate').each(function() {
+                    var inputId = $(this).attr('id');
+                    var buttonId = inputId + "_cal";
+                    if (document.getElementById(inputId) && document.getElementById(buttonId)) {
+                        Calendar.setup({
+                            inputField: inputId,
+                            ifFormat: "%Y/%m/%d",
+                            showsTime: false,
+                            button: buttonId,
+                            singleClick: true,
+                            step: 1
+                        });
+                    }
+                });
             }
 
 
@@ -570,117 +587,107 @@
 
             }
 
-            jQuery(document).ready(function () {
+            async function initializeFormContent() {
+                try {
+                    // Load Risk Factors
+                    <%
+                    String rf = props.getProperty("rf_num", "0");
+                    if(rf.length() == 0)
+                        rf = "0";
+                    int rfNum = Integer.parseInt(rf);
 
-                <%
-		String rf = props.getProperty("rf_num", "0");
-		if(rf.length() == 0)
-			rf = "0";
-		int rfNum = Integer.parseInt(rf);
-		for(int x=0;x<rfNum;x++) {
-			int y=x+1;
-		%>
-                jQuery.ajax({
-                    url: 'onarenhanced_rf.jsp?n=' +<%=y%>, async: false, success: function (data) {
-                        jQuery("#rf_container tbody").append(data);
-                        setInput(<%=y%>, "c_riskFactors", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_riskFactors"+y, "")) %>');
-                        setInput(<%=y%>, "c_planManage", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_planManage"+y, "")) %>');
+                    if(rfNum > 0) {
+                        for(int x=0; x<rfNum; x++) {
+                            int y=x+1;
+                    %>
+                    const rfResponse<%=y%> = await fetch('form/onarenhanced_rf.jsp?n=<%=y%>');
+                    const rfHtml<%=y%> = await rfResponse<%=y%>.text();
+                    document.querySelector('#rf_container tbody').insertAdjacentHTML('beforeend', rfHtml<%=y%>);
+                    setInput(<%=y%>, "c_riskFactors", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_riskFactors"+y, "")) %>');
+                    setInput(<%=y%>, "c_planManage", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("c_planManage"+y, "")) %>');
+                    <%
+                        }
+                    } else {
+                    %>
+                    addRiskFactor();
+                    <%
                     }
-                });
-                <%
-		}
-		if(rfNum == 0) {
-			%>addRiskFactor();
-                <%
-		}
-		if(bView) {
-			%>
-                $("a").each(function () {
-                    if ($(this).html() == '[x]') {
-                        $(this).hide();
+                    %>
+
+                    // Load Subsequent Visits
+                    <%
+                    String sv = props.getProperty("sv_num", "0");
+                    if(sv.length() == 0)
+                        sv = "0";
+                    int svNum = Integer.parseInt(sv);
+
+                    if(svNum > 0) {
+                        for(int x=0; x<svNum; x++) {
+                            int y=x+1;
+                    %>
+                    const svResponse<%=y%> = await fetch('form/onarenhanced_sv.jsp?n=<%=y%>');
+                    const svHtml<%=y%> = await svResponse<%=y%>.text();
+                    document.querySelector('#sv_tbody').insertAdjacentHTML('beforeend', svHtml<%=y%>);
+                    setInput(<%=y%>, "pg2_date", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_date"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_gest", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_gest"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_wt", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_wt"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_BP", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_BP"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_urinePr", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_urinePr"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_ht", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_ht"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_presn", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_presn"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_FHR", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_FHR"+y, "")) %>');
+                    setInput(<%=y%>, "pg2_comments", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_comments"+y, "")) %>');
+                    <%
+                        }
+                    } else {
+                    %>
+                    addSubsequentVisit();
+                    <%
                     }
-                });
-                <%
-		}
-	%>
+                    %>
 
+                    // Load Ultrasounds
+                    <%
+                    String us = props.getProperty("us_num", "0");
+                    if(us.length() == 0)
+                        us = "0";
+                    int usNum = Integer.parseInt(us);
 
-                <%
-	String sv = props.getProperty("sv_num", "0");
-	if(sv.length() == 0)
-		sv = "0";
-	int svNum = Integer.parseInt(sv);
-	for(int x=0;x<svNum;x++) {
-		int y=x+1;
-	%>
-                jQuery.ajax({
-                    url: 'onarenhanced_sv.jsp?n=' +<%=y%>, async: false, success: function (data) {
-                        jQuery("#sv_tbody").append(data);
-                        setInput(<%=y%>, "pg2_date", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_date"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_gest", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_gest"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_wt", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_wt"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_BP", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_BP"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_urinePr", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_urinePr"+y, "")) %>');
-                        //removed urineGl
-                        setInput(<%=y%>, "pg2_ht", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_ht"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_presn", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_presn"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_FHR", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_FHR"+y, "")) %>');
-                        setInput(<%=y%>, "pg2_comments", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("pg2_comments"+y, "")) %>');
+                    if(usNum > 0) {
+                        for(int x=1; x<usNum+1; x++) {
+                    %>
+                    const usResponse<%=x%> = await fetch('form/onarenhanced_us.jsp?n=<%=x%>');
+                    const usHtml<%=x%> = await usResponse<%=x%>.text();
+                    document.querySelector('#us_container tbody').insertAdjacentHTML('beforeend', usHtml<%=x%>);
+                    setInput(<%=x%>, "ar2_uDate", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uDate"+x, "")) %>');
+                    setInput(<%=x%>, "ar2_uGA", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uGA"+x, "")) %>');
+                    setInput(<%=x%>, "ar2_uResults", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uResults"+x, "")) %>');
+                    <%
+                        }
+                    } else {
+                    %>
+                    addUltraSound();
+                    <%
                     }
-                });
-                <%
-	}
-	if(svNum == 0) {
-		%>addSubsequentVisit();
-                <%
-	}
+                    %>
 
-	if(bView) {
-		%>
-                $("a").each(function () {
-                    if ($(this).html() == '[x]') {
-                        $(this).hide();
-                    }
-                });
-                <%
-	}
-%>
+                    // Hide delete links in view mode
+                    <%if(bView) { %>
+                    document.querySelectorAll('a').forEach(function(link) {
+                        if (link.innerHTML === '[x]') {
+                            link.style.display = 'none';
+                        }
+                    });
+                    <%}%>
 
+                    createCalendarSetupOnLoad();
+                } catch (error) {
+                    console.error('Error loading form content:', error);
+                }
+            }
 
-                <%
-String us = props.getProperty("us_num", "0");
-if(us.length() == 0)
-	us = "0";
-int usNum = Integer.parseInt(us);
-for(int x=1;x<usNum+1;x++) {
-%>
-                jQuery.ajax({
-                    url: 'onarenhanced_us.jsp?n=' +<%=x%>, async: false, success: function (data) {
-                        jQuery("#us_container tbody").append(data);
-                        setInput(<%=x%>, "ar2_uDate", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uDate"+x, "")) %>');
-                        setInput(<%=x%>, "ar2_uGA", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uGA"+x, "")) %>');
-                        setInput(<%=x%>, "ar2_uResults", '<%= StringEscapeUtils.escapeEcmaScript(props.getProperty("ar2_uResults"+x, "")) %>');
-                    }
-                });
-                <%
-}
-if(usNum == 0) {
-	%>addUltraSound();
-                <%
-}
-if(bView) {
-	%>
-                $("a").each(function () {
-                    if ($(this).html() == '[x]') {
-                        $(this).hide();
-                    }
-                });
-                <%
-}
-%>
-
-                createCalendarSetupOnLoad();
-
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeFormContent();
             });
 
 
@@ -961,7 +968,7 @@ if(bView) {
                 return ret && ret1;
             }
 
-            function onPageChange(url) {
+            async function onPageChange(url) {
                 var result = false;
                 var newID = 0;
                 document.forms[0].submit.value = "save";
@@ -973,21 +980,29 @@ if(bView) {
                     if (ret) {
                         window.onunload = null;
                         adjustDynamicListTotals();
-                        jQuery.ajax({
-                            url: '<%=ctx%>/Pregnancy.do?method=saveFormAjax',
-                            data: $("form").serialize(),
-                            async: false,
-                            dataType: 'json',
-                            success: function (data) {
-                                if (data.value == 'error') {
-                                    alert('Error saving form.');
-                                    result = false;
-                                } else {
-                                    result = true;
-                                    newID = parseInt(data.value);
-                                }
+
+                        try {
+                            const response = await fetch('<%=ctx%>/Pregnancy.do?method=saveFormAjax', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: $("form").serialize()
+                            });
+                            const data = await response.json();
+
+                            if (data.value == 'error') {
+                                alert('Error saving form.');
+                                result = false;
+                            } else {
+                                result = true;
+                                newID = parseInt(data.value);
                             }
-                        });
+                        } catch (error) {
+                            console.error('Error saving form:', error);
+                            alert('Error saving form.');
+                            result = false;
+                        }
                     } else {
                         url = url.replace('#id', '<%=formId%>');
                         location.href = url;
@@ -1501,19 +1516,21 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     width: 450,
                     modal: true,
                     buttons: {
-                        "Generate Requisition": function () {
+                        "Generate Requisition": async function () {
                             $(this).dialog("close");
                             var penicillin = $("#penicillin").attr('checked');
                             var demographic = '<%=props.getProperty("demographic_no", "0")%>';
                             var user = '<%=session.getAttribute("user")%>';
                             url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=' + demographic + '&formId=0&provNo=' + user + '&fromSession=true';
-                            jQuery.ajax({
-                                url: '<%=ctx%>/Pregnancy.do?method=createGBSLabReq&demographicNo=' + demographic + '&penicillin=' + penicillin,
-                                async: false,
-                                success: function (data) {
-                                    popupRequisitionPage(url);
-                                }
-                            });
+
+                            try {
+                                const response = await fetch('<%=ctx%>/Pregnancy.do?method=createGBSLabReq&demographicNo=' + demographic + '&penicillin=' + penicillin);
+                                await response.text();
+                                popupRequisitionPage(url);
+                            } catch (error) {
+                                console.error('Error creating GBS lab requisition:', error);
+                                alert('Error creating lab requisition.');
+                            }
                         },
                         Cancel: function () {
                             $(this).dialog("close");
@@ -1808,7 +1825,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     width: 450,
                     modal: true,
                     buttons: {
-                        "Generate Requisition": function () {
+                        "Generate Requisition": async function () {
                             $(this).dialog("close");
                             var gct_hb = $("#gct_hb").attr('checked');
                             var gct_urine = $("#gct_urine").attr('checked');
@@ -1817,11 +1834,15 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             var user = '<%=session.getAttribute("user")%>';
                             url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
                             var pregUrl = '<%=ctx%>/Pregnancy.do?method=createGCTLabReq&demographicNo=<%=demoNo%>&hb=' + gct_hb + '&urine=' + gct_urine + '&antibody=' + gct_ab + '&glucose=' + gct_glu;
-                            jQuery.ajax({
-                                url: pregUrl, async: false, success: function (data) {
-                                    popupRequisitionPage(url);
-                                }
-                            });
+
+                            try {
+                                const response = await fetch(pregUrl);
+                                await response.text();
+                                popupRequisitionPage(url);
+                            } catch (error) {
+                                console.error('Error creating GCT lab requisition:', error);
+                                alert('Error creating lab requisition.');
+                            }
                         },
                         Cancel: function () {
                             $(this).dialog("close");
@@ -1838,17 +1859,21 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     width: 450,
                     modal: true,
                     buttons: {
-                        "Generate Requisition": function () {
+                        "Generate Requisition": async function () {
                             $(this).dialog("close");
                             var gtt_glu = $("#gtt_glu").attr('checked');
                             var user = '<%=session.getAttribute("user")%>';
                             url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
                             var pregUrl = '<%=ctx%>/Pregnancy.do?method=createGTTLabReq&demographicNo=<%=demoNo%>&glucose=' + gtt_glu;
-                            jQuery.ajax({
-                                url: pregUrl, async: false, success: function (data) {
-                                    popupRequisitionPage(url);
-                                }
-                            });
+
+                            try {
+                                const response = await fetch(pregUrl);
+                                await response.text();
+                                popupRequisitionPage(url);
+                            } catch (error) {
+                                console.error('Error creating GTT lab requisition:', error);
+                                alert('Error creating lab requisition.');
+                            }
                         },
                         Cancel: function () {
                             $(this).dialog("close");
@@ -3238,13 +3263,15 @@ if (!fedb.equals("") && fedb.length()==10 ) {
     </div>
 
     <script type="text/javascript">
-        Calendar.setup({
-            inputField: "ar2_rhIG",
-            ifFormat: "%Y/%m/%d",
-            showsTime: false,
-            button: "ar2_rhIG_cal",
-            singleClick: true,
-            step: 1
+        $(document).ready(function() {
+            Calendar.setup({
+                inputField: "ar2_rhIG",
+                ifFormat: "%Y/%m/%d",
+                showsTime: false,
+                button: "ar2_rhIG_cal",
+                singleClick: true,
+                step: 1
+            });
         });
     </script>
     </body>
