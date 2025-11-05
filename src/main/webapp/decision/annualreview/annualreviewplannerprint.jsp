@@ -53,6 +53,7 @@
 <%
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     String folderPath = pageContext.getServletContext().getRealPath("/decision/annualreview/");
+    folderPath = folderPath.endsWith("/") ? folderPath : folderPath + "/";
 
     if (folderPath == null) {
         throw new NullPointerException("Cannot resolve real path for /decision/annualreview/ - check deployment configuration");

@@ -1,41 +1,31 @@
-// Restore checkbox states from saved XML data (replaces IE-only XML Data Binding)
 function restoreCheckboxStates() {
-    var xmlElement = document.getElementById('xml_list');
-    if (!xmlElement) return;
+  const xmlEl = document.getElementById('xml_list');
+  if (!xmlEl) return;
+  const xmlText = (xmlEl.textContent || xmlEl.innerText).trim();
+  if (!xmlText) return;
 
-    var xmlContent = xmlElement.innerHTML || xmlElement.textContent || xmlElement.innerText;
-    if (!xmlContent) return;
+  // parse XML
+  const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+  if (doc.getElementsByTagName('parsererror').length) return;
 
-    // Parse XML content to find all tags
-    var tagRegex = /<([^>]+)>checked<\/\1>/g;
-    var match;
-    while ((match = tagRegex.exec(xmlContent)) !== null) {
-        var fieldName = match[1];
+  // collect all tags whose text == "checked"
+  const checkedNames = Array.prototype.filter
+    .call(doc.documentElement.children, node => node.textContent === 'checked')
+    .map(node => node.nodeName.toLowerCase());
 
-        // Try exact match first
-        var checkbox = document.getElementsByName(fieldName)[0];
+  if (!checkedNames.length) return;
 
-        // If not found, try case-insensitive search
-        if (!checkbox || checkbox.type !== 'checkbox') {
-            var allInputs = document.getElementsByTagName('input');
-            for (var i = 0; i < allInputs.length; i++) {
-                if (allInputs[i].type === 'checkbox' && 
-                    allInputs[i].name.toLowerCase() === fieldName.toLowerCase()) {
-                    checkbox = allInputs[i];
-                    break;
-                }
-            }
-        }
-
-        if (checkbox && checkbox.type === 'checkbox') {
-            checkbox.checked = true;
-        }
-    }
+  // set matching checkboxes in one pass
+  checkedNames.forEach(function(name) {
+    // note the [i] for case-insensitive attr match in modern browsers
+    const selector = 'input[type="checkbox"][name="' + name + '" i]';
+    document.querySelectorAll(selector).forEach(cb => cb.checked = true);
+  });
 }
 
-// Run after page loads
+// attach once
 if (window.addEventListener) {
-    window.addEventListener('load', restoreCheckboxStates, false);
-} else if (window.attachEvent) {
-    window.attachEvent('onload', restoreCheckboxStates);
+  window.addEventListener('load', restoreCheckboxStates, false);
+} else {
+  window.attachEvent('onload', restoreCheckboxStates);
 }

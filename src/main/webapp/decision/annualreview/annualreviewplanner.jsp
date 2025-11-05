@@ -44,6 +44,7 @@
 <%
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
     String folderPath = pageContext.getServletContext().getRealPath("/decision/annualreview/");
+    folderPath = folderPath.endsWith("/") ? folderPath : folderPath + "/";
 
     if (folderPath == null) {
         throw new NullPointerException("Cannot resolve real path for /decision/annualreview/ - check deployment configuration");
@@ -131,18 +132,18 @@
 
         DesAnnualReviewPlan darp = desAnnualReviewPlanDao.search(Integer.parseInt(form_no), Integer.parseInt(demographic_no));
 
-        if (darp != null) {
-            String risk_content = darp.getRiskContent();
-            String checklist_content = darp.getChecklistContent();
-    %>
-    <script type="text/xml" id="xml_list">
-        <planner><%= risk_content %> <%= checklist_content %></planner>
-    </script>
-    <%
-            //set the riskdata bean from xml file
-            Properties savedar1risk1 = risks.getRiskName(folderPath + "desannualreviewplannerrisk.xml");
-            StringBuffer tt;
+        String risk_content = "";
+        String checklist_content = "";
 
+        // Load all possible risk names from XML file
+        Properties savedar1risk1 = risks.getRiskName(folderPath + "desannualreviewplannerrisk.xml");
+
+        if (darp != null) {
+            // If we have saved data, populate riskDataBean from saved risks only
+            risk_content = darp.getRiskContent();
+            checklist_content = darp.getChecklistContent();
+
+            StringBuffer tt;
             for (Enumeration e = savedar1risk1.propertyNames(); e.hasMoreElements(); ) {
                 tt = new StringBuffer().append(e.nextElement());
 
@@ -150,7 +151,15 @@
                     riskDataBean.setProperty(tt.toString(), savedar1risk1.getProperty(tt.toString()));
                 }
             }
+        } else {
+            // On first load (no saved data), show all possible checklist items
+            // by adding all risks to riskDataBean
+            for (Enumeration e = savedar1risk1.propertyNames(); e.hasMoreElements(); ) {
+                String riskKey = (String) e.nextElement();
+                riskDataBean.setProperty(riskKey, savedar1risk1.getProperty(riskKey));
+            }
         }
+
         //find the age and sex of the patient from demographic table
         Demographic d = demographicDao.getDemographic(demographic_no);
         int age = 0;
@@ -177,6 +186,9 @@
             }
         }
     %>
+    <script type="text/xml" id="xml_list">
+        <planner><%= risk_content %> <%= checklist_content %></planner>
+    </script>
     <table bgcolor='silver' width='100%'>
         <tr>
             <td align="left"><input type="submit" name="submit"
