@@ -26,12 +26,13 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
+    String context = request.getContextPath();
     String roleName2$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
     boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
+    <%response.sendRedirect(context + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -53,7 +54,6 @@
 <%@ page import="ca.openosp.openo.form.graphic.FrmGraphicAR" %>
 <%@ page import="ca.openosp.OscarProperties" %>
 <%
-    String ctx = request.getContextPath();
     String formClass = "ONAREnhanced";
     String formLink = "formonarenhancedpg2.jsp";
 
@@ -69,7 +69,7 @@
     props.setProperty("c_lastVisited", "pg2");
 
     //get project_home
-    String project_home = ctx.substring(1);
+    String project_home = context.substring(1);
 
     //load eform groups
     List<LabelValueBean> cytologyForms = Pregnancy2Action.getEformsByGroup("Cytology");
@@ -123,23 +123,23 @@
 <html>
     <head>
         <title>Antenatal Record 2</title>
-        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <script type="text/javascript" src="<%= ctx %>/js/global.js"></script>
-        <link rel="stylesheet" type="text/css" href="<%=bView? request.getContextPath() + "/form/arStyleView.css" : request.getContextPath() + "/form/arStyle.css" %>">
-        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + context + "/" %>">
+        <script type="text/javascript" src="<%= context %>/js/global.js"></script>
+        <link rel="stylesheet" type="text/css" href="<%=bView ? context + "/form/arStyleView.css" : context + "/form/arStyle.css"%>">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= context %>/share/calendar/calendar.css" title="win2k-cold-1"/>
+        <script type="text/javascript" src="<%= context %>/share/calendar/calendar.js"></script>
         <script type="text/javascript"
-                src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-        <script src="<%=ctx%>/js/jquery-ui-1.8.18.custom.min.js"></script>
-        <script src="<%=ctx%>/js/fg.menu.js"></script>
-        <script type="text/javascript" src="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-        <link rel="stylesheet" type="text/css" href="<%=ctx%>/js/fancybox/jquery.fancybox-1.3.4.css" media="screen"/>
+                src="<%= context %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+        <script type="text/javascript" src="<%= context %>/share/calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="<%= context %>/js/jquery-1.7.1.min.js"></script>
+        <script src="<%= context %>/js/jquery-ui-1.8.18.custom.min.js"></script>
+        <script src="<%= context %>/js/fg.menu.js"></script>
+        <script type="text/javascript" src="<%= context %>/js/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+        <link rel="stylesheet" type="text/css" href="<%= context %>/js/fancybox/jquery.fancybox-1.3.4.css" media="screen"/>
 
 
-        <link rel="stylesheet" href="<%=ctx%>/css/cupertino/jquery-ui-1.8.18.custom.css">
-        <link rel="stylesheet" href="<%=ctx%>/css/fg.menu.css">
+        <link rel="stylesheet" href="<%= context %>/css/cupertino/jquery-ui-1.8.18.custom.css">
+        <link rel="stylesheet" href="<%= context %>/css/fg.menu.css">
 
         <style type="text/css">
             body {
@@ -241,7 +241,7 @@
                 <%
 			} else if(cytologyForms.size() == 1) {
 				%>
-                popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=cytologyForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', 'cytology');
+                popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=cytologyForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', 'cytology');
                 <%
 			} else {
 				%>$("#cytology-eform-form").dialog("open");
@@ -260,7 +260,7 @@
                 <%
 				} else if(ultrasoundForms.size() == 1) {
 					%>
-                popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=ultrasoundForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', 'ultrasound');
+                popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=ultrasoundForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', 'ultrasound');
                 <%
 				} else {
 					%>$("#ultrasound-eform-form").dialog("open");
@@ -280,7 +280,7 @@
                 <%
 			} else if(customForms.size() == 1) {
 				%>
-                popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=customForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', '<%=customEformGroup%>form');
+                popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=customForms.get(0).getValue()%>&demographic_no=<%=demoNo%>&appointment=0', '<%=customEformGroup%>form');
                 <%
 			} else {
 				%>$("#custom-eform-form").dialog("open");
@@ -712,7 +712,7 @@
                 haveLock = false;
                 $.ajax({
                         type: "POST",
-                        url: "<%=ctx%>/PageMonitoringService.do",
+                        url: "<%= context %>/PageMonitoringService.do",
                         data: {method: "update", page: "formonarenhanced", pageId: "<%=demoNo%>", lock: lock},
                         dataType: 'json',
                         success: function (data, textStatus) {
@@ -810,7 +810,7 @@
             		urlExt.append("&multiple="+(multiple+1));
             	}
             	%>
-                        document.forms[0].action = "<%= request.getContextPath() %>/form/createpdf?__title=Antenatal+Record+Part+2&__cfgfile=onar2enhancedPrintCfgPg1&__cfgGraphicFile=onar2PrintGraphCfgPg1&__template=onar2<%=urlExt.toString()%>&postProcessor=ONAR2EnhancedPostProcessor";
+                        document.forms[0].action = "<%= context %>/form/createpdf?__title=Antenatal+Record+Part+2&__cfgfile=onar2enhancedPrintCfgPg1&__cfgGraphicFile=onar2PrintGraphCfgPg1&__template=onar2<%=urlExt.toString()%>&postProcessor=ONAR2EnhancedPostProcessor";
                         document.forms[0].target = "_blank";
                     }
 
@@ -982,7 +982,7 @@
                         adjustDynamicListTotals();
 
                         try {
-                            const response = await fetch('<%=ctx%>/Pregnancy.do?method=saveFormAjax', {
+                            const response = await fetch('<%= context %>/Pregnancy.do?method=saveFormAjax', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -1521,10 +1521,10 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             var penicillin = $("#penicillin").attr('checked');
                             var demographic = '<%=props.getProperty("demographic_no", "0")%>';
                             var user = '<%=session.getAttribute("user")%>';
-                            url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=' + demographic + '&formId=0&provNo=' + user + '&fromSession=true';
+                            url = '<%= context %>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=' + demographic + '&formId=0&provNo=' + user + '&fromSession=true';
 
                             try {
-                                const response = await fetch('<%=ctx%>/Pregnancy.do?method=createGBSLabReq&demographicNo=' + demographic + '&penicillin=' + penicillin);
+                                const response = await fetch('<%= context %>/Pregnancy.do?method=createGBSLabReq&demographicNo=' + demographic + '&penicillin=' + penicillin);
                                 await response.text();
                                 popupRequisitionPage(url);
                             } catch (error) {
@@ -1572,7 +1572,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             if (printLocation.length > 0) {
                                 jQuery.ajax({
                                     type: "POST",
-                                    url: '<%=ctx%>/Pregnancy.do?method=recordPrint',
+                                    url: '<%= context %>/Pregnancy.do?method=recordPrint',
                                     data: {
                                         printLocation: printLocation,
                                         printMethod: printMethod,
@@ -1591,7 +1591,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             if (ret == true) {
                                 document.forms[0].submit.value = "print";
                                 document.forms[0].target = "_blank";
-                                var url = "<%= request.getContextPath() %>/form/createpdf?";
+                                var url = "<%= context %>/form/createpdf?";
                                 var multiple = 0;
                                 if (!(typeof printAr1 == "undefined")) {
                                     url += "__title=Antenatal+Record+Part+1&__cfgfile=onar1enhancedPrintCfgPg1&__template=onar1&__numPages=1&postProcessor=ONAR1EnhancedPostProcessor";
@@ -1692,7 +1692,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                 $("#print_log_menu").bind('click', function () {
                     jQuery.ajax({
                         type: "POST",
-                        url: '<%=ctx%>/Pregnancy.do?method=getPrintData',
+                        url: '<%= context %>/Pregnancy.do?method=getPrintData',
                         data: {resourceName: 'ONAREnhanced', resourceId: $('#episodeId').val()},
                         dataType: 'json',
                         async: true,
@@ -1729,7 +1729,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                 }
 
                 function getFundalImageUrl(c) {
-                    var url = "<%=ctx%>/Pregnancy.do?method=getFundalImage";
+                    var url = "<%= context %>/Pregnancy.do?method=getFundalImage";
                     //gest,ht
                     var params = "";
                     var n = getGestHtVal();
@@ -1832,8 +1832,8 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             var gct_ab = $("#gct_ab").attr('checked');
                             var gct_glu = $("#gct_glu").attr('checked');
                             var user = '<%=session.getAttribute("user")%>';
-                            url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
-                            var pregUrl = '<%=ctx%>/Pregnancy.do?method=createGCTLabReq&demographicNo=<%=demoNo%>&hb=' + gct_hb + '&urine=' + gct_urine + '&antibody=' + gct_ab + '&glucose=' + gct_glu;
+                            url = '<%= context %>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
+                            var pregUrl = '<%= context %>/Pregnancy.do?method=createGCTLabReq&demographicNo=<%=demoNo%>&hb=' + gct_hb + '&urine=' + gct_urine + '&antibody=' + gct_ab + '&glucose=' + gct_glu;
 
                             try {
                                 const response = await fetch(pregUrl);
@@ -1863,8 +1863,8 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             $(this).dialog("close");
                             var gtt_glu = $("#gtt_glu").attr('checked');
                             var user = '<%=session.getAttribute("user")%>';
-                            url = '<%=ctx%>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
-                            var pregUrl = '<%=ctx%>/Pregnancy.do?method=createGTTLabReq&demographicNo=<%=demoNo%>&glucose=' + gtt_glu;
+                            url = '<%= context %>/form/formlabreq<%=labReqVer %>.jsp?demographic_no=<%=demoNo%>&formId=0&provNo=' + user + '&fromSession=true';
+                            var pregUrl = '<%= context %>/Pregnancy.do?method=createGTTLabReq&demographicNo=<%=demoNo%>&glucose=' + gtt_glu;
 
                             try {
                                 const response = await fetch(pregUrl);
@@ -2238,17 +2238,17 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     </tr>
                     <tr id="24wk_visit">
                         <td>24 week Visit<span style="float:right"><img id="24wk_visit_menu"
-                                                                        src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                        src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                         border="0"></span></td>
                     </tr>
                     <tr id="35wk_visit">
                         <td>35 week Visit<span style="float:right"><img id="35wk_visit_menu"
-                                                                        src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                        src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                         border="0"></span></td>
                     </tr>
                     <!--
 			<tr id="dd_visit">
-				<td>Due Date<span style="float:right"><img id="dd_visit_menu" src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png" border="0"></span></td>
+				<td>Due Date<span style="float:right"><img id="dd_visit_menu" src="<%= context %>/images/right-circle-arrow-Icon.png" border="0"></span></td>
 			</tr>
 			-->
                 </table>
@@ -2262,7 +2262,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     <tr id="graph">
                         <td>
                             <span id="fundal_graph_text">Fundus Height Graph</span><span style="float:right"><img
-                                id="graph_menu" src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png" border="0"></span>
+                                id="graph_menu" src="<%= context %>/images/right-circle-arrow-Icon.png" border="0"></span>
                             <div style="display:none"><a href="#" id="fundal_link">dummy link</a></div>
                         </td>
                     </tr>
@@ -2270,7 +2270,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                         <td>
                             Printing Log
                             <span style="float:right"><img id="print_log_menu"
-                                                           src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                           src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                            border="0"></span>
                         </td>
                     </tr>
@@ -2284,7 +2284,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     </tr>
                     <tr id="edb_warn" style="display:none">
                         <td>Update EDB<span style="float:right"><img id="edb_menu"
-                                                                     src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                     src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                      border="0"></span></td>
                     </tr>
                     <tr id="rh_warn" style="display:none">
@@ -2307,19 +2307,19 @@ if (!fedb.equals("") && fedb.length()==10 ) {
 
                     <tr id="gct_warn" style="display:none">
                         <td>Perform 1hr GCT<span style="float:right"><img id="gct_menu"
-                                                                          src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                          src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                           border="0"></span></td>
                     </tr>
 
                     <tr id="gct_diabetes_warn" style="display:none">
                         <td>Gestational Diabetes<span style="float:right"><img id="gd_menu"
-                                                                               src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                               src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                                border="0"></span></td>
                     </tr>
 
                     <tr id="2hrgtt_prompt" style="display:none">
                         <td>GTT Req<span style="float:right"><img id="gtt_menu"
-                                                                  src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                                                                  src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                   border="0"></span></td>
                     </tr>
 
@@ -2332,18 +2332,18 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     </tr>
 
                     <tr id="lab_prompt">
-                        <td>Labs<span style="float:right"><img id="lab_menu" src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                        <td>Labs<span style="float:right"><img id="lab_menu" src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                                border="0"></span></td>
                     </tr>
 
                     <tr id="forms_prompt">
                         <td>Forms<span style="float:right"><img id="forms_menu"
-                                                                src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png" border="0"></span>
+                                                                src="<%= context %>/images/right-circle-arrow-Icon.png" border="0"></span>
                         </td>
                     </tr>
 
                     <tr id="strep_prompt" style="display:none">
-                        <td>GBS<span style="float:right"><img id="gbs_menu" src="<%= request.getContextPath() %>/images/right-circle-arrow-Icon.png"
+                        <td>GBS<span style="float:right"><img id="gbs_menu" src="<%= context %>/images/right-circle-arrow-Icon.png"
                                                               border="0"></span></td>
                     </tr>
 
@@ -2573,7 +2573,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
 					<b>Rh IG Given:</b>
 					<input type="text" name="ar2_rhIG" id="ar2_rhIG" size="7" maxlength="10"
                            value="<%= UtilMisc.htmlEscape(props.getProperty("ar2_rhIG", "")) %>">
-					<img src="<%= request.getContextPath() %>/images/cal.gif" id="ar2_rhIG_cal">
+					<img src="<%= context %>/images/cal.gif" id="ar2_rhIG_cal">
 				</span>
                         </td>
 
@@ -3012,7 +3012,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             Order 1 Hour GCT
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Labs' menu item under Prompts, and choose 1 Hour GCT"><img border="0"
-                                                                                                           src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
+                                                                                                           src="<%= context %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     </tbody>
@@ -3031,7 +3031,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             Order GBS Lab
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Labs' menu item under Prompts, and choose GBS"><img border="0"
-                                                                                                    src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
+                                                                                                    src="<%= context %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     <tr>
@@ -3039,7 +3039,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                             Consider ultrasound for position
                             <a href="javascript:void(0);" onclick="return false;"
                                title="Click on 'Forms' menu item under Prompts, and choose Ultrasound"><img border="0"
-                                                                                                            src="<%= request.getContextPath() %>/images/icon_help_sml.gif"/></a>
+                                                                                                            src="<%= context %>/images/icon_help_sml.gif"/></a>
                         </td>
                     </tr>
                     </tbody>
@@ -3114,7 +3114,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     %>
                     <tr>
                         <td>
-                            <button onClick="popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','cytology');return false;">
+                            <button onClick="popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','cytology');return false;">
                                 Open
                             </button>
                         </td>
@@ -3143,7 +3143,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     %>
                     <tr>
                         <td>
-                            <button onClick="popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','ultrasound');return false;">
+                            <button onClick="popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','ultrasound');return false;">
                                 Open
                             </button>
                         </td>
@@ -3172,7 +3172,7 @@ if (!fedb.equals("") && fedb.length()==10 ) {
                     %>
                     <tr>
                         <td>
-                            <button onClick="popPage('<%=ctx%>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','<%=customEformGroup%>form');return false;">
+                            <button onClick="popPage('<%= context %>/eform/efmformadd_data.jsp?fid=<%=bean.getValue()%>&demographic_no=<%=demoNo%>&appointment=0','<%=customEformGroup%>form');return false;">
                                 Open
                             </button>
                         </td>
