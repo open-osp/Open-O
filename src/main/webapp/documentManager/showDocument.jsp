@@ -690,7 +690,7 @@
                             <td><%=prov == null ? "N/A" : prov.getFormattedName()%>
                             </td>
                             <td><% if (a.getStatus() == null) {%>
-                                "" <% } else if (a.getStatus().equals("N")) {%><fmt:message key="oscar.appt.ApptStatusData.msgNoShow"/><% } else if (a.getStatus().equals("C")) {%><fmt:message key="oscar.appt.ApptStatusData.msgCanceled"/> <%}%>
+                                "" <% } else if (a.getStatus().startsWith("N")) {%><fmt:message key="oscar.appt.ApptStatusData.msgNoShow"/><% } else if (a.getStatus().startsWith("C")) {%><fmt:message key="oscar.appt.ApptStatusData.msgCanceled"/> <%}%>
                             </td>
                         </tr>
                         <%}%>
