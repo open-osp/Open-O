@@ -65,6 +65,39 @@
     <script type="text/javascript" src="<%= request.getContextPath() %>/decision/annualreview/annualreviewplanner.js"></script>
     <title>Planner</title>
     <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    <style type="text/css">
+        @media print {
+            /* Force background colors and borders to print */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            /* Hide print button when printing */
+            input[type="button"] {
+                display: none;
+            }
+
+            /* Ensure tables print correctly */
+            table {
+                page-break-inside: avoid;
+            }
+
+            /* Preserve all colors */
+            body, td, th {
+                color: black;
+            }
+        }
+
+        @media screen {
+            /* Ensure colors show on screen too */
+            * {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
     <script type="text/javascript" language="Javascript">
 
     </script>
