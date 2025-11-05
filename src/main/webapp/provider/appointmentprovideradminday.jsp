@@ -2056,6 +2056,7 @@
                                                                 + curProvider_no[nProvider]
                                                                 + "&reason="
                                                                 + URLEncoder.encode(Encode.forHtmlContent(reason))
+                                                                + "&reasonCode=" + (appointment.getReasonCode() != null ? appointment.getReasonCode() : "")
                                                                 + "&encType="
                                                                 + URLEncoder.encode("face to face encounter with client", "UTF-8")
                                                                 + "&userName="
