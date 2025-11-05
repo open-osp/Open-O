@@ -109,7 +109,7 @@
         session.setAttribute("casemgmt_oscar_baseurl", request.getContextPath());
         session.setAttribute("casemgmt_oscar_bean", bean);
         session.setAttribute("casemgmt_bean_flag", "true");
-        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName;
+        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName + "&appointmentNo=" + request.getParameter("appointmentNo") + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason")) + "&reasonCode=" + (request.getParameter("reasonCode") != null ? request.getParameter("reasonCode") : "");
         if (request.getParameter("casetoEncounter") == null) {
             response.sendRedirect(hrefurl);
             return;
@@ -900,10 +900,16 @@
                 <table class="LeftTable">
                     <caisi:isModuleLoad moduleName="caisi">
                         <%
-                            String hrefurl2 = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName;
+                            String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view"
+                                + "&demographicNo=" + bean.demographicNo
+                                + "&providerNo=" + bean.providerNo
+                                + "&providerName=" + bean.userName
+                                + "&appointmentNo=" + URLEncoder.encode(request.getParameter("appointmentNo") == null ? "" : request.getParameter("appointmentNo"))
+                                + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason"))
+                                + "&reasonCode=" + URLEncoder.encode(request.getParameter("reasonCode") == null ? "" : request.getParameter("reasonCode"));
                         %>
                         <tr>
-                            <td><a href="<%=hrefurl2%>">Case Management Encounter</a></td>
+                            <td><a href="<%=hrefurl%>">Case Management Encounter</a></td>
                         </tr>
                     </caisi:isModuleLoad>
                     <tr class="Header">

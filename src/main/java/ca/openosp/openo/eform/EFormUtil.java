@@ -1176,6 +1176,25 @@ public class EFormUtil {
         return m.start();
     }
 
+    /**
+     * Returns the end position of an attribute in an HTML tag (after the attribute value and closing quote).
+     * This is useful for inserting new attributes after an existing attribute.
+     *
+     * @param key the attribute name to find
+     * @param htmlTag the HTML tag content to search in
+     * @return the position after the attribute's closing quote, or -1 if not found
+     * @since 2025-10-30
+     */
+    public static int getAttributeEndPos(String key, String htmlTag) {
+        int pos = -1;
+        if (StringUtils.isBlank(key) || StringUtils.isBlank(htmlTag)) return pos;
+
+        Matcher m = getAttributeMatcher(key, htmlTag, false);
+        if (m == null) return pos;
+
+        return m.end();
+    }
+
     public static ArrayList<String> listRichTextLetterTemplates() {
         String imagePath = OscarProperties.getInstance().getEformImageDirectory();
         MiscUtils.getLogger().debug("Img Path: " + imagePath);

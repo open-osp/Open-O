@@ -31,7 +31,12 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
+import ca.openosp.openo.caisi_integrator.util.MiscUtils;
+
 public class SxmlMisc extends Properties {
+    private static final Logger log = MiscUtils.getLogger();
 
     //get the xml string
     public static String createXmlDataString(HttpServletRequest req, String strPrefix) {
@@ -40,6 +45,13 @@ public class SxmlMisc extends Properties {
         for (Enumeration e = req.getParameterNames(); e.hasMoreElements(); ) {
             temp = e.nextElement().toString();
             if (!temp.startsWith(strPrefix) || req.getParameter(temp).equals("")) continue;
+
+            // Validate element name - only allow alphanumeric, underscore, hyphen
+            if (!temp.matches("^[a-zA-Z0-9_-]+$")) {
+                log.error("Invalid XML element name: " + temp);
+                continue; // Skip invalid parameter names
+            }
+
             sbContent = sbContent.append("<").append(temp).append(">").append(SxmlMisc.replaceHTMLContent(req.getParameter(temp))).append("</").append(temp).append(">");    //Content+="<" +temp+ ">" +request.getParameter(temp)+ "</" +temp+ ">";
         }
         content = sbContent.toString();

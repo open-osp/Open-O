@@ -381,9 +381,9 @@
                             boolean newline = false;
 
                             if (appointment.getStatus() != null) {
-                                if (appointment.getStatus().contains("N")) {
+                                if (appointment.getStatus().startsWith("N")) {
                                     comments = "No Show";
-                                } else if (appointment.getStatus().equals("C")) {
+                                } else if (appointment.getStatus().startsWith("C")) {
                                     comments = "Cancelled";
                                 }
                             }
@@ -439,7 +439,7 @@
                             <%=(p != null ? p.getLastName() + "," + p.getFirstName() : "") %> (remote)
                         </td>
                         <td>
-                            &nbsp;<%=a.getStatus() == null ? "" : (a.getStatus().contains("N") ? "No Show" : (a.getStatus().equals("C") ? "Cancelled" : "")) %>
+                            &nbsp;<%=a.getStatus() == null ? "" : (a.getStatus().startsWith("N") ? "No Show" : (a.getStatus().startsWith("C") ? "Cancelled" : "")) %>
                         </td>
                     </tr>
                     <%
