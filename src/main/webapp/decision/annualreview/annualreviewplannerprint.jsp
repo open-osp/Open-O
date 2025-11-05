@@ -52,6 +52,11 @@
 <%@ page import="ca.openosp.SxmlMisc" %>
 <%
     DemographicDao demographicDao = SpringUtils.getBean(DemographicDao.class);
+    String folderPath = pageContext.getServletContext().getRealPath("/decision/annualreview/");
+
+    if (folderPath == null) {
+        throw new NullPointerException("Cannot resolve real path for /decision/annualreview/ - check deployment configuration");
+    }
 %>
 
 <html>
@@ -79,7 +84,7 @@
 </xml>
 <%
         //set the riskdata bean from xml file
-        Properties savedar1risk1 = risks.getRiskName(oscarVariables.getProperty("tomcat_path") + "webapps/" + oscarVariables.getProperty("project_home") + "/decision/annualreview/desannualreviewplannerrisk.xml");
+        Properties savedar1risk1 = risks.getRiskName(folderPath + "desannualreviewplannerrisk.xml");
         StringBuffer tt;
         for (Enumeration e = savedar1risk1.propertyNames(); e.hasMoreElements(); ) {
             tt = new StringBuffer().append(e.nextElement());
@@ -121,7 +126,7 @@
 </table>
 
 <%
-    out.println(checklist.doStuff(new String(oscarVariables.getProperty("tomcat_path") + "webapps/" + oscarVariables.getProperty("project_home") + "/decision/annualreview/desannualreviewplannerriskchecklist.xml"), riskDataBean));
+    out.println(checklist.doStuff(folderPath + "desannualreviewplannerriskchecklist.xml", riskDataBean));
 %>
 
 </body>
