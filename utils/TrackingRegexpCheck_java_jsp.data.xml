@@ -2624,7 +2624,7 @@
             import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%&gt;&lt;%</ViolationValue>
         <ViolationValue>/src/main/webapp/common/OntarioMDRedirect.jsp:Hashtable loginCreds = omd.loginToOntarioMD(uname,pword,requestor);</ViolationValue>
         <ViolationValue>/src/main/webapp/common/omdDiseaseList.jsp:&lt;%@page
-            import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.utility.OntarioMD,java.util.Hashtable,org.apache.commons.collections.*"%&gt;</ViolationValue>
+            import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.utility.OntarioMD,java.util.Hashtable,org.apache.commons.collections.*"%&gt;</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographicaddarecordhtm.jsp:Vector vecRef = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographiceditdemographic.jsp:Vector vecRef = new Vector();</ViolationValue>
         <ViolationValue>/src/main/webapp/demographic/demographicpdflabel.jsp:Vector vecRef = new Vector();</ViolationValue>
@@ -2944,7 +2944,7 @@
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:Hashtable forView = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:Hashtable rep = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:Hashtable repNum = new Hashtable();</ViolationValue>
-        <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:String commonRow(String heading,Hashtable demoHash,org.oscarehr.common.model.Demographic demoObj){</ViolationValue>
+        <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:String commonRow(String heading,Hashtable demoHash,ca.openosp.openo.common.model.Demographic demoObj){</ViolationValue>
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:Vector&lt;EctMeasurementTypesBean&gt; vec = hd.getMeasurementTypeVector();</ViolationValue>
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:arrRepNum[x] = new Hashtable();</ViolationValue>
         <ViolationValue>/src/main/webapp/report/ClinicalReports.jsp:for (Hashtable h : list) {</ViolationValue>
