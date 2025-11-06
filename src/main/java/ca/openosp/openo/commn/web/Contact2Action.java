@@ -1135,7 +1135,6 @@ public class Contact2Action extends ActionSupport {
     @Deprecated
     /**
      * use DemographicManager.getDemographicContacts
-     * or Use org.oscarehr.util.DemographicContactCreator getHealthCareTeam
      */
     public static List<DemographicContact> getDemographicContacts(Demographic demographic) {
         List<DemographicContact> contacts = demographicContactDao.findByDemographicNo(demographic.getDemographicNo());
@@ -1145,7 +1144,6 @@ public class Contact2Action extends ActionSupport {
     @Deprecated
     /**
      * use DemographicManager.getDemographicContacts
-     * or Use org.oscarehr.util.DemographicContactCreator getHealthCareTeam
      */
     public static List<DemographicContact> getDemographicContacts(Demographic demographic, String category) {
         List<DemographicContact> contacts = demographicContactDao.findByDemographicNoAndCategory(demographic.getDemographicNo(), category);

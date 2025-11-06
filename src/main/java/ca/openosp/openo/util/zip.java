@@ -165,10 +165,10 @@ public class zip {
             File dir = new File(dirName + "unzip_archive/");
             Boolean success = afile.renameTo(new File(dir, afile.getName()));
             if (!success) {
-                logger.error("oscar.util.zip.unzipXML: the zip file " + fullpath + " was not archived");
+                logger.error("ca.openosp.openo.util.zip.unzipXML: the zip file " + fullpath + " was not archived");
             }
         } catch (Exception e) {
-            logger.error("oscar.util.zip.unzipXML Unhandled exception:", e);
+            logger.error("ca.openosp.openo.util.zip.unzipXML Unhandled exception:", e);
             return result;
         }
         result = true;

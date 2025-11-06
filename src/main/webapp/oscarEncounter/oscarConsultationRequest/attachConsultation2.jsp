@@ -36,7 +36,7 @@ String userlastname = (String) session.getAttribute("userlastname");
 <jsp:useBean id="oscarVariables" class="java.util.Properties"
 	scope="page" />
 <%@ page
-	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, oscar.util.*, java.net.*,oscar.MyDateFormat, oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
+	import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.openo.*, ca.openosp.openo.util.*, java.net.*,ca.openosp.MyDateFormat, ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.ConsultationAttachDocs"%>
 <%@ page import="ca.openosp.openo.lab.ca.on.*"%>
 <%@ page import="ca.openosp.openo.lab.ca.all.Hl7textResultsData"%>
 <%@ page import="org.apache.commons.text.StringEscapeUtils"%>
