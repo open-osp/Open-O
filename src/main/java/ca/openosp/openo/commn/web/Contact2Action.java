@@ -1152,7 +1152,7 @@ public class Contact2Action extends ActionSupport {
 
     @Deprecated
     /**
-     * Use org.oscarehr.util.DemographicContactCreator getHealthCareTeam
+     * Use ca.openosp.openo.managers.DemographicManager getHealthCareTeam
      */
     public static List<DemographicContact> fillContactNames(List<DemographicContact> contacts) {
 
