@@ -1030,7 +1030,7 @@
         </action>
         <action name="CreateInitImmunization" class="ca.openosp.openo.encounter.immunization.config.pageUtil.EctImmCreateImmunizationSetInit2Action">
             <result name="success">/immunizationConfig/CreateImmunizationSetConfig.jsp</result>
-        </action>
+        </action-->
         <action name="CreateImmunizationSetConfig" class="ca.openosp.openo.encounter.immunization.config.pageUtil.EctImmCreateImmunizationSetConfig2Action">
             <result name="success">/immunizationConfig/AdministrateImmunizationSets.jsp</result>
             <result name="goBack">/immunizationConfig/CreateImmunizationSetConfig.jsp</result>
@@ -2263,7 +2263,7 @@
         </action>
         <action name="billing/CA/ON/moveMOHFiles" class="ca.openosp.openo.billing.CA.ON.www.ArchiveMOHFile2Action">
             <result name="showInbox">/billing/CA/ON/viewMOHFiles.jsp</result>
-        </action>
+        </action-->
         <action name="billing/ca/on/DisplayInvoiceLogo" class="ca.openosp.openo.billing.CA.ON.util.DisplayInvoiceLogo2Action"/>
         <action name="admin/AuditLogPurge" class="ca.openosp.openo.admin.web.AuditLogPurge2Action">
             <result name="success">/admin/auditLogPurge.jsp</result>
