@@ -132,6 +132,7 @@ public class DocumentUpload2Action extends ActionSupport {
             }
 
             fileName = newDoc.getFileName();
+            String filePath = newDoc.getFilePath();
             // save local file;
             if (docFile.length() == 0) {
                 map.put("error", 4);
@@ -144,7 +145,7 @@ public class DocumentUpload2Action extends ActionSupport {
             if (fileName.endsWith(".PDF") || fileName.endsWith(".pdf")) {
                 newDoc.setContentType("application/pdf");
                 // get number of pages when document is a PDF
-                numberOfPages = countNumOfPages(fileName);
+                numberOfPages = countNumOfPages(filePath);
             }
             newDoc.setNumberOfPages(numberOfPages);
             String doc_no = EDocUtil.addDocumentSQL(newDoc);
@@ -182,7 +183,7 @@ public class DocumentUpload2Action extends ActionSupport {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        objectMapper.writeValue(response.getOutputStream(), jsonObject);
+        objectMapper.writeValue(response.getOutputStream(), jsonArray);
         return null;
     }
 
