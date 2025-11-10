@@ -51,7 +51,6 @@ public class ConfigureFax2Action extends ActionSupport {
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private static final String PASSWORD_BLANKET = "**********";
 
-    
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() {
@@ -63,9 +62,22 @@ public class ConfigureFax2Action extends ActionSupport {
         } else if ("restartFaxScheduler".equals(method)) {
             restartFaxScheduler();
             return null;
+        } else if ("configure".equals(method)) {
+            return configure();
         }
 
-        return configure();
+        // Default case: action called without a method parameter
+        // Since the JSP is accessed directly, this should probably never happen
+        // But just in case, we can return back to the page and log a warning
+        MiscUtils.getLogger().warn("ConfigureFax2Action called without a method parameter.");
+        return null;
+    }
+
+    public String displayConfigure() {
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "r", null)) {
+            throw new SecurityException("missing required sec object (_admin)");
+        }
+        return "configure"; // Return the JSP view name
     }
 
     public String configure() {
@@ -214,7 +226,6 @@ public class ConfigureFax2Action extends ActionSupport {
         MiscUtils.getLogger().info("JSON: " + jsonObject);
         JSONUtil.jsonResponse(response, jsonObject);
         return null;
-
     }
 
     public void restartFaxScheduler() {

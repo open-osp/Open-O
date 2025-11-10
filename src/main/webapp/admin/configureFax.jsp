@@ -80,7 +80,7 @@
             $("#submit").click(function (e) {
                 e.preventDefault();
 
-                var url = "<%=request.getContextPath() %>/admin/ManageFax.do";
+                var url = "<%=request.getContextPath() %>/admin/ManageFax.do?method=configure";
                 var data = $("#configFrm").serialize();
 
                 $.ajax({
