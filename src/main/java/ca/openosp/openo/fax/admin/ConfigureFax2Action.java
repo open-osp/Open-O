@@ -55,6 +55,16 @@ public class ConfigureFax2Action extends ActionSupport {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() {
+        String method = request.getParameter("method");
+
+        if ("getFaxSchedularStatus".equals(method)) {
+            getFaxSchedularStatus();
+            return null;
+        } else if ("restartFaxScheduler".equals(method)) {
+            restartFaxScheduler();
+            return null;
+        }
+
         return configure();
     }
 
