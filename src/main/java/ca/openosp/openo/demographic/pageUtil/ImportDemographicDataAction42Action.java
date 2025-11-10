@@ -221,7 +221,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
          * save the upload stream to a temp directory.  This should allow the HTTP
          * thread to close gracefully while the import is being processed.
          */
-        String filename = importFile.getName();
+        String filename = importFileFileName;
         Path filePath = importFile.toPath().normalize();
 
         // Get context of the temp directory, get the file path to the the temp directory
@@ -4603,6 +4603,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
     }
 
     private File importFile = null;
+    private String importFileFileName;
     private boolean matchProviderNames = true;
     private int timeshiftInDays;
     private String courseId;
@@ -4613,6 +4614,14 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
     public void setImportFile(File importFile) {
         this.importFile = importFile;
+    }
+
+    public String getImportFileFileName() {
+        return importFileFileName;
+    }
+
+    public void setImportFileFileName(String importFileFileName) {
+        this.importFileFileName = importFileFileName;
     }
 
     public boolean isMatchProviderNames() {

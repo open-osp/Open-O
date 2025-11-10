@@ -350,8 +350,7 @@ public class NioFileManagerImpl implements NioFileManager {
     public Path createTempFile(final String fileName, ByteArrayOutputStream os) throws IOException {
         Path directory = Files.createTempDirectory(DEFAULT_GENERIC_TEMP + System.currentTimeMillis());
         Path file = Files.createFile(Paths.get(directory.toString(), fileName));
-        Files.write(file, os.toByteArray());
-        return directory;
+        return Files.write(file, os.toByteArray());
     }
 
     /**
