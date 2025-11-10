@@ -73,13 +73,6 @@ public class ConfigureFax2Action extends ActionSupport {
         return null;
     }
 
-    public String displayConfigure() {
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_admin", "r", null)) {
-            throw new SecurityException("missing required sec object (_admin)");
-        }
-        return "configure"; // Return the JSP view name
-    }
-
     public String configure() {
         ObjectNode jsonObject;
 
