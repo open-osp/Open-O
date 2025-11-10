@@ -613,7 +613,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
         let inboxhubListTable = jQuery('#inbox_table').DataTable();
 
         // Check if the string contains <script> tags
-        if (!/<script\b[^>]*>([\s\S]*?)<\/script>/gi.test(data)) {
+        if (!containsScriptTag(data)) {
             // Split the concatenated rows by the closing </tr> tag, and re-add </tr> to each split part
             const splitRows = data.split(/<\/tr>/i).map(row => row + '</tr>').filter(row => row.trim() !== '</tr>');
             // Add rows to DataTable without destroying it
@@ -628,6 +628,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
         }
 
         updateInboxhubListProgress();
+    }
+
+    /**
+     * Helper function to detect presence of <script> tags (in any weird browser-accepted form) in an HTML string.
+     */
+    function containsScriptTag(htmlString) {
+        try {
+            const parser = new DOMParser();
+            // Parse as text/html for browser compliance
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            return doc.getElementsByTagName('script').length > 0;
+        } catch (e) {
+            // If parsing fails, err on the side of caution
+            return true;
+        }
     }
 
     function addDataInInboxhubViewTable(data) {
