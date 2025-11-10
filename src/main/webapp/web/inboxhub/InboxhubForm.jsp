@@ -61,7 +61,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
             <div class="accordion-body">
                  <form action="${pageContext.request.contextPath}/web/inboxhub/Inboxhub.do?method=displayInboxForm" method="post" id="inboxSearchForm" onsubmit="return validatePatientOptions();">
                     <div class="m-2">
-                        <input type="checkbox" name="query.viewMode" id="btnViewMode" autocomplete="off" hidden ${query.viewMode ? 'checked' : ''}>
+                        <input type="hidden" name="query.viewMode" id="btnViewMode" value="${query.viewMode ? 'true' : 'false'}">
 
                         <div class="mb-1">
                             <!--Provider-->
@@ -537,7 +537,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
     }
 
     function fetchInboxhubDataByMode(btnViewMode2) {
-        jQuery('#btnViewMode').prop('checked', btnViewMode2.checked);
+        jQuery('#btnViewMode').val(btnViewMode2.checked ? 'true' : 'false');
     	jQuery("#btnViewModeLabel").html(btnViewMode2.checked ? 'List Mode' : 'Preview Mode');
         fetchInboxhubData();
     }
@@ -546,7 +546,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
         const viewModeBtn = document.getElementById("btnViewMode");
         viewModeBtn.disabled = true;
         resetDataPageCount();
-        if (viewModeBtn.checked) {
+        if (viewModeBtn.value === 'true') {
             fetchInboxhubViewData();
         } else {
             fetchInboxhubListData();
