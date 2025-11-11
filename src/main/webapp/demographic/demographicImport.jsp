@@ -213,7 +213,7 @@
         Timeshift (in days +/-):&nbsp;<input type="text" name="timeshiftInDays" value="0" size="5"/></br/>
                 <%} %>
         If patient's providers do not have OHIP numbers:<br>
-        <input type="radio" name="matchProviderNames" value="true"/>
+        <input type="radio" name="matchProviderNames" value="true" checked/>
         Match providers in database by first and last names (Recommended)
         <br>
         <input type="radio" name="matchProviderNames" value="false"/>
