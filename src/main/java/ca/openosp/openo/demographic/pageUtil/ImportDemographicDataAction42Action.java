@@ -322,6 +322,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
          * It gets offered as a download to the end user.
          * TODO this log should be stored so that it can be retrieved later by the end user.
          */
+        // Check if any files were processed before creating import log
+        if (logs.isEmpty()) {
+            warnings.add("No valid XML files found to import. Please check the uploaded file structure.");
+            // Create empty log entry so makeImportLog doesn't crash
+            logs.add(new String[]{"No files processed"});
+        }
+
         // Save import log to servlet context temp directory (safeDir) so ImportLogDownload2Action can find it
         File importLog = makeImportLog(logs, safeDir.getCanonicalPath());
 
@@ -371,7 +378,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     else {
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
                         for (Path possibleXmlFile : possibleXmlFileList) {
-                            if (Files.exists(xmlFile)) {
+                            if (Files.exists(possibleXmlFile)) {
                                 processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                             }
                         }
