@@ -39,11 +39,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.dao.DemographicDao;
 import ca.openosp.openo.commn.dao.DemographicArchiveDao;
-//import org.oscarehr.commons.model.DemographicArchive;
 import ca.openosp.openo.commn.dao.DemographicExtDao;
 import ca.openosp.openo.commn.dao.DemographicExtArchiveDao;
-//import org.oscarehr.commons.model.DemographicExt;
-//import org.oscarehr.commons.model.DemographicExtArchive;
 import ca.openosp.openo.utility.LoggedInInfo;
 
 public class DemographicPatientStatusRosterStatusHandler {

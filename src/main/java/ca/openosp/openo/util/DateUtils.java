@@ -41,7 +41,7 @@ import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.OscarProperties;
 
 /**
- * @deprecated 2013-12-09 use org.oscarehr.util.DateUtils instead
+ * @deprecated 2013-12-09 use ca.openosp.openo.util.DateUtils instead
  */
 @Deprecated
 public final class DateUtils {
