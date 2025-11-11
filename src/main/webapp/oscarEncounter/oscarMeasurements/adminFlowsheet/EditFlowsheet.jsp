@@ -255,9 +255,9 @@
                     String flowsheetPath = "";
 
                     if (request.getParameter("htracker") != null) {
-                        flowsheetPath = "HealthTrackerPage.jspf";
+                        flowsheetPath = "oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf";
                     } else {
-                        flowsheetPath = "TemplateFlowSheet.jsp";
+                        flowsheetPath = "oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp";
                     }
             %>
 
