@@ -71,70 +71,89 @@ function remoteSave() {
 		});
 
 		appendImageInputs();
-		
+
 		moveSubject();
 
 		if (typeof releaseDirtyFlag === "function") {
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
 			window["releaseDirtyFlag"]();
 		}
 
     // don't need the dirty form notification if the form is being autosaved.
-    if (isFormDirty()) {
+    if (typeof isFormDirty === "function" && isFormDirty()) {
         jQuery("form:first").trigger('reinitialize.areYouSure');
     }
 
 		if (typeof saveRTL === "function") {
-			console.log("Saving RTL or RTL template");
 			window["saveRTL"]();
 			document.RichTextLetter.submit();
 			return true;
 		}
 
 		if (document.getElementsByName("SubmitButton") && document.getElementsByName("SubmitButton")[0]) {
-			console.log("Saving by remote click of the SubmitButton");
 			try {
 				document.getElementsByName("SubmitButton")[0].click();
 				return true;
 			} catch (error) {
 				showErrorAlert();
-				console.log(error);
 			}
 		}
-		
+
 		if(typeof releaseDirtyFlag === "function")
 		{
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
 			window["releaseDirtyFlag"]();
 		}
 
 		if(typeof submission === "function")
 		{
-			console.log("Executing submission method before submitting first form directly");
 			try {
 				window["submission"]();
-				document.forms[0].submit();
-				return true;
+				// Find the eForm by name
+				let eFormElement = document.forms['saveEForm'];
+				if (!eFormElement) {
+					for (let i = 0; i < document.forms.length; i++) {
+						if (document.forms[i].action && document.forms[i].action.indexOf('addEForm.do') >= 0) {
+							eFormElement = document.forms[i];
+							break;
+						}
+					}
+				}
+				if (eFormElement) {
+					eFormElement.submit();
+					return true;
+				} else {
+					showErrorAlert();
+				}
 			} catch (error) {
 				showErrorAlert();
-				console.log(error);
 			}
 		}
 
 		try
 		{
-			console.log("Submitting first form in document directly");
-			document.forms[0].submit();
-			return true;
+			// Find the eForm by name
+			let eFormElement = document.forms['saveEForm'];
+			if (!eFormElement) {
+				for (let i = 0; i < document.forms.length; i++) {
+					if (document.forms[i].action && document.forms[i].action.indexOf('addEForm.do') >= 0) {
+						eFormElement = document.forms[i];
+						break;
+					}
+				}
+			}
+			if (eFormElement) {
+				eFormElement.submit();
+				return true;
+			} else {
+				showErrorAlert();
+				return false;
+			}
 		} catch (error) {
 			showErrorAlert();
-			console.log(error);
 		}
 
 		HideSpin();
 	} catch (e) {
 		showErrorAlert();
-		console.error(e);
 	}
 
 	return false;
