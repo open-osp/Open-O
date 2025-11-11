@@ -253,11 +253,12 @@
                     }
 
                     String flowsheetPath = "";
+                    String folderPath = "oscarEncounter/oscarMeasurements/";
 
                     if (request.getParameter("htracker") != null) {
-                        flowsheetPath = "oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf";
+                        flowsheetPath = folderPath + "HealthTrackerPage.jspf";
                     } else {
-                        flowsheetPath = "oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp";
+                        flowsheetPath = folderPath + "TemplateFlowSheet.jsp";
                     }
             %>
 
