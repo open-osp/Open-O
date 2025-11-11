@@ -102,8 +102,6 @@ import ca.openosp.openo.commn.model.PartialDate;
 import ca.openosp.openo.commn.model.PharmacyInfo;
 import ca.openosp.openo.commn.model.ProfessionalSpecialist;
 import ca.openosp.openo.commn.model.Provider;
-//import org.oscarehr.e2e.director.E2ECreator;
-//import org.oscarehr.e2e.util.EverestUtils;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentCommentDao;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentToDemographicDao;

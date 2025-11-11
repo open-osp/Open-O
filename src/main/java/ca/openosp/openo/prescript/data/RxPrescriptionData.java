@@ -520,8 +520,6 @@ public class RxPrescriptionData {
         int demographic_no = bean.getDemographicNo();
 
         Date today = RxUtil.Today();
-        //String date_prescribed = oscar.rx.util.RxUtil.DateToString(today, "yyyy/MM/dd");
-        //String date_printed = date_prescribed;
 
         StringBuilder textView = new StringBuilder();
 

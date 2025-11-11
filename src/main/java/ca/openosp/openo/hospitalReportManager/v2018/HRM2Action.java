@@ -463,10 +463,10 @@ public class HRM2Action extends ActionSupport {
 
         OscarJobType oscarJobType = null;
         OscarJob oscarJob = null;
-        List<OscarJobType> jobTypes = oscarJobTypeDao.findByClassName("org.oscarehr.hospitalReportManager.v2018.HRMDownloadJob");
+        List<OscarJobType> jobTypes = oscarJobTypeDao.findByClassName("ca.openosp.openo.hospitalReportManager.v2018.HRMDownloadJob");
         if (jobTypes.isEmpty()) {
             oscarJobType = new OscarJobType();
-            oscarJobType.setClassName("org.oscarehr.hospitalReportManager.v2018.HRMDownloadJob");
+            oscarJobType.setClassName("ca.openosp.openo.hospitalReportManager.v2018.HRMDownloadJob");
             oscarJobType.setDescription("HRM Downloader");
             oscarJobType.setEnabled(true);
             oscarJobType.setName("HRMDownloadJobType");
@@ -531,7 +531,7 @@ public class HRM2Action extends ActionSupport {
         OscarJobDao oscarJobDao = SpringUtils.getBean(OscarJobDao.class);
         OscarJobTypeDao oscarJobTypeDao = SpringUtils.getBean(OscarJobTypeDao.class);
 
-        List<OscarJobType> jobTypes = oscarJobTypeDao.findByClassName("org.oscarehr.hospitalReportManager.v2018.HRMDownloadJob");
+        List<OscarJobType> jobTypes = oscarJobTypeDao.findByClassName("ca.openosp.openo.hospitalReportManager.v2018.HRMDownloadJob");
 
         for (OscarJobType jobType : jobTypes) {
             List<OscarJob> jobs = oscarJobDao.findByType(jobType);

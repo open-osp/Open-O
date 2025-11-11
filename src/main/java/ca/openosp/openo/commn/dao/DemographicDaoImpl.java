@@ -1764,7 +1764,7 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
     /*
      * (non-Javadoc)
      *
-     * @see org.oscarehr.PMmodule.daos.DemographicDao#exists(java.lang.Integer)
+     * @see ca.openosp.openo.PMmodule.daos.DemographicDao#clientExists(java.lang.Integer)
      */
     @Override
     public boolean clientExists(Integer demographicNo) {

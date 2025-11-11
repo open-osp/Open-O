@@ -1926,7 +1926,7 @@ public class MSPReconcile {
      * @param value String
      * @return String
      * @todo complete documentation
-     * oscar.oscarBilling.ca.bc.MSP.MSPReconcile.convCurValue(
+     * ca.openosp.openo.billings.ca.bc.MSP.MSPReconcile.convCurValue(
      */
     public static String convCurValue(String value) {
         BigDecimal curValue = new BigDecimal(0.0);

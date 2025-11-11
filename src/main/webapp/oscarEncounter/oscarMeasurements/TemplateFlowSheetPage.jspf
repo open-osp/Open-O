@@ -630,8 +630,6 @@ div.recommendations ul{
 			Allergy[] allergies;
                     allergies = RxPatientData.getPatient(loggedInInfo, Integer.parseInt(demographic_no)).getActiveAllergies();
 
-// oscar.rx.data.RxPatientData.Patient.Allergy[] allergies;
-//                    allergies = oscar.rx.data.RxPatientData().getPatient(Integer.parseInt(demographic_no)).getAllergies();
 
                     if (allergies.length > 0){%>
                 <ul>

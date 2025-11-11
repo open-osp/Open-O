@@ -789,11 +789,8 @@ public class EForm extends EFormBase {
         Matcher matcher = p.matcher(html);
         if (matcher.find(from)) {
             int start = matcher.start();
-            //org.oscarehr.util.MiscUtils.getLogger().info("New code shows: " + start);
             return start;
         } else {
-            //org.oscarehr.util.MiscUtils.getLogger().info("New code shows: " + -1);
-
             return -1;
         }
 

@@ -221,7 +221,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
          * save the upload stream to a temp directory.  This should allow the HTTP
          * thread to close gracefully while the import is being processed.
          */
-        String filename = importFile.getName();
+        String filename = importFileFileName;
         Path filePath = importFile.toPath().normalize();
 
         // Get context of the temp directory, get the file path to the the temp directory
@@ -322,7 +322,15 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
          * It gets offered as a download to the end user.
          * TODO this log should be stored so that it can be retrieved later by the end user.
          */
-        File importLog = makeImportLog(logs, directory.getParent().toString());
+        // Check if any files were processed before creating import log
+        if (logs.isEmpty()) {
+            warnings.add("No valid XML files found to import. Please check the uploaded file structure.");
+            // Create empty log entry so makeImportLog doesn't crash
+            logs.add(new String[]{"No files processed"});
+        }
+
+        // Save import log to servlet context temp directory (safeDir) so ImportLogDownload2Action can find it
+        File importLog = makeImportLog(logs, safeDir.getCanonicalPath());
 
         //channel warnings and importlog to browser
         request.setAttribute("warnings", warnings);
@@ -370,7 +378,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     else {
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
                         for (Path possibleXmlFile : possibleXmlFileList) {
-                            if (Files.exists(xmlFile)) {
+                            if (Files.exists(possibleXmlFile)) {
                                 processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                             }
                         }
@@ -4603,6 +4611,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
     }
 
     private File importFile = null;
+    private String importFileFileName;
     private boolean matchProviderNames = true;
     private int timeshiftInDays;
     private String courseId;
@@ -4613,6 +4622,14 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
     public void setImportFile(File importFile) {
         this.importFile = importFile;
+    }
+
+    public String getImportFileFileName() {
+        return importFileFileName;
+    }
+
+    public void setImportFileFileName(String importFileFileName) {
+        this.importFileFileName = importFileFileName;
     }
 
     public boolean isMatchProviderNames() {

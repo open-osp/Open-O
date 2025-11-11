@@ -1225,7 +1225,7 @@ public final class EDocUtil {
             File inputFile = inputPath.toFile();
             String canonicalPath = inputFile.getCanonicalPath();
             
-            // Validate that the resolved path is within the allowed document directory
+            // Validate that the resolved path is within the allowed document/temp directories
             if (!canonicalPath.startsWith(canonicalDocDir + File.separator) && 
                 !canonicalPath.startsWith(canonicalTempDir + File.separator)) {
                 logger.warn("Path is outside of the allowed directories: " + fileName);

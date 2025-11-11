@@ -174,7 +174,7 @@ public class SearchConfig {
     public Integer getNumberOfMinutesAdvance() {
         if (filters != null) {
             for (FilterDefinition fd : filters) {
-                if ("org.oscarehr.appointment.search.filters.FutureApptFilter".equals(fd.getFilterClassName())) {
+                if ("ca.openosp.openo.appointment.search.filters.FutureApptFilter".equals(fd.getFilterClassName())) {
                     String str = fd.getParams().get("buffer");
                     try {
                         return Integer.parseInt(str);
@@ -190,7 +190,7 @@ public class SearchConfig {
     public void setNumberOfMinutesAdvance(Integer minutes) {
         if (filters != null) {
             for (FilterDefinition fd : filters) {
-                if ("org.oscarehr.appointment.search.filters.FutureApptFilter".equals(fd.getFilterClassName())) {
+                if ("ca.openosp.openo.appointment.search.filters.FutureApptFilter".equals(fd.getFilterClassName())) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("buffer", "" + minutes);
                     fd.setParams(params);
@@ -206,7 +206,7 @@ public class SearchConfig {
     public Character[] getOpenAccessCodes() {
         if (filters != null) {
             for (FilterDefinition fd : filters) {
-                if ("org.oscarehr.appointment.search.filters.OpenAccessFilter".equals(fd.getFilterClassName())) {
+                if ("ca.openosp.openo.appointment.search.filters.OpenAccessFilter".equals(fd.getFilterClassName())) {
                     String str = fd.getParams().get("codes");
                     try {
                         Character[] retval = getCharArray(str);
@@ -224,7 +224,7 @@ public class SearchConfig {
     public void setOpenAccessCodes(Character[] openAccessCodes) {
         if (filters != null) {
             for (FilterDefinition fd : filters) {
-                if ("org.oscarehr.appointment.search.filters.OpenAccessFilter".equals(fd.getFilterClassName())) {
+                if ("ca.openosp.openo.appointment.search.filters.OpenAccessFilter".equals(fd.getFilterClassName())) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("codes", StringUtils.join(openAccessCodes, ","));
                     fd.setParams(params);
@@ -450,7 +450,7 @@ public class SearchConfig {
 
         if (clinicTransfer.getNumberOfMinutesAdvance() != null && clinicTransfer.getNumberOfMinutesAdvance() > 0) {
             FilterDefinition fd = new FilterDefinition();
-            fd.setFilterClassName("org.oscarehr.appointment.search.filters.FutureApptFilter");
+            fd.setFilterClassName("ca.openosp.openo.appointment.search.filters.FutureApptFilter");
             Map<String, String> params = new HashMap<String, String>();
             params.put("buffer", "" + clinicTransfer.getNumberOfMinutesAdvance());
             fd.setParams(params);
@@ -497,7 +497,7 @@ public class SearchConfig {
 			
 			if(openAccessList.size() > 0){
 				FilterDefinition fd = new FilterDefinition();
-				fd.setFilterClassName("org.oscarehr.appointment.search.filters.OpenAccessFilter");
+				fd.setFilterClassName("ca.openosp.openo.appointment.search.filters.OpenAccessFilter");
 				returnClinic.filters.add(fd);
 			}
 			returnClinic.setOpenAccessCodes(openAccessList.toArray(new Character[openAccessList.size()]));
@@ -509,18 +509,18 @@ public class SearchConfig {
 
         if (clinicTransfer.getOpenAccessList() != null && clinicTransfer.getOpenAccessList().size() > 0) {
             FilterDefinition fd = new FilterDefinition();
-            fd.setFilterClassName("org.oscarehr.appointment.search.filters.OpenAccessFilter");
+            fd.setFilterClassName("ca.openosp.openo.appointment.search.filters.OpenAccessFilter");
             returnClinic.filters.add(fd);
             returnClinic.setOpenAccessCodes(clinicTransfer.getOpenAccessList().toArray(new Character[clinicTransfer.getOpenAccessList().size()]));
         }
 
 
         FilterDefinition fdExistingApp = new FilterDefinition();
-        fdExistingApp.setFilterClassName("org.oscarehr.appointment.search.filters.ExistingAppointmentFilter");
+        fdExistingApp.setFilterClassName("ca.openosp.openo.appointment.search.filters.ExistingAppointmentFilter");
         returnClinic.filters.add(fdExistingApp);
 
         FilterDefinition fdMultiUnit = new FilterDefinition();
-        fdMultiUnit.setFilterClassName("org.oscarehr.appointment.search.filters.MultiUnitFilter");
+        fdMultiUnit.setFilterClassName("ca.openosp.openo.appointment.search.filters.MultiUnitFilter");
         returnClinic.filters.add(fdMultiUnit);
 
 
