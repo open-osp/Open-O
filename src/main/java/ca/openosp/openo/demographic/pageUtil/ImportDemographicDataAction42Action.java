@@ -322,7 +322,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
          * It gets offered as a download to the end user.
          * TODO this log should be stored so that it can be retrieved later by the end user.
          */
-        File importLog = makeImportLog(logs, directory.getParent().toString());
+        // Save import log to servlet context temp directory (safeDir) so ImportLogDownload2Action can find it
+        File importLog = makeImportLog(logs, safeDir.getCanonicalPath());
 
         //channel warnings and importlog to browser
         request.setAttribute("warnings", warnings);

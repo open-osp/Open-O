@@ -1507,6 +1507,7 @@
         </action>
         <action name="form/importLogDownload" class="ca.openosp.openo.demographic.pageUtil.ImportLogDownload2Action">
             <result name="success">/demographic/demographicImport.jsp</result>
+            <result name="error">/errorpage.jsp</result>
         </action>
         <action name="demographic/DemographicExport" class="ca.openosp.openo.demographic.pageUtil.DemographicExportAction42Action">
             <result name="fail">/demographic/demographicExport.jsp</result>
