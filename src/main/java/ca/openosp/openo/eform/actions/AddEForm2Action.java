@@ -283,19 +283,25 @@ public class AddEForm2Action extends ActionSupport {
             }
 
             if (fax) {
-                StringBuilder faxForward = new StringBuilder("/fax/faxAction.do");
-                faxForward.append("method=").append("prepareFax");
-                faxForward.append("transactionId=").append(fdid);
-                faxForward.append("transactionType=").append(TransactionType.EFORM.name());
-                faxForward.append("demographicNo=").append(demographic_no);
+                StringBuilder faxForward = new StringBuilder(request.getContextPath()).append("/fax/faxAction.do");
+                faxForward.append("?method=").append("prepareFax");
+                faxForward.append("&transactionId=").append(fdid);
+                faxForward.append("&transactionType=").append(TransactionType.EFORM.name());
+                faxForward.append("&demographicNo=").append(demographic_no);
 
                 /*
                  * Added incase the eForm developer adds these elements to the
                  * eform.
                  */
-                faxForward.append("recipient=").append(recipient);
-                faxForward.append("recipientFaxNumber=").append(recipientFaxNumber);
-                faxForward.append("letterheadFax=").append(letterheadFax);
+                if (recipient != null) {
+                    faxForward.append("&recipient=").append(recipient);
+                }
+                if (recipientFaxNumber != null) {
+                    faxForward.append("&recipientFaxNumber=").append(recipientFaxNumber);
+                }
+                if (letterheadFax != null) {
+                    faxForward.append("&letterheadFax=").append(letterheadFax);
+                }
                 try {
                     response.sendRedirect(faxForward.toString());
                 } catch (IOException e) {
@@ -360,19 +366,25 @@ public class AddEForm2Action extends ActionSupport {
                  * This form id is sent to the fax action to render it as a faxable PDF.
                  * A preview is returned to the user once the form is rendered.
                  */
-                StringBuilder faxForward = new StringBuilder("/fax/faxAction.do");
-                faxForward.append("method=").append("prepareFax");
-                faxForward.append("transactionId=").append(prev_fdid);
-                faxForward.append("transactionType=").append(TransactionType.EFORM.name());
-                faxForward.append("demographicNo=").append(demographic_no);
+                StringBuilder faxForward = new StringBuilder(request.getContextPath()).append("/fax/faxAction.do");
+                faxForward.append("?method=").append("prepareFax");
+                faxForward.append("&transactionId=").append(prev_fdid);
+                faxForward.append("&transactionType=").append(TransactionType.EFORM.name());
+                faxForward.append("&demographicNo=").append(demographic_no);
 
                 /*
                  * Added incase the eForm developer adds these elements to the
                  * eform.
                  */
-                faxForward.append("recipient=").append(recipient);
-                faxForward.append("recipientFaxNumber=").append(recipientFaxNumber);
-                faxForward.append("letterheadFax=").append(letterheadFax);
+                if (recipient != null) {
+                    faxForward.append("&recipient=").append(recipient);
+                }
+                if (recipientFaxNumber != null) {
+                    faxForward.append("&recipientFaxNumber=").append(recipientFaxNumber);
+                }
+                if (letterheadFax != null) {
+                    faxForward.append("&letterheadFax=").append(letterheadFax);
+                }
                 try {
                     response.sendRedirect(faxForward.toString());
                 } catch (IOException e) {
