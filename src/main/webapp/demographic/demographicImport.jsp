@@ -193,7 +193,7 @@
     <div class="container-fluid well">
         <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DemoImport"/></h3>
 
-        <form action="${pageContext.request.contextPath}/form/importUpload.do" method="POST"
+        <form name="ImportDemographicDataForm" action="${pageContext.request.contextPath}/form/importUpload.do" method="POST"
                    enctype="multipart/form-data">
         <p><input type="file" name="importFile" id="importFile" multiple="multiple"/>
             <span id="uploadWarn" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
