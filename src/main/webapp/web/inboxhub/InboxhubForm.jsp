@@ -601,35 +601,48 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
     }
 
     function addDataInInboxhubListTable(data) {
-        let inboxhubListTable = jQuery('#inbox_table').DataTable();
-
         if (page == 1) {
             jQuery("#inboxhubMode").html(data);
-            inboxhubListTable.draw(false); // `draw(false)` prevents resetting the scroll position
+            jQuery('#inbox_table').DataTable().draw(false); // `draw(false)` prevents resetting the scroll position
             showInboxhubStats();
             startInboxhubListProgress();
             updateInboxhubListProgress();
             return;
         }
 
-        // Parse only the inboxhub table rows from response
-        let tempDiv = document.createElement('div');
-        tempDiv.innerHTML = data;
-        let newRows = tempDiv.querySelectorAll('#inboxhubListModeTableBody tr');
+        let inboxhubListTable = jQuery('#inbox_table').DataTable();
 
-        if (newRows.length === 0) {
-            hasMoreData = false; // stop further fetches
+        // Check if the string contains <script> tags
+        if (!containsScriptTag(data)) {
+            // Split the concatenated rows by the closing </tr> tag, and re-add </tr> to each split part
+            const splitRows = data.split(/<\/tr>/i).map(row => row + '</tr>').filter(row => row.trim() !== '</tr>');
+            // Add rows to DataTable without destroying it
+            jQuery.each(splitRows, function(index, row) {
+                inboxhubListTable.row.add(jQuery(row));
+            });
+
+            // Redraw the table
+            inboxhubListTable.draw(false); // `draw(false)` prevents resetting the scroll position
+        } else {
+            jQuery("#inboxhubMode").append(data);
         }
 
-        // Add rows to DataTable
-        newRows.forEach(row => {
-            // Extract cell data from the row
-            let rowData = Array.from(row.children).map(cell => cell.innerHTML);
-            inboxhubListTable.row.add(rowData);
-        });
-
-        inboxhubListTable.draw(false);
         updateInboxhubListProgress();
+    }
+
+    /**
+     * Helper function to detect presence of <script> tags (in any weird browser-accepted form) in an HTML string.
+     */
+    function containsScriptTag(htmlString) {
+        try {
+            const parser = new DOMParser();
+            // Parse as text/html for browser compliance
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            return doc.getElementsByTagName('script').length > 0;
+        } catch (e) {
+            // If parsing fails, err on the side of caution
+            return true;
+        }
     }
 
     function addDataInInboxhubViewTable(data) {
