@@ -348,8 +348,16 @@ public class NioFileManagerImpl implements NioFileManager {
     }
 
     public Path createTempFile(final String fileName, ByteArrayOutputStream os) throws IOException {
+        String sanitizedName = new File(fileName).getName();
+        
         Path directory = Files.createTempDirectory(DEFAULT_GENERIC_TEMP + System.currentTimeMillis());
-        Path file = Files.createFile(Paths.get(directory.toString(), fileName));
+        Path file = directory.resolve(sanitizedName).normalize();
+
+        // Ensure the resolved path is still within the temp directory
+        if (!file.startsWith(directory)) {
+            throw new SecurityException("File can only be created in temporary directory.");
+        }
+
         return Files.write(file, os.toByteArray());
     }
 
