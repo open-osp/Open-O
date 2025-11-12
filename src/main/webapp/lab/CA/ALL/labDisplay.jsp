@@ -1529,6 +1529,21 @@ request.setAttribute("missingTests", missingTests);
                                         </td>
                                     </tr>
 
+                                    <% if ("ExcellerisON".equals(handler.getMsgType())) { %>
+                                        <tr>
+                                            <td>
+                                                <div class="FieldData">
+                                                    <strong>Reported on:</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="FieldData" nowrap="nowrap">
+                                                    <%= ((ExcellerisOntarioHandler) handler).getReportStatusChangeDate() %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+
                                     <tr>
                                         <td>
                                             <div class="FieldData">
