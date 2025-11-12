@@ -337,7 +337,7 @@ public class AddEForm2Action extends ActionSupport {
                 return "download";
             } else if (isEmailEForm) {
                 String path = request.getContextPath() + "/email/emailComposeAction.do?method=prepareComposeEFormMailer";
-                addEmailAttachments(request, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
+                addEmailAttachmentsToSession(request, fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
                 try {
                     response.sendRedirect(path);
                 } catch (IOException e) {
@@ -420,7 +420,7 @@ public class AddEForm2Action extends ActionSupport {
                 return "download";
             } else if (isEmailEForm) {
                 String path = request.getContextPath() + "/email/emailComposeAction.do?method=prepareComposeEFormMailer";
-                addEmailAttachments(request, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
+                addEmailAttachmentsToSession(request, prev_fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
                 try {
                     response.sendRedirect(path);
                 } catch (IOException e) {
@@ -484,6 +484,45 @@ public class AddEForm2Action extends ActionSupport {
         String formattedDate = dateFormat.format(currentDate);
 
         return formattedDate + "_" + demographicLastName + ".pdf";
+    }
+
+    /**
+     * Stores email attachment data in session for use after redirect.
+     * Session attributes survive redirects, unlike request attributes.
+     *
+     * @param request HTTP request
+     * @param fdid eForm data ID
+     * @param demographicNo demographic number
+     * @param attachedEForms array of attached eForm IDs
+     * @param attachedDocuments array of attached document IDs
+     * @param attachedLabs array of attached lab IDs
+     * @param attachedHRMDocuments array of attached HRM document IDs
+     * @param attachedForms array of attached form IDs
+     */
+    private void addEmailAttachmentsToSession(HttpServletRequest request, String fdid, String demographicNo,
+        String[] attachedEForms, String[] attachedDocuments, String[] attachedLabs,
+        String[] attachedHRMDocuments, String[] attachedForms) {
+        Boolean attachEFormItSelf = request.getParameter("attachEFormToEmail") == null || "true".equals(request.getParameter("attachEFormToEmail"));
+        Boolean openEFormAfterEmail = "true".equals(request.getParameter("openEFormAfterSendingEmail"));
+        Boolean isEmailEncrypted = request.getParameter("enableEmailEncryption") == null || "true".equals(request.getParameter("enableEmailEncryption"));
+        Boolean isEmailAttachmentEncrypted = request.getParameter("encryptEmailAttachments") == null || "true".equals(request.getParameter("encryptEmailAttachments"));
+        Boolean isEmailAutoSend = "true".equals(request.getParameter("autoSendEmail"));
+        Boolean deleteEFormAfterEmail = "true".equals(request.getParameter("deleteEFormAfterSendingEmail"));
+
+        HttpSession session = request.getSession();
+        session.setAttribute("deleteEFormAfterEmail", deleteEFormAfterEmail);
+        session.setAttribute("isEmailEncrypted", isEmailEncrypted);
+        session.setAttribute("isEmailAttachmentEncrypted", isEmailAttachmentEncrypted);
+        session.setAttribute("isEmailAutoSend", isEmailAutoSend);
+        session.setAttribute("openEFormAfterEmail", openEFormAfterEmail);
+        session.setAttribute("attachEFormItSelf", attachEFormItSelf);
+        session.setAttribute("fdid", fdid);
+        session.setAttribute("demographicId", demographicNo);
+        session.setAttribute("attachedEForms", attachedEForms);
+        session.setAttribute("attachedDocuments", attachedDocuments);
+        session.setAttribute("attachedLabs", attachedLabs);
+        session.setAttribute("attachedHRMDocuments", attachedHRMDocuments);
+        session.setAttribute("attachedForms", attachedForms);
     }
 
     private void addEmailAttachments(HttpServletRequest request, String[] attachedEForms, String[] attachedDocuments, String[] attachedLabs, String[] attachedHRMDocuments, String[] attachedForms) {
