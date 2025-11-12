@@ -293,13 +293,13 @@ public class AddEForm2Action extends ActionSupport {
                  * Added incase the eForm developer adds these elements to the
                  * eform.
                  */
-                if (recipient != null) {
+                if (recipient != null && !recipient.isEmpty()) {
                     faxForward.append("&recipient=").append(recipient);
                 }
-                if (recipientFaxNumber != null) {
+                if (recipientFaxNumber != null && !recipientFaxNumber.isEmpty()) {
                     faxForward.append("&recipientFaxNumber=").append(recipientFaxNumber);
                 }
-                if (letterheadFax != null) {
+                if (letterheadFax != null && !letterheadFax.isEmpty()) {
                     faxForward.append("&letterheadFax=").append(letterheadFax);
                 }
                 try {
