@@ -55,10 +55,11 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
@@ -285,22 +286,22 @@ public class AddEForm2Action extends ActionSupport {
             if (fax) {
                 StringBuilder faxForward = new StringBuilder(request.getContextPath()).append("/fax/faxAction.do");
                 faxForward.append("?method=").append("prepareFax");
-                faxForward.append("&transactionId=").append(fdid);
-                faxForward.append("&transactionType=").append(TransactionType.EFORM.name());
-                faxForward.append("&demographicNo=").append(demographic_no);
+                faxForward.append("&transactionId=").append(URLEncoder.encode(fdid, StandardCharsets.UTF_8));
+                faxForward.append("&transactionType=").append(URLEncoder.encode(TransactionType.EFORM.name(), StandardCharsets.UTF_8));
+                faxForward.append("&demographicNo=").append(URLEncoder.encode(demographic_no, StandardCharsets.UTF_8));
 
                 /*
                  * Added incase the eForm developer adds these elements to the
                  * eform.
                  */
                 if (recipient != null && !recipient.isEmpty()) {
-                    faxForward.append("&recipient=").append(recipient);
+                    faxForward.append("&recipient=").append(URLEncoder.encode(recipient, StandardCharsets.UTF_8));
                 }
                 if (recipientFaxNumber != null && !recipientFaxNumber.isEmpty()) {
-                    faxForward.append("&recipientFaxNumber=").append(recipientFaxNumber);
+                    faxForward.append("&recipientFaxNumber=").append(URLEncoder.encode(recipientFaxNumber, StandardCharsets.UTF_8));
                 }
                 if (letterheadFax != null && !letterheadFax.isEmpty()) {
-                    faxForward.append("&letterheadFax=").append(letterheadFax);
+                    faxForward.append("&letterheadFax=").append(URLEncoder.encode(letterheadFax, StandardCharsets.UTF_8));
                 }
                 try {
                     response.sendRedirect(faxForward.toString());
