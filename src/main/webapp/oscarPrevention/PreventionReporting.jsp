@@ -27,7 +27,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang3.StringUtils" %>
-<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,java.net.*,ca.openosp.openo.eform.*" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*, java.text.SimpleDateFormat,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,java.net.*,ca.openosp.openo.eform.*" %>
 <%@page import="ca.openosp.OscarProperties"%>
 <%@page import="ca.openosp.openo.utility.SpringUtils"%>
 <%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
@@ -71,6 +71,9 @@
     String eformSearch = (String) request.getAttribute("eformSearch");
     //EfmData efData = new EfmData();
     BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+
+    // Create current date value to display by default
+    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 %>
 
 <html>
@@ -455,7 +458,7 @@
                     </div>
                     <div>
                         As of:
-                        <input type="text" name="asofDate" size="9" styleId="asofDate"/> <a id="date"><img title="Calendar"
+                        <input type="text" name="asofDate" size="9" id="asofDate" value="<%=Encode.forHtmlAttribute(currentDate)%>"/> <a id="date"><img title="Calendar"
                                                                                                        src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                        alt="Calendar"
                                                                                                        border="0"/></a>
