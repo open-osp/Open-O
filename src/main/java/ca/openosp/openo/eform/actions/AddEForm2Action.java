@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.model.enumerator.DocumentType;
 import ca.openosp.openo.documentManager.DocumentAttachmentManager;
+import ca.openosp.openo.email.core.EmailAttachmentSettings;
 import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.managers.EformDataManager;
 import ca.openosp.openo.managers.EmailManager;
@@ -337,7 +338,10 @@ public class AddEForm2Action extends ActionSupport {
                 return "download";
             } else if (isEmailEForm) {
                 String path = request.getContextPath() + "/email/emailComposeAction.do?method=prepareComposeEFormMailer";
-                addEmailAttachmentsToSession(request, fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
+                EmailAttachmentSettings settings = EmailAttachmentSettings.fromRequest(request)
+                    .withIds(fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms)
+                    .build();
+                addEmailAttachmentsToSession(request, settings);
                 try {
                     response.sendRedirect(path);
                 } catch (IOException e) {
@@ -420,7 +424,10 @@ public class AddEForm2Action extends ActionSupport {
                 return "download";
             } else if (isEmailEForm) {
                 String path = request.getContextPath() + "/email/emailComposeAction.do?method=prepareComposeEFormMailer";
-                addEmailAttachmentsToSession(request, prev_fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms);
+                EmailAttachmentSettings settings = EmailAttachmentSettings.fromRequest(request)
+                    .withIds(prev_fdid, demographic_no, attachedEForms, attachedDocuments, attachedLabs, attachedHRMDocuments, attachedForms)
+                    .build();
+                addEmailAttachmentsToSession(request, settings);
                 try {
                     response.sendRedirect(path);
                 } catch (IOException e) {
@@ -491,58 +498,48 @@ public class AddEForm2Action extends ActionSupport {
      * Session attributes survive redirects, unlike request attributes.
      *
      * @param request HTTP request
-     * @param fdid eForm data ID
-     * @param demographicNo demographic number
-     * @param attachedEForms array of attached eForm IDs
-     * @param attachedDocuments array of attached document IDs
-     * @param attachedLabs array of attached lab IDs
-     * @param attachedHRMDocuments array of attached HRM document IDs
-     * @param attachedForms array of attached form IDs
+     * @param settings EmailAttachmentSettings containing all attachment configuration
      */
-    private void addEmailAttachmentsToSession(HttpServletRequest request, String fdid, String demographicNo,
-        String[] attachedEForms, String[] attachedDocuments, String[] attachedLabs,
-        String[] attachedHRMDocuments, String[] attachedForms) {
-        Boolean attachEFormItSelf = request.getParameter("attachEFormToEmail") == null || "true".equals(request.getParameter("attachEFormToEmail"));
-        Boolean openEFormAfterEmail = "true".equals(request.getParameter("openEFormAfterSendingEmail"));
-        Boolean isEmailEncrypted = request.getParameter("enableEmailEncryption") == null || "true".equals(request.getParameter("enableEmailEncryption"));
-        Boolean isEmailAttachmentEncrypted = request.getParameter("encryptEmailAttachments") == null || "true".equals(request.getParameter("encryptEmailAttachments"));
-        Boolean isEmailAutoSend = "true".equals(request.getParameter("autoSendEmail"));
-        Boolean deleteEFormAfterEmail = "true".equals(request.getParameter("deleteEFormAfterSendingEmail"));
-
+    private void addEmailAttachmentsToSession(HttpServletRequest request, EmailAttachmentSettings settings) {
         HttpSession session = request.getSession();
-        session.setAttribute("deleteEFormAfterEmail", deleteEFormAfterEmail);
-        session.setAttribute("isEmailEncrypted", isEmailEncrypted);
-        session.setAttribute("isEmailAttachmentEncrypted", isEmailAttachmentEncrypted);
-        session.setAttribute("isEmailAutoSend", isEmailAutoSend);
-        session.setAttribute("openEFormAfterEmail", openEFormAfterEmail);
-        session.setAttribute("attachEFormItSelf", attachEFormItSelf);
-        session.setAttribute("fdid", fdid);
-        session.setAttribute("demographicId", demographicNo);
-        session.setAttribute("attachedEForms", attachedEForms);
-        session.setAttribute("attachedDocuments", attachedDocuments);
-        session.setAttribute("attachedLabs", attachedLabs);
-        session.setAttribute("attachedHRMDocuments", attachedHRMDocuments);
-        session.setAttribute("attachedForms", attachedForms);
+        session.setAttribute("deleteEFormAfterEmail", settings.deleteEFormAfterEmail);
+        session.setAttribute("isEmailEncrypted", settings.isEmailEncrypted);
+        session.setAttribute("isEmailAttachmentEncrypted", settings.isEmailAttachmentEncrypted);
+        session.setAttribute("isEmailAutoSend", settings.isEmailAutoSend);
+        session.setAttribute("openEFormAfterEmail", settings.openAfterEmail);
+        session.setAttribute("attachEFormItSelf", settings.attachEFormItSelf);
+        session.setAttribute("fdid", settings.fdid);
+        session.setAttribute("demographicId", settings.demographicNo);
+        session.setAttribute("attachedEForms", settings.attachedEForms);
+        session.setAttribute("attachedDocuments", settings.attachedDocuments);
+        session.setAttribute("attachedLabs", settings.attachedLabs);
+        session.setAttribute("attachedHRMDocuments", settings.attachedHRMDocuments);
+        session.setAttribute("attachedForms", settings.attachedForms);
+        session.setAttribute("emailPDFPassword", settings.emailPDFPassword);
+        session.setAttribute("emailPDFPasswordClue", settings.emailPDFPasswordClue);
     }
 
-    private void addEmailAttachments(HttpServletRequest request, String[] attachedEForms, String[] attachedDocuments, String[] attachedLabs, String[] attachedHRMDocuments, String[] attachedForms) {
-        Boolean attachEFormItSelf = request.getParameter("attachEFormToEmail") == null || "true".equals(request.getParameter("attachEFormToEmail")) ? true : false;
-        Boolean openEFormAfterEmail = request.getParameter("openEFormAfterSendingEmail") == null || "false".equals(request.getParameter("openEFormAfterSendingEmail")) ? false : true;
-        Boolean isEmailEncrypted = request.getParameter("enableEmailEncryption") == null || "true".equals(request.getParameter("enableEmailEncryption")) ? true : false;
-        Boolean isEmailAttachmentEncrypted = request.getParameter("encryptEmailAttachments") == null || "true".equals(request.getParameter("encryptEmailAttachments")) ? true : false;
-        Boolean isEmailAutoSend = request.getParameter("autoSendEmail") == null || "false".equals(request.getParameter("autoSendEmail")) ? false : true;
-        Boolean deleteEFormAfterEmail = request.getParameter("deleteEFormAfterSendingEmail") == null || "false".equals(request.getParameter("deleteEFormAfterSendingEmail")) ? false : true;
-        request.setAttribute("deleteEFormAfterEmail", deleteEFormAfterEmail);
-        request.setAttribute("isEmailEncrypted", isEmailEncrypted);
-        request.setAttribute("isEmailAttachmentEncrypted", isEmailAttachmentEncrypted);
-        request.setAttribute("isEmailAutoSend", isEmailAutoSend);
-        request.setAttribute("openEFormAfterEmail", openEFormAfterEmail);
-        request.setAttribute("attachEFormItSelf", attachEFormItSelf);
-        request.setAttribute("attachedEForms", attachedEForms);
-        request.setAttribute("attachedDocuments", attachedDocuments);
-        request.setAttribute("attachedLabs", attachedLabs);
-        request.setAttribute("attachedHRMDocuments", attachedHRMDocuments);
-        request.setAttribute("attachedForms", attachedForms);
+    /**
+     * Stores email attachment data in request attributes.
+     * Used for non-redirect scenarios where request scope is sufficient.
+     *
+     * @param request HTTP request
+     * @param settings EmailAttachmentSettings containing all attachment configuration
+     */
+    private void addEmailAttachments(HttpServletRequest request, EmailAttachmentSettings settings) {
+        request.setAttribute("deleteEFormAfterEmail", settings.deleteEFormAfterEmail);
+        request.setAttribute("isEmailEncrypted", settings.isEmailEncrypted);
+        request.setAttribute("isEmailAttachmentEncrypted", settings.isEmailAttachmentEncrypted);
+        request.setAttribute("isEmailAutoSend", settings.isEmailAutoSend);
+        request.setAttribute("openEFormAfterEmail", settings.openAfterEmail);
+        request.setAttribute("attachEFormItSelf", settings.attachEFormItSelf);
+        request.setAttribute("attachedEForms", settings.attachedEForms);
+        request.setAttribute("attachedDocuments", settings.attachedDocuments);
+        request.setAttribute("attachedLabs", settings.attachedLabs);
+        request.setAttribute("attachedHRMDocuments", settings.attachedHRMDocuments);
+        request.setAttribute("attachedForms", settings.attachedForms);
+        request.setAttribute("emailPDFPassword", settings.emailPDFPassword);
+        request.setAttribute("emailPDFPasswordClue", settings.emailPDFPasswordClue);
     }
 
     private void attachToEForm(LoggedInInfo loggedInInfo, String[] attachedEForms, String[] attachedDocuments, String[] attachedLabs, String[] attachedHRMDocuments, String[] attachedForms, String fdid, String demographic_no, String providerNo) {

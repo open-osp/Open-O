@@ -52,6 +52,23 @@ public class EmailCompose2Action extends ActionSupport {
         String[] attachedEForms = (String[]) session.getAttribute("attachedEForms");
         String[] attachedHRMDocuments = (String[]) session.getAttribute("attachedHRMDocuments");
 
+        // Clean up session attributes after consuming them to avoid stale data persisting across requests
+        session.removeAttribute("attachEFormItSelf");
+        session.removeAttribute("fdid");
+        session.removeAttribute("demographicId");
+        session.removeAttribute("emailPDFPassword");
+        session.removeAttribute("emailPDFPasswordClue");
+        session.removeAttribute("attachedDocuments");
+        session.removeAttribute("attachedLabs");
+        session.removeAttribute("attachedForms");
+        session.removeAttribute("attachedEForms");
+        session.removeAttribute("attachedHRMDocuments");
+        session.removeAttribute("deleteEFormAfterEmail");
+        session.removeAttribute("isEmailEncrypted");
+        session.removeAttribute("isEmailAttachmentEncrypted");
+        session.removeAttribute("isEmailAutoSend");
+        session.removeAttribute("openEFormAfterEmail");
+
         String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicId));
 
         String receiverName = demographicManager.getDemographicFormattedName(loggedInInfo, Integer.parseInt(demographicId));
