@@ -288,23 +288,25 @@ public class Util {
             
             // Verify the file exists and is readable
             if (!requestedFile.exists() || !requestedFile.isFile() || !requestedFile.canRead()) {
-                logger.error("File not found or not accessible: " + safeFileName);
+                logger.error("Error during file download: file does not exist or is not accessible - {}", fileName);
+                rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
             rsp.setContentType("application/octet-stream");
             rsp.setHeader("Content-Disposition", "attachment; filename=\"" + sanitizeHeaderValue(safeFileName) + "\"");
-            InputStream in = new FileInputStream(requestedFile);
-            OutputStream out = rsp.getOutputStream();
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            rsp.setContentLengthLong(requestedFile.length());
+            
+            try (InputStream in = new FileInputStream(requestedFile);
+                OutputStream out = rsp.getOutputStream()) {
+                byte[] buf = new byte[8192];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
             }
-            in.close();
-            out.close();
         } catch (IOException ex) {
-            logger.error("Error", ex);
+            logger.error("Error during file download: {}", fileName, ex);
         }
     }
     
