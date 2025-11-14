@@ -34,117 +34,62 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @since 2025-11-13
  */
-public class EmailAttachmentSettings {
-    public final String fdid;
-    public final String demographicNo;
-    public final String[] attachedEForms;
-    public final String[] attachedDocuments;
-    public final String[] attachedLabs;
-    public final String[] attachedHRMDocuments;
-    public final String[] attachedForms;
-    public final boolean attachEFormItSelf;
-    public final boolean openAfterEmail;
-    public final boolean isEmailEncrypted;
-    public final boolean isEmailAttachmentEncrypted;
-    public final boolean isEmailAutoSend;
-    public final boolean deleteEFormAfterEmail;
-    public final String emailPDFPassword;
-    public final String emailPDFPasswordClue;
-
-    private EmailAttachmentSettings(Builder builder) {
-        this.fdid = builder.fdid;
-        this.demographicNo = builder.demographicNo;
-        this.attachedEForms = builder.attachedEForms;
-        this.attachedDocuments = builder.attachedDocuments;
-        this.attachedLabs = builder.attachedLabs;
-        this.attachedHRMDocuments = builder.attachedHRMDocuments;
-        this.attachedForms = builder.attachedForms;
-        this.attachEFormItSelf = builder.attachEFormItSelf;
-        this.openAfterEmail = builder.openAfterEmail;
-        this.isEmailEncrypted = builder.isEmailEncrypted;
-        this.isEmailAttachmentEncrypted = builder.isEmailAttachmentEncrypted;
-        this.isEmailAutoSend = builder.isEmailAutoSend;
-        this.deleteEFormAfterEmail = builder.deleteEFormAfterEmail;
-        this.emailPDFPassword = builder.emailPDFPassword;
-        this.emailPDFPasswordClue = builder.emailPDFPasswordClue;
-    }
-
+public record EmailAttachmentSettings(
+    String fdid,
+    String demographicNo,
+    String[] attachedEForms,
+    String[] attachedDocuments,
+    String[] attachedLabs,
+    String[] attachedHRMDocuments,
+    String[] attachedForms,
+    boolean attachEFormItSelf,
+    boolean openAfterEmail,
+    boolean isEmailEncrypted,
+    boolean isEmailAttachmentEncrypted,
+    boolean isEmailAutoSend,
+    boolean deleteEFormAfterEmail,
+    String emailPDFPassword,
+    String emailPDFPasswordClue
+) {
     /**
-     * Creates a builder from HTTP request parameters.
-     * Centralizes all parameter parsing logic in one place.
+     * Creates an EmailAttachmentSettings instance from an HTTP request.
      *
-     * @param request HTTP servlet request containing email parameters
-     * @return Builder instance with parameters parsed from request
+     * @param req The HTTP request containing the parameters.
+     * @param fdid The eForm data ID.
+     * @param demographicNo The demographic number.
+     * @param eForms Array of attached eForm IDs.
+     * @param docs Array of attached document IDs.
+     * @param labs Array of attached lab IDs.
+     * @param hrmDocs Array of attached HRM document IDs.
+     * @param forms Array of attached form IDs.
+     * @return A new EmailAttachmentSettings instance.
      */
-    public static Builder fromRequest(HttpServletRequest request) {
-        Builder builder = new Builder();
-        builder.attachEFormItSelf = !"false".equals(request.getParameter("attachEFormToEmail"));
-        builder.openAfterEmail = "true".equals(request.getParameter("openEFormAfterSendingEmail"));
-        builder.isEmailEncrypted = !"false".equals(request.getParameter("enableEmailEncryption"));
-        builder.isEmailAttachmentEncrypted = !"false".equals(request.getParameter("encryptEmailAttachments"));
-        builder.isEmailAutoSend = "true".equals(request.getParameter("autoSendEmail"));
-        builder.deleteEFormAfterEmail = "true".equals(request.getParameter("deleteEFormAfterSendingEmail"));
-        builder.emailPDFPassword = request.getParameter("emailPDFPassword");
-        builder.emailPDFPasswordClue = request.getParameter("emailPDFPasswordClue");
-        return builder;
-    }
-
-    /**
-     * Builder pattern for EmailAttachmentSettings.
-     * Allows flexible construction with method chaining.
-     *
-     * @since 2025-11-13
-     */
-    public static class Builder {
-        private String fdid;
-        private String demographicNo;
-        private String[] attachedEForms;
-        private String[] attachedDocuments;
-        private String[] attachedLabs;
-        private String[] attachedHRMDocuments;
-        private String[] attachedForms;
-        private boolean attachEFormItSelf;
-        private boolean openAfterEmail;
-        private boolean isEmailEncrypted;
-        private boolean isEmailAttachmentEncrypted;
-        private boolean isEmailAutoSend;
-        private boolean deleteEFormAfterEmail;
-        private String emailPDFPassword;
-        private String emailPDFPasswordClue;
-
-        /**
-         * Sets all attachment IDs and metadata.
-         *
-         * @param fdid eForm data ID
-         * @param demographicNo demographic number
-         * @param eForms array of attached eForm IDs
-         * @param docs array of attached document IDs
-         * @param labs array of attached lab IDs
-         * @param hrmDocs array of attached HRM document IDs
-         * @param forms array of attached form IDs
-         * @return this builder for method chaining
-         */
-        public Builder withIds(String fdid, String demographicNo,
-                               String[] eForms, String[] docs,
-                               String[] labs, String[] hrmDocs,
-                               String[] forms) {
-            this.fdid = fdid;
-            this.demographicNo = demographicNo;
-            this.attachedEForms = eForms;
-            this.attachedDocuments = docs;
-            this.attachedLabs = labs;
-            this.attachedHRMDocuments = hrmDocs;
-            this.attachedForms = forms;
-            return this;
-        }
-
-        /**
-         * Builds the immutable EmailAttachmentSettings instance.
-         *
-         * @return configured EmailAttachmentSettings
-         */
-        public EmailAttachmentSettings build() {
-            return new EmailAttachmentSettings(this);
-        }
+    public static EmailAttachmentSettings of(
+        HttpServletRequest req,
+        String fdid,
+        String demographicNo,
+        String[] eForms,
+        String[] docs,
+        String[] labs,
+        String[] hrmDocs,
+        String[] forms
+    ) {
+        return new EmailAttachmentSettings(
+            fdid,
+            demographicNo,
+            eForms,
+            docs,
+            labs,
+            hrmDocs,
+            forms,
+            !"false".equals(req.getParameter("attachEFormToEmail")),
+            "true".equals(req.getParameter("openEFormAfterSendingEmail")),
+            !"false".equals(req.getParameter("enableEmailEncryption")),
+            !"false".equals(req.getParameter("encryptEmailAttachments")),
+            "true".equals(req.getParameter("autoSendEmail")),
+            "true".equals(req.getParameter("deleteEFormAfterSendingEmail")),
+            req.getParameter("emailPDFPassword"),
+            req.getParameter("emailPDFPasswordClue")
+        );
     }
 }
