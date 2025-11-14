@@ -143,8 +143,8 @@
             <td class="MainTableRightColumn" valign="top">
 
 
-                <nested:form action="/admin/ManageBillingReferral">
-                    <nested:hidden property="method" value="advancedSearch"/>
+                <form action="<%= request.getContextPath() %>/admin/ManageBillingReferral.do">
+                    <input type="hidden" name="method" value="advancedSearch"/>
                     <input type="text" name="nameQuery" id="nameQuery" placeholder="Name or ReferralId"
                            value="<%= Encode.forHtmlAttribute(name != null ? name : "") %>">
                     &nbsp;
@@ -158,11 +158,11 @@
                     <input type="checkbox" name="showHidden"
                            id="showHidden" <%=(checked != null && checked) ? " checked=\"checked\" " : "" %> />
 
-                    <nested:submit style="border:1px solid #666666;">Search</nested:submit>
-                    <nested:submit style="border:1px solid #666666;" onclick="clearMe()">Clear</nested:submit>
-                    <nested:submit style="border:1px solid #666666;"
-                                   onclick="return openAddSpecialist()">Add</nested:submit>
-                </nested:form>
+                    <input type="submit" style="border:1px solid #666666;" value="Search" />
+                    <input type="submit" style="border:1px solid #666666;" onclick="clearMe()" value="Clear" />
+                    <input type="submit" style="border:1px solid #666666;"
+                                   onclick="return openAddSpecialist()" value="Add" />
+                </form>
                 <br/>
                 <%
                     if (request.getAttribute("referrals") == null) {

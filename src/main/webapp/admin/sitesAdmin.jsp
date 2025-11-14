@@ -72,9 +72,9 @@
             </td>
             <td class="MainTableRightColumn" valign="top">
 
-                <nested:form action="/admin/ManageSites?method=add">
-                    <nested:submit style="border:1px solid #666666;">Add New Site</nested:submit>
-                </nested:form>
+                <form action="<%= request.getContextPath() %>/admin/ManageSites.do?method=add">
+                    <input type="submit" style="border:1px solid #666666;" value="Add New Site" />
+                </form>
 
                 <display-el:table name="sites" id="site" class="its"
                                   style="border:1px solid #666666; width:99%;margin-top:2px;">
