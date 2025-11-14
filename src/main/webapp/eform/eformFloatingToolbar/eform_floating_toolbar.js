@@ -59,6 +59,27 @@ window.onerror = function uncaughtExceptionHandler(message, source, lineNumber, 
     jQuery.post(context + "/eform/logEformError.do", eform);
 }
 
+function getEForm() {
+	let ef = document.forms['saveEForm'];
+	if (!ef) {
+		ef = Array.prototype.find.call(
+			document.forms,
+			f => f.action && f.action.includes('addEForm.do')
+		);
+	}
+	return ef;
+}
+
+function submitEForm() {
+	const ef = getEForm();
+	if (!ef) {
+		showErrorAlert();
+		return false;
+	}
+	ef.submit();
+	return true;
+}
+
 	/**
 	 * Triggers the eForm save/submit function
 	 */
@@ -71,70 +92,56 @@ function remoteSave() {
 		});
 
 		appendImageInputs();
-		
+
 		moveSubject();
 
 		if (typeof releaseDirtyFlag === "function") {
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
 			window["releaseDirtyFlag"]();
 		}
 
     // don't need the dirty form notification if the form is being autosaved.
-    if (isFormDirty()) {
+    if (typeof isFormDirty === "function" && isFormDirty()) {
         jQuery("form:first").trigger('reinitialize.areYouSure');
     }
 
 		if (typeof saveRTL === "function") {
-			console.log("Saving RTL or RTL template");
 			window["saveRTL"]();
 			document.RichTextLetter.submit();
 			return true;
 		}
 
 		if (document.getElementsByName("SubmitButton") && document.getElementsByName("SubmitButton")[0]) {
-			console.log("Saving by remote click of the SubmitButton");
 			try {
 				document.getElementsByName("SubmitButton")[0].click();
 				return true;
 			} catch (error) {
 				showErrorAlert();
-				console.log(error);
 			}
 		}
-		
+
 		if(typeof releaseDirtyFlag === "function")
 		{
-			console.log("Releasing dirty window flag by releaseDirtyFlag function")
 			window["releaseDirtyFlag"]();
 		}
 
-		if(typeof submission === "function")
-		{
-			console.log("Executing submission method before submitting first form directly");
+		if (typeof submission === "function") {
 			try {
 				window["submission"]();
-				document.forms[0].submit();
-				return true;
-			} catch (error) {
+				return submitEForm();
+			} catch (e) {
 				showErrorAlert();
-				console.log(error);
 			}
 		}
 
-		try
-		{
-			console.log("Submitting first form in document directly");
-			document.forms[0].submit();
-			return true;
-		} catch (error) {
+		try {
+			return submitEForm();
+		} catch (e) {
 			showErrorAlert();
-			console.log(error);
 		}
 
 		HideSpin();
 	} catch (e) {
 		showErrorAlert();
-		console.error(e);
 	}
 
 	return false;

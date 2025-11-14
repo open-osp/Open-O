@@ -11,6 +11,7 @@
     <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*" />
     <constant name="struts.custom.i18n.resources" value="oscarResources"/>
     <constant name="struts.custom.i18n.resources" value="oscarResources,MessageResources_mcedt"/>
+    <constant name="struts.multipart.maxSize" value="524288000" />
     <!-- Default package extending struts-default -->
 	<package name="default" namespace="/" extends="struts-default">
         <action name="logout" class="ca.openosp.openo.login.Logout2Action">
@@ -1627,6 +1628,7 @@
             <interceptor-ref name="fileUpload" />
             <interceptor-ref name="defaultStack"/>
             <result name="success">/lab/CA/ALL/testUploader.jsp</result>
+            <result name="input">/lab/CA/ALL/testUploader.jsp</result>
         </action>
         <action name="lab/CA/ALL/oruR01Upload" class="ca.openosp.openo.lab.ca.all.pageUtil.OruR01Upload2Action">
             <result name="result">/common/genericResultPage.jsp</result>
