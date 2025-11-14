@@ -72,8 +72,10 @@
     //EfmData efData = new EfmData();
     BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
 
-    // Create current date value to display by default
-    String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    // Try to get the asofDate parameter if available
+    String asofDate = request.getParameter("asofDate");
+    // Create current date value to display as a fallback
+    if (asofDate == null) asofDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 %>
 
 <html>
@@ -448,17 +450,17 @@
                     <div>
                         Prevention:
                         <select name="prevention" id="prevention">
-                            <option value="-1">--Select Prevention--</option>
-                            <option value="PAP">PAP</option>
-                            <option value="Mammogram">Mammogram</option>
-                            <option value="Flu">Flu</option>
-                            <option value="ChildImmunizations">Child Immunizations</option>
-                            <option value="FOBT">FOBT</option>
+                            <option value="-1" ${prevention == '-1' ? 'selected' : ''} >--Select Prevention--</option>
+                            <option value="PAP" ${prevention == 'PAP' ? 'selected' : ''} >PAP</option>
+                            <option value="Mammogram" ${prevention == 'Mammogram' ? 'selected' : ''} >Mammogram</option>
+                            <option value="Flu" ${prevention == 'Flu' ? 'selected' : ''} >Flu</option>
+                            <option value="ChildImmunizations" ${prevention == 'ChildImmunizations' ? 'selected' : ''} >Child Immunizations</option>
+                            <option value="FOBT" ${prevention == 'FOBT' ? 'selected' : ''} >FOBT</option>
                         </select>
                     </div>
                     <div>
                         As of:
-                        <input type="text" name="asofDate" size="9" id="asofDate" value="<%=Encode.forHtmlAttribute(currentDate)%>"/> <a id="date"><img title="Calendar"
+                        <input type="text" name="asofDate" size="9" id="asofDate" value="<%=Encode.forHtmlAttribute(asofDate)%>"/> <a id="date"><img title="Calendar"
                                                                                                        src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                        alt="Calendar"
                                                                                                        border="0"/></a>
