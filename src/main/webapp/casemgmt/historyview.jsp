@@ -51,7 +51,7 @@
 
 </head>
 <body bgcolor="#eeeeff">
-<form action="<%= request.getContextPath() %>/CaseManagementEntry">
+<form action="<%= request.getContextPath() %>/CaseManagementEntry.do">
 <br>
 <b>Archived Note Update History</b>
 <br>

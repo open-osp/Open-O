@@ -58,7 +58,7 @@
 </head>
 
 <body>
-<form action="<%= request.getContextPath() %>/CaseManagementEntry">
+<form action="<%= request.getContextPath() %>/CaseManagementEntry.do">
     <c:url value="/casemgmt/CaseManagementEntry.jsp?demographicNo=${param.demographicNo}&providerNo=${param.providerNo}&demoName=${requestScope.demoName}&demoAge=${requestScope.demoAge}&demoDOB=${requestScope.demoDOB}"
            var="url"/>
     <script type="text/javascript">
@@ -97,7 +97,7 @@
     <input type="text" name="searString" />
     <input type="submit" value="search" onclick="this.form.method.value='issueSearch';" />
 
-    <c:if test="${showList == true}">
+    <c:if test="${showList == 'true'}">
         <P><b>Issue List</b></P>
         <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#C0C0C0">
             <tr class="title">
@@ -137,8 +137,7 @@
     </c:if>
 
     <c:if test="${from == 'casemgmt'}">
-        <input type="submit" value="back to notes"
-                       onclick="this.form.method.value='edit';backToNote('casemgmt');return false;" />
+        <input type="submit" value="back to notes" onclick="this.form.method.value='edit';backToNote('casemgmt');return false;" />
     </c:if>
     <c:choose>
         <c:when test="${from != 'casemgmt'}">
