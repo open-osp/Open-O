@@ -95,7 +95,11 @@
         if (eformLink != null) eForm.setEformLink(eformLink);
 
         String parentAjaxId = request.getParameter("parentAjaxId");
-        if (parentAjaxId != null) eForm.setAction(parentAjaxId);
+        if (parentAjaxId != null) {
+            eForm.setAction(parentAjaxId);
+        } else {
+            eForm.setAction();
+        }
     } else {  //if form is viewed from admin screen
         eForm = new EForm(fid, "-1"); //form cannot be submitted, demographic_no "-1" indicate this specialty
         eForm.setContextPath(request.getContextPath());
