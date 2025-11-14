@@ -17,6 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.billing.CA.ON.model.BillingPercLimit" %>
 <%@page import="ca.openosp.openo.billing.CA.ON.dao.BillingPercLimitDao" %>
 <%@page import="ca.openosp.openo.commn.model.BillingService" %>
@@ -452,8 +453,8 @@
             } else {
                 msg += "<script language=\"JavaScript\">window.location = 'billingShortcutPg1.jsp?billRegion=&billForm="
                         + URLEncoder.encode(oscarVariables.getProperty("hospital_view", oscarVariables.getProperty("default_view"))) + "&hotclick=&appointment_no=0&demographic_name="
-                        + URLEncoder.encode(demoLast) + "%2C"
-                        + URLEncoder.encode(demoFirst) + "&demographic_no="
+                        + URLEncoder.encode(demoLast, StandardCharsets.UTF_8) + "%2C"
+                        + URLEncoder.encode(demoFirst, StandardCharsets.UTF_8) + "&demographic_no="
                         + demo_no + "&providerview=1&user_no="
                         + user_no + "&apptProvider_no=none&appointment_date="
                         + curYear + "-" + curMonth + "-" + curDay + "&start_time=0:00:00&bNewForm=1&status=t'</script>";

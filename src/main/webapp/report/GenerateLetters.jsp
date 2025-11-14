@@ -40,6 +40,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@page
@@ -273,7 +274,7 @@
             // if ( firstLetter.size() > 0 ) {
             //    String queryStr = getUrlParamList(firstLetter, "demo");
             //
-            //&message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :" + request.getAttribute("prevType"), "UTF-8")
+            //&message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :" + request.getAttribute("prevType"), StandardCharsets.UTF_8)
             //&followupType=
             //&followupValue=L1
     %>

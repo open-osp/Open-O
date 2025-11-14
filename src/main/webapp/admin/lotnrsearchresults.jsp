@@ -25,6 +25,7 @@
 --%>
 
 <%@page import="java.net.URLEncoder" %>
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="java.text.SimpleDateFormat, java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -151,7 +152,7 @@
                     <td><%=pRec.getPreventionType()%>
                     </td>
                     <td><a
-                            href="lotnrdeleterecordhtm.jsp?prevention=<%=pRec.getPreventionType()%>&lotnr=<%=URLEncoder.encode(pRec.getLotNr(),"UTF-8")%>"><%= pRec.getLotNr()%>
+                            href="lotnrdeleterecordhtm.jsp?prevention=<%=pRec.getPreventionType()%>&lotnr=<%=URLEncoder.encode(pRec.getLotNr(), StandardCharsets.UTF_8)%>"><%= pRec.getLotNr()%>
                     </a></td>
                 </tr>
                 <% }

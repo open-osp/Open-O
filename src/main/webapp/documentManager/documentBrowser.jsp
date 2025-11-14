@@ -36,6 +36,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
 <%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
 <%@page import="ca.openosp.openo.util.UtilDateUtilities" %>
@@ -456,7 +457,7 @@ Remote documents not supported
                     </a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
                     | <a
                         href="#"
-                        onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals((String) doctypes.get(i3)) ? "<b>" : ""%><%=(String) doctypes.get(i3)%><%=view.equals((String) doctypes.get(i3)) ? "</b>" : ""%>
+                        onclick="LoadView('<%=URLEncoder.encode((String, StandardCharsets.UTF_8) doctypes.get(i3),"UTF-8")%>')"><%=view.equals((String) doctypes.get(i3)) ? "<b>" : ""%><%=(String) doctypes.get(i3)%><%=view.equals((String) doctypes.get(i3)) ? "</b>" : ""%>
                 </a>
                     <%}%>
                 </fieldset>

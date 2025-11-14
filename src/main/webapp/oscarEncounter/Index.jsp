@@ -30,6 +30,7 @@
     The selection logic is in ca.openosp.openo.encounter.pageUtil.EctIncomingEncounter2Action.java
 --%>
 
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
@@ -109,7 +110,7 @@
         session.setAttribute("casemgmt_oscar_baseurl", request.getContextPath());
         session.setAttribute("casemgmt_oscar_bean", bean);
         session.setAttribute("casemgmt_bean_flag", "true");
-        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName + "&appointmentNo=" + request.getParameter("appointmentNo") + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason")) + "&reasonCode=" + (request.getParameter("reasonCode") != null ? request.getParameter("reasonCode") : "");
+        String hrefurl = request.getContextPath() + "/casemgmt/forward.jsp?action=view&demographicNo=" + bean.demographicNo + "&providerNo=" + bean.providerNo + "&providerName=" + bean.userName + "&appointmentNo=" + request.getParameter("appointmentNo") + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason"), StandardCharsets.UTF_8) + "&reasonCode=" + (request.getParameter("reasonCode") != null ? request.getParameter("reasonCode") : "");
         if (request.getParameter("casetoEncounter") == null) {
             response.sendRedirect(hrefurl);
             return;
@@ -904,9 +905,9 @@
                                 + "&demographicNo=" + bean.demographicNo
                                 + "&providerNo=" + bean.providerNo
                                 + "&providerName=" + bean.userName
-                                + "&appointmentNo=" + URLEncoder.encode(request.getParameter("appointmentNo") == null ? "" : request.getParameter("appointmentNo"))
-                                + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason"))
-                                + "&reasonCode=" + URLEncoder.encode(request.getParameter("reasonCode") == null ? "" : request.getParameter("reasonCode"));
+                                + "&appointmentNo=" + URLEncoder.encode(request.getParameter("appointmentNo") == null ? "" : request.getParameter("appointmentNo"), StandardCharsets.UTF_8)
+                                + "&reason=" + URLEncoder.encode(request.getParameter("reason") == null ? "" : request.getParameter("reason"), StandardCharsets.UTF_8)
+                                + "&reasonCode=" + URLEncoder.encode(request.getParameter("reasonCode") == null ? "" : request.getParameter("reasonCode"), StandardCharsets.UTF_8);
                         %>
                         <tr>
                             <td><a href="<%=hrefurl%>">Case Management Encounter</a></td>
@@ -925,7 +926,7 @@
                             <%
                                 if (bean.status.indexOf('B') == -1) { %>
                             <a href=#
-                               onClick='popupPage(700,1000, "<%=request.getContextPath()%>/billing.do?billRegion=<%=URLEncoder.encode(province)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"))%>&hotclick=<%=URLEncoder.encode("")%>&appointment_no=<%=bean.appointmentNo%>&demographic_name=<%=URLEncoder.encode(bean.patientLastName+","+bean.patientFirstName)%>&demographic_no=<%=bean.demographicNo%>&providerview=<%=bean.curProviderNo%>&user_no=<%=bean.providerNo%>&apptProvider_no=<%=bean.curProviderNo%>&appointment_date=<%=bean.appointmentDate%>&start_time=<%=bean.startTime%>&bNewForm=1&status=t");return false;'
+                               onClick='popupPage(700,1000, "<%=request.getContextPath()%>/billing.do?billRegion=<%=URLEncoder.encode(province, StandardCharsets.UTF_8)%>&billForm=<%=URLEncoder.encode(oscarVariables.getProperty("default_view"), StandardCharsets.UTF_8)%>&hotclick=<%=URLEncoder.encode("", StandardCharsets.UTF_8)%>&appointment_no=<%=bean.appointmentNo%>&demographic_name=<%=URLEncoder.encode(bean.patientLastName+","+bean.patientFirstName)%>&demographic_no=<%=bean.demographicNo%>&providerview=<%=bean.curProviderNo%>&user_no=<%=bean.providerNo%>&apptProvider_no=<%=bean.curProviderNo%>&appointment_date=<%=bean.appointmentDate%>&start_time=<%=bean.startTime%>&bNewForm=1&status=t");return false;'
                                title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.billing"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.billing"/></a> <% } else {%>
                             <!--a href=# onClick='onUnbilled("<%= request.getContextPath() %>/billing/billingDeleteWithoutNo.jsp?appointment_no=<%=bean.appointmentNo%>");return false;' title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.unbil"/>">-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.billing"/></a-->
                             <a href=#
@@ -959,7 +960,7 @@
                             <% } %> <a href=#
                                        onClick="popupOscarComm(580,900,'<%=request.getContextPath()%>/oscarResearch/dxresearch/setupDxResearch.do?demographicNo=<%=bean.demographicNo%>&providerNo=<%=provNo%>&quickList=');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.disease"/></a><br>
                             <a href=#
-                               onClick="popupOscarCon(580,800,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?keyword=<%=URLEncoder.encode(bean.patientLastName+","+bean.patientFirstName)%>&displaymode=<%=URLEncoder.encode("Search ")%>&search_mode=search_name&originalpage=<%=URLEncoder.encode(request.getContextPath() + "/tickler/ticklerAdd.jsp")%>&orderby=last_name&appointment_date=2000-01-01&limit1=0&limit2=5&status=t&start_time=10:45&end_time=10:59&duration=15&dboperation=search_demorecord&type=&demographic_no=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.addTickler"/></a><br>
+                               onClick="popupOscarCon(580,800,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?keyword=<%=URLEncoder.encode(bean.patientLastName+","+bean.patientFirstName)%>&displaymode=<%=URLEncoder.encode("Search ", StandardCharsets.UTF_8)%>&search_mode=search_name&originalpage=<%=URLEncoder.encode(request.getContextPath(), StandardCharsets.UTF_8) + "/tickler/ticklerAdd.jsp")%>&orderby=last_name&appointment_date=2000-01-01&limit1=0&limit2=5&status=t&start_time=10:45&end_time=10:59&duration=15&dboperation=search_demorecord&type=&demographic_no=<%=bean.demographicNo%>');return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.addTickler"/></a><br>
                         </td>
                     </tr>
                     <!-- <tr><td>&nbsp;</td></tr> -->

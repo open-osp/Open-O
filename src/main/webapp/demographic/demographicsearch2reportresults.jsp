@@ -57,6 +57,7 @@
 %>
 
 <%@ page import="java.util.*, java.sql.*,java.net.*, ca.openosp.*" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>
@@ -222,11 +223,11 @@
                 onMouseOver="this.style.cursor='hand';this.style.backgroundColor='pink';"
                 onMouseout="this.style.backgroundColor='<%=bgColor%>';"
                 onClick="<% if(caisi) { out.print("addNameCaisi");}
-						else { out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName())%>','<%=URLEncoder.encode(demo.getFirstName())%>','<%=URLEncoder.encode(demo.getChartNo())%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>')">
+						else { out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName(), StandardCharsets.UTF_8)%>','<%=URLEncoder.encode(demo.getFirstName(), StandardCharsets.UTF_8)%>','<%=URLEncoder.encode(demo.getChartNo(), StandardCharsets.UTF_8)%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>')">
 
                 <td><input type="submit" class="mbttn" name="demographic_no" value="<%=demo.getDemographicNo()%>"
                            onClick="<% if(caisi) {out.print("addNameCaisi");}
-					else { out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName())%>','<%=URLEncoder.encode(demo.getFirstName())%>','<%=URLEncoder.encode(demo.getChartNo())%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>')">
+					else { out.print("addName");} %>('<%=demo.getDemographicNo()%>','<%=URLEncoder.encode(demo.getLastName(), StandardCharsets.UTF_8)%>','<%=URLEncoder.encode(demo.getFirstName(), StandardCharsets.UTF_8)%>','<%=URLEncoder.encode(demo.getChartNo(), StandardCharsets.UTF_8)%>','<%=request.getParameter("messageId")%>','<%=demo.getProviderNo()%>')">
                 </td>
                 <td><%=Encode.forHtml(Misc.toUpperLowerCase(demo.getLastName()))%>
                 </td>
