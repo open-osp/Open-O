@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.EmailAttachment;
@@ -36,16 +37,37 @@ public class EmailCompose2Action extends ActionSupport {
 
     public String prepareComposeEFormMailer() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        boolean attachEFormItSelf = (boolean) request.getAttribute("attachEFormItSelf");
-        String fdid = attachEFormItSelf ? (String) request.getAttribute("fdid") : "";
-        String demographicId = (String) request.getAttribute("demographicId");
-        String emailPDFPassword = (String) request.getAttribute("emailPDFPassword");
-        String emailPDFPasswordClue = (String) request.getAttribute("emailPDFPasswordClue");
-        String[] attachedDocuments = (String[]) request.getAttribute("attachedDocuments");
-        String[] attachedLabs = (String[]) request.getAttribute("attachedLabs");
-        String[] attachedForms = (String[]) request.getAttribute("attachedForms");
-        String[] attachedEForms = (String[]) request.getAttribute("attachedEForms");
-        String[] attachedHRMDocuments = (String[]) request.getAttribute("attachedHRMDocuments");
+
+        // Get email information from session.
+        HttpSession session = request.getSession();
+        Boolean attachEFormItSelfObj = (Boolean) session.getAttribute("attachEFormItSelf");
+        boolean attachEFormItSelf = attachEFormItSelfObj != null && attachEFormItSelfObj;
+        String fdid = attachEFormItSelf ? (String) session.getAttribute("fdid") : "";
+        String demographicId = (String) session.getAttribute("demographicId");
+        String emailPDFPassword = (String) session.getAttribute("emailPDFPassword");
+        String emailPDFPasswordClue = (String) session.getAttribute("emailPDFPasswordClue");
+        String[] attachedDocuments = (String[]) session.getAttribute("attachedDocuments");
+        String[] attachedLabs = (String[]) session.getAttribute("attachedLabs");
+        String[] attachedForms = (String[]) session.getAttribute("attachedForms");
+        String[] attachedEForms = (String[]) session.getAttribute("attachedEForms");
+        String[] attachedHRMDocuments = (String[]) session.getAttribute("attachedHRMDocuments");
+
+        // Clean up session attributes after consuming them to avoid stale data persisting across requests
+        session.removeAttribute("attachEFormItSelf");
+        session.removeAttribute("fdid");
+        session.removeAttribute("demographicId");
+        session.removeAttribute("emailPDFPassword");
+        session.removeAttribute("emailPDFPasswordClue");
+        session.removeAttribute("attachedDocuments");
+        session.removeAttribute("attachedLabs");
+        session.removeAttribute("attachedForms");
+        session.removeAttribute("attachedEForms");
+        session.removeAttribute("attachedHRMDocuments");
+        session.removeAttribute("deleteEFormAfterEmail");
+        session.removeAttribute("isEmailEncrypted");
+        session.removeAttribute("isEmailAttachmentEncrypted");
+        session.removeAttribute("isEmailAutoSend");
+        session.removeAttribute("openEFormAfterEmail");
 
         String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicId));
 

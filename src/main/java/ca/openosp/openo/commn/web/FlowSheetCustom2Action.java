@@ -422,6 +422,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
         m.setRecommendationColour(recommendationColour);
 
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
+        templateConfig.addIndicatorsInCustomFlowsheet(m);
         String name = templateConfig.addFlowsheet(m);
         m.loadRuleBase();
         /// END FLOWSHEET CODE

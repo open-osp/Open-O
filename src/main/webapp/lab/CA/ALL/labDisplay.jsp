@@ -1530,6 +1530,21 @@ request.setAttribute("missingTests", missingTests);
                                         </td>
                                     </tr>
 
+                                    <% if ("ExcellerisON".equals(handler.getMsgType())) { %>
+                                        <tr>
+                                            <td>
+                                                <div class="FieldData">
+                                                    <strong>Reported on:</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="FieldData" nowrap="nowrap">
+                                                    <%= ((ExcellerisOntarioHandler) handler).getReportStatusChangeDate() %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+
                                     <tr>
                                         <td>
                                             <div class="FieldData">
@@ -1996,6 +2011,23 @@ request.setAttribute("missingTests", missingTests);
                     String lastObxSetId = "0";
                     boolean obrFlag = false;
                     int obxCount = handler.getOBXCount(j);
+
+                    if (handler.getMsgType().equals("ExcellerisON") && handler.getObservationHeader(j, 0).equals(headers.get(i))) {
+                        String orderRequestStatus = ((ExcellerisOntarioHandler) handler).getOrderStatus(j);
+                        int obrCommentCount = handler.getOBRCommentCount(j);
+                        if (orderRequestStatus.equals(ExcellerisOntarioHandler.OrderStatus.DELETED.getDescription())) { continue; }
+                        
+                        if (obxCount > 0 || !orderRequestStatus.isEmpty() || obrCommentCount > 0) {
+                            obrFlag = true;
+                            %>
+                                <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" >
+                                    <td valign="top" align="left"><span style="font-size:16px;font-weight: bold;"><%=handler.getOBRName(j)%></span></td>
+                                    <td colspan="1"><%=orderRequestStatus%></td>
+                                </tr>
+                            <%
+                        }                               
+                    }
+
                     for (k = 0; k < obxCount; k++) {
 
                         String obxName = handler.getOBXName(j, k);
@@ -2042,7 +2074,7 @@ request.setAttribute("missingTests", missingTests);
                             b1 = !obrFlag && !obrName.equals("");
                             b2 = !(obxName.contains(obrName));
                             b3 = !(obxCount < 2 && !isUnstructuredDoc);
-                            if (b1 && b2 && b3) {
+                            if (b1 && b2 && b3 && !handler.getMsgType().equals("ExcellerisON")) {
             %>
             <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>">
                 <td valign="top" align="left"><span style="font-size:16px;font-weight: bold;"><%=obrName%></span></td>
@@ -2419,7 +2451,11 @@ request.setAttribute("missingTests", missingTests);
             } else {
             %>
             <td align="<%=align%>">
+                <% if (handler.getMsgType().equals("ExcellerisON") && !((ExcellerisOntarioHandler) handler).getOBXSubId(j, k).isEmpty()) { %>
+                <em><%= ((ExcellerisOntarioHandler) handler).getOBXSubIdWithObservationValue( j, k) %></em>
+                <% } else { %>
                 <%= handler.getOBXResult(j, k) %>
+                <% } %>
                 <%= handler.isTestResultBlocked(j, k) ? "<a href='#' title='Do Not Disclose Without Explicit Patient Consent'>(BLOCKED)</a>" : ""%>
             </td>
 
