@@ -59,6 +59,27 @@ window.onerror = function uncaughtExceptionHandler(message, source, lineNumber, 
     jQuery.post(context + "/eform/logEformError.do", eform);
 }
 
+function getEForm() {
+	let ef = document.forms['saveEForm'];
+	if (!ef) {
+		ef = Array.prototype.find.call(
+			document.forms,
+			f => f.action && f.action.includes('addEForm.do')
+		);
+	}
+	return ef;
+}
+
+function submitEForm() {
+	const ef = getEForm();
+	if (!ef) {
+		showErrorAlert();
+		return false;
+	}
+	ef.submit();
+	return true;
+}
+
 	/**
 	 * Triggers the eForm save/submit function
 	 */
@@ -103,51 +124,18 @@ function remoteSave() {
 			window["releaseDirtyFlag"]();
 		}
 
-		if(typeof submission === "function")
-		{
+		if (typeof submission === "function") {
 			try {
 				window["submission"]();
-				// Find the eForm by name
-				let eFormElement = document.forms['saveEForm'];
-				if (!eFormElement) {
-					for (let i = 0; i < document.forms.length; i++) {
-						if (document.forms[i].action && document.forms[i].action.indexOf('addEForm.do') >= 0) {
-							eFormElement = document.forms[i];
-							break;
-						}
-					}
-				}
-				if (eFormElement) {
-					eFormElement.submit();
-					return true;
-				} else {
-					showErrorAlert();
-				}
-			} catch (error) {
+				return submitEForm();
+			} catch (e) {
 				showErrorAlert();
 			}
 		}
 
-		try
-		{
-			// Find the eForm by name
-			let eFormElement = document.forms['saveEForm'];
-			if (!eFormElement) {
-				for (let i = 0; i < document.forms.length; i++) {
-					if (document.forms[i].action && document.forms[i].action.indexOf('addEForm.do') >= 0) {
-						eFormElement = document.forms[i];
-						break;
-					}
-				}
-			}
-			if (eFormElement) {
-				eFormElement.submit();
-				return true;
-			} else {
-				showErrorAlert();
-				return false;
-			}
-		} catch (error) {
+		try {
+			return submitEForm();
+		} catch (e) {
 			showErrorAlert();
 		}
 
