@@ -700,7 +700,7 @@ public class MDSHandler implements MessageHandler {
             }
 
             if (nteIndex >= MAX_NTE_COUNT) {
-                logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT + ". Some NTE segments may have been omitted due to truncation.")
+                logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT + ". Some NTE segments may have been omitted due to truncation.");
             }
 
             return allComments.toString();
