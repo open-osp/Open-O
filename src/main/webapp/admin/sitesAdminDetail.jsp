@@ -150,7 +150,7 @@
 
                     <input type="hidden" name="site.siteId" />
                     <input type="hidden" name="method" value="save" />
-                    <input type="submit" styleClass="button" value="Save" /> <input type="submit" styleClass="button"
+                    <input type="submit" class="button" value="Save" /> <input type="submit" class="button"
                                                                                            onclick="this.form.method.value='view'" value="Cancel" />
 
                 </td>

@@ -69,7 +69,7 @@
     </tr>
 
     <form action="${pageContext.request.contextPath}/documentManager/changeDocStatus.do" method="POST"
-               enctype="multipart/form-data" styleClass="forms"
+               enctype="multipart/form-data" class="forms"
                onsubmit="return submitUpload(this)">
 
         <table>

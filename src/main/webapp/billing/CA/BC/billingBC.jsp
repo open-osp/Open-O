@@ -1554,7 +1554,7 @@
                                     <div class="form-group">
 
                                         <label for="afterHours">After Hours</label>
-                                        <select styleClass="form-control" name="afterHours"
+                                        <select class="form-control" name="afterHours"
                                                      id="afterHours">
                                             <option value="0">No</option>
                                             <option value="E">Evening</option>
