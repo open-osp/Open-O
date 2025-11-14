@@ -590,7 +590,7 @@
 
         <div id="injectionInfo"></div>
 
-        <form action="${pageContext.request.contextPath}/oscarPrevention/AddPrevention.do" styleId="deleteForm"
+        <form action="${pageContext.request.contextPath}/oscarPrevention/AddPrevention.do" id="deleteForm"
                 method="post" target="_blank">
 
         <input type="hidden" name="id" id="deleteId"/>

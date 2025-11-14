@@ -90,7 +90,7 @@
                         </tr>
                         <tr>
                             <td>Theme Color:<sup style="color:red">*</sup></td>
-                            <td><nested:text styleId="colorField" property="site.bgColor" type="color"
+                            <td><nested:text id="colorField" property="site.bgColor" type="color"
                                              onchange="this.style.backgroundColor = this.value;"></nested:text>
                             </td>
                         </tr>
