@@ -499,7 +499,7 @@
                     </a> <% for (int i3 = 0; i3 < doctypes.size(); i3++) {%>
                     | <a
                         href="#"
-                        onclick="LoadView('<%=URLEncoder.encode((String, StandardCharsets.UTF_8) doctypes.get(i3),"UTF-8")%>')"><%=view.equals(doctypes.get(i3)) ? "<b>" : ""%><%=(String) doctypes.get(i3)%><%=view.equals(doctypes.get(i3)) ? "</b>" : ""%>
+                        onclick="LoadView('<%=URLEncoder.encode((String) doctypes.get(i3),"UTF-8")%>')"><%=view.equals(doctypes.get(i3)) ? "<b>" : ""%><%=(String) doctypes.get(i3)%><%=view.equals(doctypes.get(i3)) ? "</b>" : ""%>
                 </a>
                     <%}%>
                 </fieldset>

@@ -2056,7 +2056,7 @@
                                                                 + "&curProviderNo="
                                                                 + curProvider_no[nProvider]
                                                                 + "&reason="
-                                                                + URLEncoder.encode(Encode.forHtmlContent(reason, StandardCharsets.UTF_8))
+                                                                + URLEncoder.encode(Encode.forHtmlContent(reason), StandardCharsets.UTF_8)
                                                                 + "&reasonCode=" + (appointment.getReasonCode() != null ? appointment.getReasonCode() : "")
                                                                 + "&encType="
                                                                 + URLEncoder.encode("face to face encounter with client", "UTF-8")

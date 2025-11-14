@@ -252,7 +252,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                                                                     <a href="javascript:window.close()"> <% } else { // we were called from lab module %>
 
                                                                         <a
-                                                                                href="javascript:popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=MDS&segmentID=<%= request.getParameter("segmentID")%>&name=<%=java.net.URLEncoder.encode(pd.getPatientName(), StandardCharsets.UTF_8) )%>', 'searchPatientWindow')">
+                                                                                href="javascript:popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=MDS&segmentID=<%= request.getParameter("segmentID")%>&name=<%=java.net.URLEncoder.encode(pd.getPatientName(), StandardCharsets.UTF_8) %>', 'searchPatientWindow')">
                                                                             <% } %> <%=pd.getPatientName()%>
                                                                         </a></div>
                                                             </td>
@@ -827,7 +827,7 @@ if ( request.getParameter("searchProviderNo") == null || request.getParameter("s
                                    onClick="window.close()"> <% } else { // we were called from lab module %>
                             <input type="button"
                                    value=" <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnEChart"/> "
-                                   onClick="popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=MDS&segmentID=<%= request.getParameter("segmentID")%>&name=<%=java.net.URLEncoder.encode(pd.getPatientName(), StandardCharsets.UTF_8) )%>', 'searchPatientWindow')">
+                                   onClick="popupStart(360, 680, '${pageContext.request.contextPath}/oscarMDS/SearchPatient.do?labType=MDS&segmentID=<%= request.getParameter("segmentID")%>&name=<%=java.net.URLEncoder.encode(pd.getPatientName(), StandardCharsets.UTF_8)%>', 'searchPatientWindow')">
                             <% } %>
                         </td>
                         <td width="50%" valign="center" align="left"><span
