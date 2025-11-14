@@ -372,10 +372,11 @@ public class AddEForm2Action extends ActionSupport {
                  * A preview is returned to the user once the form is rendered.
                  */
                 StringBuilder faxForward = new StringBuilder(request.getContextPath()).append("/fax/faxAction.do");
-                faxForward.append("?method=").append("prepareFax");
-                faxForward.append("&transactionId=").append(prev_fdid);
-                faxForward.append("&transactionType=").append(TransactionType.EFORM.name());
-                faxForward.append("&demographicNo=").append(demographic_no);
+                faxForward.append("?method=").append(URLEncoder.encode("prepareFax", StandardCharsets.UTF_8));
+                faxForward.append("&transactionId=").append(URLEncoder.encode(prev_fdid, StandardCharsets.UTF_8));
+                faxForward.append("&transactionType=").append(URLEncoder.encode(TransactionType.EFORM.name(), StandardCharsets.UTF_8));
+                faxForward.append("&demographicNo=").append(URLEncoder.encode(demographic_no, StandardCharsets.UTF_8));
+
 
                 /*
                  * Added incase the eForm developer adds these elements to the
