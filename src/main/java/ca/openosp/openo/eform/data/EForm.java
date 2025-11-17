@@ -1121,7 +1121,7 @@ public class EForm extends EFormBase {
                         String id = idNode.asText();
                         String value = valueNode.asText();
 
-                        if (!id.isEmpty() && !value.isEmpty() && !value.startsWith("http") && !value.startsWith("HTTP")) {
+                        if (!id.isEmpty() && !value.isEmpty() && !value.toLowerCase().startsWith("http")) {
                             for (Element imageElement : imageElements) {
                                 if (id.equalsIgnoreCase(imageElement.id())) {
                                     imageElement.attr("src", value);
