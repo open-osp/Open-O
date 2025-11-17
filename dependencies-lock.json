@@ -474,11 +474,11 @@
   }, {
     "groupId" : "com.github.openosp",
     "artifactId" : "ultrabuk-htmltopdf-java",
-    "version" : "1.0.10.1",
+    "version" : "1.0.11",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:wrZgw3qzidHOj5azKeYKrI+wvrbXYXSg2e0e0Ue4bRsZ6/r4ckq+E1bELl9aMRXRjdWeyIKmsj6es5ws0uQzfg=="
+    "integrity" : "sha512:UV+Mfq1Qz+xkGu2cgUL0f9N9PVkjBijDwhghzRaItamQ9pVlmEpNAwqnFOuFY55m3Oi6YdzBoQk2KYXrzNvMtQ=="
   }, {
     "groupId" : "com.github.scribejava",
     "artifactId" : "scribejava-apis",
