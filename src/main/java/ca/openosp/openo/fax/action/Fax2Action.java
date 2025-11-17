@@ -46,7 +46,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -190,12 +189,13 @@ public class Fax2Action extends ActionSupport {
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
                 }
             } else {
-                // Validate and sanitize the file path to prevent path traversal
-                try {
-                    File targetFile = new File(faxFilePath);
+                // Validate the PDF path to prevent path traversal attacks
+                Path pdfPath = Path.of(faxFilePath);
 
+                try {
                     // Get the canonical path to resolve any path traversal attempts
-                    String targetFileCanonical = targetFile.getCanonicalPath();
+                    Path canonicalPdfPath = pdfPath.toRealPath();
+
                     // Define allowed base directories
                     String[] allowedBasePaths = {
                         OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
@@ -206,11 +206,10 @@ public class Fax2Action extends ActionSupport {
                     boolean isValidPath = false;
                     for (String basePath : allowedBasePaths) {
                         if (basePath != null && !basePath.isEmpty()) {
-                            File baseDir = new File(basePath);
-                            if (baseDir.exists()) {
-                                String baseDirCanonical = baseDir.getCanonicalPath();
-                                if (targetFileCanonical.startsWith(baseDirCanonical + File.separator) ||
-                                    targetFileCanonical.equals(baseDirCanonical)) {
+                            Path basePathObj = Path.of(basePath);
+                            if (Files.exists(basePathObj)) {
+                                Path baseCanonicalPath = basePathObj.toRealPath();
+                                if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
                                     isValidPath = true;
                                     break;
                                 }
@@ -219,34 +218,22 @@ public class Fax2Action extends ActionSupport {
                     }
 
                     if (!isValidPath) {
-                        logger.error("Access denied: file not in allowed directory: " + targetFileCanonical);
+                        logger.error("Access denied: Path traversal attempt detected for path: " + faxFilePath);
                         response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                         return;
                     }
 
-                    // Check if the file exists and is readable
-                    if (!targetFile.exists()) {
-                        logger.error("File does not exist: " + faxFilePath);
+                    // Ensure the file exists and is a regular file
+                    if (!Files.exists(canonicalPdfPath) || !Files.isRegularFile(canonicalPdfPath)) {
+                        logger.error("PDF file not found or is not a regular file: " + faxFilePath);
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
                         return;
                     }
 
-                    if (!targetFile.isFile()) {
-                        logger.error("Path is not a file: " + faxFilePath);
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "Not a file");
-                        return;
-                    }
-
-                    if (!targetFile.canRead()) {
-                        logger.error("File is not readable: " + faxFilePath);
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "File not readable");
-                        return;
-                    }
-
-                    outfile = targetFile.toPath();
+                    outfile = canonicalPdfPath;
                     response.setContentType("application/pdf");
                 } catch (IOException e) {
-                    logger.error("Error processing file path", e);
+                    logger.error("Error processing file path: " + faxFilePath, e);
                     try {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing file");
                     } catch (IOException ex) {
