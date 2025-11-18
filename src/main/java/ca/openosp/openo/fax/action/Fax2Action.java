@@ -46,7 +46,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -74,6 +73,12 @@ public class Fax2Action extends ActionSupport {
             return queue();
         } else if ("prepareFax".equals(method)) {
             return prepareFax();
+        } else if ("getPreview".equals(method)) {
+            getPreview();
+            return null;
+        } else if ("getPageCount".equals(method)) {
+            getPageCount();
+            return null;
         }
         return cancel();
     }
@@ -184,49 +189,51 @@ public class Fax2Action extends ActionSupport {
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
                 }
             } else {
-                // Validate and sanitize the file path to prevent path traversal
+                // Validate the PDF path to prevent path traversal attacks
+                Path pdfPath = Path.of(faxFilePath);
+
                 try {
-                    // Extract just the filename component, removing any path traversal attempts
-                    String sanitizedFilename = FilenameUtils.getName(faxFilePath);
-                    if (sanitizedFilename == null || sanitizedFilename.isEmpty()) {
-                        logger.error("Invalid or empty filename provided");
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid filename");
+                    // Get the canonical path to resolve any path traversal attempts
+                    Path canonicalPdfPath = pdfPath.toRealPath();
+
+                    // Define allowed base directories
+                    String[] allowedBasePaths = {
+                        OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
+                        OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/"),
+                        System.getProperty("java.io.tmpdir")
+                    };
+
+                    boolean isValidPath = false;
+                    for (String basePath : allowedBasePaths) {
+                        if (basePath != null && !basePath.isEmpty()) {
+                            Path basePathObj = Path.of(basePath);
+                            if (Files.exists(basePathObj)) {
+                                Path baseCanonicalPath = basePathObj.toRealPath();
+                                if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
+                                    isValidPath = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!isValidPath) {
+                        logger.error("Access denied: Path traversal attempt detected for path: " + faxFilePath);
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
                         return;
                     }
-                    
-                    // Get the document directory from configuration
-                    String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-                    if (documentDir == null || documentDir.isEmpty()) {
-                        // Fall back to temp directory if DOCUMENT_DIR is not configured
-                        documentDir = System.getProperty("java.io.tmpdir");
-                    }
-                    
-                    // Construct the file path safely using canonical path validation
-                    File baseDir = new File(documentDir);
-                    File targetFile = new File(baseDir, sanitizedFilename);
-                    
-                    // Validate that the canonical path is within the expected directory
-                    String baseDirCanonical = baseDir.getCanonicalPath();
-                    String targetFileCanonical = targetFile.getCanonicalPath();
-                    
-                    if (!targetFileCanonical.startsWith(baseDirCanonical + File.separator) && 
-                        !targetFileCanonical.equals(baseDirCanonical)) {
-                        logger.error("Path traversal attempt detected: " + faxFilePath);
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid file path");
-                        return;
-                    }
-                    
-                    // Check if the file exists and is readable
-                    if (!targetFile.exists() || !targetFile.isFile() || !targetFile.canRead()) {
-                        logger.error("File not found or not readable: " + sanitizedFilename);
+
+                    // Ensure the file exists and is a regular file
+                    if (!Files.exists(canonicalPdfPath) || !Files.isRegularFile(canonicalPdfPath)) {
+                        logger.error("PDF file not found or is not a regular file: " + faxFilePath);
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
                         return;
                     }
-                    
-                    outfile = targetFile.toPath();
+
+                    outfile = canonicalPdfPath;
                     response.setContentType("application/pdf");
                 } catch (IOException e) {
-                    logger.error("Error processing file path", e);
+                    logger.error("Error processing file path: " + faxFilePath, e);
                     try {
                         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing file");
                     } catch (IOException ex) {
