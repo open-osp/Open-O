@@ -720,12 +720,15 @@
                     <div class="form-group">
 					    <label for="ticklerview">Filter</label>
                         <select id="ticklerview" class="form-control" name="ticklerview">
-                            <option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>><bean:message
-                                    key="tickler.ticklerMain.formActive"/></option>
-                            <option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>><bean:message
-                                    key="tickler.ticklerMain.formCompleted"/></option>
-                            <option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>><bean:message
-                                    key="tickler.ticklerMain.formDeleted"/></option>
+                            <option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formActive"/></option>
+                            <option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formCompleted"/></option>
+                            <option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formDeleted"/></option>
                         </select>
                     </div>
                     <div class="form-group" style="padding-top:15px;">
