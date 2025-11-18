@@ -718,21 +718,40 @@
         }
     }
 
-    var specArr = new Array();
-    var specStr = '<%=org.apache.commons.text.StringEscapeUtils.escapeEcmaScript(specStr)%>';
-
-    specArr = specStr.split("*");// * is used as delimiter
-    //oscarLog("specArr="+specArr);
-    YAHOO.example.BasicLocal = function () {
-        // Use a LocalDataSource
-        var oDS = new YAHOO.util.LocalDataSource(specArr);
-        // Optional to define fields for single-dimensional array
-        oDS.responseSchema = {fields: ["state"]};
-
-        // Instantiate the AutoComplete
-        var oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
-        oAC.prehighlightClassName = "yui-ac-prehighlight";
+        YAHOO.example.FnMultipleFields = function () {
+        let url = "<%= request.getContextPath() %>/oscarRx/search.do?parameterValue=searchSpecialInstructions";
+        let oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponse'});
+        oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
+        // Define the schema of the delimited results
+        oDS.responseSchema = {
+            resultsList: "results"
+        };
+        // Enable caching
+        oDS.maxCacheEntries = 0;
+        // oDS.connXhrMode = "cancelStaleRequests";
+        // Instantiate AutoComplete
+        let oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
         oAC.useShadow = true;
+        oAC.resultTypeList = false;
+        oAC.queryMatchSubset = true;
+        oAC.minQueryLength = 1;
+        oAC.maxResultsDisplayed = 40;
+
+        oAC.doBeforeExpandContainer = function (sQuery, oResponse) {
+            if (oAC._nDisplayedItems < oAC.maxResultsDisplayed) {
+                oAC.setFooter("");
+            } else {
+                oAC.setFooter("<a href='javascript:void(0)' onClick='popupRxSearchWindow();oAC.collapseContainer();'>See more results...</a>");
+            }
+            return true;
+        }
+
+        oAC.containerCollapseEvent.subscribe(function () {
+            $('autocomplete_choices').hide();
+        });
+        oAC.dataRequestEvent.subscribe(function () {
+            $('autocomplete_choices').show();
+        });
 
         return {
             oDS: oDS,

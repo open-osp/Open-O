@@ -620,6 +620,21 @@
 
         List<Map<String, Object>> resultList = null;
 
+        //check if a maximum patient name length has ben configured for the user
+        //if so, use that maximum length in all scenarios
+        UserProperty uppatientNameLength = userPropertyDao.getProp(loggedInInfo1.getLoggedInProviderNo(), UserProperty.PATIENT_NAME_LENGTH);
+        int NameLength = 0;
+        if (uppatientNameLength != null && uppatientNameLength.getValue() != null) {
+            try {
+                NameLength = Integer.parseInt(uppatientNameLength.getValue());
+            } catch (NumberFormatException e) {
+                NameLength = 0;
+            }
+            if (NameLength > 0) {
+                len = lenLimitedS = lenLimitedL = NameLength;
+            }
+        }
+
         if (mygroupno != null && providerBean.get(mygroupno) != null) { //single appointed providers view
             numProvider = 1;
             curProvider_no = new String[numProvider];
@@ -695,6 +710,8 @@
                         }
 
                         if (NameLength > 0) {
+                            //if a custom maximum patient name has been set (NameLength variable)
+                            //use that configured nameLength variable to override the length  
                             len = lenLimitedS = lenLimitedL = NameLength;
                         }
                     }

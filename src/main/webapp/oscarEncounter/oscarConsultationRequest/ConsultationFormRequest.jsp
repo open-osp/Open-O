@@ -1274,10 +1274,18 @@
 
 
     <%
+        /*
+        * set and select the default provider to be used in the Letterhead.
+        * It is possible for this value to be different than the letterhead provider.
+        * 1). logged in provider
+        * 2). MRP on patient file
+        * 3). Clinic Address.
+        * See calls to javascript switchProvider for methods and order of change.
+        */
         String lhndType = "providers"; //set default as providers
         String providerDefault = providerNo;
 
-        if (consultUtil.letterheadName == null) {
+        if (consultUtil.letterheadName == null || consultUtil.letterheadName.isEmpty()) {
             //nothing saved so find default
             UserProperty lhndProperty = userPropertyDAO.getProp(providerNo, UserProperty.CONSULTATION_LETTERHEADNAME_DEFAULT);
             String lhnd = null;
@@ -1299,6 +1307,30 @@
             }
 
         }
+
+        //TODO set up user settings for selecting default referring provider
+        /*
+        * set and select the default referring provider.
+        * It is possible for this value to be different than the letterhead provider.
+        * 1). or NULL:   use logged in provider
+        * 2). use MRP on patient file.
+        */
+        // providerNo is the logged in provider
+        String referringProviderDefault = providerNo;
+        if(consultUtil.providerNo == null || consultUtil.providerNo.isEmpty()) {
+            UserProperty defaultReferringPractitioner = userPropertyDAO.getProp(providerNo, UserProperty.DEFAULT_REF_PRACTITIONER);
+            String defaultValue = null;
+            if(defaultReferringPractitioner != null) {
+                defaultValue = defaultReferringPractitioner.getValue();
+            }
+            if("2".equals(defaultValue)) {
+                referringProviderDefault = providerNoFromChart;
+            }
+
+        }
+        pageContext.setAttribute("referringProviderDefault", referringProviderDefault);
+        pageContext.setAttribute("lhndType", lhndType);
+        pageContext.setAttribute("providerDefault", providerDefault);
     %>
 
     <script>
@@ -1374,8 +1406,20 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadPhone").value = "<%=Encode.forHtmlAttribute(clinic.getClinicPhone()) %>";
                 document.getElementById("letterheadPhoneSpan").innerHTML = "<%=Encode.forHtmlContent(clinic.getClinicPhone()) %>";
                 document.getElementById("letterheadFax").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
+
+                document.getElementById("letterheadFaxSpan").innerHTML = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
+                document.getElementById("faxAccount").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
+
+                let faxAccountOptions = document.getElementById("faxAccount");
+                for(let option in faxAccountOptions.options) {
+                    if(faxAccountOptions.options[option].value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
+                        faxAccountOptions.value = "<%=clinic.getClinicFax()%>".replace(/[^0-9.]/g, '');
+                        break;
+                    }
+                }
             } else {
                 let origValue = value;
+                value = value.replace(/[^A-Za-z0-9]+/g, '');
                 if (typeof providerData["prov_" + value.toString()] != "undefined") {
                     value = "prov_" + value;
                 }
@@ -1385,6 +1429,14 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadPhone").value = providerData[value]['phone'];
                 document.getElementById("letterheadPhoneSpan").innerHTML = providerData[value]['phone'];
                 document.getElementById("letterheadFax").value = providerData[value]['fax'];
+                document.getElementById("letterheadFaxSpan").innerHTML = providerData[value]['fax'];
+                let faxAccountOptions = document.getElementById("faxAccount");
+                for(let option in faxAccountOptions.options) {
+                    if(faxAccountOptions.options[option].value === providerData[value]['fax'].replace(/[^0-9.]/g, '')) {
+                        faxAccountOptions.value = providerData[value]['fax'].replace(/[^0-9.]/g, '');
+                        break;
+                    }
+                }
             }
         }
 
@@ -1964,18 +2016,26 @@ if (userAgent != null) {
                         <% } %>
                         <tr class="consultDemographicData">
                             <td>
+                                <% // Determine if curUser has selected a default practitioner in preferences
+                                    UserProperty refPracProp = userPropertyDAO.getProp(providerNo,  UserProperty.DEFAULT_REF_PRACTITIONER);
+                                    String refPrac = "";
+                                    if (refPracProp != null && refPracProp.getValue() != null) {
+                                        refPrac = refPracProp.getValue();
+                                    }
+                                %>
 
                                 <table>
                                     <% if (props.isConsultationFaxEnabled() && OscarProperties.getInstance().isPropertyActive("consultation_dynamic_labelling_enabled")) { %>
                                     <tr>
-                                        <td class="tite4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgAssociated2"/></td>
-                                        <td class="tite1">
+                                        <td class="tite4" style="width:30%"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgAssociated2"/></td>
+                                        <td class="tite1" style="width:70%">
+
                                             <select name="providerNo" onchange="switchProvider(this.value)">
                                                 <%
                                                     for (Provider p : prList) {
                                                         if (p.getProviderNo().compareTo("-1") != 0) {
                                                 %>
-                                                <option value="<%=p.getProviderNo() %>" <%=((consultUtil.providerNo != null && consultUtil.providerNo.equalsIgnoreCase(p.getProviderNo())) || (consultUtil.providerNo == null && providerNo.equalsIgnoreCase(p.getProviderNo())) ? "selected='selected'" : "") %>>
+                                                <option value="<%=p.getProviderNo() %>" <%=((consultUtil.providerNo != null && consultUtil.providerNo.equalsIgnoreCase(p.getProviderNo())) || (consultUtil.providerNo == null && referringProviderDefault.equalsIgnoreCase(p.getProviderNo())) ? "selected" : "") %>>
                                                     <%=Encode.forHtmlContent(p.getFirstName().replace("Dr.", "")) %>&nbsp;<%=Encode.forHtmlContent(p.getSurname()) %>
                                                 </option>
                                                 <% }
@@ -2454,7 +2514,40 @@ if (userAgent != null) {
                                         <td class="tite4">
                                             <label for="letterheadFax"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.letterheadFax"/></label>
                                         </td>
-                                        <td class="tite1">
+                                        <td  class="tite1" style="width:70%;">
+								<c:choose>
+								    <c:when test="${not empty consultUtil.letterheadFax}">
+									    <input type="hidden" name="letterheadFax" id="letterheadFax" value="<encode:forHtmlAttribute value="${consultUtil.letterheadFax}"/>" />
+									    <span id="letterheadFaxSpan">
+										    <c:out value="${consultUtil.letterheadFax}" />
+									    </span>
+								    </c:when>
+									<c:otherwise>
+										<input type="hidden" name="letterheadFax" id="letterheadFax" value="<%=Encode.forHtmlContent(clinic.getClinicFax())%>" />
+										<span id="letterheadFaxSpan">
+										    <%=Encode.forHtmlContent(clinic.getClinicFax())%>
+									    </span>
+									</c:otherwise>
+								</c:choose>
+							</td>
+						</tr>
+					</table>
+					</td>
+				</tr>
+				<% if (props.isConsultationFaxEnabled()) { %>
+					<tr>
+						<td colspan=2 class="tite4 heading">
+							Fax Account
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<table>
+								<tr>
+									<td class="tite4" style="width:30%;">
+										<label for="faxAccount">Select Account</label>
+									</td>
+									<td class="tite1" style="width:70%;">
                                             <%
                                                 FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
                                                 List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
@@ -2904,6 +2997,24 @@ if (userAgent != null) {
                     jQuery("#searchHealthCareTeamInput").val(ui.item.contact.lastName + ", " + ui.item.contact.firstName);
                 }
             });
+
+            /*
+            * Selecting which letterhead to load for new consult requests.
+            * Default is logged in provider on page load
+            * Options are:
+            *  2 : MRP on patient file
+            *  3 : Clinic address.
+            * Clinic address is set if no selection is detected.
+            */
+            if("${empty pageScope.consultUtil.letterheadName}" === "true") {
+                if("${pageScope.lhndType eq 'provider'}" === "true"){
+                    switchProvider("${pageScope.providerDefault}");
+                } else if("${pageScope.lhndType eq 'clinic'}" === "true"){
+                    switchProvider("<%=clinic.getClinicName()%>");
+                } else {
+                    switchProvider("-1");
+                }
+            }
         })
     </script>
 
