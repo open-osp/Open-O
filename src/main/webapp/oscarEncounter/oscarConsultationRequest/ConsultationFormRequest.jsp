@@ -1409,8 +1409,6 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadFaxSpan").textContent = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
                 document.getElementById("faxAccount").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
 
-                console.log('letterheadAddressSpan value -1: ' + document.getElementById("letterheadAddressSpan").textContent);
-
                 let faxAccountOptions = document.getElementById("faxAccount");
                 for(let option in faxAccountOptions.options) {
                     if(faxAccountOptions.options[option].value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
@@ -1431,8 +1429,7 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadPhoneSpan").textContent = providerData[value]['phone'];
                 document.getElementById("letterheadFax").value = providerData[value]['fax'];
                 document.getElementById("letterheadFaxSpan").textContent = providerData[value]['fax'];
-
-                console.log('letterheadAddressSpan value: ' + document.getElementById("letterheadAddressSpan").textContent);
+                
                 let faxAccountOptions = document.getElementById("faxAccount");
                 for(let option in faxAccountOptions.options) {
                     if(faxAccountOptions.options[option].value === providerData[value]['fax'].replace(/[^0-9.]/g, '')) {
