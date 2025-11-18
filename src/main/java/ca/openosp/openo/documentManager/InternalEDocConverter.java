@@ -15,9 +15,9 @@ import io.woo.htmltopdf.PdfPageSize;
 public class InternalEDocConverter implements EDocConverterInterface {
     /**
      * Converts HTML to PDF using the internal io.woo.htmltopdf library.
-     * Only use this if you've bundled the required native .so file (e.g.,
-     * libwkhtmltox.ubuntu.noble.amd64.so)
-     * and WKHTMLTOPDF_COMMAND=internal is set.
+     * Requires the required native .so file to be bundled (e.g.,
+     * libwkhtmltox.ubuntu.noble.amd64.so).
+     * This is now the only converter used; no configuration property is required.
      * 
      * @param document the complete HTML string to convert to PDF
      * @param os       the {@link ByteArrayOutputStream} where the generated PDF
