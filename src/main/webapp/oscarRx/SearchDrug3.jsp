@@ -904,7 +904,7 @@
                         <td valign="top" align="left">
                             <%if (securityManager.hasWriteAccess("_rx", roleName2$, true)) {%>
                             <form action="${pageContext.request.contextPath}/oscarRx/searchDrug.do" onsubmit="return checkEnterSendRx();"
-                                       style="display: inline; margin-bottom:0;" styleId="drugForm" name="drugForm" id="drugForm" method="post">
+                                       style="display: inline; margin-bottom:0;" id="drugForm" name="drugForm" method="post">
                                 <div id="interactingDrugErrorMsg" style="display:none"></div>
                                 <div id="rxText" style="float:left;"></div>
                                 <br style="clear:left;">
