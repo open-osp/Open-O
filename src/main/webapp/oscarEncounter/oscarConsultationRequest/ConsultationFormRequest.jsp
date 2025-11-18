@@ -1398,17 +1398,18 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
         console.log(providerData);
 
         function switchProvider(value) {
-
             if (value === -1) {
                 document.getElementById("letterheadName").value = value;
                 document.getElementById("letterheadAddress").value = '<%=Encode.forHtmlAttribute(clinic.getClinicAddress()) + " " + Encode.forHtmlAttribute(clinic.getClinicCity()) + " " + Encode.forHtmlAttribute(clinic.getClinicProvince()) + " " + Encode.forHtmlAttribute(clinic.getClinicPostal()) %>';
-                document.getElementById("letterheadAddressSpan").innerHTML = '<%=Encode.forHtmlContent(clinic.getClinicAddress()) + " " + Encode.forHtmlContent(clinic.getClinicCity()) + " " + Encode.forHtmlContent(clinic.getClinicProvince()) + " " + Encode.forHtmlContent(clinic.getClinicPostal()) %>';
+                document.getElementById("letterheadAddressSpan").textContent = '<%=Encode.forHtmlContent(clinic.getClinicAddress()) + " " + Encode.forHtmlContent(clinic.getClinicCity()) + " " + Encode.forHtmlContent(clinic.getClinicProvince()) + " " + Encode.forHtmlContent(clinic.getClinicPostal()) %>';
                 document.getElementById("letterheadPhone").value = "<%=Encode.forHtmlAttribute(clinic.getClinicPhone()) %>";
-                document.getElementById("letterheadPhoneSpan").innerHTML = "<%=Encode.forHtmlContent(clinic.getClinicPhone()) %>";
+                document.getElementById("letterheadPhoneSpan").textContent = "<%=Encode.forHtmlContent(clinic.getClinicPhone()) %>";
                 document.getElementById("letterheadFax").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
 
-                document.getElementById("letterheadFaxSpan").innerHTML = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
+                document.getElementById("letterheadFaxSpan").textContent = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
                 document.getElementById("faxAccount").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
+
+                console.log('letterheadAddressSpan value -1: ' + document.getElementById("letterheadAddressSpan").textContent);
 
                 let faxAccountOptions = document.getElementById("faxAccount");
                 for(let option in faxAccountOptions.options) {
@@ -1425,11 +1426,13 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 }
                 document.getElementById("letterheadName").value = origValue;
                 document.getElementById("letterheadAddress").value = providerData[value]['address'];
-                document.getElementById("letterheadAddressSpan").innerHTML = providerData[value]['address'];
+                document.getElementById("letterheadAddressSpan").textContent = providerData[value]['address'];
                 document.getElementById("letterheadPhone").value = providerData[value]['phone'];
-                document.getElementById("letterheadPhoneSpan").innerHTML = providerData[value]['phone'];
+                document.getElementById("letterheadPhoneSpan").textContent = providerData[value]['phone'];
                 document.getElementById("letterheadFax").value = providerData[value]['fax'];
-                document.getElementById("letterheadFaxSpan").innerHTML = providerData[value]['fax'];
+                document.getElementById("letterheadFaxSpan").textContent = providerData[value]['fax'];
+
+                console.log('letterheadAddressSpan value: ' + document.getElementById("letterheadAddressSpan").textContent);
                 let faxAccountOptions = document.getElementById("faxAccount");
                 for(let option in faxAccountOptions.options) {
                     if(faxAccountOptions.options[option].value === providerData[value]['fax'].replace(/[^0-9.]/g, '')) {
