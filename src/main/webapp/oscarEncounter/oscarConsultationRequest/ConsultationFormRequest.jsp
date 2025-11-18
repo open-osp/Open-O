@@ -2569,8 +2569,6 @@ if (userAgent != null) {
                                 </table>
                             </td>
                         </tr>
-                        <% if (props.isConsultationFaxEnabled()) { %>
-
                         <tr>
                             <td colspan=2 class="tite4 heading">
                                 Additional Fax Recipients

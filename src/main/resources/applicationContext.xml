@@ -85,7 +85,6 @@
 	<bean id="programQueueDao" class="ca.openosp.openo.PMmodule.dao.ProgramQueueDaoImpl" autowire="byName" />
 	<bean id="clientReferralDAO" class="ca.openosp.openo.PMmodule.dao.ClientReferralDAOImpl" autowire="byName" />
 	<bean id="agencyDao" class="ca.openosp.openo.PMmodule.dao.AgencyDaoImpl" autowire="byName" />
-	<bean id="admissionDao" class="ca.openosp.openo.commn.dao.AdmissionDaoImpl" autowire="byName" />
 	<bean id="providerDao" class="ca.openosp.openo.PMmodule.dao.ProviderDaoImpl" autowire="byName" />
 	<bean id="otherIdDao" class="ca.openosp.openo.commn.dao.OtherIdDAOImpl" autowire="byName" />
 

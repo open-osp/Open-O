@@ -698,22 +698,10 @@
                             len = 30;
                         }
                     }
-                    UserProperty uppatientNameLength = userPropertyDao.getProp(loggedInInfo1.getLoggedInProviderNo(), UserProperty.PATIENT_NAME_LENGTH);
-
-                    int NameLength = 0;
-
-                    if (uppatientNameLength != null && uppatientNameLength.getValue() != null) {
-                        try {
-                            NameLength = Integer.parseInt(uppatientNameLength.getValue());
-                        } catch (NumberFormatException e) {
-                            NameLength = 0;
-                        }
-
-                        if (NameLength > 0) {
-                            //if a custom maximum patient name has been set (NameLength variable)
-                            //use that configured nameLength variable to override the length  
-                            len = lenLimitedS = lenLimitedL = NameLength;
-                        }
+                    if (NameLength > 0) {
+                        //if a custom maximum patient name has been set (NameLength variable)
+                        //use that configured nameLength variable to override the length  
+                        len = lenLimitedS = lenLimitedL = NameLength;
                     }
                     curProvider_no = new String[numProvider];
                     curProviderName = new String[numProvider];
