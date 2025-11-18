@@ -551,7 +551,7 @@
                                         <td class="FormLabel">Date Of Injury:</td>
                                         <td>
                                             <input type="text" readonly="readonly" name="w_doi" value="<%=form.getW_doi()%>"
-                                                       styleId="w_doi"/>
+                                                       id="w_doi"/>
                                             <a id="hlIDate">Date</a>
                                         </td>
                                     </tr>
@@ -559,7 +559,7 @@
                                         <td class="FormLabel">Service Date:</td>
                                         <td>
                                             <input type="text" readonly="readonly" name="w_servicedate"
-                                                       value="<%=form.getW_servicedate()%>" styleId="w_servicedate"/>
+                                                       value="<%=form.getW_servicedate()%>" id="w_servicedate"/>
                                             <a id="hlSDate">Date</a>
                                         </td>
                                     </tr>
@@ -567,7 +567,7 @@
                                         <td class="FormLabel">Work Date:</td>
                                         <td>
                                             <input type="text" readonly="readonly" name="w_workdate"
-                                                       value="<%=form.getW_workdate()%>" styleId="w_workdate"/>
+                                                       value="<%=form.getW_workdate()%>" id="w_workdate"/>
                                             <a id="hlWDate">Date</a>
                                         </td>
                                     </tr>
@@ -587,7 +587,7 @@
                                     <tr>
                                         <td class="FormLabel">Estimate Date:</td>
                                         <td><input type="text" readonly="true" name="w_estimatedate"
-                                                       value="<%=form.getW_estimatedate()%>" styleId="w_estimatedate"/>
+                                                       value="<%=form.getW_estimatedate()%>" id="w_estimatedate"/>
                                             <a id="hlEDate">Date</a></td>
                                     </tr>
                                     <tr>

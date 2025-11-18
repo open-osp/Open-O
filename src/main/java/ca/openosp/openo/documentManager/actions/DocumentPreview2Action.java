@@ -168,14 +168,17 @@ public class DocumentPreview2Action extends ActionSupport {
                 OscarProperties.getInstance().getProperty("eform_image", "/var/lib/OscarDocument/eform/images/"),
                 System.getProperty("java.io.tmpdir")
             };
-            
+
             boolean isValidPath = false;
             for (String basePath : allowedBasePaths) {
                 if (basePath != null && !basePath.isEmpty()) {
-                    Path baseCanonicalPath = Paths.get(basePath).toRealPath();
-                    if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
-                        isValidPath = true;
-                        break;
+                    Path basePathObj = Paths.get(basePath);
+                    if (Files.exists(basePathObj)) {
+                        Path baseCanonicalPath = basePathObj.toRealPath();
+                        if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
+                            isValidPath = true;
+                            break;
+                        }
                     }
                 }
             }

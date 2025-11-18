@@ -196,8 +196,8 @@
         <input type="hidden" name="providerNo" value="<%=provNo%>"/>
         <input type="hidden" name="tab" value="Current Issues"/>
         <input type="hidden" name="hideActiveIssue" id="hideActiveIssue"/>
-        <input type="hidden" name="ectWin.rowOneSize" styleId="rowOneSize"/>
-        <input type="hidden" name="ectWin.rowTwoSize" styleId="rowTwoSize"/>
+        <input type="hidden" name="ectWin.rowOneSize" id="rowOneSize"/>
+        <input type="hidden" name="ectWin.rowTwoSize" id="rowTwoSize"/>
         <input type="hidden" name="chain" value="list">
         <input type="hidden" name="method" value="view">
         <input type="hidden" id="check_issue" name="check_issue">
