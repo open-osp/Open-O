@@ -66,6 +66,18 @@ RUN apt-get update && apt-get install -y pipx && \
     pipx install aider-chat && \
     pipx ensurepath
 
+# Install Postfix for mail testing with default values
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
+
+# Configure Postfix
+RUN postconf -e 'myhostname=openo-dev.local' && \
+    postconf -e 'mydestination=openo-dev.local, localhost' && \
+    postconf -e 'mynetworks=0.0.0.0/0' && \
+    postconf -e 'inet_interfaces=all' && \
+    postconf -e 'maillog_file=/dev/stdout' && \
+    postconf -e 'default_transport=discard' && \
+    postconf -e 'relay_transport=discard'
+
 # Create custom bashrc with tool reminders
 COPY ./config/bashrc /root/.bashrc
 

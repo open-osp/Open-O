@@ -1,0 +1,5 @@
+#!/bin/bash
+# scripts/mail-log.sh
+
+# Tail the Docker container logs and filter for Postfix entries
+docker logs -f openo-dev | grep postfix
