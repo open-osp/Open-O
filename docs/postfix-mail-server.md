@@ -2,7 +2,7 @@
 
 ## Overview
 
-The devcontainer includes a local Postfix SMTP server for testing email functionality in OSCAR without sending actual emails. All emails are discarded after logging.
+The devcontainer includes a local Postfix SMTP server for testing email functionality in OpenO without sending actual emails. All emails are discarded after logging.
 
 ## Quick Start
 
@@ -73,7 +73,7 @@ mail start
 
 ### Connection Refused Errors
 
-Ensure Postfix is started before testing email functionality in OSCAR.
+Ensure Postfix is started before testing email functionality in OpenO.
 
 ### No Log File
 
