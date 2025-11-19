@@ -317,26 +317,29 @@
 							        </button>
 							   </div>
 						 	</div>
-						
-					  		<c:forEach items="${ copyToRecipients }" var="recipient" >
-						  			<div class="row">							  			
-							  			<div class="col-sm-12 input-group recipientGroup">
-							  				<label></label>
-										      <input type="text" class="form-control" value="${ recipient.name } ${ recipient.fax }" disabled/>
-										      <span class="input-group-btn">
-										        <button class="btn btn-danger" type="button">
-										        	<span class="glyphicon glyphicon-remove"></span>
-										        </button>
-										      </span>
-                                    </div>
-                                    <input type="hidden" name="copyToRecipients"
-                                           value="'name':'${ recipient.name }','fax':'${ recipient.fax }'"/>
 
-                                        <%-- to be removed below --%>
-                                    <input type="hidden" name="faxRecipients"
-                                           value="'name':'${ recipient.name }','fax':'${ recipient.fax }'"/>
-                                </div>
-                            </c:forEach>
+					  		<%-- Only show existing recipients if not displaying submission results --%>
+					  		<c:if test="${ empty faxSuccessful }">
+						  		<c:forEach items="${ copyToRecipients }" var="recipient" >
+							  			<div class="row">
+								  			<div class="col-sm-12 input-group recipientGroup">
+								  				<label></label>
+											      <input type="text" class="form-control" value="${ recipient.name } ${ recipient.fax }" disabled/>
+											      <span class="input-group-btn">
+											        <button class="btn btn-danger" type="button">
+											        	<span class="glyphicon glyphicon-remove"></span>
+											        </button>
+											      </span>
+	                                    </div>
+	                                    <input type="hidden" name="copyToRecipients"
+	                                           value='"name":"${ recipient.name }","fax":"${ recipient.fax }"'/>
+
+	                                        <%-- to be removed below --%>
+	                                    <input type="hidden" name="faxRecipients"
+	                                           value='"name":"${ recipient.name }","fax":"${ recipient.fax }"'/>
+	                                </div>
+	                            </c:forEach>
+                            </c:if>
                         </div>
                     </div>
                 </div>
@@ -408,7 +411,8 @@
                     </div>
                 </div>
             </form>
-            <c:if test="${ transactionType ne 'CONSULTATION' }">
+            <%-- Only show preview before submission, not after --%>
+            <c:if test="${ transactionType ne 'CONSULTATION' and empty faxSuccessful }">
                 <div class="panel panel-default" id="preview-panel">
                     <div class="panel-heading">
                         <h3 class="panel-title">Preview</h3>
@@ -526,12 +530,12 @@
             var inputValue = escapeHtml(name + " " + fax);
             
             // For the data format the server expects
-            // First escape single quotes in the actual values to prevent breaking the format
-            var safeName = name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-            var safeFax = fax.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
-            
-            // Build the format the server expects
-            var submitValue = "'name':'" + safeName + "','fax':'" + safeFax + "'";
+            // First escape double quotes and backslashes in the actual values to prevent breaking the JSON format
+            var safeName = name.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+            var safeFax = fax.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+
+            // Build the format the server expects (proper JSON format with double quotes)
+            var submitValue = '"name":"' + safeName + '","fax":"' + safeFax + '"';
 
             $("#fax-additional-recipients").append(
                 '<div class="row">\
@@ -543,8 +547,8 @@
 						        </button>\
 						      </span>\
 					    </div>\
-						<input type="hidden" name="copyToRecipients" value="' + submitValue + '" />\
-						<input type="hidden" name="faxRecipients" value="' + submitValue + '" />\
+						<input type="hidden" name="copyToRecipients" value=\'' + submitValue + '\' />\
+						<input type="hidden" name="faxRecipients" value=\'' + submitValue + '\' />\
 					</div>'
             );
 

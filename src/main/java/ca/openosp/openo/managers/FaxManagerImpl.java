@@ -476,6 +476,8 @@ public class FaxManagerImpl implements FaxManager {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
             throw new RuntimeException("missing required sec object (_fax)");
         }
+        // Resolve to full path before getting page count to avoid security validation errors
+        currentDocument = nioFileManager.getOscarDocument(currentDocument);
         int numberpages = EDocUtil.getPDFPageCount(currentDocument.toString());
         byte[] coverPage = faxDocumentManager.createCoverPage(loggedInInfo, note, recipient, sender, numberpages);
         return addCoverPage(coverPage, currentDocument);
