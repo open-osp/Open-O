@@ -1410,8 +1410,9 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("faxAccount").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
 
                 let faxAccountOptions = document.getElementById("faxAccount");
-                for(let option in faxAccountOptions.options) {
-                    if(faxAccountOptions.options[option].value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
+                for(let i = 0; i < faxAccountOptions.options.length; i++) {
+                    let option = faxAccountOptions.options[i];
+                    if(option.value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
                         faxAccountOptions.value = "<%=clinic.getClinicFax()%>".replace(/[^0-9.]/g, '');
                         break;
                     }

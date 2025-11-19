@@ -220,17 +220,9 @@ public class DocumentPreview2Action extends ActionSupport {
 
         String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 
-        List<EDoc> allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
+        populateCommonDocs(loggedInInfo, demographicNo);
 		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
-		ArrayList<HashMap<String,? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		List<AttachmentLabResultData> allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
-		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
-
-		request.setAttribute("allDocuments", allDocuments);
-		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
-		request.setAttribute("allForms", allForms);
-		request.setAttribute("allEForms", allEForms);
-		request.setAttribute("allHRMDocuments", allHRMDocuments);
+        request.setAttribute("allEForms", allEForms);
 
         return "fetchDocuments";
     }
@@ -241,17 +233,9 @@ public class DocumentPreview2Action extends ActionSupport {
         String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
         String fdid = StringUtils.isNullOrEmpty(request.getParameter("fdid")) ? "0" : request.getParameter("fdid");
 
-        List<EDoc> allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
+        populateCommonDocs(loggedInInfo, demographicNo);
 		List<EFormData> allEForms = documentAttachmentManager.getAllEFormsExpectFdid(loggedInInfo, Integer.parseInt(demographicNo), Integer.parseInt(fdid));
-		ArrayList<HashMap<String,? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
-		List<AttachmentLabResultData> allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
-		List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
-
-		request.setAttribute("allDocuments", allDocuments);
-		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
-		request.setAttribute("allForms", allForms);
 		request.setAttribute("allEForms", allEForms);
-		request.setAttribute("allHRMDocuments", allHRMDocuments);
 
         return "fetchDocuments";
     }
@@ -277,5 +261,22 @@ public class DocumentPreview2Action extends ActionSupport {
         } catch (IOException e) {
             logger.error("An error occurred while writing JSON response to the output stream", e);
         }
+    }
+
+    /**
+     * Populate common documents like EDocs, Labs, Forms, HRM documents
+     * @param loggedInInfo Information about the logged-in user
+     * @param demographicNo Demographic number of the patient
+     */
+    private void populateCommonDocs(LoggedInInfo loggedInInfo, String demographicNo) {
+        List<EDoc> allDocuments = EDocUtil.listDocs(loggedInInfo, "demographic", demographicNo, null, EDocUtil.PRIVATE, EDocUtil.EDocSort.OBSERVATIONDATE);
+        ArrayList<HashMap<String,? extends Object>> allHRMDocuments = HRMUtil.listHRMDocuments(loggedInInfo, "report_date", false, demographicNo,false);
+        List<AttachmentLabResultData> allLabsSortedByVersions = documentAttachmentManager.getAllLabsSortedByVersions(loggedInInfo, demographicNo);
+        List<EctFormData.PatientForm> allForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demographicNo), false, true);
+
+        request.setAttribute("allDocuments", allDocuments);
+        request.setAttribute("allHRMDocuments", allHRMDocuments);
+		request.setAttribute("allLabsSortedByVersions", allLabsSortedByVersions);
+		request.setAttribute("allForms", allForms);
     }
 }

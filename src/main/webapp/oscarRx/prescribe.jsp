@@ -718,7 +718,7 @@
         }
     }
 
-        YAHOO.example.FnMultipleFields = function () {
+    YAHOO.example.FnMultipleFields = function () {
         let url = "<%= request.getContextPath() %>/oscarRx/search.do?parameterValue=searchSpecialInstructions";
         let oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponse'});
         oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
@@ -726,6 +726,10 @@
         oDS.responseSchema = {
             resultsList: "results"
         };
+
+        oDS.subscribe('dataErrorEvent', function(type, args) {
+            console.error('Special Instructions autocomplete failed:', args);
+        });
         // Enable caching
         oDS.maxCacheEntries = 0;
         // oDS.connXhrMode = "cancelStaleRequests";
