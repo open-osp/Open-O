@@ -34,6 +34,7 @@ import ca.openosp.openo.commn.model.FaxConfig;
 import ca.openosp.openo.commn.model.FaxJob;
 import ca.openosp.openo.commn.model.FaxJob.STATUS;
 import ca.openosp.openo.documentManager.DocumentAttachmentManager;
+import ca.openosp.openo.fax.dto.FaxJobParams;
 import ca.openosp.openo.managers.FaxManager;
 import ca.openosp.openo.managers.FaxManager.TransactionType;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -53,7 +54,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
 import ca.openosp.OscarProperties;
@@ -125,18 +125,19 @@ public class Fax2Action extends ActionSupport {
 
         TransactionType transactionType = TransactionType.valueOf(getTransactionType().toUpperCase());
 
-        // Build the fax job parameters map
-        HashMap<String, Object> faxJobMap = new HashMap<>();
-        faxJobMap.put("faxFilePath", faxFilePath);
-        faxJobMap.put("recipient", recipient);
-        faxJobMap.put("recipientFaxNumber", recipientFaxNumber);
-        faxJobMap.put("senderFaxNumber", senderFaxNumber);
-        faxJobMap.put("demographicNo", demographicNo);
-        faxJobMap.put("comments", comments);
-        faxJobMap.put("coverpage", coverpage);
-        faxJobMap.put("copyToRecipients", copyToRecipients);
+        // Build fax job parameters using builder pattern
+        FaxJobParams params = FaxJobParams.builder()
+                .faxFilePath(faxFilePath)
+                .recipient(recipient)
+                .recipientFaxNumber(recipientFaxNumber)
+                .senderFaxNumber(senderFaxNumber)
+                .demographicNo(demographicNo)
+                .comments(comments)
+                .coverpage(coverpage)
+                .copyToRecipients(copyToRecipients)
+                .build();
 
-        List<FaxJob> faxJobList = faxManager.createAndSaveFaxJob(loggedInInfo, faxJobMap);
+        List<FaxJob> faxJobList = faxManager.createAndSaveFaxJob(loggedInInfo, params.toMap());
 
         boolean success = true;
         for (FaxJob faxJob : faxJobList) {
