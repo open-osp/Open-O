@@ -49,7 +49,12 @@ public record EmailAttachmentSettings(
     boolean isEmailAutoSend,
     boolean deleteEFormAfterEmail,
     String emailPDFPassword,
-    String emailPDFPasswordClue
+    String emailPDFPasswordClue,
+    String senderEmail,
+    String subjectEmail,
+    String bodyEmail,
+    String encryptedMessageEmail,
+    String emailPatientChartOption
 ) {
     /**
      * Creates an EmailAttachmentSettings instance from an HTTP request.
@@ -88,8 +93,13 @@ public record EmailAttachmentSettings(
             !"false".equals(req.getParameter("encryptEmailAttachments")),
             "true".equals(req.getParameter("autoSendEmail")),
             "true".equals(req.getParameter("deleteEFormAfterSendingEmail")),
-            req.getParameter("emailPDFPassword"),
-            req.getParameter("emailPDFPasswordClue")
+            req.getParameter("passwordEmail"),
+            req.getParameter("passwordClueEmail"),
+            req.getParameter("senderEmail"),
+            req.getParameter("subjectEmail"),
+            req.getParameter("bodyEmail"),
+            req.getParameter("encryptedMessageEmail"),
+            req.getParameter("emailPatientChartOption")
         );
     }
 }

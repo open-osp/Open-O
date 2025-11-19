@@ -38,7 +38,7 @@ public class EmailCompose2Action extends ActionSupport {
     public String prepareComposeEFormMailer() {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        // Get email information from session.
+        // Get email information from session (survives redirect)
         HttpSession session = request.getSession();
         Boolean attachEFormItSelfObj = (Boolean) session.getAttribute("attachEFormItSelf");
         boolean attachEFormItSelf = attachEFormItSelfObj != null && attachEFormItSelfObj;
@@ -51,23 +51,14 @@ public class EmailCompose2Action extends ActionSupport {
         String[] attachedForms = (String[]) session.getAttribute("attachedForms");
         String[] attachedEForms = (String[]) session.getAttribute("attachedEForms");
         String[] attachedHRMDocuments = (String[]) session.getAttribute("attachedHRMDocuments");
+        String senderEmail = (String) session.getAttribute("senderEmail");
+        String subjectEmail = (String) session.getAttribute("subjectEmail");
+        String bodyEmail = (String) session.getAttribute("bodyEmail");
+        String encryptedMessageEmail = (String) session.getAttribute("encryptedMessageEmail");
+        String emailPatientChartOption = (String) session.getAttribute("emailPatientChartOption");
 
-        // Clean up session attributes after consuming them to avoid stale data persisting across requests
-        session.removeAttribute("attachEFormItSelf");
-        session.removeAttribute("fdid");
-        session.removeAttribute("demographicId");
-        session.removeAttribute("emailPDFPassword");
-        session.removeAttribute("emailPDFPasswordClue");
-        session.removeAttribute("attachedDocuments");
-        session.removeAttribute("attachedLabs");
-        session.removeAttribute("attachedForms");
-        session.removeAttribute("attachedEForms");
-        session.removeAttribute("attachedHRMDocuments");
-        session.removeAttribute("deleteEFormAfterEmail");
-        session.removeAttribute("isEmailEncrypted");
-        session.removeAttribute("isEmailAttachmentEncrypted");
-        session.removeAttribute("isEmailAutoSend");
-        session.removeAttribute("openEFormAfterEmail");
+        // Don't clean up session attributes here - they are needed by the JSP
+        // Session cleanup will be done in EmailSend2Action after email is sent
 
         String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicId));
 
@@ -94,6 +85,7 @@ public class EmailCompose2Action extends ActionSupport {
         }
         emailComposeManager.sanitizeAttachments(emailAttachmentList);
 
+        // Set request attributes for JSP (from session and computed values)
         request.setAttribute("transactionType", TransactionType.EFORM);
         request.setAttribute("emailConsentName", emailConsent[0]);
         request.setAttribute("emailConsentStatus", emailConsent[1]);
@@ -103,9 +95,53 @@ public class EmailCompose2Action extends ActionSupport {
         request.setAttribute("senderAccounts", senderAccounts);
         request.setAttribute("emailPDFPassword", emailPDFPassword);
         request.setAttribute("emailPDFPasswordClue", emailPDFPasswordClue);
+        request.setAttribute("senderEmail", senderEmail);
+        request.setAttribute("subjectEmail", subjectEmail);
+        request.setAttribute("bodyEmail", bodyEmail);
+        request.setAttribute("encryptedMessageEmail", encryptedMessageEmail);
+        request.setAttribute("emailPatientChartOption", emailPatientChartOption);
+        request.setAttribute("demographicId", demographicId);
+        request.setAttribute("fdid", session.getAttribute("fdid"));
+        request.setAttribute("openEFormAfterEmail", session.getAttribute("openEFormAfterEmail"));
+        request.setAttribute("deleteEFormAfterEmail", session.getAttribute("deleteEFormAfterEmail"));
+        request.setAttribute("isEmailEncrypted", session.getAttribute("isEmailEncrypted"));
+        request.setAttribute("isEmailAttachmentEncrypted", session.getAttribute("isEmailAttachmentEncrypted"));
+        request.setAttribute("isEmailAutoSend", session.getAttribute("isEmailAutoSend"));
         request.getSession().setAttribute("emailAttachmentList", emailAttachmentList);
 
+        cleanupEmailSessionAttributes(request);
+
         return "compose";
+    }
+
+    /**
+     * Cleans up email-related session attributes.
+     * This method is called after email composition to clear temporary session data.
+     *
+     * @param request the HTTP servlet request containing the session to clean up
+     * @since 2025-01-18
+     */
+    protected static void cleanupEmailSessionAttributes(HttpServletRequest request) {
+        request.getSession().removeAttribute("attachEFormItSelf");
+        request.getSession().removeAttribute("fdid");
+        request.getSession().removeAttribute("demographicId");
+        request.getSession().removeAttribute("emailPDFPassword");
+        request.getSession().removeAttribute("emailPDFPasswordClue");
+        request.getSession().removeAttribute("attachedDocuments");
+        request.getSession().removeAttribute("attachedLabs");
+        request.getSession().removeAttribute("attachedForms");
+        request.getSession().removeAttribute("attachedEForms");
+        request.getSession().removeAttribute("attachedHRMDocuments");
+        request.getSession().removeAttribute("deleteEFormAfterEmail");
+        request.getSession().removeAttribute("isEmailEncrypted");
+        request.getSession().removeAttribute("isEmailAttachmentEncrypted");
+        request.getSession().removeAttribute("isEmailAutoSend");
+        request.getSession().removeAttribute("openEFormAfterEmail");
+        request.getSession().removeAttribute("senderEmail");
+        request.getSession().removeAttribute("subjectEmail");
+        request.getSession().removeAttribute("bodyEmail");
+        request.getSession().removeAttribute("encryptedMessageEmail");
+        request.getSession().removeAttribute("emailPatientChartOption");
     }
 
     private String emailComposeError(HttpServletRequest request, String errorMessage) {
