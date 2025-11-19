@@ -36,15 +36,6 @@ mail stop
 | `mail status` | Check if Postfix is running |
 | `mail log` | View mail logs in real-time (Ctrl+C to exit) |
 
-## Configuration
-
-OpenO is pre-configured to use the local mail server:
-
-- **SMTP Host:** `localhost`
-- **SMTP Port:** `25`
-- **Authentication:** None required
-- **Provider:** SendGrid (configured in `emailConfig` table)
-
 ## How It Works
 
 1. OpenO sends emails to `localhost:25`
