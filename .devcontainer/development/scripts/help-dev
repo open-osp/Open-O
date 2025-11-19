@@ -26,6 +26,10 @@ SERVER MANAGEMENT:
   server log              Tail Tomcat logs (catalina.out)
 
 MAIL MANAGEMENT:
+  mail start              Start Postfix mail server
+  mail stop               Stop Postfix mail server
+  mail status             Show Postfix server status
+  mail restart            Restart Postfix mail server
   mail log               Tail Postfix logs (mail.log)
 
 AI CODING ASSISTANTS:
