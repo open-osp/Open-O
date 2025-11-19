@@ -23,6 +23,10 @@
  */
 package ca.openosp.openo.commn.model;
 
+import ca.openosp.openo.commn.dao.FaxConfigDao;
+import ca.openosp.openo.utility.EncryptionUtils;
+import ca.openosp.openo.utility.SpringUtils;
+
 import javax.persistence.*;
 
 @Entity
@@ -90,18 +94,35 @@ public class FaxConfig extends AbstractModel<Integer> {
 
 
     /**
-     * @return the passwd
+     * @return the passwd (decrypted)
      */
     public String getPasswd() {
-        return passwd;
+        try {
+            if (EncryptionUtils.isEncrypted(this.passwd)) {
+                return EncryptionUtils.decrypt(this.passwd);
+            } else {
+                // the password is not encrypted, encrypt and save it for future use
+                this.setPasswd(this.passwd);
+                // Recursively calling this method to retrieve the newly encrypted password
+                FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+                faxConfigDao.merge(this);
+                return this.getPasswd();
+            }
+        } catch (Exception e) {
+            return this.passwd;
+        }
     }
 
 
     /**
-     * @param passwd the passwd to set
+     * @param passwd the passwd to set (will be encrypted)
      */
     public void setPasswd(String passwd) {
-        this.passwd = passwd;
+        try {
+            this.passwd = EncryptionUtils.encrypt(passwd);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while securely saving the password.");
+        }
     }
 
 
@@ -122,18 +143,35 @@ public class FaxConfig extends AbstractModel<Integer> {
 
 
     /**
-     * @return the faxPasswd
+     * @return the faxPasswd (decrypted)
      */
     public String getFaxPasswd() {
-        return faxPasswd;
+        try {
+            if (EncryptionUtils.isEncrypted(this.faxPasswd)) {
+                return EncryptionUtils.decrypt(this.faxPasswd);
+            } else {
+                // the password is not encrypted, encrypt and save it for future use
+                this.setFaxPasswd(this.faxPasswd);
+                // Recursively calling this method to retrieve the newly encrypted password
+                FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
+                faxConfigDao.merge(this);
+                return this.getFaxPasswd();
+            }
+        } catch (Exception e) {
+            return this.faxPasswd;
+        }
     }
 
 
     /**
-     * @param faxPasswd the faxPasswd to set
+     * @param faxPasswd the faxPasswd to set (will be encrypted)
      */
     public void setFaxPasswd(String faxPasswd) {
-        this.faxPasswd = faxPasswd;
+        try {
+            this.faxPasswd = EncryptionUtils.encrypt(faxPasswd);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while securely saving the password.");
+        }
     }
 
 
