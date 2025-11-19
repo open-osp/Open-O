@@ -418,11 +418,11 @@
   }, {
     "groupId" : "com.github.openosp",
     "artifactId" : "ultrabuk-htmltopdf-java",
-    "version" : "1.0.10.1",
+    "version" : "1.0.11",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:wrZgw3qzidHOj5azKeYKrI+wvrbXYXSg2e0e0Ue4bRsZ6/r4ckq+E1bELl9aMRXRjdWeyIKmsj6es5ws0uQzfg=="
+    "integrity" : "sha512:UV+Mfq1Qz+xkGu2cgUL0f9N9PVkjBijDwhghzRaItamQ9pVlmEpNAwqnFOuFY55m3Oi6YdzBoQk2KYXrzNvMtQ=="
   }, {
     "groupId" : "com.google.code.findbugs",
     "artifactId" : "jsr305",
@@ -1034,11 +1034,11 @@
   }, {
     "groupId" : "net.java.dev.jna",
     "artifactId" : "jna",
-    "version" : "5.17.0",
+    "version" : "5.18.1",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:M/NSUo/HCgf/yRhP+AZHsCxR6ibOsRznDupK29lBmm+BG8EXRtxz3fQP8qIdrtvqq9NJ6QHzDsXoQaH1/G8bUg=="
+    "integrity" : "sha512:6Fmqe/AyJdrN0EPGf5OeklDj4iPvAxoMtncXl0Ni6d8r0dnXBOe1LnQIIw8B2Ba6t+wadF2c8v6ybr2DmAJsfg=="
   }, {
     "groupId" : "net.oauth.core",
     "artifactId" : "oauth-provider",
