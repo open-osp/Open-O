@@ -55,6 +55,8 @@ import oscar.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import java.io.File;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -201,6 +203,9 @@ public class AddEFormAction extends Action {
 		}
 
 		EForm curForm = new EForm(fid, demographic_no, providerNo);
+		curForm.setContextPath(request.getContextPath());
+		curForm.setRealPath(request.getServletContext().getRealPath(File.separator));
+		curForm.setImagePath();
 
 		//add eform_link value from session attribute
 		ArrayList<String> openerNames = curForm.getOpenerNames();
@@ -218,7 +223,6 @@ public class AddEFormAction extends Action {
 		curForm.setValues(paramNames, paramValues);
 		if (!openerNames.isEmpty()) curForm.setOpenerValues(openerNames, openerValues);
 		if (eform_link!=null) curForm.setEformLink(eform_link);
-		curForm.setImagePath();
 		curForm.setAction();
 		curForm.setNowDateTime();
 		if (!errors.isEmpty()) {
