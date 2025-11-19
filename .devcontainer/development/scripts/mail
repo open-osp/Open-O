@@ -1,0 +1,8 @@
+#!/bin/bash
+
+command=$1
+
+case $command in
+    log)
+      tail -f /var/log/mail.log
+    ;;

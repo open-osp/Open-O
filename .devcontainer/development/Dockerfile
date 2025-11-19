@@ -74,7 +74,7 @@ RUN postconf -e 'myhostname=openo-dev.local' && \
     postconf -e 'mydestination=openo-dev.local, localhost' && \
     postconf -e 'mynetworks=0.0.0.0/0' && \
     postconf -e 'inet_interfaces=all' && \
-    postconf -e 'maillog_file=/dev/stdout' && \
+    postconf -e 'maillog_file=/var/log/mail.log' && \
     postconf -e 'default_transport=discard' && \
     postconf -e 'relay_transport=discard'
 
