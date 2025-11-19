@@ -124,7 +124,19 @@ public class Fax2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         TransactionType transactionType = TransactionType.valueOf(getTransactionType().toUpperCase());
-        List<FaxJob> faxJobList = faxManager.createAndSaveFaxJob(loggedInInfo, new HashMap<>());
+
+        // Build the fax job parameters map
+        HashMap<String, Object> faxJobMap = new HashMap<>();
+        faxJobMap.put("faxFilePath", faxFilePath);
+        faxJobMap.put("recipient", recipient);
+        faxJobMap.put("recipientFaxNumber", recipientFaxNumber);
+        faxJobMap.put("senderFaxNumber", senderFaxNumber);
+        faxJobMap.put("demographicNo", demographicNo);
+        faxJobMap.put("comments", comments);
+        faxJobMap.put("coverpage", coverpage);
+        faxJobMap.put("copyToRecipients", copyToRecipients);
+
+        List<FaxJob> faxJobList = faxManager.createAndSaveFaxJob(loggedInInfo, faxJobMap);
 
         boolean success = true;
         for (FaxJob faxJob : faxJobList) {
@@ -345,6 +357,10 @@ public class Fax2Action extends ActionSupport {
     private String recipient;
     private String recipientFaxNumber;
     private String letterheadFax;
+    private String senderFaxNumber;
+    private String comments;
+    private String coverpage;
+    private String[] copyToRecipients;
 
     public String getFaxFilePath() {
         return faxFilePath;
@@ -400,5 +416,37 @@ public class Fax2Action extends ActionSupport {
 
     public void setLetterheadFax(String letterheadFax) {
         this.letterheadFax = letterheadFax;
+    }
+
+    public String getSenderFaxNumber() {
+        return senderFaxNumber;
+    }
+
+    public void setSenderFaxNumber(String senderFaxNumber) {
+        this.senderFaxNumber = senderFaxNumber;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getCoverpage() {
+        return coverpage;
+    }
+
+    public void setCoverpage(String coverpage) {
+        this.coverpage = coverpage;
+    }
+
+    public String[] getCopyToRecipients() {
+        return copyToRecipients;
+    }
+
+    public void setCopyToRecipients(String[] copyToRecipients) {
+        this.copyToRecipients = copyToRecipients;
     }
 }
