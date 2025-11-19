@@ -182,7 +182,6 @@ public class UserPreference2Action extends ActionSupport {
         Security secRecord = securityDao.getByProviderNo(providerNo);
 
         if (Objects.nonNull(secRecord) && this.securityManager.matchesPassword(currentPassword, secRecord.getPassword())) {
-
             secRecord.setPassword(this.securityManager.encodePassword(newPassword));
             securityDao.merge(secRecord);
 

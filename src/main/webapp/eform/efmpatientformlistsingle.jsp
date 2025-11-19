@@ -70,8 +70,6 @@
 		<script src="${ pageContext.request.contextPath }/js/jquery.fileDownload.js"></script>
 		<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
 		<script>
-
-
 			jQuery(document).ready( function () {
 				jQuery('#tblEforms').DataTable({
 					"order": [],
@@ -81,7 +79,6 @@
 					}
 				});
 			});
-
 		</script>
         <script type="text/javascript" language="javascript">
             function showHtml() {

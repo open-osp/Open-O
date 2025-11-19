@@ -276,7 +276,7 @@
             <result name="repcbLongTerm">/oscarRx/prescribe.jsp</result>
             <result name="represcribe">/oscarRx/prescribe.jsp</result>
         </action>
-        <action name ="oscarRx/search" class="ca.openosp.openo.prescript.pageUtil.RxWriteScript2Action">
+        <action name="oscarRx/search" class="ca.openosp.openo.prescript.pageUtil.RxWriteScript2Action">
             <result name="prescribe">/oscarRx/prescribe.jsp</result>
         </action>
         <action name="oscarRx/saveDigitalSignature" class="ca.openosp.openo.prescript.pageUtil.RxRePrescribe2Action" method="saveDigitalSignature">
