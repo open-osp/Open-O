@@ -23,9 +23,7 @@
  */
 package ca.openosp.openo.commn.model;
 
-import ca.openosp.openo.commn.dao.FaxConfigDao;
 import ca.openosp.openo.utility.EncryptionUtils;
-import ca.openosp.openo.utility.SpringUtils;
 
 import javax.persistence.*;
 
@@ -41,9 +39,21 @@ public class FaxConfig extends AbstractModel<Integer> {
 
     private String url = "";
     private String siteUser = "";
+
+    @Column(name = "passwd")
+    private String encryptedPasswd = "";
+
+    @Transient
     private String passwd = "";
+
     private String faxUser = "";
+
+    @Column(name = "faxPasswd")
+    private String encryptedFaxPasswd = "";
+
+    @Transient
     private String faxPasswd = "";
+
     private String faxNumber = "";
     private String senderEmail = "";
 
@@ -94,35 +104,18 @@ public class FaxConfig extends AbstractModel<Integer> {
 
 
     /**
-     * @return the passwd (decrypted)
+     * @return the passwd (decrypted plain text)
      */
     public String getPasswd() {
-        try {
-            if (EncryptionUtils.isEncrypted(this.passwd)) {
-                return EncryptionUtils.decrypt(this.passwd);
-            } else {
-                // the password is not encrypted, encrypt and save it for future use
-                this.setPasswd(this.passwd);
-                // Recursively calling this method to retrieve the newly encrypted password
-                FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-                faxConfigDao.merge(this);
-                return this.getPasswd();
-            }
-        } catch (Exception e) {
-            return this.passwd;
-        }
+        return passwd;
     }
 
 
     /**
-     * @param passwd the passwd to set (will be encrypted)
+     * @param passwd the passwd to set (plain text, will be encrypted before persistence)
      */
     public void setPasswd(String passwd) {
-        try {
-            this.passwd = EncryptionUtils.encrypt(passwd);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while securely saving the password.");
-        }
+        this.passwd = passwd;
     }
 
 
@@ -143,35 +136,18 @@ public class FaxConfig extends AbstractModel<Integer> {
 
 
     /**
-     * @return the faxPasswd (decrypted)
+     * @return the faxPasswd (decrypted plain text)
      */
     public String getFaxPasswd() {
-        try {
-            if (EncryptionUtils.isEncrypted(this.faxPasswd)) {
-                return EncryptionUtils.decrypt(this.faxPasswd);
-            } else {
-                // the password is not encrypted, encrypt and save it for future use
-                this.setFaxPasswd(this.faxPasswd);
-                // Recursively calling this method to retrieve the newly encrypted password
-                FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
-                faxConfigDao.merge(this);
-                return this.getFaxPasswd();
-            }
-        } catch (Exception e) {
-            return this.faxPasswd;
-        }
+        return faxPasswd;
     }
 
 
     /**
-     * @param faxPasswd the faxPasswd to set (will be encrypted)
+     * @param faxPasswd the faxPasswd to set (plain text, will be encrypted before persistence)
      */
     public void setFaxPasswd(String faxPasswd) {
-        try {
-            this.faxPasswd = EncryptionUtils.encrypt(faxPasswd);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while securely saving the password.");
-        }
+        this.faxPasswd = faxPasswd;
     }
 
 
@@ -275,5 +251,69 @@ public class FaxConfig extends AbstractModel<Integer> {
 
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    /**
+     * JPA lifecycle callback to decrypt passwords after loading from database.
+     * Automatically handles migration of legacy unencrypted passwords.
+     */
+    @PostLoad
+    private void decryptPasswords() {
+        this.passwd = decryptPassword(encryptedPasswd);
+        this.faxPasswd = decryptPassword(encryptedFaxPasswd);
+    }
+
+    /**
+     * JPA lifecycle callback to encrypt passwords before persisting to database.
+     * Called before both INSERT and UPDATE operations.
+     */
+    @PrePersist
+    @PreUpdate
+    private void encryptPasswords() {
+        this.encryptedPasswd = encryptPassword(passwd, "passwd");
+        this.encryptedFaxPasswd = encryptPassword(faxPasswd, "faxPasswd");
+    }
+
+    /**
+     * Helper method to decrypt a password field.
+     * Handles legacy unencrypted passwords and decryption failures gracefully.
+     *
+     * @param encryptedValue the encrypted password value from database
+     * @return decrypted plain text password, or the original value if decryption fails
+     */
+    private String decryptPassword(String encryptedValue) {
+        try {
+            if (encryptedValue != null && !encryptedValue.isEmpty()) {
+                if (EncryptionUtils.isEncrypted(encryptedValue)) {
+                    return EncryptionUtils.decrypt(encryptedValue);
+                } else {
+                    // Legacy unencrypted password - use as-is and it will be encrypted on next save
+                    return encryptedValue;
+                }
+            }
+        } catch (Exception e) {
+            // Fallback to encrypted value if decryption fails
+            return encryptedValue;
+        }
+        return "";
+    }
+
+    /**
+     * Helper method to encrypt a password field.
+     *
+     * @param plainText the plain text password to encrypt
+     * @param fieldName the name of the field being encrypted (for error messages)
+     * @return encrypted password value
+     * @throws RuntimeException if encryption fails
+     */
+    private String encryptPassword(String plainText, String fieldName) {
+        try {
+            if (plainText != null && !plainText.isEmpty()) {
+                return EncryptionUtils.encrypt(plainText);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt " + fieldName, e);
+        }
+        return "";
     }
 }
