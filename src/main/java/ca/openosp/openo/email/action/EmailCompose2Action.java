@@ -30,6 +30,18 @@ public class EmailCompose2Action extends ActionSupport {
     private DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
     private EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
 
+    private static final String[] EMAIL_SESSION_KEYS = {
+        "attachEFormItSelf", "fdid", "demographicId",
+        "emailPDFPassword", "emailPDFPasswordClue",
+        "attachedDocuments", "attachedLabs", "attachedForms",
+        "attachedEForms", "attachedHRMDocuments",
+        "deleteEFormAfterEmail", "isEmailEncrypted",
+        "isEmailAttachmentEncrypted", "isEmailAutoSend",
+        "openEFormAfterEmail", "senderEmail", "subjectEmail",
+        "bodyEmail", "encryptedMessageEmail",
+        "emailPatientChartOption"
+    };
+
 
     public String execute() {
         return prepareComposeEFormMailer();
@@ -122,26 +134,14 @@ public class EmailCompose2Action extends ActionSupport {
      * @since 2025-01-18
      */
     protected static void cleanupEmailSessionAttributes(HttpServletRequest request) {
-        request.getSession().removeAttribute("attachEFormItSelf");
-        request.getSession().removeAttribute("fdid");
-        request.getSession().removeAttribute("demographicId");
-        request.getSession().removeAttribute("emailPDFPassword");
-        request.getSession().removeAttribute("emailPDFPasswordClue");
-        request.getSession().removeAttribute("attachedDocuments");
-        request.getSession().removeAttribute("attachedLabs");
-        request.getSession().removeAttribute("attachedForms");
-        request.getSession().removeAttribute("attachedEForms");
-        request.getSession().removeAttribute("attachedHRMDocuments");
-        request.getSession().removeAttribute("deleteEFormAfterEmail");
-        request.getSession().removeAttribute("isEmailEncrypted");
-        request.getSession().removeAttribute("isEmailAttachmentEncrypted");
-        request.getSession().removeAttribute("isEmailAutoSend");
-        request.getSession().removeAttribute("openEFormAfterEmail");
-        request.getSession().removeAttribute("senderEmail");
-        request.getSession().removeAttribute("subjectEmail");
-        request.getSession().removeAttribute("bodyEmail");
-        request.getSession().removeAttribute("encryptedMessageEmail");
-        request.getSession().removeAttribute("emailPatientChartOption");
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return;
+        }
+
+        for (String key : EMAIL_SESSION_KEYS) {
+            session.removeAttribute(key);
+        }
     }
 
     private String emailComposeError(HttpServletRequest request, String errorMessage) {
