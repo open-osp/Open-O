@@ -35,11 +35,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			})
 		}
 
-		/**
-		 *  Enable Are-you-sure dirty page detection.
-		 */
-		jQuery("form:first").areYouSure();
-
 	const isSuccessAndAutoclose = document.getElementById("isSuccess_Autoclose") &&
 		document.getElementById("isSuccess_Autoclose").value === 'true';
 	if (isSuccessAndAutoclose) {
@@ -94,15 +89,6 @@ function remoteSave() {
 		appendImageInputs();
 
 		moveSubject();
-
-		if (typeof releaseDirtyFlag === "function") {
-			window["releaseDirtyFlag"]();
-		}
-
-    // don't need the dirty form notification if the form is being autosaved.
-    if (typeof isFormDirty === "function" && isFormDirty()) {
-        jQuery("form:first").trigger('reinitialize.areYouSure');
-    }
 
 		if (typeof saveRTL === "function") {
 			window["saveRTL"]();
