@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.validator.EmailValidator;
 import org.apache.logging.log4j.Logger;
+
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.dao.EmailConfigDaoImpl;
 import ca.openosp.openo.commn.dao.EmailLogDaoImpl;
 import ca.openosp.openo.commn.dao.UserPropertyDAO;
@@ -127,8 +129,12 @@ public class EmailComposeManager {
     }
 
     public List<EmailAttachment> prepareHRMAttachments(LoggedInInfo loggedInInfo, String[] attachedHRMDocuments) throws PDFGenerationException {
+        if (!OscarProperties.getInstance().isOntarioBillingRegion()) {
+            return new ArrayList<>();
+        }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
-            throw new RuntimeException("missing required sec object (_hrm)");
+            logger.warn("missing required security object (_hrm)");
+            return new ArrayList<>();
         }
 
         List<String> attachedHRMIds = convertToList(attachedHRMDocuments);

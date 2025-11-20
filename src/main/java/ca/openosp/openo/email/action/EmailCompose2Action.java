@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
+
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.model.EmailAttachment;
 import ca.openosp.openo.commn.model.EmailConfig;
 import ca.openosp.openo.commn.model.EmailLog.TransactionType;
@@ -86,7 +88,9 @@ public class EmailCompose2Action extends ActionSupport {
             emailAttachmentList.addAll(emailComposeManager.prepareEFormAttachments(loggedInInfo, fdid, attachedEForms));
             emailAttachmentList.addAll(emailComposeManager.prepareEDocAttachments(loggedInInfo, attachedDocuments));
             emailAttachmentList.addAll(emailComposeManager.prepareLabAttachments(loggedInInfo, attachedLabs));
-            emailAttachmentList.addAll(emailComposeManager.prepareHRMAttachments(loggedInInfo, attachedHRMDocuments));
+            if (OscarProperties.getInstance().isOntarioBillingRegion()) {
+                emailAttachmentList.addAll(emailComposeManager.prepareHRMAttachments(loggedInInfo, attachedHRMDocuments));
+            }
             emailAttachmentList.addAll(emailComposeManager.prepareFormAttachments(request, response, attachedForms, Integer.parseInt(demographicId)));
         } catch (PDFGenerationException e) {
             logger.error(e.getMessage(), e);

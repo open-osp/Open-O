@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.hospitalReportManager.dao.*;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.hospitalReportManager.model.HRMCategory;
@@ -57,6 +58,13 @@ public class HRMUtil {
      * Because multiple versions of a single HRM document can be received,
      */
     public static ArrayList<HashMap<String, ? extends Object>> listHRMDocuments(LoggedInInfo loggedInInfo, String sortBy, boolean sortAsc, String demographicNo, boolean filterDuplicates) {
+        if (!OscarProperties.getInstance().isOntarioBillingRegion()) {
+            return new ArrayList<>();
+        }
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
+            logger.warn("missing required security object (_hrm)");
+            return new ArrayList<>();
+        }
 
         ArrayList<HashMap<String, ? extends Object>> hrmdocslist = new ArrayList<HashMap<String, ?>>();
 
