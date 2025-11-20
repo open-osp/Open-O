@@ -51,11 +51,26 @@ public class ConfigureFax2Action extends ActionSupport {
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private static final String PASSWORD_BLANKET = "**********";
 
-    
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() {
-        return configure();
+        String method = request.getParameter("method");
+
+        if ("getFaxSchedularStatus".equals(method)) {
+            getFaxSchedularStatus();
+            return null;
+        } else if ("restartFaxScheduler".equals(method)) {
+            restartFaxScheduler();
+            return null;
+        } else if ("configure".equals(method)) {
+            return configure();
+        }
+
+        // Default case: action called without a method parameter
+        // Since the JSP is accessed directly, this should probably never happen
+        // But just in case, we can return back to the page and log a warning
+        MiscUtils.getLogger().warn("ConfigureFax2Action called without a method parameter.");
+        return null;
     }
 
     public String configure() {
@@ -109,14 +124,14 @@ public class ConfigureFax2Action extends ActionSupport {
                         savedFaxConfig.setUrl(faxUrl);
                         savedFaxConfig.setSiteUser(siteUser);
 
-                        if (!PASSWORD_BLANKET.equals(sitePasswd)) {
-                            savedFaxConfig.setPasswd(sitePasswd);
+                        if (sitePasswd != null && !PASSWORD_BLANKET.equals(sitePasswd)) {
+                            savedFaxConfig.setPasswd(sitePasswd.trim());
                         }
 
                         savedFaxConfig.setFaxUser(faxUsers[idx]);
 
-                        if (!PASSWORD_BLANKET.equals(faxPasswds[idx])) {
-                            savedFaxConfig.setFaxPasswd(faxPasswds[idx]);
+                        if (faxPasswds[idx] != null && !PASSWORD_BLANKET.equals(faxPasswds[idx])) {
+                            savedFaxConfig.setFaxPasswd(faxPasswds[idx].trim());
                         }
 
                         String faxNumber = faxNumbers[idx];
@@ -135,8 +150,8 @@ public class ConfigureFax2Action extends ActionSupport {
                         faxConfig.setId(null);
                         faxConfig.setSiteUser(siteUser);
 
-                        if (!PASSWORD_BLANKET.equals(sitePasswd)) {
-                            faxConfig.setPasswd(sitePasswd);
+                        if (sitePasswd != null && !PASSWORD_BLANKET.equals(sitePasswd)) {
+                            faxConfig.setPasswd(sitePasswd.trim());
                         }
                         // the password carries over from the last configuration. Usually the first entry
                         else if ((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
@@ -146,8 +161,8 @@ public class ConfigureFax2Action extends ActionSupport {
                         faxConfig.setUrl(faxUrl);
                         faxConfig.setFaxUser(faxUsers[idx]);
 
-                        if (!PASSWORD_BLANKET.equals(faxPasswds[idx])) {
-                            faxConfig.setFaxPasswd(faxPasswds[idx]);
+                        if (faxPasswds[idx] != null && !PASSWORD_BLANKET.equals(faxPasswds[idx])) {
+                            faxConfig.setFaxPasswd(faxPasswds[idx].trim());
                         }
 
                         faxConfig.setFaxNumber(faxNumbers[idx]);
@@ -183,8 +198,8 @@ public class ConfigureFax2Action extends ActionSupport {
                 faxConfig.setUrl(faxUrl);
                 faxConfig.setSiteUser(siteUser);
 
-                if (!PASSWORD_BLANKET.equals(sitePasswd)) {
-                    faxConfig.setPasswd(sitePasswd);
+                if (sitePasswd != null && !PASSWORD_BLANKET.equals(sitePasswd)) {
+                    faxConfig.setPasswd(sitePasswd.trim());
                 }
                 // the password carries over from the last configuration. Usually the first entry
                 else if ((masterFaxConfig = savedFaxConfigList.get(0)) != null) {
@@ -201,15 +216,9 @@ public class ConfigureFax2Action extends ActionSupport {
             MiscUtils.getLogger().error("COULD NOT SAVE FAX CONFIGURATION", ex);
         }
 
-
-        try {
-            MiscUtils.getLogger().info("JSON: " + jsonObject);
-            response.getWriter().write(jsonObject.toString());
-        } catch (IOException e) {
-            MiscUtils.getLogger().error("JSON WRITER ERROR", e);
-        }
+        MiscUtils.getLogger().info("JSON: " + jsonObject);
+        JSONUtil.jsonResponse(response, jsonObject);
         return null;
-
     }
 
     public void restartFaxScheduler() {

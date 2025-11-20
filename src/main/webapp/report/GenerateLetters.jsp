@@ -199,7 +199,7 @@
             <td class="MainTableLeftColumn" valign="top">&nbsp;</td>
             <td valign="top" class="MainTableRightColumn"><form
                     action="${pageContext.request.contextPath}/report/GenerateLetters.do" method="POST"
-                    styleId="listDemographic">
+                    id="listDemographic">
 
                 <%
                     ManageLetters mLetter = new ManageLetters();

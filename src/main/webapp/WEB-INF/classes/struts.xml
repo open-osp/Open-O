@@ -11,6 +11,7 @@
     <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*" />
     <constant name="struts.custom.i18n.resources" value="oscarResources"/>
     <constant name="struts.custom.i18n.resources" value="oscarResources,MessageResources_mcedt"/>
+    <constant name="struts.multipart.maxSize" value="524288000" />
     <!-- Default package extending struts-default -->
 	<package name="default" namespace="/" extends="struts-default">
         <action name="logout" class="ca.openosp.openo.login.Logout2Action">
@@ -1028,7 +1029,7 @@
             <result name="viewAllConsult">/oscarConsultationRequest/DisplayDemographicConsultationRequests.jsp</result>
             <result name="success">/search/searchDemographicSearch.jsp</result>
         </action>
-        <action name="CreateInitImmunization" class="oscar.oscarEncounter.immunization.config.pageUtil.EctCreateImmunizationSetInit2Action">
+        <action name="CreateInitImmunization" class="ca.openosp.openo.encounter.immunization.config.pageUtil.EctImmCreateImmunizationSetInit2Action">
             <result name="success">/immunizationConfig/CreateImmunizationSetConfig.jsp</result>
         </action-->
         <action name="CreateImmunizationSetConfig" class="ca.openosp.openo.encounter.immunization.config.pageUtil.EctImmCreateImmunizationSetConfig2Action">
@@ -1507,6 +1508,7 @@
         </action>
         <action name="form/importLogDownload" class="ca.openosp.openo.demographic.pageUtil.ImportLogDownload2Action">
             <result name="success">/demographic/demographicImport.jsp</result>
+            <result name="error">/errorpage.jsp</result>
         </action>
         <action name="demographic/DemographicExport" class="ca.openosp.openo.demographic.pageUtil.DemographicExportAction42Action">
             <result name="fail">/demographic/demographicExport.jsp</result>
@@ -1626,6 +1628,7 @@
             <interceptor-ref name="fileUpload" />
             <interceptor-ref name="defaultStack"/>
             <result name="success">/lab/CA/ALL/testUploader.jsp</result>
+            <result name="input">/lab/CA/ALL/testUploader.jsp</result>
         </action>
         <action name="lab/CA/ALL/oruR01Upload" class="ca.openosp.openo.lab.ca.all.pageUtil.OruR01Upload2Action">
             <result name="result">/common/genericResultPage.jsp</result>
@@ -2261,7 +2264,7 @@
             <result name="success">/billing/CA/ON/billingLreport.jsp</result>
             <result name="failure">/billing/CA/ON/billingLreport.jsp</result>
         </action>
-        <action name="billing/CA/ON/moveMOHFiles" class="org.oscarehr.billing.CA.ON.www.ArchiveMOHFile2Action">
+        <action name="billing/CA/ON/moveMOHFiles" class="ca.openosp.openo.billing.CA.ON.www.ArchiveMOHFile2Action">
             <result name="showInbox">/billing/CA/ON/viewMOHFiles.jsp</result>
         </action-->
         <action name="billing/ca/on/DisplayInvoiceLogo" class="ca.openosp.openo.billing.CA.ON.util.DisplayInvoiceLogo2Action"/>

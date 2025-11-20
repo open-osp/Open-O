@@ -74,7 +74,7 @@ import ca.openosp.openo.util.ConversionUtils;
  *   <li>Provider-specific message isolation</li>
  * </ul>
  * 
- * @deprecated Use org.oscarehr.managers.MessagingManager and JPA model.
+ * @deprecated Use ca.openosp.openo.managers.MessagingManager and JPA model.
  *             This class uses outdated patterns and should be replaced with
  *             modern service-oriented architecture.
  * @version 1.0

@@ -544,15 +544,13 @@ public class MDSHandler implements MessageHandler {
 
     /**
      * Methods to get information from observation notes
-     * For MDS labs, this counts all comment lines including ZMC segments
+     * Returns 1 if there are any NTE segments (representing one concatenated comment block)
+     * Returns 0 if there are no NTE segments
+     * This matches the old behavior where all NTE segments are shown in a single table row
      */
     public int getOBXCommentCount(int i, int j) {
         try {
             // jth obx of the ith obr
-
-            // For MDS messages with RESPONSE group structure, we need to handle this differently
-            // The old code tried to find OBX in the flat segments array, but now OBX is nested
-            // in RESPONSE/ORDER_OBSERVATION/OBSERVATION groups
 
             ArrayList obxSegs = (ArrayList) obrGroups.get(i);
             if (obxSegs == null || j >= obxSegs.size()) {
@@ -562,72 +560,26 @@ public class MDSHandler implements MessageHandler {
             String obxPath = (String) obxSegs.get(j);
 
             // Try to find NTE segments following this OBX in the OBSERVATION group
-            // Extract the observation index from the path
             // Path format: /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/OBX
             try {
-                // Count NTE segments that follow this OBX
-                int totalCommentLines = 0;
-
                 // Build the path to potential NTE segments
                 // They would be at /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/NTE(k)
                 String basePath = obxPath.substring(0, obxPath.lastIndexOf("/"));
 
-                // First, find all NTE segments for this OBX
-                ArrayList<String> commentCodes = new ArrayList<String>();
-                int nteIndex = 0;
-                final int MAX_NTE_COUNT = 500; // Safety limit
-                while (nteIndex < MAX_NTE_COUNT) {
-                    String ntePath = basePath + "/NTE(" + nteIndex + ")";
-                    try {
-                        String commentType = terser.get(ntePath + "-2-1");
-                        if (commentType == null) {
-                            // No more NTE segments
-                            break;
-                        }
-                        if (commentType.equals("MC")) {
-                            // This is a matched code - get the code and count ZMC segments
-                            // NTE-3 field format: ^CODE means component 1 is empty, component 2 is CODE
-                            String commentCode = terser.get(ntePath + "-3-2");
-                            if (commentCode != null) {
-                                commentCodes.add(commentCode);
-                            }
-                        } else {
-                            // Direct text comment
-                            String nteText = terser.get(ntePath + "-3-1");
-                            if (nteText != null && !nteText.isEmpty()) {
-                                totalCommentLines++;
-                            }
-                        }
-                        nteIndex++;
-                    } catch (HL7Exception e) {
-                        // No more NTE segments
-                        break;
+                // Check if there are any NTE segments
+                String ntePath = basePath + "/NTE(0)";
+                try {
+                    String commentType = terser.get(ntePath + "-2-1");
+                    if (commentType != null) {
+                        // There is at least one NTE segment, return 1
+                        return 1;
                     }
-                }
-                if (nteIndex >= MAX_NTE_COUNT) {
-                    logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT);
+                } catch (HL7Exception e) {
+                    // No NTE segments
+                    return 0;
                 }
 
-                // Now count all ZMC segments for each comment code
-                if (!commentCodes.isEmpty() && rawHL7Body != null) {
-                    String[] lines = rawHL7Body.split("\r?\n");
-                    for (String line : lines) {
-                        if (line.startsWith("ZMC|")) {
-                            String[] fields = line.split("\\|", -1);
-                            if (fields.length > 2) {
-                                String zmcCode = fields[2];
-                                for (String commentCode : commentCodes) {
-                                    if (zmcCode.equals(commentCode)) {
-                                        totalCommentLines++;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return totalCommentLines;
+                return 0;
             } catch (Exception e) {
                 // If we can't parse the structure, return 0
                 logger.debug("Error counting comments", e);
@@ -642,6 +594,11 @@ public class MDSHandler implements MessageHandler {
     public String getOBXComment(int i, int j, int k) {
         try {
             // For MDS messages with RESPONSE group structure
+            // Since getOBXCommentCount() returns 1, k should always be 0
+            // Returns ALL NTE segments concatenated with <br />
+            // For MC type: returns all matching ZMC segments
+            // For other types: returns all NTE-3 component 2 values
+
             ArrayList obxSegs = (ArrayList) obrGroups.get(i);
             if (obxSegs == null || j >= obxSegs.size()) {
                 return "";
@@ -653,14 +610,17 @@ public class MDSHandler implements MessageHandler {
             // Path format: /RESPONSE/ORDER_OBSERVATION(i)/OBSERVATION(j)/NTE(k)
             String basePath = obxPath.substring(0, obxPath.lastIndexOf("/"));
 
-            // Build a complete list of all comment lines for this OBX
-            ArrayList<String> allCommentLines = new ArrayList<String>();
-
-            // First, find all NTE segments and their associated comments
+            // Collect all NTE segments using pattern from hacked_patched_hapi-0.5.1.jar
+            // Pattern: comment = (comment==null) ? commentCode : comment+"<br/>"+commentCode
+            // This tracks "first segment" explicitly to handle empty first segments correctly
+            StringBuilder allComments = new StringBuilder();
+            boolean isFirstSegment = true;
             int nteIndex = 0;
             final int MAX_NTE_COUNT = 500; // Safety limit
+
             while (nteIndex < MAX_NTE_COUNT) {
                 String ntePath = basePath + "/NTE(" + nteIndex + ")";
+
                 try {
                     String commentType = terser.get(ntePath + "-2-1");
                     if (commentType == null) {
@@ -668,51 +628,82 @@ public class MDSHandler implements MessageHandler {
                         break;
                     }
 
-                    if (commentType.equals("MC")) {
+                    String currentComment = "";
+
+                    if ("MC".equals(commentType)) {
                         // This is a matched code - get all ZMC segments for this code
                         // NTE-3 field format: ^CODE means component 1 is empty, component 2 is CODE
                         String commentCode = terser.get(ntePath + "-3-2");
 
                         if (commentCode != null && rawHL7Body != null) {
                             // Parse all ZMC segments from raw HL7 for this code
+                            // Pattern: First ZMC appends directly (even if empty), subsequent ZMCs prepend <br />
+                            // This ensures empty ZMC segments produce visible line breaks
+                            StringBuilder zmcComments = new StringBuilder();
+                            boolean isFirstZmc = true;
                             String[] lines = rawHL7Body.split("\r?\n");
                             for (String line : lines) {
                                 if (line.startsWith("ZMC|")) {
                                     String[] fields = line.split("\\|", -1);
                                     if (fields.length > 6) {
+                                        // ZMC field 2 may have components (CODE^EXTRA), extract component 1 only
                                         String zmcCode = fields[2];
+                                        if (zmcCode.contains("^")) {
+                                            zmcCode = zmcCode.split("\\^")[0];
+                                        }
                                         if (zmcCode.equals(commentCode)) {
-                                            // Add this ZMC comment line
-                                            String commentText = fields[6];
-                                            allCommentLines.add(commentText);
+                                            // Add this ZMC comment line from field 6
+                                            String commentText = getString(fields[6]);
+
+                                            // Pattern from hacked_patched_hapi-0.5.1.jar for ZMC:
+                                            // First ZMC: append commentText directly (even if empty)
+                                            // Subsequent ZMCs: prepend "<br />" then append commentText
+                                            // This makes empty ZMC segments (e.g., ZMC|1.1|CODE||5|Y|)
+                                            // produce a leading <br />, creating a visible blank line
+                                            if (isFirstZmc) {
+                                                zmcComments.append(commentText);
+                                                isFirstZmc = false;
+                                            } else {
+                                                zmcComments.append("<br />").append(commentText);
+                                            }
                                         }
                                     }
                                 }
                             }
+                            currentComment = zmcComments.toString();
                         }
                     } else {
                         // Direct text comment from NTE
-                        String nteText = terser.get(ntePath + "-3-1");
-                        if (nteText != null && !nteText.isEmpty()) {
-                            allCommentLines.add(nteText);
+                        // NTE-3 format: CODE^DESCRIPTION, we want component 2 (description)
+                        String nteText = terser.get(ntePath + "-3-2");
+                        if (nteText != null) {
+                            currentComment = getString(nteText);
                         }
                     }
+
+                    // Pattern from hacked_patched_hapi-0.5.1.jar implementation:
+                    // First NTE: append currentComment directly (even if empty)
+                    // Subsequent NTEs: append "<br />" + currentComment
+                    // This ensures leading <br /> when first segment is empty
+                    if (isFirstSegment) {
+                        allComments.append(currentComment);
+                        isFirstSegment = false;
+                    } else {
+                        allComments.append("<br />").append(currentComment);
+                    }
+
                     nteIndex++;
                 } catch (HL7Exception e) {
                     // No more NTE segments
                     break;
                 }
             }
+
             if (nteIndex >= MAX_NTE_COUNT) {
-                logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT);
+                logger.warn("Reached maximum NTE count limit: " + MAX_NTE_COUNT + ". Some NTE segments may have been omitted due to truncation.");
             }
 
-            // Return the kth comment line
-            if (k < allCommentLines.size()) {
-                return getString(allCommentLines.get(k));
-            }
-
-            return "";
+            return allComments.toString();
         } catch (Exception e) {
             logger.error("Unexpected error in getOBXComment", e);
             return "";

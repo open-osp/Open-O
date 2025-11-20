@@ -48,6 +48,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.lab.ca.all.upload.MessageUploader;
 import ca.openosp.openo.lab.ca.all.upload.RouteReportResults;
 
@@ -73,7 +74,7 @@ public class PATHL7Handler implements MessageHandler {
             }
 
             // Base directory
-            String baseDir = "/some/safe/path/";
+            String baseDir = OscarProperties.getInstance().getDocumentDirectory();
             Path basePath = Paths.get(baseDir).toAbsolutePath().normalize();
             Path targetPath = basePath.resolve(fileName).normalize();
 
