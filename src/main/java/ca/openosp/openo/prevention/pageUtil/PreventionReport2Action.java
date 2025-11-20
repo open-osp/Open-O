@@ -148,11 +148,11 @@ public class PreventionReport2Action extends ActionSupport {
         this.prevention = prevention;
     }
 
-    public String getAsOfDate() {
+    public String getAsofDate() {
         return asofDate;
     }
 
-    public void setAsOfDate(String asofDate) {
+    public void setAsofDate(String asofDate) {
         this.asofDate = asofDate;
     }
 }
