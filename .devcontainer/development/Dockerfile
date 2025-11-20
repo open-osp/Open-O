@@ -72,8 +72,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
 # Configure Postfix for simple localhost operation
 RUN postconf -e 'myhostname=openo-dev.local' && \
     postconf -e 'mydestination=openo-dev.local, localhost' && \
-    postconf -e 'mynetworks=127.0.0.0/8, 10.0.0.0/8' && \
-    postconf -e 'inet_interfaces=localhost' && \
+    postconf -e 'mynetworks=127.0.0.0/8' && \
+    postconf -e 'inet_interfaces=loopback-only' && \
     postconf -e 'maillog_file=/var/log/mail.log' && \
     # Disable all authentication and encryption
     postconf -e 'smtpd_sasl_auth_enable=no' && \
