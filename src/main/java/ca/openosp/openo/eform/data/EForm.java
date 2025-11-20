@@ -1106,20 +1106,28 @@ public class EForm extends EFormBase {
      * Empty image src values are the result of using Javascript in the eForm to dynamically
      * set paths for images.
      */
-    public void addImagePathPlaceholders(String[] imagePathPlaceholders) 
+    public void addImagePathPlaceholders(String[] imagePathPlaceholders)
         throws JsonProcessingException, JsonMappingException {
         if (imagePathPlaceholders != null && imagePathPlaceholders.length > 0) {
-            ArrayNode placeHolders = objectMapper.valueToTree(imagePathPlaceholders);
             Elements imageElements = getDocument().getElementsByTag("img");
-            for (JsonNode objekt : placeHolders) {
-                ObjectNode placeHolder = (ObjectNode) objekt;
-                String id = placeHolder.get("id").asText();
-                String value = placeHolder.get("value").asText();
-                if (!id.isEmpty() && !value.isEmpty() && (!value.startsWith("http") || !value.startsWith("HTTP"))) {
-                    for (Element imageElement : imageElements) {
-                        if (id.equalsIgnoreCase(imageElement.id())) {
-                            imageElement.attr("src", value);
-                            break;
+            for (String jsonString : imagePathPlaceholders) {
+                JsonNode parsedNode = objectMapper.readTree(jsonString);
+                if (parsedNode.isObject()) {
+                    ObjectNode placeHolder = (ObjectNode) parsedNode;
+                    JsonNode idNode = placeHolder.get("id");
+                    JsonNode valueNode = placeHolder.get("value");
+
+                    if (idNode != null && valueNode != null) {
+                        String id = idNode.asText();
+                        String value = valueNode.asText();
+
+                        if (!id.isEmpty() && !value.isEmpty() && !value.toLowerCase().startsWith("http")) {
+                            for (Element imageElement : imageElements) {
+                                if (id.equalsIgnoreCase(imageElement.id())) {
+                                    imageElement.attr("src", value);
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

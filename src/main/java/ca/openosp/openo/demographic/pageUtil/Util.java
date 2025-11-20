@@ -44,6 +44,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -287,23 +288,25 @@ public class Util {
             
             // Verify the file exists and is readable
             if (!requestedFile.exists() || !requestedFile.isFile() || !requestedFile.canRead()) {
-                logger.error("File not found or not accessible: " + safeFileName);
+                logger.error("Error during file download: file does not exist or is not accessible - {}", fileName);
+                rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
             rsp.setContentType("application/octet-stream");
             rsp.setHeader("Content-Disposition", "attachment; filename=\"" + sanitizeHeaderValue(safeFileName) + "\"");
-            InputStream in = new FileInputStream(requestedFile);
-            OutputStream out = rsp.getOutputStream();
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
+            rsp.setContentLengthLong(requestedFile.length());
+            
+            try (InputStream in = new FileInputStream(requestedFile);
+                OutputStream out = rsp.getOutputStream()) {
+                byte[] buf = new byte[8192];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
             }
-            in.close();
-            out.close();
         } catch (IOException ex) {
-            logger.error("Error", ex);
+            logger.error("Error during file download: {}", fileName, ex);
         }
     }
     
@@ -780,6 +783,29 @@ public class Util {
     static public boolean isNonImmunizationPrevention(String type) {
         if (nonImmunizationPreventionType.isEmpty()) setPreventionTypes();
         return nonImmunizationPreventionType.contains(type);
+    }
+
+    public static cdsDt.ResidualInformation fillResidualInfo(String name, String dataType, String content) {
+        List<cdsDt.ResidualInformation.DataElement> dataElementArray = new ArrayList<cdsDt.ResidualInformation.DataElement>();
+        cdsDt.ResidualInformation residualInformation = cdsDt.ResidualInformation.Factory.newInstance();
+        
+        cdsDt.ResidualInformation.DataElement data = residualInformation.addNewDataElement();
+        data.setName(name);
+        data.setDataType(dataType);
+        data.setContent(content);
+        dataElementArray.add(data);
+        residualInformation.setDataElementArray((cdsDt.ResidualInformation.DataElement[]) dataElementArray.toArray(new cdsDt.ResidualInformation.DataElement[dataElementArray.size()]));
+        return residualInformation;
+    }
+
+    public static cdsDt.ResidualInformation fillResidualInfoSummary(String content) {
+        cdsDt.ResidualInformation residualInformation = null;
+
+        if (StringUtils.filled(content)) {
+            residualInformation = fillResidualInfo("Summary", "String", content);
+        }
+
+        return residualInformation;
     }
 
     static public String replaceTags(String s) {
