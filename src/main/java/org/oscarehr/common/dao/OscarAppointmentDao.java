@@ -43,6 +43,7 @@ import org.oscarehr.PMmodule.model.Program;
 import org.oscarehr.common.NativeSql;
 import org.oscarehr.common.model.Appointment;
 import org.oscarehr.common.model.AppointmentArchive;
+import org.oscarehr.common.model.AppointmentStatus;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.beans.BeanUtils;
@@ -113,7 +114,7 @@ public interface OscarAppointmentDao extends AbstractDao<Appointment> {
 
 	public List<Object[]> findPatientAppointments(String providerNo, Date from, Date to);
 
-	public List<Appointment> search_unbill_history_daterange(String providerNo, Date startDate, Date endDate);
+	public List<Appointment> search_unbill_history_daterange(String providerNo, Date startDate, Date endDate, boolean excludeNoShow, boolean excludeCancelled);
 
 	public List<Appointment> findByDateAndProvider(Date date, String provider_no);
 
