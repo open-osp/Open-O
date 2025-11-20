@@ -55,6 +55,7 @@
 <%@ page import="org.oscarehr.common.model.MeasurementMap, org.oscarehr.common.dao.MeasurementMapDao" %>
 <%@ page import="org.oscarehr.common.model.Tickler" %>
 <%@ page import="org.oscarehr.managers.TicklerManager" %>
+<%@ page import="org.oscarehr.managers.ProviderManager2" %>
 <%@ page import="org.apache.commons.lang.StringUtils" %>
 <%@ page import="org.oscarehr.casemgmt.service.CaseManagementManager, org.oscarehr.common.dao.Hl7TextMessageDao, org.oscarehr.common.model.Hl7TextMessage,org.oscarehr.common.dao.Hl7TextInfoDao,org.oscarehr.common.model.Hl7TextInfo"%>
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="session" />
@@ -69,6 +70,7 @@
 <%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo"%>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 	  boolean authed=true;
@@ -628,6 +630,15 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                                                                             } else if( action === 'addComment' ) {
 																				console.log("Adding comment. Formid: " + formid + " labid: " + labid);
                                                                             	addComment(formid,labid);
+                                                                            } else if (action === 'ackLabAndFileForOther') {
+                                                                                fileOnBehalfOfMultipleProviders().then(() => {
+                                                                                    console.log("Acknowledging lab results");
+                                                                                    if(confirmAck()){
+                                                                                        console.log("Acknowledge confirmed. Labid: " + labid);
+                                                                                        jQuery("#labStatus_"+labid).val("A")
+                                                                                        updateStatus(formid,labid);
+                                                                                    }
+                                                                                });
                                                                             }
 
                                                                         }else{
@@ -712,6 +723,133 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                 document.forms['TDISLabelForm_' + segmentID].label.value = newlabelvalue;
             }
        	}
+
+        jQuery(document).ready(function() {
+            jQuery(document).on('change', '.ackProviderCheckbox, #ackSelectAllCheckbox', function() {
+                if (this.id === 'ackSelectAllCheckbox') {
+                    // When "Select All" changes, update all checkboxes
+                    jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").prop('checked', this.checked);
+                }
+                jQuery("#ackYesButton").button("option", "disabled", jQuery(".ackProviderCheckbox:checked").length === 0);
+            });
+        });
+
+        // Global flag to track if "file on behalf" was triggered
+        var doFileOnBehalfOfProviders = false;
+
+        // Opens the modal dialog asking if the user wants to file on behalf of others.
+        function openFileDialog(isFileOnly) {
+            if ((jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").length === 0 && !isFileOnly) || jQuery("#isHl7OfferFileForOthers").val() === "false") {
+                jQuery('#tempAckBtn').click();
+                return;
+            }
+
+            jQuery("#fileDialog").dialog({
+                autoOpen: false,
+                modal: true,
+                height: 'auto',
+                width: 'auto',
+                resizable: true,
+                buttons: [
+                    {
+                        text: "No",
+                        click: function() {
+                            jQuery("#fileDialog").dialog("close");
+                            if (!isFileOnly) { jQuery("#tempAckBtn").click(); }
+                        }
+                    },
+                    {
+                        text: "Yes",
+                        id: "ackYesButton",
+                        click: function() {
+                            doFileOnBehalfOfProviders = true;
+                            jQuery("#fileDialog").dialog("close");
+
+                            if (isFileOnly) {
+                                fileOnBehalfOfMultipleProviders().then(() => location.reload());
+                            } else {
+                                const skipAckComment = jQuery("#skipAckComment").val() === 'true';
+                                if (skipAckComment) {
+                                    handleLab('acknowledgeForm_'+jQuery("#segmentID").val(),jQuery("#segmentID").val(), 'ackLabAndFileForOther');
+                                } else {
+                                    getComment('ackLabAndFileForOther', jQuery("#segmentID").val());
+                                }
+                            }
+                        },
+                        disabled: true // Initially disabled
+                    }
+                ]
+            }).dialog("open");
+        }
+
+        // Sends file requests for all selected providers.
+        function fileOnBehalfOfMultipleProviders() {
+            const selectedProviders = jQuery(".ackProviderCheckbox:checked").map(function() {
+                return jQuery(this).val();
+            }).get();
+
+            if (selectedProviders.length === 0) {
+                return Promise.reject(new Error("No providers selected"));
+            }
+
+            const flaggedLabId = jQuery("#segmentID").val();
+            const labType = jQuery("#labType").val();
+            const loggedInProviderNo = jQuery("#loggedInProviderNo").val();
+            const loggedInProviderName = jQuery("#loggedInProviderName").val();
+
+            const ajaxCalls = selectedProviders.map(providerNo => {
+                const providerName = jQuery(".ackProviderName[data-provider-no='" + providerNo + "']").val();
+                const comment = createFilingComment(providerName, loggedInProviderName);
+                const url = "${e:forJavaScript(pageContext.servletContext.contextPath)}" + "/oscarMDS/FileLabs.do";
+
+                return new Promise((resolve, reject) => {
+                    jQuery.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: {
+                            method: 'fileOnBehalfOfMultipleProviders',
+                            providerNo: providerNo,
+                            flaggedLabId: flaggedLabId,
+                            labType: labType,
+                            comment: comment,
+                            fileUpToLabNo: true,
+                            onBehalfOfOtherProvider: true
+                        },
+                        success: function(response) {
+                            console.log("Filed lab for provider: " + providerNo);
+                            resolve(response);
+                        },
+                        error: function(xhr) {
+                            console.error("Failed filing for provider: " + providerNo);
+                            reject(new Error("Failed for provider: " + providerNo));
+                        }
+                    });
+                });
+            });
+
+            return Promise.allSettled(ajaxCalls).then(results => {
+                const failed = results.filter(r => r.status === 'rejected');
+                if (failed.length > 0) {
+                    console.error("Some AJAX calls failed:", failed);
+                }
+
+                doFileOnBehalfOfProviders = false;
+            });
+        }
+
+        function createFilingComment(providerName, loggedInProviderName) {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            const formattedDate = yyyy + '.' + mm + '.' + dd + ' @ ' + hours + ':' + minutes + ampm;
+
+            return 'Filed by ' + loggedInProviderName + ' on behalf of ' + providerName + ' on ' + formattedDate;
+        }
         </script>
 
     </head>
@@ -720,6 +858,10 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 
         <!-- form forwarding of the lab -->
         <%        
+            ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+            boolean isHl7OfferFileForOthers = providerManager.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+            request.setAttribute("isHl7OfferFileForOthers", isHl7OfferFileForOthers);
+
         	for( int idx = 0; idx < segmentIDs.length; ++idx ) {
         		       		
         		if (remoteFacilityIdString==null) {
@@ -730,19 +872,26 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         		
         		boolean notBeenAcked = ackList.size() == 0;
         		boolean ackFlag = false;
+                boolean isLabNotFiledOrAckFlag = false; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
         		String labStatus = "";
         		if (ackList != null){
         		    for (int i=0; i < ackList.size(); i++){
         		        ReportStatus reportStatus = ackList.get(i);
+                        reportStatus.setHl7AllowOthersFileForYou(providerManager.isHl7AllowOthersFileForYou(loggedInInfo, reportStatus.getOscarProviderNo()));
         		        if (providerNo.equals(reportStatus.getOscarProviderNo())) {
         		        	labStatus = reportStatus.getStatus();
         		        	if( labStatus.equals("A") ){
         		            	ackFlag = true;//lab has been ack by this provider.
-        		            	break;
         		        	}
         		        }
+
+                        if ("N".equals(reportStatus.getStatus())) {
+                            isLabNotFiledOrAckFlag = true; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
+                        }
         		    }
         		}
+
+                request.setAttribute("ackList", ackList);
         		
         		Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
         		int lab_no = Integer.parseInt(segmentID);
@@ -758,6 +907,9 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
         			ackLabFunc = "getComment('ackLab', " + segmentID + ");";
         		}
 
+                request.setAttribute("ackLabFunc", ackLabFunc);
+                request.setAttribute("skipComment", skipComment);
+                request.setAttribute("loggedInProviderName", loggedInInfo.getLoggedInProvider().getFullName());
         %>
         <script type="text/javascript">
 
@@ -808,6 +960,64 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 	        	}});
 			}
 		</script>
+
+        <!-- Save logged-in provider details -->
+        <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(sessionScope.user)}" />
+        <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
+        <input type="hidden" id="isHl7OfferFileForOthers" value="${e:forHtml(isHl7OfferFileForOthers)}" />
+
+        <!-- Hidden dialog that appears when a locum MD clicks "Acknowledge" -->
+        <div id="fileDialog" title="File Document" style="display: none;">
+
+            <!-- Hidden button used to trigger temp acknowledgment logic if no providers are found -->
+            <button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
+
+             <!-- Flag to determine if skip comment logic should be applied -->
+            <input id="skipAckComment" type="hidden" value="${e:forHtml(skipComment)}" />
+
+            <!-- Form that lists providers to file on behalf of -->
+            <form id="fileForm">
+                <p>This result is linked to other providers who have not acknowledged or filed it yet.</p>
+                <p>Do you want to "file" this result on their behalf?</p>
+                <p>Important - doing so will mean they likely will not see this result. Only proceed if you are sure they will not need to see this result.</p>
+                <input type="checkbox" id="ackSelectAllCheckbox" />
+                <label for="ackSelectAllCheckbox"><b>Select All</b></label><br/>
+
+                <c:forEach var="report" items="${ackList}" varStatus="status">
+                    <c:choose>
+                        <c:when test="${report.oscarProviderNo == sessionScope.user}">
+                        </c:when>
+                        <c:otherwise>
+                            <!-- Show only providers that have not already filed or ack (status != 'F' && status != 'A') -->
+                            <c:if test="${report.status != 'F' && report.status != 'A'}">
+                                <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
+                                <c:set var="providerId" value="ackProvider${status.index}" />
+                                <c:set var="providerNo" value="${e:forHtml(report.oscarProviderNo)}" />
+                                <c:set var="providerName" value="${e:forHtml(report.providerName)}" />
+                                
+                                <input type="checkbox"
+                                    name="providers"
+                                    id="${providerId}"
+                                    value="${providerNo}"
+                                    class="ackProviderCheckbox${isDisabled ? ' disabled-checkbox' : ''}"
+                                    ${isDisabled ? 'disabled' : ''} />
+
+                                <label for="${providerId}" 
+                                    style="${isDisabled ? 'color: gray; cursor: not-allowed;' : ''}">
+                                    <e:forHtml value="${providerName}${isDisabled ? ' (opted out by user preference)' : ''}" />
+                                </label>
+
+                                <input type="hidden"
+                                    class="ackProviderName"
+                                    data-provider-no="${providerNo}"
+                                    value="${providerName}" /><br/>
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                <p>Tip: In your user preferences, you can hide this prompt or prevent others from filing results on your behalf. See "Set HL7 Lab Result Preferences".</p>
+            </form>
+        </div>
 
 		<div id="lab_<%= Encode.forHtmlAttribute(segmentID) %>">
 
@@ -878,12 +1088,12 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
                         <table class="MainTableTopRowRightColumn" width="100%" border="0" cellspacing="0" cellpadding="3">
                             <tr>
                                 <td>
-                                    <input type="hidden" name="segmentID" value="<%= Encode.forHtmlAttribute(segmentID) %>"/>
+                                    <input type="hidden" name="segmentID" id="segmentID" value="<%= Encode.forHtmlAttribute(segmentID) %>"/>
                                     <input type="hidden" name="multiID" value="<%= Encode.forHtmlAttribute(multiLabId) %>" />
                                     <input type="hidden" name="providerNo" id="providerNo" value="<%= Encode.forHtmlAttribute(providerNo) %>"/>
                                     <input type="hidden" name="status" value="<%=Encode.forHtmlAttribute(labStatus)%>" id="labStatus_<%=Encode.forHtmlAttribute(segmentID)%>"/>
                                     <input type="hidden" name="comment" value=""/>
-                                    <input type="hidden" name="labType" value="HL7"/>
+                                    <input type="hidden" name="labType" id="labType" value="HL7"/>
                                     <%
                                     if ( !ackFlag ) {
                                     %>
@@ -917,7 +1127,18 @@ input[type=button], button, input[id^='acklabel_']{ font-size:12px !important;pa
 											</div>
 									<% } %>
 
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>" onclick="<%=ackLabFunc%>" >
+                                    <input type="button"
+                                        value="<bean:message key='oscarMDS.segmentDisplay.btnAcknowledge' />"
+                                        onclick="openFileDialog(false)" />
+
+                                    <% } else if (isLabNotFiledOrAckFlag) {
+                                        // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
+                                        // Case: Current provider has acknowledged the lab,
+                                        // but at least one of the linked providers has NOT filed or acknowledged
+                                    %>
+                                    <input type="button"
+                                        value="File for..."
+                                        onclick="openFileDialog(true)" />
                                     <% } %>
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
                                     <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=Encode.forJavaScript(segmentID)%> + ':HL7', '', '')" >
@@ -2149,8 +2370,21 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                         <table width="100%" border="0" cellspacing="0" cellpadding="3" class="MainTableBottomRowRightColumn" bgcolor="#003399">
                             <tr>
                                 <td align="left" width="50%">
-                                    <% if ( !ackFlag ) { %>
-                                    <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnAcknowledge" />" onclick="<%=ackLabFunc%>" >
+                                    <% if ( !ackFlag ) {
+                                        // Case: Current provider has not acknowledged the lab
+                                    %>
+                                    <input type="button"
+                                        value="<bean:message key='oscarMDS.segmentDisplay.btnAcknowledge' />"
+                                        onclick="openFileDialog(false)" />
+
+                                    <% } else if (isLabNotFiledOrAckFlag) { 
+                                        // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
+                                        // Case: Current provider has acknowledged the lab,
+                                        // but at least one of the linked providers has NOT filed or acknowledged
+                                    %>
+                                    <input type="button"
+                                        value="File for..."
+                                        onclick="openFileDialog(true)" />
                                     <% } %>
                                     <input type="button" value="<bean:message key="oscarMDS.segmentDisplay.btnComment"/>" onclick="return getComment('addComment',<%=Encode.forJavaScript(segmentID)%>);">
                                     <input type="button" class="smallButton" value="<bean:message key="oscarMDS.index.btnForward"/>" onClick="ForwardSelectedRows(<%=Encode.forJavaScript(segmentID)%> + ':HL7', '', '')" >
