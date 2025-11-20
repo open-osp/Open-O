@@ -67,45 +67,20 @@ RUN apt-get update && apt-get install -y pipx && \
     pipx ensurepath
 
 # Install Postfix for mail testing with default values
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix libsasl2-modules sasl2-bin
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
 
-# Configure Postfix
+# Configure Postfix for simple localhost operation
 RUN postconf -e 'myhostname=openo-dev.local' && \
     postconf -e 'mydestination=openo-dev.local, localhost' && \
-    postconf -e 'mynetworks=0.0.0.0/0' && \
-    postconf -e 'inet_interfaces=all' && \
+    postconf -e 'mynetworks=127.0.0.0/8, 10.0.0.0/8' && \
+    postconf -e 'inet_interfaces=localhost' && \
     postconf -e 'maillog_file=/var/log/mail.log' && \
-    postconf -e 'default_transport=discard' && \
-    postconf -e 'relay_transport=discard' && \
-    # Enable submission port (587) for STARTTLS
-    postconf -M submission/inet="submission inet n - n - - smtpd" && \
-    postconf -P "submission/inet/syslog_name=postfix/submission" && \
-    postconf -P "submission/inet/smtpd_tls_security_level=may" && \
-    postconf -P "submission/inet/smtpd_sasl_auth_enable=yes" && \
-    postconf -P "submission/inet/smtpd_tls_auth_only=no" && \
-    postconf -P "submission/inet/smtpd_client_restrictions=permit_sasl_authenticated,permit_mynetworks,reject" && \
-    # TLS configuration
-    postconf -e 'smtpd_use_tls=yes' && \
-    postconf -e 'smtpd_tls_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem' && \
-    postconf -e 'smtpd_tls_key_file=/etc/ssl/private/ssl-cert-snakeoil.key' && \
-    postconf -e 'smtpd_tls_security_level=may' && \
-    postconf -e 'smtpd_tls_protocols=!SSLv2,!SSLv3,!TLSv1,!TLSv1.1,TLSv1.2' && \
-    postconf -e 'smtpd_tls_mandatory_protocols=!SSLv2,!SSLv3,!TLSv1,!TLSv1.1,TLSv1.2' && \
-    postconf -e 'smtpd_tls_ciphers=high' && \
-    postconf -e 'smtpd_tls_mandatory_ciphers=high' && \
-    postconf -e 'smtpd_tls_loglevel=2' && \
-    # SASL authentication
-    postconf -e 'smtpd_sasl_auth_enable=yes' && \
-    postconf -e 'smtpd_sasl_type=cyrus' && \
-    postconf -e 'smtpd_sasl_path=smtpd' && \
-    postconf -e 'smtpd_sasl_local_domain=$myhostname' && \
-    postconf -e 'smtpd_sasl_security_options=noanonymous' && \
-    postconf -e 'broken_sasl_auth_clients=yes'
-
-    # Create test user for SASL authentication
-RUN echo 'testuser:testpass' | saslpasswd2 -c -p -u openo-dev.local testuser && \
-    chown postfix:sasl /etc/sasldb2 && \
-    chmod 640 /etc/sasldb2
+    # Disable all authentication and encryption
+    postconf -e 'smtpd_sasl_auth_enable=no' && \
+    postconf -e 'smtpd_use_tls=no' && \
+    postconf -e 'smtpd_tls_security_level=none' && \
+    # Allow local connections without auth
+    postconf -e 'smtpd_client_restrictions=permit_mynetworks,reject'
 
 # Create custom bashrc with tool reminders
 COPY ./config/bashrc /root/.bashrc
