@@ -86,7 +86,6 @@
 <%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
 <%@ page import="ca.openosp.openo.demographic.data.EctInformation" %>
 <%@ page import="ca.openosp.openo.demographic.data.RxInformation" %>
-<%-- EctConConfigurationJavascriptData import removed - now using AJAX via ConsultationLookup2Action --%>
 <%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
 <%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
 <%@ page import="ca.openosp.openo.managers.LookupListManager" %>
@@ -665,7 +664,6 @@
         var services = new Array();				// the following are used as a 2D table for makes and models
         var specialists = new Array();
         var specialistFaxNumber = "";
-        <%// Legacy JavaScript generation replaced with AJAX lookup - see ConsultationLookup2Action %>
 
         /////////////////////////////////////////////////////////////////////
         // Load services and specialists via AJAX (modern approach)
