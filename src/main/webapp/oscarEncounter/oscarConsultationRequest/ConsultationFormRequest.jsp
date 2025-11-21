@@ -679,9 +679,9 @@
                 return;
             }
             
-            K(-1, "----Choose a Service-------");
+            K(-1, "----All Services-------");
 
-            var defaultSpec = new Specialist(-1, "--------Choose a Specialist-----", "", "", "", "");
+            var defaultSpec = new Specialist(-1, "--------All Specialists-----", "", "", "", "", "");
             services[-1] = new Service();
             services[-1].specialists.push(defaultSpec);
 
@@ -926,7 +926,7 @@
             this.specName = SpecName;
             this.specFax = SpecFax;
             this.specAddress = SpecAddress;
-            this.specAnnotation = SpecAnnotation || "";
+            this.specAnnotation = SpecAnnotation || undefined;
         }
 
         //-------------------------------------------------------------------
@@ -1844,7 +1844,7 @@ if (userAgent != null) {
                             <td colspan="2">
                                 <table>
                                     <tr>
-                                        <td class="stat"><input type="radio" name="status" value="1"/>
+                                        <td class="stat"><input type="radio" name="status" value="1" <%="1".equals(thisForm.getStatus()) ? "checked" : ""%>/>
                                         </td>
                                         <td class="stat"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgNoth"/>:
                                         </td>
@@ -1856,7 +1856,7 @@ if (userAgent != null) {
                             <td colspan="2">
                                 <table>
                                     <tr>
-                                        <td class="stat"><input type="radio" name="status" value="2"/>
+                                        <td class="stat"><input type="radio" name="status" value="2" <%="2".equals(thisForm.getStatus()) ? "checked" : ""%>/>
                                         </td>
                                         <td class="stat"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgSpecCall"/>
                                         </td>
@@ -1868,7 +1868,7 @@ if (userAgent != null) {
                             <td colspan="2">
                                 <table>
                                     <tr>
-                                        <td class="stat"><input type="radio" name="status" value="3"/>
+                                        <td class="stat"><input type="radio" name="status" value="3" <%="3".equals(thisForm.getStatus()) ? "checked" : ""%>/>
                                         </td>
                                         <td class="stat"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgPatCall"/>
                                         </td>
@@ -1883,7 +1883,7 @@ if (userAgent != null) {
                             <td colspan="2">
                                 <table>
                                     <tr>
-                                        <td class="stat"><input type="radio" name="status" value="5"/>
+                                        <td class="stat"><input type="radio" name="status" value="5" <%="5".equals(thisForm.getStatus()) ? "checked" : ""%>/>
                                         </td>
                                         <td class="stat"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgBookCon"/>
                                         </td>
@@ -1898,7 +1898,7 @@ if (userAgent != null) {
                             <td colspan="2">
                                 <table>
                                     <tr>
-                                        <td class="stat"><input type="radio" name="status" value="4"/>
+                                        <td class="stat"><input type="radio" name="status" value="4" <%="4".equals(thisForm.getStatus()) ? "checked" : ""%>/>
                                         </td>
                                         <td class="stat"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgCompleted"/></td>
                                     </tr>
@@ -2161,7 +2161,7 @@ if (userAgent != null) {
                                                     if (request.getAttribute("id") != null) {
                                                 %>
                                                 <input type="text" id="referalDate" name="referalDate"
-                                                           ondblclick="this.value='';"/>
+                                                           ondblclick="this.value='';" value="<%=Encode.forHtmlAttribute(thisForm.getReferalDate())%>"/>
                                                 <%
                                                 } else {
                                                 %>
@@ -2259,13 +2259,13 @@ if (userAgent != null) {
                                         <td class="tite4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formUrgency"/></td>
                                         <td class="tite3">
                                             <select name="urgency" id="urgency">
-                                                <option value="2">
+                                                <option value="2" <%="2".equals(thisForm.getUrgency()) ? "selected" : ""%>>
                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgNUrgent"/>
                                                 </option>
-                                                <option value="1">
+                                                <option value="1" <%="1".equals(thisForm.getUrgency()) ? "selected" : ""%>>
                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgUrgent"/>
                                                 </option>
-                                                <option value="3">
+                                                <option value="3" <%="3".equals(thisForm.getUrgency()) ? "selected" : ""%>>
                                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgReturn"/>
                                                 </option>
                                             </select>
@@ -2316,7 +2316,7 @@ if (userAgent != null) {
                                                                var="appointmentInstruction">
                                                         <%-- Ensure that only active items are shown --%>
                                                         <c:if test="${ appointmentInstruction.active }">
-                                                            <option value="${ appointmentInstruction.value }">
+                                                            <option value="${ appointmentInstruction.value }" ${ EctConsultationFormRequest2Form.appointmentInstructions eq appointmentInstruction.value ? 'selected' : '' }>
                                                                 <c:out value="${ appointmentInstruction.label }"/>
                                                             </option>
                                                         </c:if>
@@ -2340,7 +2340,7 @@ if (userAgent != null) {
                                         <td class="tite3"><img alt="calendar" id="appointmentDate_cal"
                                                                src="<%= request.getContextPath() %>/images/cal.gif">
                                             <input type="text" id="appointmentDate" name="appointmentDate"
-                                                       readonly="true" ondblclick="this.value='';"/>
+                                                       readonly="true" ondblclick="this.value='';" value="<%=Encode.forHtmlAttribute(thisForm.getAppointmentDate())%>"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -2354,8 +2354,9 @@ if (userAgent != null) {
                                                         <%
                                                             for (int i = 1; i < 13; i = i + 1) {
                                                                 String hourOfday = Integer.toString(i);
+                                                                String selectedHour = (hourOfday.equals(thisForm.getAppointmentHour())) ? "selected" : "";
                                                         %>
-                                                        <option value="<%=hourOfday%>"><%=hourOfday%>
+                                                        <option value="<%=hourOfday%>" <%=selectedHour%>><%=hourOfday%>
                                                         </option>
                                                         <%
                                                             }
@@ -2369,16 +2370,17 @@ if (userAgent != null) {
                                                                 if (i < 10) {
                                                                     minuteOfhour = "0" + minuteOfhour;
                                                                 }
+                                                                String selectedMinute = (String.valueOf(i).equals(thisForm.getAppointmentMinute())) ? "selected" : "";
                                                         %>
-                                                        <option value="<%=String.valueOf(i)%>"><%=minuteOfhour%>
+                                                        <option value="<%=String.valueOf(i)%>" <%=selectedMinute%>><%=minuteOfhour%>
                                                         </option>
                                                         <%
                                                             }
                                                         %>
                                                     </select></td>
                                                     <td><select name="appointmentPm" id="appointmentPm">
-                                                        <option value="AM">AM</option>
-                                                        <option value="PM">PM</option>
+                                                        <option value="AM" <%="AM".equals(thisForm.getAppointmentPm()) ? "selected" : ""%>>AM</option>
+                                                        <option value="PM" <%="PM".equals(thisForm.getAppointmentPm()) ? "selected" : ""%>>PM</option>
                                                     </select></td>
                                                     <td><input type="button" value="Clear Date & Time"
                                                                onclick="clearAppointmentDateAndTime()"/></td>
@@ -2472,12 +2474,13 @@ if (userAgent != null) {
                                         <td class="tite4"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgSendTo"/>
                                         </td>
                                         <td class="tite3"><select name="sendTo" id="sendTo">
-                                            <option value="-1">---- <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgTeams"/> ----</option>
+                                            <option value="-1" <%="-1".equals(thisForm.getSendTo()) ? "selected" : ""%>>---- <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgTeams"/> ----</option>
                                             <%
                                                 for (int i = 0; i < consultUtil.teamVec.size(); i++) {
                                                     String te = (String) consultUtil.teamVec.elementAt(i);
+                                                    String selectedTeam = (te.equals(thisForm.getSendTo())) ? "selected" : "";
                                             %>
-                                            <option value="<%=te%>"><%=te%>
+                                            <option value="<%=te%>" <%=selectedTeam%>><%=te%>
                                             </option>
                                             <%
                                                 }
@@ -2491,7 +2494,7 @@ if (userAgent != null) {
                                     </tr>
                                     <tr>
                                         <td colspan="2" class="tite3"><textarea
-                                                name="appointmentNotes"></textarea></td>
+                                                name="appointmentNotes"><%=Encode.forHtmlContent(thisForm.getAppointmentNotes())%></textarea></td>
                                     </tr>
 
 
@@ -2501,7 +2504,7 @@ if (userAgent != null) {
                                         <td class="tite3">
                                             <img alt="calendar" id="followUpDate_cal" src="<%= request.getContextPath() %>/images/cal.gif"/>
                                             <input type="text" id="followUpDate" name="followUpDate"
-                                                       ondblclick="this.value='';"/>
+                                                       ondblclick="this.value='';" value="<%=thisForm.getFollowUpDate() != null ? Encode.forHtmlAttribute(thisForm.getFollowUpDate()) : ""%>"/>
                                         </td>
 
                                     </tr>
@@ -2537,16 +2540,16 @@ if (userAgent != null) {
                                         </td>
                                         <td class="tite1">
                                             <select name="letterheadName" id="letterheadName"
-                                                    onchange="switchProvider(this.value)">
-                                                <option value="<%=Encode.forHtmlAttribute(clinic.getClinicName())%>" <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(clinic.getClinicName())) ? "selected='selected'" : (lhndType.equals("clinic") ? "selected='selected'" : "") %>>
-                                                    <%=Encode.forHtmlContent(clinic.getClinicName()) %>
+                                                    onchange="switchProvider(this.value)">   
+                                                <option value="<%=Encode.forHtmlAttribute(clinic.getClinicName())%>" <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(clinic.getClinicName())) ? "selected" : (lhndType.equals("clinic") ? "selected" : "") %>>
+                                                <%=Encode.forHtmlContent(clinic.getClinicName()) %>
                                                 </option>
                                                 <%
                                                     for (Provider p : prList) {
                                                         if (p.getProviderNo().compareTo("-1") != 0 && (p.getFirstName() != null || p.getSurname() != null)) {
                                                 %>
                                                 <option value="<%=p.getProviderNo() %>"
-                                                        <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(p.getProviderNo())) ? "selected='selected'" : (consultUtil.letterheadName == null && p.getProviderNo().equalsIgnoreCase(providerDefault) && lhndType.equals("providers") ? "selected='selected'" : "") %>>
+                                                        <%=(thisForm.getLetterheadName() != null && !thisForm.getLetterheadName().isEmpty() && thisForm.getLetterheadName().equalsIgnoreCase(p.getProviderNo())) ? "selected" : ((thisForm.getLetterheadName() == null || thisForm.getLetterheadName().isEmpty()) && p.getProviderNo().equalsIgnoreCase(providerDefault) && lhndType.equals("providers") ? "selected" : "") %>>
                                                     <%=Encode.forHtmlContent(p.getSurname())%>
                                                     ,&nbsp;<%=Encode.forHtmlContent(p.getFirstName().replace("Dr.", ""))%>
                                                 </option>
@@ -2556,7 +2559,7 @@ if (userAgent != null) {
                                                     if (OscarProperties.getInstance().getBooleanProperty("consultation_program_letterhead_enabled", "true")) {
                                                         for (Program p : programList) {
                                                 %>
-                                                <option value="prog_<%=p.getId() %>" <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase("prog_" + p.getId()) ? "selected='selected'" : "") %>>
+                                                <option value="prog_<%=p.getId() %>" <%=(thisForm.getLetterheadName() != null && thisForm.getLetterheadName().equalsIgnoreCase("prog_" + p.getId()) ? "selected" : "") %>>
                                                     <%=Encode.forHtmlContent(p.getName()) %>
                                                 </option>
                                                 <% }
@@ -2719,7 +2722,7 @@ if (userAgent != null) {
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <textarea rows="10" name="reasonForConsultation"></textarea>
+                                <textarea rows="10" name="reasonForConsultation"><%=Encode.forHtmlContent(thisForm.getReasonForConsultation())%></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -2762,7 +2765,7 @@ if (userAgent != null) {
                         <tr>
                             <td colspan="2">
                                 <textarea rows="10" id="clinicalInformation"
-                                               name="clinicalInformation"></textarea></td>
+                                               name="clinicalInformation"><%=Encode.forHtmlContent(thisForm.getClinicalInformation())%></textarea></td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -2814,7 +2817,7 @@ if (userAgent != null) {
                             <td colspan=2>
 
                                 <textarea rows="10" id="concurrentProblems"
-                                               name="concurrentProblems"></textarea>
+                                               name="concurrentProblems"><%=Encode.forHtmlContent(thisForm.getConcurrentProblems())%></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -2845,7 +2848,7 @@ if (userAgent != null) {
                         <tr>
                             <td colspan=2>
                                 <textarea rows="10" id="currentMedications"
-                                               name="currentMedications"></textarea>
+                                               name="currentMedications"><%=Encode.forHtmlContent(thisForm.getCurrentMedications())%></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -2867,7 +2870,7 @@ if (userAgent != null) {
                         </tr>
                         <tr>
                             <td colspan=2>
-                                <textarea rows="10" id="allergies" name="allergies"></textarea></td>
+                                <textarea rows="10" id="allergies" name="allergies"><%=Encode.forHtmlContent(thisForm.getAllergies())%></textarea></td>
                         </tr>
 
                         <%
