@@ -2540,7 +2540,7 @@ if (userAgent != null) {
                                         </td>
                                         <td class="tite1">
                                             <select name="letterheadName" id="letterheadName"
-                                                    onchange="switchProvider(this.value)">   
+                                                    onchange="switchProvider(this.value)">
                                                 <option value="<%=Encode.forHtmlAttribute(clinic.getClinicName())%>" <%=(consultUtil.letterheadName != null && consultUtil.letterheadName.equalsIgnoreCase(clinic.getClinicName())) ? "selected" : (lhndType.equals("clinic") ? "selected" : "") %>>
                                                 <%=Encode.forHtmlContent(clinic.getClinicName()) %>
                                                 </option>
@@ -3110,7 +3110,7 @@ if (userAgent != null) {
             * Clinic address is set if no selection is detected.
             */
             if("${empty pageScope.consultUtil.letterheadName}" === "true") {
-                if("${pageScope.lhndType eq 'provider'}" === "true"){
+                if("${pageScope.lhndType eq 'providers'}" === "true"){
                     switchProvider("${pageScope.providerDefault}");
                 } else if("${pageScope.lhndType eq 'clinic'}" === "true"){
                     switchProvider("<%=clinic.getClinicName()%>");
