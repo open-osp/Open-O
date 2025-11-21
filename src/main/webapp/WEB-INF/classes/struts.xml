@@ -1931,8 +1931,8 @@
         <action name="provider/OlisPreferences" class="ca.openosp.openo.provider.web.OlisPreferences2Action">
             <result name="form">/provider/olis_preferences.jsp</result>
         </action>
-        <action name="searchProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action"/>
-        <action name="getProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action"/>
+        <action name="searchProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action" method="search"/>
+        <action name="getProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action" method="get"/>
         <action name="demographic/Contact" class="ca.openosp.openo.commn.web.Contact2Action">
             <result name="pForm">/demographic/addEditProfessionalContact.jsp</result>
             <result name="cForm">/demographic/addEditContact.jsp</result>
