@@ -128,7 +128,7 @@ public class EmailCompose2Action extends ActionSupport {
 
     /**
      * Cleans up email-related session attributes.
-     * This method is called after email composition to clear temporary session data.
+     * This method is called after transferring email composition data from session to request attributes, before rendering the compose screen.
      *
      * @param request the HTTP servlet request containing the session to clean up
      * @since 2025-01-18
