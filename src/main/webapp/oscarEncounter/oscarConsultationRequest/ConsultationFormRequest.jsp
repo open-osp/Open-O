@@ -86,8 +86,7 @@
 <%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
 <%@ page import="ca.openosp.openo.demographic.data.EctInformation" %>
 <%@ page import="ca.openosp.openo.demographic.data.RxInformation" %>
-<%@ page
-  import="ca.openosp.openo.encounter.oscarConsultationRequest.config.data.EctConConfigurationJavascriptData" %>
+<%-- EctConConfigurationJavascriptData import removed - now using AJAX via ConsultationLookup2Action --%>
 <%@ page import="ca.openosp.openo.lab.ca.on.CommonLabResultData" %>
 <%@ page import="ca.openosp.openo.lab.ca.on.LabResultData" %>
 <%@ page import="ca.openosp.openo.managers.LookupListManager" %>
@@ -666,13 +665,100 @@
         var services = new Array();				// the following are used as a 2D table for makes and models
         var specialists = new Array();
         var specialistFaxNumber = "";
-        <%EctConConfigurationJavascriptData configScript;
-				configScript = new EctConConfigurationJavascriptData();
-				out.println(configScript.getJavascript());%>
+        <%// Legacy JavaScript generation replaced with AJAX lookup - see ConsultationLookup2Action %>
 
         /////////////////////////////////////////////////////////////////////
+        // Load services and specialists via AJAX (modern approach)
         function initMaster() {
-            makeSpecialistslist(2);
+            loadServicesFromServer();
+        }
+
+        function loadServicesFromServer() {
+            // Get the service dropdown element
+            var serviceDropdown = document.getElementById('service');
+            if (!serviceDropdown) {
+                console.error('Service dropdown not found on page');
+                return;
+            }
+            
+            K(-1, "----Choose a Service-------");
+
+            var defaultSpec = new Specialist(-1, "--------Choose a Specialist-----", "", "", "", "");
+            services[-1] = new Service();
+            services[-1].specialists.push(defaultSpec);
+
+            // Fetch services from Struts2 action via AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getServices', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var serviceList = JSON.parse(xhr.responseText);
+                            processServices(serviceList);
+                        } catch(e) {
+                            console.error('Error parsing services JSON:', e);
+                        }
+                    } else {
+                        console.error('Error loading services: ' + xhr.status);
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function processServices(serviceList) {
+            var serviceDropdown = document.getElementById('service');
+            if (!serviceDropdown) {
+                console.error('Service dropdown not found');
+                return;
+            }
+
+            // Add each service to both the internal array and the HTML dropdown
+            for (var i = 0; i < serviceList.length; i++) {
+                var service = serviceList[i];
+                var serviceId = service.serviceId;
+                var serviceDesc = service.serviceDesc;
+
+                // Populate services array (using existing K() function)
+                K(serviceId, serviceDesc);
+
+                // Add option to the HTML dropdown
+                serviceDropdown.options[serviceDropdown.options.length] = new Option(serviceDesc, serviceId);
+
+                // Don't preload specialists - use lazy loading when service is selected
+            }
+        }
+
+        function loadSpecialistsForService(serviceId, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getSpecialists&serviceId=' + serviceId, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var specialistList = JSON.parse(xhr.responseText);
+                            processSpecialists(serviceId, specialistList);
+                            if (callback) {
+                                callback();
+                            }
+                        } catch(e) {
+                            console.error('Error parsing specialists JSON for service ' + serviceId + ':', e);
+                        }
+                    } else {
+                        console.error('Error loading specialists for service ' + serviceId + ': ' + xhr.status);
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function processSpecialists(serviceId, specialistList) {
+            for (var i = 0; i < specialistList.length; i++) {
+                var spec = specialistList[i];
+                // Use existing D() function to add specialist
+                D(serviceId, spec.specId, spec.phone, spec.name, spec.fax, spec.address, spec.annotation);
+            }
         }
 
         //-------------------------------------------------------------------
@@ -826,15 +912,15 @@
         /////////////////////////////////////////////////////////////////////
         // create car model objects and fill arrays
         //=======
-        function D(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress) {
-            var specialistObj = new Specialist(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress);
+        function D(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation) {
+            var specialistObj = new Specialist(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation);
             services[servNumber].specialists.push(specialistObj);
         }
 
         //-------------------------------------------------------------------
 
         /////////////////////////////////////////////////////////////////////
-        function Specialist(makeNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress) {
+        function Specialist(makeNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation) {
 
             this.specId = makeNumber;
             this.specNbr = specNum;
@@ -842,6 +928,7 @@
             this.specName = SpecName;
             this.specFax = SpecFax;
             this.specAddress = SpecAddress;
+            this.specAnnotation = SpecAnnotation || "";
         }
 
         //-------------------------------------------------------------------
@@ -879,18 +966,33 @@
             document.EctConsultationFormRequest2Form.phone.value = ("");
             document.EctConsultationFormRequest2Form.fax.value = ("");
             document.EctConsultationFormRequest2Form.address.value = ("");
+            document.getElementById("annotation").value = "";
 
             if (selectedIdx == 0) {
                 return;
             }
 
+            // Check if specialists are already loaded for this service
+            var specs = services[makeNbr].specialists;
+            if (specs && specs.length > 0) {
+                // Specialists already loaded, populate dropdown immediately
+                populateSpecialistDropdown(makeNbr);
+            } else {
+                // Specialists not loaded yet, load them via AJAX
+                loadSpecialistsForService(makeNbr, function() {
+                    populateSpecialistDropdown(makeNbr);
+                });
+            }
+        }
+
+        // Helper function to populate specialist dropdown
+        function populateSpecialistDropdown(serviceId) {
             var i = 1;
-            var specs = (services[makeNbr].specialists);
+            var specs = services[serviceId].specialists;
             for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
                 aPit = specs[specIndex];
                 document.EctConsultationFormRequest2Form.specialist.options[i++] = new Option(aPit.specName, aPit.specNbr);
             }
-
         }
 
         //-------------------------------------------------------------------
@@ -1021,6 +1123,7 @@
                 form.phone.value = ("");
                 form.fax.value = ("");
                 form.address.value = ("");
+                document.getElementById("annotation").value = "";
 
                 enableDisableRemoteReferralButton(form, true);
 

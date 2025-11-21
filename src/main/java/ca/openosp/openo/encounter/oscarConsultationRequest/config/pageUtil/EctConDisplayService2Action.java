@@ -72,8 +72,7 @@ public class EctConDisplayService2Action extends ActionSupport {
             dao.persist(ss);
         }
 
-        EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
-        constructSpecialistsScriptsFile.makeString(request.getLocale());
+        // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
         return SUCCESS;
     }
 

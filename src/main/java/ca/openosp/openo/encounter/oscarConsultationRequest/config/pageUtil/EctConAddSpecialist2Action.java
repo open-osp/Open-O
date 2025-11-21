@@ -103,8 +103,7 @@ public class EctConAddSpecialist2Action extends ActionSupport {
             }
             professionalSpecialistDao.merge(professionalSpecialist);
 
-            EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
-            constructSpecialistsScriptsFile.makeString(request.getLocale());
+            // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
         } else {
             logger.error("missed a case, whichType=" + whichType);
         }

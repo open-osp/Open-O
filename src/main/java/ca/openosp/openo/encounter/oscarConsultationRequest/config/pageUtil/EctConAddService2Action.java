@@ -61,8 +61,7 @@ public class EctConAddService2Action extends ActionSupport {
         consultationServiceDao.persist(cs);
         request.setAttribute("SERVADD", service);
 
-        EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
-        constructSpecialistsScriptsFile.makeString(request.getLocale());
+        // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
         return SUCCESS;
     }
 

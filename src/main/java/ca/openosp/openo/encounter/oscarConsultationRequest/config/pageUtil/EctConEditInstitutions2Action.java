@@ -68,8 +68,7 @@ public class EctConEditInstitutions2Action extends ActionSupport {
                     institutionDao.remove(Integer.parseInt(specialists[i]));
                 }
             }
-            EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
-            constructSpecialistsScriptsFile.makeString(request.getLocale());
+            // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
             return "delete";
         }
 
@@ -95,9 +94,8 @@ public class EctConEditInstitutions2Action extends ActionSupport {
 
 
         request.setAttribute("upd", Integer.valueOf(updater));
-        EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
-        request.setAttribute("verd", constructSpecialistsScriptsFile.makeFile());
-        constructSpecialistsScriptsFile.makeString(request.getLocale());
+        // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
+        request.setAttribute("verd", "Success"); // Previously returned makeFile() result
         return SUCCESS;
     }
 
