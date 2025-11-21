@@ -1152,10 +1152,11 @@
 
             for (var idx = 0; idx < specs.length; ++idx) {
                 aSpeci = specs[idx];									// get the specialist Object for the currently selected spec
-                if (aSpeci.specNbr === SelectedSpec.value) {
+                if (aSpeci.specNbr == SelectedSpec.value) {
                     form.phone.value = (aSpeci.phoneNum.replace(null, ""));
                     form.fax.value = (aSpeci.specFax.replace(null, ""));					// load the text fields with phone fax and address
                     form.address.value = (aSpeci.specAddress.replace(null, ""));
+                    form.annotation.value = (aSpeci.specAnnotation.replace(null, ""));
 
                     //since there is a match make sure the dislaimer is hidden
                     document.getElementById("consult-disclaimer").style.display = 'none';
@@ -1172,8 +1173,6 @@
                             console.log(xml);
                             let hasUrl = xml.eDataUrl != null && xml.eDataUrl !== "";
                             enableDisableRemoteReferralButton(form, !hasUrl);
-                            let annotation = document.getElementById("annotation");
-                            annotation.value = xml.annotation;
                             updateEFormLink(xml.eformId)
                         }
                     );
