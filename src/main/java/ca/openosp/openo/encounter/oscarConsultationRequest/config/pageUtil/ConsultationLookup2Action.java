@@ -71,7 +71,7 @@ public class ConsultationLookup2Action extends ActionSupport {
             return getSpecialists();
         }
 
-        return ERROR;
+        return NONE;
     }
 
     /**
@@ -109,7 +109,7 @@ public class ConsultationLookup2Action extends ActionSupport {
             } catch (IOException ioException) {
                 MiscUtils.getLogger().error("Error sending error response", ioException);
             }
-            return ERROR;
+            return null;
         }
     }
 
@@ -169,7 +169,7 @@ public class ConsultationLookup2Action extends ActionSupport {
             } catch (IOException ioException) {
                 MiscUtils.getLogger().error("Error sending error response", ioException);
             }
-            return ERROR;
+            return null;
         }
     }
 

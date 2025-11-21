@@ -987,6 +987,7 @@
         function populateSpecialistDropdown(serviceId) {
             var i = 1;
             var specs = services[serviceId].specialists;
+            document.EctConsultationFormRequest2Form.specialist.options.length = 1;
             for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
                 aPit = specs[specIndex];
                 document.EctConsultationFormRequest2Form.specialist.options[i++] = new Option(aPit.specName, aPit.specNbr);
