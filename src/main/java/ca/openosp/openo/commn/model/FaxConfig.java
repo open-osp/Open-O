@@ -270,8 +270,13 @@ public class FaxConfig extends AbstractModel<Integer> {
     @PrePersist
     @PreUpdate
     private void encryptPasswords() {
-        this.encryptedPasswd = encryptPassword(passwd, "passwd");
-        this.encryptedFaxPasswd = encryptPassword(faxPasswd, "faxPasswd");
+        // Only encrypt and overwrite if plaintext password is non-null and non-empty
+        if (passwd != null && !passwd.isEmpty()) {
+            this.encryptedPasswd = encryptPassword(passwd, "passwd");
+        }
+        if (faxPasswd != null && !faxPasswd.isEmpty()) {
+            this.encryptedFaxPasswd = encryptPassword(faxPasswd, "faxPasswd");
+        }
     }
 
     /**
