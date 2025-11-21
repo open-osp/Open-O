@@ -70,7 +70,7 @@ public class EmailCompose2Action extends ActionSupport {
         String emailPatientChartOption = (String) session.getAttribute("emailPatientChartOption");
 
         // Don't clean up session attributes here - they are needed by the JSP
-        // Session cleanup will be done in EmailSend2Action after email is sent
+        // Session cleanup is performed in this action immediately after transferring session data to request attributes.
 
         String[] emailConsent = emailComposeManager.getEmailConsentStatus(loggedInInfo, Integer.parseInt(demographicId));
 
