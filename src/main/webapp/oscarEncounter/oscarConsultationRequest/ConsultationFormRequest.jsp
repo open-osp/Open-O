@@ -721,8 +721,17 @@
                 // Populate services array (using existing K() function)
                 K(serviceId, serviceDesc);
 
-                // Add option to the HTML dropdown
-                serviceDropdown.options[serviceDropdown.options.length] = new Option(serviceDesc, serviceId);
+                // Only add option to dropdown if it doesn't already exist (prevents duplicates)
+                var optionExists = false;
+                for (var idx = 0; idx < serviceDropdown.options.length; idx++) {
+                    if (serviceDropdown.options[idx].value == serviceId) {
+                        optionExists = true;
+                        break;
+                    }
+                }
+                if (!optionExists) {
+                    serviceDropdown.options[serviceDropdown.options.length] = new Option(serviceDesc, serviceId);
+                }
 
                 // Don't preload specialists - use lazy loading when service is selected
             }
@@ -1106,8 +1115,22 @@
                     opt.selected = true;
                     fillSpecialistSelect1(pair.value);
                 }
-                $("service").options.add(opt);
-
+                // Only add option if it doesn't already exist in the dropdown (prevents duplicates)
+                var serviceDropdown = document.getElementById('service');
+                var optionExists = false;
+                for (var idx = 0; idx < serviceDropdown.options.length; idx++) {
+                    if (serviceDropdown.options[idx].value == pair.value) {
+                        optionExists = true;
+                        // If this is the saved service, select the existing option
+                        if (pair.value == strSer) {
+                            serviceDropdown.options[idx].selected = true;
+                        }
+                        break;
+                    }
+                }
+                if (!optionExists) {
+                    $("service").options.add(opt);
+                }
             });
 
         }
