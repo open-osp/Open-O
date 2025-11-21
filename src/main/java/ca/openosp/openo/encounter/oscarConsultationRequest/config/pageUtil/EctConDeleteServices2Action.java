@@ -67,7 +67,8 @@ public class EctConDeleteServices2Action extends ActionSupport {
                 }
             }
         }
-        // Legacy JavaScript generation removed - now using AJAX via ConsultationLookup2Action
+        EctConConstructSpecialistsScriptsFile constructSpecialistsScriptsFile = new EctConConstructSpecialistsScriptsFile();
+        constructSpecialistsScriptsFile.makeString(request.getLocale());
         return SUCCESS;
     }
     public String[] getService() {
