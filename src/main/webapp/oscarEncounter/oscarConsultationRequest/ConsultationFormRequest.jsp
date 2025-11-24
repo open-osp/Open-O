@@ -771,13 +771,20 @@
         function populateSpecialistDropdown(serviceId, savedSpecialistId) {
             var dropdown = document.EctConsultationFormRequest2Form.specialist;
             var defaultSpec = services[-1].specialists[0];
+            var isExistingConsultation = (requestId && requestId != "null" && requestId != "");
 
-            // Clear and add "All Specialists" at index 0
+            // Clear dropdown
             dropdown.options.length = 0;
-            dropdown.options[0] = new Option(defaultSpec.specName, defaultSpec.specNbr);
+
+            // For existing consultations, use blank first option; for new, use "All Specialists"
+            if (isExistingConsultation) {
+                dropdown.options[0] = new Option("", "");
+            } else {
+                dropdown.options[0] = new Option(defaultSpec.specName, defaultSpec.specNbr);
+            }
 
             if (!serviceId || serviceId == "-1" || serviceId == "null") {
-                return; // No service selected, just show "All Specialists"
+                return; // No service selected
             }
 
             var specs = services[serviceId] ? services[serviceId].specialists : [];
