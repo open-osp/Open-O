@@ -138,7 +138,7 @@ public class RptLabReportData {
                         + " and to_days(now()) - to_days(formCreated) <=  " + " (to_days( now() ) - to_days( date_sub( now(), interval " + days + " month ) ) )";
 
                 // Build parameters map
-                java.util.Map<String, Object> params = new java.util.HashMap<>();
+                Map<String, Object> params = new HashMap<>();
                 params.put("demoNo", demoNo);
 
                 Consult con;
