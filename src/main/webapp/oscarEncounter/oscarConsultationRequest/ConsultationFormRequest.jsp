@@ -664,41 +664,34 @@
         var services = new Array();				// the following are used as a 2D table for makes and models
         var specialists = new Array();
         var specialistFaxNumber = "";
+        var servicesLoaded = false;  // Flag to track if services have been loaded
 
         /////////////////////////////////////////////////////////////////////
-        // Load services and specialists via AJAX (modern approach)
-        function initMaster() {
-            loadServicesFromServer();
-        }
-
-        function loadServicesFromServer() {
-            // Get the service dropdown element
+        // Load services via AJAX - accepts callback for proper sequencing
+        function loadServicesFromServer(callback) {
             var serviceDropdown = document.getElementById('service');
             if (!serviceDropdown) {
                 console.error('Service dropdown not found on page');
                 return;
             }
-            
-            K(-1, "----All Services-------");
 
-            var defaultSpec = new Specialist(-1, "--------All Specialists-----", "", "", "", "", "");
+            // Initialize default service and specialist
+            K(-1, "----All Services-------");
+            var defaultSpec = new Specialist(-1, -1, "", "--------All Specialists-----", "", "", "");
             services[-1] = new Service();
             services[-1].specialists.push(defaultSpec);
 
-            // Fetch services from Struts2 action via AJAX
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getServices', true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var serviceList = JSON.parse(xhr.responseText);
-                            processServices(serviceList);
-                        } catch(e) {
-                            console.error('Error parsing services JSON:', e);
-                        }
-                    } else {
-                        console.error('Error loading services: ' + xhr.status);
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var serviceList = JSON.parse(xhr.responseText);
+                        processServices(serviceList);
+                        servicesLoaded = true;
+                        if (callback) callback();
+                    } catch(e) {
+                        console.error('Error parsing services JSON:', e);
                     }
                 }
             };
@@ -707,65 +700,93 @@
 
         function processServices(serviceList) {
             var serviceDropdown = document.getElementById('service');
-            if (!serviceDropdown) {
-                console.error('Service dropdown not found');
-                return;
-            }
-
-            // Add each service to both the internal array and the HTML dropdown
             for (var i = 0; i < serviceList.length; i++) {
                 var service = serviceList[i];
-                var serviceId = service.serviceId;
-                var serviceDesc = service.serviceDesc;
+                K(service.serviceId, service.serviceDesc);
 
-                // Populate services array (using existing K() function)
-                K(serviceId, serviceDesc);
-
-                // Only add option to dropdown if it doesn't already exist (prevents duplicates)
-                var optionExists = false;
+                // Add to dropdown if not exists
+                var exists = false;
                 for (var idx = 0; idx < serviceDropdown.options.length; idx++) {
-                    if (serviceDropdown.options[idx].value == serviceId) {
-                        optionExists = true;
+                    if (serviceDropdown.options[idx].value == service.serviceId) {
+                        exists = true;
                         break;
                     }
                 }
-                if (!optionExists) {
-                    serviceDropdown.options[serviceDropdown.options.length] = new Option(serviceDesc, serviceId);
+                if (!exists) {
+                    serviceDropdown.options[serviceDropdown.options.length] = new Option(service.serviceDesc, service.serviceId);
                 }
-
-                // Don't preload specialists - use lazy loading when service is selected
             }
         }
 
+        /////////////////////////////////////////////////////////////////////
+        // Load specialists for a service via AJAX
         function loadSpecialistsForService(serviceId, callback) {
+            // Check if already loaded
+            if (services[serviceId] && services[serviceId].specialists.length > 0) {
+                if (callback) callback();
+                return;
+            }
+
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getSpecialists&serviceId=' + serviceId, true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        try {
-                            var specialistList = JSON.parse(xhr.responseText);
-                            processSpecialists(serviceId, specialistList);
-                            if (callback) {
-                                callback();
-                            }
-                        } catch(e) {
-                            console.error('Error parsing specialists JSON for service ' + serviceId + ':', e);
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    try {
+                        var specialistList = JSON.parse(xhr.responseText);
+                        // Ensure service exists in array before adding specialists
+                        if (!services[serviceId]) {
+                            services[serviceId] = new Service();
                         }
-                    } else {
-                        console.error('Error loading specialists for service ' + serviceId + ': ' + xhr.status);
+                        // Clear existing specialists to prevent duplicates on reload
+                        services[serviceId].specialists = [];
+                        for (var i = 0; i < specialistList.length; i++) {
+                            var spec = specialistList[i];
+                            addSpecialist(serviceId, spec.specId, spec.phone, spec.name, spec.fax, spec.address, spec.annotation);
+                        }
+                        if (callback) callback();
+                    } catch(e) {
+                        console.error('Error parsing specialists JSON:', e);
                     }
                 }
             };
             xhr.send();
         }
 
-        function processSpecialists(serviceId, specialistList) {
-            for (var i = 0; i < specialistList.length; i++) {
-                var spec = specialistList[i];
-                // Use existing D() function to add specialist
-                D(serviceId, spec.specId, spec.phone, spec.name, spec.fax, spec.address, spec.annotation);
+        /////////////////////////////////////////////////////////////////////
+        // Add specialist to array (with duplicate check)
+        function addSpecialist(serviceId, specId, phone, name, fax, address, annotation) {
+            var specs = services[serviceId].specialists;
+            for (var i = 0; i < specs.length; i++) {
+                if (specs[i].specNbr == specId) return; // Already exists
             }
+            specs.push(new Specialist(serviceId, specId, phone, name, fax, address, annotation));
+        }
+
+        /////////////////////////////////////////////////////////////////////
+        // Single function to populate specialist dropdown - handles all cases
+        function populateSpecialistDropdown(serviceId, savedSpecialistId) {
+            var dropdown = document.EctConsultationFormRequest2Form.specialist;
+            var defaultSpec = services[-1].specialists[0];
+
+            // Clear and add "All Specialists" at index 0
+            dropdown.options.length = 0;
+            dropdown.options[0] = new Option(defaultSpec.specName, defaultSpec.specNbr);
+
+            if (!serviceId || serviceId == "-1" || serviceId == "null") {
+                return; // No service selected, just show "All Specialists"
+            }
+
+            var specs = services[serviceId] ? services[serviceId].specialists : [];
+            var foundSaved = false;
+
+            for (var i = 0; i < specs.length; i++) {
+                var spec = specs[i];
+                var isSelected = (savedSpecialistId && spec.specNbr == savedSpecialistId);
+                if (isSelected) foundSaved = true;
+                dropdown.options[dropdown.options.length] = new Option(spec.specName, spec.specNbr, false, isSelected);
+            }
+
+            return foundSaved;
         }
 
         //-------------------------------------------------------------------
@@ -917,18 +938,8 @@
 
         //------------------------------------------------------------------------------------------
         /////////////////////////////////////////////////////////////////////
-        // create car model objects and fill arrays
-        //=======
-        function D(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation) {
-            var specialistObj = new Specialist(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation);
-            services[servNumber].specialists.push(specialistObj);
-        }
-
-        //-------------------------------------------------------------------
-
-        /////////////////////////////////////////////////////////////////////
+        // Specialist constructor
         function Specialist(makeNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation) {
-
             this.specId = makeNumber;
             this.specNbr = specNum;
             this.phoneNum = phoneNum;
@@ -938,201 +949,108 @@
             this.specAnnotation = SpecAnnotation || undefined;
         }
 
-        //-------------------------------------------------------------------
-
-        /////////////////////////////////////////////////////////////////////
-        // make name constructor
-        function ServicesName(makeNumber) {
-
-            this.serviceNumber = makeNumber;
-        }
-
-        //-------------------------------------------------------------------
-
-        /////////////////////////////////////////////////////////////////////
-        // make constructor
+        // Service constructor
         function Service() {
-
             this.specialists = new Array();
         }
 
+        // Service name constructor (legacy)
+        function ServicesName(makeNumber) {
+            this.serviceNumber = makeNumber;
+        }
+
+        // Legacy D() function - now uses addSpecialist
+        function D(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation) {
+            if (!services[servNumber]) {
+                services[servNumber] = new Service();
+            }
+            addSpecialist(servNumber, specNum, phoneNum, SpecName, SpecFax, SpecAddress, SpecAnnotation);
+        }
+
         //-------------------------------------------------------------------
 
         /////////////////////////////////////////////////////////////////////
-        // construct model selection on page
+        // Called when user changes service dropdown
         function fillSpecialistSelect(aSelectedService) {
-
-            document.getElementById("eFormButton").style.display = "none"; //added here to immediately hide button if the service is changed
+            document.getElementById("eFormButton").style.display = "none";
 
             var selectedIdx = aSelectedService.selectedIndex;
-            var makeNbr = (aSelectedService.options[selectedIdx]).value;
+            var serviceId = (aSelectedService.options[selectedIdx]).value;
 
-            document.EctConsultationFormRequest2Form.specialist.options.selectedIndex = 0;
-            document.EctConsultationFormRequest2Form.specialist.options.length = 1;
-
-            document.EctConsultationFormRequest2Form.phone.value = ("");
-            document.EctConsultationFormRequest2Form.fax.value = ("");
-            document.EctConsultationFormRequest2Form.address.value = ("");
+            // Clear form fields
+            document.EctConsultationFormRequest2Form.phone.value = "";
+            document.EctConsultationFormRequest2Form.fax.value = "";
+            document.EctConsultationFormRequest2Form.address.value = "";
             document.getElementById("annotation").value = "";
 
-            if (selectedIdx == 0) {
+            if (selectedIdx == 0 || serviceId == "-1") {
+                populateSpecialistDropdown(null, null);
                 return;
             }
 
-            // Check if specialists are already loaded for this service
-            var specs = services[makeNbr].specialists;
-            if (specs && specs.length > 0) {
-                // Specialists already loaded, populate dropdown immediately
-                populateSpecialistDropdown(makeNbr);
-            } else {
-                // Specialists not loaded yet, load them via AJAX
-                loadSpecialistsForService(makeNbr, function() {
-                    populateSpecialistDropdown(makeNbr);
-                });
-            }
-        }
-
-        // Helper function to populate specialist dropdown
-        function populateSpecialistDropdown(serviceId) {
-            var i = 1;
-            var specs = services[serviceId].specialists;
-            document.EctConsultationFormRequest2Form.specialist.options.length = 1;
-            for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
-                aPit = specs[specIndex];
-                document.EctConsultationFormRequest2Form.specialist.options[i++] = new Option(aPit.specName, aPit.specNbr);
-            }
+            // Load specialists and populate dropdown
+            loadSpecialistsForService(serviceId, function() {
+                populateSpecialistDropdown(serviceId, null);
+            });
         }
 
         //-------------------------------------------------------------------
 
         /////////////////////////////////////////////////////////////////////
-        function fillSpecialistSelect1(makeNbr) {
-            //document.EctConsultationFormRequest2Form.specialist.options.length = 1;
+        // Initialize consultation - called AFTER services are loaded
+        function initializeConsultation(savedService, savedServiceName, savedSpecialist, savedSpecName, savedPhone, savedFax, savedAddress) {
+            var serviceDropdown = document.getElementById('service');
 
-            var specs = (services[makeNbr].specialists);
-            var i = 1;
-            var match = false;
-
-            for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
-                aPit = specs[specIndex];
-
-                if (aPit.specNbr == "<%=consultUtil.specialist%>") {
-                    //look for matching specialist on spec list and make option selected
-                    match = true;
-                    document.EctConsultationFormRequest2Form.specialist.options[i] = new Option(aPit.specName, aPit.specNbr, false, true);
-                } else {
-                    //add specialist on list as normal
-                    document.EctConsultationFormRequest2Form.specialist.options[i] = new Option(aPit.specName, aPit.specNbr);
+            // Check if saved service exists in loaded services
+            var serviceExists = false;
+            for (var idx = 0; idx < serviceDropdown.options.length; idx++) {
+                if (serviceDropdown.options[idx].value == savedService) {
+                    serviceDropdown.options[idx].selected = true;
+                    serviceExists = true;
+                    break;
                 }
-
-                i++;
             }
 
-            <%if(requestId!=null){ %>
-            if (!match) {
-                //if no match then most likely doctor has been removed from specialty list so just add specialist
-                document.EctConsultationFormRequest2Form.specialist.options[0] = new Option("<%=consultUtil.getSpecailistsName(consultUtil.specialist)%>", "<%=consultUtil.specialist%>", false, true);
+            // If service was deleted but we have saved data, add it
+            if (!serviceExists && savedService && savedService != "null") {
+                K(savedService, savedServiceName);
+                serviceDropdown.options[serviceDropdown.options.length] = new Option(savedServiceName, savedService, false, true);
 
-                //don't display if no consultant was saved
-                <%if( ! "null".equals(consultUtil.specialist) ){%>
-                document.getElementById("consult-disclaimer").style.display = 'inline';
-                <%}else{%>
-                //display so user knows why field is empty
-                document.EctConsultationFormRequest2Form.specialist.options[0] = new Option("No Consultant Saved", "-1");
-                <%}%>
-            }
-            <%}%>
-
-        }
-
-        //-------------------------------------------------------------------f
-
-        /////////////////////////////////////////////////////////////////////
-        function setSpec(servNbr, specialNbr) {
-//    //window.alert("get Called");
-            specs = (services[servNbr].specialists);
-//    //window.alert("got specs");
-            var i = 1;
-            var NotSelected = true;
-
-            for (var specIndex = 0; specIndex < specs.length; ++specIndex) {
-//      //  window.alert("loop");
-                aPit = specs[specIndex];
-                if (aPit.specNbr == specialNbr) {
-//        //    window.alert("if");
-                    document.EctConsultationFormRequest2Form.specialist.options[i].selected = true;
-                    NotSelected = false;
-                }
-
-                i++;
-            }
-
-            if (NotSelected)
-                document.EctConsultationFormRequest2Form.specialist.options[0].selected = true;
-//    window.alert("exiting");
-
-        }
-
-        //=------------------------------------------------------------------
-
-        /////////////////////////////////////////////////////////////////////
-        //insert first option title into specialist drop down list select box
-        function initSpec() {
-            <%if(requestId==null){ %>
-            var aSpecialist = services["-1"].specialists[0];
-            document.EctConsultationFormRequest2Form.specialist.options[0] = new Option(aSpecialist.specNbr, aSpecialist.specId);
-            <%}%>
-        }
-
-        /////////////////////////////////////////////////////////////////////
-        function initService(ser, name, spec, specname, phone, fax, address) {
-            var i = 0;
-            var isSel = 0;
-            var strSer = new String(ser);
-            var strNa = new String(name);
-            var strSpec = new String(spec);
-            var strSpecNa = new String(specname);
-            var strPhone = new String(phone);
-            var strFax = new String(fax);
-            var strAddress = new String(address);
-
-            var isSerDel = 1;//flagging service if deleted: 1=deleted 0=active
-
-            $H(servicesName).each(function (pair) {
-                if (pair.value == strSer) {
-                    isSerDel = 0;
-                }
-            });
-
-            if (isSerDel == 1 && strSer != "null") {
-                K(strSer, strNa);
-                D(strSer, strSpec, strPhone, strSpecNa, strFax, strAddress);
-            }
-
-            $H(servicesName).each(function (pair) {
-                var opt = new Option(pair.key, pair.value);
-                if (pair.value == strSer) {
-                    opt.selected = true;
-                    fillSpecialistSelect1(pair.value);
-                }
-                // Only add option if it doesn't already exist in the dropdown (prevents duplicates)
-                var serviceDropdown = document.getElementById('service');
-                var optionExists = false;
-                for (var idx = 0; idx < serviceDropdown.options.length; idx++) {
-                    if (serviceDropdown.options[idx].value == pair.value) {
-                        optionExists = true;
-                        // If this is the saved service, select the existing option
-                        if (pair.value == strSer) {
-                            serviceDropdown.options[idx].selected = true;
-                        }
-                        break;
+                // Also add the specialist for this deleted service
+                if (savedSpecialist && savedSpecialist != "null") {
+                    if (!services[savedService]) {
+                        services[savedService] = new Service();
                     }
+                    addSpecialist(savedService, savedSpecialist, savedPhone, savedSpecName, savedFax, savedAddress, "");
                 }
-                if (!optionExists) {
-                    $("service").options.add(opt);
-                }
-            });
+            }
 
+            // Now load specialists for the saved service
+            if (savedService && savedService != "null") {
+                loadSpecialistsForService(savedService, function() {
+                    var foundSaved = populateSpecialistDropdown(savedService, savedSpecialist);
+
+                    <%if(requestId!=null){ %>
+                    // Handle case where saved specialist no longer exists
+                    if (!foundSaved && savedSpecialist && savedSpecialist != "null") {
+                        var dropdown = document.EctConsultationFormRequest2Form.specialist;
+                        // Replace "All Specialists" with the saved specialist name
+                        dropdown.options[0] = new Option("<%=consultUtil.getSpecailistsName(consultUtil.specialist)%>", savedSpecialist, false, true);
+                        document.getElementById("consult-disclaimer").style.display = 'inline';
+                    } else if (!savedSpecialist || savedSpecialist == "null") {
+                        var dropdown = document.EctConsultationFormRequest2Form.specialist;
+                        dropdown.options[0] = new Option("No Consultant Saved", "-1", false, true);
+                    }
+                    <%}%>
+
+                    // Fill phone/fax/address fields
+                    FillThreeBoxes(savedSpecialist);
+                    onSelectSpecialist(document.EctConsultationFormRequest2Form.specialist);
+                });
+            } else {
+                // New consultation - just show "All Specialists"
+                populateSpecialistDropdown(null, null);
+            }
         }
 
         //-------------------------------------------------------------------
@@ -2983,65 +2901,23 @@ if (userAgent != null) {
                         </tr>
                         <% } %>
 
-                        <script type="text/javascript">
-                            //<!--
-                            function initConsultationServices() {
-                                initMaster();
-                                initService('<%=consultUtil.service%>', '<%=((consultUtil.service==null)?"":Encode.forJavaScript(consultUtil.getServiceName(consultUtil.service.toString())))%>', '<%=consultUtil.specialist%>', '<%=((consultUtil.specialist==null)?"":Encode.forJavaScript(consultUtil.getSpecailistsName(consultUtil.specialist.toString())))%>', '<%=Encode.forJavaScript(consultUtil.specPhone)%>', '<%=Encode.forJavaScript(consultUtil.specFax)%>', '<%=Encode.forJavaScript(consultUtil.specAddr)%>');
-                                initSpec();
-
-                                document.EctConsultationFormRequest2Form.phone.value = ("");
-                                document.EctConsultationFormRequest2Form.fax.value = ("");
-                                document.EctConsultationFormRequest2Form.address.value = ("");
-                                <%if (request.getAttribute("id") != null)
-							{%>
-                                setSpec('<%=consultUtil.service%>', '<%=consultUtil.specialist%>');
-                                FillThreeBoxes('<%=consultUtil.specialist%>');
-                                <%}
-							else
-							{%>
-                                document.EctConsultationFormRequest2Form.service.options.selectedIndex = 0;
-                                document.EctConsultationFormRequest2Form.specialist.options.selectedIndex = 0;
-                                <%}%>
-
-                                onSelectSpecialist(document.EctConsultationFormRequest2Form.specialist);
-
-                                <%
-		            	//specialist pre-selected
-		            	String reqService = request.getParameter("service");
-
-		            	String reqSpecialist = request.getParameter("specialist");
-
-		            	if(reqService != null && reqSpecialist != null) {
-		            		ConsultationServices consultService = consultationServiceDao.findByDescription(reqService);
-		            		if(consultService != null) {
-		            		%>
-                                jQuery("#service").val('<%=consultService.getId()%>');
-                                fillSpecialistSelect(document.getElementById('service'));
-                                jQuery("#specialist").val('<%=reqSpecialist%>');
-                                onSelectSpecialist(document.getElementById('specialist'));
-                                <%
-		            	} }
-
-		            	String serviceId = request.getParameter("serviceId");
-		            	if(serviceId != null) {
-		            		%>
-                                jQuery("#service").val('<%=serviceId%>');
-                                fillSpecialistSelect(document.getElementById('service'));
-                                <%
-		            	}
-		            %>
-                            }
-
-                            //-->
-                        </script>
-
                         <oscar:oscarPropertiesCheck value="false"
                                                     property="ENABLE_HEALTH_CARE_TEAM_IN_CONSULTATION_REQUESTS"
                                                     defaultVal="false">
                             <script type="text/javascript">
                                 //<!--
-                                initConsultationServices();
+                                // Load services first, then initialize consultation with saved data
+                                loadServicesFromServer(function() {
+                                    initializeConsultation(
+                                        '<%=consultUtil.service%>',
+                                        '<%=((consultUtil.service==null)?"":Encode.forJavaScript(consultUtil.getServiceName(consultUtil.service.toString())))%>',
+                                        '<%=consultUtil.specialist%>',
+                                        '<%=((consultUtil.specialist==null)?"":Encode.forJavaScript(consultUtil.getSpecailistsName(consultUtil.specialist.toString())))%>',
+                                        '<%=Encode.forJavaScript(consultUtil.specPhone)%>',
+                                        '<%=Encode.forJavaScript(consultUtil.specFax)%>',
+                                        '<%=Encode.forJavaScript(consultUtil.specAddr)%>'
+                                    );
+                                });
                                 //-->
                             </script>
                         </oscar:oscarPropertiesCheck>
