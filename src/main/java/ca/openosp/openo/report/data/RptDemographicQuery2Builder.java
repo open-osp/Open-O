@@ -103,13 +103,14 @@ public class RptDemographicQuery2Builder {
 
         String asofDate = frm.getAsofDate();
         String asofDateSql; // SQL representation (either CURRENT_DATE or :asofDate parameter)
+        boolean useAsofDateParam = false; // Track whether :asofDate parameter will be used in the SQL
 
         if (asofDate == null || asofDate.trim().isEmpty()
                 || UtilDateUtilities.getDateFromString(asofDate, "yyyy-MM-dd") == null) {
             asofDateSql = "CURRENT_DATE";
         } else {
             asofDateSql = ":asofDate";
-            params.put("asofDate", asofDate);
+            useAsofDateParam = true;
         }
 
         RptDemographicColumnNames demoCols = new RptDemographicColumnNames();
@@ -236,6 +237,11 @@ public class RptDemographicQuery2Builder {
                 }
                 theFirstFlag = 1;
                 break;
+        }
+
+        // Only add asofDate param if it's actually used in the SQL (i.e., an age filter case was executed)
+        if (useAsofDateParam && yStyle >= 1 && yStyle <= 4) {
+            params.put("asofDate", asofDate);
         }
 
         if (rosterStatus != null) {
