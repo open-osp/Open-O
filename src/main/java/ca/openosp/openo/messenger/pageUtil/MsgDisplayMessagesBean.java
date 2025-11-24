@@ -199,7 +199,7 @@ public class MsgDisplayMessagesBean implements java.io.Serializable {
      * @return String SQL WHERE clause fragment with :filterParam placeholder, empty if no filter
      */
     public String getSQLSearchFilterParameterized(String[] colsToSearch) {
-        if (filter == null || colsToSearch.length == 0) {
+        if (filter == null || filter.isEmpty() || colsToSearch.length == 0) {
             return "";
         } else {
             // Build OR condition across all specified columns using parameterized query
