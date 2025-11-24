@@ -598,7 +598,7 @@
                                                     for (int i = 0; i < patientArray.size(); i++) {
                                                         String pat = (String) patientArray.get(i);%>
                                                 <td><%=pat%><br>
-                                                    <input type="submit" name="patientStatus" value="<%=pat%>"/>
+                                                    <input type="checkbox" name="patientStatus" value="<%=pat%>"/>
                                                 </td>
                                                 <%
                                                     }
