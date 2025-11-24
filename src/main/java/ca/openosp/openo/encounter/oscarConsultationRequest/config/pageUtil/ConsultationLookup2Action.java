@@ -20,6 +20,8 @@ import ca.openosp.openo.commn.dao.ServiceSpecialistsDao;
 import ca.openosp.openo.commn.model.ConsultationServices;
 import ca.openosp.openo.commn.model.ProfessionalSpecialist;
 import ca.openosp.openo.commn.model.ServiceSpecialists;
+import ca.openosp.openo.encounter.oscarConsultationRequest.config.data.ConsultationServiceDto;
+import ca.openosp.openo.encounter.oscarConsultationRequest.config.data.SpecialistDto;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.util.ConversionUtils;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -38,7 +40,7 @@ import ca.openosp.openo.utility.SpringUtils;
  * - ConsultationLookup2Action.do?method=getServices - Returns all active consultation services
  * - ConsultationLookup2Action.do?method=getSpecialists&serviceId=X - Returns specialists for a service
  *
- * @since 2025-01-20
+ * @since 2025-11-20
  */
 public class ConsultationLookup2Action extends ActionSupport {
 
@@ -71,6 +73,7 @@ public class ConsultationLookup2Action extends ActionSupport {
             return getSpecialists();
         }
 
+        MiscUtils.getLogger().warn("Invalid method parameter: " + method);
         return NONE;
     }
 
@@ -90,26 +93,24 @@ public class ConsultationLookup2Action extends ActionSupport {
     private String getServices() {
         try {
             List<ConsultationServices> services = consultationServiceDao.findActive();
-            List<Map<String, Object>> serviceList = new ArrayList<>();
+            List<ConsultationServiceDto> serviceList = new ArrayList<>();
 
             for (ConsultationServices service : services) {
-                Map<String, Object> serviceData = new HashMap<>();
-                serviceData.put("serviceId", service.getServiceId());
-                serviceData.put("serviceDesc", service.getServiceDesc());
-                serviceList.add(serviceData);
+                serviceList.add(new ConsultationServiceDto(
+                    service.getServiceId(),
+                    service.getServiceDesc()
+                ));
             }
 
             writeJsonResponse(serviceList);
             return null; // Response already written
 
         } catch (Exception e) {
-            MiscUtils.getLogger().error("Error retrieving consultation services", e);
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving services");
-            } catch (IOException ioException) {
-                MiscUtils.getLogger().error("Error sending error response", ioException);
-            }
-            return null;
+           return handleServerError(
+                "Error retrieving consultation services",
+                "Error retrieving services",
+                e
+            );
         }
     }
 
@@ -142,35 +143,50 @@ public class ConsultationLookup2Action extends ActionSupport {
             }
 
             List<Object[]> results = serviceSpecialistsDao.findSpecialists(serviceId);
-            List<Map<String, Object>> specialistList = new ArrayList<>();
+            List<SpecialistDto> specialistList = new ArrayList<>();
 
             for (Object[] result : results) {
                 ServiceSpecialists serviceSpec = (ServiceSpecialists) result[0];
                 ProfessionalSpecialist specialist = (ProfessionalSpecialist) result[1];
 
-                Map<String, Object> specialistData = new HashMap<>();
-                specialistData.put("specId", serviceSpec.getId().getSpecId());
-                specialistData.put("name", formatSpecialistName(specialist));
-                specialistData.put("phone", nullSafe(specialist.getPhoneNumber()));
-                specialistData.put("fax", nullSafe(specialist.getFaxNumber()));
-                specialistData.put("address", nullSafe(specialist.getStreetAddress()));
-                specialistData.put("annotation", nullSafe(specialist.getAnnotation()));
-
-                specialistList.add(specialistData);
+                specialistList.add(new SpecialistDto(
+                    serviceSpec.getId().getSpecId(),
+                    formatSpecialistName(specialist),
+                    nullSafe(specialist.getPhoneNumber()),
+                    nullSafe(specialist.getFaxNumber()),
+                    nullSafe(specialist.getStreetAddress()),
+                    nullSafe(specialist.getAnnotation())
+                ));
             }
 
             writeJsonResponse(specialistList);
             return null; // Response already written
 
         } catch (Exception e) {
-            MiscUtils.getLogger().error("Error retrieving specialists", e);
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error retrieving specialists");
-            } catch (IOException ioException) {
-                MiscUtils.getLogger().error("Error sending error response", ioException);
-            }
-            return null;
+            return handleServerError(
+                "Error retrieving specialists",
+                "Error retrieving specialists",
+                e
+            );
         }
+    }
+
+    /**
+     * Handles server errors by logging and sending an error response.
+     *
+     * @param logMessage   Message to log
+     * @param clientMessage Message to send to client
+     * @param e            Exception that occurred
+     * @return String action result (ERROR)
+     */
+    private String handleServerError(String logMessage, String clientMessage, Exception e) {
+        MiscUtils.getLogger().error(logMessage, e);
+        try {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, clientMessage);
+        } catch (IOException ioException) {
+            MiscUtils.getLogger().error("Error sending error response", ioException);
+        }
+        return null;
     }
 
     /**

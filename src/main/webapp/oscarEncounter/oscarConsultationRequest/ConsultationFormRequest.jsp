@@ -681,6 +681,10 @@
             services[-1] = new Service();
             services[-1].specialists.push(defaultSpec);
 
+            // Add "All Services" as first option in dropdown
+            serviceDropdown.options.length = 0;  // Clear any existing options
+            serviceDropdown.options[0] = new Option("----All Services-------", -1);
+
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getServices', true);
             xhr.onreadystatechange = function() {
