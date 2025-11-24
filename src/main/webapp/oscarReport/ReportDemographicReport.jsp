@@ -51,7 +51,7 @@
 <script src="<%=request.getContextPath()%>/js/jquery-1.9.1.min.js"></script>
 <script>
     $(document).ready(function () {
-        $("#demographicNoCheckbox").bind('change', function () {
+        $("#select_demographic_no").bind('change', function () {
             updateSetBox();
             //alert('test');
         });
@@ -59,7 +59,7 @@
     });
 
     function updateSetBox() {
-        if ($("#demographicNoCheckbox").is(":checked")) {
+        if ($("#select_demographic_no").is(":checked")) {
             $("#submitPatientSet").show();
         } else {
             $("#submitPatientSet").hide();
