@@ -177,7 +177,7 @@ public class ConsultationLookup2Action extends ActionSupport {
      * @param logMessage   Message to log
      * @param clientMessage Message to send to client
      * @param e            Exception that occurred
-     * @return String action result (ERROR)
+     * @return null (response written directly to output stream)
      */
     private String handleServerError(String logMessage, String clientMessage, Exception e) {
         MiscUtils.getLogger().error(logMessage, e);

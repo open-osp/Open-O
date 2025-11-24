@@ -688,14 +688,32 @@
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getServices', true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    try {
-                        var serviceList = JSON.parse(xhr.responseText);
-                        processServices(serviceList);
-                        servicesLoaded = true;
-                        if (callback) callback();
-                    } catch(e) {
-                        console.error('Error parsing services JSON:', e);
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var serviceList = JSON.parse(xhr.responseText);
+                            processServices(serviceList);
+                            servicesLoaded = true;
+                            if (callback) callback();
+                        } catch(e) {
+                            console.error('Error parsing services JSON:', e);
+                            if (callback) {
+                                try {
+                                    callback(e);
+                                } catch (callbackError) {
+                                    console.error('Error in loadServicesFromServer callback:', callbackError);
+                                }
+                            }
+                        }
+                    } else {
+                        console.error('Failed to load services. HTTP status: ' + xhr.status);
+                        if (callback) {
+                            try {
+                                callback(new Error('Failed to load services (HTTP ' + xhr.status + ')'));
+                            } catch (callbackError) {
+                                console.error('Error in loadServicesFromServer callback:', callbackError);
+                            }
+                        }
                     }
                 }
             };
@@ -734,22 +752,40 @@
             var xhr = new XMLHttpRequest();
             xhr.open('GET', '<%= request.getContextPath() %>/oscarEncounter/ConsultationLookup2Action.do?method=getSpecialists&serviceId=' + serviceId, true);
             xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    try {
-                        var specialistList = JSON.parse(xhr.responseText);
-                        // Ensure service exists in array before adding specialists
-                        if (!services[serviceId]) {
-                            services[serviceId] = new Service();
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        try {
+                            var specialistList = JSON.parse(xhr.responseText);
+                            // Ensure service exists in array before adding specialists
+                            if (!services[serviceId]) {
+                                services[serviceId] = new Service();
+                            }
+                            // Clear existing specialists to prevent duplicates on reload
+                            services[serviceId].specialists = [];
+                            for (var i = 0; i < specialistList.length; i++) {
+                                var spec = specialistList[i];
+                                addSpecialist(serviceId, spec.specId, spec.phone, spec.name, spec.fax, spec.address, spec.annotation);
+                            }
+                            if (callback) callback();
+                        } catch(e) {
+                            console.error('Error parsing specialists JSON:', e);
+                            if (callback) {
+                                try {
+                                    callback(e);
+                                } catch (callbackError) {
+                                    console.error('Error in loadSpecialistsForService callback:', callbackError);
+                                }
+                            }
                         }
-                        // Clear existing specialists to prevent duplicates on reload
-                        services[serviceId].specialists = [];
-                        for (var i = 0; i < specialistList.length; i++) {
-                            var spec = specialistList[i];
-                            addSpecialist(serviceId, spec.specId, spec.phone, spec.name, spec.fax, spec.address, spec.annotation);
+                    } else {
+                        console.error('Failed to load specialists for service ' + serviceId + '. HTTP status: ' + xhr.status);
+                        if (callback) {
+                            try {
+                                callback(new Error('Failed to load specialists for service ' + serviceId + ' (HTTP ' + xhr.status + ')'));
+                            } catch (callbackError) {
+                                console.error('Error in loadSpecialistsForService callback:', callbackError);
+                            }
                         }
-                        if (callback) callback();
-                    } catch(e) {
-                        console.error('Error parsing specialists JSON:', e);
                     }
                 }
             };
@@ -770,7 +806,13 @@
         // Single function to populate specialist dropdown - handles all cases
         function populateSpecialistDropdown(serviceId, savedSpecialistId) {
             var dropdown = document.EctConsultationFormRequest2Form.specialist;
-            var defaultSpec = services[-1].specialists[0];
+
+            // Defensive: services[-1] and its specialists array may not be initialized
+            var defaultSpec = null;
+            if (services && services[-1] && services[-1].specialists && services[-1].specialists.length > 0) {
+                defaultSpec = services[-1].specialists[0];
+            }
+
             var isExistingConsultation = (requestId && requestId != "null" && requestId != "");
 
             // Clear dropdown
@@ -780,7 +822,10 @@
             if (isExistingConsultation) {
                 dropdown.options[0] = new Option("", "");
             } else {
-                dropdown.options[0] = new Option(defaultSpec.specName, defaultSpec.specNbr);
+                dropdown.options[0] = new Option(
+                    defaultSpec ? defaultSpec.specName : "Select a specialist",
+                    defaultSpec ? defaultSpec.specNbr : ""
+                );
             }
 
             if (!serviceId || serviceId == "-1" || serviceId == "null") {
