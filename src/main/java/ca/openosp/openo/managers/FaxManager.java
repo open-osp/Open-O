@@ -221,6 +221,21 @@ public interface FaxManager {
     void validateFilePath(String filePath);
 
     /**
+     * Resolves and validates a file path with robust path containment checking.
+     * This method performs comprehensive security validation including:
+     * - Path traversal pattern detection
+     * - Path normalization
+     * - Containment verification within allowed base directories
+     * - File existence and type validation
+     *
+     * @param filePath the file path to resolve and validate
+     * @return the resolved and validated Path object
+     * @throws SecurityException if the path is invalid, outside allowed directories, or fails security checks
+     * @throws IOException if the file does not exist or is not a regular file
+     */
+    Path resolveAndValidateFilePath(String filePath) throws IOException;
+
+    /**
      * Validates a fax number format.
      * Ensures the fax number contains only valid characters: digits, spaces, hyphens, plus sign, and parentheses.
      *

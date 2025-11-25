@@ -807,6 +807,63 @@ public class FaxManagerImpl implements FaxManager {
     }
 
     /**
+     * Resolves and validates a file path with robust path containment checking.
+     * This method performs comprehensive security validation including:
+     * - Path traversal pattern detection
+     * - Path normalization
+     * - Containment verification within allowed base directories
+     * - File existence and type validation
+     *
+     * @param filePath the file path to resolve and validate
+     * @return the resolved and validated Path object
+     * @throws SecurityException if the path is invalid, outside allowed directories, or fails security checks
+     * @throws IOException if the file does not exist or is not a regular file
+     */
+    @Override
+    public Path resolveAndValidateFilePath(String filePath) throws IOException {
+        // First validate with existing security checks
+        validateFilePath(filePath);
+
+        // Additional robust path containment validation
+        // Define allowed base directories for fax files
+        String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/");
+        String tmpDir = OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/");
+        String javaIoTmpDir = System.getProperty("java.io.tmpdir");
+        String tomcatTempDir = "/usr/local/tomcat/temp/";
+
+        Path resolvedPath = Path.of(filePath).normalize();
+
+        // Check if the resolved path is within one of the allowed base directories
+        boolean isPathContained = false;
+        Path[] allowedBasePaths = {
+            Path.of(documentDir).normalize(),
+            Path.of(tmpDir).normalize(),
+            javaIoTmpDir != null ? Path.of(javaIoTmpDir).normalize() : null,
+            Path.of(tomcatTempDir).normalize()
+        };
+
+        for (Path basePath : allowedBasePaths) {
+            if (basePath != null && resolvedPath.startsWith(basePath)) {
+                isPathContained = true;
+                break;
+            }
+        }
+
+        if (!isPathContained) {
+            logger.error("Path containment check failed - file path outside allowed directories: " + filePath);
+            throw new SecurityException("File path must be within allowed directories");
+        }
+
+        // Ensure the file exists and is a regular file
+        if (!Files.exists(resolvedPath) || !Files.isRegularFile(resolvedPath)) {
+            logger.error("File not found or is not a regular file: " + filePath);
+            throw new IOException("File not found or is not a regular file");
+        }
+
+        return resolvedPath;
+    }
+
+    /**
      * Validates a fax number format.
      * Ensures the fax number contains only valid characters: digits, spaces, hyphens, plus sign, and parentheses.
      *

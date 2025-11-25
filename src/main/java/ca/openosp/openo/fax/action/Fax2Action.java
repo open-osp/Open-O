@@ -286,20 +286,9 @@ public class Fax2Action extends ActionSupport {
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFilename + "\"");
                 }
             } else {
-                // Validate the PDF path to prevent path traversal attacks
+                // Validate and resolve the PDF path using FaxManager
                 try {
-                    faxManager.validateFilePath(faxFilePath);
-
-                    Path pdfPath = Path.of(faxFilePath);
-
-                    // Ensure the file exists and is a regular file
-                    if (!Files.exists(pdfPath) || !Files.isRegularFile(pdfPath)) {
-                        logger.error("PDF file not found or is not a regular file: " + faxFilePath);
-                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
-                        return;
-                    }
-
-                    outfile = pdfPath;
+                    outfile = faxManager.resolveAndValidateFilePath(faxFilePath);
                     response.setContentType("application/pdf");
                 } catch (SecurityException e) {
                     logger.error("Security validation failed for file path: " + faxFilePath, e);
@@ -310,9 +299,9 @@ public class Fax2Action extends ActionSupport {
                     }
                     return;
                 } catch (IOException e) {
-                    logger.error("Error processing file path: " + faxFilePath, e);
+                    logger.error("File not found or error processing file path: " + faxFilePath, e);
                     try {
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing file");
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
                     } catch (IOException ex) {
                         logger.error("Error sending error response", ex);
                     }
