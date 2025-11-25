@@ -59,10 +59,13 @@ public class RptDemographicReport2Action extends ActionSupport implements ModelD
 
     public String execute() throws IOException, ServletException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        
+
         String query = form.getQuery();
         String[] select = form.getSelect();
         String studyId = form.getStudyId();
+
+        // Always pass the form to the JSP for repopulating field values
+        request.setAttribute("formBean", form);
 
         if ("Run Query".equals(query)) {
             MiscUtils.getLogger().debug("run query");
