@@ -31,6 +31,7 @@ import ca.openosp.openo.utility.PDFGenerationException;
 import ca.openosp.openo.utility.SpringUtils;
 
 import ca.openosp.openo.lab.ca.on.HRMResultsData;
+import ca.openosp.openo.log.LogAction;
 import ca.openosp.openo.util.StringUtils;
 
 public class HRMUtil {
@@ -62,6 +63,7 @@ public class HRMUtil {
             return new ArrayList<>();
         }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
+            LogAction.addLog(loggedInInfo.getLoggedInProviderNo(), "HRMUtil.listHRMDocuments", "UNAUTHORIZED", "missing required security object (_hrm)", loggedInInfo.getIp(), demographicNo, null);
             logger.warn("missing required security object (_hrm)");
             return new ArrayList<>();
         }

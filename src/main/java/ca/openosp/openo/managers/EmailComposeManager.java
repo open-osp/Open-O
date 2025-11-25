@@ -29,6 +29,7 @@ import ca.openosp.openo.commn.model.EmailLog;
 import ca.openosp.openo.commn.model.UserProperty;
 import ca.openosp.openo.commn.model.enumerator.DocumentType;
 import ca.openosp.openo.documentManager.DocumentAttachmentManager;
+import ca.openosp.openo.log.LogAction;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.PDFGenerationException;
@@ -133,6 +134,7 @@ public class EmailComposeManager {
             return new ArrayList<>();
         }
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_hrm", SecurityInfoManager.READ, null)) {
+            LogAction.addLogSynchronous(loggedInInfo.getLoggedInProviderNo(), "EmailComposeManager.prepareHRMAttachments", "UNAUTHORIZED", "missing required security object (_hrm)", loggedInInfo.getIp());
             logger.warn("missing required security object (_hrm)");
             return new ArrayList<>();
         }
