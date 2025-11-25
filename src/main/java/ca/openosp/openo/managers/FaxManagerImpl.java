@@ -58,6 +58,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import ca.openosp.OscarProperties;
 
 @Service
 public class FaxManagerImpl implements FaxManager {
@@ -747,6 +748,84 @@ public class FaxManagerImpl implements FaxManager {
         jsonObject.put("faxSchedularStatus", status);
         jsonObject.put("isRunning", FaxSchedulerJob.isRunning());
         return jsonObject;
+    }
+
+    /**
+     * Validates that a file path is safe and within allowed directories.
+     * Prevents path traversal attacks by checking for malicious patterns and
+     * validating the path is within whitelisted directories.
+     *
+     * @param filePath the file path to validate
+     * @throws SecurityException if the path is invalid or outside allowed directories
+     */
+    @Override
+    public void validateFilePath(String filePath) {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            return;
+        }
+
+        // Check for path traversal patterns
+        if (filePath.contains("..") || filePath.contains("~")) {
+            logger.error("Path traversal attempt detected: " + filePath);
+            throw new SecurityException("Invalid file path detected: path traversal patterns not allowed");
+        }
+
+        // Validate the path is within allowed directories
+        try {
+            Path path = Path.of(filePath);
+            Path canonicalPath = path.normalize();
+
+            // Define allowed base directories for fax files
+            String[] allowedBasePaths = {
+                OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
+                OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/"),
+                System.getProperty("java.io.tmpdir"),
+                "/usr/local/tomcat/temp/"  // Tomcat temp directory
+            };
+
+            boolean isValidPath = false;
+            for (String basePath : allowedBasePaths) {
+                if (basePath != null && !basePath.isEmpty()) {
+                    Path basePathObj = Path.of(basePath).normalize();
+                    if (canonicalPath.startsWith(basePathObj)) {
+                        isValidPath = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isValidPath) {
+                logger.error("File path outside allowed directories: " + filePath);
+                throw new SecurityException("File path must be within allowed directories");
+            }
+        } catch (SecurityException e) {
+            throw e;  // Re-throw security exceptions
+        } catch (Exception e) {
+            logger.error("Error validating file path: " + filePath, e);
+            throw new SecurityException("Invalid file path: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Validates a fax number format.
+     * Ensures the fax number contains only valid characters: digits, spaces, hyphens, plus sign, and parentheses.
+     *
+     * @param faxNumber the fax number to validate
+     * @param fieldName the name of the field being validated (for error messages)
+     * @throws SecurityException if the fax number format is invalid
+     */
+    @Override
+    public void validateFaxNumber(String faxNumber, String fieldName) {
+        // Regex pattern for fax number validation: allows digits, spaces, hyphens, plus sign, and parentheses
+        final String FAX_NUMBER_PATTERN = "^[0-9\\-\\+\\(\\)\\s]+$";
+
+        if (faxNumber != null && !faxNumber.trim().isEmpty()) {
+            if (!faxNumber.matches(FAX_NUMBER_PATTERN)) {
+                String errorMsg = "Invalid " + fieldName + " format: contains illegal characters";
+                logger.error(errorMsg + " - " + faxNumber);
+                throw new SecurityException(errorMsg);
+            }
+        }
     }
 
 

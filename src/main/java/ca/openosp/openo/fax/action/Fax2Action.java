@@ -42,6 +42,8 @@ import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.PDFGenerationException;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.form.JSONUtil;
+import ca.openosp.openo.managers.SecurityInfoManager;
+import org.owasp.encoder.Encode;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +58,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FilenameUtils;
-import ca.openosp.OscarProperties;
 
 public class Fax2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -66,6 +67,8 @@ public class Fax2Action extends ActionSupport {
     private static final Logger logger = MiscUtils.getLogger();
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
     private final DocumentAttachmentManager documentAttachmentManager = SpringUtils.getBean(DocumentAttachmentManager.class);
+    private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
 
     public String execute() {
         String method = request.getParameter("method");
@@ -113,6 +116,80 @@ public class Fax2Action extends ActionSupport {
     }
 
     /**
+     * Validates all input parameters for security before processing the fax request.
+     * Implements comprehensive input validation to prevent security vulnerabilities including:
+     * - Path traversal attacks
+     * - SQL injection
+     * - Invalid patient access
+     * - Malformed fax numbers
+     *
+     * @param loggedInInfo the logged-in user information
+     * @throws SecurityException if validation fails or user lacks required privileges
+     */
+    private void validateFaxInputs(LoggedInInfo loggedInInfo) {
+        // Validate fax privilege
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", "w", null)) {
+            throw new SecurityException("User lacks required fax privileges");
+        }
+
+        // Validate demographic number and access
+        if (demographicNo != null) {
+            if (demographicNo < 0) {
+                throw new SecurityException("Invalid demographic number: must be non-negative");
+            }
+            // Verify user has access to this patient's record
+            if (!securityInfoManager.isAllowedAccessToPatientRecord(loggedInInfo, demographicNo)) {
+                logger.warn("Unauthorized access attempt to demographic " + demographicNo + " by provider " + loggedInInfo.getLoggedInProviderNo());
+                throw new SecurityException("Unauthorized access to patient record");
+            }
+        }
+
+        // Validate fax file path to prevent path traversal attacks
+        faxManager.validateFilePath(faxFilePath);
+
+        // Validate recipient fax number format (required)
+        if (recipientFaxNumber == null || recipientFaxNumber.trim().isEmpty()) {
+            addActionError("Recipient fax number is required");
+            throw new SecurityException("Recipient fax number is required");
+        }
+        faxManager.validateFaxNumber(recipientFaxNumber, "recipient fax number");
+
+        // Validate sender fax number format (optional)
+        faxManager.validateFaxNumber(senderFaxNumber, "sender fax number");
+
+        // Sanitize recipient name to prevent injection attacks
+        if (recipient != null && !recipient.trim().isEmpty()) {
+            // Check for potential injection patterns
+            if (recipient.contains("<script") || recipient.contains("javascript:") || recipient.contains("onerror=")) {
+                logger.error("Potential XSS attempt in recipient name: " + recipient);
+                throw new SecurityException("Invalid characters in recipient name");
+            }
+        }
+
+        // Validate copyToRecipients array if present
+        // Note: copyToRecipients contains JSON strings like: "name":"Test","fax":"1234567890"
+        if (copyToRecipients != null && copyToRecipients.length > 0) {
+            for (int i = 0; i < copyToRecipients.length; i++) {
+                String copyRecipient = copyToRecipients[i];
+                if (copyRecipient != null && !copyRecipient.trim().isEmpty()) {
+                    // Parse JSON to extract fax number for validation
+                    try {
+                        String jsonString = "{" + copyRecipient + "}";
+                        ObjectNode json = (ObjectNode) objectMapper.readTree(jsonString);
+                        String faxNumber = json.has("fax") ? json.get("fax").asText() : null;
+                        if (faxNumber != null && !faxNumber.trim().isEmpty()) {
+                            faxManager.validateFaxNumber(faxNumber, "copy-to recipient fax number [" + i + "]");
+                        }
+                    } catch (Exception e) {
+                        logger.error("Failed to parse copy-to recipient JSON at index " + i + ": " + copyRecipient, e);
+                        throw new SecurityException("Invalid copy-to recipient format at index " + i);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Set up fax parameters for this fax to be sent with the next timed
      * batch process.
      * This action assumes that the fax has already been produced and reviewed
@@ -123,16 +200,23 @@ public class Fax2Action extends ActionSupport {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
+        // Validate all inputs before processing
+        validateFaxInputs(loggedInInfo);
+
         TransactionType transactionType = TransactionType.valueOf(getTransactionType().toUpperCase());
+
+        // Sanitize text inputs to prevent injection attacks
+        String sanitizedRecipient = recipient != null ? Encode.forHtml(recipient) : null;
+        String sanitizedComments = comments != null ? Encode.forHtml(comments) : null;
 
         // Build fax job parameters using builder pattern
         FaxJobParams params = FaxJobParams.builder()
                 .faxFilePath(faxFilePath)
-                .recipient(recipient)
+                .recipient(sanitizedRecipient)
                 .recipientFaxNumber(recipientFaxNumber)
                 .senderFaxNumber(senderFaxNumber)
                 .demographicNo(demographicNo)
-                .comments(comments)
+                .comments(sanitizedComments)
                 .coverpage(coverpage)
                 .copyToRecipients(copyToRecipients)
                 .build();
@@ -203,48 +287,28 @@ public class Fax2Action extends ActionSupport {
                 }
             } else {
                 // Validate the PDF path to prevent path traversal attacks
-                Path pdfPath = Path.of(faxFilePath);
-
                 try {
-                    // Get the canonical path to resolve any path traversal attempts
-                    Path canonicalPdfPath = pdfPath.toRealPath();
+                    faxManager.validateFilePath(faxFilePath);
 
-                    // Define allowed base directories
-                    String[] allowedBasePaths = {
-                        OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
-                        OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/"),
-                        System.getProperty("java.io.tmpdir")
-                    };
-
-                    boolean isValidPath = false;
-                    for (String basePath : allowedBasePaths) {
-                        if (basePath != null && !basePath.isEmpty()) {
-                            Path basePathObj = Path.of(basePath);
-                            if (Files.exists(basePathObj)) {
-                                Path baseCanonicalPath = basePathObj.toRealPath();
-                                if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
-                                    isValidPath = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!isValidPath) {
-                        logger.error("Access denied: Path traversal attempt detected for path: " + faxFilePath);
-                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
-                        return;
-                    }
+                    Path pdfPath = Path.of(faxFilePath);
 
                     // Ensure the file exists and is a regular file
-                    if (!Files.exists(canonicalPdfPath) || !Files.isRegularFile(canonicalPdfPath)) {
+                    if (!Files.exists(pdfPath) || !Files.isRegularFile(pdfPath)) {
                         logger.error("PDF file not found or is not a regular file: " + faxFilePath);
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
                         return;
                     }
 
-                    outfile = canonicalPdfPath;
+                    outfile = pdfPath;
                     response.setContentType("application/pdf");
+                } catch (SecurityException e) {
+                    logger.error("Security validation failed for file path: " + faxFilePath, e);
+                    try {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+                    } catch (IOException ex) {
+                        logger.error("Error sending error response", ex);
+                    }
+                    return;
                 } catch (IOException e) {
                     logger.error("Error processing file path: " + faxFilePath, e);
                     try {

@@ -211,6 +211,26 @@ public interface FaxManager {
     public ObjectNode getFaxSchedularStatus(LoggedInInfo loggedInInfo);
 
     /**
+     * Validates that a file path is safe and within allowed directories.
+     * Prevents path traversal attacks by checking for malicious patterns and
+     * validating the path is within whitelisted directories.
+     *
+     * @param filePath the file path to validate
+     * @throws SecurityException if the path is invalid or outside allowed directories
+     */
+    void validateFilePath(String filePath);
+
+    /**
+     * Validates a fax number format.
+     * Ensures the fax number contains only valid characters: digits, spaces, hyphens, plus sign, and parentheses.
+     *
+     * @param faxNumber the fax number to validate
+     * @param fieldName the name of the field being validated (for error messages)
+     * @throws SecurityException if the fax number format is invalid
+     */
+    void validateFaxNumber(String faxNumber, String fieldName);
+
+    /**
      * Check if fax services are enabled.
      */
     public static boolean isEnabled() {
