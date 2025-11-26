@@ -59,6 +59,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -383,7 +385,8 @@ public final class Login2Action extends ActionSupport {
              *
              */
             if (SSOUtility.isSSOEnabled()) {
-                String newURL = request.getContextPath() + "/ssoLogin.do?user_email=" + strAuth[6];
+                String encodedEmail = URLEncoder.encode(strAuth[6], StandardCharsets.UTF_8);
+                String newURL = request.getContextPath() + "/ssoLogin.do?user_email=" + encodedEmail;
 
                 response.sendRedirect(newURL);
                 return NONE;
