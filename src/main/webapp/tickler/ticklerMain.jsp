@@ -717,9 +717,21 @@
                             }
                         %>
                     </div>
-                    <div class="pull-right form-group"
-                         style="text-align: right; vertical-align: bottom; padding:20px 15px 15px 15px;">
-                        <label for="formSubmitBtn"></label>
+                    <div class="form-group">
+					    <label for="ticklerview">Filter</label>
+                        <select id="ticklerview" class="form-control" name="ticklerview">
+                            <option value="A" <%=ticklerview.equals("A") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formActive"/></option>
+                            <option value="C" <%=ticklerview.equals("C") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formCompleted"/></option>
+                            <option value="D" <%=ticklerview.equals("D") ? "selected" : ""%>>
+                                <fmt:setBundle basename="oscarResources"/>
+                                <fmt:message key="tickler.ticklerMain.formDeleted"/></option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="padding-top:15px;">
                         <input type="button" class="btn btn-primary mbttn noprint" id="formSubmitBtn"
                                value="<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerMain.btnCreateReport"/>"
                                onclick="document.forms['serviceform'].Submit.value='Create Report'; document.forms['serviceform'].submit();">

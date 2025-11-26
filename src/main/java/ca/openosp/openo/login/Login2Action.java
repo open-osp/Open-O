@@ -82,18 +82,19 @@ public final class Login2Action extends ActionSupport {
     private static final Logger logger = MiscUtils.getLogger();
     private static final String LOG_PRE = "Login!@#$: ";
 
-    private ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
-    private AppManager appManager = SpringUtils.getBean(AppManager.class);
-    private FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
-    private ProviderPreferenceDao providerPreferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
-    private ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-    private UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
-    private DSService dsService = SpringUtils.getBean(DSService.class);
-    private ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
-    private SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
-    private SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
-    private UserSessionManager userSessionManager = SpringUtils.getBean(UserSessionManager.class);
-    private MfaManager mfaManager = SpringUtils.getBean(MfaManager.class);
+    private final ProviderManager providerManager = SpringUtils.getBean(ProviderManager.class);
+    private final AppManager appManager = SpringUtils.getBean(AppManager.class);
+    private final FacilityDao facilityDao = SpringUtils.getBean(FacilityDao.class);
+    private final ProviderPreferenceDao providerPreferenceDao = SpringUtils.getBean(ProviderPreferenceDao.class);
+    private final ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    private final UserPropertyDAO propDao = SpringUtils.getBean(UserPropertyDAO.class);
+    private final DSService dsService = SpringUtils.getBean(DSService.class);
+    private final ServiceRequestTokenDao serviceRequestTokenDao = SpringUtils.getBean(ServiceRequestTokenDao.class);
+    private final SecurityManager securityManager = SpringUtils.getBean(SecurityManager.class);
+    private final SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
+    private final UserSessionManager userSessionManager = SpringUtils.getBean(UserSessionManager.class);
+    private final MfaManager mfaManager = SpringUtils.getBean(MfaManager.class);
+    
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws ServletException, IOException {
@@ -615,7 +616,14 @@ public final class Login2Action extends ActionSupport {
                 response.getWriter().write(json.toString());
                 return null;
             }
-            return where;
+
+            String oneIdKey = request.getParameter("nameId");
+            String newURL = request.getContextPath() + "/logout.do?login=failed";
+            if (oneIdKey != null && !oneIdKey.equals("")) {
+                newURL += "&nameId=" + Encode.forUriComponent(oneIdKey);
+            }
+            response.sendRedirect(newURL);
+            return NONE;
         }
 
         if (request.getParameter("oauth_token") != null) {

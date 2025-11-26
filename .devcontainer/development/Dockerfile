@@ -66,6 +66,22 @@ RUN apt-get update && apt-get install -y pipx && \
     pipx install aider-chat && \
     pipx ensurepath
 
+# Install Postfix for mail testing with default values
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
+
+# Configure Postfix for simple localhost operation
+RUN postconf -e 'myhostname=openo-dev.local' && \
+    postconf -e 'mydestination=openo-dev.local, localhost' && \
+    postconf -e 'mynetworks=127.0.0.0/8' && \
+    postconf -e 'inet_interfaces=loopback-only' && \
+    postconf -e 'maillog_file=/var/log/mail.log' && \
+    # Disable all authentication and encryption
+    postconf -e 'smtpd_sasl_auth_enable=no' && \
+    postconf -e 'smtpd_use_tls=no' && \
+    postconf -e 'smtpd_tls_security_level=none' && \
+    # Allow local connections without auth
+    postconf -e 'smtpd_client_restrictions=permit_mynetworks,reject'
+
 # Create custom bashrc with tool reminders
 COPY ./config/bashrc /root/.bashrc
 
