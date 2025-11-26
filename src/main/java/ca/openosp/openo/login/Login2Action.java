@@ -616,7 +616,14 @@ public final class Login2Action extends ActionSupport {
                 response.getWriter().write(json.toString());
                 return null;
             }
-            return where;
+
+            String oneIdKey = request.getParameter("nameId");
+            String newURL = request.getContextPath() + "/logout.do?login=failed";
+            if (oneIdKey != null && !oneIdKey.equals("")) {
+                newURL += "&nameId=" + Encode.forUriComponent(oneIdKey);
+            }
+            response.sendRedirect(newURL);
+            return NONE;
         }
 
         if (request.getParameter("oauth_token") != null) {
