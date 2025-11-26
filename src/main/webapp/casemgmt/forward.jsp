@@ -27,6 +27,7 @@
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 
 <!-- logic:redirect forward="/admissionListAction.admit" / -->
 
@@ -49,9 +50,9 @@
         "/CaseManagementEntry.do?method=setUpMainEncounter&from=casemgmt&chain=list" +
         "&demographicNo=" + request.getParameter("demographicNo") +
         "&providerNo=" + request.getParameter("providerNo") +
-        "&reason=" + (request.getParameter("reason") != null ? URLEncoder.encode(request.getParameter("reason"), "UTF-8") : "") +
-        "&reasonCode=" + (request.getParameter("reasonCode") != null ? URLEncoder.encode(request.getParameter("reasonCode"), "UTF-8") : "") +
-        "&appointmentNo=" + (request.getParameter("appointmentNo") != null ? URLEncoder.encode(request.getParameter("appointmentNo"), "UTF-8") : "") +
+        "&reason=" + (request.getParameter("reason") != null ? URLEncoder.encode(request.getParameter("reason"), StandardCharsets.UTF_8) : "") +
+        "&reasonCode=" + (request.getParameter("reasonCode") != null ? URLEncoder.encode(request.getParameter("reasonCode"), StandardCharsets.UTF_8) : "") +
+        "&appointmentNo=" + (request.getParameter("appointmentNo") != null ? URLEncoder.encode(request.getParameter("appointmentNo"), StandardCharsets.UTF_8) : "") +
         "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
     } else {
         redirectURL = request.getContextPath() + "/CaseManagementView.do";

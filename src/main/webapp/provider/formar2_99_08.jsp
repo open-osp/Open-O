@@ -29,6 +29,7 @@
     String form_name = "ar2_99_08";
     String username = (String) session.getAttribute("userlastname") + "," + (String) session.getAttribute("userfirstname");
 %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page import="java.util.*, java.sql.*, java.net.*, ca.openosp.*, ca.openosp.openo.util.UtilDateUtilities, ca.openosp.openo.form.graphic.*"
          errorPage="/errorpage.jsp" %>
 
@@ -243,7 +244,7 @@
                         //if(bNewList&&!(request.getParameter("patientmaster")!=null) ) {
                         if (bNewList || (request.getParameter("patientmaster") != null)) {
                     %> <a href=#
-                          onClick="popupPage(600,900,'<%= request.getContextPath() %>/provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=&bNewForm=1&username=&reason=<%=URLEncoder.encode(request.getParameter("reason")==null?"":request.getParameter("reason"))%>&displaymode=ar1&dboperation=search_demograph');return false;"
+                          onClick="popupPage(600,900,'<%= request.getContextPath() %>/provider/providercontrol.jsp?appointment_no=<%=request.getParameter("appointment_no")%>&demographic_no=<%=request.getParameter("demographic_no")%>&curProvider_no=&bNewForm=1&username=&reason=<%=URLEncoder.encode(request.getParameter("reason")==null?"":request.getParameter("reason"), StandardCharsets.UTF_8)%>&displaymode=ar1&dboperation=search_demograph');return false;"
                           title="Antenatal Record 1"> <font color='yellow'>View AR1</font></a>
                     | <a href=#
                          onClick="popupPage(500,600,'<%=request.getContextPath()%>/demographic/formhistory.jsp?demographic_no=<%=request.getParameter("demographic_no")%>')"
@@ -267,7 +268,7 @@
                         if (request.getParameter("appointment_no") != null)
                             newFormURL += "&appointment_no=" + request.getParameter("appointment_no");
                         if (request.getParameter("reason") != null)
-                            newFormURL += "&reason=" + URLEncoder.encode(request.getParameter("reason"));
+                            newFormURL += "&reason=" + URLEncoder.encode(request.getParameter("reason"), StandardCharsets.UTF_8);
                         newFormURL += "&bNewForm=1&displaymode=ar2&dboperation=search_demograph&template=";
 
                     %> <a href="<%=newFormURL%>"><font color="yellow">New Form</font></a>&nbsp;

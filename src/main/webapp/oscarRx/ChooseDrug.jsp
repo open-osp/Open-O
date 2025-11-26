@@ -48,6 +48,7 @@
 <%@ page import="java.util.*,ca.openosp.openo.rx.data.*,ca.openosp.openo.rx.pageUtil.*, ca.openosp.OscarProperties" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxDrugData" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <c:if test="${empty RxSessionBean}">
     <% response.sendRedirect("error.html"); %>
 </c:if>
@@ -306,7 +307,7 @@
                                                         <a href="javascript: void(0);"
                                                            onclick="setDrugRx2('<%=t.pKey%>','<%=brandName %>')">
                                                                     <%}else{%>
-                                                            <a href="oscarRx/chooseDrug.do?BN=<%=java.net.URLEncoder.encode(brandName )%>&drugId=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
+                                                            <a href="oscarRx/chooseDrug.do?BN=<%=java.net.URLEncoder.encode(brandName , StandardCharsets.UTF_8)%>&drugId=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
                                                                title="<%=brandName %>">
                                                                 <%}%>
                                                                 <%=brandName%>
