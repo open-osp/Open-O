@@ -29,9 +29,9 @@ WORKDIR /workspace
 # Install required packages and clean up apt lists
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix curl git wget apt-transport-https ca-certificates gnupg lsb-release \
-    wkhtmltopdf \
+    libjpeg-turbo8 \
     locales iputils-ping gettext fontconfig libc6 libfreetype6 \
-    libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 libjpeg62 \
+    libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 \
     libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
     python3 python3-pip \
