@@ -24,6 +24,8 @@
 package ca.openosp.openo.commn.model;
 
 import ca.openosp.openo.utility.EncryptionUtils;
+import ca.openosp.openo.utility.MiscUtils;
+import org.apache.logging.log4j.Logger;
 
 import javax.persistence.*;
 
@@ -32,6 +34,7 @@ import javax.persistence.*;
 public class FaxConfig extends AbstractModel<Integer> {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger logger = MiscUtils.getLogger();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -284,7 +287,7 @@ public class FaxConfig extends AbstractModel<Integer> {
      * Handles legacy unencrypted passwords and decryption failures gracefully.
      *
      * @param encryptedValue the encrypted password value from database
-     * @return decrypted plain text password, or the original value if decryption fails
+     * @return decrypted plain text password, or empty string if decryption fails
      */
     private String decryptPassword(String encryptedValue) {
         try {
@@ -297,8 +300,9 @@ public class FaxConfig extends AbstractModel<Integer> {
                 }
             }
         } catch (Exception e) {
-            // Fallback to encrypted value if decryption fails
-            return encryptedValue;
+            logger.error("Failed to decrypt fax password - possible key rotation or corruption. Field will need to be re-entered.", e);
+            // Return empty to force credential re-entry rather than using potentially compromised value
+            return "";
         }
         return "";
     }
