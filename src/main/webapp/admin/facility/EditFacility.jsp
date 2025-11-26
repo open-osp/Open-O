@@ -24,36 +24,35 @@
 
 --%>
 
-<%@ include file="/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=true%>">
-	<%response.sendRedirect("../../securityError.jsp?type=_admin");%>
-	<%authed=false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
+    <%authed = false; %>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
-<html:html lang="en">
+<html>
     <head>
         <title>Edit Facility</title>
-        <link rel="stylesheet" type="text/css" href='<html:rewrite page="/css/tigris.css" />' />
-        <link rel="stylesheet" type="text/css" href='<html:rewrite page="/css/displaytag.css" />' />
+        <link rel="stylesheet" type="text/css" href='${request.contextPath}/css/tigris.css'/>
+        <link rel="stylesheet" type="text/css" href='${request.contextPath}/css/displaytag.css'/>
 
         <script type="text/javascript"
-            src="<%=request.getContextPath()%>/js/validation.js">
+                src="<%=request.getContextPath()%>/js/validation.js">
         </script>
         <script type="text/javascript">
-            function validateForm()
-            {
+            function validateForm() {
                 if (bCancel) return bCancel;
 
                 var isOk = false;
@@ -64,13 +63,12 @@
                 return isOk;
             }
 
-            function validateUpdateInterval()
-            {
+            function validateUpdateInterval() {
                 var ret = false;
                 var interval = document.forms[0].updateInterval.value;
                 if (!isInteger(interval)) {
                     alert("Integrator Update Interval must be an integer!");
-                } else if (parseInt(interval)<1) {
+                } else if (parseInt(interval) < 1) {
                     alert("Integrator Update Interval must be > 0");
                 } else {
                     ret = true;
@@ -88,92 +86,91 @@
             }
         </script>
         <!-- don't close in 1 statement, will break IE7 -->
-        
+
     </head>
     <body>
-        <h1>Edit Facility</h1>
-        <html:form action="/FacilityManager.do"
-            onsubmit="return validateForm();">
-            <input type="hidden" name="method" value="save" />
-            <html:hidden property="facility.orgId" />
-            <html:hidden property="facility.sectorId" />
-<!-- Ronnie
-            < :hidden property="facility.ocanServiceOrgNumber" />
--->
-            <table width="100%" border="1" cellspacing="2" cellpadding="3">
-                <tr class="b">
-                    <td>Facility Id:</td>
-                    <td><c:out value="${requestScope.id}" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Name: *</td>
-                    <td><html:text property="facility.name" size="32"
-                           maxlength="32" styleId="facilityName" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Description: *</td>
-                    <td><html:text property="facility.description" size="60"
-                           maxlength="70" styleId="facilityDesc" /></td>
-                </tr>
-                <tr class="b">
-					<td width="20%">Enable Digital Signatures:</td>
-					<td><html:checkbox property="facility.enableDigitalSignatures" /></td>
-				</tr>
-                <tr class="b">
-                    <td>Enable Integrator:</td>
-                    <td><html:checkbox property="facility.integratorEnabled" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Integrator Url:</td>
-                    <td><html:text property="facility.integratorUrl" size="40" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Integrator User:</td>
-                    <td><html:text property="facility.integratorUser" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Integrator Password:</td>
-                    <td><html:password property="facility.integratorPassword" /></td>
-                </tr>
-                <tr class="b">
-                    <td>Remove Demographic Identity:</td>
-                    <td>
-                        <html:checkbox property="removeDemographicIdentity" />
-                        (All patients' names, hin# & sin# will be removed in Integrator)
-                        <br>
-                    </td>
-                </tr>
-                
-		<tr class="b">
-			<td>Rx Interaction Warning Level:</td>
-			<td>
-				<html:select property="facility.rxInteractionWarningLevel">
-					<html:option value="0">Not Specified</html:option>
-					<html:option value="1">Low</html:option>
-					<html:option value="2">Medium</html:option>
-					<html:option value="3">High</html:option>
-					<html:option value="4">None</html:option>
-				</html:select>
-			</td>
-		</tr>                
-<!--Ronnie
+    <h1>Edit Facility</h1>
+    <form action="${pageContext.request.contextPath}/FacilityManager.do" method="post"
+               onsubmit="return validateForm();">
+        <input type="hidden" name="method" value="save"/>
+        <input type="hidden" name="orgId" id="orgId"/>
+        <input type="hidden" name="sectorId" id="sectorId"/>
+        <!-- Ronnie
+        < :hidden property="facility.ocanServiceOrgNumber" />
+        -->
+        <table width="100%" border="1" cellspacing="2" cellpadding="3">
+            <tr class="b">
+                <td>Facility Id:</td>
+                <td><c:out value="${requestScope.id}"/></td>
+            </tr>
+            <tr class="b">
+                <td>Name: *</td>
+                <td><input type="text" name="facility.name" size="32" maxlength="32" id="facilityName"/></td>
+            </tr>
+            <tr class="b">
+                <td>Description: *</td>
+                <td><input type="text" name="facility.description" size="60" maxlength="70" id="facilityDesc"/></td>
+            </tr>
+            <tr class="b">
+                <td width="20%">Enable Digital Signatures:</td>
+                <td><input type="checkbox" name="facility.enableDigitalSignatures"/></td>
+            </tr>
+            <tr class="b">
+                <td>Enable Integrator:</td>
+                <td><input type="checkbox" name="facility.integratorEnabled"/></td>
+            </tr>
+            <tr class="b">
+                <td>Integrator Url:</td>
+                <td><input type="checkbox" name="facility.integratorUrl" size="40" /></td>
+            </tr>
+            <tr class="b">
+                <td>Integrator User:</td>
+                <td><input type="text" name="facility.integratorUser" id="facility.integratorUser" /></td>
+            </tr>
+            <tr class="b">
+                <td>Integrator Password:</td>
+                <td><input type="password" name="integratorPassword" id="integratorPassword"/></td>
+            </tr>
+            <tr class="b">
+                <td>Remove Demographic Identity:</td>
+                <td>
+                    <input type="checkbox" name="removeDemographicIdentity"/>
+                    (All patients' names, hin# & sin# will be removed in Integrator)
+                    <br>
+                </td>
+            </tr>
+
+            <tr class="b">
+                <td>Rx Interaction Warning Level:</td>
+                <td>
+                    <select name="rxInteractionWarningLevel">
+                        <option value="0">Not Specified</option>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                        <option value="4">None</option>
+                    </select>
+                </td>
+            </tr>
+            <!--Ronnie
                 </tr>
                 <tr class="b">
                     <td>Integrator Update Interval:</td>
                     <td>
-                        <html:text property="updateInterval" size="3" />
+                        <input type="checkbox" name="updateInterval" id="updateInterval" size="3" />
                         Hour(s)
                         <br>
                     </td>
                 </tr>
 -->
-                <tr>
-                    <td colspan="2">* Mandatory fields</td>
-                <tr>
-                    <td colspan="2"><html:submit property="submit.save" onclick="bCancel=false;">Save</html:submit>
-                        <html:cancel>Cancel</html:cancel></td>
-                </tr>
-            </table>
-        </html:form>
+            <tr>
+                <td colspan="2">* Mandatory fields</td>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" name="submit" value="Save" onclick="bCancel=false;" />
+                    <button type="button" onclick="window.history.back();">Cancel</button></td>
+            </tr>
+        </table>
+    </form>
     </body>
-</html:html>
+</html>

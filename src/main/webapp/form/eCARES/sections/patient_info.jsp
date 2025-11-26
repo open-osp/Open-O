@@ -23,12 +23,15 @@
     Ontario, Canada
 
 --%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <ul class="m-0 p-0 patient-info">
     <li class="flex justify-center items-center" style="min-width: 600px;">
         <div>
             <span>Chart #:</span>
             <span class="font-bold" data-field-name="demographicNo">
-                <c:out value="${ param.demographicNo }" />
+                <c:out value="${ param.demographicNo }"/>
             </span>
         </div>
         <div class="ml-2">

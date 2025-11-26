@@ -26,22 +26,27 @@
 <div class="flex items-center w-full">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_supports" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_supports" data-score="1">
         <strong class="tt" data-toggle="tooltip" title="HCNS: Home Care Nursing Support">Supports</strong>
     </div>
 
     <div class="pl-4 flex items-center">
-        <label class="font-normal flex items-center"><input type="radio" name="supports" class="m-0" autocomplete="off" value="none needed">
+        <label class="font-normal flex items-center"><input type="radio" name="supports" class="m-0" autocomplete="off"
+                                                            value="none needed">
             <span class="pl-1">None needed</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0" autocomplete="off" value="informal">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0"
+                                                                 autocomplete="off" value="informal">
             <span class="pl-1">Informal</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0" autocomplete="off" value="hcns">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0"
+                                                                 autocomplete="off" value="hcns">
             <span class="pl-1">HCNS</span></label>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0" autocomplete="off" value="other">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="supports" class="m-0"
+                                                                 autocomplete="off" value="other">
             <span class="pl-1">Other</span></label>
     </div>
     <div class="pl-4 flex items-center">
@@ -49,9 +54,11 @@
         Requires more support
         </span>
 
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="requires_more_support" class="m-0" autocomplete="off" value="y">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="requires_more_support" class="m-0"
+                                                                 autocomplete="off" value="y">
             <span class="pl-1">Y</span></label>
-        <label class="font-normal flex items-center ml-2"><input type="radio" name="requires_more_support" class="m-0" autocomplete="off" value="n">
+        <label class="font-normal flex items-center ml-2"><input type="radio" name="requires_more_support" class="m-0"
+                                                                 autocomplete="off" value="n">
             <span class="pl-1">N</span></label>
     </div>
 </div>

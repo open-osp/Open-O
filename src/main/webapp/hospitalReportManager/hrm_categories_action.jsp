@@ -9,60 +9,55 @@
 
 --%>
 
-<%@page import="org.apache.commons.lang3.StringUtils"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="org.apache.commons.lang3.StringUtils" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.hospitalReportManager.model.HRMCategory"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.hospitalReportManager.dao.HRMCategoryDao"%>
-<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@page import="ca.openosp.openo.hospitalReportManager.model.HRMCategory" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.hospitalReportManager.dao.HRMCategoryDao" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%
-	HRMCategoryDao hrmCategoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
+    HRMCategoryDao hrmCategoryDao = (HRMCategoryDao) SpringUtils.getBean(HRMCategoryDao.class);
 
-	String action=request.getParameter("action");
+    String action = request.getParameter("action");
 
-	if ("add".equals(action))
-	{
-		String id = request.getParameter("id");
-		String categoryName=request.getParameter("categoryName");
-		String subClassNameMnemonic=request.getParameter("subClassNameMnemonic");
-		
-		if(StringUtils.isEmpty(id)) {
-			HRMCategory category=new HRMCategory();
-			category.setCategoryName(categoryName);
-			category.setSubClassNameMnemonic(subClassNameMnemonic);
-			hrmCategoryDao.persist(category);
-		} else {
-			HRMCategory category = hrmCategoryDao.find(Integer.parseInt(id));
-			category.setCategoryName(categoryName);
-			category.setSubClassNameMnemonic(subClassNameMnemonic);
-			hrmCategoryDao.merge(category);
-		}
-		
-		
-	}
-	else if ("delete".equals(action))
-	{
-		Integer id=new Integer(request.getParameter("id"));
-		hrmCategoryDao.remove(id);
-	}
-	else
-	{
-		MiscUtils.getLogger().error("Missed case, action="+action);
-	}
+    if ("add".equals(action)) {
+        String id = request.getParameter("id");
+        String categoryName = request.getParameter("categoryName");
+        String subClassNameMnemonic = request.getParameter("subClassNameMnemonic");
 
-	response.sendRedirect("hrmCategories.jsp");
+        if (StringUtils.isEmpty(id)) {
+            HRMCategory category = new HRMCategory();
+            category.setCategoryName(categoryName);
+            category.setSubClassNameMnemonic(subClassNameMnemonic);
+            hrmCategoryDao.persist(category);
+        } else {
+            HRMCategory category = hrmCategoryDao.find(Integer.parseInt(id));
+            category.setCategoryName(categoryName);
+            category.setSubClassNameMnemonic(subClassNameMnemonic);
+            hrmCategoryDao.merge(category);
+        }
+
+
+    } else if ("delete".equals(action)) {
+        Integer id = new Integer(request.getParameter("id"));
+        hrmCategoryDao.remove(id);
+    } else {
+        MiscUtils.getLogger().error("Missed case, action=" + action);
+    }
+
+    response.sendRedirect("hrmCategories.jsp");
 %>

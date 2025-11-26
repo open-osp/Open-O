@@ -30,7 +30,7 @@
                 }
             };
         };
-        
+
     FileUpload = function (container) {
         var fileUpload = this,
             uploadForm,
@@ -86,8 +86,8 @@
                             settings.onDocumentDragLeave(e);
                         };
                     }
-                    documentListeners['dragover.'   + settings.namespace] = fileUpload.onDocumentDragOver;
-                    documentListeners['drop.'       + settings.namespace] = fileUpload.onDocumentDrop;
+                    documentListeners['dragover.' + settings.namespace] = fileUpload.onDocumentDragOver;
+                    documentListeners['drop.' + settings.namespace] = fileUpload.onDocumentDrop;
                     $(document).bind(documentListeners);
                     if (typeof settings.onDragEnter === func) {
                         dropZoneListeners['dragenter.' + settings.namespace] = function (e) {
@@ -99,8 +99,8 @@
                             settings.onDragLeave(e);
                         };
                     }
-                    dropZoneListeners['dragover.'   + settings.namespace] = fileUpload.onDragOver;
-                    dropZoneListeners['drop.'       + settings.namespace] = fileUpload.onDrop;
+                    dropZoneListeners['dragover.' + settings.namespace] = fileUpload.onDragOver;
+                    dropZoneListeners['drop.' + settings.namespace] = fileUpload.onDrop;
                     settings.dropZone.bind(dropZoneListeners);
                 }
                 fileInput.bind('change.' + settings.namespace, fileUpload.onChange);
@@ -145,14 +145,14 @@
                 }
                 return settings.url;
             },
-            
+
             getMethod = function (settings) {
                 if (typeof settings.method === func) {
                     return settings.method(settings.uploadForm || uploadForm);
                 }
                 return settings.method;
             },
-            
+
             getFieldName = function (settings) {
                 if (typeof settings.fieldName === func) {
                     return settings.fieldName(settings.fileInput || fileInput);
@@ -183,7 +183,7 @@
                         index = url.indexOf(host, indexStart),
                         pathIndex = index + host.length;
                     if ((index === indexStart || index === url.indexOf('@', indexStart) + 1) &&
-                            (url.length === pathIndex || $.inArray(url.charAt(pathIndex), ['/', '?', '#']) !== -1)) {
+                        (url.length === pathIndex || $.inArray(url.charAt(pathIndex), ['/', '?', '#']) !== -1)) {
                         return true;
                     }
                     return false;
@@ -222,7 +222,7 @@
 
             buildMultiPartFormData = function (boundary, files, filesFieldName, fields) {
                 var doubleDash = '--',
-                    crlf     = '\r\n',
+                    crlf = '\r\n',
                     formData = '';
                 $.each(fields, function (index, field) {
                     formData += doubleDash + boundary + crlf +
@@ -242,7 +242,7 @@
                 formData += doubleDash + boundary + doubleDash + crlf;
                 return formData;
             },
-            
+
             fileReaderUpload = function (files, xhr, settings) {
                 var boundary = '----MultiPartFormBoundary' + (new Date()).getTime(),
                     loader,
@@ -388,7 +388,7 @@
             handleLegacyUpload = function (event, input, form) {
                 // javascript:false as iframe src prevents warning popups on HTTPS in IE6:
                 var iframe = $('<iframe src="javascript:false;" style="display:none" name="iframe_' +
-                    settings.namespace + '_' + (new Date()).getTime() + '"></iframe>'),
+                        settings.namespace + '_' + (new Date()).getTime() + '"></iframe>'),
                     uploadSettings = $.extend({}, settings);
                 uploadSettings.fileInput = input;
                 uploadSettings.uploadForm = form;
@@ -414,17 +414,17 @@
                     }
                 }).appendTo(form);
             },
-            
+
             initUploadForm = function () {
                 uploadForm = (container.is('form') ? container : container.find('form'))
                     .filter(settings.uploadFormFilter);
             },
-            
+
             initFileInput = function () {
                 fileInput = uploadForm.find('input:file')
                     .filter(settings.fileInputFilter);
             },
-            
+
             replaceFileInput = function (input) {
                 var inputClone = input.clone(true);
                 $('<form/>').append(inputClone).get(0).reset();
@@ -434,15 +434,15 @@
 
         this.onDocumentDragOver = function (e) {
             if (typeof settings.onDocumentDragOver === func &&
-                    settings.onDocumentDragOver(e) === false) {
+                settings.onDocumentDragOver(e) === false) {
                 return false;
             }
             e.preventDefault();
         };
-        
+
         this.onDocumentDrop = function (e) {
             if (typeof settings.onDocumentDrop === func &&
-                    settings.onDocumentDrop(e) === false) {
+                settings.onDocumentDrop(e) === false) {
                 return false;
             }
             e.preventDefault();
@@ -450,7 +450,7 @@
 
         this.onDragOver = function (e) {
             if (typeof settings.onDragOver === func &&
-                    settings.onDragOver(e) === false) {
+                settings.onDragOver(e) === false) {
                 return false;
             }
             var dataTransfer = e.originalEvent.dataTransfer;
@@ -462,7 +462,7 @@
 
         this.onDrop = function (e) {
             if (typeof settings.onDrop === func &&
-                    settings.onDrop(e) === false) {
+                settings.onDrop(e) === false) {
                 return false;
             }
             var dataTransfer = e.originalEvent.dataTransfer;
@@ -471,10 +471,10 @@
             }
             e.preventDefault();
         };
-        
+
         this.onChange = function (e) {
             if (typeof settings.onChange === func &&
-                    settings.onChange(e) === false) {
+                settings.onChange(e) === false) {
                 return false;
             }
             var input = $(e.target),
@@ -524,22 +524,22 @@
             removeEventHandlers();
             $.each(options, function (name, value) {
                 switch (name) {
-                case 'namespace':
-                    $.error('The FileUpload namespace cannot be updated.');
-                    return;
-                case 'uploadFormFilter':
-                    uploadFormFilterUpdate = true;
-                    fileInputFilterUpdate = true;
-                    break;
-                case 'fileInputFilter':
-                    fileInputFilterUpdate = true;
-                    break;
-                case 'cssClass':
-                    oldCssClass = settings.cssClass;
-                    break;
-                case 'dropZone':
-                    oldDropZone = settings.dropZone;
-                    break;
+                    case 'namespace':
+                        $.error('The FileUpload namespace cannot be updated.');
+                        return;
+                    case 'uploadFormFilter':
+                        uploadFormFilterUpdate = true;
+                        fileInputFilterUpdate = true;
+                        break;
+                    case 'fileInputFilter':
+                        fileInputFilterUpdate = true;
+                        break;
+                    case 'cssClass':
+                        oldCssClass = settings.cssClass;
+                        break;
+                    case 'dropZone':
+                        oldDropZone = settings.dropZone;
+                        break;
                 }
                 settings[name] = value;
             });
@@ -562,7 +562,7 @@
             }
             initEventHandlers();
         };
-        
+
         this.option = function (name, value) {
             var options;
             if (typeof value === undef) {
@@ -572,7 +572,7 @@
             options[name] = value;
             fileUpload.options(options);
         };
-        
+
         this.destroy = function () {
             removeEventHandlers();
             container
@@ -583,12 +583,12 @@
     };
 
     methods = {
-        init : function (options) {
+        init: function (options) {
             return this.each(function () {
                 (new FileUpload($(this))).init(options);
             });
         },
-        
+
         option: function (option, value, namespace) {
             namespace = namespace ? namespace : defaultNamespace;
             var fileUpload = $(this).data(namespace);
@@ -601,8 +601,8 @@
                 $.error('No FileUpload with namespace "' + namespace + '" assigned to this element');
             }
         },
-                
-        destroy : function (namespace) {
+
+        destroy: function (namespace) {
             namespace = namespace ? namespace : defaultNamespace;
             return this.each(function () {
                 var fileUpload = $(this).data(namespace);
@@ -615,7 +615,7 @@
 
         }
     };
-    
+
     $.fn.fileUpload = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -625,5 +625,5 @@
             $.error('Method ' + method + ' does not exist on jQuery.fileUpload');
         }
     };
-    
+
 }(jQuery));

@@ -23,38 +23,38 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
-<%@ page import="oscar.oscarEncounter.data.EctPatientData"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="ca.openosp.openo.encounter.data.EctPatientData" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 
 <%
     String demoNo = request.getParameter("demographic_no");
     int formId = Integer.parseInt(request.getParameter("formId"));
     //int provNo = Integer.parseInt(request.getParameter("provNo"));
 
-	EctPatientData.Patient p = new EctPatientData().getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
+    EctPatientData.Patient p = new EctPatientData().getPatient(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
     String s = p.getSex();
 
-    if(true) {
+    if (true) {
         out.clear();
-		if (s.equals("F")) 
-			pageContext.forward("formannualfemaleV2.jsp?demographic_no=" + demoNo + "&formId=" + formId) ; // request.getParameter("form_link") + "?demographic_no=" + request.getParameter("demographic_no") ); //+ "&study_no=" + request.getParameter("study_no") ); //forward request&response to the target page "&formId=" + request.getParameter("formId") + 
-		else 
-			pageContext.forward("formannualmaleV2.jsp?demographic_no=" + demoNo + "&formId=" + formId) ;
+        if (s.equals("F"))
+            pageContext.forward("formannualfemaleV2.jsp?demographic_no=" + demoNo + "&formId=" + formId); // request.getParameter("form_link") + "?demographic_no=" + request.getParameter("demographic_no") ); //+ "&study_no=" + request.getParameter("study_no") ); //forward request&response to the target page "&formId=" + request.getParameter("formId") +
+        else
+            pageContext.forward("formannualmaleV2.jsp?demographic_no=" + demoNo + "&formId=" + formId);
 
-		return;
+        return;
     }
 %>

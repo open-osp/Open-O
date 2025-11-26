@@ -1,4 +1,16 @@
-FROM tomcat:9.0.56-jdk8-openjdk
+FROM tomcat:9.0.97-jdk21-temurin
+
+# Set environment variables for Tomcat
+ENV CATALINA_HOME /usr/local/tomcat
+ENV PATH $CATALINA_HOME/bin:$PATH
+# ENV CATALINA_OPTS="--add-opens java.base/java.net=ALL-UNNAMED -agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+ENV CATALINA_OPTS="--add-opens java.base/java.net=ALL-UNNAMED"
+ENV JPDA_OPTS="-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n"
+ENV JPDA_ADDRESS=8000
+ENV JPDA_TRANSPORT=dt_socket
+
+# Copy Tomcat installation from the official Tomcat image
+COPY --from=tomcat:9.0.97 /usr/local/tomcat $CATALINA_HOME
 
 # Labels
 LABEL author="OpenOSP" \
@@ -9,19 +21,71 @@ ARG DRUGREF_DOWNLOAD_URL=https://bitbucket.org/openoscar/drugref/downloads/drugr
 ARG TOMCAT_PATH=/usr/local/tomcat
 ARG DOCS_PATH='/home/oscar/development/volumes'
 ARG OSCAR_DOCUMENT="${DOCS_PATH}/OscarDocument"
+ARG DB_DOCS="/db-data/documents"
+ARG DOCS_DEST="/var/lib/OscarDocument/oscar/document"
 
 WORKDIR /workspace
 
 # Install required packages and clean up apt lists
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix curl git wget apt-transport-https ca-certificates gnupg lsb-release \
-    locales iputils-ping gettext fontconfig libc6 libfreetype6 libjpeg62-turbo \
-    libpng16-16 libssl1.1 libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 \
-    libxrender1 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
+    libjpeg-turbo8 \
+    locales iputils-ping gettext fontconfig libc6 libfreetype6 \
+    libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 \
+    libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
+    python3 python3-pip \
+    inotify-tools \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Remove unnecessary default web apps in Tomcat
+# Install Node.js (latest LTS)
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - \
+    && apt-get install -y nodejs
+
+# Install GitHub CLI
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt-get update \
+    && apt-get install -y gh
+
+# Install Go
+RUN apt-get update && apt-get install -y golang-go
+
+# Install javadoc2md utility for converting Javadoc to Markdown
+RUN go install github.com/dburkart/javadoc2md/cmd/javadoc2md@latest
+
+# Install Claude Code CLI and Docusaurus
+RUN npm install -g @anthropic-ai/claude-code @docusaurus/core @docusaurus/preset-classic
+
+# Install Gemini CLI.
+RUN npm install -g @google/gemini-cli
+
+# Install pipx and Aider AI coding assistant
+RUN apt-get update && apt-get install -y pipx && \
+    pipx install aider-chat && \
+    pipx ensurepath
+
+# Install Postfix for mail testing with default values
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
+
+# Configure Postfix for simple localhost operation
+RUN postconf -e 'myhostname=openo-dev.local' && \
+    postconf -e 'mydestination=openo-dev.local, localhost' && \
+    postconf -e 'mynetworks=127.0.0.0/8' && \
+    postconf -e 'inet_interfaces=loopback-only' && \
+    postconf -e 'maillog_file=/var/log/mail.log' && \
+    # Disable all authentication and encryption
+    postconf -e 'smtpd_sasl_auth_enable=no' && \
+    postconf -e 'smtpd_use_tls=no' && \
+    postconf -e 'smtpd_tls_security_level=none' && \
+    # Allow local connections without auth
+    postconf -e 'smtpd_client_restrictions=permit_mynetworks,reject'
+
+# Create custom bashrc with tool reminders
+COPY ./config/bashrc /root/.bashrc
+
+# Remove unnecessary default www apps in Tomcat
 RUN rm -rf $TOMCAT_PATH/webapps/ROOT/* \
     $TOMCAT_PATH/webapps/docs \
     $TOMCAT_PATH/webapps/examples \
@@ -37,6 +101,7 @@ RUN curl -sSL -o $TOMCAT_PATH/webapps/drugref2.war $DRUGREF_DOWNLOAD_URL
 # Copy scripts and config files
 COPY ./scripts /scripts
 COPY ./setup/setup.sh /setup-dir/setup.sh
+COPY ./setup/setup-hot-reload.sh /setup-dir/setup-hot-reload.sh
 COPY ./config/tomcat/conf/server.xml $TOMCAT_PATH/conf/server.xml
 COPY ./config/shared/volumes/*.properties /root/
 
@@ -47,7 +112,8 @@ COPY ./openosp_files/logging.properties $TOMCAT_PATH/conf/logging.properties
 COPY ./openosp_files/logging-servlet.properties $TOMCAT_PATH/conf/logging-servlet.properties
 COPY ./openosp_files/tomcat-users.xml $TOMCAT_PATH/conf/tomcat-users.xml
 
-# Set up document directories
+# Set up document directories, including seeded document data for the database and the destination
+# of all documents
 RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
     $OSCAR_DOCUMENT/oscar/billing/download \
     $OSCAR_DOCUMENT/oscar/billing/invoices \
@@ -58,14 +124,17 @@ RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
     $OSCAR_DOCUMENT/oscar/onEDTDocs/sent \
     $OSCAR_DOCUMENT/oscar/onEDTDocs/archive \
     $OSCAR_DOCUMENT/oscar/oscarEncounter/oscarMeasurements/styles \
-    $OSCAR_DOCUMENT/oscar/incomingdocs
+    $OSCAR_DOCUMENT/oscar/incomingdocs \
+    $DB_DOCS \
+    $DOCS_DEST 
 
 # Convert script files from DOS to Unix format (if necessary)
 RUN dos2unix /scripts/* \
     && dos2unix /setup-dir/setup.sh
 
-# Make setup script executable and run it
-RUN chmod +x /setup-dir/setup.sh && /setup-dir/setup.sh
+# Make scripts executable and add to PATH
+RUN chmod +x /scripts/* /setup-dir/*.sh && /setup-dir/setup.sh
+ENV PATH="/scripts:${PATH}"
 
 # Expose Tomcat port
 EXPOSE 8080

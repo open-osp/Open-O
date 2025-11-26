@@ -9,142 +9,134 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<!DOCTYPE html>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.util.*, org.oscarehr.documentManager.EDocUtil, org.oscarehr.documentManager.data.ChangeDocStatusForm"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<% 
-ArrayList<String> doctypesD = EDocUtil.getDoctypes("demographic");
-ArrayList<String> doctypesP = EDocUtil.getDoctypes("provider");
+<%@ page
+        import="java.util.*, ca.openosp.openo.documentManager.EDocUtil" %>
 
-ArrayList<String> doctypes;
+<%
+    ArrayList<String> doctypesD = EDocUtil.getDoctypes("demographic");
+    ArrayList<String> doctypesP = EDocUtil.getDoctypes("providers");
 
-ChangeDocStatusForm formdata = new ChangeDocStatusForm();
-HashMap<String,String> doctypeerrors = new HashMap<String,String>();
-if (request.getAttribute("doctypeerrors") != null) {
-	doctypeerrors = (HashMap<String,String>) request.getAttribute("doctypeerrors");
-}
+    HashMap<String, String> doctypeerrors = new HashMap<String, String>();
+    if (request.getAttribute("doctypeerrors") != null) {
+        doctypeerrors = (HashMap<String, String>) request.getAttribute("doctypeerrors");
+    }
 
 %>
 
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript">
-function selectDocMenu() {
-	if (document.getElementById(module).options[this.selectedIndex].value=="Demographic"){
-		document.getElementById(provdiv).style.display='hidden' ;
-	} else {
-		document.getElementById(demodiv).style.display= 'hidden' ;
-	}
-}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <% Iterator iter = doctypeerrors.keySet().iterator();
+        while (iter.hasNext()) {%>
+    <font class="warning">Error: <fmt:setBundle basename="oscarResources"/><fmt:message key="<%=doctypeerrors.get(iter.next())%>"/></font><br/>
+    <% } %>
 
-
-</script>
-<% Iterator iter = doctypeerrors.keySet().iterator();
-while (iter.hasNext()){%>
-<font class="warning">Error: <bean:message
-	key="<%=doctypeerrors.get(iter.next())%>" /></font><br />
-<% } %> 
-
-<link rel="stylesheet" type="text/css" href="../share/yui/css/fonts-min.css"/>
-<link rel="stylesheet" type="text/css" href="../share/yui/css/autocomplete.css"/>
-<link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
-<title>Status Update Page</title>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/fonts-min.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/yui/css/autocomplete.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
+    <title>Status Update Page</title>
 </head>
 <body>
 <table class="MainTable" id="scrollNumber1" name="documentCategoryTable" style="margin: 0px;">
-			<tr class="topbar">
-                <td class="MainTableTopRowLeftColumn" width="60px">Document Status</td>
-                <td class="MainTableTopRowRightColumn">
-                    <table class="TopStatusBar">
-                        <tr>
-                            <td>Change Document Status</td>
-                        </tr>
-                    </table>
+    <tr class="topbar">
+        <td class="MainTableTopRowLeftColumn" width="60px">Document Status</td>
+        <td class="MainTableTopRowRightColumn">
+            <table class="TopStatusBar">
+                <tr>
+                    <td>Change Document Status</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <form action="${pageContext.request.contextPath}/documentManager/changeDocStatus.do" method="POST"
+               enctype="multipart/form-data" styleClass="forms"
+               onsubmit="return submitUpload(this)">
+
+        <table>
+            <br>
+            <tr>
+                <td><b>Select Document Type: </b></td>
+                <td>
+                    <div id='demodiv'>
+                        <select id="docTypeD" name="docTypeD" style="width: 160">
+                            <option value="">Demographic Document Types</option>
+                            <% for (String doctypeD : doctypesD) { %>
+                            <option value="<%=doctypeD%>">
+                                    <%=doctypeD%>
+                            </option>
+                            <%}%>
+                        </select>
+                    </div>
+                </td>
+
+                <td>
+                    <select id="statusD" name="statusD" style="width: 160">
+                        <option value="">Select Status</option>
+                        <option value="A">Active</option>
+                        <option value="I">Inactive</option>
+
+                    </select>
                 </td>
             </tr>
- 
-<html:form action="/documentManager/changeDocStatus" method="POST"
-	enctype="multipart/form-data" styleClass="forms"
-	onsubmit="return submitUpload(this)" >
-	
-<table>
-	<br>
-	<tr>
-		<td><b>Select Document Type: </b></td>
-		<td >
-			<div id='demodiv'>		
-			<select id="docTypeD" name="docTypeD" style="width: 160" >
-				<option value="">Demographic Document Types</option>
-			<% for (String doctypeD : doctypesD) { %>
-				<option value="<%= doctypeD%>"
-						<%=(formdata.getDocTypeD().equals(doctypeD))?" selected":""%>><%= doctypeD%></option>
-						<%}%>
-			</select>		
-			</div>
-		</td>
-	
-		<td >
-			<select id="statusD" name="statusD" style="width: 160" >
-				<option value="">Select Status</option>
-				<option value="A">Active</option>
-				<option value="I">Inactive</option>
-				
-			</select>
-		</td>
-	</tr>
-</table>
+        </table>
 
-<table>	
-<br>	
-	<tr> 
-		<td><b>Select Document Type: </b></td>
-		<td>
-		<div id='provdiv'>
-			<select id="docTypeP" name="docTypeP" style="width: 160" >
-				<option value="">Provider Document Types</option>
-				<%
-					for ( String doctypeP : doctypesP) { %>
-				<option value="<%= doctypeP%>"
-					<%=(formdata.getDocTypeP().equals(doctypeP))?" selected":""%>><%= doctypeP%></option>
-					<%}%>
-			</select>				
-		</div></td>
-	
-		<td >
-			<select id="statusP" name="statusP" style="width: 160" >
-				<option value="">Select Status</option>
-				<option value="A">Active</option>
-				<option value="I">Inactive</option>
-			</select>
-		</td>
-	</tr>
+        <table>
+            <br>
+            <tr>
+                <td><b>Select Document Type: </b></td>
+                <td>
+                    <div id='provdiv'>
+                        <select id="docTypeP" name="docTypeP" style="width: 160">
+                            <option value="">Provider Document Types</option>
+                            <%
+                                for (String doctypeP : doctypesP) { %>
+                            <option value="<%=doctypeP%>">
+                                    <%=doctypeP%>
+                            </option>
+                            <%}%>
+                        </select>
+                    </div>
+                </td>
 
- </table>
- <table>
- <br>
-	<tr>
-		<td><input type="submit" name="submit" value="Update"/> </td>
-		<td><input type="button" name="button" value="Cancel"
-			 onclick=self.close()> </td> 
-	</tr>
-</table>
-</html:form>	
+                <td>
+                    <select id="statusP" name="statusP" style="width: 160">
+                        <option value="">Select Status</option>
+                        <option value="A">Active</option>
+                        <option value="I">Inactive</option>
+                    </select>
+                </td>
+            </tr>
+
+        </table>
+        <table>
+            <br>
+            <tr>
+                <td><input type="submit" name="submit" value="Update"/></td>
+                <td><input type="button" name="button" value="Cancel"
+                           onclick=self.close()></td>
+            </tr>
+        </table>
+    </form>
 </table>
 </body>
 </html>

@@ -24,17 +24,17 @@
 
 --%>
 <%
-	int n = Integer.parseInt(request.getParameter("n"));
+    int n = Integer.parseInt(request.getParameter("n"));
 %>
 
 <tr id="rf_<%=n%>">
-	<td>
-		<a href="javascript:void(0)" onclick="deleteRiskFactor('<%=n%>'); return false;">[x]</a>
-	</td>
-	<td>
-		<input type="text" name="c_riskFactors<%=n%>" size="20" maxlength="50" style="width: 100%" >
-	</td>
-	<td>
-		<input type="text" name="c_planManage<%=n %>" size="60" maxlength="100" style="width: 100%" >
-	</td>
+    <td>
+        <a href="javascript:void(0)" onclick="deleteRiskFactor('<%=n%>'); return false;">[x]</a>
+    </td>
+    <td>
+        <input type="text" name="c_riskFactors<%=n%>" size="20" maxlength="50" style="width: 100%">
+    </td>
+    <td>
+        <input type="text" name="c_planManage<%=n %>" size="60" maxlength="100" style="width: 100%">
+    </td>
 </tr>

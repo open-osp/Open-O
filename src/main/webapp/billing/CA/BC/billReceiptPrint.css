@@ -1,10 +1,9 @@
 
-BODY
-{
+BODY {
     background-color: white;
     color: black;
-    width:600px;
-    font-size:7pt;
+    width: 600px;
+    font-size: 7pt;
     margin-top: 0px;
     margin-right: 0px;
     margin-bottom: 0px;
@@ -18,30 +17,33 @@ BODY
 }
 
 .header {
-    display:none;
+    display: none;
 }
+
 .header INPUT {
-    display:none;
+    display: none;
 }
 
 .header A {
-    display:none;
+    display: none;
 }
 
 input {
-    border:none;
+    border: none;
 }
+
 select {
-    border:none;
+    border: none;
 }
+
 .totals_cell {
     text-align: right;
 }
 
-.rcvPayment, .billingTo{
-    display:none;
+.rcvPayment, .billingTo {
+    display: none;
 }
 
-.notes{
+.notes {
     display: none;
 }

@@ -24,129 +24,135 @@ b<%--
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../../securityError.jsp?type=_billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-  String curUser_no= (String) session.getAttribute("user");
- 
-%>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, java.net.*"%>
+    String curUser_no = (String) session.getAttribute("user");
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
-<%
-	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
 %>
-<%@page import="org.oscarehr.util.MiscUtils"%><html>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, java.net.*" %>
+
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
+<%
+    DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
+%>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Billing Summary</title>
-<script LANGUAGE="JavaScript">
-<!--
-<%
-      boolean multipage = false;
-      String formName = request.getParameter("formName");
-      String formElement = request.getParameter("formElement");
-      if ( formName != null && !formName.equals("") && formElement != null && !formElement.equals("") ){
-         multipage = true;
-      }
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Billing Summary</title>
+    <script LANGUAGE="JavaScript">
+        <!--
+        <%
+              boolean multipage = false;
+              String formName = request.getParameter("formName");
+              String formElement = request.getParameter("formElement");
+              if ( formName != null && !formName.equals("") && formElement != null && !formElement.equals("") ){
+                 multipage = true;
+              }
 
-      if (multipage){%>
-function CodeAttach(File0, File1, File2) {
+              if (multipage){%>
 
-      self.close();
-      self.opener.document.<%=formName%>.<%=formElement%>.value = File0;
-}
-      <%}else{%>
-function CodeAttach(File0, File1, File2) {
+        function CodeAttach(File0, File1, File2) {
 
-      self.close();
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail1.value = File0;
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail2.value = File1;
-      self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail3.value = File2;
-}
-    <%}%>
--->
-</script>
+            self.close();
+            self.opener.document
+        .<%=formName%>.<%=formElement%>.
+            value = File0;
+        }
+
+        <%}else{%>
+
+        function CodeAttach(File0, File1, File2) {
+
+            self.close();
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail1.value = File0;
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail2.value = File1;
+            self.opener.document.BillingCreateBillingForm.xml_diagnostic_detail3.value = File2;
+        }
+
+        <%}%>
+        -->
+    </script>
 
 </head>
 <body>
 <%
- if (request.getParameter("update").equals("Confirm")) {
+    if (request.getParameter("update").equals("Confirm")) {
 
 
-        String temp="";
-        String[] param =new String[10];
+        String temp = "";
+        String[] param = new String[10];
         param[0] = "";
         param[1] = "";
         param[2] = "";
 
-	int Count = 0;
+        int Count = 0;
 
-	for (Enumeration e = request.getParameterNames() ; e.hasMoreElements() ;) {
-		temp=e.nextElement().toString();
-		if( temp.indexOf("code_")==-1 ) continue;
-                 param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
-                 Count = Count + 1;
+        for (Enumeration e = request.getParameterNames(); e.hasMoreElements(); ) {
+            temp = e.nextElement().toString();
+            if (temp.indexOf("code_") == -1) continue;
+            param[Count] = temp.substring(5).toUpperCase(); // + " |" + request.getParameter("codedesc_" + temp.substring(5));
+            Count = Count + 1;
 
-      }
+        }
 
-    if (Count == 1) {
-    param[1] = "";
-    param[2] = "";
-    }
+        if (Count == 1) {
+            param[1] = "";
+            param[2] = "";
+        }
         if (Count == 2) {
-        param[2] = "";
+            param[2] = "";
 
-    }
+        }
 
-    if (Count ==0) {
-    %>
+        if (Count == 0) {
+%>
 <p>No input selected</p>
 <input type="button" name="back" value="back"
-	onClick="javascript:history.go(-1);return false;">
+       onClick="javascript:history.go(-1);return false;">
 <%
-    }else{
-    %>
+} else {
+%>
 <script LANGUAGE="JavaScript">
     <!--
-     CodeAttach('<%=param[0]%>','<%=param[1]%>', '<%=param[2]%>' );
+    CodeAttach('<%=param[0]%>', '<%=param[1]%>', '<%=param[2]%>');
     -->
 
 </script>
 <%
-}
+    }
 } else {
 %>
 <%
 
-  String code = request.getParameter("update");
-  code = code.substring(6).trim();
+    String code = request.getParameter("update");
+    code = code.substring(6).trim();
 
 
+    int rowsAffected = 0;
 
- int rowsAffected=0;
 
-
-          List<DiagnosticCode> results = diagnosticCodeDao.findByDiagnosticCode(code);
-          for(DiagnosticCode result:results) {
-        	  result.setDescription(request.getParameter(code));
-        	  diagnosticCodeDao.merge(result);
-          }
+    List<DiagnosticCode> results = diagnosticCodeDao.findByDiagnosticCode(code);
+    for (DiagnosticCode result : results) {
+        result.setDescription(request.getParameter(code));
+        diagnosticCodeDao.merge(result);
+    }
 
 
 %>
@@ -154,7 +160,8 @@ function CodeAttach(File0, File1, File2) {
 <h1>Successful Addition of a billing Record.</h1>
 </p>
 <script LANGUAGE="JavaScript">
-    history.go(-1);return false;
+    history.go(-1);
+    return false;
     self.opener.refresh();
 </script>
 <% } %>

@@ -25,11 +25,12 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Modal Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -37,60 +38,58 @@
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/respond.min.js"></script>
     <![endif]-->
 
-<style>
-body.modal-open {margin-right: 0px} /*needed hack when using the new modal because the right scroll is added*/
-</style>
+    <style>
+        body.modal-open {
+            margin-right: 0px
+        }
 
-  </head>
-  <body>
+        /*needed hack when using the new modal because the right scroll is added*/
+    </style>
 
-    <div class="container">
+</head>
+<body>
 
-	<div class="row">
-	  <div class="col-md-12">
-	    	<h1>Hello, Modal! <small><a href="index.jsp">view example list</a></small></h1>
+<div class="container">
 
-		<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-		Launch demo modal
-		</button>
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Hello, Modal! <small><a href="index.jsp">view example list</a></small></h1>
 
-	<!-- Modal -->
-	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h4 class="modal-title" id="myModalLabel">Modal title</h4>
-	      </div>
-	      <div class="modal-body">
-		...
-	      </div>
-	      <div class="modal-footer">
-		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		<button type="button" class="btn btn-primary">Save changes</button>
-	      </div>
-	    </div><!-- /.modal-content -->
-	  </div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->
+            <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                Launch demo modal
+            </button>
 
-
-      	   </div>
-	</div>
-
-    </div><!-- /.container -->
-
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
 
 
+        </div>
+    </div>
+
+</div><!-- /.container -->
 
 
-
-
-
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  </body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
 </html>
 

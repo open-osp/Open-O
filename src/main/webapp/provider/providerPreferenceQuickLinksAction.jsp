@@ -24,31 +24,26 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
-<%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	String providerNo=loggedInInfo.getLoggedInProviderNo();
-   String action=request.getParameter("action");
-	
-	if ("add".equals(action))
-	{
-	   String name=request.getParameter("name");
-	   String url=request.getParameter("url");
-	   ProviderPreferencesUIBean.addQuickLink(providerNo,name,url);
-	}
-	else if ("remove".equals(action))
-	{
-	   String name=request.getParameter("name");
-	   ProviderPreferencesUIBean.removeQuickLink(providerNo,name);		
-	}
-	else
-	{
-		MiscUtils.getLogger().error("Missing action case. action="+action);
-		WebUtils.dumpParameters(request);
-	}
-	
-	response.sendRedirect("providerpreference.jsp");
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    String providerNo = loggedInInfo.getLoggedInProviderNo();
+    String action = request.getParameter("action");
+
+    if ("add".equals(action)) {
+        String name = request.getParameter("name");
+        String url = request.getParameter("url");
+        ProviderPreferencesUIBean.addQuickLink(providerNo, name, url);
+    } else if ("remove".equals(action)) {
+        String name = request.getParameter("name");
+        ProviderPreferencesUIBean.removeQuickLink(providerNo, name);
+    } else {
+        MiscUtils.getLogger().error("Missing action case. action=" + action);
+        WebUtils.dumpParameters(request);
+    }
+
+    response.sendRedirect(request.getContextPath() + "/provider/providerpreference.jsp");
 %>

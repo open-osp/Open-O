@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,38 +24,37 @@
 --%>
 
 
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_allergy" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_allergy");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_allergy");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*"%>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*"%>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1"
-	bgcolor="#C0C0C0">
-	<tr class="title">
-		<td>Update date</td>
-		<td>Allergy description</td>
-		<td>Reaction</td>
-	</tr>
-	<c:forEach var="allergy" items="${Allergies}">
-		<tr>
-			<td bgcolor="white"><fmt:formatDate pattern="MM/dd/yy"
-				value="${allergy.entry_date}" /></td>
-			<td bgcolor="white"><c:out value="${allergy.description}" /></td>
-			<td bgcolor="white"><c:out value="${allergy.reaction}" /></td>
-		</tr>
-	</c:forEach>
+       bgcolor="#C0C0C0">
+    <tr class="title">
+        <td>Update date</td>
+        <td>Allergy description</td>
+        <td>Reaction</td>
+    </tr>
+    <c:forEach var="allergy" items="${Allergies}">
+        <tr>
+            <td bgcolor="white"><fmt:formatDate pattern="MM/dd/yy"
+                                                value="${allergy.entry_date}"/></td>
+            <td bgcolor="white"><c:out value="${allergy.description}"/></td>
+            <td bgcolor="white"><c:out value="${allergy.reaction}"/></td>
+        </tr>
+    </c:forEach>
 </table>

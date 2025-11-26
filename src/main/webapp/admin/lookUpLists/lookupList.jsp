@@ -25,44 +25,47 @@
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<div class="lookupListItemsWrapper" >
+<div class="lookupListItemsWrapper">
 
-	<div class="row lookupListItemHeading" >
-		<div class="lookupListName row">
-			<h3><c:out value="${ lookuplist.listTitle }" /></h3>
-		</div>
-		<div class="lookupListTitle row">
-			<span class="lookupListDescription" >
-				<c:out value="${ lookuplist.description }" />
-			</span>	
-<%-- 			<a class="showHideEdit" id="edit_${ lookuplist.id }" href="javascript:void(0);" >edit</a> --%>
-<%-- 			<a class="showHideEdit" id="cancel_${ lookuplist.id }" style="display: none;" href="javascript:void(0);" >cancel</a>			 --%>
-		</div>
-	</div>
-	
-	<div class="row lookupListItems" id="lookupListItems_${ lookuplist.id }"  >		
-		<ul>						
-			<c:forEach var="lookupListItem" items="${ lookuplist.items }" >	
-				<c:if test="${ lookupListItem.active }" >
-					<li class="lookupListItem" id="lookupListItem_${ lookupListItem.displayOrder }">							
+    <div class="row lookupListItemHeading">
+        <div class="lookupListName row">
+            <h3><c:out value="${ lookuplist.listTitle }"/></h3>
+        </div>
+        <div class="lookupListTitle row">
+			<span class="lookupListDescription">
+				<c:out value="${ lookuplist.description }"/>
+			</span>
+            <%-- 			<a class="showHideEdit" id="edit_${ lookuplist.id }" href="javascript:void(0);" >edit</a> --%>
+            <%-- 			<a class="showHideEdit" id="cancel_${ lookuplist.id }" style="display: none;" href="javascript:void(0);" >cancel</a>			 --%>
+        </div>
+    </div>
+
+    <div class="row lookupListItems" id="lookupListItems_${ lookuplist.id }">
+        <ul>
+            <c:forEach var="lookupListItem" items="${ lookuplist.items }">
+                <c:if test="${ lookupListItem.active }">
+                    <li class="lookupListItem" id="lookupListItem_${ lookupListItem.displayOrder }">
 						<span class="label">
-							<c:out value="${ lookupListItem.label }" />
-						</span>	
-						<a href="javascript:void(0);" id="removeLookupListItem_${ lookupListItem.id }_${ lookuplist.id }" 
-							class="removeLookupListItem" >X</a>
-					</li>
-				</c:if>
-			</c:forEach>			
-		</ul>
-	</div>
-	
-	<div class="addLookupListItemTools">
-		<div class="addInput">		
-			<input type="text" class="lookupListItemLabel" id="lookupListItemLabel_${ lookuplist.id }" name="lookupListItemLabel_${ lookuplist.id }" value="" />
-		</div>
-		<div class="addInputButton">
-			<input type="button" class="addLookupListItemButton" id="addLookupListItemButton_${ lookuplist.id }" value="add">
-		</div>
-	</div>
-	<div class="clearfix"></div>	
+							<c:out value="${ lookupListItem.label }"/>
+						</span>
+                        <a href="javascript:void(0);"
+                           id="removeLookupListItem_${ lookupListItem.id }_${ lookuplist.id }"
+                           class="removeLookupListItem">X</a>
+                    </li>
+                </c:if>
+            </c:forEach>
+        </ul>
+    </div>
+
+    <div class="addLookupListItemTools">
+        <div class="addInput">
+            <input type="text" class="lookupListItemLabel" id="lookupListItemLabel_${ lookuplist.id }"
+                   name="lookupListItemLabel_${ lookuplist.id }" value=""/>
+        </div>
+        <div class="addInputButton">
+            <input type="button" class="addLookupListItemButton" id="addLookupListItemButton_${ lookuplist.id }"
+                   value="add">
+        </div>
+    </div>
+    <div class="clearfix"></div>
 </div>		

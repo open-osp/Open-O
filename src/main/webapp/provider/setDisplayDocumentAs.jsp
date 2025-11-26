@@ -24,55 +24,64 @@
 
 --%>
 
-<%@page contentType="text/html"%>
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@page contentType="text/html" %>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%@page import="java.util.*" %>
+<%@ page import="java.util.ResourceBundle"%>
 <%
-if(session.getValue("user") == null) response.sendRedirect("../logout.htm");
-if(session.getAttribute("userrole") == null ) response.sendRedirect("../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.htm");
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
+
+    String providertitle = (String) request.getAttribute("providertitle");
+    String providermsgPrefs = (String) request.getAttribute("providermsgPrefs");
+    String providermsgProvider = (String) request.getAttribute("providermsgProvider");
+    String providermsgEdit = (String) request.getAttribute("providermsgEdit");
+    String providermsgSuccess = (String) request.getAttribute("providermsgSuccess");
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-    "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 <c:set var="ctx" value="${pageContext.request.contextPath}"
-       scope="request" />
-<html:html>
+       scope="request"/>
+<html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <html:base />
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><bean-el:message key="${providertitle}" /></title>
+        <title><%=bundle.getString(providertitle)%></title>
         <link rel="stylesheet" type="text/css"
-              href="../oscarEncounter/encounterStyles.css">
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
     </head>
 
     <body class="BodyStyle" vlink="#0000FF">
-        <table class="MainTable" id="scrollNumber1" name="encounterTable">
-            <tr class="MainTableTopRow">
-                <td class="MainTableTopRowLeftColumn"><bean-el:message
-                        key="${providermsgPrefs}" /></td>
-                <td style="color: white" class="MainTableTopRowRightColumn"><bean-el:message
-                        key="${providermsgProvider}" /></td>
-            </tr>
-            <tr>
-                <td class="MainTableLeftColumn">&nbsp;</td>
-                <td class="MainTableRightColumn">
-                    <%if( request.getAttribute("status") == null ){%> <bean-el:message
-                        key="${providermsgEdit}" />
-                    <html:form action="/setProviderStaleDate.do">
-                        <input type="hidden" name="method" value="<c:out value="${method}"/>">
-			<html:select property="displayDocumentAsProperty.value">
-				<html:options collection="dropOpts" property="value"
-					labelProperty="label" />
-			</html:select>
-                        <html:submit property="btnApply"/>
-                    </html:form> <%}else {%> <bean-el:message key="${providermsgSuccess}" /> <br>
-                    <%}%>
-                </td>
-            </tr>
-            <tr>
-                <td class="MainTableBottomRowLeftColumn"></td>
-                <td class="MainTableBottomRowRightColumn"></td>
-            </tr>
-        </table>
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"><%=bundle.getString(providermsgPrefs)%></td>
+            <td style="color: white" class="MainTableTopRowRightColumn"><%=bundle.getString(providermsgProvider)%></td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <%if (request.getAttribute("status") == null) {%> <%=bundle.getString(providermsgEdit)%>
+                <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
+                    <input type="hidden" name="method" value="<c:out value="${method}"/>">
+                    <select name="displayDocumentAsProperty.value" id="displayDocumentAsProperty.value">
+                        <c:forEach var="dropOpt" items="${dropOpts}">
+                            <option value="${dropOpt.value}" 
+                                <c:if test="${dropOpt.value == fmt.value}">selected</c:if>>
+                                ${dropOpt.label}
+                            </option>
+                        </c:forEach>
+                    </select>
+                    <input type="submit" name="btnApply" value="Apply" />
+                </form> <%} else {%> <%=bundle.getString(providermsgSuccess)%> <br>
+                <%}%>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
     </body>
-</html:html>
+</html>

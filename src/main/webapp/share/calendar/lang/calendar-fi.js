@@ -8,74 +8,74 @@
 // full day names
 Calendar._DN = new Array
 ("Sunnuntai",
- "Maanantai",
- "Tiistai",
- "Keskiviikko",
- "Torstai",
- "Perjantai",
- "Lauantai",
- "Sunnuntai");
+    "Maanantai",
+    "Tiistai",
+    "Keskiviikko",
+    "Torstai",
+    "Perjantai",
+    "Lauantai",
+    "Sunnuntai");
 
 // short day names
 Calendar._SDN = new Array
 ("Su",
- "Ma",
- "Ti",
- "Ke",
- "To",
- "Pe",
- "La",
- "Su");
+    "Ma",
+    "Ti",
+    "Ke",
+    "To",
+    "Pe",
+    "La",
+    "Su");
 
 // full month names
 Calendar._MN = new Array
 ("Tammikuu",
- "Helmikuu",
- "Maaliskuu",
- "Huhtikuu",
- "Toukokuu",
- "Kesäkuu",
- "Heinäkuu",
- "Elokuu",
- "Syyskuu",
- "Lokakuu",
- "Marraskuu",
- "Joulukuu");
+    "Helmikuu",
+    "Maaliskuu",
+    "Huhtikuu",
+    "Toukokuu",
+    "Kesäkuu",
+    "Heinäkuu",
+    "Elokuu",
+    "Syyskuu",
+    "Lokakuu",
+    "Marraskuu",
+    "Joulukuu");
 
 // short month names
 Calendar._SMN = new Array
 ("Tam",
- "Hel",
- "Maa",
- "Huh",
- "Tou",
- "Kes",
- "Hei",
- "Elo",
- "Syy",
- "Lok",
- "Mar",
- "Jou");
+    "Hel",
+    "Maa",
+    "Huh",
+    "Tou",
+    "Kes",
+    "Hei",
+    "Elo",
+    "Syy",
+    "Lok",
+    "Mar",
+    "Jou");
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "Tietoja kalenterista";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Time Selector\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"Uusin versio osoitteessa: http://www.dynarch.com/projects/calendar/\n" +
-"Julkaistu GNU LGPL lisenssin alaisuudessa. Lisätietoja osoitteessa http://gnu.org/licenses/lgpl.html" +
-"\n\n" +
-"Päivämäärä valinta:\n" +
-"- Käytä \xab, \xbb painikkeita valitaksesi vuosi\n" +
-"- Käytä " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " painikkeita valitaksesi kuukausi\n" +
-"- Pitämällä hiiren painiketta minkä tahansa yllä olevan painikkeen kohdalla, saat näkyviin valikon nopeampaan siirtymiseen.";
+    "DHTML Date/Time Selector\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "Uusin versio osoitteessa: http://www.dynarch.com/projects/calendar/\n" +
+    "Julkaistu GNU LGPL lisenssin alaisuudessa. Lisätietoja osoitteessa http://gnu.org/licenses/lgpl.html" +
+    "\n\n" +
+    "Päivämäärä valinta:\n" +
+    "- Käytä \xab, \xbb painikkeita valitaksesi vuosi\n" +
+    "- Käytä " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " painikkeita valitaksesi kuukausi\n" +
+    "- Pitämällä hiiren painiketta minkä tahansa yllä olevan painikkeen kohdalla, saat näkyviin valikon nopeampaan siirtymiseen.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Ajan valinta:\n" +
-"- Klikkaa kellonajan numeroita lisätäksesi aikaa\n" +
-"- tai pitämällä Shift-näppäintä pohjassa saat aikaa taaksepäin\n" +
-"- tai klikkaa ja pidä hiiren painike pohjassa sekä liikuta hiirtä muuttaaksesi aikaa nopeasti eteen- ja taaksepäin.";
+    "Ajan valinta:\n" +
+    "- Klikkaa kellonajan numeroita lisätäksesi aikaa\n" +
+    "- tai pitämällä Shift-näppäintä pohjassa saat aikaa taaksepäin\n" +
+    "- tai klikkaa ja pidä hiiren painike pohjassa sekä liikuta hiirtä muuttaaksesi aikaa nopeasti eteen- ja taaksepäin.";
 
 Calendar._TT["PREV_YEAR"] = "Edell. vuosi (paina hetki, näet valikon)";
 Calendar._TT["PREV_MONTH"] = "Edell. kuukausi (paina hetki, näet valikon)";

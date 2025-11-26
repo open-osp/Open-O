@@ -25,34 +25,35 @@
 :root {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 12px;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 .title {
-    font-family:"Helvetica";
-    font-weight:bold;
-    text-align:center;
+    font-family: "Helvetica";
+    font-weight: bold;
+    text-align: center;
 }
 
 a {
-    text-decoration:none;
+    text-decoration: none;
 }
 
 .panel li div {
-    display:table-cell;
+    display: table-cell;
     border-bottom: 1px solid #c0c0c0;
     border-right: 1px solid #c0c0c0;
-    vertical-align:middle;
-    height:inherit;
+    vertical-align: middle;
+    height: inherit;
     background-color: inherit;
 }
+
 /* Only add appointment screen has a border on its cells */
 div#editAppointment .panel li div {
-    border:none;
+    border: none;
 }
 
 .row {
@@ -65,23 +66,23 @@ div#editAppointment .panel li div {
 }
 
 div.label {
-    text-align:right;
-    width:25%;
+    text-align: right;
+    width: 25%;
     vertical-align: top !important;
 }
 
 div.input {
-    text-align:left;
-    width:25%;
+    text-align: left;
+    width: 25%;
     vertical-align: top !important;
 }
 
 .panel input {
-    font-size:12px;
+    font-size: 12px;
 }
 
 input.submit {
-    width:auto;
+    width: auto;
 }
 
 input[readonly] {
@@ -90,32 +91,35 @@ input[readonly] {
 
 
 #bottomInfo {
-    float:left;
-    width:100%;
+    float: left;
+    width: 100%;
 }
 
 .buttonBar {
-    width:100%;
+    width: 100%;
 }
+
 table.buttonBar tr td {
-    padding-top:10px;
+    padding-top: 10px;
 
 }
+
 table.buttonBar tr td input, table.buttonBar tr td a {
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 .panel {
-    display:block;
-    width:100%;
+    display: block;
+    width: 100%;
 }
 
 .panel ul {
-    display:table;
+    display: table;
     list-style: none;
-    padding: 0; margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 #viewButton {
-    display:none;
+    display: none;
 }

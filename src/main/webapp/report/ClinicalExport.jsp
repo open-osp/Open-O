@@ -24,60 +24,62 @@
 
 --%>
 <%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.MiscUtils"%><%@page import="org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFWorkbook,com.Ostermiller.util.CSVParser"%><%
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="org.apache.poi.hssf.usermodel.HSSFRow,org.apache.poi.hssf.usermodel.HSSFSheet,org.apache.poi.hssf.usermodel.HSSFWorkbook,com.Ostermiller.util.CSVParser" %>
+<%
 
     String csv = (String) session.getAttribute("clinicalReportCSV");
     String action = request.getParameter("getCSV");
-        if (action != null) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename=\"oscarReport.csv\"");
-            try {
-                response.getWriter().write(csv);
-            } catch (Exception ioe) {
-            	MiscUtils.getLogger().error("Error", ioe);
-            }
+    if (action != null) {
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=\"oscarReport.csv\"");
+        try {
+            response.getWriter().write(csv);
+        } catch (Exception ioe) {
+            MiscUtils.getLogger().error("Error", ioe);
         }
-        action = request.getParameter("getXLS");
-        if (action != null) {
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename=\"oscarReport.xls\"");
-            String[][] data = CSVParser.parse(csv);
-            HSSFWorkbook wb = new HSSFWorkbook();
-            HSSFSheet sheet = wb.createSheet("OSCAR_Report");
-            for (int x=0; x<data.length; x++) {
-                HSSFRow row = sheet.createRow((short)x);
-                for (int y=0; y<data[x].length; y++) {
-                    try{
-                       double d = Double.parseDouble(data[x][y]);
-                        row.createCell((short)y).setCellValue(d);
-                    }catch(Exception e){
-                       row.createCell((short)y).setCellValue(data[x][y]);
-                    }
+    }
+    action = request.getParameter("getXLS");
+    if (action != null) {
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=\"oscarReport.xls\"");
+        String[][] data = CSVParser.parse(csv);
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet("OSCAR_Report");
+        for (int x = 0; x < data.length; x++) {
+            HSSFRow row = sheet.createRow((short) x);
+            for (int y = 0; y < data[x].length; y++) {
+                try {
+                    double d = Double.parseDouble(data[x][y]);
+                    row.createCell((short) y).setCellValue(d);
+                } catch (Exception e) {
+                    row.createCell((short) y).setCellValue(data[x][y]);
                 }
             }
-            try {    
-                wb.write(response.getOutputStream());
-		return;
-            } catch(Exception e) {
-            	MiscUtils.getLogger().error("Error", e);
-            }
-            
         }
-       
+        try {
+            wb.write(response.getOutputStream());
+            return;
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Error", e);
+        }
+
+    }
+
 
 %>

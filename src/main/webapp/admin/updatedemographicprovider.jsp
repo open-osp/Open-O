@@ -26,14 +26,14 @@
 --%>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.List" %>
-<%@ page import="org.oscarehr.common.model.DemographicExt" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DemographicExt" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.managers.DemographicManager" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.managers.ProviderManager2" %>
-<%@ page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.managers.ProviderManager2" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
@@ -44,7 +44,7 @@
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r"
                    reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%!
     DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
@@ -57,34 +57,35 @@
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     List<String> names = new ArrayList<>();
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="admin.admin.btnUpdatePatientProvider"/></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnUpdatePatientProvider"/></title>
 
         <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.css" rel="stylesheet">
     </head>
-    <script type="text/javascript" >
-      function setregexp() {
-        document.ADDAPPT.regexp.value = "^[" + document.ADDAPPT.last_name_from.value + "-"
-            + document.ADDAPPT.last_name_to.value + "]";
-      }
+    <script type="text/javascript">
+        function setregexp() {
+            document.ADDAPPT.regexp.value = "^[" + document.ADDAPPT.last_name_from.value + "-"
+                + document.ADDAPPT.last_name_to.value + "]";
+        }
 
-      function setregexp1() {
-        document.ADDAPPT1.regexp.value = "^[" + document.ADDAPPT1.last_name_from.value + "-"
-            + document.ADDAPPT1.last_name_to.value + "]";
-      }
+        function setregexp1() {
+            document.ADDAPPT1.regexp.value = "^[" + document.ADDAPPT1.last_name_from.value + "-"
+                + document.ADDAPPT1.last_name_to.value + "]";
+        }
 
-      function setregexp2() {
-        document.ADDAPPT2.regexp.value = "^[" + document.ADDAPPT2.last_name_from.value + "-"
-            + document.ADDAPPT2.last_name_to.value + "]";
-      }
-      function setregexp3() {
-          document.ADDMRP.regexp.value = "^[" + document.ADDMRP.last_name_from.value + "-"
-                  + document.ADDMRP.last_name_to.value + "]";
-      }
+        function setregexp2() {
+            document.ADDAPPT2.regexp.value = "^[" + document.ADDAPPT2.last_name_from.value + "-"
+                + document.ADDAPPT2.last_name_to.value + "]";
+        }
+
+        function setregexp3() {
+            document.ADDMRP.regexp.value = "^[" + document.ADDMRP.last_name_from.value + "-"
+                + document.ADDMRP.last_name_to.value + "]";
+        }
     </script>
     <%
         for (Provider p : providerManager.getProviders(loggedInInfo, true)) {
@@ -95,14 +96,14 @@
 
     <body>
     <div class="container-fluid">
-        <h3><bean:message key="admin.admin.btnUpdatePatientProvider"/></h3>
+        <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnUpdatePatientProvider"/></h3>
         <%
             if (request.getParameter("update") != null
                     && request.getParameter("update").equals("UpdateResident")) {
                 // find demographicNos for records with last name starting with and have a resident assigned
                 List<Integer> noList = demographicManager.getDemographicNumbersByResidentNumberAndDemographicLastNameRegex(
                         loggedInInfo, request.getParameter("oldcust2"), request.getParameter("regexp")
-                        );
+                );
                 int rowsAffected = 0;
                 if (noList != null) {
                     int nosize = noList.size();
@@ -120,10 +121,10 @@
                         for (int x = 2; x < param.length; x++) {
                             demoList.add(Integer.parseInt(param[x]));
                         }
-                        // get demographicExt entries in demo list with old provider
+                        // get demographicExt entries in demo list with old providers
                         List<DemographicExt> residents = demographicManager
                                 .getMultipleResidentForDemographicNumbersByProviderNumber(
-                                        loggedInInfo,demoList, param[1]
+                                        loggedInInfo, demoList, param[1]
                                 );
                         for (DemographicExt resident : residents) {
                             resident.setValue(param[0]);
@@ -134,17 +135,17 @@
                 }
         %>
         <%=rowsAffected %>
-        <bean:message key="admin.updatedemographicprovider.msgRecords"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgRecords"/>
         <br>
         <%
             }
             if (request.getParameter("update") != null
                     && request.getParameter("update").equals("UpdateNurse")) {
                 List<Integer> noList = demographicManager.getDemographicNumbersByNurseNumberAndDemographicLastNameRegex(
-                            loggedInInfo,
-                            request.getParameter("oldcust1"),
-                            request.getParameter("regexp")
-                        );
+                        loggedInInfo,
+                        request.getParameter("oldcust1"),
+                        request.getParameter("regexp")
+                );
                 int rowsAffected = 0;
                 if (noList != null) {
                     int nosize = noList.size();
@@ -164,7 +165,7 @@
                         }
                         List<DemographicExt> nurses = demographicManager.
                                 getMultipleNurseForDemographicNumbersByProviderNumber(
-                                    loggedInInfo, demoList, param[1]
+                                        loggedInInfo, demoList, param[1]
                                 );
                         for (DemographicExt nurse : nurses) {
                             nurse.setValue(param[0]);
@@ -175,17 +176,17 @@
                 }
         %>
         <%=rowsAffected %>
-        <bean:message key="admin.updatedemographicprovider.msgRecords"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgRecords"/>
         <br>
         <%
             }
             if (request.getParameter("update") != null
                     && request.getParameter("update").equals("UpdateMidwife")) {
                 List<Integer> noList = demographicManager.getDemographicNumbersByMidwifeNumberAndDemographicLastNameRegex(
-                            loggedInInfo,
-                            request.getParameter("oldcust4"),
-                            request.getParameter("regexp")
-                        );
+                        loggedInInfo,
+                        request.getParameter("oldcust4"),
+                        request.getParameter("regexp")
+                );
                 int rowsAffected = 0;
                 if (noList != null) {
                     int nosize = noList.size();
@@ -207,19 +208,19 @@
                         }
                         List<DemographicExt> midwives = demographicManager.getMultipleMidwifeForDemographicNumbersByProviderNumber(
                                 loggedInInfo,
-                                    demoList,
-                                    param[1]
-                                );
+                                demoList,
+                                param[1]
+                        );
                         for (DemographicExt midwife : midwives) {
                             midwife.setValue(param[0]);
-                            demographicManager.updateExtension(loggedInInfo,midwife);
+                            demographicManager.updateExtension(loggedInInfo, midwife);
                         }
                         rowsAffected = midwives.size();
                     }
                 }
         %>
         <%= rowsAffected %>
-        <bean:message key="admin.updatedemographicprovider.msgRecords"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgRecords"/>
         <br>
         <%
             }
@@ -231,17 +232,17 @@
                 int rowsAffected = 0;
                 if (noList != null) {
                     String newmrp = request.getParameter("newcust5");
-                    if(newmrp != null) {
-                        for(Demographic demographic : noList) {
+                    if (newmrp != null) {
+                        for (Demographic demographic : noList) {
                             demographic.setProviderNo(newmrp);
                             demographicManager.updateDemographic(loggedInInfo, demographic);
-                            rowsAffected ++;
+                            rowsAffected++;
                         }
                     }
                 }
         %>
         <%= rowsAffected %>
-        <bean:message key="admin.updatedemographicprovider.msgRecords"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgRecords"/>
         <br>
         <% } %>
 
@@ -252,14 +253,14 @@
                       ACTION="updatedemographicprovider.jsp" onsubmit="return(setregexp3())">
                     <tr>
                         <td>
-                            <b><bean:message key="admin.updatedemographicprovider.msgMrp"/></b>
+                            <b><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgMrp"/></b>
                         </td>
                     </tr>
                     <tr>
-                        <td><bean:message key="admin.updatedemographicprovider.formReplace"/>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formReplace"/>
                             <select name="oldcust5">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
                                 <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
@@ -267,10 +268,10 @@
                                 </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formWith"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formWith"/>
                             <select name="newcust5">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
                                 <option value="<%=Encode.forHtmlContent(names.get(i))%>">
@@ -278,7 +279,7 @@
                                 </option>
                                 <% } %>
                             </select><br>
-                            <bean:message key="admin.updatedemographicprovider.formCondition"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formCondition"/>
                             <select name="last_name_from">
                                 <%
                                     char cletter = 'A';
@@ -289,7 +290,7 @@
                                 </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formTo"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formTo"/>
                             <select name="last_name_to">
                                 <%
                                     cletter = 'A';
@@ -302,7 +303,7 @@
                             </select> <br>
                             <INPUT type="hidden" name="regexp" value="">
                             <input type="hidden" name="update" value="UpdateMrp">
-                            <INPUT class="btn btn-primary" type="submit" value="<bean:message key="global.update"/>">
+                            <INPUT class="btn btn-primary" type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.update"/>">
                         </td>
                     </tr>
                 </form>
@@ -316,58 +317,58 @@
                       ACTION="updatedemographicprovider.jsp" onsubmit="return(setregexp1())">
                     <tr>
                         <td>
-                            <b><bean:message key="admin.updatedemographicprovider.msgNurse"/></b>
+                            <b><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNurse"/></b>
                         </td>
                     </tr>
                     <tr>
-                        <td><bean:message key="admin.updatedemographicprovider.formReplace"/>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formReplace"/>
                             <select name="oldcust1">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
-                                    <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
-                                        <%= Encode.forHtmlContent(names.get(i + 1)) %>
-                                    </option>
+                                <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
+                                    <%= Encode.forHtmlContent(names.get(i + 1)) %>
+                                </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formWith"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formWith"/>
                             <select name="newcust1">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
-                                    <option value="<%=Encode.forHtmlContent(names.get(i))%>">
-                                        <%=Encode.forHtmlContent(names.get(i + 1))%>
-                                    </option>
+                                <option value="<%=Encode.forHtmlContent(names.get(i))%>">
+                                    <%=Encode.forHtmlContent(names.get(i + 1))%>
+                                </option>
                                 <% } %>
                             </select><br>
-                            <bean:message key="admin.updatedemographicprovider.formCondition"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formCondition"/>
                             <select name="last_name_from">
                                 <%
                                     cletter = 'A';
                                     for (int i = 0; i < 26; i++) {
                                 %>
-                                    <option value="<%= (char) (cletter + i) %>">
-                                        <%= (char) (cletter + i) %>
-                                    </option>
+                                <option value="<%= (char) (cletter + i) %>">
+                                    <%= (char) (cletter + i) %>
+                                </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formTo"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formTo"/>
                             <select name="last_name_to">
                                 <%
                                     cletter = 'A';
                                     for (int i = 0; i < 26; i++) {
                                 %>
-                                    <option value="<%= (char) (cletter + i) %>">
-                                        <%= (char) (cletter + i) %>
-                                    </option>
+                                <option value="<%= (char) (cletter + i) %>">
+                                    <%= (char) (cletter + i) %>
+                                </option>
                                 <% } %>
                             </select> <br>
                             <INPUT type="hidden" name="regexp" value="">
                             <input type="hidden" name="update" value="UpdateNurse">
                             <INPUT class="btn btn-primary" type="submit"
-                                   value="<bean:message key="global.update"/>">
+                                   value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.update"/>">
                         </td>
                     </tr>
                 </form>
@@ -380,14 +381,14 @@
                 <FORM NAME="ADDAPPT2" METHOD="post"
                       ACTION="updatedemographicprovider.jsp" onsubmit="return(setregexp2())">
                     <tr>
-                        <td><b><bean:message key="admin.updatedemographicprovider.msgMidwife"/></b></td>
+                        <td><b><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgMidwife"/></b></td>
                     </tr>
                     <tr>
                         <td>
-                            <bean:message key="admin.updatedemographicprovider.formReplace"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formReplace"/>
                             <select name="oldcust4">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <%
                                     for (int i = 0; i < names.size(); i = i + 2) {
@@ -397,44 +398,44 @@
                                 </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formWith"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formWith"/>
                             <select name="newcust4">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
-                                    <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
-                                        <%= Encode.forHtmlContent(names.get(i + 1)) %>
-                                    </option>
+                                <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
+                                    <%= Encode.forHtmlContent(names.get(i + 1)) %>
+                                </option>
                                 <% } %>
                             </select><br>
-                            <bean:message key="admin.updatedemographicprovider.formCondition"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formCondition"/>
                             <select name="last_name_from">
                                 <%
                                     cletter = 'A';
                                     for (int i = 0; i < 26; i++) {
                                 %>
-                                    <option value="<%=(char) (cletter+i) %>">
-                                        <%= (char) (cletter + i) %>
-                                    </option>
+                                <option value="<%=(char) (cletter+i) %>">
+                                    <%= (char) (cletter + i) %>
+                                </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formTo"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formTo"/>
                             <select
                                     name="last_name_to">
                                 <%
                                     cletter = 'A';
                                     for (int i = 0; i < 26; i++) {
                                 %>
-                                    <option value="<%=(char) (cletter+i) %>">
-                                        <%= (char) (cletter + i) %>
-                                    </option>
+                                <option value="<%=(char) (cletter+i) %>">
+                                    <%= (char) (cletter + i) %>
+                                </option>
                                 <% } %>
                             </select> <br>
                             <input type="hidden" NAME="regexp" value="">
                             <input type="hidden" name="update" value="UpdateMidwife">
                             <input class="btn btn-primary" type="submit"
-                                   value="<bean:message key="global.update"/>">
+                                   value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.update"/>">
                         </td>
                     </tr>
                 </form>
@@ -447,13 +448,13 @@
                 <FORM NAME="ADDAPPT" METHOD="post"
                       ACTION="updatedemographicprovider.jsp" onsubmit="return(setregexp())">
                     <tr>
-                        <td><b><bean:message key="admin.updatedemographicprovider.msgResident"/></b></td>
+                        <td><b><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgResident"/></b></td>
                     </tr>
                     <tr>
-                        <td><bean:message key="admin.updatedemographicprovider.formReplace"/>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formReplace"/>
                             <select name="oldcust2">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
                                 <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
@@ -461,10 +462,10 @@
                                 </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formWith"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formWith"/>
                             <select name="newcust2">
                                 <option value="">
-                                    <bean:message key="admin.updatedemographicprovider.msgNoProvider"/>
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.msgNoProvider"/>
                                 </option>
                                 <% for (int i = 0; i < names.size(); i = i + 2) { %>
                                 <option value="<%= Encode.forHtmlContent(names.get(i)) %>">
@@ -472,7 +473,7 @@
                                 </option>
                                 <% } %>
                             </select><br>
-                            <bean:message key="admin.updatedemographicprovider.formCondition"/>
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formCondition"/>
                             <select name="last_name_from">
                                 <%
                                     cletter = 'A';
@@ -483,22 +484,22 @@
                                 </option>
                                 <% } %>
                             </select>
-                            <bean:message key="admin.updatedemographicprovider.formTo"/>
-                            <select  name="last_name_to">
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.updatedemographicprovider.formTo"/>
+                            <select name="last_name_to">
                                 <%
                                     cletter = 'A';
                                     for (int i = 0; i < 26; i++) {
                                 %>
-                                    <option value="<%=(char) (cletter+i) %>">
-                                        <%= (char) (cletter + i) %>
-                                    </option>
+                                <option value="<%=(char) (cletter+i) %>">
+                                    <%= (char) (cletter + i) %>
+                                </option>
                                 <% } %>
                             </select> <br>
                             <INPUT TYPE="hidden" NAME="regexp" VALUE=""> <input
                                     type="hidden" name="update" value="UpdateResident"> <INPUT
                                     class="btn btn-primary"
                                     TYPE="submit"
-                                    VALUE="<bean:message key="global.update"/>">
+                                    VALUE="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.update"/>">
                         </td>
                     </tr>
                 </form>
@@ -506,4 +507,4 @@
         </div>
     </div>
     </body>
-</html:html>
+</html>

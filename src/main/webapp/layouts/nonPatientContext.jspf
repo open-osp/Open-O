@@ -29,19 +29,14 @@
 <html lang="en">
 
 <head>
-<tiles:get name="title" />
-<tiles:get name="header" />
 
 <div class="container-fluid" id="main-wrapper" style="margin-top:70px;">
 
 	<div class="row-fluid">
 		
-	<tiles:get name="content" /><!--secondary layout-->
 
 	</div><!--row-fluid-->
 </div><!--container-fluid-->
-
-<tiles:get name="footer" />
 
 </body>
 </html>

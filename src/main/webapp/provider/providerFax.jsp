@@ -24,67 +24,64 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="oscar.oscarProvider.data.*"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@ page import="org.oscarehr.common.model.UserProperty"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="ca.openosp.openo.providers.data.*" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../logout.htm");
-  String curUser_no = (String) session.getAttribute("user");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.htm");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-<html:base />
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 
-<title><bean:message key="provider.editRxFax.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.title"/></title>
 
-<script type="text/javascript">
-    function validate() {        
-        var msg = "<bean:message key="provider.editRxFax.msgPhoneFormat" />";
-        var strnum = document.forms[0].elements[0].value;
-        if(strnum.length > 0 ) {
-	        if( !strnum.match(/^\d{3}-\d{3}-\d{4}$/) ) {
-	            alert(msg);
-	            return false;
-	        }
-        }
-        return true;        
-    }
-</script>
+        <script type="text/javascript">
+            function validate() {
+                var msg = "<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.msgPhoneFormat"/>";
+                var strnum = document.forms[0].elements[0].value;
+                if (strnum.length > 0) {
+                    if (!strnum.match(/^\d{3}-\d{3}-\d{4}$/)) {
+                        alert(msg);
+                        return false;
+                    }
+                }
+                return true;
+            }
+        </script>
 
-</head>
+    </head>
 
-<body class="BodyStyle" vlink="#0000FF">
+    <body class="BodyStyle" vlink="#0000FF">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message
-			key="provider.editRxFax.msgPrefs" /></td>
-		<td style="color: white" class="MainTableTopRowRightColumn"><bean:message
-			key="provider.editRxFax.msgProviderFaxNumber" /></td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<%
-		UserPropertyDAO propertyDao = (UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
-		UserProperty prop = propertyDao.getProp(curUser_no,"faxnumber");			
-		String faxNum = "";
-        if(prop!=null) {
-        	faxNum = prop.getValue();
-        }
-               
-               if( request.getAttribute("status") == null )
-               {
-      
-            %> <html:form action="/EditFaxNum.do">
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.msgPrefs"/></td>
+            <td style="color: white" class="MainTableTopRowRightColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.msgProviderFaxNumber"/></td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <%
+                    UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
+                    UserProperty prop = propertyDao.getProp(curUser_no, "faxnumber");
+                    String faxNum = "";
+                    if (prop != null) {
+                        faxNum = prop.getValue();
+                    }
+
+                    if (request.getAttribute("status") == null) {
+
+                %> <form action="${pageContext.request.contextPath}/EditFaxNum.do" method="post">
 
 
 			<span style="color:blue">By entering in a value, you will 
@@ -94,26 +91,25 @@
 			</li>
 			</ul>
 			</span>
-            <br/>
+                <br/>
 
-			<html:text property="faxNumber" value="<%=faxNum%>" size="40" />
-			<br>
+                <input type="text" name="faxNumber" value="<%=faxNum%>" size="40"/>
+                <br>
 
-			<input type="submit" onclick="return validate();"
-				value="<bean:message key="provider.editRxFax.btnSubmit"/>" />
-		</html:form> <%
-               }
-               else if( ((String)request.getAttribute("status")).equals("complete") ) {
-            %> <bean:message key="provider.editRxFax.msgSuccess" /> <br>
-		<%=faxNum%> <%
-               }
+                <input type="submit" onclick="return validate();"
+                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.btnSubmit"/>"/>
+            </form> <%
+            } else if (((String) request.getAttribute("status")).equals("complete")) {
+            %> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.editRxFax.msgSuccess"/> <br>
+                <%=faxNum%> <%
+                }
             %>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

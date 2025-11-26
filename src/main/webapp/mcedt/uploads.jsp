@@ -24,112 +24,113 @@
 
 --%>
 
-<%@ page errorPage="error.jsp"%>
+<%@ page errorPage="/errorpage.jsp" %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<html:html>
-<head>
-<jsp:include page="head-includes.jsp" />
-<script language="javascript">
-	function removeSelected(control) {
-		return submitForm('removeSelected', control);
-	}
-
-	function uploadToMcedt(control) {
-		return submitForm('uploadToMcedt', control);
-	}
-
-	function cancelUpload(control) {
-		return submitForm('cancelUpload', control);
-	}
-
-	function addNew(control) {
-		return submitForm('addNew', control);
-	}
-
-	function submitForm(methodType, control) {
-		if (control) {
-			control.disabled = true;
-		}
-
-		var method = jQuery("#method");
-		method.val(methodType);
-
-		var form = jQuery("#form");
-		form.submit();
-		return true;
-	}
-</script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<title>MCEDT: Upload</title>
+<html>
+    <head>
+        <jsp:include page="head-includes.jsp"/>
+        <script language="javascript">
+            function removeSelected(control) {
+                return submitForm('removeSelected', control);
+            }
 
-<html:base />
-</head>
+            function uploadToMcedt(control) {
+                return submitForm('uploadToMcedt', control);
+            }
 
-<body>
-	<div class="container-fluid">
-		<div class="row-fluid">
+            function cancelUpload(control) {
+                return submitForm('cancelUpload', control);
+            }
 
-			<h2>Create New Upload</h2>
+            function addNew(control) {
+                return submitForm('addNew', control);
+            }
 
-			<html:form action="/mcedt/uploads" method="post" styleId="form">
+            function submitForm(methodType, control) {
+                if (control) {
+                    control.disabled = true;
+                }
 
-				<jsp:include page="messages.jsp" />
-				
-				<input id="method" name="method" type="hidden" value="" />
+                var method = jQuery("#method");
+                method.val(methodType);
 
-				<c:set var="uploadsEmpty" value="${empty mcedtUploads}"></c:set>
-				<c:choose>
-					<c:when test="${uploadsEmpty}">
-						<p>Please add at least one file to the upload.</p>
+                var form = jQuery("#form");
+                form.submit();
+                return true;
+            }
+        </script>
 
-						<div>
-							<button class="btn" onclick="return addNew(this)">Add
-								File</button>
-							<button class="btn" onclick="return cancelUpload(this)">Cancel</button>
-						</div>
 
-					</c:when>
-					<c:otherwise>
-						<table class="table table-striped  table-condensed">
-							<thead>
-								<tr>
-									<th></th>
-									<th>Resource Type</th>
-									<th>Description</th>
-								</tr>
-							</thead>
-							</tr>
-							<c:forEach var="u" items="${mcedtUploads}" varStatus="i">
-								<tr>
-									<td><input type="checkbox" value="${i.index}"
-										name="resourceId" /></td>
-									<td><c:out value="${u.resourceType}" /></td>
-									<td><c:out value="${u.description}" /></td>
-								</tr>
-							</c:forEach>
-						</table>
+        <title>MCEDT: Upload</title>
 
-						<div>
-							<button class="btn" onclick="return uploadToMcedt(this)">Upload to MCEDT</button>
-							<button class="btn" onclick="return removeSelected(this)">Remove Selected Files</button>
-							<button class="btn" onclick="return addNew(this)">Add More Files</button>
-							<button class="btn" onclick="return cancelUpload(this)">Cancel</button>
-						</div>
-					</c:otherwise>
-				</c:choose>
-			</html:form>
-		</div>
-	</div>
-</body>
-</html:html>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
+
+    <body>
+    <div class="container-fluid">
+        <div class="row-fluid">
+
+            <h2>Create New Upload</h2>
+
+            <form action="${pageContext.request.contextPath}/mcedt/uploads.do" method="post" id="form">
+
+                <jsp:include page="messages.jsp"/>
+
+                <input id="method" name="method" type="hidden" value=""/>
+
+                <c:set var="uploadsEmpty" value="${empty mcedtUploads}"></c:set>
+                <c:choose>
+                    <c:when test="${uploadsEmpty}">
+                        <p>Please add at least one file to the upload.</p>
+
+                        <div>
+                            <button class="btn" onclick="return addNew(this)">Add
+                                File
+                            </button>
+                            <button class="btn" onclick="return cancelUpload(this)">Cancel</button>
+                        </div>
+
+                    </c:when>
+                    <c:otherwise>
+                        <table class="table table-striped  table-condensed">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th>Resource Type</th>
+                                <th>Description</th>
+                            </tr>
+                            </thead>
+                            </tr>
+                            <c:forEach var="u" items="${mcedtUploads}" varStatus="i">
+                                <tr>
+                                    <td><input type="checkbox" value="${i.index}"
+                                               name="resourceId"/></td>
+                                    <td><c:out value="${u.resourceType}"/></td>
+                                    <td><c:out value="${u.description}"/></td>
+                                </tr>
+                            </c:forEach>
+                        </table>
+
+                        <div>
+                            <button class="btn" onclick="return uploadToMcedt(this)">Upload to MCEDT</button>
+                            <button class="btn" onclick="return removeSelected(this)">Remove Selected Files</button>
+                            <button class="btn" onclick="return addNew(this)">Add More Files</button>
+                            <button class="btn" onclick="return cancelUpload(this)">Cancel</button>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </form>
+        </div>
+    </div>
+    </body>
+</html>

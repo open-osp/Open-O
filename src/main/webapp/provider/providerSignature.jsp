@@ -24,75 +24,68 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="oscar.oscarProvider.data.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ page import="ca.openosp.openo.providers.data.*" %>
+<%@ page import="ca.openosp.openo.providers.data.ProSignatureData" %>
 
 <%
-  if(session.getValue("user") == null)
-    response.sendRedirect("../logout.htm");
-  String curUser_no,userfirstname,userlastname;
-  curUser_no = (String) session.getAttribute("user");
-  ProSignatureData sig = new ProSignatureData();
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.htm");
+    String curUser_no, userfirstname, userlastname;
+    curUser_no = (String) session.getAttribute("user");
+    ProSignatureData sig = new ProSignatureData();
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html:base />
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 
-<title><bean:message key="provider.providerSignature.title" /></title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 
-</head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.title"/></title>
 
-<body class="BodyStyle" vlink="#0000FF">
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"><bean:message
-			key="provider.providerSignature.msgPrefs" /></td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td><bean:message key="provider.providerSignature.msgTitle" />
-				</td>
-				<td>&nbsp;</td>
-				<td style="text-align: right"><oscar:help keywords="signature" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-					key="global.license" /></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<% boolean hasSig = sig.hasSignature(curUser_no);
-               if (hasSig){
-            %> <bean:message
-			key="provider.providerSignature.msgCurrentSignature" /> <u><%=sig.getSignature(curUser_no)%></u>
-		<br>
-		<a href="editSignature.jsp"><bean:message
-			key="provider.providerSignature.btnClickHere" /></a> <bean:message
-			key="provider.providerSignature.msgChangeIt" /> <% }else{%> <bean:message
-			key="provider.providerSignature.msgSigNotSet" /><br>
-		<a href="editSignature.jsp"><bean:message
-			key="provider.providerSignature.btnClickHere" /></a> <bean:message
-			key="provider.providerSignature.msgCreate" /> <%}%>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+    </head>
+
+    <body class="BodyStyle" vlink="#0000FF">
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgPrefs"/></td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgTitle"/>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <% boolean hasSig = sig.hasSignature(curUser_no);
+                    if (hasSig) {
+                %> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgCurrentSignature"/> <u><%=sig.getSignature(curUser_no)%>
+            </u>
+                <br>
+                <a href="provider/editSignature.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.btnClickHere"/></a> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgChangeIt"/> <% } else {%> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgSigNotSet"/><br>
+                <a href="provider/editSignature.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.btnClickHere"/></a> <fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerSignature.msgCreate"/> <%}%>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

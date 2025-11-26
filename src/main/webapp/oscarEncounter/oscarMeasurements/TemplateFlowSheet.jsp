@@ -23,14 +23,14 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.OscarProperties"%>
+<%@page import="ca.openosp.OscarProperties" %>
 
 
-<jsp:include page="TemplateFlowSheetPage.jspf" />
-<% 
-String errorMessage = (String)request.getAttribute("errorMessage");
-if (errorMessage != null) {
-    response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
-    return;
-}
+<jsp:include page="TemplateFlowSheetPage.jspf"/>
+<%
+    String errorMessage = (String) request.getAttribute("errorMessage");
+    if (errorMessage != null) {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
+        return;
+    }
 %>

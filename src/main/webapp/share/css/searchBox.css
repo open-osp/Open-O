@@ -21,8 +21,13 @@
  * Hamilton
  * Ontario, Canada
  */
-.select-group input.form-control{ width: 65%}
-.select-group select.input-group-addon { width: 35%; }
+.select-group input.form-control {
+    width: 65%
+}
+
+.select-group select.input-group-addon {
+    width: 35%;
+}
 
 form {
     padding: 0;

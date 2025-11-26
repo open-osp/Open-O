@@ -1,7 +1,4 @@
-
 <%--
-
-
     Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
     This program is free software; you can redistribute it and/or
@@ -21,64 +18,64 @@
     This software was written for
     Centre for Research on Inner City Health, St. Michael's Hospital,
     Toronto, Ontario, Canada
-
 --%>
 
 
-
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 <title>MyIssues ~ Issue List</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+<link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
 <button onclick="location.href='issueAdmin.do?method=edit'">Add
-Issue</button>
+    Issue
+</button>
 <table border="0" cellpadding="0" cellspacing="1" bgcolor="#C0C0C0">
-	<thead>
-		<tr class="title">
-			<!--
-    <th><bean:message key="issueAdmin.id"/></th>
+    <thead>
+    <tr class="title">
+        <!--
+    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="issueAdmin.id"/></th>
 -->
-			<th><bean:message key="issueAdmin.code" /></th>
-			<th><bean:message key="issueAdmin.description" /></th>
-			<th><bean:message key="issueAdmin.role" /></th>
-			<!-- 
-    <th><bean:message key="issueAdmin.update_date"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="issueAdmin.code"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="issueAdmin.description"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="issueAdmin.role"/></th>
+        <!--
+    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="issueAdmin.update_date"/></th>
 -->
-		</tr>
-	</thead>
-	<tbody>
-		<c:forEach var="issueAdmin" items="${issueAdmins}" varStatus="status">
-			<c:choose>
-				<c:when test="${status.count % 2 == 0}">
-					<tr class="even">
-				</c:when>
-				<c:otherwise>
-					<tr class="odd">
-				</c:otherwise>
-			</c:choose>
-			<!--Not allow to edit issue
-    <td><a href="issueAdmin.do?method=edit&amp;id=<c:out value="${issueAdmin.id}"/>"><c:out value="${issueAdmin.code}"/></a></td>
--->
-			<td><c:out value="${issueAdmin.code}" /></a></td>
-			<td><c:out value="${issueAdmin.description}" /></td>
-			<td><c:out value="${issueAdmin.role}" /></td>
-			<!--
-    <td><c:out value="${issueAdmin.update_date}"/></td>
--->
-			</tr>
-		</c:forEach>
-	</tbody>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="issueAdmin" items="${issueAdmins}" varStatus="status">
+        <c:choose>
+            <c:when test="${status.count % 2 == 0}">
+                <tr class="even">
+            </c:when>
+            <c:otherwise>
+                <tr class="odd">
+            </c:otherwise>
+        </c:choose>
+        <!--Not allow to edit issue
+        <td><a href="issueAdmin.do?method=edit&amp;id=<c:out value="${issueAdmin.id}"/>"><c:out
+            value="${issueAdmin.code}"/></a></td>
+        -->
+        <td><c:out value="${issueAdmin.code}"/></a></td>
+        <td><c:out value="${issueAdmin.description}"/></td>
+        <td><c:out value="${issueAdmin.role}"/></td>
+        <!--
+        <td><c:out value="${issueAdmin.update_date}"/></td>
+        -->
+        </tr>
+    </c:forEach>
+    </tbody>
 </table>

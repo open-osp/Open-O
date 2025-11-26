@@ -25,56 +25,66 @@
 --%>
 
 <%@ page
-	import="java.math.*,java.util.*, java.sql.*, oscar.*, java.net.*,oscar.oscarBilling.ca.bc.MSP.*,oscar.util.*,oscar.oscarProvider.data.*,oscar.oscarBilling.ca.on.data.*"%>
+        import="java.math.*,java.util.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.openo.billing.ca.bc.MSP.*,ca.openosp.openo.util.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.RAData" %>
 
 <%
-String billingNo = request.getParameter("billing_no");
+    String billingNo = request.getParameter("billing_no");
 
-RAData raData = new RAData();
-ArrayList aList = raData.getRAData(billingNo);
+    RAData raData = new RAData();
+    ArrayList aList = raData.getRAData(billingNo);
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>JSP Page</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>JSP Page</title>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 </head>
 <body>
 <div class="tableListing">
-<table>
-	<tr>
-		<th>RA HEADER #</th>
-		<th>OHIP #</th>
-		<th>SERVICE CODE</th>
-		<th>SERVICE COUNT</th>
-		<th>HIN</th>
-		<th>AMOUNT CLAIMED</th>
-		<th>AMOUNT PAYED</th>
-		<th>SERVICE DATE</th>
-		<th>ERROR CODE</th>
-		<th>BILL TYPE</th>
-	</tr>
-	<% for (int i = 0 ; i < aList.size(); i++) { 
+    <table>
+        <tr>
+            <th>RA HEADER #</th>
+            <th>OHIP #</th>
+            <th>SERVICE CODE</th>
+            <th>SERVICE COUNT</th>
+            <th>HIN</th>
+            <th>AMOUNT CLAIMED</th>
+            <th>AMOUNT PAYED</th>
+            <th>SERVICE DATE</th>
+            <th>ERROR CODE</th>
+            <th>BILL TYPE</th>
+        </tr>
+            <% for (int i = 0 ; i < aList.size(); i++) {
        Hashtable h = (Hashtable) aList.get(i);           
        %>
-	<tr>
-		<td><%=h.get("raheader_no")%></td>
-		<td><%=h.get("providerohip_no")%></a></td>
-		<td><%=h.get("service_code")%></td>
-		<td><%=h.get("service_count")%></td>
-		<td><%=h.get("hin")%></td>
-		<td><%=h.get("amountclaim")%></td>
-		<td><%=h.get("amountpay")%></td>
-		<td><%=h.get("service_date")%></td>
-		<td><%=h.get("error_code")%></td>
-		<td><%=h.get("billtype")%></td>
-	</tr>
-	<% } %>
-	<table>
-		</div>
+        <tr>
+            <td><%=h.get("raheader_no")%>
+            </td>
+            <td><%=h.get("providerohip_no")%></a></td>
+            <td><%=h.get("service_code")%>
+            </td>
+            <td><%=h.get("service_count")%>
+            </td>
+            <td><%=h.get("hin")%>
+            </td>
+            <td><%=h.get("amountclaim")%>
+            </td>
+            <td><%=h.get("amountpay")%>
+            </td>
+            <td><%=h.get("service_date")%>
+            </td>
+            <td><%=h.get("error_code")%>
+            </td>
+            <td><%=h.get("billtype")%>
+            </td>
+        </tr>
+            <% } %>
+        <table>
+</div>
 </body>
 </html>

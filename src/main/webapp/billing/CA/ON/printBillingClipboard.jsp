@@ -18,80 +18,81 @@
 
 --%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<%      
-  if(session.getValue("user") == null)
-      response.sendRedirect("../logout.jsp");
-  String user_no; 
-  user_no = (String) session.getAttribute("user");
-  String asstProvider_no = "";
-  String color ="";
-  String premiumFlag="";
-String service_form="", service_name="";
+<%
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String user_no;
+    user_no = (String) session.getAttribute("user");
+    String asstProvider_no = "";
+    String color = "";
+    String premiumFlag = "";
+    String service_form = "", service_name = "";
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>oscarBilling :: Clip board ::</title>
-<link rel="stylesheet" href="billing.css">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>oscarBilling :: Clip board ::</title>
+    <link rel="stylesheet" href="billing.css">
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-<script language="JavaScript">
-<!--
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    <script language="JavaScript">
+        <!--
 
-function selectprovider(s) {
-  if(self.location.href.lastIndexOf("&providerview=") > 0 ) a = self.location.href.substring(0,self.location.href.lastIndexOf("&providerview="));
-  else a = self.location.href;
-	self.location.href = a + "&providerview=" +s.options[s.selectedIndex].value ;
-}
+        function selectprovider(s) {
+            if (self.location.href.lastIndexOf("&providerview=") > 0) a = self.location.href.substring(0, self.location.href.lastIndexOf("&providerview="));
+            else a = self.location.href;
+            self.location.href = a + "&providerview=" + s.options[s.selectedIndex].value;
+        }
 
-function refresh() {
-  var u = self.location.href;
-  if(u.lastIndexOf("view=1") > 0) {
-    self.location.href = u.substring(0,u.lastIndexOf("view=1")) + "view=0" + u.substring(eval(u.lastIndexOf("view=1")+6));
-  } else {
-    history.go(0);
-  }
-}
+        function refresh() {
+            var u = self.location.href;
+            if (u.lastIndexOf("view=1") > 0) {
+                self.location.href = u.substring(0, u.lastIndexOf("view=1")) + "view=0" + u.substring(eval(u.lastIndexOf("view=1") + 6));
+            } else {
+                history.go(0);
+            }
+        }
 
 
-//-->
-</script>
+        //-->
+    </script>
 </head>
 
 <body leftmargin="0" topmargin="5" rightmargin="0">
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr bgcolor="#000000">
-		<td height="40" width="20%">
-		<form><input class=mbttn type=button name=print value=PRINT
-			onClick=window.print()><input class=mbttn type=button
-			name=back value=BACK onClick="history.go(-1);return false;"></form>
-		</td>
-		<td width="80%" align="left" bgcolor="#000000">
-		<p><font face="Verdana, Arial, Helvetica, sans-serif"
-			color="#FFFFFF"><b><font
-			face="Arial, Helvetica, sans-serif" size="4">oscar<font
-			size="3">Billing</font></font></b></font> <font color="#CCCCCC">Ciipboard </font></p>
-		</td>
-	</tr>
+    <tr bgcolor="#000000">
+        <td height="40" width="20%">
+            <form><input class=mbttn type=button name=print value=PRINT
+                         onClick=window.print()><input class=mbttn type=button
+                                                       name=back value=BACK onClick="history.go(-1);return false;">
+            </form>
+        </td>
+        <td width="80%" align="left" bgcolor="#000000">
+            <p><font face="Verdana, Arial, Helvetica, sans-serif"
+                     color="#FFFFFF"><b><font
+                    face="Arial, Helvetica, sans-serif" size="4">oscar<font
+                    size="3">Billing</font></font></b></font> <font color="#CCCCCC">Ciipboard </font></p>
+        </td>
+    </tr>
 </table>
 
 
 <pre>
-<%=request.getParameter("textfield")==null?"":request.getParameter("textfield").replaceAll("\r[^\n]|[^\r]\n]", "\r\n")%>
+<%=request.getParameter("textfield") == null ? "" : request.getParameter("textfield").replaceAll("\r[^\n]|[^\r]\n]", "\r\n")%>
 </pre>
 
 <pre>
-<% 
-String tmp1 = "";
-String tmp =request.getParameter("textfield1")==null?"":request.getParameter("textfield1");
-tmp1 = tmp;
-while (tmp1.length() > 80){
-%>
-<%=tmp1.substring(0,80)%>
 <%
-tmp1 = tmp1.substring(80);
+    String tmp1 = "";
+    String tmp = request.getParameter("textfield1") == null ? "" : request.getParameter("textfield1");
+    tmp1 = tmp;
+    while (tmp1.length() > 80) {
+%>
+<%=tmp1.substring(0, 80)%>
+<%
+        tmp1 = tmp1.substring(80);
 
-}
+    }
 
 
 %>

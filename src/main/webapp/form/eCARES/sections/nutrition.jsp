@@ -26,8 +26,9 @@
 <div class="flex items-center">
     <div class="mw-9">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_nutrition" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_nutrition" data-score="1">
         <strong>Nutrition</strong>
     </div>
     <div class="flex w-full border-left-gray">
@@ -36,40 +37,47 @@
         <div class="flex-1 flex items-center">
             <strong class="mandatory font-bold pl-1 w-10" data-names="good,under,over,obese">
                 <span class="highlight" data-field-name="weight">Weight</span>
-                </strong>
+            </strong>
 
-            <label class="font-normal flex items-center"><input type="radio" name="weight" class="m-0" autocomplete="off" value="good"
-                    data-score="0">
+            <label class="font-normal flex items-center"><input type="radio" name="weight" class="m-0"
+                                                                autocomplete="off" value="good"
+                                                                data-score="0">
                 <span class="pl-1">Good</span></label>
 
-            <label class="font-normal flex items-center pl-2"><input type="radio" name="weight" class="m-0" autocomplete="off" value="under"
-                    data-score="0.5">
-                    <span class="pl-1">Under</span></label>
+            <label class="font-normal flex items-center pl-2"><input type="radio" name="weight" class="m-0"
+                                                                     autocomplete="off" value="under"
+                                                                     data-score="0.5">
+                <span class="pl-1">Under</span></label>
 
-            <label class="font-normal flex items-center pl-1"><input type="radio" name="weight" class="m-0" autocomplete="off" value="over"
-                    data-score="0.5">
-                    <span class="pl-1">Over</span></label>
+            <label class="font-normal flex items-center pl-1"><input type="radio" name="weight" class="m-0"
+                                                                     autocomplete="off" value="over"
+                                                                     data-score="0.5">
+                <span class="pl-1">Over</span></label>
 
-            <label class="font-normal flex items-center pl-1"><input type="radio" name="weight" class="m-0" autocomplete="off" value="obese"
-                    data-score="1">
-                    <span class="pl-1">Obese</span></label>
+            <label class="font-normal flex items-center pl-1"><input type="radio" name="weight" class="m-0"
+                                                                     autocomplete="off" value="obese"
+                                                                     data-score="1">
+                <span class="pl-1">Obese</span></label>
         </div>
         <div class="flex-1 flex">
 
             <strong class="mandatory control-label font-bold w-9" data-names="wnl,fair,poor">
                 <span class="highlight" data-field-name="appetite">Appetite</span></strong>
 
-            <label class="font-normal flex items-center"><input type="radio" name="appetite" class="m-0" autocomplete="off" value="wnl"
-                    data-score="0">
+            <label class="font-normal flex items-center"><input type="radio" name="appetite" class="m-0"
+                                                                autocomplete="off" value="wnl"
+                                                                data-score="0">
                 <span class="pl-1">WNL</span></label>
 
-            <label class="font-normal flex items-center pl-4"><input type="radio" name="appetite" class="m-0" autocomplete="off" value="fair"
-                    data-score="0.5">
-                    <span class="pl-1">FAIR</span></label>
+            <label class="font-normal flex items-center pl-4"><input type="radio" name="appetite" class="m-0"
+                                                                     autocomplete="off" value="fair"
+                                                                     data-score="0.5">
+                <span class="pl-1">FAIR</span></label>
 
-            <label class="font-normal flex items-center pl-4"><input type="radio" name="appetite" class="m-0" autocomplete="off" value="poor"
-                    data-score="1">
-                    <span class="pl-1">POOR</span></label>
+            <label class="font-normal flex items-center pl-4"><input type="radio" name="appetite" class="m-0"
+                                                                     autocomplete="off" value="poor"
+                                                                     data-score="1">
+                <span class="pl-1">POOR</span></label>
 
         </div>
     </div>

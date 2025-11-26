@@ -24,22 +24,22 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="oscar.oscarReport.data.DemographicSets,java.util.ArrayList"%>
+<%@page import="ca.openosp.openo.report.data.DemographicSets,java.util.ArrayList" %>
 
 <%
     String demoNo = request.getParameter("demoNo");
@@ -49,20 +49,20 @@
     java.util.List<String> demoSet = ds.getDemographicSet(patientSet);
 
     if (!demoSet.contains(demoNo)) {
-	java.util.List<String> newSet = new ArrayList<String>();
-	newSet.add(demoNo);
-	ds.addDemographicSet(patientSet, newSet);
+        java.util.List<String> newSet = new ArrayList<String>();
+        newSet.add(demoNo);
+        ds.addDemographicSet(patientSet, newSet);
     }
-    response.sendRedirect("../close.html");
+    response.sendRedirect(request.getContextPath() + "/close.html");
 %>
 
 <html>
-    <head>
-        <title>Add Demographic to Patient Set</title>
-    </head>
-    <body>
+<head>
+    <title>Add Demographic to Patient Set</title>
+</head>
+<body>
 
-    Adding...
+Adding...
 
-    </body>
+</body>
 </html>

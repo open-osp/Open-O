@@ -23,96 +23,93 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     String curProvider_no = (String) session.getAttribute("user");
 
-    boolean isSiteAccessPrivacy=false;
-    boolean authed=true;
+    boolean isSiteAccessPrivacy = false;
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r" reverse="false">
-	<%isSiteAccessPrivacy=true; %>
+    <%isSiteAccessPrivacy = true; %>
 </security:oscarSec>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="/errorpage.jsp"%>
-<%@ page import="oscar.log.LogAction,oscar.log.LogConst"%>
-<%@ page import="oscar.log.*, oscar.oscarDB.*"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<%@page import="org.oscarehr.common.dao.SiteDao"%>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.log.LogAction,ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.log.*, ca.openosp.openo.db.*" %>
 
-<jsp:useBean id="apptMainBean" class="oscar.AppointmentMainBean" scope="session" />
+<%@page import="ca.openosp.openo.commn.dao.SiteDao" %>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.PreventionsLotNrs"%>
-<%@ page import="org.oscarehr.common.dao.PreventionsLotNrsDao"%>
+<jsp:useBean id="apptMainBean" class="ca.openosp.AppointmentMainBean" scope="session"/>
+
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.PreventionsLotNrs" %>
+<%@ page import="ca.openosp.openo.commn.dao.PreventionsLotNrsDao" %>
 <%
-PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao)SpringUtils.getBean(PreventionsLotNrsDao.class);
-String prevention = request.getParameter("prevention");
-String lotNr = request.getParameter("lotnr");
+    PreventionsLotNrsDao PreventionsLotNrsDao = (PreventionsLotNrsDao) SpringUtils.getBean(PreventionsLotNrsDao.class);
+    String prevention = request.getParameter("prevention");
+    String lotNr = request.getParameter("lotnr");
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="admin.lotdeleterecord.title" /></title>
-<link rel="stylesheet" href="../web.css">
-</head>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotdeleterecord.title"/></title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
+    </head>
 
-<body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th><font face="Helvetica" color="#FFFFFF">
-			<bean:message key="admin.lotdeleterecord.description" />
-		</font></th>
-	</tr>
-</table>
-<%
-String curUser_no = (String)session.getAttribute("user");
+    <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr bgcolor="#486ebd">
+                <th><font face="Helvetica" color="#FFFFFF">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotdeleterecord.description"/>
+                </font></th>
+            </tr>
+        </table>
+        <%
+            String curUser_no = (String) session.getAttribute("user");
 
-List<String> lotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
-if (!lotnrs.contains(lotNr))
-{
-  %>
-	<bean:message key="admin.lotdeleterecord.msgNonExistentLotnr"/>
-	<%
-}
-else
-{
-	PreventionsLotNrs p =  PreventionsLotNrsDao.findByName(prevention, lotNr, false);
-	if(p != null) {
-		p.setDeleted(true);
-		PreventionsLotNrsDao.merge(p);
-	}
-	
-	lotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
-	if (!lotnrs.contains(lotNr)){
-	%>
-		<bean:message key="admin.lotdeleterecord.msgDeletionSuccess" />
-	<%
-	  } else {
-	%>
-		<bean:message key="admin.lotdeleterecord.msgDeletionFailure" />
-	<%
-	}
-}
-%>
+            List<String> lotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
+            if (!lotnrs.contains(lotNr)) {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotdeleterecord.msgNonExistentLotnr"/>
+        <%
+        } else {
+            PreventionsLotNrs p = PreventionsLotNrsDao.findByName(prevention, lotNr, false);
+            if (p != null) {
+                p.setDeleted(true);
+                PreventionsLotNrsDao.merge(p);
+            }
 
-</center>
-</body>
-</html:html>
+            lotnrs = PreventionsLotNrsDao.findLotNrs(prevention, false);
+            if (!lotnrs.contains(lotNr)) {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotdeleterecord.msgDeletionSuccess"/>
+        <%
+        } else {
+        %>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.lotdeleterecord.msgDeletionFailure"/>
+        <%
+                }
+            }
+        %>
+
+    </center>
+    </body>
+</html>

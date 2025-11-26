@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
     <%authed = false; %>
-    <%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
     if (!authed) {
@@ -44,15 +44,19 @@
     String userlastname = (String) session.getAttribute("userlastname");
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ taglib prefix="csrf" uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" %>
 
 <%@ page
-        import="java.util.*, oscar.*, oscar.util.*, oscar.oscarProvider.data.ProviderData, org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.CtlDocClassDao" %>
-<%@ page import="org.oscarehr.documentManager.data.AddEditDocumentForm" %>
-<%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %>
+        import="java.util.*, ca.openosp.*, ca.openosp.openo.util.*, ca.openosp.openo.providers.data.ProviderData, ca.openosp.openo.utility.SpringUtils, ca.openosp.openo.commn.dao.CtlDocClassDao" %>
+<%@ page import="ca.openosp.openo.documentManager.data.AddEditDocument2Form" %>
+<%@ page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@ page import="ca.openosp.openo.documentManager.EDoc" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="ca.openosp.openo.util.UtilMisc" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
     String mode = "";
     if (request.getAttribute("mode") != null) {
@@ -91,9 +95,9 @@
 
     String lastUpdate = "", fileName = "";
     boolean oldDoc = true;
-    AddEditDocumentForm formdata = new AddEditDocumentForm();
+    AddEditDocument2Form formdata = new AddEditDocument2Form();
     if (request.getAttribute("completedForm") != null) {
-        formdata = (AddEditDocumentForm) request.getAttribute("completedForm");
+        formdata = (AddEditDocument2Form) request.getAttribute("completedForm");
         lastUpdate = EDocUtil.getDmsDateTime();
     } else if ((editDocumentNo != null) && (!editDocumentNo.isEmpty())) {
         EDoc currentDoc = EDocUtil.getDoc(editDocumentNo);
@@ -128,7 +132,7 @@
 
     List<Map<String, String>> pdList = new ProviderData().getProviderList();
     ArrayList<String> doctypes = EDocUtil.getDoctypes(module);
-    String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_DOCUMENT;
+    String annotation_display = CaseManagementNoteLink.DISP_DOCUMENT;
     String annotation_tableid = editDocumentNo;
     Long now = new Date().getTime();
     String annotation_attrib = "anno" + now;
@@ -161,20 +165,20 @@
 <head>
     <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
     <title>Edit Document</title>
-    <script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-    <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="../share/javascript/scriptaculous.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
 
     <link rel="stylesheet" type="text/css"
-          href="../share/css/niftyCorners.css"/>
+          href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
     <link rel="stylesheet" type="text/css"
-          href="../share/css/OscarStandardLayout.css"/>
+          href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
     <link rel="stylesheet" type="text/css" href="dms.css"/>
     <link rel="stylesheet" type="text/css"
-          href="../share/css/niftyPrint.css" media="print"/>
-    <script type="text/javascript" src="../share/javascript/nifty.js"></script>
+          href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
     <link rel="stylesheet" type="text/css" media="all"
-          href="../share/calendar/calendar.css" title="win2k-cold-1"/>
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
     <style type="text/css">
         .autocomplete_style {
             background: #fff;
@@ -194,10 +198,10 @@
         }
     </style>
 
-    <script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
     <script type="text/javascript"
-            src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
-    <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
+            src="<%= request.getContextPath() %>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar-setup.js"></script>
     <script type="text/javascript">
         window.onload = function () {
             if (!NiftyCheck()) return;
@@ -264,16 +268,15 @@
         }
 
     </script>
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 </head>
 <body class="mainbody" onLoad="prepare();">
 <div class="maindiv">
     <div class="maindivheading">&nbsp;&nbsp;&nbsp; Edit Document</div>
     <%-- Lists linkhtmlerrors --%> <% for (Enumeration errorkeys = linkhtmlerrors.keys(); errorkeys.hasMoreElements(); ) {%>
-    <font class="warning">Error: <bean:message
-            key="<%=(String) linkhtmlerrors.get(errorkeys.nextElement())%>"/></font><br/>
-    <% } %> <html:form action="/documentManager/addEditHtml" method="POST"
-                       enctype="multipart/form-data" styleClass="form"
+    <font class="warning">Error: <fmt:setBundle basename="oscarResources"/><fmt:message key="<%=(String) linkhtmlerrors.get(errorkeys.nextElement())%>"/></font><br/>
+    <% } %> <form action="${pageContext.request.contextPath}/documentManager/addEditHtml.do" method="POST"
+                       enctype="multipart/form-data" class="form"
                        onsubmit="return submitUpload(this);">
     <input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
     <input type="hidden" name="function"
@@ -294,7 +297,7 @@
             <td width="180px">Type:</td>
             <td>
                 <select id="docType" name="docType" style="width: 160">
-                    <option value=""><bean:message key="dms.addDocument.formSelect"/></option>
+                    <option value=""><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.addDocument.formSelect"/></option>
                     <% for (int i = 0; i < doctypes.size(); i++) {
                         String doctype = doctypes.get(i); %>
                     <option value="<%= doctype%>" <%=(formdata.getDocType().equals(doctype)) ? " selected" : ""%>><%= doctype%>
@@ -302,13 +305,13 @@
                     <%}%>
                 </select>
                 <input id="docTypeinput" type="button" size="20" onClick="newDocType();"
-                       value="<bean:message key="dms.documentEdit.formAddNewDocType"/> "/>
+                       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentEdit.formAddNewDocType"/> "/>
             </td>
         </tr>
         <tr>
-            <td><bean:message key="dms.addDocument.msgDocClass"/>:</td>
+            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.addDocument.msgDocClass"/>:</td>
             <td><select name="docClass" id="docClass">
-                <option value=""><bean:message key="dms.addDocument.formSelectClass"/></option>
+                <option value=""><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.addDocument.formSelectClass"/></option>
                 <% boolean consultShown = false;
                     for (String reportClass : reportClasses) {
                         if (reportClass.startsWith("Consultant Report")) {
@@ -324,7 +327,7 @@
             </td>
         </tr>
         <tr>
-            <td><bean:message key="dms.addDocument.msgDocSubClass"/>:</td>
+            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.addDocument.msgDocSubClass"/>:</td>
             <td><input type="text" name="docSubClass" id="docSubClass" value="<%=formdata.getDocSubClass()%>"
                        style="width:330px">
                 <div class="autocomplete_style" id="docSubClass_list"></div>
@@ -363,7 +366,7 @@
             </td>
         </tr>
         <tr>
-            <td><bean:message key="dms.addDocument.formContentAddedUpdated"/>:</td>
+            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.addDocument.formContentAddedUpdated"/>:</td>
             <td><%=formdata.getContentDateTime()%>
             </td>
         </tr>
@@ -379,10 +382,10 @@
             <td>Observation Date <font class="comment">(yyyy/mm/dd):</font></td>
             <td><input type="text" name="observationDate"
                        id="observationDate" value="<%=formdata.getObservationDate()%>"><a
-                    id="obsdate"><img title="Calendar" src="../images/cal.gif"
+                    id="obsdate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
                                       alt="Calendar" border="0"/></a></td>
         </tr>
-        <% if (module.equals("provider")) {%>
+        <% if (module.equals("providers")) {%>
         <tr>
             <td>Public?</td>
             <td><input type="checkbox" name="docPublic"
@@ -404,7 +407,7 @@
         <tr>
             <td colspan="2">
                 <input type="button" value="Annotation"
-                       onclick="window.open('../annotation/annotation.jsp?atbname=<%=annotation_attrib%>&display=<%=annotation_display%>&table_id=<%=annotation_tableid%>&demo=<%=moduleid%>','anwin','width=400,height=500');"/>
+                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?atbname=<%=annotation_attrib%>&display=<%=annotation_display%>&table_id=<%=annotation_tableid%>&demo=<%=moduleid%>','anwin','width=400,height=500');"/>
             </td>
         </tr>
         <tr>
@@ -422,7 +425,7 @@
         <div><input type="submit" name="Submit" value="Submit"><input
                 type="button" value="Cancel" onclick="window.close();"></div>
     </center>
-</html:form>
+</form>
     <script type="text/javascript">
         Calendar.setup({
             inputField: "observationDate",

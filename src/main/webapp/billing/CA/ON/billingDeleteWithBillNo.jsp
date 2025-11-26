@@ -23,117 +23,119 @@
 
 --%>
 <%
-  String curUser_no = (String) session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,oscar.*" errorPage="/errorpage.jsp"%>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
-<%@ page import="oscar.oscarBilling.ca.on.data.*"%>
-<%@ include file="../../../admin/dbconnection.jsp"%>
+<%@ page import="java.sql.*, java.util.*,ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@ include file="/admin/dbconnection.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
-<%@page import="org.oscarehr.common.dao.AppointmentArchiveDao" %>
-<%@page import="org.oscarehr.common.dao.OscarAppointmentDao" %>
-<%@page import="org.oscarehr.common.model.Appointment" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@page import="ca.openosp.openo.commn.dao.AppointmentArchiveDao" %>
+<%@page import="ca.openosp.openo.commn.dao.OscarAppointmentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Appointment" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingCorrectionPrep" %>
 
 <%
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
-	AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao)SpringUtils.getBean(AppointmentArchiveDao.class);
-	OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    AppointmentArchiveDao appointmentArchiveDao = (AppointmentArchiveDao) SpringUtils.getBean(AppointmentArchiveDao.class);
+    OscarAppointmentDao appointmentDao = (OscarAppointmentDao) SpringUtils.getBean(OscarAppointmentDao.class);
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    function start(){
-      this.focus();
-    }
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        function start() {
+            this.focus();
+        }
+    </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER">
-		<font face="Helvetica" color="#FFFFFF">BILLING RECORD</font>
-		</th>
-	</tr>
-</table>
-<%
-   	String billCode = " ";
-   	String apptNo = request.getParameter("appointment_no");
-   	String billNo ="";
-   	
-  	billNo = request.getParameter("billNo_old");
-  	billCode = request.getParameter("billStatus_old");  	
-  	if(billNo==null || billNo.equals("")  || billNo.equals("null")) {
-  		for(Billing b:billingDao.findByAppointmentNo(Integer.parseInt(apptNo))) {
-  		   billCode = b.getStatus();
-  		   billNo = b.getId().toString();
-  	   }
-  	}
-  	
-  	
-   	if (billCode.substring(0,1).compareTo("B") == 0) {
-   %>
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER">
+                <font face="Helvetica" color="#FFFFFF">BILLING RECORD</font>
+            </th>
+        </tr>
+    </table>
+    <%
+        String billCode = " ";
+        String apptNo = request.getParameter("appointment_no");
+        String billNo = "";
 
-<h1>Sorry, cannot delete billed items.</h1>
+        billNo = request.getParameter("billNo_old");
+        billCode = request.getParameter("billStatus_old");
+        if (billNo == null || billNo.equals("") || billNo.equals("null")) {
+            for (Billing b : billingDao.findByAppointmentNo(Integer.parseInt(apptNo))) {
+                billCode = b.getStatus();
+                billNo = b.getId().toString();
+            }
+        }
 
-<% }else{
-   
-  int rowsAffected=0;
-  OscarProperties props = OscarProperties.getInstance();
-  if(props.getProperty("isNewONbilling", "").equals("true")) {
-	  //search bill status
-	  BillingCorrectionPrep dbObj = new BillingCorrectionPrep();
-	  if(billNo != null && !billNo.equals("null")) {
-		  List billStatus = dbObj.getBillingNoStatusByBillNo(billNo);
-		  //delete the bill
-		  if(billStatus!=null && ((billStatus.size() == 0) || (billStatus.size()>1 && ((String)billStatus.get(billStatus.size()-1)).startsWith("B")))){
-			  out.println("Sorry, cannot delete billed items.");
-		  } else if(billStatus!=null) {
-	                for( int idx = 0; idx < billStatus.size(); idx += 2) {
-	                    if( !((String)billStatus.get(idx+1)).equals("D") ) {
-	                        rowsAffected = dbObj.deleteBilling((String)billStatus.get(idx),"D", curUser_no)? 1 : 0;
-	                    }
-	                }
-		  }
-	  }
-	  
-  } else {
-	  Billing b = billingDao.find(Integer.parseInt(billNo));
-	  if(b != null) {
-		  b.setStatus("D");
-		  billingDao.merge(b);
-		  rowsAffected=1;
-	  }
-  }   
- 
-  if (rowsAffected ==1) {
-%>
 
-<h1>Successful Deletion of a billing Record.</h1>
+        if (billCode.substring(0, 1).compareTo("B") == 0) {
+    %>
 
-<script LANGUAGE="JavaScript">
-      self.close();
-      self.opener.refresh();
-</script> <%
-  
-  } else if(rowsAffected == 0 && billNo != null && !"null".equals(billNo)) {
-%>
+    <h1>Sorry, cannot delete billed items.</h1>
 
-<h1>Sorry, deletion has failed. </h1>
+    <% } else {
 
-<%  
-  }
-  
-  }
-%>
-<p></p>
-<hr width="90%"></hr>
-<form><input type="button" value="Close this window" onClick="window.close()"></form>
+        int rowsAffected = 0;
+        OscarProperties props = OscarProperties.getInstance();
+        if (props.getProperty("isNewONbilling", "").equals("true")) {
+            //search bill status
+            BillingCorrectionPrep dbObj = new BillingCorrectionPrep();
+            if (billNo != null && !billNo.equals("null")) {
+                List billStatus = dbObj.getBillingNoStatusByBillNo(billNo);
+                //delete the bill
+                if (billStatus != null && ((billStatus.size() == 0) || (billStatus.size() > 1 && ((String) billStatus.get(billStatus.size() - 1)).startsWith("B")))) {
+                    out.println("Sorry, cannot delete billed items.");
+                } else if (billStatus != null) {
+                    for (int idx = 0; idx < billStatus.size(); idx += 2) {
+                        if (!((String) billStatus.get(idx + 1)).equals("D")) {
+                            rowsAffected = dbObj.deleteBilling((String) billStatus.get(idx), "D", curUser_no) ? 1 : 0;
+                        }
+                    }
+                }
+            }
+
+        } else {
+            Billing b = billingDao.find(Integer.parseInt(billNo));
+            if (b != null) {
+                b.setStatus("D");
+                billingDao.merge(b);
+                rowsAffected = 1;
+            }
+        }
+
+        if (rowsAffected == 1) {
+    %>
+
+    <h1>Successful Deletion of a billing Record.</h1>
+
+    <script LANGUAGE="JavaScript">
+        self.close();
+        self.opener.refresh();
+    </script>
+    <%
+
+    } else if (rowsAffected == 0 && billNo != null && !"null".equals(billNo)) {
+    %>
+
+    <h1>Sorry, deletion has failed. </h1>
+
+    <%
+            }
+
+        }
+    %>
+    <p></p>
+    <hr width="90%"></hr>
+    <form><input type="button" value="Close this window" onClick="window.close()"></form>
 </center>
 </body>
 </html>

@@ -23,158 +23,155 @@
     Ontario, Canada
 
 --%>
-<%@page contentType="text/html"%>
-<%@ include file="/casemgmt/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@page import="org.oscarehr.common.model.UserProperty" %>
+<%@page contentType="text/html" %>
+<%@ include file="/casemgmt/taglibs.jsp" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@page import="ca.openosp.openo.commn.model.UserProperty" %>
 
 <%
-String curUser_no = (String) session.getAttribute("user");
-String roleName$ = (String)session.getAttribute("userrole") + "," + (String)session.getAttribute("user");
+    String curUser_no = (String) session.getAttribute("user");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 
 <security:oscarSec objectName="_admin" roleName="<%=roleName$%>" rights="r" reverse="false">
 
 
-<html:html>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
-<script type="text/javascript" src="../share/javascript/Oscar.js"></script>
-<script type="text/JavaScript">
-function popupPage(vheight,vwidth,varpage) { //open a new popup window
-  var page = "" + varpage;
-  windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";//360,680
-  var popup=window.open(page, "groupno", windowprops);
-  if (popup != null) {
-    if (popup.opener == null) {
-      popup.opener = self;
-    }
-    popup.focus();
-  }
-}
+    <html>
+        <head>
+            <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+            <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.7.1.min.js"></script>
+            <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+            <script type="text/JavaScript">
+                function popupPage(vheight, vwidth, varpage) { //open a new popup window
+                    var page = "" + varpage;
+                    windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";//360,680
+                    var popup = window.open(page, "groupno", windowprops);
+                    if (popup != null) {
+                        if (popup.opener == null) {
+                            popup.opener = self;
+                        }
+                        popup.focus();
+                    }
+                }
 
-function disableNextAndFuturePush(flag) {
-	$.ajax({
-		type: "POST",
-		url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=disableNextAndFuturePushes",
-		data: { type: flag},
-		dataType:'json'
-		})
-		.done(function( msg ) {
-			if(msg && msg.success == 'false')
-			alert(msg.reason);
-		});
-}
+                function disableNextAndFuturePush(flag) {
+                    $.ajax({
+                        type: "POST",
+                        url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=disableNextAndFuturePushes",
+                        data: {type: flag},
+                        dataType: 'json'
+                    })
+                        .done(function (msg) {
+                            if (msg && msg.success == 'false')
+                                alert(msg.reason);
+                        });
+                }
 
-function updatePushData() {
-	$.ajax({
-		type: "POST",
-		url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=getPushData",
-		dataType:'json'
-		})
-		.done(function( data ) {
-			var msg = data.items;
-			
-			for(var x=0;x<msg.length;x++) {
-				
-				$("#dataTable tbody").append("<tr><td>");
-				
-				if(msg[x].status == 'running') {
-					$("#dataTable tbody").append("<input type=\"button\" onClick=\"pause()\" value=\"Pause\"/>");
-				
-					$("#dataTable tbody").append("<input type=\"button\" onClick=\"resume()\" value=\"Resume\"/>");
-				}  else {
-					$("#dataTable tbody").append("&nbsp;");
-				}
-				
-					
-				
-				$("#dataTable tbody").append("</td>"+
-						"<td>"+msg[x].status+"</td><td>"+msg[x].dateCreatedAsString+"</td>"+
-						"<td>"+msg[x].progressAsPercentageString+"</td><td>"+msg[x].estimatedDateOfCompletionAsString+"</td>"+
-						"<td>"+msg[x].totalDemographics+"</td>"+
-						"</tr>");
-				
-			}
-			
-		});
-}
+                function updatePushData() {
+                    $.ajax({
+                        type: "POST",
+                        url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=getPushData",
+                        dataType: 'json'
+                    })
+                        .done(function (data) {
+                            var msg = data.items;
 
-function pause() {
-	$.ajax({
-		type: "POST",
-		url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=togglePause",
-		data: { pause: 'true'},
-		dataType:'json'
-		})
-		.done(function( msg ) {
-			if(msg && msg.success == 'false')
-			alert(msg.reason);
-		});
-}
+                            for (var x = 0; x < msg.length; x++) {
 
-function resume() {
-	$.ajax({
-		type: "POST",
-		url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=togglePause",
-		data: { pause: 'false'},
-		dataType:'json'
-		})
-		.done(function( msg ) {
-			if(msg && msg.success == 'false')
-			alert(msg.reason);
-		});
-}
+                                $("#dataTable tbody").append("<tr><td>");
 
-$( document ).ready(function() {
-	updatePushData();
-});
+                                if (msg[x].status == 'running') {
+                                    $("#dataTable tbody").append("<input type=\"button\" onClick=\"pause()\" value=\"Pause\"/>");
+
+                                    $("#dataTable tbody").append("<input type=\"button\" onClick=\"resume()\" value=\"Resume\"/>");
+                                } else {
+                                    $("#dataTable tbody").append("&nbsp;");
+                                }
 
 
+                                $("#dataTable tbody").append("</td>" +
+                                    "<td>" + msg[x].status + "</td><td>" + msg[x].dateCreatedAsString + "</td>" +
+                                    "<td>" + msg[x].progressAsPercentageString + "</td><td>" + msg[x].estimatedDateOfCompletionAsString + "</td>" +
+                                    "<td>" + msg[x].totalDemographics + "</td>" +
+                                    "</tr>");
 
-</script>
-<html:base />
-<meta http-equiv="Content-Type" content="text/html;">
-<title>Integrator Push Manager</title>
+                            }
 
-<link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
+                        });
+                }
 
-</head>
+                function pause() {
+                    $.ajax({
+                        type: "POST",
+                        url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=togglePause",
+                        data: {pause: 'true'},
+                        dataType: 'json'
+                    })
+                        .done(function (msg) {
+                            if (msg && msg.success == 'false')
+                                alert(msg.reason);
+                        });
+                }
 
+                function resume() {
+                    $.ajax({
+                        type: "POST",
+                        url: "<%=request.getContextPath()%>/integrator/IntegratorPush.do?method=togglePause",
+                        data: {pause: 'false'},
+                        dataType: 'json'
+                    })
+                        .done(function (msg) {
+                            if (msg && msg.success == 'false')
+                                alert(msg.reason);
+                        });
+                }
 
-<body>
-
-<h3>Integrator Push Events</h3>
-<br/>
-
-<table class="MainTable" id="dataTable" name="dataTable" border="1">
-	<thead>
-		<tr>
-			<th>Actions</th>
-			<th>Status</th>
-			<th>Date Started</th>
-			<th>Progress</th>
-			<th>Est. Time to Completion</th>
-			<th>Total Records</th>
-		</tr>
-	</thead>
-	
-	<tbody>
-	</tbody>
-</table>
-</body>
-
-<br>
-
-<input type="button" onClick="disableNextAndFuturePush(false)" value="Enable Next and Future Pushes"/>
-
-<input type="button" onClick="disableNextAndFuturePush(true)" value="Disable Next and Future Pushes"/>
+                $(document).ready(function () {
+                    updatePushData();
+                });
 
 
+            </script>
+            <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+            <meta http-equiv="Content-Type" content="text/html;">
+            <title>Integrator Push Manager</title>
 
-</html:html>
+            <link rel="stylesheet" type="text/css"
+                  href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
 
-	
+        </head>
+
+
+        <body>
+
+        <h3>Integrator Push Events</h3>
+        <br/>
+
+        <table class="MainTable" id="dataTable" name="dataTable" border="1">
+            <thead>
+            <tr>
+                <th>Actions</th>
+                <th>Status</th>
+                <th>Date Started</th>
+                <th>Progress</th>
+                <th>Est. Time to Completion</th>
+                <th>Total Records</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            </tbody>
+        </table>
+        </body>
+
+        <br>
+
+        <input type="button" onClick="disableNextAndFuturePush(false)" value="Enable Next and Future Pushes"/>
+
+        <input type="button" onClick="disableNextAndFuturePush(true)" value="Disable Next and Future Pushes"/>
+
+
+    </html>
+
+
 </security:oscarSec>

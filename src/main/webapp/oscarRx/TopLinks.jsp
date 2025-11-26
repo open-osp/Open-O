@@ -23,73 +23,74 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
- 
-<c:set var="ctx" value="${ pageContext.servletContext.contextPath }" />
-<c:set var="url" value="${ ctx }/demographic/demographiccontrol.jsp?demographic_no=${ param.demographicNo }&displaymode=edit&dboperation=search_detail&appointment=" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<table id="${ not empty param.tableId ? param.tableId : 'topLink' }" >
-<tr>
-	<td id="topLinkLeftColumn"> 
-		<h1><c:out value="${ param.title }" /></h1> 	
-	</td>
-		
-		<td id="topLinkCenterColumn" >
+<core:set var="ctx" value="${ pageContext.servletContext.contextPath }"/>
+<core:set var="url"
+       value="${ ctx }/demographic/demographiccontrol.jsp?demographic_no=${ param.demographicNo }&displaymode=edit&dboperation=search_detail&appointment="/>
 
-		<c:if test="${ not empty param.patientName }" >
-	        <a href="javascript:void(0)" onClick="popupPage(700,1000,'${ url }'); return false;" 
-	        	title="<bean:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>" > 
-	        	<c:out value="${ param.patientName }" />
-	        </a> 
-        </c:if>
-        
-        <c:if test="${ not empty param.sex }" >
+<table id="${ not empty param.tableId ? param.tableId : 'topLink' }">
+    <tr>
+        <td id="topLinkLeftColumn">
+            <h1><core:out value="${ param.title }"/></h1>
+        </td>
+
+        <td id="topLinkCenterColumn">
+
+            <core:if test="${ not empty param.patientName }">
+                <a href="javascript:void(0)" onClick="popupPage(700,1000,'${ url }'); return false;"
+                   title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.msgMasterFile"/>">
+                    <core:out value="${ param.patientName }"/>
+                </a>
+            </core:if>
+
+            <core:if test="${ not empty param.sex }">
 	        <span class="label">
 	        	sex
-	        </span>	
-	        <span>
-	        	${ param.sex }
-	        </span>   
-        </c:if>
-        
-         <c:if test="${ not empty param.age }" >
+	        </span>
+                <span>
+                        ${ param.sex }
+                </span>
+            </core:if>
+
+            <core:if test="${ not empty param.age }">
 	        <span class="label">
 	        	age
-	        </span>	
-	        <span>
-	        	${ param.age }
-	        </span>	
-        </c:if>
-        
-        <c:if test="${ not empty param.phone }" >
+	        </span>
+                <span>
+                        ${ param.age }
+                </span>
+            </core:if>
+
+            <core:if test="${ not empty param.phone }">
 	        <span class="label">
 	        	home
-	        </span>	
-	        <span>
-	        	${ param.phone }
 	        </span>
-        </c:if>
-        
-        <c:if test="${ not empty param.mrp }" >
-		<security:oscarSec roleName="${ security }" objectName="_newCasemgmt.doctorName" rights="r">
-	    	<span class="label">	
-	    		  <bean:message key="oscarEncounter.Index.msgMRP"/>  			   
-		    </span>
-		    <span>
-		     	<c:out value="${ param.mrp }" />
-		    </span>
-		</security:oscarSec>
-		</c:if>	
-		</td>
+                <span>
+                        ${ param.phone }
+                </span>
+            </core:if>
 
-	<td id="topLinkRightColumn">
+            <core:if test="${ not empty param.mrp }">
+                <security:oscarSec roleName="${ security }" objectName="_newCasemgmt.doctorName" rights="r">
+	    	<span class="label">	
+	    		  <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Index.msgMRP"/>  			   
+		    </span>
+                    <span>
+		     	<core:out value="${ param.mrp }"/>
+		    </span>
+                </security:oscarSec>
+            </core:if>
+        </td>
+
+        <td id="topLinkRightColumn">
 	 		<span class="HelpAboutLogout" style="color:white;">
-                 <oscar:help keywords="2.2.4" key="app.top1" style="color:white;" />
+
                  <a style="color:white;" href="${ ctx }/oscarEncounter/About.jsp" target="_new">About</a>
              </span>
-	</td>
-</tr>
+        </td>
+    </tr>
 </table>

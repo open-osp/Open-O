@@ -24,141 +24,145 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.data.*"%>
-<%@ page import="org.oscarehr.common.model.Provider" %>
+<%@ page import="java.util.*,ca.openosp.openo.report.data.*" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.report.data.RptFluReportData" %>
 
 
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 
 <%
-	String curUser_no, userfirstname, userlastname;
-	curUser_no = (String) session.getAttribute("user");
-	int count = 0;
+    String curUser_no, userfirstname, userlastname;
+    curUser_no = (String) session.getAttribute("user");
+    int count = 0;
 
-	String years = null;
-	int curYear = 0;
+    String years = null;
+    int curYear = 0;
 
-	String pros = "";
-	if (request.getParameter("numMonth") != null) {
-		years = request.getParameter("numMonth");
-		curYear = Integer.parseInt(years);
-	} else {
-		GregorianCalendar cal = new GregorianCalendar();
-		curYear = cal.get(Calendar.YEAR);
-		years = "" + curYear; //"2003";
-	}
+    String pros = "";
+    if (request.getParameter("numMonth") != null) {
+        years = request.getParameter("numMonth");
+        curYear = Integer.parseInt(years);
+    } else {
+        GregorianCalendar cal = new GregorianCalendar();
+        curYear = cal.get(Calendar.YEAR);
+        years = "" + curYear; //"2003";
+    }
 
-	if (request.getParameter("proNo") != null) {
-		pros = request.getParameter("proNo");
-	}
+    if (request.getParameter("proNo") != null) {
+        pros = request.getParameter("proNo");
+    }
 
-	oscar.oscarReport.data.RptFluReportData fluData = new oscar.oscarReport.data.RptFluReportData();
-	fluData.fluReportGenerate(pros, years);
-	List<Provider> providers = fluData.providerList();
+    RptFluReportData fluData = new RptFluReportData();
+    fluData.fluReportGenerate(pros, years);
+    List<Provider> providers = fluData.providerList();
 %>
-<%!String selled(String i, String years) {
-		String retval = "";
-		if (i.equals(years)) {
-			retval = "selected";
-		}
-		return retval;
-	}%>
-
+<%!
+    String selled(String i, String years) {
+        String retval = "";
+        if (i.equals(years)) {
+            retval = "selected";
+        }
+        return retval;
+    }
+%>
 
 
 <div class="page-header">
-	<h4>
-		<bean:message key="oscarReport.oscarReportFluBilling.title" />
-		<%=years%>
-	</h4>
+    <h4>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.title"/>
+        <%=years%>
+    </h4>
 </div>
 
 <form action="${ctx}/oscarReport/oscarReportFluBilling.jsp" class="well form-inline" id="fluForm">
-	<select name="numMonth" class="input-small">
-		<%
-			for (int i = curYear - 2; i <= curYear + 2; i++) {
-		%>
-		<option value="<%=i%>" <%=selled(("" + i), years)%>><%=i%></option>
-		<%
-			}
-		%>
+    <select name="numMonth" class="input-small">
+        <%
+            for (int i = curYear - 2; i <= curYear + 2; i++) {
+        %>
+        <option value="<%=i%>" <%=selled(("" + i), years)%>><%=i%>
+        </option>
+        <%
+            }
+        %>
 
-	</select> <select name="proNo" class="input-large">
-		<option value="-1" <%=selled("-1", pros)%>>
-			<bean:message key="oscarReport.oscarReportFluBilling.msgAllProviders" />
-		</option>
-		<%
-			for (Provider p : providers) {
-		%>
-		<option value="<%=p.getProviderNo()%>" <%=selled(p.getProviderNo(), pros)%>><%=p.getFormattedName()%></option>
-		<%
-			}
-		%>
-	</select>
-	<button type="submit" class="btn btn-primary">
-		<bean:message key="oscarReport.oscarReportFluBilling.btnUpdate" />
-	</button>
+    </select> <select name="proNo" class="input-large">
+    <option value="-1" <%=selled("-1", pros)%>>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgAllProviders"/>
+    </option>
+    <%
+        for (Provider p : providers) {
+    %>
+    <option value="<%=p.getProviderNo()%>" <%=selled(p.getProviderNo(), pros)%>><%=p.getFormattedName()%>
+    </option>
+    <%
+        }
+    %>
+</select>
+    <button type="submit" class="btn btn-primary">
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.btnUpdate"/>
+    </button>
 </form>
 
 <table class="table table-bordered table-striped table-condensed table-hover">
-	<thead>
-		<tr>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgName" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgDOB" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgAge" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgRoster" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgPatientStatus" /></th>
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgPhone" /></th>
+    <thead>
+    <tr>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgName"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgDOB"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgAge"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgRoster"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgPatientStatus"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgPhone"/></th>
 
-			<th><bean:message
-					key="oscarReport.oscarReportFluBilling.msgBillingDate" /></th>
-		</tr>
-	</thead>
-	<tbody>
-		<%
-			RptFluReportData.DemoFluDataStruct demoData;
-			for (int i = 0; i < fluData.demoList.size(); i++) {
-				demoData = (RptFluReportData.DemoFluDataStruct) fluData.demoList
-				.get(i);
-				count = count + 1;
-		%>
-		<tr>
-			<td><%=demoData.demoName%></td>
-			<td><%=demoData.getDemoDOB()%></td>
-			<td><%=demoData.getDemoAge()%></td>
-			<td><%=demoData.demoRosterStatus%></td>
-			<td><%=demoData.demoPatientStatus%></td>
-			<td><%=demoData.getDemoPhone()%></td>
-			<td><%=demoData.getBillingDate(fluData.years)%></td>
-		</tr>
-		<%
-			}
-		%>
-	</tbody>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportFluBilling.msgBillingDate"/></th>
+    </tr>
+    </thead>
+    <tbody>
+    <%
+        RptFluReportData.DemoFluDataStruct demoData;
+        for (int i = 0; i < fluData.demoList.size(); i++) {
+            demoData = (RptFluReportData.DemoFluDataStruct) fluData.demoList
+                    .get(i);
+            count = count + 1;
+    %>
+    <tr>
+        <td><%=demoData.demoName%>
+        </td>
+        <td><%=demoData.getDemoDOB()%>
+        </td>
+        <td><%=demoData.getDemoAge()%>
+        </td>
+        <td><%=demoData.demoRosterStatus%>
+        </td>
+        <td><%=demoData.demoPatientStatus%>
+        </td>
+        <td><%=demoData.getDemoPhone()%>
+        </td>
+        <td><%=demoData.getBillingDate(fluData.years)%>
+        </td>
+    </tr>
+    <%
+        }
+    %>
+    </tbody>
 </table>
 
 <script>
-	registerFormSubmit('fluForm', 'dynamic-content');
+    registerFormSubmit('fluForm', 'dynamic-content');
 </script>

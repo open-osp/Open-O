@@ -8,17 +8,17 @@
 // For translators: please use UTF-8 if possible.  We strongly believe that
 // Unicode is the answer to a real internationalized world.  Also please
 // include your contact information in the header, as can be seen above.
-	
+
 // full day names
 Calendar._DN = new Array
 ("星期日",
- "星期一",
- "星期二",
- "星期三",
- "星期四",
- "星期五",
- "星期六",
- "星期日");
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六",
+    "星期日");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -35,63 +35,63 @@ Calendar._DN = new Array
 // short day names
 Calendar._SDN = new Array
 ("日",
- "一",
- "二",
- "三",
- "四",
- "五",
- "六",
- "日");
+    "一",
+    "二",
+    "三",
+    "四",
+    "五",
+    "六",
+    "日");
 
 // full month names
 Calendar._MN = new Array
 ("一月",
- "二月",
- "三月",
- "四月",
- "五月",
- "六月",
- "七月",
- "八月",
- "九月",
- "十月",
- "十一月",
- "十二月");
+    "二月",
+    "三月",
+    "四月",
+    "五月",
+    "六月",
+    "七月",
+    "八月",
+    "九月",
+    "十月",
+    "十一月",
+    "十二月");
 
 // short month names
 Calendar._SMN = new Array
 ("一月",
- "二月",
- "三月",
- "四月",
- "五月",
- "六月",
- "七月",
- "八月",
- "九月",
- "十月",
- "十一月",
- "十二月");
+    "二月",
+    "三月",
+    "四月",
+    "五月",
+    "六月",
+    "七月",
+    "八月",
+    "九月",
+    "十月",
+    "十一月",
+    "十二月");
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "關於";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Time Selector\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
-"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
-"\n\n" +
-"日期選擇方法:\n" +
-"- 使用 \xab, \xbb 按鈕可選擇年份\n" +
-"- 使用 " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " 按鈕可選擇月份\n" +
-"- 按住上面的按鈕可以加快選取";
+    "DHTML Date/Time Selector\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
+    "Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
+    "\n\n" +
+    "日期選擇方法:\n" +
+    "- 使用 \xab, \xbb 按鈕可選擇年份\n" +
+    "- 使用 " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " 按鈕可選擇月份\n" +
+    "- 按住上面的按鈕可以加快選取";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"時間選擇方法:\n" +
-"- 點擊任何的時間部份可增加其值\n" +
-"- 同時按Shift鍵再點擊可減少其值\n" +
-"- 點擊並拖曳可加快改變的值";
+    "時間選擇方法:\n" +
+    "- 點擊任何的時間部份可增加其值\n" +
+    "- 同時按Shift鍵再點擊可減少其值\n" +
+    "- 點擊並拖曳可加快改變的值";
 
 Calendar._TT["PREV_YEAR"] = "上一年 (按住選單)";
 Calendar._TT["PREV_MONTH"] = "下一年 (按住選單)";

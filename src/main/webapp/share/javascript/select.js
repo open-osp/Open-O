@@ -1,5 +1,5 @@
 // Copyright (c) 2006 - 2007 Gabriel Lanzani (http://www.glanzani.com.ar)
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -7,7 +7,7 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
 //
@@ -22,10 +22,22 @@
 // SEE CHANGELOG FOR A COMPLETE CHANGES OVERVIEW
 // VERSION 0.3
 
+// HTML escaping function to prevent XSS vulnerabilities
+function escapeHTML(str) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+    return String(str).replace(/[&<>"']/g, m => map[m]);
+}
+
 Autocompleter.SelectBox = Class.create();
 
 Autocompleter.SelectBox.prototype = Object.extend(new Autocompleter.Base(), {
-initialize: function(select, options) {
+    initialize: function (select, options) {
 	this.element = document.createElement('input');
 	this.element.type = 'text';
 	this.element.id = select + "_combo";
@@ -39,20 +51,20 @@ initialize: function(select, options) {
 		if (comboElement) {
 			comboElement.classList.add(inputClass);
 		}
-	});
-	
+        });
+
 	this.update = document.createElement('div');
 	this.update.id = selectElement.id + "_options";
 	this.update.className = "autocomplete";
 
 	selectElement.parentNode.insertBefore(this.update, selectElement);
-		
+
     this.baseInitialize(this.element.id, this.update.id, options);
-    this.select = select;
-	this.selectOptions = [];
-		
+        this.select = select;
+        this.selectOptions = [];
+
 	this.element.setAttribute('readonly', 'readonly');
-	this.element.readOnly = true;
+        this.element.readOnly = true;
 	if(this.options.debug) {
 		alert('input ' + this.element.id + ' and div ' + this.update.id + ' created, Autocompleter.Base() initialized');
 	}
@@ -64,26 +76,32 @@ initialize: function(select, options) {
 	const nodes = Array.from(optionList);
 
 	for(let i=0; i < nodes.length; i++){
-		this.selectOptions.push("<li id=\"" + nodes[i].value + "\">" + nodes[i].innerHTML + '</li>');
-		if (nodes[i].getAttribute("selected")) this.element.value = nodes[i].innerHTML;
-		
-		if(this.options.debug)alert('option ' + nodes[i].innerHTML + ' added to '+ this.update.id);
-	}
-	
+            // Escape HTML to prevent XSS vulnerabilities
+            const optionText = nodes[i].innerHTML ? escapeHTML(nodes[i].innerHTML) : '';
+            const optionValue = nodes[i].value ? escapeHTML(nodes[i].value) : '';
+            
+            this.selectOptions.push("<li id=\"" + optionValue + "\">" + optionText + '</li>');
+            if (nodes[i].getAttribute("selected")) this.element.value = nodes[i].textContent || nodes[i].innerText || '';
+
+            if (this.options.debug) alert('option ' + (nodes[i].textContent || nodes[i].innerText || '') + ' added to ' + this.update.id);
+        }
+
 	this.element.addEventListener("click", this.activate.bind(this));
-	
+
 	if (selectElement.selectedIndex >= 0) {
-		this.element.value = selectElement.options[selectElement.selectedIndex].innerHTML;
+		// Use textContent to avoid XSS vulnerabilities
+		const selectedOption = selectElement.options[selectElement.selectedIndex];
+		this.element.value = selectedOption.textContent || selectedOption.innerText || '';
 	}
-	
+
 	const self = this;
-	this.options.afterUpdateElement = function(text, li) {
+        this.options.afterUpdateElement = function (text, li) {
 		const optionList = selectElement.getElementsByTagName('option');
 		const nodes = Array.from(optionList);
 
 		const opt = nodes.find( function(node){
-			return (node.value == li.id);
-		});
+                return (node.value == li.id);
+            });
 		selectElement.selectedIndex = nodes.indexOf(opt);
 		if (self.options.redirect) {
 			document.location.href = opt.value;
@@ -94,23 +112,23 @@ initialize: function(select, options) {
 				autoSubmitElement.submit();
 			}
 		}
-	}
-  },
+        }
+    },
 
-  getUpdatedChoices: function() {
-  		this.updateChoices(this.setValues());
-  },
+    getUpdatedChoices: function () {
+        this.updateChoices(this.setValues());
+    },
 
-  setValues : function(){
-		return ("<ul>" + this.selectOptions.join('') + "</ul>");
-  },
+    setValues: function () {
+        return ("<ul>" + this.selectOptions.join('') + "</ul>");
+    },
 
-  setOptions: function(options) {
-    this.options = Object.extend({
-		//MORE OPTIONS TO EXTEND THIS CLASS
-		redirect	: false, // redirects to option value
-		debug		: false, //show alerts with information
-		autoSubmit	: '' //form Id to submit after change
-	}, options || {});
-  }
+    setOptions: function (options) {
+        this.options = Object.extend({
+            //MORE OPTIONS TO EXTEND THIS CLASS
+            redirect: false, // redirects to option value
+            debug: false, //show alerts with information
+            autoSubmit: '' //form Id to submit after change
+        }, options || {});
+    }
 });

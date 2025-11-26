@@ -23,37 +23,39 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
-<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.fax" rights="r" reverse="<%=true%>"> 
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.fax");%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.fax" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.fax");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="org.oscarehr.common.dao.FaxJobDao, org.oscarehr.common.model.FaxJob"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.dao.FaxJobDao, ca.openosp.openo.commn.model.FaxJob" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="java.util.List" %>
 
 <ul style="list-style-type:none;padding:0px;">
 
-<%
-	FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
-	String Id = request.getParameter("jobId");
-	FaxJob faxJob = faxJobDao.find(Integer.parseInt(Id));
+    <%
+        FaxJobDao faxJobDao = SpringUtils.getBean(FaxJobDao.class);
+        String Id = request.getParameter("jobId");
+        FaxJob faxJob = faxJobDao.find(Integer.parseInt(Id));
 
-	for( int idx = 1; idx <= faxJob.getNumPages(); ++idx ) {
-%>
-		<li><img src="<%=request.getContextPath() + "/admin/ManageFaxes.do?method=viewFax&jobId=" + faxJob.getId() + "&curPage=" + idx %>" ondblclick="_zoom(this)"/></li>
-<%
-	}
-%>
+        for (int idx = 1; idx <= faxJob.getNumPages(); ++idx) {
+    %>
+    <li><img
+            src="<%=request.getContextPath() + "/admin/ManageFaxes.do?method=viewFax&jobId=" + faxJob.getId() + "&curPage=" + idx %>"
+            ondblclick="_zoom(this)"/></li>
+    <%
+        }
+    %>
 
 </ul>

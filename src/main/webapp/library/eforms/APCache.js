@@ -5,9 +5,9 @@
  Description
  ===========
  
- APCache provides an interface for making calls against a web page in 
+ APCache provides an interface for making calls against a www page in
  OSCAR's eforms which will return the value of queries defined in 
- OSCAR/web/WEB-INF/classes/src/oscar/richeform/apconfig.xml.
+ OSCAR/www/WEB-INF/classes/src/oscar/richeform/apconfig.xml.
  
  Requirements
  ============
@@ -165,77 +165,84 @@ Below we will modify some of the examples above to create a fully working eform 
 <!-- END EXAMPLE -->                 
  */
 
-function createCache(options) {    
+function createCache(options) {
     function Cache(options) {
-    	this.flushCache = options.flushCache == null ? true : options.flushCache;
+        this.flushCache = options.flushCache == null ? true : options.flushCache;
         this.values = {};
-        this.mappings = [];    
-        this.defaultCacheResponseHandler = options.defaultCacheResponseHandler == null ? function () {} : options.defaultCacheResponseHandler;    
+        this.mappings = [];
+        this.defaultCacheResponseHandler = options.defaultCacheResponseHandler == null ? function () {
+        } : options.defaultCacheResponseHandler;
         this.cacheResponseErrorHandler = options.defaultCacheResponseErrorHandler == null
-            ? function(xhr, error) { alert("Please contact an administrator, an error has occurred."); } 
-                : options.defaultCacheResponseErrorHandler; 
-        this.put = function(key, value) {
-            return this.values[key] = value.replace(/\r?\n/g,"<br>");
+            ? function (xhr, error) {
+                alert("Please contact an administrator, an error has occurred.");
+            }
+            : options.defaultCacheResponseErrorHandler;
+        this.put = function (key, value) {
+            return this.values[key] = value.replace(/\r?\n/g, "<br>");
         };
-        this.get = function(key) {
+        this.get = function (key) {
             return this.values[key];
         };
-        this.contains = function(key) {
+        this.contains = function (key) {
             return !(this.values[key] === undefined);
         };
         this.isEmpty = function (key) {
-            return this.values[key] == null || this.values[key] == ""; 
+            return this.values[key] == null || this.values[key] == "";
         };
         this.addMapping = function (options) {
-            if (options.cacheResponseHandler == null) { 
-                options.cacheResponseHandler = this.defaultCacheResponseHandler; 
+            if (options.cacheResponseHandler == null) {
+                options.cacheResponseHandler = this.defaultCacheResponseHandler;
             }
             this.mappings.push(new CacheMapping(options));
         };
         this.getMapping = function (key) {
             var mappingIndex;
-            for (mappingIndex = 0; mappingIndex < this.mappings.length; mappingIndex++) { 
-                if (this.mappings[mappingIndex].name == key) { return this.mappings[mappingIndex]; } 
+            for (mappingIndex = 0; mappingIndex < this.mappings.length; mappingIndex++) {
+                if (this.mappings[mappingIndex].name == key) {
+                    return this.mappings[mappingIndex];
+                }
             }
             return null;
         };
-        this.lookup = function(key) {
-            
-        	if (this.flushCache) { 
-            	this.values = {};
+        this.lookup = function (key) {
+
+            if (this.flushCache) {
+                this.values = {};
             }
-        	if (_cache.contains(key)) { return _cache.get(key); }
-        	
+            if (_cache.contains(key)) {
+                return _cache.get(key);
+            }
+
             // Compiling keys into name value pairs.
             var query = "oscarAPCacheLookupType=" + key;
             var map;
-    
+
             // Include associated fields if a mapping is found.
             if ((map = this.getMapping(key)) != null) {
                 var y = 0;
                 for (y = 0; y < map.values.length; y++) {
                     query += "&key=" + map.values[y];
-                }                
+                }
                 // If mapping (A) references mapping (B) then mapping 
                 // (B) must be passed along as a key so that the onStoreInCache event for mapping (B)
                 // will be executed when the cache returns values.
-                if (map.name != key) { 
-                    query +="&key=" + map.name;
+                if (map.name != key) {
+                    query += "&key=" + map.name;
                 }
             }
             // Otherwise, use just this key. 
             else {
                 query += "&key=" + key;
             }
-            
+
             if (window.location.search.substr(1).indexOf("demographic_no") < 0 && demographicNo !== undefined) {
-            	query += "&demographic_no=" + demographicNo;
-            }            
-            
+                query += "&demographic_no=" + demographicNo;
+            }
+
             jQuery.ajax({
-                url : "efmformapconfig_lookup.jsp",
-                data : query + "&" + window.location.search.substr(1),
-                success : function(response) {
+                url: "efmformapconfig_lookup.jsp",
+                data: query + "&" + window.location.search.substr(1),
+                success: function (response) {
                     response = jQuery(response);
                     var y;
                     var map;
@@ -245,7 +252,7 @@ function createCache(options) {
                         item = jQuery(response[y]);
                         var _key = item.attr("name");
                         var _val = item.val();
-                        
+
                         if (_key == "oscarAPCacheLookupType") {
                             _lookupType = _val;
                             continue;
@@ -254,11 +261,10 @@ function createCache(options) {
                         map = _cache.getMapping(_key);
                         if (map != null) {
                             map.onStoreInCache(_key, _val);
-                        } 
-                        else {
+                        } else {
                             _cache.put(_key, _val);
                         }
-    
+
                     }
                     // Performing store in cache for mapping if lookup type matches a mapping 
                     if (_lookupType != null && _lookupType != "") {
@@ -276,7 +282,7 @@ function createCache(options) {
                     else {
                         _cache.defaultCacheResponseHandler(_lookupType);
                     }
-                    
+
                 },
                 error: this.cacheResponseErrorHandler
             });
@@ -289,19 +295,21 @@ function createCache(options) {
 }
 
 /**
- * Associates multiple fields with a single key and allows behaviour  
+ * Associates multiple fields with a single key and allows behaviour
  * for storing in cache and display on the page to be customized.
  *
  * @param name the name for this mapping
  * @param values the values of the associated fields
  * @param storeInCacheHandler function called after all the fields associated with this mapping have been loaded
  * @param cacheResponseHandler function called after all cache queries have been processed
-  
+
  */
 function CacheMapping(options) {
     this.name = options.name;
     this.values = options.values == null ? [] : options.values;
-    this.onStoreInCache  = options.storeInCacheHandler == null ? function() {} : options.storeInCacheHandler;
-    this.onCacheResponse = options.cacheResponseHandler == null ? function() {} : options.cacheResponseHandler;
-    
+    this.onStoreInCache = options.storeInCacheHandler == null ? function () {
+    } : options.storeInCacheHandler;
+    this.onCacheResponse = options.cacheResponseHandler == null ? function () {
+    } : options.cacheResponseHandler;
+
 }

@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,91 +24,86 @@
 --%>
 
 
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*"%>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*"%>
-<%@ page import="oscar.OscarProperties"%>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<html:hidden property="cpp.reminders" />
+<input type="hidden" name="reminders" id="reminders"/>
 <table width="100%" border="0" cellpadding="0" cellspacing="1"
-	bgcolor="#C0C0C0">
-	<%if(!OscarProperties.getInstance().isTorontoRFQ())  { %>
-	<tr>
-		<td bgcolor="white">Primary Health Care Provider</td>
-		<td bgcolor="white"><html:text property="cpp.primaryPhysician" /></td>
-	</tr>
-	<%} %>
-	<tr>
-		<td bgcolor="white">Primary Counsellor/Caseworker</td>
-		<td bgcolor="white"><html:text property="cpp.primaryCounsellor" /></td>
-	</tr>
-	<tr>
-		<td bgcolor="white">Other File Number</td>
-		<td bgcolor="white"><html:text property="cpp.otherFileNumber" /></td>
-	</tr>
-	<tr height="10">
-		<td bgcolor="white" colspan="2">&nbsp;</td>
-	</tr>
+       bgcolor="#C0C0C0">
+    <%if (!OscarProperties.getInstance().isTorontoRFQ()) { %>
+    <tr>
+        <td bgcolor="white">Primary Health Care Provider</td>
+        <td bgcolor="white"><input type="text" name="cpp.primaryPhysician" id="cpp.primaryPhysician" /></td>
+    </tr>
+    <%} %>
+    <tr>
+        <td bgcolor="white">Primary Counsellor/Caseworker</td>
+        <td bgcolor="white"><input type="text" name="cpp.primaryCounsellor" id="cpp.primaryCounsellor" /></td>
+    </tr>
+    <tr>
+        <td bgcolor="white">Other File Number</td>
+        <td bgcolor="white"><input type="text" name="cpp.otherFileNumber" id="cpp.otherFileNumber" /></td>
+    </tr>
+    <tr height="10">
+        <td bgcolor="white" colspan="2">&nbsp;</td>
+    </tr>
 
-	<tr>
-		<td bgcolor="white">Updated Last</td>
-		<td bgcolor="white"><c:out
-			value="${requestScope.cpp.update_date}" /></td>
-	</tr>
+    <tr>
+        <td bgcolor="white">Updated Last</td>
+        <td bgcolor="white"><c:out
+                value="${requestScope.cpp.update_date}"/></td>
+    </tr>
 
 
-	<tr class="title">
-		<td>Social History</td>
-		<td>Family History</td>
-	</tr>
-	<tr>
-		<td bgcolor="white"><html:textarea property="cpp.socialHistory"
-			rows="5" cols="45" /></td>
-		<td bgcolor="white"><html:textarea property="cpp.familyHistory"
-			rows="5" cols="45" /></td>
-	</tr>
+    <tr class="title">
+        <td>Social History</td>
+        <td>Family History</td>
+    </tr>
+    <tr>
+        <td bgcolor="white"><textarea name="socialHistory" rows="5" cols="45"></textarea></td>
+        <td bgcolor="white"><textarea name="familyHistory" rows="5" cols="45"></textarea></td>
+    </tr>
 
-	<tr class="title">
-		<td>Medical History</td>
-		<td>Past Medications</td>
-	</tr>
-	<tr>
-		<td bgcolor="white"><html:textarea property="cpp.medicalHistory"
-			rows="5" cols="45" /></td>
-		<td bgcolor="white"><html:textarea property="cpp.pastMedications"
-			rows="5" cols="45" /></td>
-	</tr>
+    <tr class="title">
+        <td>Medical History</td>
+        <td>Past Medications</td>
+    </tr>
+    <tr>
+        <td bgcolor="white"><textarea name="medicalHistory"
+                                      rows="5" cols="45"></textarea></td>
+        <td bgcolor="white"><textarea name="pastMedications"
+                                      rows="5" cols="45"></textarea></td>
+    </tr>
 
-	<tr class="title">
-		<td colspan="2">Other Support Systems</td>
-	</tr>
-	<tr>
-		<td colspan="2" bgcolor="white"><html:textarea
-			property="cpp.otherSupportSystems" rows="2" cols="95" /></td>
-	</tr>
+    <tr class="title">
+        <td colspan="2">Other Support Systems</td>
+    </tr>
+    <tr>
+        <td colspan="2" bgcolor="white"><textarea
+                name="otherSupportSystems" rows="2" cols="95"></textarea></td>
+    </tr>
 </table>
-<html:submit value="Save"
-	onclick="this.form.method.value='patientCPPSave'" />
-<html:submit value="Print Preview"
-	onclick="this.form.method.value='patientCppPrintPreview'"></html:submit>
-<logic:messagesPresent message="true">
-	<html:messages id="message" message="true" bundle="casemgmt">
-		<div style="color: blue"><I><c:out value="${message}" /></I></div>
-	</html:messages>
-</logic:messagesPresent>
+<input type="submit" name="submit" value="Save" onclick="this.form.method.value='patientCPPSave'"/>
+<input type="submit" name="submit" value="Print Preview" onclick="this.form.method.value='patientCppPrintPreview'" />
+<c:if test="${not empty requestScope.messages}">
+    <c:forEach var="message" items="${requestScope.messages}">
+        <div style="color: blue"><I><c:out value="${message}"/></I></div>
+    </c:forEach>
+</c:if>

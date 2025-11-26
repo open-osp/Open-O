@@ -35,4 +35,4 @@ __finalEDB	:	__startDate
 __xDateScale	: __xDateScale_2	
 __dateFormat	:	dd/MM/yyyy
 
-__className	:	oscar.form.graphic.FrmPdfGraphicRourke
+__className	:	ca.openosp.openo.form.graphic.FrmPdfGraphicRourke

@@ -24,76 +24,77 @@
 
 --%>
 
-<%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+
+
+
 
 <html>
 <script src="${pageContext.request.contextPath}/csrfguard"></script>
-    <head>
-        <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
-        <script type="text/javascript" src="<%= request.getContextPath()%>/js/jquery.js"></script>
-        <link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet">
-        <title>PATIENT DETAIL INFO</title>
-        <link rel="stylesheet" href="../web.css" />
-        <script language="JavaScript">
-            <!--
-            
-            function verifyInput() {
-            	var input = document.forms[0].magneticStripe.value;
-            	var tracks = input.split(";");
-            	track1 = tracks[0];
-            	
-            	if( track1.length == 78 || track1.length == 79 ) {
-            		return true;
-            	}
-            	
-            	alert("I didn't get that.  Try scanning again");
-            	document.forms[0].magneticStripe.value = "";
-            	return false;
+<head>
+    <script type="text/javascript" src="<%= request.getContextPath()%>/js/global.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath()%>/js/jquery.js"></script>
+    <link href="<%=request.getContextPath()%>/css/bootstrap.min.css" rel="stylesheet">
+    <title>PATIENT DETAIL INFO</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
+    <script language="JavaScript">
+        <!--
+
+        function verifyInput() {
+            var input = document.forms[0].magneticStripe.value;
+            var tracks = input.split(";");
+            track1 = tracks[0];
+
+            if (track1.length == 78 || track1.length == 79) {
+                return true;
             }
-            
-            function setfocus() {
-            	document.forms[0].magneticStripe.focus();
-            }
-            //-->
-        </script>
-    </head>
-    <body background="../images/gray_bg.jpg" bgproperties="fixed" onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0" onload="setfocus()">
 
-        <table border="0" cellspacing="0" cellpadding="0" width="100%">
-            <tr bgcolor="#486ebd">
-                <th align=CENTER NOWRAP>
-                    <font face="Helvetica" color="#FFFFFF">PATIENT'S DETAIL RECORD</font>
-                </th>
-            </tr>
-        </table>
+            alert("I didn't get that.  Try scanning again");
+            document.forms[0].magneticStripe.value = "";
+            return false;
+        }
 
-        <html:form action="/demographic/ValidateSwipeCard" onsubmit="return verifyInput();">
+        function setfocus() {
+            document.forms[0].magneticStripe.focus();
+        }
 
-            <div class="container">
+        //-->
+    </script>
+</head>
+<body background="<%= request.getContextPath() %>/images/gray_bg.jpg" bgproperties="fixed" onLoad="setfocus()" topmargin="0" leftmargin="0"
+      rightmargin="0" onload="setfocus()">
 
-                <p class="row">
-                    <p class="span">
-                        Swipe card
-                    </p>
-                    <p class="span">
-                        <html:text property="magneticStripe" size="79"/>
-                    </p>
-                </p>
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP>
+            <font face="Helvetica" color="#FFFFFF">PATIENT'S DETAIL RECORD</font>
+        </th>
+    </tr>
+</table>
 
-                <p class="row">
-                    <p class="span2">
-                        <html:submit value="Validate" />
-                    </p>
-                </p>
-            </div>
+<form action="<%=request.getContextPath() %>/demographic/ValidateSwipeCard.do" onsubmit="return verifyInput();">
+    <div class="container">
 
-        </html:form>        
-        <br>
-        <br>
-        <form>
-            <input type="button" name="Button" value="Cancel" onclick=self.close();>
-        </form>
-    </body>
+        <p class="row">
+        <p class="span">
+            Swipe card
+        </p>
+        <p class="span">
+            <input type="checkbox" name="magneticStripe" size="79" />
+        </p>
+        </p>
+
+        <p class="row">
+        <p class="span2">
+            <input type="submit" value="Validate" />
+        </p>
+        </p>
+    </div>
+
+</form>
+<br>
+<br>
+<form>
+    <input type="button" name="Button" value="Cancel" onclick=self.close();>
+</form>
+</body>
 </html>

@@ -23,78 +23,85 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<!--   /** No SWF Object Multiple File Upload
-     * @version         1.1.1
-     * @compatibility   Chrome 1, FireFox 3+, Internet Explorer 5+, Opera 8+, Safari 3+
-     * @author          Andrea Giammarchi
-     * @blog            webreflection.blogspot.com
-     * @license         Mit Style License
-     */
+<!-- /** No SWF Object Multiple File Upload
+* @version 1.1.1
+* @compatibility Chrome 1, FireFox 3+, Internet Explorer 5+, Opera 8+, Safari 3+
+* @author Andrea Giammarchi
+* @blog webreflection.blogspot.com
+* @license Mit Style License
+*/
 -->
-<%@page import="oscar.oscarProvider.data.*,java.util.*,oscar.oscarLab.ca.on.CommonLabResultData,org.oscarehr.util.SpringUtils,org.oscarehr.common.dao.QueueDao" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@page import="ca.openosp.openo.providers.data.*,java.util.*,ca.openosp.openo.lab.ca.on.CommonLabResultData,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.dao.QueueDao" %>
+<%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
-    <head>
-          <title><bean:message key="inboxmanager.document.title"/></title>
-        <script type="text/javascript" src="../share/javascript/prototype.js"></script>
-        <script type="text/javascript" src="../share/javascript/scriptaculous.js"></script>
-        <link rel="stylesheet" type="text/css" href="../share/css/OscarStandardLayout.css" />
+<head>
+    <title><fmt:setBundle basename="oscarResources"/><fmt:message key="inboxmanager.document.title"/></title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
 
-        <%
-            QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
-            List<Hashtable> queues=queueDao.getQueues();
-            List providers = ProviderData.getProviderList();
-            String queueIdStr = (String) request.getSession().getAttribute("preferredQueue");
-            int queueId = 1;
-            if (queueIdStr != null) {
-                queueIdStr = queueIdStr.trim();
-                queueId = Integer.parseInt(queueIdStr);
-            }
-            String provider = CommonLabResultData.NOT_ASSIGNED_PROVIDER_NO;
-            //String provider ="";//(String) session.getValue("user");
-%>
+    <%
+        QueueDao queueDao = (QueueDao) SpringUtils.getBean(QueueDao.class);
+        List<Hashtable> queues = queueDao.getQueues();
+        List providers = ProviderData.getProviderList();
+        String queueIdStr = (String) request.getSession().getAttribute("preferredQueue");
+        int queueId = 1;
+        if (queueIdStr != null) {
+            queueIdStr = queueIdStr.trim();
+            queueId = Integer.parseInt(queueIdStr);
+        }
+        String provider = CommonLabResultData.NOT_ASSIGNED_PROVIDER_NO;
+        //String providers ="";//(String) session.getValue("user");
+    %>
 
-        <style type="text/css">
+    <style type="text/css">
         * {
-            font-family:Verdana,Tahoma,Arial,sans-serif;
+            font-family: Verdana, Tahoma, Arial, sans-serif;
             font-size: 10pt;
             font-weight: normal;
         }
+
         img {
             border: 0;
         }
+
         body {
             text-align: center;
         }
+
         h1 {
             font-size: 12pt;
         }
+
         h2 {
             margin-top: 32px;
             font-size: 8pt;
             font-weight: bold;
         }
+
         h3 {
             font-size: 8pt;
         }
+
         div.form {
             text-align: left;
             margin: auto;
@@ -104,8 +111,9 @@
             position: relative;
             border: 1px solid #999;
         }
+
         input.submit {
-            font-family:Verdana,Tahoma,Arial,sans-serif;
+            font-family: Verdana, Tahoma, Arial, sans-serif;
             font-size: 10pt;
             width: 248px !important;
             width: 242px;
@@ -114,27 +122,27 @@
             position: absolute;
             top: 180px;
             left: 0;
-            cursor:pointer;
+            cursor: pointer;
         }
-        </style>
-        <script type="text/javascript" src="../share/javascript/noswfupload.js"></script>
+    </style>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/noswfupload.js"></script>
 
-        <script type="text/javascript">
+    <script type="text/javascript">
 
         // add dedicated css
-        noswfupload.css("../share/css/noswfupload.css", "../share/css/noswfupload-icons.css");
-        var upload_url;//global to attached provider no and queue no.
+        noswfupload.css("<%= request.getContextPath() %>/share/css/noswfupload.css", "<%= request.getContextPath() %>/share/css/noswfupload-icons.css");
+        var upload_url;//global to attached providers no and queue no.
 
-        onload = function(){
+        onload = function () {
             var
                 // the input type file to wrap
-                input   = document.getElementsByName("filedata")[0],
+                input = document.getElementsByName("filedata")[0],
 
                 // the submit button
-                submit  = document.getElementById("noswfuploadSubmit"),
+                submit = document.getElementById("noswfuploadSubmit"),
 
                 // the form
-                form    = document.getElementById("noswfupload_form"),
+                form = document.getElementById("noswfupload_form"),
 
                 // the form action to use with noswfupload
                 //url     = form.getAttribute("action") || form.action,
@@ -142,16 +150,17 @@
                 // noswfupload wrap Object
                 wrap;
 
-                upload_url=form.getAttribute("action") || form.action;
+            upload_url = form.getAttribute("action") || form.action;
             // if we do not need the form ...
-                // move inputs outside the form since we do not need it
-                with(form.parentNode){
-                    appendChild(input);
-                    appendChild(submit);
-                };
+            // move inputs outside the form since we do not need it
+            with (form.parentNode) {
+                appendChild(input);
+                appendChild(submit);
+            }
+            ;
 
-                // remove the form
-                form.parentNode.removeChild(form);
+            // remove the form
+            form.parentNode.removeChild(form);
 
             // create the noswfupload.wrap Object with 1Mb of limit
             wrap = noswfupload.wrap(input, 10024 * 10024);
@@ -160,10 +169,10 @@
             form = input = null;
 
             // assign event to the submit button
-            noswfupload.event.add(submit, "click", function(e){
-                wrap.url=upload_url;
+            noswfupload.event.add(submit, "click", function (e) {
+                wrap.url = upload_url;
                 // only if there is at least a file to upload
-                if(wrap.files.length){
+                if (wrap.files.length) {
                     submit.setAttribute("disabled", "disabled");
                     wrap.upload(
                         // it is possible to declare events directly here
@@ -178,7 +187,7 @@
                 submit.blur();
 
                 // block native events
-                return  noswfupload.event.stop(e);
+                return noswfupload.event.stop(e);
             });
 
             // set wrap object properties and methods (events)
@@ -188,16 +197,16 @@
 
             // accepted file types (filter)
             // wrap.fileType = "Images (*.jpg, *.jpeg, *.png, *.gif, *.bmp)";
-             wrap.fileType = "PDF (*.pdf, *.PDF)";
+            wrap.fileType = "PDF (*.pdf, *.PDF)";
             // fileType could contain whatever text but filter checks *.{extension} if present
 
             // handlers
-            wrap.onerror = function(msg){
+            wrap.onerror = function (msg) {
                 noswfupload.text(this.dom.info, "WARNING: Unable to upload " + this.file.fileName + "(" + msg + ")");
             };
 
             // instantly vefore files are sent
-            wrap.onloadstart = function(){
+            wrap.onloadstart = function () {
 
                 // we need to show progress bars and disable input file (no choice during upload)
                 this.show(0);
@@ -207,7 +216,7 @@
             };
 
             // event called during progress. It could be the real one, if browser supports it, or a simulated one.
-            wrap.onprogress = function(rpe, xhr){
+            wrap.onprogress = function (rpe, xhr) {
 
                 // percent for each bar
                 this.show((this.sent + rpe.loaded) * 100 / this.total, rpe.loaded * 100 / rpe.total);
@@ -217,10 +226,10 @@
 
                 // fileSize is -1 only if browser does not support file info access
                 // this if splits recent browsers from others
-                if(this.file.fileSize !== -1){
+                if (this.file.fileSize !== -1) {
 
                     // simulation property indicates when the progress event is fake
-                    if(rpe.simulation)
+                    if (rpe.simulation)
                         // in this case sent data is fake but we still have the total so we could show something
                         noswfupload.text(this.dom.info,
                             "Uploading: " + this.file.fileName,
@@ -244,19 +253,19 @@
             };
 
             // generated if there is something wrong during upload
-            wrap.onerror = function(msg){
-            	// just inform the user something was wrong
+            wrap.onerror = function (msg) {
+                // just inform the user something was wrong
                 noswfupload.text(this.dom.info, "WARNING: Unable to upload " + this.file.fileName + "(" + msg + ")");
             };
 
             // generated when every file has been sent (one or more, it does not matter)
-            wrap.onload = function(rpe, xhr){
-            	var self = this;
+            wrap.onload = function (rpe, xhr) {
+                var self = this;
                 // just show everything is fine ...
                 noswfupload.text(this.dom.info, "Upload complete");
 
                 // ... and after a second reset the component
-                setTimeout(function(){
+                setTimeout(function () {
                     self.clean();   // remove files from list
                     self.hide();    // hide progress bars and enable input file
 
@@ -269,85 +278,97 @@
 
         };
 
-     function changeProviderAndQueue(){
-            upload_url="../documentManager/addEditDocument.do?method=html5MultiUpload&queue="+$('queue').value+"&provider="+$('provider').value;
+        function changeProviderAndQueue() {
+            upload_url = "<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=" + $('queue').value + "&providers=" + $('provider').value;
 
-     }
-     function addProviderToPost(ele){
-                $('provider').value=ele.options[ele.selectedIndex].value;
-                changeProviderAndQueue();
-            }
-    function addQueueToPost(ele){
-                $('queue').value=ele.options[ele.selectedIndex].value;
-                changeProviderAndQueue();
-            }
-        </script>
-<style type="text/css">
-            div.maindiv {
-                background-color: #f2f7ff;
-                border: 1px solid #acb3f5;
-                height: 390px;
-            }
-            .noswfupload{
-                 background-color: #f2f7ff;
-            }
-            div.maindivheading {
-                font-family:Verdana,Tahoma,Arial,sans-serif;
-                background-color: #acb3f5;
-                font-size: 14px;
-            }
-            label.labels {
-                float: left;
-                clear: left;
-                width: 160px;
-            }
-            .fields{
-                font-family:Verdana,Tahoma,Arial,sans-serif;
-                font-size: 10pt;
-            }
+        }
+
+        function addProviderToPost(ele) {
+            $('provider').value = ele.options[ele.selectedIndex].value;
+            changeProviderAndQueue();
+        }
+
+        function addQueueToPost(ele) {
+            $('queue').value = ele.options[ele.selectedIndex].value;
+            changeProviderAndQueue();
+        }
+    </script>
+    <style type="text/css">
+        div.maindiv {
+            background-color: #f2f7ff;
+            border: 1px solid #acb3f5;
+            height: 390px;
+        }
+
+        .noswfupload {
+            background-color: #f2f7ff;
+        }
+
+        div.maindivheading {
+            font-family: Verdana, Tahoma, Arial, sans-serif;
+            background-color: #acb3f5;
+            font-size: 14px;
+        }
+
+        label.labels {
+            float: left;
+            clear: left;
+            width: 160px;
+        }
+
+        .fields {
+            font-family: Verdana, Tahoma, Arial, sans-serif;
+            font-size: 10pt;
+        }
 
 
-        </style>
-    </head>
-    <body>
-        <div class="maindiv">
-            <div class="maindivheading">
-                &nbsp;&nbsp;&nbsp; <bean:message key="inboxmanager.document.addMultipleDocuments"/>
+    </style>
+</head>
+<body>
+<div class="maindiv">
+    <div class="maindivheading">
+        &nbsp;&nbsp;&nbsp; <fmt:setBundle basename="oscarResources"/><fmt:message key="inboxmanager.document.addMultipleDocuments"/>
+    </div>
+    <div>
+        <input type="hidden" id="queue" value="<%=queueId%>"/>
+        <input type="hidden" id="provider" value="<%=provider%>"/>
+        <label for="queueDrop" class="fields">Send to Queue:</label>
+        <select onchange="javascript:addQueueToPost(this);" id="queueDrop" name="queueDrop">
+
+            <%
+                for (Hashtable ht : queues) {
+                    int id = (Integer) ht.get("id");
+                    String qName = (String) ht.get("queue");
+            %>
+            <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%>
+            </option>
+            <%}%>
+        </select>
+        <br/>
+        <label for="providerDrop" class="fields">Send to Provider:</label>
+        <select onchange="javascript:addProviderToPost(this);" id="providerDrop" name="providerDrop">
+            <option value="-2" <%=("-2".equals(provider) ? " selected" : "")%> >None</option>
+            <%
+                for (int i = 0; i < providers.size(); i++) {
+                    Map h = (Map) providers.get(i);
+            %>
+            <option value="<%= h.get("providerNo")%>" <%= (h.get("providerNo").equals(provider) ? " selected" : "")%>><%= h.get("lastName")%> <%= h.get("firstName")%>
+            </option>
+            <%}%>
+        </select>
+    </div>
+    <div class="form">
+        <form id="noswfupload_form" method="post"
+              action="<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&provider=<%=provider%>"
+              enctype="multipart/form-data">
+            <div>
+                <input type="file" name="filedata"/>
+                <input id="noswfuploadSubmit" class="submit" type="submit" value="Upload File"/>
             </div>
-           <div >
-                <input type="hidden" id="queue" value="<%=queueId%>"/>
-                <input type="hidden" id="provider" value="<%=provider%>"/>
-                <label for="queueDrop" class="fields">Send to Queue:</label>
-                <select onchange="javascript:addQueueToPost(this);" id="queueDrop" name="queueDrop">
+        </form>
+    </div>
+</div>
 
-                    <%
-                                for (Hashtable ht : queues) {
-                                    int id = (Integer)ht.get("id");
-                                    String qName = (String) ht.get("queue");
-                    %>
-                    <option value="<%=id%>" <%=((id == queueId) ? " selected" : "")%>><%= qName%> </option>
-                    <%}%>
-                </select>
-                <br/>
-                <label for="providerDrop" class="fields">Send to Provider:</label>
-                <select onchange="javascript:addProviderToPost(this);" id="providerDrop" name="providerDrop">
-                    <option value="-2" <%=("-2".equals(provider) ? " selected" : "")%> >None</option>
-                    <%for (int i = 0; i < providers.size(); i++) {
-                                    Map h = (Map) providers.get(i);%>
-                    <option value="<%= h.get("providerNo")%>" <%= (h.get("providerNo").equals(provider) ? " selected" : "")%>><%= h.get("lastName")%> <%= h.get("firstName")%></option>
-                    <%}%>
-                </select>
-            </div>
-        <div class="form">
-            <form id="noswfupload_form" method="post" action="../documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&provider=<%=provider%>" enctype="multipart/form-data">
-                <div>
-                    <input type="file" name="filedata" />
-                    <input id="noswfuploadSubmit" class="submit" type="submit" value="Upload File" />
-                </div>
-            </form>
-        </div>
-        </div>
-
-    </body>
+</body>
 
 </html>

@@ -24,9 +24,9 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<h3><bean:message key="oscarEncounter.LeftNavBar.ErrorH3" /></h3>
+<h3><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.LeftNavBar.ErrorH3"/></h3>
 
 Could not retrieve data for
 <%=request.getAttribute("navbarName")%>

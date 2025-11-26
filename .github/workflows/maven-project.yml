@@ -1,0 +1,112 @@
+# GitHub Workflow: Check Open-O
+#
+# Description:
+# This workflow automates the build, testing, and code quality checks for 
+# the Open-O Maven project. It ensures the project builds successfully and adheres 
+# to coding standards defined by Checkstyle.
+#
+# Usage:
+# - Triggered by pull requests targeting the following branches:
+#   - main
+#   - develop/alpaca
+#   - develop/bullfrog
+#   - develop/coyote
+#   - develop/dolphin
+#   - develop/dogfish
+#
+# Key Jobs:
+# - build: 
+#   - Checks out the source code, builds Docker containers, generates Make files,
+#     builds the project, and runs unit tests while compiling JSP files.
+# - checkstyle:
+#   - Checks out the source code, builds Docker containers, and runs the 
+#     Maven Checkstyle plugin to enforce code style guidelines.
+#
+# License:
+# This GitHub Workflow file is part of the Open-O project and is subject 
+# to the licensing terms outlined in the repository's LICENSE file.
+#
+# Last Updated:
+# January 31, 2025
+
+name: Check Open-O
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop/alpaca
+      - develop/bullfrog
+      - develop/coyote
+      - develop/dolphin
+      - develop/dogfish
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/.docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build Docker containers
+        uses: hoverkraft-tech/compose-action@v2.1.0
+        with:
+          compose-file: ".devcontainer/docker-compose.yml"
+      
+      # Removed incorrect 'make lock' - we should validate against committed lock file, not update it
+      
+      - name: Build project
+        run: docker exec openo-tomcat-dev .devcontainer/development/scripts/make install
+
+      - name: Run unit tests & build JSP files
+        run: docker exec openo-tomcat-dev mvn package -Pjspc,modern-tests -Ddependency.lock.filename=dependencies-lock-modern.json
+
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /home/runner/.docker
+          key: ${{ runner.os }}-docker-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build Docker containers
+        uses: hoverkraft-tech/compose-action@v2.1.0
+        with:
+          compose-file: ".devcontainer/docker-compose.yml"
+          
+      - name: Run Maven Checkstyle plugin
+        run: docker exec openo-tomcat-dev mvn checkstyle:checkstyle

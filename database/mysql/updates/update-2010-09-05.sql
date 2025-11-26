@@ -14,7 +14,7 @@ create table ProviderPreference
 	lastUpdated datetime not null
 );
 
--- replace command because of glitch is oscar where a provider can have more than one preference even though only one is active
+-- replace command because of glitch is oscar where a providers can have more than one preference even though only one is active
 replace into ProviderPreference (select provider_no,start_hour,end_hour,every_min,mygroup_no,color_template,new_tickler_warning_window,default_servicetype,default_caisi_pmm,default_new_oscar_cme,0,now() from preference);
 
 update ProviderPreference set myGroupNo=null where myGroupNo='';

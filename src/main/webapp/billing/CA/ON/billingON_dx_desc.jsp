@@ -25,25 +25,25 @@
 --%>
 
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ page import="java.util.List"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.util.List" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
 <%
-	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
+    DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
 %>
 
 <%
-String diagnostic_code = request.getParameter("diagnostic_code");
-String description = "";
+    String diagnostic_code = request.getParameter("diagnostic_code");
+    String description = "";
 
-List<DiagnosticCode> results = diagnosticCodeDao.findByDiagnosticCode(diagnostic_code);
-for(DiagnosticCode result:results) {
-	description = result.getDescription().trim();
-}
+    List<DiagnosticCode> results = diagnosticCodeDao.findByDiagnosticCode(diagnostic_code);
+    for (DiagnosticCode result : results) {
+        description = result.getDescription().trim();
+    }
 
 %>
 
-<%=(!description.equals("") && description.length()>32)?description.substring(0,32)+"...":description%>
+<%=(!description.equals("") && description.length() > 32) ? description.substring(0, 32) + "..." : description%>

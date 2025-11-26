@@ -23,84 +23,90 @@
     Ontario, Canada
 
 --%>
-<%@page import="oscar.*,java.util.*"%>
-<%@page import="java.io.InputStream"%>
-<%@page import="java.util.ArrayList"%>
-<%@page import="java.util.HashMap"%>
-<%@page import="java.util.Iterator"%>
-<%@page import="java.util.List"%>
-<%@page import="java.net.URLEncoder"%>
-<%@page import="org.apache.commons.httpclient.HttpClient"%>
-<%@page import="org.apache.commons.httpclient.methods.GetMethod"%>
-<%@page import="org.jdom.Document"%>
-<%@page import="org.jdom.Element"%>
-<%@page import="org.jdom.filter.ElementFilter"%>
-<%@page import="org.jdom.input.SAXBuilder"%>
-<%@page import="org.oscarehr.util.MiscUtils"%>
-<%@page import="org.apache.logging.log4j.Logger"%>
+<%@page import="ca.openosp.*,java.util.*" %>
+<%@page import="java.io.InputStream" %>
+<%@page import="java.util.ArrayList" %>
+<%@page import="java.util.HashMap" %>
+<%@page import="java.util.Iterator" %>
+<%@page import="java.util.List" %>
+<%@page import="java.net.URLEncoder" %>
+<%@ page import="org.apache.http.client.HttpClient" %>
+<%@ page import="org.apache.http.client.methods.HttpGet" %>
+<%@ page import="org.apache.http.impl.client.HttpClients" %>
+<%@ page import="org.apache.http.HttpResponse" %>
+<%@ page import="org.apache.http.util.EntityUtils" %>
+<%@page import="org.jdom2.Document" %>
+<%@page import="org.jdom2.Element" %>
+<%@page import="org.jdom2.filter.ElementFilter" %>
+<%@page import="org.jdom2.input.SAXBuilder" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="org.apache.logging.log4j.Logger" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
-    <head>
-        <style type="text/css">
-            table.sample {
-                border-width: 1px;
-                border-spacing: 1px;
-                border-style: solid;
-                border-color: gray;
-                border-collapse: collapse;
-                background-color: white;
-            }
-            table.sample th {
-                border-width: 1px;
-                padding: 1px;
-                border-style: solid;
-                border-color: gray;
-                background-color: white;
-                -moz-border-radius: 0px 0px 0px 0px;
-            }
-            table.sample td {
-                border-bottom-width: 1px;
-                padding: 5px;
-                border-style: solid;
-                border-color: gray;
-                background-color: white;
-                -moz-border-radius: 0px 0px 0px 0px;
-                font-size:12px;
+<head>
+    <style type="text/css">
+        table.sample {
+            border-width: 1px;
+            border-spacing: 1px;
+            border-style: solid;
+            border-color: gray;
+            border-collapse: collapse;
+            background-color: white;
+        }
 
-            }
+        table.sample th {
+            border-width: 1px;
+            padding: 1px;
+            border-style: solid;
+            border-color: gray;
+            background-color: white;
+            -moz-border-radius: 0px 0px 0px 0px;
+        }
 
-            table.sample td a{
-                text-decoration:none;
-                font-family:sans-serif;
-                font-size:14px;
-            }
+        table.sample td {
+            border-bottom-width: 1px;
+            padding: 5px;
+            border-style: solid;
+            border-color: gray;
+            background-color: white;
+            -moz-border-radius: 0px 0px 0px 0px;
+            font-size: 12px;
 
-        </style>
-    </head>
-    <body>
-        <%
-        String searchString = request.getParameter("searchterm");
-        List<HashMap <String,String>> list = searchTripDatabase(searchString);
-        if (list != null && list.size() > 0){%>
-        <table class="sample">
-            <%for (HashMap<String,String> h : list) {%>
+        }
 
-            <tr>
-                <td>
-                    <a href="<%=h.get("link")%>" ><%=h.get("title")%></a><br/>
-                     <%=h.get("publication")%> -- <%=h.get("year")%>
-                </td>
+        table.sample td a {
+            text-decoration: none;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
 
-            </tr>
+    </style>
+</head>
+<body>
+<%
+    String searchString = request.getParameter("searchterm");
+    List<HashMap<String, String>> list = searchTripDatabase(searchString);
+    if (list != null && list.size() > 0) {%>
+<table class="sample">
+    <%for (HashMap<String, String> h : list) {%>
 
-            <%}%>
-        </table>
+    <tr>
+        <td>
+            <a href="<%=h.get("link")%>"><%=h.get("title")%>
+            </a><br/>
+            <%=h.get("publication")%> -- <%=h.get("year")%>
+        </td>
 
-        <%} else {%>
-        No Results
-        <%}%>
-    </body>
+    </tr>
+
+    <%}%>
+</table>
+
+<%} else {%>
+No Results
+<%}%>
+</body>
 </html>
 
 <%--
@@ -131,30 +137,35 @@ the trick with the latter one is to carry out a search and under each result the
  --%>
 
 <%!
-    public List<HashMap <String,String>> searchTripDatabase(String searchString) throws Exception{
-       Logger logger = MiscUtils.getLogger();
-       List<HashMap <String,String>> h  = null;
-       GetMethod post = new GetMethod("http://www.tripdatabase.com/search/xml?key=MCM001&criteria="+URLEncoder.encode(searchString,"UTF-8"));
-      
-       HttpClient httpclient = new HttpClient();
-       try{
-                int result = httpclient.executeMethod(post);
-                if (result != 200){
-                    logger.debug("result "+result);
-                }
-                h =parseReturn(post.getResponseBodyAsStream());
-       }catch(Exception e ){
-            logger.debug("searchTripDB" ,e);
-       } finally{
-                // Release current connection to the connection pool
-                post.releaseConnection();
-       }
-       return h;
+    public List<HashMap<String, String>> searchTripDatabase(String searchString) throws Exception {
+        Logger logger = MiscUtils.getLogger();
+        List<HashMap<String, String>> h = null;
+        
+        HttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet("http://www.tripdatabase.com/search/xml?key=MCM001&criteria=" + URLEncoder.encode(searchString, "UTF-8"));
+        
+        try {
+            HttpResponse response = httpclient.execute(httpGet);
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode != 200) {
+                logger.error("HTTP request failed with status: " + statusCode);
+            }
+            
+            InputStream responseStream = response.getEntity().getContent();
+            h = parseReturn(responseStream);
+        } catch (Exception e) {
+            logger.error("searchTripDB", e);
+        } finally {
+            // Release current connection to the connection pool
+            httpGet.releaseConnection();
+        }
+        return h;
     }
 
-     private List<HashMap <String,String>> parseReturn(InputStream is){
+    private List<HashMap<String, String>> parseReturn(InputStream is) {
         Logger logger = MiscUtils.getLogger();
-        List<HashMap <String,String>> list = new ArrayList<HashMap <String,String>>();
+        List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
         try {
 
             SAXBuilder parser = new SAXBuilder();
@@ -162,18 +173,18 @@ the trick with the latter one is to carry out a search and under each result the
             Element root = doc.getRootElement();
             logger.debug(root.getName());
             Iterator<Element> results = root.getDescendants(new ElementFilter("document"));
-			
-            while(results.hasNext()){
-               Element ele = results.next();
-               HashMap<String,String> h = new HashMap<String,String>();
-               h.put("title",ele.getChild("title").getText());
-               h.put("link",ele.getChild("link").getText());
-               h.put("year", ele.getChild("pubDate").getText()); 
-               h.put("publication", ele.getChild("publication").getText()); 
-               list.add(h);
+
+            while (results.hasNext()) {
+                Element ele = results.next();
+                HashMap<String, String> h = new HashMap<String, String>();
+                h.put("title", ele.getChild("title").getText());
+                h.put("link", ele.getChild("link").getText());
+                h.put("year", ele.getChild("pubDate").getText());
+                h.put("publication", ele.getChild("publication").getText());
+                list.add(h);
             }
-        }catch(Exception e){
-            logger.debug("parseReturn ",e);
+        } catch (Exception e) {
+            logger.debug("parseReturn ", e);
         }
         return list;
     }

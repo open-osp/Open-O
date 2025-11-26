@@ -23,11 +23,11 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@ page import="org.oscarehr.common.model.UserProperty"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
     String curUser_no = (String) session.getAttribute("user");
     UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
@@ -45,27 +45,31 @@
         }
     }
 %>
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="report.printLabel.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.title"/></title>
     </head>
     <body>
-        <% if (!defaultPrinterName.isEmpty()) { 
-            if( silentPrint == true) {%>
-                <bean:message key="report.printLabel.SilentlyPrintToDefaultPrinter"/>
-            <%} else {%> 
-                <bean:message key="report.printLabel.DefaultPrinter"/> 
-            <%}%>
-            <%=defaultPrinterName%>
-        <%}%>
-        <br>
-        
-        
-        <object id="pdf" type="application/pdf"  data="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>" height="80%" width="100%" standby="Loading pdf...">
-        
-        Sorry the pdf failed to load...<a href="../report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>">click here to download the PDF</a>.
-        
-        </object>
+    <% if (!defaultPrinterName.isEmpty()) {
+        if (silentPrint == true) {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.SilentlyPrintToDefaultPrinter"/>
+    <%} else {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.DefaultPrinter"/>
+    <%}%>
+    <%=defaultPrinterName%>
+    <%}%>
+    <br>
+
+
+    <object id="pdf" type="application/pdf"
+            data="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>"
+            height="80%" width="100%" standby="Loading pdf...">
+
+        Sorry the pdf failed to load...<a
+            href="<%= request.getContextPath() %>/report/GenerateEnvelopes.do?demos=<%=request.getParameter("demos")%>">click here to download the
+        PDF</a>.
+
+    </object>
     </body>
-</html:html>
+</html>
 

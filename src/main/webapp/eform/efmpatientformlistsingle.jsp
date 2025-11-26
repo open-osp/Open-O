@@ -23,37 +23,37 @@
     Ontario, Canada
 
 --%>
-<!DOCTYPE HTML>
-<%@page import="java.util.*,oscar.eform.*"%>
-<%@page import="org.oscarehr.web.eform.EfmPatientFormList"%>
+
+<%@page import="java.util.*,ca.openosp.openo.eform.*" %>
+<%@page import="ca.openosp.openo.web.eform.EfmPatientFormList" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-	String demographic_no = request.getParameter("demographic_no");
-	String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
+    String demographic_no = request.getParameter("demographic_no");
+    String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
 
-	if (session.getAttribute("userrole") == null) response.sendRedirect("../logout.jsp");
-	String roleName$ = (String)session.getAttribute("userrole") + "," + (String)session.getAttribute("user");
-	String country = request.getLocale().getCountry();
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    String country = request.getLocale().getCountry();
 
-	String fdid = request.getParameter("fdid");
-	String orderByRequest = request.getParameter("orderby");
-	String orderBy = "";
-	if (orderByRequest == null) orderBy = EFormUtil.DATE;
-	else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
-	else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
+    String fdid = request.getParameter("fdid");
+    String orderByRequest = request.getParameter("orderby");
+    String orderBy = "";
+    if (orderByRequest == null) orderBy = EFormUtil.DATE;
+    else if (orderByRequest.equals("form_subject")) orderBy = EFormUtil.SUBJECT;
+    else if (orderByRequest.equals("form_name")) orderBy = EFormUtil.NAME;
 
-	String appointment = request.getParameter("appointment");
-	String parentAjaxId = request.getParameter("parentAjaxId");
+    String appointment = request.getParameter("appointment");
+    String parentAjaxId = request.getParameter("parentAjaxId");
 
-	boolean isMyOscarAvailable = EfmPatientFormList.isMyOscarAvailable(Integer.parseInt(demographic_no));
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 <html>
 
-	<head>
-		<title><bean:message key="eform.showmyform.title" /></title>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.title"/></title>
 
 		<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet"><!-- Bootstrap 2.3.1 -->
 		<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet">
@@ -70,162 +70,135 @@
 		<script src="${ pageContext.request.contextPath }/js/jquery.fileDownload.js"></script>
 		<script src="${ pageContext.request.contextPath }/share/javascript/Oscar.js"></script>
 		<script>
-
-
 			jQuery(document).ready( function () {
 				jQuery('#tblEforms').DataTable({
 					"order": [],
 					"bPaginate": false,
 					"language": {
-						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<bean:message key="global.i18nLanguagecode"/>.json"
+						"url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.i18nLanguagecode"/>.json"
 					}
 				});
 			});
-
 		</script>
+        <script type="text/javascript" language="javascript">
+            function showHtml() {
 
-		<script type="text/javascript" language="javascript">
-			function showHtml() {
+                //		preparingMessageHtml: "Generating PDF, please wait...",
+                //		failMessageHtml: "There was a problem generating PDF, please try again.",
+                var content = document.body.innerHTML;
+                $.fileDownload(
+                    "<%=request.getContextPath()%>/html2pdf",
+                    {
+                        httpMethod: "POST",
+                        data: {"content": content}
+                    }
+                );
+                return false;
+            }
+        </script>
 
-				//		preparingMessageHtml: "Generating PDF, please wait...",
-				//		failMessageHtml: "There was a problem generating PDF, please try again.",
-				var content = document.body.innerHTML;
-				$.fileDownload(
-						"<%=request.getContextPath()%>/html2pdf",
-						{
-							httpMethod: "POST",
-							data: {"content":  content}
-						}
-				);
-				return false;
-			}
-		</script>
+        <script type="text/javascript" language="javascript">
+            function popupPage(varpage, windowname) {
+                var page = "" + varpage;
+                windowprops = "height=700,width=800,location=no,"
+                    + "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
+                var popup = window.open(page, windowname, windowprops);
+                if (popup != null) {
+                    if (popup.opener == null) {
+                        popup.opener = self;
+                    }
+                    popup.focus();
+                }
+            }
 
-		<script type="text/javascript" language="javascript">
-			function popupPage(varpage, windowname) {
-				var page = "" + varpage;
-				windowprops = "height=700,width=800,location=no,"
-						+ "scrollbars=yes,menubars=no,status=yes,toolbars=no,resizable=yes,top=10,left=200";
-				var popup = window.open(page, windowname, windowprops);
-				if (popup != null) {
-					if (popup.opener == null) {
-						popup.opener = self;
-					}
-					popup.focus();
-				}
-			}
+            function checkSelectBox() {
+                var selectVal = document.forms[0].group_view.value;
+                if (selectVal == "default") {
+                    return false;
+                }
+            }
 
-			function checkSelectBox() {
-				var selectVal = document.forms[0].group_view.value;
-				if (selectVal == "default") {
-					return false;
-				}
-			}
+            function updateAjax() {
+                var parentAjaxId = "<%=parentAjaxId%>";
+                if (parentAjaxId != "null") {
+                    window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
+                    window.opener.updateNeeded = true;
+                }
 
-			function updateAjax() {
-				var parentAjaxId = "<%=parentAjaxId%>";
-				if( parentAjaxId != "null" ) {
-					window.opener.document.forms['encForm'].elements['reloadDiv'].value = parentAjaxId;
-					window.opener.updateNeeded = true;
-				}
+            }
+        </script>
+        <script type="text/javascript" language="JavaScript"
+                src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
+    </head>
 
-			}
-		</script>
+    <body onunload="updateAjax()" class="BodyStyle" vlink="#0000FF">
 
-	</head>
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgFormLybrary"/></td>
+                        <td>&nbsp;</td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableRightColumn" valign="top">
 
-	<body onunload="updateAjax()" >
-	<form action="efmpatientformlistSendPhrAction.jsp">
-		<input type="hidden" name="clientId" value="<%=demographic_no%>" />
-		<table class="MainTable" id="scrollNumber1"  style="width:100%;" >
-			<tr class="MainTableTopRow">
-				<td class="MainTableTopRowRightColumn">
-					<table class="TopStatusBar">
-						<tr>
-							<td><h4><bean:message key="eform.showmyform.msgFormLybrary" /></h4></td>
-							<td>&nbsp;</td>
-							<td style="text-align: right"><oscar:help keywords="eform" key="app.top1"/> | <a
-									href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-									key="global.about" /></a> | <a
-									href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-									key="global.license" /></a></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
-				<td class="MainTableRightColumn">
+                <div>
+                    <table class="elements" width="100%">
+                        <tr bgcolor=<%=deepColor%>>
+                            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnFormName"/></th>
+                            <th><a
+                                    href="efmpatientformlistsingle.jsp?fdid=<%=fdid%>&demographic_no=<%=demographic_no%>&orderby=form_subject&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.btnSubject"/></a></th>
+                            <th><a
+                                    href="efmpatientformlistsingle.jsp?fdid=<%=fdid%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.formDate"/></a></th>
+                            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgAction"/></th>
+                        </tr>
+                        <%
+                            ArrayList<HashMap<String, ? extends Object>> eForms;
+                            eForms = EFormUtil.getFormsSameFidSamePatient(fdid, orderBy, roleName$);
 
+                            for (int i = 0; i < eForms.size(); i++) {
+                                HashMap<String, ? extends Object> curform = eForms.get(i);
+                        %>
+                        <tr bgcolor="<%=((i % 2) == 1)?"#F2F2F2":"white"%>">
+                            <td>
+                                <a href="#"
+                                   ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
+                                   TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgViewFrm"/>"
+                                   onmouseover="window.status='<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgViewFrm"/>'; return true"><%=curform.get("formName")%>
+                                </a>
+                            </td>
+                            <td><%=curform.get("formSubject")%>
+                            </td>
+                            <td align='center'><%=curform.get("formDate")%>
+                            </td>
+                            <td align='center'><a
+                                    href="<%= request.getContextPath() %>/eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&demographic_no=<%=demographic_no%>&callpage=single&parentAjaxId=<%=parentAjaxId%>"
+                                    onClick="javascript: return confirm('Are you sure you want to delete this eform?');"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.btnDelete"/></a></td>
+                        </tr>
+                        <%
+                            }
+                            if (eForms.size() <= 0) {
+                        %>
+                        <tr>
+                            <td align='center' colspan='5'><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.showmyform.msgNoData"/></td>
+                        </tr>
+                        <%
+                            }
+                        %>
+                    </table>
+                    <button onclick="showHtml(); return false;">Save as PDF</button>
+                </div>
 
-					<table style="width:100%;" ID="tblEforms" class="table table-striped table-condensed">
-						<thead>
-						<tr>
-							<th><bean:message key="eform.showmyform.btnFormName" /></th>
-							<th><a
-									href="efmpatientformlistsingle.jsp?fdid=<%=fdid%>&demographic_no=<%=demographic_no%>&orderby=form_subject&parentAjaxId=<%=parentAjaxId%>"><bean:message
-									key="eform.showmyform.btnSubject" /></a></th>
-							<th><a
-									href="efmpatientformlistsingle.jsp?fdid=<%=fdid%>&demographic_no=<%=demographic_no%>&parentAjaxId=<%=parentAjaxId%>"><bean:message
-									key="eform.showmyform.formDate" /></a></th>
-							<th><bean:message key="eform.showmyform.msgAction" /></th>
-						</tr>
-						</thead>
-						<tbody>
-						<%
-							ArrayList<HashMap<String,? extends Object>> eForms;
-							eForms = EFormUtil.getFormsSameFidSamePatient(fdid, orderBy, roleName$);
-
-							for (int i = 0; i < eForms.size(); i++)
-							{
-								HashMap<String,? extends Object> curform = eForms.get(i);
-						%>
-						<tr>
-							<%
-								if (isMyOscarAvailable)
-								{
-							%>
-							<td>
-								<input type="checkbox" name="sendToPhr" value="<%=curform.get("fdid")%>" />
-							</td>
-							<%
-								}
-							%>
-							<td>
-								<a href="#"
-								   ONCLICK="popupPage('efmshowform_data.jsp?fdid=<%=curform.get("fdid")%>&appointment=<%=appointment%>', '<%="FormP" + i%>'); return false;"
-								   TITLE="<bean:message key="eform.showmyform.msgViewFrm"/>"
-								   onmouseover="window.status='<bean:message key="eform.showmyform.msgViewFrm"/>'; return true"><%=curform.get("formName")%></a>
-							</td>
-							<td><%=curform.get("formSubject")%></td>
-							<td style='text-align:center'><%=curform.get("formDate")%></td>
-							<td style='text-align:center'><a
-									href="../eform/removeEForm.do?fdid=<%=curform.get("fdid")%>&demographic_no=<%=demographic_no%>&callpage=single&parentAjaxId=<%=parentAjaxId%>" onClick="javascript: return confirm('Are you sure you want to delete this eform?');"><bean:message
-									key="eform.uploadimages.btnDelete" /></a></td>
-						</tr>
-						<%
-							}
-							if (eForms.size() <= 0)
-							{
-						%>
-						<tr>
-							<td style='text-align:center' colspan='5'><bean:message
-									key="eform.showmyform.msgNoData" /></td>
-						</tr>
-						<%
-							}
-						%>
-						</tbody>
-					</table>
-					<% if (isMyOscarAvailable) { %>
-					<input type="submit" class="btn" value="<bean:message key="eform.showmyform.btnsendtophr" />"> |
-					<% } %>
-					<button class="btn" onclick="showHtml(); return false;">Save as PDF</button>
-
-
-
-				</td>
-			</tr>
-		</table>
-	</form>
-	</body>
+            </td>
+        </tr>
+    </table>
+    </body>
 </html>

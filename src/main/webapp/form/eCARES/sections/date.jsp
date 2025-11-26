@@ -27,4 +27,4 @@
     (YYYY/MM/DD):</label>
 
 <input type="text" name="date" title="Date of data entry" class="date bottom-line form-control h-si ecares-input"
-    style="width: 200px;">
+       style="width: 200px;">

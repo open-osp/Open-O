@@ -25,7 +25,7 @@
                 if (options === 'destroy') {
                     $(this).removeClass(
                         'ui-button ui-widget ui-state-default ui-corner-all' +
-                            ' ui-button-icon-only ui-button-text-icon-primary'
+                        ' ui-button-icon-only ui-button-text-icon-primary'
                     ).html($(this).text());
                 } else {
                     $(this)
@@ -43,7 +43,7 @@
             });
         };
     }
-        
+
     UploadHandler = function (container, options) {
         var uploadHandler = this;
 
@@ -62,14 +62,14 @@
         this.uploadTemplate = this.uploadTable.find('.file_upload_template:first');
         this.downloadTemplate = this.uploadTable.find('.file_download_template:first');
         this.multiButtons = container.find('.file_upload_buttons:first');
-        
+
         this.adjustMaxNumberOfFiles = function (operand) {
             var number = container.fileUploadUIX('option', 'maxNumberOfFiles');
             if (typeof number === 'number') {
                 container.fileUploadUIX('option', 'maxNumberOfFiles', number + operand);
             }
         };
-        
+
         this.formatFileSize = function (bytes) {
             if (typeof bytes !== 'number' || bytes === null) {
                 return '';
@@ -82,11 +82,11 @@
             }
             return (bytes / 1000).toFixed(2) + ' KB';
         };
-        
+
         this.formatFileName = function (name) {
             return name.replace(/^.*[\/\\]/, '');
         };
-        
+
         this.enableDragToDesktop = function () {
             var link = $(this),
                 url = link.get(0).href,
@@ -96,7 +96,8 @@
                 try {
                     event.originalEvent.dataTransfer
                         .setData('DownloadURL', [type, name, url].join(':'));
-                } catch (e) {}
+                } catch (e) {
+                }
             });
         };
 
@@ -143,7 +144,7 @@
         this.getFileUrl = function (file, handler) {
             return file.url;
         };
-        
+
         this.getThumbnailUrl = function (file, handler) {
             return file.thumbnail;
         };
@@ -183,14 +184,14 @@
                 .button({icons: {primary: 'ui-icon-trash'}, text: false});
             return downloadRow;
         };
-        
+
         this.onError = function (event, files, index, xhr, handler) {
             handler.uploadRow.addClass('file_upload_error')
                 .find('.file_upload_progress').append($('<div class="error"/>').append(
-                    handler.locale[event] || event
-                ));
+                handler.locale[event] || event
+            ));
         };
-        
+
         this.validate = function (event, files, index, xhr, handler) {
             var isValid = true,
                 file;
@@ -208,12 +209,12 @@
                     isValid = false;
                 }
                 if (!(handler.acceptFileTypes.test(file.type) ||
-                        handler.acceptFileTypes.test(file.name))) {
+                    handler.acceptFileTypes.test(file.name))) {
                     handler.onError('Filetype not allowed', files, index, xhr, handler);
                     isValid = false;
                 }
                 if (typeof handler.maxNumberOfFiles === 'number' &&
-                        handler.maxNumberOfFiles < index + 1) {
+                    handler.maxNumberOfFiles < index + 1) {
                     handler.onError('Max number exceeded', files, index, xhr, handler);
                     isValid = false;
                 }
@@ -224,7 +225,7 @@
         this.uploadCallBack = function (event, files, index, xhr, handler, callBack) {
             callBack();
         };
-        
+
         this.beforeSend = function (event, files, index, xhr, handler, callBack) {
             if (!handler.validate(event, files, index, xhr, handler)) {
                 return;
@@ -271,7 +272,7 @@
             });
             e.preventDefault();
         };
-        
+
         this.initEventHandlers = function () {
             uploadHandler.downloadTable.find('a:not([target="_blank"])')
                 .live('click', uploadHandler.downloadHandler);
@@ -285,12 +286,12 @@
             uploadHandler.downloadTable.find('.file_download_delete button')
                 .die('click', uploadHandler.deleteHandler);
         };
-        
+
         this.multiButtonHandler = function (e) {
             uploadHandler.uploadTable.find(e.data.selector + ' button:visible').click();
             e.preventDefault();
         };
-        
+
         this.initMultiButtons = function () {
             if (uploadHandler.autoUpload) {
                 uploadHandler.multiButtons.find('.file_upload_start:first').hide();
@@ -306,7 +307,7 @@
                 .button({icons: {primary: 'ui-icon-trash'}})
                 .bind('click', {selector: '.file_download_delete'}, uploadHandler.multiButtonHandler);
         };
-        
+
         this.destroyMultiButtons = function () {
             uploadHandler.multiButtons.find(
                 '.file_upload_start:first, .file_upload_cancel:first, .file_download_delete:first'
@@ -327,12 +328,12 @@
     };
 
     methods = {
-        init : function (options) {
+        init: function (options) {
             return this.each(function () {
                 $(this).fileUploadUI(new UploadHandler($(this), options));
             });
         },
-        
+
         option: function (option, value, namespace) {
             if (!option || (typeof option === 'string' && typeof value === 'undefined')) {
                 return $(this).fileUpload('option', option, value, namespace);
@@ -341,20 +342,20 @@
                 $(this).fileUploadUI('option', option, value, namespace);
             });
         },
-            
-        destroy : function (namespace) {
+
+        destroy: function (namespace) {
             return this.each(function () {
                 $(this).fileUploadUI('destroy', namespace);
             });
         },
-        
+
         upload: function (files, namespace) {
             return this.each(function () {
                 $(this).fileUploadUI('upload', files, namespace);
             });
         }
     };
-    
+
     $.fn.fileUploadUIX = function (method) {
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
@@ -364,5 +365,5 @@
             $.error('Method "' + method + '" does not exist on jQuery.fileUploadUIX');
         }
     };
-    
+
 }(jQuery));

@@ -17,95 +17,101 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@page import="org.oscarehr.common.model.BillingOnItemPayment" %>
-<%@page import="org.oscarehr.common.model.BillingONPayment" %>
-<%@page import="org.oscarehr.common.model.BillingPaymentType" %>
-<%@page import="org.oscarehr.common.dao.BillingPaymentTypeDao" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="ca.openosp.openo.commn.model.BillingONPayment" %>
+<%@page import="ca.openosp.openo.commn.model.BillingPaymentType" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingPaymentTypeDao" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 <%
-BillingONPayment billPayment = (BillingONPayment)request.getAttribute("billPayment");
+    BillingONPayment billPayment = (BillingONPayment) request.getAttribute("billPayment");
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <%@ page
-	import="java.util.*, oscar.util.*,oscar.oscarBilling.ca.on.pageUtil.*,oscar.oscarBilling.ca.on.data.*,oscar.oscarProvider.data.*,java.math.* ,oscar.oscarBilling.ca.on.administration.*"%>
+        import="java.util.*, ca.openosp.openo.util.*,ca.openosp.openo.billing.ca.on.pageUtil.*,ca.openosp.openo.billing.ca.on.data.*,ca.openosp.openo.providers.data.*,java.math.* ,ca.openosp.openo.billing.ca.on.administration.*" %>
 
 <html>
 <head>
-<title>View payment details</title>
+    <title>View payment details</title>
 </head>
 <body>
-	
-	<label>View payment details:</label>
-	<hr>
-	<p />
-	<table width="100%" border="0">
-		<tbody>
-			<tr>
-				<th>Patient Name</th>
-				<th>Invoice # </th>				
-				<th>Service Code</th>
-				<th>Payment</th>
-				<th>Discount</th>
-				<th>Refund Credit / Overpayment</th>
-				<th>Refund / Write off</th>
-			</tr>
-			<logic:present name="itemDataList" scope="request">
-				<logic:iterate id="itemData" name="itemDataList" indexId="idx">
-				<tr align="center">
-					<td><bean:write name="itemData" property="patientName"/></td>
-					<td><bean:write name="itemData" property="ch1_id"/></td>					
-					<td><bean:write name="itemData" property="service_code"/></td>
-					<td><bean:write name="itemData" property="paid"/></td>
-					<td><bean:write name="itemData" property="discount"/></td>
-					<td><bean:write name="itemData" property="credit"/></td>
-					<td><bean:write name="itemData" property="refund"/></td>
-				</tr>
-				</logic:iterate>
-			</logic:present>
-		</tbody>
-	</table>
-	<hr />
-	<%if (billPayment != null) {
-		String payType = "";
-		BillingPaymentTypeDao billPayTypeDao = (BillingPaymentTypeDao)SpringUtils.getBean(BillingPaymentTypeDao.class);
-		if (billPayTypeDao != null) {
-			BillingPaymentType payTypeTmp = billPayTypeDao.find(billPayment.getPaymentTypeId());
-			if (payTypeTmp != null) {
-				payType = payTypeTmp.getPaymentType();
-			}
-		}
-	%>
-	<table width="100%" border="0">
-		<tr align="right">
-			<td width="86%">Date:</td>
-			<td><%=billPayment.getPaymentDateFormatted() %></td>
-		</tr>
-		<tr align="right">
-			<td width="86%">Payment type:</td>
-			<td><%=payType %></td>
-		</tr>
-		<tr align="right">
-			<td width="86%">Payment:</td>
-			<td><%=billPayment.getTotal_payment() %></td>
-		</tr>
-		<tr align="right">
-			<td width="86%">Discount:</td>
-			<td><%=billPayment.getTotal_discount() %></td>
-		</tr>
-		<tr align="right">
-			<td width="86%">Refund Credit / Overpayment:</td>
-			<td><%=billPayment.getTotal_credit()%></td>
-		</tr>
-		<tr align="right">
-			<td width="86%">Refund / Write off:</td>
-			<td><%=billPayment.getTotal_refund() %></td>
-		</tr>
-	</table>
-	<%} %>
+
+<label>View payment details:</label>
+<hr>
+<p/>
+<table width="100%" border="0">
+    <tbody>
+    <tr>
+        <th>Patient Name</th>
+        <th>Invoice #</th>
+        <th>Service Code</th>
+        <th>Payment</th>
+        <th>Discount</th>
+        <th>Refund Credit / Overpayment</th>
+        <th>Refund / Write off</th>
+    </tr>
+    <c:if test="${not empty itemDataList}">
+        <c:forEach var="itemData" items="${itemDataList}" varStatus="idx">
+            <tr align="center">
+                <td><c:out value="${itemData.patientName}"/></td>
+                <td><c:out value="${itemData.ch1_id}"/></td>
+                <td><c:out value="${itemData.service_code}"/></td>
+                <td><c:out value="${itemData.paid}"/></td>
+                <td><c:out value="${itemData.discount}"/></td>
+                <td><c:out value="${itemData.credit}"/></td>
+                <td><c:out value="${itemData.refund}"/></td>
+            </tr>
+        </c:forEach>
+    </c:if>
+    </tbody>
+</table>
+<hr/>
+<%
+    if (billPayment != null) {
+        String payType = "";
+        BillingPaymentTypeDao billPayTypeDao = (BillingPaymentTypeDao) SpringUtils.getBean(BillingPaymentTypeDao.class);
+        if (billPayTypeDao != null) {
+            BillingPaymentType payTypeTmp = billPayTypeDao.find(billPayment.getPaymentTypeId());
+            if (payTypeTmp != null) {
+                payType = payTypeTmp.getPaymentType();
+            }
+        }
+%>
+<table width="100%" border="0">
+    <tr align="right">
+        <td width="86%">Date:</td>
+        <td><%=billPayment.getPaymentDateFormatted() %>
+        </td>
+    </tr>
+    <tr align="right">
+        <td width="86%">Payment type:</td>
+        <td><%=payType %>
+        </td>
+    </tr>
+    <tr align="right">
+        <td width="86%">Payment:</td>
+        <td><%=billPayment.getTotal_payment() %>
+        </td>
+    </tr>
+    <tr align="right">
+        <td width="86%">Discount:</td>
+        <td><%=billPayment.getTotal_discount() %>
+        </td>
+    </tr>
+    <tr align="right">
+        <td width="86%">Refund Credit / Overpayment:</td>
+        <td><%=billPayment.getTotal_credit()%>
+        </td>
+    </tr>
+    <tr align="right">
+        <td width="86%">Refund / Write off:</td>
+        <td><%=billPayment.getTotal_refund() %>
+        </td>
+    </tr>
+</table>
+<%} %>
 </body>
 </html>

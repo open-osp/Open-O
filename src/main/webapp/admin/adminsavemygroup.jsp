@@ -24,86 +24,87 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
-<%@ page import="java.sql.*, java.util.*, oscar.MyDateFormat" errorPage="../errorpage.jsp"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.MyGroup" %>
-<%@ page import="org.oscarehr.common.model.MyGroupPrimaryKey" %>
-<%@ page import="org.oscarehr.common.dao.MyGroupDao" %>
+
+<%@ page import="java.sql.*, java.util.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroup" %>
+<%@ page import="ca.openosp.openo.commn.model.MyGroupPrimaryKey" %>
+<%@ page import="ca.openosp.openo.commn.dao.MyGroupDao" %>
 <%
-	MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
+    MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
 %>
 
 <!DOCTYPE html>
-<html:html lang="en">
-<head>
+<html>
+    <head>
 
-<script>
-    <!--
-    function start(){
-      this.focus();
-    }
-    //-->
-</script>
+        <script>
+            <!--
+            function start() {
+                this.focus();
+            }
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+            //-->
+        </script>
+
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
 
-</head>
+    </head>
 
-<body onload="start()">
+    <body onload="start()">
 
-<br>
-<%
-	int rowsAffected=0;
-	String[] nums = request.getParameterValues("data");
+    <br>
+    <%
+        int rowsAffected = 0;
+        String[] nums = request.getParameterValues("data");
 
-	if (nums != null){
-    	for (String datano: nums){
-			MyGroup myGroup = new MyGroup();
-			myGroup.setId(new MyGroupPrimaryKey());
-			myGroup.getId().setMyGroupNo(request.getParameter("mygroup_no"));
-			myGroup.getId().setProviderNo(request.getParameter("provider_no"+datano));
-			myGroup.setFirstName(request.getParameter("first_name"+datano));
-			myGroup.setLastName(request.getParameter("last_name"+datano));
-			if(myGroupDao.find(myGroup.getId()) == null) {
-				myGroupDao.persist(myGroup);
-			}
-			rowsAffected++;
-    	}
-	}
+        if (nums != null) {
+            for (String datano : nums) {
+                MyGroup myGroup = new MyGroup();
+                myGroup.setId(new MyGroupPrimaryKey());
+                myGroup.getId().setMyGroupNo(request.getParameter("mygroup_no"));
+                myGroup.getId().setProviderNo(request.getParameter("provider_no" + datano));
+                myGroup.setFirstName(request.getParameter("first_name" + datano));
+                myGroup.setLastName(request.getParameter("last_name" + datano));
+                if (myGroupDao.find(myGroup.getId()) == null) {
+                    myGroupDao.persist(myGroup);
+                }
+                rowsAffected++;
+            }
+        }
 
-  if (rowsAffected > 0) {
-%>
+        if (rowsAffected > 0) {
+    %>
 
     <div class="alert alert-success">
- 		<bean:message key="admin.adminsavemygroup.msgAdditionSuccess" />
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminsavemygroup.msgAdditionSuccess"/>
     </div>
- <%
-  }  else {
-%>
-	<div class="alert alert-error">
-		<bean:message key="admin.adminsavemygroup.msgAdditionFailure" />
-	</div>
-<%
-  }
-%>
+    <%
+    } else {
+    %>
+    <div class="alert alert-error">
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.adminsavemygroup.msgAdditionFailure"/>
+    </div>
+    <%
+        }
+    %>
 
 
-<a href="admindisplaymygroup.jsp" class="btn btn-primary">View Group List</a>
+    <a href="admindisplaymygroup.jsp" class="btn btn-primary">View Group List</a>
 
-<a href="adminnewgroup.jsp" class="btn"><bean:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
+    <a href="adminnewgroup.jsp" class="btn"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admindisplaymygroup.btnSubmit2"/></a>
 
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 
-<script>
-$( document ).ready(function() {	
-    parent.parent.resizeIframe($('html').height());	
-});
-</script>
+    <script>
+        $(document).ready(function () {
+            parent.parent.resizeIframe($('html').height());
+        });
+    </script>
 
-</body>
-</html:html>
+    </body>
+</html>

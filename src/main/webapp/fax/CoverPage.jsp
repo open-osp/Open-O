@@ -1,4 +1,5 @@
-<%@ page import="oscar.OscarProperties" %><%--
+<%@ page import="ca.openosp.OscarProperties" %>
+<%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -26,178 +27,181 @@
 
 <!DOCTYPE html>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<%@ taglib prefix="html" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_fax" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_fax");%>
+	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_fax");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <html>
 <head>
-<title>OSCAR Fax</title>
+    <title>OSCAR Fax</title>
 
-	<c:set var="ctx" value="${ pageContext.request.contextPath }" scope="page" />
-	<link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css" />
+    <c:set var="ctx" value="${ pageContext.request.contextPath }" scope="page"/>
+    <link rel="stylesheet" href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css"/>
     <link href="${ctx}/library/jquery/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 
-	<script type="text/javascript" src="${ctx}/library/jquery/jquery-1.12.0.min.js" ></script>  
-	<script type="text/javascript" src="${ctx}/library/jquery/jquery.validate.min.js" ></script> 	              
-	<script type="text/javascript" src="${ctx}/library/jquery/jquery-ui.min.js" ></script>	
-	<script type="text/javascript" src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js" ></script> 
+    <script type="text/javascript" src="${ctx}/library/jquery/jquery-1.12.0.min.js"></script>
+    <script type="text/javascript" src="${ctx}/library/jquery/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="${ctx}/library/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="${ctx}/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
-	<script type="text/javascript">
-	
-		top.window.resizeTo("800","850");
-	
-		// Action to remove additional recipients from the form.
-		function removeRecipient(element) {
-			$(element).parent().parent().parent().remove();
-		}
+    <script type="text/javascript">
 
-		// Show loading screen after submiting and validating the form.
-		function submitForm(event) {
-			const submit = event.submitter;
-			if (submit.id === 'btnCancel') { return true; }
-			
-			const coverPageForm = document.getElementById('coverPageForm');
-			if (coverPageForm.checkValidity()) {
-				return ShowSpin(true);
-			}
-			return false;
-		}
-	</script>
-	
-	<%-- 
-		Action return flashy confirmation messages.
-	--%>
-	<c:if test="${ not empty faxSuccessful }">
-		<script type="text/javascript" >
-			$(document).ready(function() {
-				$("#page-body").slideUp("slow");
-			})
-		</script>
-	</c:if>
-	
-	<style type="text/css">
-	
-	* {
-		font-family: Arial,Helvetica,sans-serif;
-		font-size: small;
-	}
+        top.window.resizeTo("800", "850");
 
-	img {
-		max-width: 100%;
-		height: auto;
-		width: auto\9;
-	}
-	
-	#additionalRecipientControlPanel, #form-control-buttons {
-		margin-bottom: 15px;
-	}
-	
-	#form-control-buttons button {
-		margin-left: 15px;
-	}
-	
-	ul.ui-widget {
-		margin: 10px;
-		max-width: 100%;
-		height: auto;
-		max-height: 400px;
-		overflow-y: scroll;
-	}
-	
-	.recipientGroup {
-		margin-bottom: 3px;
-	}
-		
-	#oscarFaxHeader {
-		width: 100%;
-		border-collapse: collapse;
-		margin-top: .5%;
-		margin-bottom: 15px;
-	}
-	
-	table#oscarFaxHeader tr td {
-		padding: 1px 5px;
-		background-color: #F3F3F3;
-	}
-	
-	#oscarFaxHeader #oscarFaxHeaderLeftColumn {
-		width: 19.5% !important;
-		background-color: white;
-		padding: 0px;
-		padding-right: .5% !important;
-		width: 20%;
-	}
-	
-	#oscarFaxHeader #oscarFaxHeaderLeftColumn h1 {
-		margin: 0px;
-		padding: 7px !important;
-		display: block;
-		font-size: large !important;
-		background-color: black;
-		color: white;
-		font-weight: bold;
-	}
-	#oscarFaxHeaderRightColumn {
-		vertical-align: top;
-		text-align: right;
-		padding-top: 3px;
-		padding-right: 3px;
-	}
+        // Action to remove additional recipients from the form.
+        function removeRecipient(element) {
+            $(element).parent().parent().parent().remove();
+        }
 
-	span.HelpAboutLogout a {
-		font-size: x-small;
-		color: black;
-		float: right;
-		padding: 0 3px;
-	}
-	
-	label.invalid {
-		color:red;
-		font-weight: normal;
-	}
-	
-	input.invalid {
-		border-color:red;
-	}
+        // Show loading screen after submiting and validating the form.
+        function submitForm(event) {
+            const submit = event.submitter;
+            if (submit.id === 'btnCancel') {
+                return true;
+            }
 
-</style>
+            const coverPageForm = document.getElementById('coverPageForm');
+            if (coverPageForm.checkValidity()) {
+                return ShowSpin(true);
+            }
+            return false;
+        }
+    </script>
+
+    <%--
+        Action return flashy confirmation messages.
+    --%>
+    <c:if test="${ not empty faxSuccessful }">
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#page-body").slideUp("slow");
+            })
+        </script>
+    </c:if>
+
+    <style type="text/css">
+
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: small;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            width: auto \9;
+        }
+
+        #additionalRecipientControlPanel, #form-control-buttons {
+            margin-bottom: 15px;
+        }
+
+        #form-control-buttons button {
+            margin-left: 15px;
+        }
+
+        ul.ui-widget {
+            margin: 10px;
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        .recipientGroup {
+            margin-bottom: 3px;
+        }
+
+        #oscarFaxHeader {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: .5%;
+            margin-bottom: 15px;
+        }
+
+        table#oscarFaxHeader tr td {
+            padding: 1px 5px;
+            background-color: #F3F3F3;
+        }
+
+        #oscarFaxHeader #oscarFaxHeaderLeftColumn {
+            width: 19.5% !important;
+            background-color: white;
+            padding: 0px;
+            padding-right: .5% !important;
+            width: 20%;
+        }
+
+        #oscarFaxHeader #oscarFaxHeaderLeftColumn h1 {
+            margin: 0px;
+            padding: 7px !important;
+            display: block;
+            font-size: large !important;
+            background-color: black;
+            color: white;
+            font-weight: bold;
+        }
+
+        #oscarFaxHeaderRightColumn {
+            vertical-align: top;
+            text-align: right;
+            padding-top: 3px;
+            padding-right: 3px;
+        }
+
+        span.HelpAboutLogout a {
+            font-size: x-small;
+            color: black;
+            float: right;
+            padding: 0 3px;
+        }
+
+        label.invalid {
+            color: red;
+            font-weight: normal;
+        }
+
+        input.invalid {
+            border-color: red;
+        }
+
+    </style>
 
 </head>
 <body>
-<jsp:include page="../images/spinner.jsp" flush="true"/>
+<jsp:include page="/images/spinner.jsp" flush="true"/>
 <div id="bodyrow" class="container-fluid">
 
-	<div id="bodycolumn" class="col-sm-12">
+    <div id="bodycolumn" class="col-sm-12">
 
-		<div id="page-header">
-	
-			<table id="oscarFaxHeader">
-				<tr>
-					<td id="oscarFaxHeaderLeftColumn"><h1>OSCAR Fax</h1></td>
-	
-					<td id="oscarFaxHeaderCenterColumn">${ transactionType }</td>
-					<td id="oscarFaxHeaderRightColumn" align=right>
+        <div id="page-header">
+
+            <table id="oscarFaxHeader">
+                <tr>
+                    <td id="oscarFaxHeaderLeftColumn"><h1>OSCAR Fax</h1></td>
+
+                    <td id="oscarFaxHeaderCenterColumn">${ transactionType }</td>
+                    <td id="oscarFaxHeaderRightColumn" align=right>
 						<span class="HelpAboutLogout"> 
-							<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp" target="_new">About</a>
+							<a style="font-size: 10px; font-style: normal;" href="${ ctx }oscarEncounter/About.jsp"
+                               target="_new">About</a>
 							<a style="font-size: 10px; font-style: normal;" target="_blank"
-										href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>		
+                               href="http://www.oscarmanual.org/search?SearchableText=&Title=Chart+Interface&portal_type%3Alist=Document">Help</a>
 						</span>
 					</td>
 				</tr>
@@ -324,187 +328,215 @@
 										        	<span class="glyphicon glyphicon-remove"></span>
 										        </button>
 										      </span>
-									    </div>
-										<input type="hidden" name="copyToRecipients" value="'name':'${ recipient.name }','fax':'${ recipient.fax }'" />
-										
-										<%-- to be removed below --%>
-										<input type="hidden" name="faxRecipients" value="'name':'${ recipient.name }','fax':'${ recipient.fax }'" />
-									</div>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-		
-				<c:if test="${ not empty documents and transactionType eq 'CONSULTATION' }"> 
-		 			<div class="panel panel-default">
-					  	<div class="panel-heading">
-							<h3 class="panel-title">Attachments</h3>
-						</div>
-					  	<div class="panel-body">
-					  	  	<div class="container">
-					  	  		<div class="row">
-									<ol class="list-group col-sm-12">
-										<c:forEach items="${ documents }" var="document">
-											<li class="list-group-item"><c:out value="${ document }" /></li>
-											<input type="hidden" name="documents" value=${ document } />
-										</c:forEach>
-									</ol>
-								</div>
-							</div>
-						</div>
-					</div>
-				</c:if>
-				
-				<div class="panel panel-default">
-				  	<div class="panel-heading">
-						<h3 class="panel-title">Cover page</h3>
-					</div>
-				  	<div class="panel-body">
-					  	<div class="container">
-						  	<div class="row" >
-								<div class="col-sm-12">
-									<label class="radio-inline" for="coverpageyes">
-										<input type="radio" name="coverpage" id="coverpageyes" value="true"
-											onchange="document.getElementById('comments_container').style.display = 'block';"  />Yes
-									</label>
-									<label class="radio-inline" for="coverpageno">
-										<input type="radio" checked="checked" name="coverpage" id="coverpageno"
-											value="false" onchange="document.getElementById('comments_container').style.display = 'none';" />No
-									</label>
-								</div>
-							</div>
-							<div class="row" id="comments_container" style="display:none;" >
-								<div class="col-sm-12">
-									<label for="commentsTextArea">Comments</label>
-									<textarea class="form-control" name="comments" id="commentsTextArea" rows="5"><%= OscarProperties.getInstance().getProperty("DEFAULT_FAX_COVERPAGE_COMMENT" ,"") %></textarea>
-								</div>
-							</div>
-						</div>				
-					</div>
-				</div>
-				<div class="container" id="form-control-buttons">
-					<div class="row">
-					<div class="col-sm-12">
-						<input type="hidden" id="submitMethod" name="method" value="queue" />
-						<button type="submit" id="btnSend" class="btn btn-primary btn-md pull-right" value="Send">
-							<span class="btn-label"><i class="glyphicon glyphicon-send"></i></span>
-							Send
-						</button>					
-						<button formnovalidate="formnovalidate" id="btnCancel" type="submit" class="btn btn-danger btn-md pull-right" value="Cancel" 
-							onclick="document.getElementById('submitMethod').value = 'cancel'" >
-							<span class="btn-label"><i class="glyphicon glyphicon-remove-circle"></i></span>
-							Cancel
-						</button>
-					</div>
-					</div>
-				</div>
-		</form>
-		<c:if test="${ transactionType ne 'CONSULTATION' }">
-			<div class="panel panel-default" id="preview-panel">
-			  	<div class="panel-heading">
-					<h3 class="panel-title">Preview</h3>
-				</div>
-			  	<div class="panel-body">
-			  		<div class="container">
-						<object id="previewPDF" data="${ctx}/fax/faxAction.do?method=getPreview&faxFilePath=${faxFilePath}" 
-								type="application/pdf" width="100%" height="800">
-						</object>
-					</div>
-				</div>
-			</div>
-		</c:if>
-	</div>
-	
-	<%-- the confirmation tags. --%>
-	<c:if test="${ not empty faxSuccessful }">
-		<c:forEach items="${ faxJobList }" var="faxJob">
-			<c:choose>
-				<c:when test="${ faxJob.status eq 'ERROR' }">
-					<div class="alert alert-success" role="alert">
-						Failed to add fax to outgoing queue: <c:out value="${ faxJob.recipient } at ${ faxJob.destination } ${ faxJob.status }: ${ faxJob.statusString }" />
-					</div>								
-				</c:when>
-				<c:otherwise>
-					<div class="alert alert-success" role="alert">
-						Successfully added fax to outgoing queue: <c:out value="${ faxJob.recipient } at ${ faxJob.destination }" />
-					</div>	
-				</c:otherwise>				
-			</c:choose>
-		</c:forEach>
-		<input type="button" class="btn btn-danger btn-md pull-right" value="Close" onclick="window.close();" />
-	</c:if>
+                                    </div>
+                                    <input type="hidden" name="copyToRecipients"
+                                           value="'name':'${ recipient.name }','fax':'${ recipient.fax }'"/>
+
+                                        <%-- to be removed below --%>
+                                    <input type="hidden" name="faxRecipients"
+                                           value="'name':'${ recipient.name }','fax':'${ recipient.fax }'"/>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+
+                <c:if test="${ not empty documents and transactionType eq 'CONSULTATION' }">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Attachments</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="container">
+                                <div class="row">
+                                    <ol class="list-group col-sm-12">
+                                        <c:forEach items="${ documents }" var="document">
+                                            <li class="list-group-item"><c:out value="${ document }"/></li>
+                                            <input type="hidden" name="documents" value=${ document }/>
+                                        </c:forEach>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Cover page</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="radio-inline" for="coverpageyes">
+                                        <input type="radio" name="coverpage" id="coverpageyes" value="true"
+                                               onchange="document.getElementById('comments_container').style.display = 'block';"/>Yes
+                                    </label>
+                                    <label class="radio-inline" for="coverpageno">
+                                        <input type="radio" checked="checked" name="coverpage" id="coverpageno"
+                                               value="false"
+                                               onchange="document.getElementById('comments_container').style.display = 'none';"/>No
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row" id="comments_container" style="display:none;">
+                                <div class="col-sm-12">
+                                    <label for="commentsTextArea">Comments</label>
+                                    <textarea class="form-control" name="comments" id="commentsTextArea"
+                                              rows="5"><%= OscarProperties.getInstance().getProperty("DEFAULT_FAX_COVERPAGE_COMMENT", "") %></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container" id="form-control-buttons">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="hidden" id="submitMethod" name="method" value="queue"/>
+                            <button type="submit" id="btnSend" class="btn btn-primary btn-md pull-right" value="Send">
+                                <span class="btn-label"><i class="glyphicon glyphicon-send"></i></span>
+                                Send
+                            </button>
+                            <button formnovalidate="formnovalidate" id="btnCancel" type="submit"
+                                    class="btn btn-danger btn-md pull-right" value="Cancel"
+                                    onclick="document.getElementById('submitMethod').value = 'cancel'">
+                                <span class="btn-label"><i class="glyphicon glyphicon-remove-circle"></i></span>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <c:if test="${ transactionType ne 'CONSULTATION' }">
+                <div class="panel panel-default" id="preview-panel">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Preview</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="container">
+                            <object id="previewPDF"
+                                    data="${ctx}/fax/faxAction.do?method=getPreview&faxFilePath=${faxFilePath}"
+                                    type="application/pdf" width="100%" height="800">
+                            </object>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </div>
+
+        <%-- the confirmation tags. --%>
+        <c:if test="${ not empty faxSuccessful }">
+            <c:forEach items="${ faxJobList }" var="faxJob">
+                <c:choose>
+                    <c:when test="${ faxJob.status eq 'ERROR' }">
+                        <div class="alert alert-success" role="alert">
+                            Failed to add fax to outgoing queue: <c:out
+                                value="${ faxJob.recipient } at ${ faxJob.destination } ${ faxJob.status }: ${ faxJob.statusString }"/>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-success" role="alert">
+                            Successfully added fax to outgoing queue: <c:out
+                                value="${ faxJob.recipient } at ${ faxJob.destination }"/>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+            <input type="button" class="btn btn-danger btn-md pull-right" value="Close" onclick="window.close();"/>
+        </c:if>
+    </div>
 </div>
-</div>
 
-<script type="text/javascript" >
-var ctx = "${ ctx }";
+<script type="text/javascript">
+    var ctx = "${ ctx }";
+    
+    // HTML entity encoding function to prevent XSS
+    function escapeHtml(text) {
+        if (!text) return '';
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
 
-$(document).ready(function() {
+    $(document).ready(function () {
 
-	/*
-	* Auto complete methods.
-	*/
-	$( "#fax-additional-recipients .autocomplete, #fax-recipients .autocomplete" ).autocomplete({				
-		source: function( request, response ) { 
-			var url = ctx + "/demographic/Contact.do?method=searchAllContacts&searchMode=search_name&orderBy=c.lastName,c.firstName";
-			jQuery.ajax({
-				url: url,
-				type: "GET",
-				dataType: "json",
-				data: {
-				 	term: request.term   			  
-				},
-				contentType: "application/json",
-				success: function( data ) {
-					response(jQuery.map(data, function( item ) {					
-						return {
-						  label: item.lastName + ", " 
-						  + item.firstName + " :: "
-						  + item.residencePhone
-						  + " :: " + item.address 
-						  + " " + item.city,
-						  value: item.id,
-						  contact: item
-						 }						 
-					}));
-				}
-			});
-	    },
-	    minLength: 2,  
-	    focus: function( event, ui ) {
-	    		event.preventDefault();
-	        return false;
-	    },
-	    select: function(event, ui) { 
-	    		event.preventDefault(); 
-	    		$("#" + this.id).val(ui.item.contact.lastName + ", " + ui.item.contact.firstName);
-	           	$("#" + this.id.split("_")[0] + "_fax").val(ui.item.contact.fax);
-	    }
-	});
-	
-	/*
-	* Action to add additional recipients to this fax transmission
-	*/
-	$("#additionalRecipient_fax_btn").click(function() {
-		
-			var nameElement = $("#additionalRecipient_name");
-			var faxElement = $("#additionalRecipient_fax");
-			var name = nameElement.val();
-			var fax = faxElement.val();
-			
-			if(!fax)
-			{
-				faxElement.addClass('invalid').focus();
-				return;
-			}
-			
-			var inputValue = name + " " + fax;
-			var submitValue = "'name':'" + name + "','fax':'" + fax + "'";
-		
-			$("#fax-additional-recipients").append(	    					
-			  		'<div class="row">\
-			  			<div class="col-sm-12 input-group recipientGroup">\
-						      <input type="text" class="form-control" value="' + inputValue + '" disabled/>\
+        /*
+        * Auto complete methods.
+        */
+        $("#fax-additional-recipients .autocomplete, #fax-recipients .autocomplete").autocomplete({
+            source: function (request, response) {
+                var url = ctx + "/demographic/Contact.do?method=searchAllContacts&searchMode=search_name&orderBy=c.lastName,c.firstName";
+                jQuery.ajax({
+                    url: url,
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        term: request.term
+                    },
+                    contentType: "application/json",
+                    success: function (data) {
+                        response(jQuery.map(data, function (item) {
+                            return {
+                                label: item.lastName + ", "
+                                    + item.firstName + " :: "
+                                    + item.residencePhone
+                                    + " :: " + item.address
+                                    + " " + item.city,
+                                value: item.id,
+                                contact: item
+                            }
+                        }));
+                    }
+                });
+            },
+            minLength: 2,
+            focus: function (event, ui) {
+                event.preventDefault();
+                return false;
+            },
+            select: function (event, ui) {
+                event.preventDefault();
+                $("#" + this.id).val(ui.item.contact.lastName + ", " + ui.item.contact.firstName);
+                $("#" + this.id.split("_")[0] + "_fax").val(ui.item.contact.fax);
+            }
+        });
+
+        /*
+        * Action to add additional recipients to this fax transmission
+        */
+        $("#additionalRecipient_fax_btn").click(function () {
+
+            var nameElement = $("#additionalRecipient_name");
+            var faxElement = $("#additionalRecipient_fax");
+            var name = nameElement.val();
+            var fax = faxElement.val();
+
+            if (!fax) {
+                faxElement.addClass('invalid').focus();
+                return;
+            }
+
+            // For display
+            var inputValue = escapeHtml(name + " " + fax);
+            
+            // For the data format the server expects
+            // First escape single quotes in the actual values to prevent breaking the format
+            var safeName = name.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            var safeFax = fax.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            
+            // Build the format the server expects
+            var submitValue = "'name':'" + safeName + "','fax':'" + safeFax + "'";
+
+            $("#fax-additional-recipients").append(
+                '<div class="row">\
+                    <div class="col-sm-12 input-group recipientGroup">\
+                        <input type="text" class="form-control" value="' + inputValue + '" disabled/>\
 						      <span class="input-group-btn">\
 						        <button class="btn btn-danger remove-additional-recipient-btn" type="button" onclick="removeRecipient(this)" >\
 						        	<span class="glyphicon glyphicon-trash"></span>\
@@ -514,60 +546,59 @@ $(document).ready(function() {
 						<input type="hidden" name="copyToRecipients" value="' + submitValue + '" />\
 						<input type="hidden" name="faxRecipients" value="' + submitValue + '" />\
 					</div>'
-			);
-			
-			faxElement.val("");
-			nameElement.val("");
-		
-	})
-	
-	/*
-	* Clear the add recipient fields. 
-	*/
-	$('#coverPageForm').submit(function(){
-		if($("#additionalRecipient_name").val().length > 0 && $("#additionalRecipient_fax").val().length > 6)
-		{
-			$('#additionalRecipient_fax_btn').trigger('click');
-		}
-	})
-	
-	/*
-	 * Validate the form before submission 
-	 */
- 	$('#coverPageForm').validate({		
-		rules: {
-			recipientFaxNumber: {
-				required: true,
-				minlength: 7
-			},	
-			recipient: {
-				required: true
-			},
-			additionalRecipient_fax: {
-				required: {
-					depends: function(element){
-						return $("#additionalRecipient_name").val().length > 0;
-					}
-				},
-				minlength: 7
-			}
-		},		
-		messages: {
-			additionalRecipient_fax: {
-				required: "Recipient fax number required"
-			},
-			recipientFaxNumber: {
-				required: "Recipient fax number required",
-				minlength: "Recipient fax is invalid"
-			},
-			recipient: "Recipient name required"
-		},
-		errorClass: 'invalid',
-		validClass: 'valid'
-		
-	})
-	 
-})
+            );
+
+            faxElement.val("");
+            nameElement.val("");
+
+        })
+
+        /*
+        * Clear the add recipient fields.
+        */
+        $('#coverPageForm').submit(function () {
+            if ($("#additionalRecipient_name").val().length > 0 && $("#additionalRecipient_fax").val().length > 6) {
+                $('#additionalRecipient_fax_btn').trigger('click');
+            }
+        })
+
+        /*
+         * Validate the form before submission
+         */
+        $('#coverPageForm').validate({
+            rules: {
+                recipientFaxNumber: {
+                    required: true,
+                    minlength: 7
+                },
+                recipient: {
+                    required: true
+                },
+                additionalRecipient_fax: {
+                    required: {
+                        depends: function (element) {
+                            return $("#additionalRecipient_name").val().length > 0;
+                        }
+                    },
+                    minlength: 7
+                }
+            },
+            messages: {
+                additionalRecipient_fax: {
+                    required: "Recipient fax number required"
+                },
+                recipientFaxNumber: {
+                    required: "Recipient fax number required",
+                    minlength: "Recipient fax is invalid"
+                },
+                recipient: "Recipient name required"
+            },
+            errorClass: 'invalid',
+            validClass: 'valid'
+
+        })
+
+    })
 
 </script>
 </body>

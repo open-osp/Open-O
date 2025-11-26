@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,10 +24,9 @@
 --%>
 
 
-
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Doh!</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Doh!</title>
 </head>
 
 No client selected. Please select client first.

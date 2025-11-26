@@ -3,28 +3,28 @@
   Company: WELL Health Technologies Corp.
   Date: December 6, 2018
  --%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="org.oscarehr.common.dao.PropertyDao" %>
-<%@ page import="org.oscarehr.common.dao.SystemPreferencesDao" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingPreferencesDAO" %>
-<%@ page import="oscar.oscarBilling.ca.bc.data.BillingPreference" %>
-<%@ page import="org.oscarehr.common.model.Property" %>
+<%@ page import="ca.openosp.openo.commn.dao.PropertyDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.SystemPreferencesDao" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreferencesDAO" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingPreference" %>
+<%@ page import="ca.openosp.openo.commn.model.Property" %>
 <%@ page import="java.util.List" %>
-<%@ page import="oscar.oscarClinic.ClinicData" %>
+<%@ page import="ca.openosp.openo.clinic.ClinicData" %>
 <%@ page import="java.util.StringTokenizer" %>
 <%@ page import="java.util.Vector" %>
-<%@ page import="oscar.util.StringUtils" %>
-<%@ page import="org.oscarehr.common.model.SystemPreferences" %>
+<%@ page import="ca.openosp.openo.util.StringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.SystemPreferences" %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
     if (session.getValue("user") == null)
-        response.sendRedirect("../../../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>

@@ -39,7 +39,7 @@
                     // so we set the name along with the iframe HTML markup:
                     iframe = $(
                         '<iframe src="javascript:false;" name="iframe-transport-' +
-                            (counter += 1) + '"></iframe>'
+                        (counter += 1) + '"></iframe>'
                     ).bind('load', function () {
                         var fileInputClones;
                         iframe
@@ -85,7 +85,7 @@
                             });
                         }
                         if (options.fileInput && options.fileInput.length &&
-                                options.type === 'POST') {
+                            options.type === 'POST') {
                             fileInputClones = options.fileInput.clone();
                             // Insert a clone for each file input field:
                             options.fileInput.after(function (index) {

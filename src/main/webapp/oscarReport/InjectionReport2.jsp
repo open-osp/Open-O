@@ -24,199 +24,216 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page
-	import="java.util.*,oscar.oscarReport.data.*,oscar.util.*,oscar.oscarDB.*,java.sql.*,oscar.oscarDemographic.data.*,oscar.oscarPrevention.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+        import="java.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.util.*,ca.openosp.openo.db.*,java.sql.*,ca.openosp.openo.demographic.data.*,ca.openosp.openo.prevention.*" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.prevention.PreventionData" %>
+<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <link rel="stylesheet" type="text/css"
-	href="../oscarEncounter/encounterStyles.css">
-<%  //This could be done alot better.
-  String curUser_no,userfirstname,userlastname;
-  curUser_no = (String) session.getAttribute("user");
+      href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+<% //This could be done alot better.
+    String curUser_no, userfirstname, userlastname;
+    curUser_no = (String) session.getAttribute("user");
 
-  String startStr = "";
-  String endStr   = "";
-  String injectionType ="";
+    String startStr = "";
+    String endStr = "";
+    String injectionType = "";
 
-  if (request.getParameter("startDate") != null && request.getParameter("startDate") != null && request.getParameter("startDate") != null  ){
+    if (request.getParameter("startDate") != null && request.getParameter("startDate") != null && request.getParameter("startDate") != null) {
 
-      String startDate =     request.getParameter("startDate");
-      String endDate  =      request.getParameter("endDate");
-      injectionType = request.getParameter("injectionType");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+        injectionType = request.getParameter("injectionType");
 
-      java.util.Date sDate = UtilDateUtilities.StringToDate(startDate);
-      java.util.Date eDate = UtilDateUtilities.StringToDate(endDate);
+        java.util.Date sDate = UtilDateUtilities.StringToDate(startDate);
+        java.util.Date eDate = UtilDateUtilities.StringToDate(endDate);
 
-      String keyVal = "lot";
-      if (injectionType != null && injectionType.equals("RH")){
-          keyVal = "product";
-      }
+        String keyVal = "lot";
+        if (injectionType != null && injectionType.equals("RH")) {
+            keyVal = "product";
+        }
 
-      ArrayList<Map<String,Object>> list = PreventionData.getExtValues(injectionType,sDate,eDate,keyVal);
-      pageContext.setAttribute("list",list);
+        ArrayList<Map<String, Object>> list = PreventionData.getExtValues(injectionType, sDate, eDate, keyVal);
+        pageContext.setAttribute("list", list);
 
-      startStr = UtilDateUtilities.DateToString(sDate);
-      endStr   = UtilDateUtilities.DateToString(eDate);
-  }else{
-     Calendar cal = Calendar.getInstance();
-     int daysTillMonday = cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY;
-     java.util.Date endDate = cal.getTime();
-     cal.add(Calendar.DATE,-daysTillMonday);
-     java.util.Date startDate = cal.getTime();
+        startStr = UtilDateUtilities.DateToString(sDate);
+        endStr = UtilDateUtilities.DateToString(eDate);
+    } else {
+        Calendar cal = Calendar.getInstance();
+        int daysTillMonday = cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY;
+        java.util.Date endDate = cal.getTime();
+        cal.add(Calendar.DATE, -daysTillMonday);
+        java.util.Date startDate = cal.getTime();
 
-     startStr = UtilDateUtilities.DateToString(startDate);
-     endStr   = UtilDateUtilities.DateToString(endDate);
-  }
+        startStr = UtilDateUtilities.DateToString(startDate);
+        endStr = UtilDateUtilities.DateToString(endDate);
+    }
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Injection Report</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Injection Report</title>
 
-<style type="text/css" media="print">
-.noprint {
-	display: none;
-}
+    <style type="text/css" media="print">
+        .noprint {
+            display: none;
+        }
 
-table.ele {
-	width: 450pt;
-	margin-left: 0pt;
-}
-</style>
+        table.ele {
+            width: 450pt;
+            margin-left: 0pt;
+        }
+    </style>
 
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-</script>
+    </script>
 
 </head>
 
 <body class="BodyStyle" vlink="#0000FF">
 <!--  -->
 <table class="MainTable noprint" id="scrollNumber1"
-	name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Report</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td>Injection</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<form action="InjectionReport2.jsp">
-		<fieldset><legend>Injections</legend> <label>Start
-		Date:</label> <input type="text" size="9" name="startDate"
-			value="<%=startStr%>" /> <label>End Date:</label> <input type="text"
-			size="9" name="endDate" value="<%=endStr%>" /> <label>Injection
-		Type:</label> <select name="injectionType">
-			<option value="RH" <%=selled ("RH",injectionType)%>>Rh</option>
-			<option value="DTaP-IPV" <%=selled ("DTaP-IPV",injectionType)%>>DTaP-IPV</option>
-			<option value="DTaP-IPV-Hib" <%=selled ("DTaP-IPV-Hib",injectionType)%>>DTaP-IPV-Hib</option>
-			<option value="Hib" <%=selled ("Hib",injectionType)%>>Hib</option>
-			<option value="HPV" <%=selled ("HPV",injectionType)%>>HPV</option>
-			<option value="Pneu-C" <%=selled ("Pneu-C",injectionType)%>>Pneu-C</option>
-			<option value="MMR" <%=selled ("MMR",injectionType)%>>MMR</option>
-			<option value="MMRV" <%=selled ("MMRV",injectionType)%>>MMRV</option>
-			<option value="MenC-C" <%=selled ("MenC-C",injectionType)%>>MenC-C</option>
-			<option value="Men-P-ACWY" <%=selled ("Men-P-ACWY",injectionType)%>>Men-P-ACWY</option>
-			<option value="Rot" <%=selled ("Rot",injectionType)%>>Rot</option>
-			<option value="VZ" <%=selled ("VZ",injectionType)%>>VZ</option>
-			<option value="HepB" <%=selled ("HepB",injectionType)%>>HepB</option>
-			<option value="dTap" <%=selled ("dTap",injectionType)%>>dTap</option>
-			<option value="Td" <%=selled ("Td",injectionType)%>>Td</option>
-			<option value="Flu" <%=selled ("Flu",injectionType)%>>Flu</option>
-			<option value="HepA" <%=selled ("HepA",injectionType)%>>HepA</option>
-			<option value="HepAB" <%=selled ("HepAB",injectionType)%>>HepAB</option>
-			<option value="Rabies" <%=selled ("Rabies",injectionType)%>>Rabies</option>
-			
-			<option value="Tuberculosis"
-				<%=selled ("Tuberculosis",injectionType)%>>Tuberculosis</option>
-			<option value="Pneumovax" <%=selled ("Pneumovax",injectionType)%>>Pneumovax</option>
-			<option value="TdP" <%=selled ("TdP",injectionType)%>>TdP</option>
-			<option value="IPV" <%=selled ("IPV",injectionType)%>>IPV</option>
-                        <option value="H1N1" <%=selled ("H1N1",injectionType)%>>H1N1</option>
-		</select> <input type="submit" value="Run Report" /></fieldset>
-		</form>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
+       name="encounterTable">
+    <tr class="MainTableTopRow">
+        <td class="MainTableTopRowLeftColumn">Report</td>
+        <td class="MainTableTopRowRightColumn">
+            <table class="TopStatusBar">
+                <tr>
+                    <td>Injection</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td class="MainTableLeftColumn">&nbsp;</td>
+        <td class="MainTableRightColumn">
+            <form action="InjectionReport2.jsp">
+                <fieldset>
+                    <legend>Injections</legend>
+                    <label>Start
+                        Date:</label> <input type="text" size="9" name="startDate"
+                                             value="<%=startStr%>"/> <label>End Date:</label> <input type="text"
+                                                                                                     size="9"
+                                                                                                     name="endDate"
+                                                                                                     value="<%=endStr%>"/>
+                    <label>Injection
+                        Type:</label> <select name="injectionType">
+                    <option value="RH" <%=selled("RH", injectionType)%>>Rh</option>
+                    <option value="DTaP-IPV" <%=selled("DTaP-IPV", injectionType)%>>DTaP-IPV</option>
+                    <option value="DTaP-IPV-Hib" <%=selled("DTaP-IPV-Hib", injectionType)%>>DTaP-IPV-Hib</option>
+                    <option value="Hib" <%=selled("Hib", injectionType)%>>Hib</option>
+                    <option value="HPV" <%=selled("HPV", injectionType)%>>HPV</option>
+                    <option value="Pneu-C" <%=selled("Pneu-C", injectionType)%>>Pneu-C</option>
+                    <option value="MMR" <%=selled("MMR", injectionType)%>>MMR</option>
+                    <option value="MMRV" <%=selled("MMRV", injectionType)%>>MMRV</option>
+                    <option value="MenC-C" <%=selled("MenC-C", injectionType)%>>MenC-C</option>
+                    <option value="Men-P-ACWY" <%=selled("Men-P-ACWY", injectionType)%>>Men-P-ACWY</option>
+                    <option value="Rot" <%=selled("Rot", injectionType)%>>Rot</option>
+                    <option value="VZ" <%=selled("VZ", injectionType)%>>VZ</option>
+                    <option value="HepB" <%=selled("HepB", injectionType)%>>HepB</option>
+                    <option value="dTap" <%=selled("dTap", injectionType)%>>dTap</option>
+                    <option value="Td" <%=selled("Td", injectionType)%>>Td</option>
+                    <option value="Flu" <%=selled("Flu", injectionType)%>>Flu</option>
+                    <option value="HepA" <%=selled("HepA", injectionType)%>>HepA</option>
+                    <option value="HepAB" <%=selled("HepAB", injectionType)%>>HepAB</option>
+                    <option value="Rabies" <%=selled("Rabies", injectionType)%>>Rabies</option>
+
+                    <option value="Tuberculosis"
+                            <%=selled("Tuberculosis", injectionType)%>>Tuberculosis
+                    </option>
+                    <option value="Pneumovax" <%=selled("Pneumovax", injectionType)%>>Pneumovax</option>
+                    <option value="TdP" <%=selled("TdP", injectionType)%>>TdP</option>
+                    <option value="IPV" <%=selled("IPV", injectionType)%>>IPV</option>
+                    <option value="H1N1" <%=selled("H1N1", injectionType)%>>H1N1</option>
+                </select> <input type="submit" value="Run Report"/></fieldset>
+            </form>
+        </td>
+    </tr>
+    <tr>
+        <td class="MainTableBottomRowLeftColumn"></td>
+        <td class="MainTableBottomRowRightColumn"></td>
+    </tr>
 </table>
 
 <%
-    ArrayList<Map<String,Object>> report = (ArrayList<Map<String,Object>>) pageContext.getAttribute("list");
-    if (report != null){
-        DemographicData demoData= new DemographicData();
-    %>
+    ArrayList<Map<String, Object>> report = (ArrayList<Map<String, Object>>) pageContext.getAttribute("list");
+    if (report != null) {
+        DemographicData demoData = new DemographicData();
+%>
 <table class="ele">
-	<tr>
-		<th>#</th>
-		<th>First Name</th>
-		<th>Last Name</th>
-		<th>DOB</th>
-		<th>Chart #</th>
-		<th>Product #</th>
-		<th>Injection Date</th>
-		<th>Comments</th>
-	</tr>
-	<% for (int i = 0; i < report.size(); i++){
-				Map<String,Object> h = report.get(i);
-                String demo = (String) h.get("demographic_no");
-                org.oscarehr.common.model.Demographic demog = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
-                String comments = PreventionData.getPreventionComment((String)h.get("preventions_id"));
-                if( comments == null ) {
-                    comments = "";
-                }
-            %>
-	<tr>
-		<td><%=i+1%></td>
-		<td><%=demog.getFirstName()%></td>
-		<td><%=demog.getLastName()%></td>
-		<td><%=DemographicData.getDob(demog,"-")%></td>
-		<td><%=demog.getChartNo()%></td>
-		<td><%=h.get("val")%>&nbsp;</td>
-		<td><%=h.get("prevention_date")%></td>
-		<td><%=comments%></td>
-	</tr>
-	<%}%>
+    <tr>
+        <th>#</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>DOB</th>
+        <th>Chart #</th>
+        <th>Product #</th>
+        <th>Injection Date</th>
+        <th>Comments</th>
+    </tr>
+    <% for (int i = 0; i < report.size(); i++) {
+        Map<String, Object> h = report.get(i);
+        String demo = (String) h.get("demographic_no");
+        Demographic demog = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demo);
+        String comments = PreventionData.getPreventionComment((String) h.get("preventions_id"));
+        if (comments == null) {
+            comments = "";
+        }
+    %>
+    <tr>
+        <td><%=i + 1%>
+        </td>
+        <td><%=demog.getFirstName()%>
+        </td>
+        <td><%=demog.getLastName()%>
+        </td>
+        <td><%=DemographicData.getDob(demog, "-")%>
+        </td>
+        <td><%=demog.getChartNo()%>
+        </td>
+        <td><%=h.get("val")%>&nbsp;</td>
+        <td><%=h.get("prevention_date")%>
+        </td>
+        <td><%=comments%>
+        </td>
+    </tr>
+    <%}%>
 </table>
 <input type="button" onclick="window.print();" value="Print"
-	class="noprint" />
+       class="noprint"/>
 
 <%}%>
 </body>
 </html>
 <%!
-  String selled (String i,String mons){
-         String retval = "";
-         if ( i.equals(mons) ){
+    String selled(String i, String mons) {
+        String retval = "";
+        if (i.equals(mons)) {
             retval = "selected";
-         }
-     return retval;
-  }
+        }
+        return retval;
+    }
 %>

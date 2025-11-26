@@ -24,380 +24,411 @@
 
 --%>
 
-<%@ page language="java" contentType="text/html" %>  
-  
+<%@ page language="java" contentType="text/html" %>
+
 <%-- 
 	Author: Dennis Warren 
 	Company: Colcamex Resources
 	Date: November 2014 
 	Comment: The Pharmacists Clinic, Faculty of Pharmaceutical Sciences, University of British Columbia.
---%>  
-   
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %> 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+--%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = session.getAttribute("userrole") + "," + session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
-  
-<html:html>
-		
-<head>
-	<title><bean:message key="colcamex.formBPMH.title" /></title>
-	<link rel="stylesheet" type="text/css" media="screen" href="${ pageContext.request.contextPath }/form/pharmaForms/index.css" />
- 	<link rel="stylesheet" type="text/css" media="screen" href="${ pageContext.request.contextPath }/css/bootstrap.min.css" />
-	<link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css" />
-	<script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.js" ></script>
- 	<script type="text/javascript" >
-		
- 		function popUpData(data) {
-			if(data) {
-				location.reload();
-			}
-		}
 
- 		jQuery(document).ready( function($) { 			
-			$("#editFamilyDr").click(function(){
-				var familyDrContactId = $("#familyDrContactId").val();
-				var demographicNo = '${ bpmh.demographic.demographicNo }';
-				var source = "${ pageContext.request.contextPath }/demographic/manageHealthCareTeam.jsp?" +
-						"demographicNo=" + demographicNo + 
-						"&view=detached" + 
-						"&element=providerId";
-				var windowspecs = "width=700,height=400,left=-1000,top=-1000, scrollbars=yes, resizable=yes";
-				window.open(source, "manageHealthCareTeam", windowspecs);
-			})
- 		})
-	</script>
+<html>
 
-</head>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.title"/></title>
+        <link rel="stylesheet" type="text/css" media="screen"
+              href="${ pageContext.request.contextPath }/form/pharmaForms/index.css"/>
+        <link rel="stylesheet" type="text/css" media="screen"
+              href="${ pageContext.request.contextPath }/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="${ pageContext.request.contextPath }/css/healthCareTeam.css"/>
+        <script type="text/javascript" src="${ pageContext.request.contextPath }/js/jquery.js"></script>
+        <script type="text/javascript">
 
-<body id="formBPMH">
+            function popUpData(data) {
+                if (data) {
+                    location.reload();
+                }
+            }
 
-	<!--  HEADING  -->
-	<!-- FORM BEGIN -->
-	<html:form action="/formBPMH.do" >
-		<html:hidden property="demographicNo" />
-		<html:hidden property="formId" />
-		<header>	
-				
-			<h1><bean:message key="colcamex.formBPMH.title" /></h1>
-			
-			<c:set var="controls" value="on" scope="page" />
-			
-			<div id="bpmhId">	
-								
-					<logic:empty name="bpmh" property="provider">
-	
-				<span class="red" >	
-						<bean:message key="colcamex.formBPMH.preparedby" />
-						<bean:message key="colcamex.formBPMH.error.unknown" />
-					</logic:empty>
-					
-					<logic:notEmpty name="bpmh" property="provider">
+            jQuery(document).ready(function ($) {
+                $("#editFamilyDr").click(function () {
+                    var familyDrContactId = $("#familyDrContactId").val();
+                    var demographicNo = '${ bpmh.demographic.demographicNo }';
+                    var source = "${ pageContext.request.contextPath }/demographic/manageHealthCareTeam.jsp?" +
+                        "demographicNo=" + demographicNo +
+                        "&view=detached" +
+                        "&element=providerId";
+                    var windowspecs = "width=700,height=400,left=-1000,top=-1000, scrollbars=yes, resizable=yes";
+                    window.open(source, "manageHealthCareTeam", windowspecs);
+                })
+            })
+        </script>
+
+    </head>
+
+    <body id="formBPMH">
+
+    <!--  HEADING  -->
+    <!-- FORM BEGIN -->
+    <form action="${pageContext.request.contextPath}/formBPMH.do" method="post">
+        <input type="hidden" name="demographicNo" id="demographicNo"/>
+        <input type="hidden" name="formId" id="formId"/>
+        <header>
+
+            <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.title"/></h1>
+
+            <c:set var="controls" value="on" scope="page"/>
+
+            <div id="bpmhId">
+
+                <c:if test="${empty bpmh.provider}">
+                    <span class="red">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.preparedby"/>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.error.unknown"/>
+                    </span>
+                </c:if>
+
+
+                <c:if test="${not empty bpmh.provider}">
 		
 				<span>	
-						<bean:message key="colcamex.formBPMH.preparedby" />
-						<bean:write name="bpmh" property="provider.formattedName" />
-						<logic:notEmpty name="bpmh" property="provider.ohipNo">	
-							&#40;<bean:write name="bpmh" property="provider.ohipNo" />&#41;
-						</logic:notEmpty>
-						<logic:empty name="bpmh" property="provider.ohipNo">
-							&#40;<bean:message key="colcamex.formBPMH.error.unknown" />&#41;
-						</logic:empty>
+						<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.preparedby"/>
+						<c:out value="${bpmh.provider.formattedName}"/>
+						<c:choose>
+                            <c:when test="${not empty bpmh.provider.ohipNo}">
+                                &#40;<c:out value="${bpmh.provider.ohipNo}"/>&#41;
+                            </c:when>
+                            <c:otherwise>
+                                &#40;<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.error.unknown"/>&#41;
+                            </c:otherwise>
+                        </c:choose>
+
 								
-					</logic:notEmpty>					
+					</c:if>
 				</span>
-					
-				
-				<logic:empty name="bpmh" property="formDateFormatted">
-					<span class="red" >
-				</logic:empty>
-				<logic:notEmpty name="bpmh" property="formDateFormatted">
-					<span>
-				</logic:notEmpty>
-					<bean:message key="colcamex.formBPMH.preparedon" />
-					<bean:write name="bpmh" property="formDateFormatted" />	
+
+
+                <c:if test="${empty bpmh.formDateFormatted}">
+                    <span class="red">
+                </c:if>
+                <c:if test="${not empty bpmh.formDateFormatted}">
+                    <span>
+                </c:if>
+
+					<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.preparedon"/>
+					<c:out value="${bpmh.formDateFormatted}"/>
 				</span>
 									
 				<span>				
-					<bean:message key="colcamex.formBPMH.printedon" />
-					<bean:write name="bpmh" property="editDateFormatted" />	
-				</span>	
-				
-			</div>		
-		</header>
-		
-		<!--  SUB HEADING  -->
-		<section id="subHeader">
-		
-			<!--  PATIENT  -->
-			<table id="patientId" >
-				<tr><th colspan="6"><bean:message key="colcamex.formBPMH.patient" /></th></tr>			
-				<tr>	
-					<td rowspan="2" class="columnTitle" ><bean:message key="colcamex.formBPMH.patient.name" /></td>
-						<td rowspan="2">							
-							<bean:write name="bpmh" property="demographic.fullName" />
-						</td>	
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.patient.insurance" /></td>
-						<td>
-							<bean:write name="bpmh" property="demographic.hin" />
-						</td>
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.patient.gender" /></td>
-						<td>
-							<bean:write name="bpmh" property="demographic.sex" />
-						</td>
-				</tr>
-				
-				<tr> 													
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.patient.dob" /></td>
-						<td>
-							<bean:write name="bpmh" property="demographic.formattedDob" />
-						</td>
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.patient.phone" /></td>
-						<td>
-							<bean:write name="bpmh" property="demographic.phone" />
-						</td>
-				</tr>
-			</table>
-			<table id="allergies">
-				<tr>
-					<td class="columnTitle">
-						<bean:message key="colcamex.formBPMH.patient.allergies" />
-					</td>
-					<td>	
-						<logic:notEmpty name="bpmh" property="allergiesString">				
-							<bean:write name="bpmh" property="allergiesString" />
-						</logic:notEmpty>
-					</td>
-				</tr>		
-			</table>
-		</section>
+					<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.printedon"/>
+					<c:out value="${bpmh.editDateFormatted}"/>
+				</span>
 
-		<!--  FAMILY PHYSICIAN  -->	
-		<section id="familyPhysician" >	
-			<html:hidden name="bpmh" property="familyDrContactId" styleId="familyDrContactId" />	
-			<table id="providerId">
-				<tr><th colspan="7"><bean:message key="colcamex.formBPMH.familyDr" /></th></tr>			
-				<tr>
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.familyDr.name" /></td>
-					<td>
-						<logic:empty name="bpmh" property="familyDrName" > 
-							<span class="red" >	Unknown	</span>
-						</logic:empty>
-						<logic:notEmpty name="bpmh" property="familyDrName" > 	
-							<bean:write name="bpmh" property="familyDrName" />
-						</logic:notEmpty>
-					</td>
-					
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.familyDr.phone" /></td>
-					<td>
-						<logic:empty name="bpmh" property="familyDrPhone" > 
-							<span class="red" >	Unknown	</span>
-						</logic:empty>
-						<logic:notEmpty name="bpmh" property="familyDrPhone" >
-							<bean:write name="bpmh" property="familyDrPhone" />
-						</logic:notEmpty>
-					</td>
-					
-					<td class="columnTitle"><bean:message key="colcamex.formBPMH.familyDr.fax" /></td>
-					<td>
-						<logic:empty name="bpmh" property="familyDrFax" > 
-							<span class="red" >	Unknown	</span>
-						</logic:empty>
-						<logic:notEmpty name="bpmh" property="familyDrFax" >
-							<bean:write name="bpmh" property="familyDrFax" />
-						</logic:notEmpty>
-					</td>
-					<logic:equal name="bpmh" property="formId" value="0">
-						<logic:notEmpty name="bpmh" property="familyDrContactId" >
-							<td class="columnTitle" style="text-align:center;background-color:#CCC;border-top:#ccc thin solid;" >
-								<input type="button" id="editFamilyDr" value="edit" />
-							</td>
-						</logic:notEmpty>
-					</logic:equal>
-					
-				</tr>	
-					
-			</table>		
-		</section>	
-		
-		<!-- DRUG DATA -->
-		<section id="drugData">		
-			<table id="drugtable">
-			
-				<tr><th colspan="4"><bean:message key="colcamex.formBPMH.drugs" /></th></tr>
-				<tr id="drugtableSubheading">
-					
-					<td class="columnTitle" >
-						<bean:message key="colcamex.formBPMH.drugs.what" /><br />
-						<span class="smallText">
-							<bean:message key="colcamex.formBPMH.drugs.what.sub" />
-						</span>
-					</td>
-					<td class="columnTitle">
-						<bean:message key="colcamex.formBPMH.drugs.how" /><br />
-						<span class="smallText">
-							<bean:message key="colcamex.formBPMH.drugs.how.sub" />
-						</span>
-					</td>
-					<td class="columnTitle">
-						<bean:message key="colcamex.formBPMH.drugs.why" /><br />
-						<span class="smallText">
-							<bean:message key="colcamex.formBPMH.drugs.why.sub" />
-						</span>
-					</td>
-					<td class="columnTitle">
-						<bean:message key="colcamex.formBPMH.drugs.instructions" /><br />
-						<span class="smallText">
-							<bean:message key="colcamex.formBPMH.drugs.instructions.sub" />
-						</span>
-					</td>
-				</tr>
-				<c:set value="missingDrugData" var="false" />
-				<logic:notEmpty name="bpmh" property="drugs">
-					<logic:iterate name="bpmh" property="drugs" id="drugs" indexId="status" >		
-						<tr>
-							<html:hidden name="drugs" property="id" indexed="true" />
-	
-							<td>
-							<!-- WHAT -->
-								<bean:write name="drugs" property="what" />
-							</td>
-							<logic:empty name="drugs" property="how">
-								<c:set value="${ true }" var="missingDrugData" />
-								<td style="border:red medium solid;" >
-									<!-- HOW ERROR -->
-									&nbsp;
-								</td>
-							</logic:empty>
-							<logic:notEmpty  name="drugs" property="how" >
-								<td>
-								<!-- HOW -->
-									<bean:write name="drugs" property="how" />
-								</td>
-							</logic:notEmpty>
-							<logic:empty name="drugs" property="why">
-								<c:set value="${ true }" var="missingDrugData" />
-								<td style="border:red medium solid;" >
-									<!-- WHY ERROR -->
-									&nbsp;
-								</td>
-							</logic:empty>
-							<logic:notEmpty  name="drugs" property="why">
-								<td>
-								<!-- WHY -->
-									<bean:write name="drugs" property="why" />
-								</td>
-							</logic:notEmpty>
-							<td>
-							<!-- INSTRUCTION -->
-								<logic:notEmpty name="drugs" property="instruction" >
-									<bean:write name="drugs" property="instruction" />										
-								</logic:notEmpty>
-								
-								<logic:empty name="drugs" property="instruction">								
-									<html:textarea name="drugs" indexed="true" property="instruction" >&nbsp;</html:textarea>									
-								</logic:empty>							
-							</td>
-						</tr>				
-					</logic:iterate>
-				</logic:notEmpty>
+            </div>
+        </header>
 
-			</table>	
-		</section>
-		<section id="declaration">
-			<table>
-				<tr><td>
-					<html:checkbox name="bpmh" property="confirm" value="checked"/>
-					<label for="confirm"><bean:message key="colcamex.formBPMH.confirm" /></label>
-				</td></tr>
-			</table>
-		</section>
-		<section id="note">
-			<table>
-				<tr>
-					<td>
-					<bean:message key="colcamex.formBPMH.notes" />
-					</td>
-				</tr>
-				<tr>
-				<td>
-					<logic:notEmpty name="bpmh" property="note" >
-						<bean:write name="bpmh" property="note" />&nbsp;
-					</logic:notEmpty>
-					<logic:empty name="bpmh" property="note">
-						<html:textarea property="note" > &nbsp;</html:textarea>
-					</logic:empty>
-				</td>
-				</tr>
-			</table>
-		</section>
-		
-		<section id="controls" >
-			<table>
-			<tr>
-				<td>
-					<c:if test="${ missingDrugData }">
-						<c:set var="controls" value="off" scope="page" />
-						<span style="color:red;">Missing Medication Data</span>
-					</c:if>
-					<logic:empty name="bpmh" property="allergiesString">
-								<c:set var="controls" value="off" scope="page" />
-								<span style="color:red;">Allergy Notation is Required (ie: NKDA)</span>
-							</logic:empty>
-					<logic:empty name="bpmh" property="provider">
-						<c:set var="controls" value="off" scope="page" />
-						<span class="red" >
-							<bean:message key="colcamex.formBPMH.error.missing.provider" />
+        <!-- SUB HEADING -->
+        <section id="subHeader">
+
+            <!--  PATIENT  -->
+            <table id="patientId">
+                <tr>
+                    <th colspan="6"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient"/></th>
+                </tr>
+                <tr>
+                    <td rowspan="2" class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.name"/></td>
+                    <td rowspan="2">
+                        <c:out value="${bpmh.demographic.fullName}"/>
+                    </td>
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.insurance"/></td>
+                    <td>
+                        <c:out value="${bpmh.demographic.hin}"/>
+                    </td>
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.gender"/></td>
+                    <td>
+                        <c:out value="${bpmh.demographic.sex}"/>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.dob"/></td>
+                    <td>
+                        <c:out value="${bpmh.demographic.formattedDob}"/>
+                    </td>
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.phone"/></td>
+                    <td>
+                        <c:out value="${bpmh.demographic.phone}"/>
+                    </td>
+                </tr>
+            </table>
+            <table id="allergies">
+                <tr>
+                    <td class="columnTitle">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.patient.allergies"/>
+                    </td>
+                    <td>
+                        <c:if test="${not empty bpmh.allergiesString}">
+                            <c:out value="${bpmh.allergiesString}" />
+                        </c:if>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- FAMILY PHYSICIAN -->
+        <section id="familyPhysician">
+            <input type="hidden" name="bpmh" property="familyDrContactId" id="familyDrContactId"/>
+            <table id="providerId">
+                <tr>
+                    <th colspan="7"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.familyDr"/></th>
+                </tr>
+                <tr>
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.familyDr.name"/></td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${empty bpmh.familyDrName}">
+                                <span class="red">Unknown</span>
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${bpmh.familyDrName}" />
+                            </c:otherwise>
+                        </c:choose>
+
+                    </td>
+
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.familyDr.phone"/></td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${empty bpmh.familyDrPhone}">
+                                <span class="red">Unknown</span>
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${bpmh.familyDrPhone}" />
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+
+                    <td class="columnTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.familyDr.fax"/></td>
+                    <td>
+                        <c:choose>
+                            <c:when test="${empty bpmh.familyDrFax}">
+                                <span class="red">Unknown</span>
+                            </c:when>
+                            <c:otherwise>
+                                <c:out value="${bpmh.familyDrFax}" />
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                    <c:if test="${bpmh.formId == 0}">
+                        <c:if test="${not empty bpmh.familyDrContactId}">
+                            <td class="columnTitle" style="text-align:center;background-color:#CCC;border-top:#ccc thin solid;">
+                                <input type="button" id="editFamilyDr" value="edit"/>
+                            </td>
+                        </c:if>
+                    </c:if>
+
+                </tr>
+
+            </table>
+        </section>
+
+        <!-- DRUG DATA -->
+        <section id="drugData">
+            <table id="drugtable">
+
+                <tr>
+                    <th colspan="4"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs"/></th>
+                </tr>
+                <tr id="drugtableSubheading">
+
+                    <td class="columnTitle">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.what"/><br/>
+                        <span class="smallText">
+							<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.what.sub"/>
 						</span>
-					</logic:empty>
-					
-					<c:if test="${ controls eq 'on' }" >
-					
-						<html:submit property="method" >
-							<bean:message key="colcamex.formBPMH.print" />
-						</html:submit>
-		
-						<logic:equal name="bpmh" property="formId" value="0">
-							<html:submit property="method" >
-								<bean:message key="colcamex.formBPMH.save" />
-							</html:submit>
-						</logic:equal>
-					
-					</c:if>
-		
-					<logic:messagesPresent message="true">
-					    <html:messages id="saved" message="true">
-					        <logic:present name="saved">
-					            <div class="messages">
-					                <bean:write name="saved" filter="false" />
-					            </div>
-					        </logic:present>
-					    </html:messages>
-					</logic:messagesPresent>
-				</td>
-			</tr>
-			</table>
-		</section>
-	</html:form>
-		
-	<!-- FOOTER -->	
-	<footer>
-		<span><bean:message key="colcamex.formBPMH.formowner" /></span>
-	</footer>
-		
-</body>
-</html:html>
+                    </td>
+                    <td class="columnTitle">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.how"/><br/>
+                        <span class="smallText">
+							<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.how.sub"/>
+						</span>
+                    </td>
+                    <td class="columnTitle">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.why"/><br/>
+                        <span class="smallText">
+							<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.why.sub"/>
+						</span>
+                    </td>
+                    <td class="columnTitle">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.instructions"/><br/>
+                        <span class="smallText">
+							<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.drugs.instructions.sub"/>
+						</span>
+                    </td>
+                </tr>
+                <c:set value="missingDrugData" var="false"/>
+                <c:if test="${not empty bpmh.drugs}">
+                    <c:forEach var="drugs" items="${bpmh.drugs}" varStatus="status">
+                        <tr>
+                            <form:hidden property="id" indexed="true" value="${drugs.id}"/>
+
+                            <td>
+                                <!-- WHAT -->
+                                <c:out value="${drugs.what}"/>
+                            </td>
+
+                            <c:choose>
+                                <c:when test="${empty drugs.how}">
+                                    <c:set var="missingDrugData" value="true"/>
+                                    <td style="border:red medium solid;">
+                                        <!-- HOW ERROR -->
+                                        &nbsp;
+                                    </td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>
+                                        <!-- HOW -->
+                                        <c:out value="${drugs.how}"/>
+                                    </td>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <c:choose>
+                                <c:when test="${empty drugs.why}">
+                                    <c:set var="missingDrugData" value="true"/>
+                                    <td style="border:red medium solid;">
+                                        <!-- WHY ERROR -->
+                                        &nbsp;
+                                    </td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td>
+                                        <!-- WHY -->
+                                        <c:out value="${drugs.why}"/>
+                                    </td>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <td>
+                                <!-- INSTRUCTION -->
+                                <c:choose>
+                                    <c:when test="${not empty drugs.instruction}">
+                                        <c:out value="${drugs.instruction}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <form:textarea property="instruction" indexed="true">
+                                            &nbsp;
+                                        </form:textarea>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </c:if>
+
+
+            </table>
+        </section>
+        <section id="declaration">
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" name="confirm" id="confirm" value="checked"/>
+                        <label for="confirm"><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.confirm"/></label>
+                    </td>
+                </tr>
+            </table>
+        </section>
+        <section id="note">
+            <table>
+                <tr>
+                    <td>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.notes"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <c:choose>
+                            <c:when test="${not empty bpmh.note}">
+                                <c:out value="${bpmh.note}"/>&nbsp;
+                            </c:when>
+                            <c:otherwise>
+                                <form:textarea property="note">&nbsp;</form:textarea>
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="controls">
+            <table>
+                <tr>
+                    <td>
+                        <c:if test="${ missingDrugData }">
+                            <c:set var="controls" value="off" scope="page"/>
+                            <span style="color:red;">Missing Medication Data</span>
+                        </c:if>
+                        <c:choose>
+                            <c:when test="${empty bpmh.allergiesString}">
+                                <c:set var="controls" value="off" scope="page"/>
+                                <span style="color:red;">Allergy Notation is Required (ie: NKDA)</span>
+                            </c:when>
+                        </c:choose>
+                        <c:choose>
+                            <c:when test="${empty bpmh.provider}">
+                                <c:set var="controls" value="off" scope="page"/>
+                                <span class="red">
+                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.error.missing.provider"/>
+                                </span>
+                            </c:when>
+                        </c:choose>
+
+
+                        <c:if test="${ controls eq 'on' }">
+
+                            <input type="submit" name="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.print"/>" />
+
+                            <c:if test="${bpmh.formId == 0}">
+                            <input type="submit" name="submit" value=“<fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.save"/>" />
+                            </c:if>
+
+                        </c:if>
+
+                        <c:if test="${not empty savedMessage}">
+                            <div class="messages">
+                                    ${savedMessage}
+                            </div>
+                        </c:if>
+                    </td>
+                </tr>
+            </table>
+        </section>
+    </form>
+
+    <!-- FOOTER -->
+    <footer>
+        <span><fmt:setBundle basename="oscarResources"/><fmt:message key="colcamex.formBPMH.formowner"/></span>
+    </footer>
+
+    </body>
+</html>

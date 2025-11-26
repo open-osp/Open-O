@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,120 +24,124 @@
 --%>
 
 
-
-
-<%@ include file="/taglibs.jsp"%>
-<%@ page import="org.oscarehr.PMmodule.model.*"%>
-<%@ page import="org.oscarehr.PMmodule.web.formbean.*"%>
-<%@ page import="java.util.*"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.StaffEditProgramContainer" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.ProgramProvider" %>
 <script>
-function assignTeam(id,selectBox) {
-	var team_id = selectBox.options[selectBox.selectedIndex].value;
-	document.staffManagerForm.elements['teamId'].value=team_id;	
-	document.staffManagerForm.elements['program_provider.programId'].value=id;
-	document.staffManagerForm.method.value='assign_team';
-	document.staffManagerForm.submit();
-}
+    function assignTeam(id, selectBox) {
+        var team_id = selectBox.options[selectBox.selectedIndex].value;
+        document.staffManagerForm.elements['teamId'].value = team_id;
+        document.staffManagerForm.elements['program_provider.programId'].value = id;
+        document.staffManagerForm.method.value = 'assign_team';
+        document.staffManagerForm.submit();
+    }
 
-function removeTeam(id,team_id) {
-	document.staffManagerForm.elements['teamId'].value=team_id;	
-	document.staffManagerForm.elements['program_provider.programId'].value=id;
-	document.staffManagerForm.method.value='remove_team';
-	document.staffManagerForm.submit();
-}
+    function removeTeam(id, team_id) {
+        document.staffManagerForm.elements['teamId'].value = team_id;
+        document.staffManagerForm.elements['program_provider.programId'].value = id;
+        document.staffManagerForm.method.value = 'remove_team';
+        document.staffManagerForm.submit();
+    }
 
-function assignRole(id,selectBox) {
-	var role_id = selectBox.options[selectBox.selectedIndex].value;
-	document.staffManagerForm.elements['program_provider.roleId'].value=role_id;	
-	document.staffManagerForm.elements['program_provider.programId'].value=id;
-	document.staffManagerForm.method.value='assign_role';
-	document.staffManagerForm.submit();
-}
+    function assignRole(id, selectBox) {
+        var role_id = selectBox.options[selectBox.selectedIndex].value;
+        document.staffManagerForm.elements['program_provider.roleId'].value = role_id;
+        document.staffManagerForm.elements['program_provider.programId'].value = id;
+        document.staffManagerForm.method.value = 'assign_role';
+        document.staffManagerForm.submit();
+    }
 
-function remove_entry(id) {
-	//alert('remove the following entry:' + id);
-	document.staffManagerForm.elements['program_provider.id'].value=id;
-	document.staffManagerForm.method.value='remove_entry';
-	document.staffManagerForm.submit();
-}
+    function remove_entry(id) {
+        //alert('remove the following entry:' + id);
+        document.staffManagerForm.elements['program_provider.id'].value = id;
+        document.staffManagerForm.method.value = 'remove_entry';
+        document.staffManagerForm.submit();
+    }
 </script>
-<html:hidden property="program_provider.roleId" />
-<html:hidden property="program_provider.programId" />
-<html:hidden property="program_provider.id" />
-<input type="hidden" name="teamId" value="" />
+<input type="hidden" name="roleId" id="roleId"/>
+<input type="hidden" name="programId" id="programId"/>
+<input type="hidden" name="id" id="id"/>
+<input type="hidden" name="teamId" value=""/>
 <div class="tabs" id="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Programs">Programs</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Programs">Programs</th>
+        </tr>
+    </table>
 </div>
 <%
-ProgramProvider pp = null;
+    ProgramProvider pp = null;
 %>
-<!--  show current staff -->
+<!-- show current staff -->
 <table class="simple" cellspacing="2" cellpadding="3">
-	<tr>
-		<th style="color:black">Assigned To</th>
-		<th style="color:black">Program Name</th>
-		<th style="color:black">Role</th>
-		<th style="color:black">Team(s)</th>
-	</tr>
-	<c:forEach var="program" items="${all_programs}">
-		<tr>
-			<td>
-			<%
-				String checked = "";
-				pp = null;
-				List currentPrograms = (List) request.getAttribute("programs");
-				StaffEditProgramContainer container = (StaffEditProgramContainer) pageContext.getAttribute("program");
-				Program p = container.getProgram();
-				for (int x = 0; x < currentPrograms.size(); x++) {
-					ProgramProvider pp1 = (ProgramProvider) currentPrograms.get(x);
-					if (pp1.getProgramId().longValue() == p.getId().intValue()) {
-						checked = "checked";
-						pp = pp1;
-						break;
-					}
-				}
-				pageContext.setAttribute("pp", pp);
-				pageContext.setAttribute("checked", checked);
-			%> <c:choose>
-				<c:when test="${checked eq 'checked'}">
-					<input type="checkbox" <%=checked%> onclick="remove_entry('<c:out value="${pp.id}"/>')" />
-				</c:when>
-				<c:otherwise>
-					<input type="checkbox" <%=checked%> disabled />
-				</c:otherwise>
-			</c:choose></td>
-			<td><a href="<html:rewrite action="/PMmodule/ProgramManager"/>?id=<c:out value="${program.program.id}"/>&view.tab=staff&method=edit"><c:out value="${program.program.name}" /></a></td>
-			<td><select name="x" onchange="assignRole('<c:out value="${program.program.id}"/>',this);">
-				<option value="0">&nbsp;</option>
-				<c:forEach var="role" items="${roles}">
-					<c:choose>
-						<c:when test="${pp.roleId == role.id }">
-							<option value="<c:out value="${role.id}"/>" selected><c:out value="${role.name}" /></option>
-						</c:when>
-						<c:otherwise>
-							<option value="<c:out value="${role.id}"/>"><c:out value="${role.name}" /></option>
-						</c:otherwise>
-					</c:choose>
-				</c:forEach>
-			</select></td>
-			<td>
-			<table width="100%" cellspacing="2" cellpadding="2">
-				<c:forEach var="team" items="${pp.teams}">
-					<tr>
-						<td><c:out value="${team.name }" /></td>
-						<td><a href="javascript:void(0);" onclick="removeTeam('<c:out value="${pp.programId}"/>','<c:out value="${team.id}"/>');return false;">Remove</a>
-					</tr>
-				</c:forEach>
-			</table>
-			<select name="x" onchange="assignTeam('<c:out value="${pp.programId}"/>',this)">
-				<option value="" SELECTED></option>
-				<c:forEach var="team" items="${program.teamList}">
-					<option value="<c:out value="${team.id}"/>"><c:out value="${team.name}" /></option>
-				</c:forEach>
-			</select></td>
-	</c:forEach>
+    <tr>
+        <th style="color:black">Assigned To</th>
+        <th style="color:black">Program Name</th>
+        <th style="color:black">Role</th>
+        <th style="color:black">Team(s)</th>
+    </tr>
+    <c:forEach var="program" items="${all_programs}">
+    <tr>
+        <td>
+            <%
+                String checked = "";
+                pp = null;
+                List currentPrograms = (List) request.getAttribute("programs");
+                StaffEditProgramContainer container = (StaffEditProgramContainer) pageContext.getAttribute("program");
+                Program p = container.getProgram();
+                for (int x = 0; x < currentPrograms.size(); x++) {
+                    ProgramProvider pp1 = (ProgramProvider) currentPrograms.get(x);
+                    if (pp1.getProgramId().longValue() == p.getId().intValue()) {
+                        checked = "checked";
+                        pp = pp1;
+                        break;
+                    }
+                }
+                pageContext.setAttribute("pp", pp);
+                pageContext.setAttribute("checked", checked);
+            %> <c:choose>
+            <c:when test="${checked eq 'checked'}">
+                <input type="checkbox" <%=checked%> onclick="remove_entry('<c:out value="${pp.id}"/>')"/>
+            </c:when>
+            <c:otherwise>
+                <input type="checkbox" <%=checked%> disabled/>
+            </c:otherwise>
+        </c:choose></td>
+        <td>
+            <a href="<%=request.getContextPath() %>/PMmodule/ProgramManager.do?id=<c:out value="${program.program.id}"/>&view.tab=staff&method=edit"><c:out
+                    value="${program.program.name}"/></a></td>
+        <td><select name="x" onchange="assignRole('<c:out value="${program.program.id}"/>',this);">
+            <option value="0">&nbsp;</option>
+            <c:forEach var="role" items="${roles}">
+                <c:choose>
+                    <c:when test="${pp.roleId == role.id }">
+                        <option value="<c:out value="${role.id}"/>" selected><c:out value="${role.name}"/></option>
+                    </c:when>
+                    <c:otherwise>
+                        <option value="<c:out value="${role.id}"/>"><c:out value="${role.name}"/></option>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+        </select></td>
+        <td>
+            <table width="100%" cellspacing="2" cellpadding="2">
+                <c:forEach var="team" items="${pp.teams}">
+                    <tr>
+                        <td><c:out value="${team.name }"/></td>
+                        <td><a href="javascript:void(0);" onclick="removeTeam('<c:out value="${pp.programId}"/>','<c:out
+                                value="${team.id}"/>');return false;">Remove</a>
+                    </tr>
+                </c:forEach>
+            </table>
+            <select name="x" onchange="assignTeam('<c:out value="${pp.programId}"/>',this)">
+                <option value="" SELECTED></option>
+                <c:forEach var="team" items="${program.teamList}">
+                    <option value="<c:out value="${team.id}"/>"><c:out value="${team.name}"/></option>
+                </c:forEach>
+            </select></td>
+        </c:forEach>
 </table>

@@ -23,51 +23,61 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed2=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed2 = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_flowsheet" rights="w" reverse="<%=true%>">
-	<%authed2=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_flowsheet");%>
+    <%authed2 = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_flowsheet");%>
 </security:oscarSec>
 <%
-if(!authed2) {
-	return;
-}
+    if (!authed2) {
+        return;
+    }
 %>
 
 <% long startTime = System.currentTimeMillis(); %>
-<%@ page import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarEncounter.oscarMeasurements.*,oscar.oscarEncounter.oscarMeasurements.bean.*,java.net.*"%>
-<%@ page import="org.jdom.Element,oscar.oscarEncounter.oscarMeasurements.data.*,org.jdom.output.Format,org.jdom.output.XMLOutputter,oscar.oscarEncounter.oscarMeasurements.util.*,java.io.*" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils"%>
-<%@ page import="org.springframework.web.context.WebApplicationContext"%>
-<%@ page import="org.oscarehr.common.dao.*,org.oscarehr.common.model.FlowSheetCustomization"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ page
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*" %>
+<%@ page
+        import="org.jdom2.Element,ca.openosp.openo.encounter.oscarMeasurements.data.*,org.jdom2.output.Format,org.jdom2.output.XMLOutputter,ca.openosp.openo.encounter.oscarMeasurements.util.*,java.io.*" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.FlowSheetCustomization" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.FlowSheetItem" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementTemplateFlowSheetConfig" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.Recommendation" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.RecommendationCondition" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetCondition" %>
+<%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetColour" %>
+<%@ page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 
 
 <%
     long startTimeToGetP = System.currentTimeMillis();
-    if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
     //int demographic_no = Integer.parseInt(request.getParameter("demographic_no"));
-    if(session.getAttribute("userrole") == null )  response.sendRedirect("../logout.jsp");
- //TODO: MOVE THIS TO AN ACTION
-WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
-MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
+    if (session.getAttribute("userrole") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    //TODO: MOVE THIS TO AN ACTION
+    WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    FlowSheetCustomizationDao flowSheetCustomizationDao = (FlowSheetCustomizationDao) ctx.getBean(FlowSheetCustomizationDao.class);
+    MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
 
 String flowsheet   = request.getParameter("flowsheet");
 String measurement = request.getParameter("measurement");
 String demographic = request.getParameter("demographic");
 String scope = request.getParameter("scope");
 
-long start = System.currentTimeMillis() ;
+    long start = System.currentTimeMillis();
 
-List<FlowSheetCustomization> custList = null;
+    List<FlowSheetCustomization> custList = null;
 
 if(scope != null && "clinic".equals(scope)) {
     custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet);
@@ -79,151 +89,158 @@ if(scope != null && "clinic".equals(scope)) {
     }
 }
 
-String module="";
-String htQueryString = "";
-if(request.getParameter("htracker")!=null){
-	module="htracker";
-	htQueryString="&"+module;	
-}
+    String module = "";
+    String htQueryString = "";
+    if (request.getParameter("htracker") != null) {
+        module = "htracker";
+        htQueryString = "&" + module;
+    }
 
-if(request.getParameter("htracker")!=null && request.getParameter("htracker").equals("slim")){
-	module="slim";
-	htQueryString=htQueryString+"=slim";
-}
+    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
+        module = "slim";
+        htQueryString = htQueryString + "=slim";
+    }
 
 
-MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet,custList);
-long end = System.currentTimeMillis() ;
-long diff = end - start;
+    MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet, custList);
+    long end = System.currentTimeMillis();
+    long diff = end - start;
 
-Map h2 = mFlowsheet.getMeasurementFlowSheetInfo(measurement);
-List<Recommendation> dsR = mFlowsheet.getDSElements((String) h2.get("measurement_type"));
-FlowSheetItem fsi =mFlowsheet.getFlowSheetItem(measurement);
+    Map h2 = mFlowsheet.getMeasurementFlowSheetInfo(measurement);
+    List<Recommendation> dsR = mFlowsheet.getDSElements((String) h2.get("measurement_type"));
+    FlowSheetItem fsi = mFlowsheet.getFlowSheetItem(measurement);
 //EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
 %>
 
-<!DOCTYPE html>
-<html:html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
 
-<head>
-<title>Update Flowsheet <%=flowsheet%>  <oscar:nameage demographicNo="<%=demographic%>"/></title><!--I18n-->
+    <head>
+        <title>Update Flowsheet <%=flowsheet%> <oscar:nameage demographicNo="<%=demographic%>"/></title><!--I18n-->
 
-<link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
+        <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
 
 
-<style type="text/css">
-#scrollToTop{
-Position:fixed;
-display:none;
-bottom:30px;
-right:15px;
-}
+        <style type="text/css">
+            #scrollToTop {
+                Position: fixed;
+                display: none;
+                bottom: 30px;
+                right: 15px;
+            }
 
 .mtype-details{
 display:inline-block;
 }
 
-.errorRuleValue { 
-    color: #E11640; 
+.errorRuleValue {
+    color: #E11640;
 }
 </style>
 
-<style type="text/css" media="print">
-.DoNotPrint {
-	display: none;
-}
-</style> 
-                              
-</head>
+        <style type="text/css" media="print">
+            .DoNotPrint {
+                display: none;
+            }
+        </style>
 
-<body id="updateFlowsheetBody">
+    </head>
 
-<%
-if(request.getParameter("htracker")==null || ( request.getParameter("htracker")!=null && !request.getParameter("htracker").equals("slim")) ){
+    <body id="updateFlowsheetBody">
 
-if(request.getParameter("demographic")==null){ %>
+    <%
+        if (request.getParameter("htracker") == null || (request.getParameter("htracker") != null && !request.getParameter("htracker").equals("slim"))) {
+
+            if (request.getParameter("demographic") == null) { %>
 <div class="navbar" id="demoHeader"><div class="navbar-inner">
     <a class="brand" href="javascript:void(0)">Update Flowsheet Measurement</a>
     <em>for <strong><%=flowsheet%></strong> flowsheet </em>
 </div></div>
-<%}else{ %>
-<%@ include file="/share/templates/patient.jspf"%>
-<div style="height:60px;"></div>
-<%} 
-}
-%>
+    <%} else { %>
+    <%@ include file="/share/templates/patient.jspf" %>
+    <div style="height:60px;"></div>
+    <%
+            }
+        }
+    %>
 
 <div class="container-fluid" id="container-main">
 
-<div class="span8">
+        <div class="span8">
 <form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
 
-		    <%if(request.getParameter("htracker")!=null){ %>
-		    <input type="hidden" name="htracker" value="<%=module%>">
-		    <%}%> 
-			
-            <input type="hidden" name="method" value="update"/>
-            <input type="hidden" name="flowsheet" value="<%=flowsheet%>"/>
-            <input type="hidden" name="measurement" value="<%=measurement%>"/>
-            
-            <%if(request.getParameter("demographic")!=null){ %>
-            <input type="hidden" name="demographic" value="<%=demographic%>"/>
-            <%} %>
-            <%if(request.getParameter("scope")!=null){ %>
-            <input type="hidden" name="scope" value="<%=request.getParameter("scope")%>"/>
-            <%} %>
-            <fieldset width="300px">
-               <input type="hidden" name="updater" value="yes"/>
-               <input type="hidden" name="prevention_type" value="<%=h2.get("prevention_type")%>"/>
-               <input type="hidden" name="measurement_type" value="<%=h2.get("measurement_type")%>" />
-                
-                <div class="well">
-                <h4>Measurement Details</h4>
-                
-                <div class="mtype-details">
-                Display Name: <br />
-                <input type="text" name="display_name" value="<%= h2.get("display_name")%>" />
-                </div>
-                
-                <div class="mtype-details">
-                Guideline:  <br />  
-                <input type="text" name="guideline"   value="<%=h2.get("guideline")%>"   />
-                </div>
-                
-                <div class="mtype-details">
-                Graphable: <br />
-                <select name="graphable" style="width:80px">
-                    <option  value="yes" <%=sel(""+h2.get("graphable"),"yes")%> >YES</option>
-                    <option  value="no"  <%=sel(""+h2.get("graphable"),"no")%> >NO</option>
-                </select> 
-                </div>
-                
-                <div class="mtype-details">
-                Value Name:<br />
-                <input type="text" name="value_name"   value="<%=h2.get("value_name")%>"    />
-                </div>
-                </div>
-                
-                <div class="well">                
-                    <h4>Rule</h4>
-                    
-                    <table class="table table-striped">
-                    <%
-                    int count = 0;
-                    if (dsR != null) {
-                        for (Recommendation e : dsR) { count++;
-                        %>
-                        <tr><td>
-                            <div class="mtype-details">
-                            Strength:  <br /> <select name="strength<%=count%>">
-                                            <option value="recommendation" <%=sel(e.getStrength(),"recommendation")%>    >Recommendation</option>
-                                            <option value="warning"        <%=sel(e.getStrength(),"warning")%>>Warning</option>
-                                        </select>
-                            </div>
-                            
-                            <div class="mtype-details">
-                            Text: <br /><input type="text" name="text<%=count%>" length="100"  value="<%=e.getText()%>" />
-							</div>
+                <%if (request.getParameter("htracker") != null) { %>
+                <input type="hidden" name="htracker" value="<%=module%>">
+                <%}%>
+
+                <input type="hidden" name="method" value="update"/>
+                <input type="hidden" name="flowsheet" value="<%=flowsheet%>"/>
+                <input type="hidden" name="measurement" value="<%=measurement%>"/>
+
+                <%if (request.getParameter("demographic") != null) { %>
+                <input type="hidden" name="demographic" value="<%=demographic%>"/>
+                <%} %>
+                <%if (request.getParameter("scope") != null) { %>
+                <input type="hidden" name="scope" value="<%=request.getParameter("scope")%>"/>
+                <%} %>
+                <fieldset width="300px">
+                    <input type="hidden" name="updater" value="yes"/>
+                    <input type="hidden" name="prevention_type" value="<%=h2.get("prevention_type")%>"/>
+                    <input type="hidden" name="measurement_type" value="<%=h2.get("measurement_type")%>"/>
+
+                    <div class="well">
+                        <h4>Measurement Details</h4>
+
+                        <div class="mtype-details">
+                            Display Name: <br/>
+                            <input type="text" name="display_name" value="<%= h2.get("display_name")%>"/>
+                        </div>
+
+                        <div class="mtype-details">
+                            Guideline: <br/>
+                            <input type="text" name="guideline" value="<%=h2.get("guideline")%>"/>
+                        </div>
+
+                        <div class="mtype-details">
+                            Graphable: <br/>
+                            <select name="graphable" style="width:80px">
+                                <option value="yes" <%=sel("" + h2.get("graphable"), "yes")%> >YES</option>
+                                <option value="no"  <%=sel("" + h2.get("graphable"), "no")%> >NO</option>
+                            </select>
+                        </div>
+
+                        <div class="mtype-details">
+                            Value Name:<br/>
+                            <input type="text" name="value_name" value="<%=h2.get("value_name")%>"/>
+                        </div>
+                    </div>
+
+                    <div class="well">
+                        <h4>Rule</h4>
+
+                        <table class="table table-striped">
+                            <%
+                                int count = 0;
+                                if (dsR != null) {
+                                    for (Recommendation e : dsR) {
+                                        count++;
+                            %>
+                            <tr>
+                                <td>
+                                    <div class="mtype-details">
+                                        Strength: <br/> <select name="strength<%=count%>">
+                                        <option value="recommendation" <%=sel(e.getStrength(), "recommendation")%>    >
+                                            Recommendation
+                                        </option>
+                                        <option value="warning"        <%=sel(e.getStrength(), "warning")%>>Warning
+                                        </option>
+                                    </select>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Text: <br/><input type="text" name="text<%=count%>" length="100"
+                                                          value="<%=e.getText()%>"/>
+                                    </div>
 
                                <%
                                List<RecommendationCondition> conds = e.getRecommendationCondition() ;
@@ -237,56 +254,61 @@ if(request.getParameter("demographic")==null){ %>
                                         <option value="lastValueAsInt"    <%=sel("lastValueAsInt",cond.getType())%>  >Last Int Value </option>
                                    </select>
 							</div>
-							
+
 							<div class="mtype-details">
                                    Param: <br /><input type="text" name="param<%=count%>c<%=condCount%>" value="<%=s(cond.getParam())%>" />
                             </div>
-                                                              
-                            <div class="mtype-details">       
+
+                            <div class="mtype-details">
                                    Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c<%=condCount%>" value="<%=cond.getValue()%>" placeholder="e.g. 5-10, >5, <10, 7"/>
                                    <br><div class="errorRuleValue"></div>
-                             </div>  
+                             </div>
 
-                               <%} condCount++;%>
-                               <br />
-                               
-							<div class="mtype-details">
-							<br />
-                              <select name="type<%=count%>c<%=condCount%>" >
-                                        <option value="monthrange"         >Month Range</option>
-                                        <option value="lastValueAsInt"     >Last Int Value </option>
-                              </select>
-							</div>
+                                    <%
+                                        }
+                                        condCount++;
+                                    %>
+                                    <br/>
 
-								<div class="mtype-details">								
-                                   Param: <br/> <input type="text" name="param<%=count%>c<%=condCount%>"  />
-                                   </div>
-                                   
+                                    <div class="mtype-details">
+                                        <br/>
+                                        <select name="type<%=count%>c<%=condCount%>">
+                                            <option value="monthrange">Month Range</option>
+                                            <option value="lastValueAsInt">Last Int Value</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Param: <br/> <input type="text" name="param<%=count%>c<%=condCount%>"/>
+                                    </div>
+
                                     <div class="mtype-details">
                                         Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c<%=condCount%>" placeholder="e.g. 5-10, >5, <10, 7" />
                                         <br><div class="errorRuleValue"></div>
                                		</div>
 
-                            <br/>
-                            </td></tr>
-                        <%
-                        }
-                    }
-                    count++;
-                    %>
-					<tr><td>
-                    <div class="mtype-details">
-                    Strength:<br />   <select name="strength<%=count%>">
-                                    <option value="recommendation"     >Recommendation</option>
-                                    <option value="warning">Warning</option>
-                                </select>
-                    </div>
-                    
-                    <div class="mtype-details">
-                                Text: <br /><input type="text" name="text<%=count%>" length="100"   />
-					</div>
-                    
-                    <br />          
+                                    <br/>
+                                </td>
+                            </tr>
+                            <%
+                                    }
+                                }
+                                count++;
+                            %>
+                            <tr>
+                                <td>
+                                    <div class="mtype-details">
+                                        Strength:<br/> <select name="strength<%=count%>">
+                                        <option value="recommendation">Recommendation</option>
+                                        <option value="warning">Warning</option>
+                                    </select>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Text: <br/><input type="text" name="text<%=count%>" length="100"/>
+                                    </div>
+
+                                    <br/>
 
 					<div class="mtype-details">
 					<br />
@@ -295,170 +317,206 @@ if(request.getParameter("demographic")==null){ %>
                                         <option value="lastValueAsInt"     >Last Int Value </option>
                                    </select>
 					</div>
-					
+
 					<div class="mtype-details">
                                    Param: <br /><input type="text" name="param<%=count%>c1"  />
                     </div>
-                    
+
                     <div class="mtype-details">
                                    Value: <br /><input type="text" class="ruleValue" name="value<%=count%>c1" placeholder="e.g. 5-10, >5, <10, 7" />
                                    <br><div class="errorRuleValue"></div>
-                    </div>           
+                    </div>
     				</td></tr>
     				</table>
                 </div>
 
 
-                <div class="well">
-                <table class="table table-striped">
-                    <%
-                           Hashtable colourHash = mFlowsheet.getIndicatorHashtable();
-                           List<TargetColour> list = fsi.getTargetColour();
-                    int targetCount = 0;
-                    if (list !=null){
-                    for(TargetColour tc:list){ targetCount++;%>
-                        
-                            
-                            <tr><td>
-                           <h4>Target <%=targetCount%></h4>
+                    <div class="well">
+                        <table class="table table-striped">
+                            <%
+                                Hashtable colourHash = mFlowsheet.getIndicatorHashtable();
+                                List<TargetColour> list = fsi.getTargetColour();
+                                int targetCount = 0;
+                                if (list != null) {
+                                    for (TargetColour tc : list) {
+                                        targetCount++;%>
 
-                           
-                               <%
-                               List<TargetCondition> conds = tc.getTargetConditions() ;
-                               int condCount = 0;
-                               for(TargetCondition cond:conds){condCount++;%>
-                               
-							<div class="mtype-details">
-							<br />
-                               <select name="targettype<%=targetCount%>c<%=condCount%>" >
-                                   <option value="getDataAsDouble"     <%=sel("getDataAsDouble", cond.getType())%>  >Number Value</option>
-                                        <option value="isMale"              <%=sel("isMale",cond.getType())%>> Is Male </option>
-                                        <option value="isFemale"            <%=sel("isFemale",cond.getType())%>> Is Female </option>
-                                        <option value="getNumberFromSplit"  <%=sel("getNumberFromSplit",cond.getType())%>> Number Split </option>
-                                        <option value="isDataEqualTo"       <%=sel("isDataEqualTo",cond.getType())%>>  String </option>
-                                   </select>
-							</div>
-							
-							<div class="mtype-details">
-                                   Param:<br /> <input type="text" name="targetparam<%=targetCount%>c<%=condCount%>" value="<%=s(cond.getParam())%>" />
-                            </div>
-                            
-                            <div class="mtype-details">       
-                                   Value: <br /><input type="text" name="targetvalue<%=targetCount%>c<%=condCount%>" value="<%=cond.getValue()%>" />
-                            </div>
-                              <br />
 
-                               <%}condCount++;%>
+                            <tr>
+                                <td>
+                                    <h4>Target <%=targetCount%>
+                                    </h4>
 
-							<div class="mtype-details">
-							<br />
-                               <select name="targettype<%=targetCount%>c<%=condCount%>">
-                                       <option value="-1">Not Set</option>
-                                        <option value="getDataAsDouble"       >Number Value</option>
-                                        <option value="isMale"              > Is Male </option>
-                                        <option value="isFemale"            > Is Female </option>
-                                        <option value="getNumberFromSplit"  > Number Split </option>
-                                        <option value="isDataEqualTo"       >  String </option>
-                                   </select>
-							</div>
-							
-							<div class="mtype-details">
-                                   Param: <br /><input type="text" name="targetparam<%=targetCount%>c<%=condCount%>" value="" />
-                            </div>
-                            
-                            <div class="mtype-details">
-                                   Value: <br /><input type="text" name="targetvalue<%=targetCount%>c<%=condCount%>" value="" />
-                            </div>
-                              
-							<br />
 
-                           
+                                    <%
+                                        List<TargetCondition> conds = tc.getTargetConditions();
+                                        int condCount = 0;
+                                        for (TargetCondition cond : conds) {
+                                            condCount++;%>
 
-                           <!-- div style="width:200px;" -->
-                           <ul style="display: inline;  list-style-type: none; ">
-                               <%Enumeration en = colourHash.keys();
-                               while(en.hasMoreElements()){
-                                 String colour = (String) en.nextElement();  %>
+                                    <div class="mtype-details">
+                                        <br/>
+                                        <select name="targettype<%=targetCount%>c<%=condCount%>">
+                                            <option value="getDataAsDouble"     <%=sel("getDataAsDouble", cond.getType())%>  >
+                                                Number Value
+                                            </option>
+                                            <option value="isMale"              <%=sel("isMale", cond.getType())%>> Is
+                                                Male
+                                            </option>
+                                            <option value="isFemale"            <%=sel("isFemale", cond.getType())%>> Is
+                                                Female
+                                            </option>
+                                            <option value="getNumberFromSplit"  <%=sel("getNumberFromSplit", cond.getType())%>>
+                                                Number Split
+                                            </option>
+                                            <option value="isDataEqualTo"       <%=sel("isDataEqualTo", cond.getType())%>>
+                                                String
+                                            </option>
+                                        </select>
+                                    </div>
 
-                               <li style="display:inline;background-color:<%=colourHash.get(colour)%>;">
-                                   <input type="radio" name="col<%=targetCount%>" value="<%=colour%>" <%=s(colour,tc.getIndicationColor())%> ><%=colour%></input>
-                               </li>
-                               <%}%>
-                           </ul>
-                           </td></tr>
+                                    <div class="mtype-details">
+                                        Param:<br/> <input type="text" name="targetparam<%=targetCount%>c<%=condCount%>"
+                                                           value="<%=s(cond.getParam())%>"/>
+                                    </div>
 
-                   <%}
-                    }targetCount++;%>
+                                    <div class="mtype-details">
+                                        Value: <br/><input type="text" name="targetvalue<%=targetCount%>c<%=condCount%>"
+                                                           value="<%=cond.getValue()%>"/>
+                                    </div>
+                                    <br/>
 
-				<tr><td>
-                   <h4>Target <%=targetCount%></h4>
+                                    <%
+                                        }
+                                        condCount++;
+                                    %>
 
-                            
-					<div class="mtype-details">
-					<br />
-                               <select name="targettype<%=targetCount%>c1">
-                                       <option value="-1">Not Set</option>
-                                        <option value="getDataAsDouble"       >Number Value</option>
-                                        <option value="isMale"              > Is Male </option>
-                                        <option value="isFemale"            > Is Female </option>
-                                        <option value="getNumberFromSplit"  > Number Split </option>
-                                        <option value="isDataEqualTo"       >  String </option>
-                                   </select>
-					</div>
-					
-					<div class="mtype-details">
-                                   Param: <br /><input type="text" name="targetparam<%=targetCount%>c1" value="" />
+                                    <div class="mtype-details">
+                                        <br/>
+                                        <select name="targettype<%=targetCount%>c<%=condCount%>">
+                                            <option value="-1">Not Set</option>
+                                            <option value="getDataAsDouble">Number Value</option>
+                                            <option value="isMale"> Is Male</option>
+                                            <option value="isFemale"> Is Female</option>
+                                            <option value="getNumberFromSplit"> Number Split</option>
+                                            <option value="isDataEqualTo"> String</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Param: <br/><input type="text" name="targetparam<%=targetCount%>c<%=condCount%>"
+                                                           value=""/>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Value: <br/><input type="text" name="targetvalue<%=targetCount%>c<%=condCount%>"
+                                                           value=""/>
+                                    </div>
+
+                                    <br/>
+
+
+                                    <!-- div style="width:200px;" -->
+                                    <ul style="display: inline;  list-style-type: none; ">
+                                        <%
+                                            Enumeration en = colourHash.keys();
+                                            while (en.hasMoreElements()) {
+                                                String colour = (String) en.nextElement();
+                                        %>
+
+                                        <li style="display:inline;background-color:<%=colourHash.get(colour)%>;">
+                                            <input type="radio" name="col<%=targetCount%>"
+                                                   value="<%=colour%>" <%=s(colour, tc.getIndicationColor())%> ><%=colour%>
+                                            </input>
+                                        </li>
+                                        <%}%>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            <%
+                                    }
+                                }
+                                targetCount++;
+                            %>
+
+                            <tr>
+                                <td>
+                                    <h4>Target <%=targetCount%>
+                                    </h4>
+
+
+                                    <div class="mtype-details">
+                                        <br/>
+                                        <select name="targettype<%=targetCount%>c1">
+                                            <option value="-1">Not Set</option>
+                                            <option value="getDataAsDouble">Number Value</option>
+                                            <option value="isMale"> Is Male</option>
+                                            <option value="isFemale"> Is Female</option>
+                                            <option value="getNumberFromSplit"> Number Split</option>
+                                            <option value="isDataEqualTo"> String</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Param: <br/><input type="text" name="targetparam<%=targetCount%>c1" value=""/>
+                                    </div>
+
+                                    <div class="mtype-details">
+                                        Value: <br/><input type="text" name="targetvalue<%=targetCount%>c1" value=""/>
+                                    </div>
+                                    <br/>
+
+                                    <!-- div style="width:200px;" -->
+                                    <ul style="display: inline;  list-style-type: none; ">
+                                        <%
+                                            Enumeration en = colourHash.keys();
+                                            while (en.hasMoreElements()) {
+                                                String colour = (String) en.nextElement();
+                                        %>
+                                        <li style="display:inline;background-color:<%=colourHash.get(colour)%>;">
+                                            <input type="radio" name="col<%=targetCount%>"
+                                                   value="<%=colour%>"><%=colour%>
+                                            </input>
+                                        </li>
+                                        <%}%>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
-                    
-                    <div class="mtype-details">
-                                   Value: <br /><input type="text" name="targetvalue<%=targetCount%>c1" value="" />
-                    </div>               
-                     <br />
-  
-                           <!-- div style="width:200px;" -->
-                           <ul style="display: inline;  list-style-type: none; ">
-                               <%Enumeration en = colourHash.keys();
-                               while(en.hasMoreElements()){
-                                 String colour = (String) en.nextElement();  %>
-                               <li style="display:inline;background-color:<%=colourHash.get(colour)%>;">
-                                   <input type="radio" name="col<%=targetCount%>" value="<%=colour%>"  ><%=colour%></input>
-                               </li>
-                               <%}%>
-                           </ul>
-						</td></tr>
-						</table>
-						
+
+                    <div style="width:100%;text-align:right">
+                        <%if (request.getParameter("demographic") == null) { %>
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>" class="btn">Cancel</a>
+                        <%} else { %>
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%>"
+                           class="btn">Cancel</a>
+                        <%} %>
+                        <input type="submit" class="btn btn-primary" value="Update"/>
                     </div>
-               
-				<div style="width:100%;text-align:right">
-				<%if(request.getParameter("demographic")==null){ %>
-				<a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>" class="btn">Cancel</a>
-				<%}else{ %>
-                <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%>" class="btn">Cancel</a> 
-                <%} %>
-                <input type="submit" class="btn btn-primary" value="Update" />
-                </div>
-                
-            </fieldset>
-           </form>
-           </div>
+
+                </fieldset>
+            </form>
+        </div>
     </div>
 
-<div id="scrollToTop"><a href="#updateFlowsheetBody"><i class="icon-arrow-up"></i>Top</a></div>
+    <div id="scrollToTop"><a href="#updateFlowsheetBody"><i class="icon-arrow-up"></i>Top</a></div>
 
 
-<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script> 
-<script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>	
-<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+    <script src="<%=request.getContextPath() %>/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery.dataTables.js"></script>
 
-<script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
+    <script src="<%=request.getContextPath() %>/js/jquery.validate.js"></script>
 
 <script>
 $(document).ready(function () {
 	let h = $(document).height();
     const trackerSlim = parent?.parent?.document?.getElementById('trackerSlim');
     if (trackerSlim) { trackerSlim.style.height = `${h}px`; }
-	
+
 	$(document).scroll(function () {
 	    var y = $(this).scrollTop();
 	    if (y > 60) {
@@ -508,60 +566,62 @@ function validateCondition(value) {
 }
 </script>
 
-</body>
-</html:html>
+    </body>
+</html>
 <%!
-    String refused(Object re){
+    String refused(Object re) {
         String ret = "Given";
-        if (re instanceof java.lang.String){
+        if (re instanceof java.lang.String) {
 
-            if (re != null && re.equals("1")){
+            if (re != null && re.equals("1")) {
                 ret = "Refused";
             }
         }
         return ret;
     }
-    String r(Object re){
+
+    String r(Object re) {
         String ret = "";
-        if (re instanceof java.lang.String){
-            if (re != null && re.equals("1")){
+        if (re instanceof java.lang.String) {
+            if (re != null && re.equals("1")) {
                 ret = "style=\"background: #FFDDDD;\"";
-            }else if(re !=null && re.equals("2")){
+            } else if (re != null && re.equals("2")) {
                 ret = "style=\"background: #FFCC24;\"";
             }
         }
         return ret;
     }
-    String wrapWithSpanIfNotNull(String s,String colour){
+
+    String wrapWithSpanIfNotNull(String s, String colour) {
         String ret = "";
         String q = "\"";
-        if (s != null){
-            ret = "<span style='color:"+colour+"'>"+s+"</span> </br>";
+        if (s != null) {
+            ret = "<span style='color:" + colour + "'>" + s + "</span> </br>";
         }
         return ret;
     }
 
 
-    String s(String s){
-    if (s ==null || s.equalsIgnoreCase("null")){
+    String s(String s) {
+        if (s == null || s.equalsIgnoreCase("null")) {
+            return "";
+        }
+        return s;
+    }
+
+    String s(String s1, String s2) {
+        if (s1 != null && s2 != null && s1.equals(s2)) {
+            return "checked";
+        }
         return "";
     }
-    return s;
-}
-String s(String s1,String s2){
-    if (s1 != null && s2 != null && s1.equals(s2)){
-        return "checked";
-    }
-    return "";
-}
 
-String sel(String s1,String s2){
-    if (s1 != null && s2 != null && s1.equals(s2)){
-        return "selected";
+    String sel(String s1, String s2) {
+        if (s1 != null && s2 != null && s1.equals(s2)) {
+            return "selected";
+        }
+        return "";
     }
-    return "";
-}
-
 
 
 %>
