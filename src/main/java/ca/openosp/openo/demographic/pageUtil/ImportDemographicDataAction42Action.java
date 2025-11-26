@@ -3672,7 +3672,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                 isu.setType(type);
                 isu.setUpdate_date(new Date());
-                issueDao.saveIssue(isu);
+                caseManagementManager.saveIssue(isu);
             }
             if (isu != null && isu.getId() != null) {
                 CaseManagementIssue cmIssu = new CaseManagementIssue();
@@ -3719,7 +3719,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
                 isu.setType(type);
                 isu.setUpdate_date(new Date());
-                issueDao.saveIssue(isu);
+                caseManagementManager.saveIssue(isu);
             }
             if (isu != null && isu.getId() != null) {
                 CaseManagementIssue cmIssu = new CaseManagementIssue();
