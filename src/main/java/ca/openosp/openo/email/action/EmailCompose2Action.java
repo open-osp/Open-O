@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
+
+import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.model.EmailAttachment;
 import ca.openosp.openo.commn.model.EmailConfig;
 import ca.openosp.openo.commn.model.EmailLog.TransactionType;
