@@ -24,6 +24,7 @@
 
 --%>
 
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@page
         import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.lab.ca.on.*,ca.openosp.openo.util.*" %>
 <%@ page import="ca.openosp.openo.lab.ca.on.CommonLabTestValues" %>
@@ -219,7 +220,7 @@
                                         prevName = "";
                                     }
                             %>
-                            <li style="margin-top: 2px;"><%-- a title="fade=[on] header=[<%=prevName%>] body=[]"      href="javascript: function myFunction() {return false; }"  onclick="javascript:addLabToProfile2('<%=h.get("labType")%>','<%= java.net.URLEncoder.encode(prevName) %>');" --%>
+                            <li style="margin-top: 2px;"><%-- a title="fade=[on] header=[<%=prevName%>] body=[]"      href="javascript: function myFunction() {return false; }"  onclick="javascript:addLabToProfile2('<%=h.get("labType")%>','<%= java.net.URLEncoder.encode(prevName, StandardCharsets.UTF_8) %>');" --%>
                                 <a title="fade=[on] header=[<%=prevName%>] body=[]"
                                    href="javascript: function myFunction() {return false; }"
                                    onclick="javascript:addLabToProfile2('<%=h.get("labType")%>','<%=prevNameEsc%>','<%= identCodeEsc %>');">

@@ -13,6 +13,7 @@ package ca.openosp.openo.caseload;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -503,7 +504,7 @@ public class CaseloadContent2Action extends ActionSupport {
                     } catch (UnsupportedEncodingException e) {
                         MiscUtils.getLogger().error("Couldn't encode string", e);
                     }
-                    String eURL = contextPath + "/oscarEncounter/IncomingEncounter.do?providerNo=" + curUser_no + "&appointmentNo=0&demographicNo=" + demographic_no + "&curProviderNo=" + caseloadProv + "&reason=&encType=" + encType + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname) + "&curDate=" + curYear + "-" + curMonth + "-" + curDay + "&appointmentDate=" + year + "-" + month + "-" + day + "&startTime=" + apptime.getHours() + ":" + apptime.getMinutes() + "&status=T" + "&apptProvider_no=" + caseloadProv + "&providerview=" + caseloadProv;
+                    String eURL = contextPath + "/oscarEncounter/IncomingEncounter.do?providerNo=" + curUser_no + "&appointmentNo=0&demographicNo=" + demographic_no + "&curProviderNo=" + caseloadProv + "&reason=&encType=" + encType + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname, StandardCharsets.UTF_8) + "&curDate=" + curYear + "-" + curMonth + "-" + curDay + "&appointmentDate=" + year + "-" + month + "-" + day + "&startTime=" + apptime.getHours() + ":" + apptime.getMinutes() + "&status=T" + "&apptProvider_no=" + caseloadProv + "&providerview=" + caseloadProv;
                     buttons += "<a href='#' onClick=\"popupWithApptNo(710, 1024,'" + eURL + "', 'encounter');return false;\" title='Encounter'>E</a> ";
                 }
 
@@ -517,12 +518,12 @@ public class CaseloadContent2Action extends ActionSupport {
                 // add B button to string
                 if (hasPrivilege("_billing", roleName$)) {
                     if (OscarProperties.getInstance().isOntarioBillingRegion()) {
-                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing.do?skipReload=true&billRegion=" + URLEncoder.encode(prov) + "&billForm=" + URLEncoder.encode(oscarProperties.getProperty("default_view")) + "&hotclick=&appointment_no=0&demographic_name=" + URLEncoder.encode(clLastName) + "%2C" + URLEncoder.encode(clFirstName) + "&demographic_no=" + demographic_no + "&providerview=1&user_no=" + curUser_no + "&apptProvider_no=none&appointment_date=" + year + "-" + month + "-" + day + "&start_time=00:00:00&bNewForm=1&status=t');return false;\" title='Billing'>B</a> ";
-                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing/CA/ON/billinghistory.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=10');return false;\" title='Billing'>BHx</a> ";
+                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing.do?skipReload=true&billRegion=" + URLEncoder.encode(prov, StandardCharsets.UTF_8) + "&billForm=" + URLEncoder.encode(oscarProperties.getProperty("default_view"), StandardCharsets.UTF_8) + "&hotclick=&appointment_no=0&demographic_name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "%2C" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&demographic_no=" + demographic_no + "&providerview=1&user_no=" + curUser_no + "&apptProvider_no=none&appointment_date=" + year + "-" + month + "-" + day + "&start_time=00:00:00&bNewForm=1&status=t');return false;\" title='Billing'>B</a> ";
+                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing/CA/ON/billinghistory.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "&first_name=" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=10');return false;\" title='Billing'>BHx</a> ";
                     }
                     if (OscarProperties.getInstance().isBritishColumbiaBillingRegion()) {
-                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing.do?billRegion=" + URLEncoder.encode(prov) + "&billForm=" + URLEncoder.encode(oscarProperties.getProperty("default_view")) + "&hotclick=&appointment_no=0&demographic_name=" + URLEncoder.encode(clLastName) + "%2C" + URLEncoder.encode(clFirstName) + "&demographic_no=" + demographic_no + "&providerview=" + curUser_no + "&user_no=" + curUser_no + "&apptProvider_no=none&appointment_date=" + year + "-" + month + "-" + day + "&start_time=00:00:00&bNewForm=1&status=t');return false;\" title='Billing'>B</a> ";
-                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing/CA/BC/billStatus.jsp?lastName=" + URLEncoder.encode(clLastName) + "&firstName=" + URLEncoder.encode(clFirstName) + "&filterPatient=true&demographicNo=" + demographic_no + "');return false;\" title='Billing'>BHx</a> ";
+                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing.do?billRegion=" + URLEncoder.encode(prov, StandardCharsets.UTF_8) + "&billForm=" + URLEncoder.encode(oscarProperties.getProperty("default_view"), StandardCharsets.UTF_8) + "&hotclick=&appointment_no=0&demographic_name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "%2C" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&demographic_no=" + demographic_no + "&providerview=" + curUser_no + "&user_no=" + curUser_no + "&apptProvider_no=none&appointment_date=" + year + "-" + month + "-" + day + "&start_time=00:00:00&bNewForm=1&status=t');return false;\" title='Billing'>B</a> ";
+                        buttons += "| <a href='#' onClick=\"popupPage(700,1000,'" + contextPath + "/billing/CA/BC/billStatus.jsp?lastName=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "&firstName=" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&filterPatient=true&demographicNo=" + demographic_no + "');return false;\" title='Billing'>BHx</a> ";
                     }
                 }
 
@@ -537,7 +538,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 }
 
                 // add Tickler button to string
-                buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/tickler/ticklerAdd.jsp?name=" + URLEncoder.encode(clLastName) + "%2C" + URLEncoder.encode(clFirstName) + "&chart_no=&bFirstDisp=false&demographic_no=" + demographic_no + "&messageID=null&doctor_no=" + curUser_no + "'); return false;\">T</a> ";
+                buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/tickler/ticklerAdd.jsp?name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "%2C" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&chart_no=&bFirstDisp=false&demographic_no=" + demographic_no + "&messageID=null&doctor_no=" + curUser_no + "'); return false;\">T</a> ";
 
                 // add Msg button to string
                 buttons += "| <a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/messenger/SendDemoMessage.do?demographic_no=" + demographic_no + "'); return false;\">Msg</a> ";
@@ -569,7 +570,7 @@ public class CaseloadContent2Action extends ActionSupport {
                     String clLappt = lapptResult.get(0).get("max(appointment_date)").toString();
 
 
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clLappt + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "&first_name=" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clLappt + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }
@@ -581,7 +582,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 List<Map<String, Object>> napptResult = caseloadDao.getCaseloadDemographicData(napptQuery, demographicParam);
                 if (!napptResult.isEmpty() && napptResult.get(0).get("min(appointment_date)") != null && !napptResult.get(0).get("min(appointment_date)").toString().equals("")) {
                     String clNappt = napptResult.get(0).get("min(appointment_date)").toString();
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName) + "&first_name=" + URLEncoder.encode(clFirstName) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clNappt + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + demographic_no + "&last_name=" + URLEncoder.encode(clLastName, StandardCharsets.UTF_8) + "&first_name=" + URLEncoder.encode(clFirstName, StandardCharsets.UTF_8) + "&orderby=appttime&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=25'); return false;\">" + clNappt + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }
@@ -646,7 +647,7 @@ public class CaseloadContent2Action extends ActionSupport {
                 List<Map<String, Object>> newMsgResult = caseloadDao.getCaseloadDemographicData(newMsgQuery, demographicParam);
                 if (!newMsgResult.isEmpty() && newMsgResult.get(0).get("count(*)") != null && !newMsgResult.get(0).get("count(*)").toString().equals("") && !newMsgResult.get(0).get("count(*)").toString().equals("0")) {
                     String clNewMsg = newMsgResult.get(0).get("count(*)").toString();
-                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/messenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographic_no + "&providerNo=" + curUser_no + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname) + "'); return false;\">" + clNewMsg + "</a>");
+                    entry.add("<a href='#' onclick=\"popupPage('700', '1000', '" + contextPath + "/messenger/DisplayDemographicMessages.do?orderby=date&boxType=3&demographic_no=" + demographic_no + "&providerNo=" + curUser_no + "&userName=" + URLEncoder.encode(userfirstname + " " + userlastname, StandardCharsets.UTF_8) + "'); return false;\">" + clNewMsg + "</a>");
                 } else {
                     entry.add("&nbsp;");
                 }

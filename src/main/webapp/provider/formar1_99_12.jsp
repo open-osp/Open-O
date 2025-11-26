@@ -31,6 +31,7 @@
 %>
 <%@ page import="java.util.*, java.sql.*, java.net.URLEncoder, ca.openosp.*" errorPage="/errorpage.jsp" %>
 
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicAccessoryDao" %>
 <%@page import="ca.openosp.openo.commn.model.DemographicAccessory" %>
@@ -280,7 +281,7 @@
                         if (request.getParameter("appointment_no") != null)
                             newFormURL += "&appointment_no=" + request.getParameter("appointment_no");
                         if (request.getParameter("reason") != null)
-                            newFormURL += "&reason=" + URLEncoder.encode(request.getParameter("reason"));
+                            newFormURL += "&reason=" + URLEncoder.encode(request.getParameter("reason"), StandardCharsets.UTF_8);
                         newFormURL += "&bNewForm=1&displaymode=ar1&dboperation=search_demograph";
 
                     %> <a href="<%=newFormURL%>"><font color="yellow">New Form</font></a>&nbsp;

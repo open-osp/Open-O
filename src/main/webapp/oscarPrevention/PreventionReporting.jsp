@@ -25,9 +25,10 @@
 --%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="org.apache.commons.lang3.StringUtils" %>
-<%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,java.net.*,ca.openosp.openo.eform.*" %>
+<%@page import="ca.openosp.openo.demographic.data.*,java.util.*, java.text.SimpleDateFormat,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.data.*,ca.openosp.openo.prevention.pageUtil.*,java.net.*,ca.openosp.openo.eform.*" %>
 <%@page import="ca.openosp.OscarProperties"%>
 <%@page import="ca.openosp.openo.utility.SpringUtils"%>
 <%@page import="ca.openosp.openo.commn.dao.BillingONCHeader1Dao" %>
@@ -71,6 +72,11 @@
     String eformSearch = (String) request.getAttribute("eformSearch");
     //EfmData efData = new EfmData();
     BillingONCHeader1Dao bCh1Dao = (BillingONCHeader1Dao) SpringUtils.getBean(BillingONCHeader1Dao.class);
+
+    // Try to get the asofDate parameter if available
+    String asofDate = request.getParameter("asofDate");
+    // Create current date value to display as a fallback
+    if (asofDate == null) asofDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 %>
 
 <html>
@@ -445,17 +451,17 @@
                     <div>
                         Prevention:
                         <select name="prevention" id="prevention">
-                            <option value="-1">--Select Prevention--</option>
-                            <option value="PAP">PAP</option>
-                            <option value="Mammogram">Mammogram</option>
-                            <option value="Flu">Flu</option>
-                            <option value="ChildImmunizations">Child Immunizations</option>
-                            <option value="FOBT">FOBT</option>
+                            <option value="-1" ${prevention == '-1' ? 'selected' : ''} >--Select Prevention--</option>
+                            <option value="PAP" ${prevention == 'PAP' ? 'selected' : ''} >PAP</option>
+                            <option value="Mammogram" ${prevention == 'Mammogram' ? 'selected' : ''} >Mammogram</option>
+                            <option value="Flu" ${prevention == 'Flu' ? 'selected' : ''} >Flu</option>
+                            <option value="ChildImmunizations" ${prevention == 'ChildImmunizations' ? 'selected' : ''} >Child Immunizations</option>
+                            <option value="FOBT" ${prevention == 'FOBT' ? 'selected' : ''} >FOBT</option>
                         </select>
                     </div>
                     <div>
                         As of:
-                        <input type="text" name="asofDate" size="9" styleId="asofDate"/> <a id="date"><img title="Calendar"
+                        <input type="text" name="asofDate" size="9" id="asofDate" value="<%=Encode.forHtmlAttribute(asofDate)%>"/> <a id="date"><img title="Calendar"
                                                                                                        src="<%= request.getContextPath() %>/images/cal.gif"
                                                                                                        alt="Calendar"
                                                                                                        border="0"/></a>
@@ -706,7 +712,7 @@
             String queryStr = getUrlParamList(firstLetter, "demo");
         %>
         <a target="_blank"
-           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"), StandardCharsets.UTF_8)%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
             First Letter</a>
         <%}%>
 
@@ -714,7 +720,7 @@
             String queryStr = getUrlParamList(secondLetter, "demo");
         %>
         <a target="_blank"
-           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 2 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L2">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 2 Reminder Letter sent for :"+request.getAttribute("prevType"), StandardCharsets.UTF_8)%>&amp;followupType=<%=followUpType%>&amp;followupValue=L2">Generate
             Second Letter</a>
         <%}%>
 
@@ -722,7 +728,7 @@
             String queryStr = getUrlParamList(refusedLetter, "demo");
         %>
         <a target="_blank"
-           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"),"UTF-8")%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
+           href="<%= request.getContextPath() %>/report/GenerateLetters.jsp?<%=queryStr%>&amp;message=<%=java.net.URLEncoder.encode("Letter 1 Reminder Letter sent for :"+request.getAttribute("prevType"), StandardCharsets.UTF_8)%>&amp;followupType=<%=followUpType%>&amp;followupValue=L1">Generate
             Refused Letter</a>
         <%}%>
 

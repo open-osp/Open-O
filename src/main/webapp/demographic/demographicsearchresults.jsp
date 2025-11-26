@@ -39,6 +39,7 @@
 %>
 
 <!DOCTYPE HTML>
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
@@ -454,7 +455,7 @@
                                                          objectName="_eChart" rights="r">
                         <a class="encounterBtn" title="Encounter" href="javascript:void(0)"
                            onclick="popupEChart(710,1024,'<c:out
-                                   value="${ctx}"/>/oscarEncounter/IncomingEncounter.do?providerNo=<%=curProvider_no%>&appointmentNo=&demographicNo=<%=dem_no%>&curProviderNo=&reason=<%=URLEncoder.encode(noteReason)%>&encType=&curDate=<%=""+curYear%>-<%=""+curMonth%>-<%=""+curDay%>&appointmentDate=&startTime=&status=');return false;">E</a>
+                                   value="${ctx}"/>/oscarEncounter/IncomingEncounter.do?providerNo=<%=curProvider_no%>&appointmentNo=&demographicNo=<%=dem_no%>&curProviderNo=&reason=<%=URLEncoder.encode(noteReason, StandardCharsets.UTF_8)%>&encType=&curDate=<%=""+curYear%>-<%=""+curMonth%>-<%=""+curDay%>&appointmentDate=&startTime=&status=');return false;">E</a>
                     </security:oscarSec> <!-- Rights --> <security:oscarSec roleName="<%=roleName$%>"
                                                                             objectName="_rx" rights="r">
 			<a class="rxBtn" title="Prescriptions"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/oscarRx/choosePatient.do?providerNo=<%=demo.getProviderNo()%>&demographicNo=<%=dem_no%>')">Rx</a>

@@ -754,11 +754,11 @@
   }, {
     "groupId" : "com.sun.activation",
     "artifactId" : "jakarta.activation",
-    "version" : "2.0.1",
+    "version" : "1.2.1",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:0cIU0tbsxhu6OW2RPGbJd0GOdN/pblVYlRzPmaYM/Kat/qP8ZLbi0V9pjjDayHC49ujXoi4N/5dfjdg4ZHFPxQ=="
+    "integrity" : "sha512:ViQ9QtC0V5ro3Ouzu5wIB9VPaON68aQ8E3nZh4/ajPLTn0/frLSA3B1YuuNXyYldpqGd1dAbRRSwHyqp+HAafA=="
   }, {
     "groupId" : "com.sun.istack",
     "artifactId" : "istack-commons-runtime",
@@ -778,11 +778,11 @@
   }, {
     "groupId" : "com.sun.mail",
     "artifactId" : "jakarta.mail",
-    "version" : "2.0.1",
+    "version" : "1.6.8",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:NktwX+PlGxphL3gSzU5Xz/O27YRMo1ZsIGGV1lEmZGYbD8wTjs0ihO4zhV+jeKQpaEJmj8ZuNEfV3Fofw+nEPQ=="
+    "integrity" : "sha512:wSTwG8iUGA8109j4Es0mWPnW2RWxoch9x2raz+si78XGQPq4ezeBYX91Gp8tNnh2fvY4wTcr5SvdHxsYMqcdaw=="
   }, {
     "groupId" : "com.sun.xml.bind.external",
     "artifactId" : "relaxng-datatype",

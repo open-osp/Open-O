@@ -23,6 +23,7 @@
 
 --%>
 
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="java.util.Hashtable" %>
 <%@page import="ca.openosp.openo.util.UtilDateUtilities" %>

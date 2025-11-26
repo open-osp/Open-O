@@ -21,6 +21,7 @@
 <%
     String user_no = (String) session.getAttribute("user");
 %>
+<%@page import="java.nio.charset.StandardCharsets" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.util.*, java.sql.*, java.net.*" %>
 <%@ include file="/admin/dbconnection.jsp" %>
@@ -226,7 +227,7 @@
                 <td width="12%" height="16"><input type="checkbox"
                                                    name="inrbilling<%=billinginr_no%>"></td>
                 <td width="22%" height="16"><a href="#"
-                                               onClick='rs("billinginrupdate","updateINRbilling.jsp?demono=<%=demono%>&billinginr_no=<%=billinginr_no%>&servicecode=<%=service_code%>&billingamount=<%=billing_amount%>&dxcode=<%=diagnostic_code%>&demo_name=<%=URLEncoder.encode(demo_name)%>&provider_name=<%=URLEncoder.encode(proName1)%>","380","300","0")'><%=demo_name%>
+                                               onClick='rs("billinginrupdate","updateINRbilling.jsp?demono=<%=demono%>&billinginr_no=<%=billinginr_no%>&servicecode=<%=service_code%>&billingamount=<%=billing_amount%>&dxcode=<%=diagnostic_code%>&demo_name=<%=URLEncoder.encode(demo_name, StandardCharsets.UTF_8)%>&provider_name=<%=URLEncoder.encode(proName1, StandardCharsets.UTF_8)%>","380","300","0")'><%=demo_name%>
                 </a></td>
                 <td width="22%" height="16"><%=proName1%>
                 </td>
@@ -285,7 +286,7 @@
                 <td width="12%" height="16"><input type="checkbox"
                                                    name="inrbilling<%=billinginr_no%>"></td>
                 <td width="22%" height="16"><a href="#"
-                                               onClick='rs("billinginrupdate","updateINRbilling.jsp?demono=<%=demono%>&billinginr_no=<%=billinginr_no%>&servicecode=<%=service_code%>&billingamount=<%=billing_amount%>&dxcode=<%=diagnostic_code%>&demo_name=<%=URLEncoder.encode(demo_name)%>&provider_name=<%=URLEncoder.encode(proName1)%>","380","300","0")'><%=demo_name%>
+                                               onClick='rs("billinginrupdate","updateINRbilling.jsp?demono=<%=demono%>&billinginr_no=<%=billinginr_no%>&servicecode=<%=service_code%>&billingamount=<%=billing_amount%>&dxcode=<%=diagnostic_code%>&demo_name=<%=URLEncoder.encode(demo_name, StandardCharsets.UTF_8)%>&provider_name=<%=URLEncoder.encode(proName1, StandardCharsets.UTF_8)%>","380","300","0")'><%=demo_name%>
                 </a></td>
                 <td width="22%" height="16"><%=proName1%>
                 </td>
