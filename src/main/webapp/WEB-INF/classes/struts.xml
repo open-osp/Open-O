@@ -981,6 +981,7 @@
         <action name="oscarEncounter/EnableConRequestResponse" class="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConEnableReqResp2Action">
             <result name="success">/oscarEncounter/oscarConsultationRequest/config/EnableRequestResponse.jsp</result>
         </action>
+        <action name="oscarEncounter/ConsultationLookup2Action" class="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.ConsultationLookup2Action"/>
         <action name="oscarEncounter/AddService" class="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConAddService2Action">
             <result name="success">/oscarEncounter/oscarConsultationRequest/config/AddService.jsp</result>
         </action>
@@ -1928,8 +1929,8 @@
         <action name="provider/OlisPreferences" class="ca.openosp.openo.provider.web.OlisPreferences2Action">
             <result name="form">/provider/olis_preferences.jsp</result>
         </action>
-        <action name="searchProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action"/>
-        <action name="getProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action"/>
+        <action name="searchProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action" method="search"/>
+        <action name="getProfessionalSpecialist" class="ca.openosp.openo.contactRegistry.ProfessionalSpecialist2Action" method="get"/>
         <action name="demographic/Contact" class="ca.openosp.openo.commn.web.Contact2Action">
             <result name="pForm">/demographic/addEditProfessionalContact.jsp</result>
             <result name="cForm">/demographic/addEditContact.jsp</result>
