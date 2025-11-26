@@ -64,6 +64,8 @@ public interface RxManager {
 
     public Boolean addFavorite(Favorite f);
 
+    Set<String> getStoredInstructionsMatching(String str);
+
     /**
      * Archives a drug. This will remove the drug from the current list. The drug can still be found under the 'All' section.
      *

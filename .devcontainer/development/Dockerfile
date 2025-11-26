@@ -29,9 +29,9 @@ WORKDIR /workspace
 # Install required packages and clean up apt lists
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix curl git wget apt-transport-https ca-certificates gnupg lsb-release \
-    wkhtmltopdf \
+    libjpeg-turbo8 \
     locales iputils-ping gettext fontconfig libc6 libfreetype6 \
-    libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 libjpeg62 \
+    libpng16-16 libssl-dev libstdc++6 libx11-6 libxcb1 libxext6 libxtst6 \
     libxrender1 libfontconfig1 libxi6 xfonts-75dpi xfonts-base zlib1g maven mariadb-client \
     nano openssh-client vim-tiny \
     python3 python3-pip \
@@ -65,6 +65,22 @@ RUN npm install -g @google/gemini-cli
 RUN apt-get update && apt-get install -y pipx && \
     pipx install aider-chat && \
     pipx ensurepath
+
+# Install Postfix for mail testing with default values
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y postfix
+
+# Configure Postfix for simple localhost operation
+RUN postconf -e 'myhostname=openo-dev.local' && \
+    postconf -e 'mydestination=openo-dev.local, localhost' && \
+    postconf -e 'mynetworks=127.0.0.0/8' && \
+    postconf -e 'inet_interfaces=loopback-only' && \
+    postconf -e 'maillog_file=/var/log/mail.log' && \
+    # Disable all authentication and encryption
+    postconf -e 'smtpd_sasl_auth_enable=no' && \
+    postconf -e 'smtpd_use_tls=no' && \
+    postconf -e 'smtpd_tls_security_level=none' && \
+    # Allow local connections without auth
+    postconf -e 'smtpd_client_restrictions=permit_mynetworks,reject'
 
 # Create custom bashrc with tool reminders
 COPY ./config/bashrc /root/.bashrc

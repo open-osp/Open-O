@@ -10,6 +10,7 @@
 --%>
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
       String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
       boolean authed=true;
@@ -31,8 +32,6 @@ String userfirstname = (String) session.getAttribute("userfirstname");
 String userlastname = (String) session.getAttribute("userlastname");
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
 <jsp:useBean id="oscarVariables" class="java.util.Properties"
 	scope="page" />
 <%@ page
@@ -84,15 +83,17 @@ boolean onIPad = http_user_agent.indexOf("iPad") >= 0;
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
    "http://www.w3.org/TR/html4/strict.dtd">
-<html:html lang="en">
+<html>
 <head>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery_oscar_defaults.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery.colorbox-min.js"></script>
 	
-<title><bean:message
-	key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" /></title>
+<title>
+    <fmt:setBundle basename="oscarResources"/>
+    <fmt:message key="oscarEncounter.oscarConsultationRequest.AttachDocPopup.title" />
+</title>
 
 <script type="text/javascript">
 //<!--   
@@ -200,7 +201,7 @@ function save() {
        window.opener.document.EctConsultationFormRequestForm.documents.value = saved; 
       
        if( list.childNodes.length == 0 )
-            paragraph.innerHTML = "<bean:message key="oscarEncounter.oscarConsultationRequest.AttachDoc.Empty"/>";
+            paragraph.innerHTML = "<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.AttachDoc.Empty"/>";
             
        ret = false;
     }    

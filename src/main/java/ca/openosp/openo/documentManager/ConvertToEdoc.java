@@ -306,12 +306,7 @@ public final class ConvertToEdoc {
      */
     private static void renderPDF(final String document, ByteArrayOutputStream os)
             throws DocumentException, IOException {
-
-        OscarProperties props = OscarProperties.getInstance();
-        String cmd = props.getProperty("WKHTMLTOPDF_COMMAND", DEFAULT_WKHTMLTOPDF_COMMAND);
-        String args = props.getProperty("WKHTMLTOPDF_ARGS", DEFAULT_WKHTMLTOPDF_ARGS);
-
-        EDocConverterInterface converter = "internal".equalsIgnoreCase(cmd) ? new InternalEDocConverter() : new ExternalEDocConverter(cmd, args);
+        EDocConverterInterface converter = new InternalEDocConverter();
 
         try {
             converter.convert(document, os);

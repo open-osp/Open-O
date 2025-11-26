@@ -211,6 +211,10 @@
                                       </th>
                                       <th>
                                           <fmt:setBundle basename="oscarResources"/>
+                                          <fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.formUrgency" />
+						              </th>
+                                      <th>
+                                          <fmt:setBundle basename="oscarResources"/>
                                           <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgPat"/>
                                       </th>
                                       <th>
@@ -225,6 +229,10 @@
                                           <fmt:setBundle basename="oscarResources"/>
                                           <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgService"/>
                                       </th>
+                                      <th >
+                                          <fmt:setBundle basename="oscarResources"/>
+                                          <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgSpecialist" />
+						              </th>
                                       <th>
                                           <fmt:setBundle basename="oscarResources"/>
                                           <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgRefDate"/>
@@ -234,13 +242,15 @@
                                 <tbody>
                                     <%
                                         for (int i = 0; i < theRequests.ids.size(); i++) {
-                                            String id        = theRequests.ids.get(i);
-                                            String status    = theRequests.status.get(i);
-                                            String patient   = theRequests.patient.get(i);
-                                            String provider  = theRequests.provider.get(i);
-                                            String service   = theRequests.service.get(i);
-                                            String date      = theRequests.date.get(i);
-                                            Provider cProv   = theRequests.consultProvider.get(i);
+                                            String id       = (String) theRequests.ids.get(i);
+                                            String status   = (String) theRequests.status.get(i);
+                                            String patient  = (String) theRequests.patient.get(i);
+                                            String provider = (String) theRequests.provider.get(i);
+                                            String service  = (String) theRequests.service.get(i);
+                                            String specialist = (String) theRequests.vSpecialist.get(i);
+                                            String date     = (String) theRequests.date.get(i);
+                                            String urgency  = (String) theRequests.urgency.get(i);
+                                            Provider cProv  = (Provider) theRequests.consultProvider.get(i);
                                     %>
                                     <tr>
                                         <td class="stat<%=status%>" width="75">
@@ -260,6 +270,18 @@
                                                 <fmt:setBundle basename="oscarResources"/>
                                                 <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgBookCon"/>
                                             <% } %>
+                                            </td>
+                                            <td class="stat<%=status%>" >
+                                            <% if (urgency.equals("1")){ %> 
+                                                <fmt:setBundle basename="oscarResources"/>
+                                                <fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgUrgent" />
+                                            <% }else if(urgency.equals("2")) { %> 
+                                                <fmt:setBundle basename="oscarResources"/>
+                                                <fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgNUrgent" />
+                                            <% }else if(urgency.equals("3")) { %> 
+                                                <fmt:setBundle basename="oscarResources"/>
+                                                <fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgReturn" />
+                                            <% } %>
                                         </td>
                                         <td class="stat<%=Encode.forHtmlAttribute(status)%>"><a
                   href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?de=<%=Encode.forUriComponent(demo)%>&requestId=<%=Encode.forUriComponent(id)%>')">
@@ -270,6 +292,9 @@
                                             <a href="javascript:popupOscarRx(700,960,'<%= request.getContextPath() %>/oscarEncounter/ViewRequest.do?de=<%=Encode.forUriComponent(demo)%>&requestId=<%=Encode.forUriComponent(id)%>')">
                                                 <%=Encode.forHtml(StringUtils.trimToEmpty(service))%>
                                             </a>
+                                        <td class="stat<%= Encode.forHtmlAttribute(status) %>">
+                                            <%= Encode.forHtml(StringUtils.trimToEmpty(specialist)) %>
+                                        </td>
                                         </td>
                                         <td class="stat<%=Encode.forHtmlAttribute(status)%>"><%=Encode.forHtml(date)%>
                                         </td>

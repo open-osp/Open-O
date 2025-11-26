@@ -31,7 +31,9 @@
 package ca.openosp.openo.report.reportByTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.jdom2.Document;
@@ -135,7 +137,10 @@ public class ReportManager {
 
                     String paramquery = param.getChildText("param-query"); //if retrieving choices from the DB
                     if (paramquery != null) {
-                        for (Object[] o : dao.runNativeQuery(paramquery)) {
+                        // Use parameterized query method even though no parameters are bound
+                        // This eliminates the use of the unsafe runNativeQuery method
+                        Map<String, Object> emptyParams = new HashMap<>();
+                        for (Object[] o : dao.runParameterizedNativeQuery(paramquery, emptyParams)) {
                             String choiceid = "", choicetext = "";
                             if (o.length >= 1) {
                                 choiceid = String.valueOf(o[0]);

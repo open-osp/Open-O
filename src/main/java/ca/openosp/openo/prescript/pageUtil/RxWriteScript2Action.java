@@ -28,10 +28,13 @@ package ca.openosp.openo.prescript.pageUtil;
 
 import ca.openosp.openo.commn.model.*;
 import com.opensymphony.xwork2.ActionSupport;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.dispatcher.mapper.ActionMapping;
+
 import ca.openosp.openo.casemgmt.model.CaseManagementNote;
 import ca.openosp.openo.casemgmt.model.CaseManagementNoteLink;
 import ca.openosp.openo.casemgmt.service.CaseManagementManager;
@@ -120,6 +123,8 @@ public final class RxWriteScript2Action extends ActionSupport {
             return updateToLongTerm();
         } else if ("checkNoStashItem".equals(method)) {
             return checkNoStashItem();
+        } else if ("searchSpecialInstructions".equals(method)) {
+            searchSpecialInstructions();
         }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -267,6 +272,17 @@ public final class RxWriteScript2Action extends ActionSupport {
             reRxDrugIdList.add(drugId);
         } else if (action.equals("removeFromReRxDrugIdList") && reRxDrugIdList.contains(drugId)) {
             reRxDrugIdList.remove(drugId);
+            try {
+				for (Iterator<RxPrescriptionData.Prescription> iterator = bean.getStashList().iterator(); iterator.hasNext(); ) {
+					RxPrescriptionData.Prescription prescription = iterator.next();
+					if (prescription.getDrugReferenceId() == Integer.parseInt(drugId)) {
+						iterator.remove();
+						break;
+					}
+				}
+			} catch (NumberFormatException e) {
+                logger.error("Error: {}", e.getMessage());
+			}
         } else if (action.equals("clearReRxDrugIdList")) {
             bean.clearReRxDrugIdList();
         } else {
@@ -1255,6 +1271,7 @@ public final class RxWriteScript2Action extends ActionSupport {
             try {
                 rx = bean.getStashItem(i);
                 rx.Save(scriptId);// new drug id available after this line
+                rx.setScript_no(scriptId);
                 bean.addRandomIdDrugIdPair(rx.getRandomId(), rx.getDrugId());
                 auditStr.append(rx.getAuditString());
                 auditStr.append("\n");
@@ -1331,6 +1348,22 @@ public final class RxWriteScript2Action extends ActionSupport {
 
         return;
     }
+
+    public String searchSpecialInstructions() throws IOException {
+		String str = request.getParameter("query");
+		Set<String> set = this.rxManager.getStoredInstructionsMatching(str);
+
+		Map<String, Object> json = new HashMap<>();
+        json.put("results", set);
+
+		response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+		ObjectMapper mapper = new ObjectMapper();
+        mapper.writeValue(response.getWriter(), json);
+
+        return "prescribe";
+	}
 
     public String checkNoStashItem() throws IOException, Exception {
         RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");

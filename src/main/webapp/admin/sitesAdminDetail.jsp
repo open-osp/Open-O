@@ -90,7 +90,7 @@
                         </tr>
                         <tr>
                             <td>Theme Color:<sup style="color:red">*</sup></td>
-                            <td><input type="text" styleId="colorField" name="site.bgColor" type="color"
+                            <td><input type="text" id="colorField" name="site.bgColor" type="color"
                                              onchange="this.style.backgroundColor = this.value;" />
                             </td>
                         </tr>

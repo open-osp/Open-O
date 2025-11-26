@@ -404,7 +404,7 @@
                         }
                     %>
 
-                    <form action="<%=strutsAction%>" method="post" styleId="msgList">
+                    <form action="<%=strutsAction%>" method="post" id="msgList">
                     <%
                         java.util.Vector theMessages2 = new java.util.Vector();
                         switch (pageType) {

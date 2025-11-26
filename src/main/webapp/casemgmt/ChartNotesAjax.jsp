@@ -895,7 +895,7 @@ EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManage
     <input type="hidden" id="bgColour<%=savedId%>" value="color:#000000;background-color:#CCCCFF;"/>
     <input type="hidden" id="editWarn<%=savedId%>" value="false"/>
     <div id="n<%=savedId%>">
-        <textarea tabindex="7" cols="84" rows="10" class="txtArea boxsizingBorder" wrap="hard"
+        <textarea tabindex="7" cols="84" rows="10" class="txtArea boxsizingBorder" wrap="soft"
                   style="line-height: 1.1em;" name="caseNote_note"
                   id="caseNote_note<%=savedId%>"><%=cform.getCaseNote_note() %></textarea>
         <div class="sig" id="sig<%=savedId%>">
