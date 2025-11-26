@@ -59,6 +59,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +104,7 @@ public final class Login2Action extends ActionSupport {
         // >> 1. Initial Checks and Mobile Detection
         if (!"POST".equals(request.getMethod())) {
             MiscUtils.getLogger().error("Someone is trying to login with a GET request.", new Exception());
-            String newURL = "/loginfailed.jsp?errormsg=Application Error. See Log.";
+            String newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Application Error. See Log.";
             response.sendRedirect(newURL);
             return NONE;
         }
@@ -224,7 +226,7 @@ public final class Login2Action extends ActionSupport {
                 removeAttributesFromSession(request);
             } catch (Exception e) {
                 logger.error("Error", e);
-                String newURL = "/loginfailed.jsp?errormsg=Setting values to the session.";
+                String newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Setting values to the session.";
 
                 // Remove the attributes from session
                 removeAttributesFromSession(request);
@@ -281,7 +283,7 @@ public final class Login2Action extends ActionSupport {
                 logger.info(LOG_PRE + " Blocked: " + userName);
                 // return mapping.findForward(where); //go to block page
                 // change to block page
-                String newURL = "/loginfailed.jsp?errormsg=Oops! Your account is now locked due to incorrect password attempts!";
+                String newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Oops! Your account is now locked due to incorrect password attempts!";
 
                 if (ajaxResponse) {
                     ObjectNode json = objectMapper.createObjectNode();
@@ -315,7 +317,7 @@ public final class Login2Action extends ActionSupport {
             }
         } catch (Exception e) {
             logger.error("Error", e);
-            String newURL = "/loginfailed.jsp";
+            String newURL = request.getContextPath() + "/loginfailed.jsp";
             if (e.getMessage() != null && e.getMessage().startsWith("java.lang.ClassNotFoundException")) {
                 newURL = newURL + "?errormsg=Database driver "
                         + e.getMessage().substring(e.getMessage().indexOf(':') + 2) + " not found.";
@@ -347,7 +349,7 @@ public final class Login2Action extends ActionSupport {
                 logger.info(LOG_PRE + " Inactive: " + userName);
                 LogAction.addLog(strAuth[0], "login", "failed", "inactive");
 
-                String newURL = "/loginfailed.jsp?errormsg=Your account is inactive. Please contact your administrator to activate.";
+                String newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Your account is inactive. Please contact your administrator to activate.";
 
                 response.sendRedirect(newURL);
                 return NONE;
@@ -367,7 +369,7 @@ public final class Login2Action extends ActionSupport {
                     setUserInfoToSession(request, userName, password, pin, nextPage);
                 } catch (Exception e) {
                     logger.error("Error", e);
-                    newURL = "/loginfailed.jsp?errormsg=Setting values to the session.";
+                    newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Setting values to the session.";
                 }
 
                 response.sendRedirect(newURL);
@@ -383,7 +385,8 @@ public final class Login2Action extends ActionSupport {
              *
              */
             if (SSOUtility.isSSOEnabled()) {
-                String newURL = "/ssoLogin.do?user_email=" + strAuth[6];
+                String encodedEmail = URLEncoder.encode(strAuth[6], StandardCharsets.UTF_8);
+                String newURL = request.getContextPath() + "/ssoLogin.do?user_email=" + encodedEmail;
 
                 response.sendRedirect(newURL);
                 return NONE;
@@ -558,7 +561,7 @@ public final class Login2Action extends ActionSupport {
 
             List<Integer> facilityIds = providerDao.getFacilityIds(provider.getProviderNo());
             if (facilityIds.size() > 1) {
-                String newURL = "/select_facility.jsp?nextPage=" + where;
+                String newURL = request.getContextPath() + "/select_facility.jsp?nextPage=" + where;
 
                 response.sendRedirect(newURL);
                 return NONE;
@@ -590,7 +593,7 @@ public final class Login2Action extends ActionSupport {
         else if (strAuth != null && strAuth.length == 1 && strAuth[0].equals("expired")) {
             logger.warn("Expired password");
             cl.updateLoginList(ip, userName);
-            String newURL = "/loginfailed.jsp?errormsg=Your account is expired. Please contact your administrator.";
+            String newURL = request.getContextPath() + "/loginfailed.jsp?errormsg=Your account is expired. Please contact your administrator.";
 
             if (ajaxResponse) {
                 ObjectNode json = objectMapper.createObjectNode();
