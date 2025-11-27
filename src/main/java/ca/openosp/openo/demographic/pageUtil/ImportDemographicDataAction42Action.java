@@ -62,6 +62,7 @@ import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
 import com.opensymphony.xwork2.ActionSupport;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -2660,7 +2661,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                         byte[] b = null;
                         if (repCt != null && repCt.getMedia() != null) b = repCt.getMedia();
-                        else if (repCt != null && repCt.getTextContent() != null) b = repCt.getTextContent().getBytes();
+                        else if (repCt != null && repCt.getTextContent() != null) {
+                            // TextContent may contain base64-encoded binary data (for images, PDFs, etc.)
+                            // or actual text content. Check if it's binary format and decode accordingly.
+                            if (binaryFormat) {
+                                // Binary formats (images, PDFs, etc.) are base64-encoded in TextContent
+                                b = Base64.decodeBase64(repCt.getTextContent());
+                            } else {
+                                // Text formats are stored as-is
+                                b = repCt.getTextContent().getBytes();
+                            }
+                        }
                         if (b == null && filePath == null) {
                             err_othe.add("Error! No report file in xml (" + (i + 1) + ")");
                         } else {
