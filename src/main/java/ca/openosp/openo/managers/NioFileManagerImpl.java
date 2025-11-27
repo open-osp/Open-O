@@ -41,6 +41,7 @@ import java.nio.file.StandardCopyOption;
 import javax.servlet.ServletContext;
 
 import ca.openosp.OscarProperties;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Logger;
 import org.jpedal.PdfDecoder;
 import org.jpedal.exception.PdfException;
@@ -439,38 +440,50 @@ public class NioFileManagerImpl implements NioFileManager {
 
     /**
      * Copy file from given file path into the default OscarDocuments directory.
-     * This method deletes the temporary file after successful copy
+     * This method deletes the temporary file after successful copy.
+     * Uses Apache Commons FilenameUtils for robust path security.
      */
     public String copyFileToOscarDocuments(String tempFilePath) {
         try {
-            // Normalize and validate the source file path
-            Path sourcePath = Paths.get(tempFilePath).normalize().toAbsolutePath();
-            
-            // Verify source file exists and is a regular file
-            if (!Files.exists(sourcePath) || !Files.isRegularFile(sourcePath)) {
+            // Use FilenameUtils.getName() to extract just the filename, removing any path components
+            // This is more reliable than manual path manipulation as it handles edge cases
+            String sanitizedFileName = FilenameUtils.getName(tempFilePath);
+            if (sanitizedFileName == null || sanitizedFileName.isEmpty()) {
+                log.error("Invalid file path provided: " + tempFilePath);
+                return null;
+            }
+
+            // Get source and destination directories
+            File documentDir = new File(getDocumentDirectory());
+            File sourceFile = new File(tempFilePath);
+            File destinationFile = new File(documentDir, sanitizedFileName);
+
+            // Validate that source file exists and is a regular file
+            if (!sourceFile.exists() || !sourceFile.isFile()) {
                 log.error("Source file does not exist or is not a regular file: " + tempFilePath);
                 return null;
             }
-            
-            // Get just the filename and sanitize it
-            String fileName = sourcePath.getFileName().toString();
-            String sanitizedFileName = sanitizeFileName(fileName);
-            
-            // Get and validate destination directory
-            Path destinationDir = Paths.get(getDocumentDirectory()).normalize().toAbsolutePath();
-            Path destinationFilePath = destinationDir.resolve(sanitizedFileName).normalize().toAbsolutePath();
-            
-            // Ensure destination is within the document directory
-            if (!destinationFilePath.startsWith(destinationDir)) {
+
+            // Use canonical paths to resolve symlinks and ensure path containment
+            String canonicalDocPath = documentDir.getCanonicalPath();
+            String canonicalDestPath = destinationFile.getCanonicalPath();
+
+            // Ensure destination is within the document directory using canonical paths
+            // This prevents symlink-based path traversal attacks
+            if (!canonicalDestPath.startsWith(canonicalDocPath + File.separator)) {
                 log.error("Path traversal attempt in copyFileToOscarDocuments: " + tempFilePath);
                 throw new SecurityException("Path traversal attempt detected");
             }
-            
-            Files.copy(sourcePath, destinationFilePath, StandardCopyOption.REPLACE_EXISTING);
-            if (Files.exists(destinationFilePath)) {
-                deleteTempFile(sourcePath.toString());
+
+            // Perform the copy operation
+            Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // Delete source file after successful copy
+            if (destinationFile.exists()) {
+                deleteTempFile(sourceFile.getPath());
             }
-            return destinationFilePath.toString();
+
+            return destinationFile.getPath();
         } catch (IOException e) {
             log.error("An error occurred while moving the PDF file", e);
             return null;

@@ -296,15 +296,12 @@ public class FaxManagerImpl implements FaxManager {
         recipientFaxNumber = recipientFaxNumber.replaceAll("\\D", "");
 
         FaxJob faxJob = new FaxJob();
-        Path faxDocument = Paths.get(faxFilePath);
 
         //TODO Possible that this could be multiple accounts using the same return fax line.
         FaxConfig faxConfig = faxConfigDao.getActiveConfigByNumber(senderFaxNumber);
         /*
          * Build the foundation of a faxJob
          */
-        faxJob.setFile_name(faxDocument.getFileName().toString());
-        faxJob.setNumPages(EDocUtil.getPDFPageCount(faxDocument.toString()));
         faxJob.setStamp(new Date());
         faxJob.setOscarUser(loggedInInfo.getLoggedInProviderNo());
         faxJob.setDemographicNo(demographicNo);
@@ -339,12 +336,20 @@ public class FaxManagerImpl implements FaxManager {
 
         /*
          * No document - No Fax. Return an error.
+         * Validate and resolve the file path to prevent path traversal attacks
          */
-        if (!Files.exists(faxDocument)) {
+        Path faxDocument;
+        try {
+            faxDocument = resolveAndValidateFilePath(faxFilePath);
+        } catch (SecurityException | IOException e) {
+            logger.error("Invalid or inaccessible fax file path: " + faxFilePath, e);
             faxJob.setStatus(STATUS.ERROR);
-            faxJob.setStatusString("File missing on local storage.");
+            faxJob.setStatusString("File missing on local storage or invalid file path.");
             return faxJob;
         }
+
+        faxJob.setFile_name(faxDocument.getFileName().toString());
+        faxJob.setNumPages(EDocUtil.getPDFPageCount(faxDocument.toString()));
 
         return faxJob;
 
