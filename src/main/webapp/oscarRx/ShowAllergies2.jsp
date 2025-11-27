@@ -188,11 +188,21 @@
                         $(".highLightButton").removeClass("highLightButton");
                         var form = $("#searchAllergy2");
                         var url = form.attr('action');
-                        var params = form.serializeArray();
                         var json = {};
-                        $.each(params, function () {
-                            json[this.name] = this.value || '';
+
+                        // Manually build JSON with proper boolean values for checkboxes
+                        form.find('input, select, textarea').each(function() {
+                            var $elem = $(this);
+                            var name = $elem.attr('name');
+                            if (name && name !== 'typeSelectAll') {  // Skip typeSelectAll
+                                if ($elem.attr('type') === 'checkbox') {
+                                    json[name] = $elem.is(':checked');
+                                } else {
+                                    json[name] = $elem.val() || '';
+                                }
+                            }
                         });
+
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
                         param = "jsonData=" + JSON.stringify(json);
