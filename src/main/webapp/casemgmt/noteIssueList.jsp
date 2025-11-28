@@ -272,6 +272,7 @@
                 <c:set var="winame" value="${fn:replace(winame, ' ', '_')}" />
                 <c:set var="winame" value="${fn:replace(winame, '/', '_')}" />
                 <c:set var="winame" value="${fn:replace(winame, '*', '_')}" />
+                <c:set var="winame" value="${fn:replace(winame, \"'\", '')}" />
 
                 <c:set var="submitString" value="this.form.method.value='issueChange'; this.form.lineId.value='${status.index}'; return ajaxUpdateIssues('issueChange', $('noteIssues').up().id);" />
                 <c:set var="id" value="noteIssue${status.index}" />
@@ -350,6 +351,7 @@
         <c:set var="winame" value="${fn:replace(winame, ' ', '_')}" />
         <c:set var="winame" value="${fn:replace(winame, '/', '_')}" />
         <c:set var="winame" value="${fn:replace(winame, '*', '_')}" />
+        <c:set var="winame" value="${fn:replace(winame, \"'\", '')}" />
         <c:set var="winame" value="${fn:escapeXml(winame)}" />
         <c:set var="countUnresolvedIssue" value="${status.index + 1}" />
 
@@ -364,7 +366,7 @@
             <c:set var="writeAccess" value="${issueCheckList.issueDisplay.writeAccess}" />
             <c:set var="disabled" value="${!writeAccess}" />
 
-            <input type="checkbox" id="${id}" name="issueCheckList" value="${status.index}" ${disabled ? 'disabled' : ''} />
+            <input type="checkbox" id="${id}" name="issueCheckList[${status.index}].checked" ${disabled ? 'disabled="disabled"' : ''} />
 
             <a href="#" onclick="return displayIssue('${winame}');">
                 ${issueCheckList.issueDisplay.description}
