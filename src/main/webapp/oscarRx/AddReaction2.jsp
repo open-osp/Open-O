@@ -127,7 +127,7 @@
                     </tr>
                     <tr>
                         <td id="addAllergyDialogue"><form action="<%=request.getContextPath()%>/oscarRx/addAllergy2.do"
-                                                               focus="reactionDescription">
+                                                               name="RxAddAllergyForm" id="RxAddAllergyForm" focus="reactionDescription">
 
                             <script type="text/javascript">
                                 function checkStartDate() {
