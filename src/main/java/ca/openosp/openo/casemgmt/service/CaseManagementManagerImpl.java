@@ -542,7 +542,7 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         // Strip XML tags, extracting only the text content between tags
         // This handles imported CDS data that contains raw XML like:
         // <cdsd:resultNormalAbnormalFlagAsPlainText>No</cdsd:resultNormalAbnormalFlagAsPlainText>
-        return noteContent.replaceAll("<[^>]+>", "").trim();
+        return noteContent.replaceAll("</?[a-zA-Z][^>]*>", "").trim();
     }
 
     @Override
