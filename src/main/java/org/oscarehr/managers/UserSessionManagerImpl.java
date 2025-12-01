@@ -23,85 +23,69 @@
 package org.oscarehr.managers;
 
 import org.apache.logging.log4j.Logger;
-import org.oscarehr.common.exception.UserSessionNotFoundException;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Objects;
 
 /**
  * Implementation of the {@link UserSessionManager} interface.
- * This class manages user sessions using a HashMap to store the association between user security codes and HttpSessions.
+ * This class manages user sessions. It supports multiple concurrent sessions per user and can
+ * either invalidate existing sessions when registering a new one or keep them based on a policy flag.
  */
 @Service
 public class UserSessionManagerImpl implements UserSessionManager {
 
     public static final String KEY_USER_SECURITY_CODE = "UserSecurityCode";
     private static final Logger logger = MiscUtils.getLogger();
-    private static final Map<Integer, HttpSession> userSessionMap = new HashMap<>();
+    private static final ConcurrentHashMap<Integer, Set<HttpSession>> userSessions = new ConcurrentHashMap<>();
 
-    /**
-     * Registers a user session with the given user security code and HttpSession.
-     * If a session is already registered for the given user security code, it is invalidated before registering the
-     * new provided session.
-     * @param userSecurityCode The user security code.
-     * @param session The HttpSession.
-     */
     @Override
-    public void registerUserSession(Integer userSecurityCode, HttpSession session) {
-        if (this.isUserSessionRegistered(userSecurityCode))
-            // Explicitly invalidate the previous session if it exists
-            try {
-                HttpSession previousSession = userSessionMap.get(userSecurityCode);
-                logger.debug("Existing User Session found, invalidating: {}", previousSession.getId());
+    public void registerUserSession(Integer userSecurityCode, HttpSession session, boolean invalidateExisting) {
+        Objects.requireNonNull(session, "session must not be null");
+        Set<HttpSession> sessions = userSessions.computeIfAbsent(userSecurityCode, k -> ConcurrentHashMap.newKeySet());
 
-                previousSession.invalidate();
-
-                logger.debug("Previous user session successfully invalidated");
-            } catch (IllegalStateException e) {
-                MiscUtils.getLogger().debug(e.getMessage());
+        if (invalidateExisting) {
+            for (HttpSession s : sessions) {
+                try {
+                    logger.debug("Invalidating existing session for user {}: {}", userSecurityCode, s.getId());
+                    s.invalidate();
+                } catch (IllegalStateException e) {
+                    // session already invalidated; ignore
+                    logger.debug("Tried to invalidate an already invalidated session: {}", e.getMessage());
+                }
             }
+            sessions.clear();
+        }
 
-        // Register the new session, overwrite previous registry
-        userSessionMap.put(userSecurityCode, session);
         session.setAttribute(KEY_USER_SECURITY_CODE, userSecurityCode);
-        logger.debug("User Session successfully registered: {}", session.getId());
+        sessions.add(session);
+        logger.debug("User Session successfully registered for user {}: {} (invalidateExisting={})", userSecurityCode, session.getId(), invalidateExisting);
     }
 
-    /**
-     * Unregisters the user session associated with the given user security code.
-     * @param userSecurityCode The user security code.
-     * @return The HttpSession that was unregistered.
-     * @throws UserSessionNotFoundException If no session is found for the given user security code.
-     */
     @Override
-    public HttpSession unregisterUserSession(Integer userSecurityCode) throws UserSessionNotFoundException {
-        if (this.isUserSessionRegistered(userSecurityCode)) {
-            HttpSession session = userSessionMap.remove(userSecurityCode);
-            session.removeAttribute(KEY_USER_SECURITY_CODE);
-            logger.debug("User Session successfully unregistered: {}", session.getId());
-            return session;
-        } else {
-            throw new UserSessionNotFoundException("User session not registered");
+    public void unregisterUserSession(Integer userSecurityCode, HttpSession session) {
+        if (session == null) return;
+        Set<HttpSession> sessions = userSessions.get(userSecurityCode);
+        if (sessions == null) return;
+        if (sessions.remove(session)) {
+            try {
+                session.removeAttribute(KEY_USER_SECURITY_CODE);
+            } catch (IllegalStateException ignored) {
+            }
+            if (sessions.isEmpty()) userSessions.remove(userSecurityCode);
+            logger.debug("Unregistered specific session for user {}: {}", userSecurityCode, session.getId());
         }
     }
 
-    /**
-     * Retrieves the registered HttpSession for the given user security code.
-     * @param userSecurityCode The user security code.
-     * @return The HttpSession.
-     * @throws UserSessionNotFoundException If no session is found for the given user security code.
-     */
     @Override
-    public HttpSession getRegisteredSession(Integer userSecurityCode) {
-        if (this.isUserSessionRegistered(userSecurityCode)) {
-            return userSessionMap.get(userSecurityCode);
-        } else {
-            throw new UserSessionNotFoundException("User session not registered");
-        }
+    public Collection<HttpSession> getRegisteredSessions(Integer userSecurityCode) {
+        Set<HttpSession> sessions = userSessions.get(userSecurityCode);
+        if (sessions == null) return Collections.emptyList();
+        return Collections.unmodifiableSet(sessions);
     }
 
     /**
@@ -111,6 +95,7 @@ public class UserSessionManagerImpl implements UserSessionManager {
      * @return True if the session is registered, false otherwise.
      */
     private boolean isUserSessionRegistered(Integer userSecurityCode) {
-        return Objects.nonNull(userSessionMap.get(userSecurityCode));
+        Set<HttpSession> sessions = userSessions.get(userSecurityCode);
+        return sessions != null && !sessions.isEmpty();
     }
 }

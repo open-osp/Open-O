@@ -224,6 +224,13 @@ public final class LoginAction extends DispatchAction {
             return this.validateMfaCode(mapping, (ValidateMFAForm) form, request, response, cl, initialChecksResult);
         }
 
+        if (initialChecksResult.isManageSessionFlow) {
+            cl = request.getSession().getAttribute("cl") == null ? new LoginCheckLogin()
+                    : (LoginCheckLogin) request.getSession().getAttribute("cl");
+
+            return this.handleManageSessions(mapping, form, request, response, cl, initialChecksResult);
+        }
+
         cl = new LoginCheckLogin();
 
         UserLoginInfo userLoginInfo;
@@ -345,7 +352,7 @@ public final class LoginAction extends DispatchAction {
             session.setMaxInactiveInterval(7200); // 2 hours
 
 			if (cl.getSecurity() != null) {
-				this.userSessionManager.registerUserSession(cl.getSecurity().getSecurityNo(), session);
+				this.userSessionManager.registerUserSession(cl.getSecurity().getSecurityNo(), session, false);
 			}
 
             // If the ondIdKey parameter is not null and is not an empty string
@@ -385,9 +392,66 @@ public final class LoginAction extends DispatchAction {
                 return mfaCheckResult.actionForward;
         }
 
+        if (cl.getSecurity() != null) {
+            Collection<HttpSession> sessionsForUser =
+                    this.userSessionManager.getRegisteredSessions(cl.getSecurity().getSecurityNo());
+            if (sessionsForUser != null && sessionsForUser.size() > 1) {
+                String sessionChoice = request.getParameter("sessionChoice");
+                if (sessionChoice == null || sessionChoice.isEmpty()) {
+                    return getManageSessionsActionForward(mapping, request, sessionsForUser, cl);
+                }
+            }
+        }
+
         // >> Authentication Success. Continue...
         return this.resumePostAuthenticationFlow(mapping, request, response, cl, initialChecksResult);
 
+    }
+
+    /**
+     * Prepares and returns an ActionForward object for managing user sessions.
+     * Sets necessary request and session attributes related to session management.
+     *
+     * @param mapping the ActionMapping used to select this instance
+     * @param request the HttpServletRequest object for the current request
+     * @param sessionsForUser the collection of HttpSession objects associated with the user
+     * @param cl the LoginCheckLogin object representing the user's login state
+     * @return an ActionForward object pointing to the "manageSessions" location
+     */
+    private static ActionForward getManageSessionsActionForward(ActionMapping mapping, HttpServletRequest request, Collection<HttpSession> sessionsForUser, LoginCheckLogin cl) {
+        request.setAttribute("otherSessionCount", sessionsForUser.size() - 1);
+        request.setAttribute("manageSessionFlow", true);
+        request.getSession().setAttribute("cl", cl);
+        return mapping.findForward("manageSessions");
+    }
+
+    /**
+     * Handles the management of user sessions, including the invalidation of other sessions if requested.
+     *
+     * @param mapping              The ActionMapping used to select this instance.
+     * @param form                 The optional ActionForm bean for this request.
+     * @param request              The HTTP request received from the client.
+     * @param response             The HTTP response being created.
+     * @param cl                   An instance of LoginCheckLogin containing user authentication details.
+     * @param initialChecksResult  The result of initial security checks performed on the user session.
+     * @return                     The ActionForward instance indicating the next view or action to process.
+     * @throws IOException         If an input or output exception occurs.
+     */
+    private ActionForward handleManageSessions(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                               HttpServletResponse response, LoginCheckLogin cl,
+                                               InitialChecksResult initialChecksResult) throws IOException {
+        Integer code = cl.getSecurity().getSecurityNo();
+        Collection<HttpSession> sessionsForUser = this.userSessionManager.getRegisteredSessions(code);
+        HttpSession currentSession = request.getSession(false);
+        ManageSessionsForm manageSessionsForm = (ManageSessionsForm) form;
+        if (manageSessionsForm.invalidateOtherSessions()) {
+            for (HttpSession s : sessionsForUser) {
+                if (currentSession != null && s.getId().equals(currentSession.getId())) continue;
+                try { s.invalidate(); } catch (java.lang.IllegalStateException ignored) {  }
+            }
+        }
+
+        return this.resumePostAuthenticationFlow(mapping, request, response, cl, initialChecksResult);
     }
 
     /**
@@ -408,7 +472,6 @@ public final class LoginAction extends DispatchAction {
      * @return An ActionForward to the next page or an error message.
      * @throws IOException If an I/O error occurs.
      */
-
     private ActionForward validateMfaCode(ActionMapping mapping, ValidateMFAForm form, HttpServletRequest request,
                                           HttpServletResponse response, LoginCheckLogin cl,
                                           InitialChecksResult initialChecksResult) throws IOException {
@@ -1050,10 +1113,12 @@ public final class LoginAction extends DispatchAction {
 
         boolean isMfaVerifyFlow = form instanceof ValidateMFAForm;
 
+        boolean isManageSessionsFlow = form instanceof ManageSessionsForm;
+
         boolean isForcePasswordChangeNeeded = request.getParameter("forcedpasswordchange") != null
                 && request.getParameter("forcedpasswordchange").equalsIgnoreCase("true");
 
-        return new InitialChecksResult(ajaxResponse, isMobileOptimized, ip, submitType, isForcePasswordChangeNeeded, isMfaVerifyFlow);
+        return new InitialChecksResult(ajaxResponse, isMobileOptimized, ip, submitType, isForcePasswordChangeNeeded, isMfaVerifyFlow, isManageSessionsFlow);
     }
 
     /**
@@ -1322,14 +1387,16 @@ public final class LoginAction extends DispatchAction {
         public String submitType;
         public boolean isForcePasswordChangeNeeded;
         public boolean isMfaVerifyFlow;
+        public boolean isManageSessionFlow;
 
-        public InitialChecksResult(boolean isAjaxResponse, boolean isMobileOptimized, String ip, String submitType, boolean isForcePasswordChangeNeeded, boolean isMfaVerifyFlow) {
+        public InitialChecksResult(boolean isAjaxResponse, boolean isMobileOptimized, String ip, String submitType, boolean isForcePasswordChangeNeeded, boolean isMfaVerifyFlow, boolean isManageSessionFlow) {
             this.isAjaxResponse = isAjaxResponse;
             this.isMobileOptimized = isMobileOptimized;
             this.ip = ip;
             this.submitType = submitType;
             this.isForcePasswordChangeNeeded = isForcePasswordChangeNeeded;
             this.isMfaVerifyFlow = isMfaVerifyFlow;
+            this.isManageSessionFlow = isManageSessionFlow;
         }
 
         public InitialChecksResult(ActionForward errorForward) {
