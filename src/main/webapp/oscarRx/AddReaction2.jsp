@@ -29,6 +29,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+
+<%@page import="org.owasp.encoder.Encode" %>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -192,7 +194,7 @@
                                 <tr valign="center">
                                     <td>
                                         <span class="label">Comment: </span>
-                                        <textarea name="reactionDescription" cols="40" rows="3"><%=reaction%></textarea>
+                                        <textarea name="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
                                         <input type="hidden" name="ID" value="<%=drugrefId%>"/>
                                         <input type="hidden" name="name" id="name" value="<%=name%>"/>
                                         <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=allergyToArchive%>"/>
