@@ -526,6 +526,25 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
         return this.caseManagementNoteDAO.getNote(Long.valueOf(note_id));
     }
 
+    /**
+     * Gets the note content with XML tags stripped for display purposes.
+     * This is used for imported CDS data that may contain raw XML elements
+     * which should be displayed as plain text.
+     *
+     * @param noteContent the raw note content
+     * @return the note content with XML tags stripped, or the original content if no XML tags present
+     */
+    @Override
+    public String getNoteContentForDisplay(String noteContent) {
+        if (noteContent == null || noteContent.isEmpty()) {
+            return noteContent;
+        }
+        // Strip XML tags, extracting only the text content between tags
+        // This handles imported CDS data that contains raw XML like:
+        // <cdsd:resultNormalAbnormalFlagAsPlainText>No</cdsd:resultNormalAbnormalFlagAsPlainText>
+        return noteContent.replaceAll("<[^>]+>", "").trim();
+    }
+
     @Override
     public List<CaseManagementNote> getNotesByUUID(String uuid) {
         return this.caseManagementNoteDAO.getNotesByUUID(uuid);

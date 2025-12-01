@@ -141,6 +141,8 @@ public interface CaseManagementManager {
 
     public CaseManagementNote getNote(String note_id);
 
+    public String getNoteContentForDisplay(String noteContent);
+
     public List<CaseManagementNote> getNotesByUUID(String uuid);
 
     public CaseManagementNote getMostRecentNote(String uuid);
