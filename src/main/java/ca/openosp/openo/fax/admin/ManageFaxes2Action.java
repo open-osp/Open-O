@@ -66,12 +66,12 @@ import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
-import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.form.JSONUtil;
 import ca.openosp.OscarProperties;
+import ca.openosp.openo.fax.action.Fax2Action;
 
-public class ManageFaxes2Action extends ActionSupport {
+public class ManageFaxes2Action extends Fax2Action {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -82,17 +82,26 @@ public class ManageFaxes2Action extends ActionSupport {
 
     private final FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
 
+    @Override
     public String execute() {
         String method = request.getParameter("method");
         if ("CancelFax".equals(method)) {
             return CancelFax();
         } else if ("ResendFax".equals(method)) {
             return ResendFax();
+        } else if ("viewFax".equals(method)) {
+            viewFax();
+            return null;
         } else if ("fetchFaxStatus".equals(method)) {
             return fetchFaxStatus();
+        } else if ("SetCompleted".equals(method)) {
+            SetCompleted();
+            return null;
         }
-        return fetchFaxStatus();
-        
+
+        // Delegate to parent for getPageCount, getPreview, etc.
+        return super.execute();
+
     }
 
 
@@ -200,72 +209,6 @@ public class ManageFaxes2Action extends ActionSupport {
         }
 
         getPreview();
-    }
-
-    /**
-     * Get a preview image of the entire fax document.
-     */
-    @SuppressWarnings("unused")
-    public void getPreview() {
-
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        String faxFilePath = request.getParameter("faxFilePath");
-        String pageNumber = request.getParameter("pageNumber");
-        String showAs = request.getParameter("showAs");
-        Path outfile = null;
-        int page = 1;
-        String jobId = request.getParameter("jobId");
-        FaxJob faxJob = null;
-
-        if (jobId != null && !jobId.isEmpty()) {
-            faxJob = faxManager.getFaxJob(loggedInInfo, Integer.parseInt(jobId));
-        }
-
-        if (faxJob != null) {
-            faxFilePath = faxJob.getFile_name();
-        }
-
-        if (pageNumber != null && !pageNumber.isEmpty()) {
-            page = Integer.parseInt(pageNumber);
-        }
-
-        /*
-         * Displaying the entire PDF using the default browser's view before faxing an EForm (in CoverPage.jsp),
-         * and when viewing it in the fax records (Manage Faxes), it is shown as images.
-         */
-        if (faxFilePath != null && !faxFilePath.isEmpty()) {
-            if (showAs != null && showAs.equals("image")) {
-                // When showing as image, use the fax manager which handles path validation
-                outfile = faxManager.getFaxPreviewImage(loggedInInfo, faxFilePath, page);
-                if (outfile != null) {
-                    response.setContentType("image/png");
-                    // Sanitize filename to prevent HTTP response splitting
-                    String sanitizedFilename = sanitizeHeaderValue(outfile.getFileName().toString());
-                    response.setHeader("Content-Disposition", "attachment;filename=" + sanitizedFilename);
-                }
-            } else {
-                // When showing as PDF, validate the path before using it
-                outfile = validateAndSanitizePath(faxFilePath);
-                if (outfile != null) {
-                    response.setContentType("application/pdf");
-                }
-            }
-        }
-
-        if (outfile != null) {
-            try (InputStream inputStream = Files.newInputStream(outfile);
-                 BufferedInputStream bfis = new BufferedInputStream(inputStream);
-                 ServletOutputStream outs = response.getOutputStream()) {
-
-                int data;
-                while ((data = bfis.read()) != -1) {
-                    outs.write(data);
-                }
-                outs.flush();
-            } catch (IOException e) {
-                log.error("Error serving file", e);
-            }
-        }
     }
 
     /**
