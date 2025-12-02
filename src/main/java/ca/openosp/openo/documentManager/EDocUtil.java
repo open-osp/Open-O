@@ -1335,15 +1335,14 @@ public final class EDocUtil {
             return 0;
         }
 
-        // For absolute paths, check if file exists first before security validation
-        // This handles stale data from different environments gracefully
-        Path inputPath = Paths.get(fileName);
-        if (inputPath.isAbsolute() && !Files.exists(inputPath)) {
-            logger.debug("File not found (may be from different environment): " + fileName);
-            return 0;
-        }
-
         try {
+            // For absolute paths, check if file exists first before security validation
+            // This handles stale data from different environments gracefully
+            Path inputPath = Paths.get(fileName);
+            if (inputPath.isAbsolute() && !Files.exists(inputPath)) {
+                logger.debug("File not found (may be from different environment): " + fileName);
+                return 0;
+            }
             // resolvePath validates the path is within allowed directories
             String resolvedPath = resolvePath(fileName);
             Path path = Paths.get(resolvedPath);
