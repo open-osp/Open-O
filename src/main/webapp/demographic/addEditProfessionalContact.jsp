@@ -328,10 +328,11 @@
                 <td align="right"><b>Specialty</b></td>
                 <td>
                     <oscar:oscarPropertiesCheck property="DEMOGRAPHIC_PATIENT_HEALTH_CARE_TEAM" value="true">
-
+                        <%-- Determine which specialty value to use for selection: contactRole (from DemographicContact) or pcontact.specialty --%>
+                        <c:set var="selectedSpecialty" value="${ not empty requestScope.contactRole ? requestScope.contactRole : pcontact.specialty }"/>
                         <select id="pcontact.specialty" name="pcontact.specialty">
                             <c:forEach items="${ specialties }" var="specialtyType">
-                                <option value="${ specialtyType.id }" ${ specialtyType.id eq requestScope.contactRole ? 'selected' : '' } >
+                                <option value="${ specialtyType.id }" ${ specialtyType.id == selectedSpecialty ? 'selected' : '' } >
                                     <c:out value="${ specialtyType.specialty }"/>
                                 </option>
                             </c:forEach>

@@ -554,10 +554,20 @@ public class Contact2Action extends ActionSupport {
     public String editProContact() {
         String id = request.getParameter("pcontact.id");
         ProfessionalContact contact = null;
+
         if (StringUtils.isNotBlank(id)) {
             id = id.trim();
             contact = proContactDao.find(Integer.parseInt(id));
             request.setAttribute("pcontact", contact);
+
+            // Set specialties list for dropdown
+            List<ContactSpecialty> specialties = contactSpecialtyDao.findAll();
+            request.setAttribute("specialties", specialties);
+
+            // Set contactRole from the contact's specialty for proper selection
+            if (contact != null && StringUtils.isNotBlank(contact.getSpecialty())) {
+                request.setAttribute("contactRole", contact.getSpecialty());
+            }
         }
         return "pForm";
     }
@@ -756,6 +766,14 @@ public class Contact2Action extends ActionSupport {
             request.setAttribute("demographic_no", demographic_no);
             request.setAttribute("id", demographicContactId);
         }
+
+        // Set up attributes for form re-render and parent window communication
+        request.setAttribute("specialties", contactSpecialtyDao.findAll());
+        request.setAttribute("contactRole", contactRole);
+        request.setAttribute("contactId", contactId);
+        request.setAttribute("contactName", contact.getFormattedName());
+        request.setAttribute("demographicContactId", demographicContactId);
+        request.setAttribute("contactType", contactType);
 
         return "pForm";
     }
