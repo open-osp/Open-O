@@ -56,7 +56,7 @@
                 var firstName = '${ pcontact.firstName }';
                 var lastName = '${ pcontact.lastName }';
 
-                if (keyword && keyword.contains(",")) {
+                if (keyword && keyword.includes(",")) {
                     keywordLastName = keyword.split(",")[0].trim();
                     keywordFirstName = keyword.split(",")[1].trim();
                 } else if (keyword) {
@@ -195,7 +195,7 @@
         </tr>
     </table>
 
-    <form action="<%= request.getContextPath() %>/demographic/Contact.do" id="addEditProfessionalForm">
+    <form action="<%= request.getContextPath() %>/demographic/Contact.do" id="addEditProfessionalForm" name="contactForm">
 
         <c:if test="${ pcontact.id gt 0 }">
             <input type="hidden" name="pcontact.id" value="${ pcontact.id }"/>
