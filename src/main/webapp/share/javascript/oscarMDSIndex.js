@@ -448,7 +448,7 @@ function FileSelectedRows(files, searchProviderNo, status) {
 //            }
 //        });
 //    }
-    let filelabs = {"flaggedLabs": "{\"files\" : " + JSON.stringify(files) + "}"};
+    let filelabs = { "flaggedLabs": JSON.stringify({ "files": files })};
     let url = ctx + "/oscarMDS/FileLabs.do";
     bulkInboxAction(url, filelabs);
 }
@@ -1278,14 +1278,11 @@ function styleDialogAsCard() {
 
 function forwardLabs(files, providers, favorites) {
     var url = ctx + "/oscarMDS/ReportReassign.do";
-    if (typeof files === "string") {
-        files = new Array(files);
-    }
 
     var filelabs = {
-        "flaggedLabs": "{\"files\" : " + JSON.stringify(files) + "}",
-        "selectedProviders": "{\"providers\" : " + JSON.stringify(providers) + "}",
-        "selectedFavorites": "{\"favorites\" : " + JSON.stringify(favorites) + "}",
+        "flaggedLabs": files,
+        "selectedProviders": providers,
+        "selectedFavorites": favorites,
         "searchProviderNo": jQuery("input[name='searchProviderNo']").val(),
         "ajax": "yes"
     };

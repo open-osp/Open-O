@@ -29,6 +29,7 @@ package ca.openosp.openo.mds.pageUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -74,73 +75,44 @@ public class ReportReassign2Action extends ActionSupport {
         String ajax = request.getParameter("ajax");
         String providerNo = loggedInInfo.getLoggedInProviderNo();
         String searchProviderNo = request.getParameter("searchProviderNo");
-        ArrayNode jsonArray = null;
-        String[] selectedProvidersArray = new String[0];
-        String[] arrNewFavs = new String[0];
         ArrayList<String[]> flaggedLabsList = new ArrayList<>();
         boolean success = Boolean.FALSE;
+        
         /*
-         * Group together any new favorite providers that may have been
-         * set during the forward process.
-         */
-        String newFavorites = request.getParameter("selectedFavorites");
-        if (newFavorites != null && !newFavorites.isEmpty()) {
-            try {
-                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(newFavorites);
-                jsonArray = (ArrayNode) jsonObject.get("favorites");
-            } catch (Exception e) {
-                logger.error("Failed to parse selectedFavorites JSON", e);
-            }
-        }
-
-        if (jsonArray != null) {
-            arrNewFavs = new String[jsonArray.size()];
-            for (int i = 0; i < jsonArray.size(); i++) {
-                arrNewFavs[i] = jsonArray.get(i).asText();
-            }
+        * Group together any new favorite providers that may have been
+        * set during the forward process.
+        */
+        String[] arrNewFavs = request.getParameterValues("selectedFavorites[]");
+        if (arrNewFavs == null) {
+            arrNewFavs = new String[0];
         }
 
         /*
-         * Group together the providers selected during the forward
-         * process.
-         */
-        String selectedProviders = request.getParameter("selectedProviders");
-        logger.info("selected providers to forward labs to " + selectedProviders);
-
-        if (selectedProviders != null && !selectedProviders.isEmpty()) {
-            try {
-                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(selectedProviders);
-                jsonArray = (ArrayNode) jsonObject.get("providers");
-            } catch (Exception e) {
-                logger.error("Failed to parse selectedProviders JSON", e);
-            }
+        * Group together the providers selected during the forward
+        * process.
+        */
+        String[] selectedProvidersArray = request.getParameterValues("selectedProviders[]");
+        if (selectedProvidersArray == null) {
+            selectedProvidersArray = new String[0];
         }
-
-        if (jsonArray != null) {
-            selectedProvidersArray = new String[jsonArray.size()];
-            for (int i = 0; i < jsonArray.size(); i++) {
-                selectedProvidersArray[i] = jsonArray.get(i).asText();
-            }
-        }
+        logger.info("selected providers to forward labs to " + Arrays.toString(selectedProvidersArray));
 
         /*
-         * Group together the lab ids and types checked off during the
-         * forwarding process.
-         */
-        String flaggedLabs = request.getParameter("flaggedLabs");
-        if (flaggedLabs != null && !flaggedLabs.isEmpty()) {
-            try {
-                ObjectNode jsonObject = (ObjectNode) objectMapper.readTree(flaggedLabs);
-                jsonArray = (ArrayNode) jsonObject.get("files");
-            } catch (Exception e) {
-                logger.error("Failed to parse flaggedLabs JSON", e);
+        * Group together the lab ids and types checked off during the
+        * forwarding process.
+        */
+        String[] flaggedLabsArray = request.getParameterValues("flaggedLabs[]");
+        if (flaggedLabsArray == null || flaggedLabsArray.length == 0) {
+            // Handle single value case (from lab display page where files is a string, not array)
+            String singleLab = request.getParameter("flaggedLabs");
+            if (singleLab != null && !singleLab.isEmpty()) {
+                flaggedLabsArray = new String[]{singleLab};
             }
         }
-
-        if (jsonArray != null) {
+        if (flaggedLabsArray != null) {
             String[] labid;
-            for (int i = 0; i < jsonArray.size(); i++) {
-                labid = jsonArray.get(i).asText().split(":");
+            for (String lab : flaggedLabsArray) {
+                labid = lab.split(":");
                 flaggedLabsList.add(labid);
             }
         }
@@ -226,7 +198,14 @@ public class ReportReassign2Action extends ActionSupport {
         if (ajax != null && ajax.equals("yes")) {
             ObjectNode jsonResponse = objectMapper.createObjectNode();
             jsonResponse.put("success", success);
-            jsonResponse.set("files", jsonArray);
+            ArrayNode filesArray = objectMapper.createArrayNode();
+            if (flaggedLabsArray != null) {
+                for (String lab : flaggedLabsArray) {
+                    filesArray.add(lab);
+                }
+            }
+            jsonResponse.set("files", filesArray);
+
             try {
                 PrintWriter out = response.getWriter();
                 response.setContentType("application/json");
