@@ -85,7 +85,6 @@
                 padding: 14px;
             }
         </style>
-        <script src="${ pageContext.request.contextPath }/library/jquery/jquery-3.6.4.min.js"></script>
         <script src="${ pageContext.request.contextPath }/share/calendar/calendar.js"></script>
         <script src="${ pageContext.request.contextPath }/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
         <script src="${ pageContext.request.contextPath }/share/calendar/calendar-setup.js"></script>
@@ -124,21 +123,39 @@
                 }
 
                 if (ret) {
+                    // Convert form data to URL-encoded string
+                    const formData = new FormData(document.getElementById('theForm'));
+                    const urlEncodedData = new URLSearchParams(formData).toString();
 
-                    $.post('<%=request.getContextPath()%>/oscarEncounter/Measurements.do?ajax=true&skipCreateNote=true', $('#theForm').serialize(), function (data) {
-                        $("#errors_list").empty();
-                        if (data.errors) {
-                            $("#errors_list").prepend("<div class='alert alert-error'>");
-                            for (var x = 0; x < data.errors.length; x++) {
-                                $(".alert").append(data.errors[x]);
+                    fetch('<%=request.getContextPath()%>/oscarEncounter/Measurements.do?ajax=true&skipCreateNote=true', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: urlEncodedData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const errorsList = document.getElementById('errors_list');
+                        const errorDiv = document.getElementById('errorDiv');
+                        
+                        errorsList.innerHTML = '';
+                        
+                        if (data.errors && data.errors.length > 0) {
+                            for (let x = 0; x < data.errors.length; x++) {
+                                errorsList.insertAdjacentHTML('beforeend', data.errors[x]);
                             }
-
+                            errorDiv.style.display = 'block';
+                            // Scroll to top to show validation errors
+                            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         } else {
                             opener.postMessage(data, "*");
                             window.close();
                         }
-                    }, 'json');
-
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                    });
                 }
             }
         </script>
@@ -180,8 +197,11 @@
                 <td class="MainTableRightColumn">
 
                     <%=measurementManager.getDShtml(groupName)%>
-                    <ul id="errors_list" style="color:red">
-                    </ul>
+                    <div id="errorDiv" style="display:none; margin: 10px 0; padding: 10px; border: 1px solid #dc3545; background-color: #f8d7da; border-radius: 4px;">
+                        <strong style="color: #721c24;">Error:</strong>
+                        <ul id="errors_list" style="color: #721c24; margin: 5px 0 0 0; padding-left: 20px;">
+                        </ul>
+                    </div>
 
                     <table>
                         <tr>
@@ -317,33 +337,53 @@
     </form>
 
     <script>
-        $(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
+            // If WT, HT and BMI exists then allow the link
+            const rowWT = document.getElementById('row-WT');
+            const rowHT = document.getElementById('row-HT');
+            const rowBMI = document.getElementById('row-BMI');
 
-//if WT, HT and BMI exists then allow the link
-            if ($('#row-WT').length && $('#row-HT').length && $('#row-BMI').length) {
+            if (rowWT && rowHT && rowBMI) {
+                const wtInput = rowWT.querySelectorAll('td')[2]?.querySelector('input');
+                const htInput = rowHT.querySelectorAll('td')[2]?.querySelector('input');
 
-                $('#row-WT td:eq(2) input').on("keyup", function () {
-                    calcBMI($(this).val(), $('#row-HT td:eq(2) input').val());
-                });
+                if (wtInput) {
+                    wtInput.addEventListener('keyup', function () {
+                        const htValue = rowHT.querySelectorAll('td')[2]?.querySelector('input')?.value;
+                        calcBMI(this.value, htValue);
+                    });
+                }
 
-                $('#row-HT td:eq(2) input').on("keyup", function () {
-                    calcBMI($('#row-WT td:eq(2) input').val(), $(this).val());
-                });
+                if (htInput) {
+                    htInput.addEventListener('keyup', function () {
+                        const wtValue = rowWT.querySelectorAll('td')[2]?.querySelector('input')?.value;
+                        calcBMI(wtValue, this.value);
+                    });
+                }
             }
 
+            // Set today's date for all date fields
+            const utc = new Date().toJSON().slice(0, 10);
+            document.querySelectorAll('[id^="date-"]').forEach(function(elem) {
+                elem.value = utc;
+            });
         });
 
-        var utc = new Date().toJSON().slice(0, 10);
-        $("[id^=date-]").val(utc);
-
         function calcBMI(w, h) {
-            b = '';
+            let b = '';
 
             if (!isNaN(parseFloat(w)) && !isNaN(parseFloat(h)) && h !== "" && w !== "") {
                 if (h > 0) {
                     b = (w / Math.pow(h / 100, 2)).toFixed(1);
-                    $('#row-BMI td:eq(2) input').val(b);
-                    $('#row-BMI').css("background-color", "#d9e6f2");
+                    const bmiInput = document.getElementById('row-BMI')?.querySelectorAll('td')[2]?.querySelector('input');
+                    const rowBMI = document.getElementById('row-BMI');
+                    
+                    if (bmiInput) {
+                        bmiInput.value = b;
+                    }
+                    if (rowBMI) {
+                        rowBMI.style.backgroundColor = "#d9e6f2";
+                    }
                 }
             }
         }
