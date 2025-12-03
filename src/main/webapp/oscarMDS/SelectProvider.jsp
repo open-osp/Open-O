@@ -35,10 +35,6 @@
 <head>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/global.js"></script>
     <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.selectProvider.title"/></title>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/prototype.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/effects.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/share/javascript/controls.js"></script>
-
     <script type="text/javascript" src="${pageContext.request.contextPath}/share/yui/js/yahoo-dom-event.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/share/yui/js/connection-min.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/share/yui/js/animation-min.js"></script>
@@ -56,22 +52,22 @@
         var fwdFavorites = "";
 
 
-        for (i = 0; i < $("fwdProviders").options.length; i++) {
+        for (i = 0; i < document.getElementById("fwdProviders").options.length; i++) {
 
             if (fwdProviders != "") {
                 fwdProviders = fwdProviders + ",";
             }
 
-            fwdProviders = fwdProviders + $("fwdProviders").options[i].value;
+            fwdProviders = fwdProviders + document.getElementById("fwdProviders").options[i].value;
         }
 
-        for (i = 0; i < $("favorites").options.length; i++) {
+        for (i = 0; i < document.getElementById("favorites").options.length; i++) {
 
             if (fwdFavorites != "") {
                 fwdFavorites = fwdFavorites + ",";
             }
 
-            fwdFavorites = fwdFavorites + $("favorites").options[i].value;
+            fwdFavorites = fwdFavorites + document.getElementById("favorites").options[i].value;
         }
 
         var isListView = <%=request.getParameter("isListView")%>;
@@ -177,11 +173,11 @@
         oAC.queryMatchContains = true;
 
         oAC.itemSelectEvent.subscribe(function (type, args) {
-            $("autocompleteprov").value = "";
+            document.getElementById("autocompleteprov").value = "";
             var name = args[2][2] + ", " + args[2][1];
             var id = args[2][0];
 
-            var selectObj = $("fwdProviders");
+            var selectObj = document.getElementById("fwdProviders");
             var option = document.createElement("option");
             option.text = name;
             option.value = id;
@@ -203,15 +199,15 @@
         };
     }();
 
-    $("autocompleteprov").focus();
+    document.getElementById("autocompleteprov").focus();
 
     function removeProvider(selectObj) {
         selectObj.remove(selectObj.selectedIndex);
     }
 
     function copyProvider(to, from) {
-        var fromOptions = $(from).options;
-        var toOptions = $(to).options;
+        var fromOptions = document.getElementById(from).options;
+        var toOptions = document.getElementById(to).options;
 
         for (var idx = 0; idx < fromOptions.length; ++idx) {
             if (fromOptions[idx].selected && toOptions.namedItem(fromOptions[idx].id) == null) {
@@ -224,9 +220,9 @@
                 option.id = fromOptions[idx].id;
                 try {
                     // for IE earlier than version 8
-                    $(to).add(option, $(to).options[null]);
+                    document.getElementById(to).add(option, document.getElementById(to).options[null]);
                 } catch (e) {
-                    $(to).add(option, null);
+                    document.getElementById(to).add(option, null);
                 }
             }
         }

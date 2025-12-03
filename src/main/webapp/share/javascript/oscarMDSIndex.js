@@ -1278,15 +1278,27 @@ function styleDialogAsCard() {
 
 function forwardLabs(files, providers, favorites) {
     var url = ctx + "/oscarMDS/ReportReassign.do";
-
-    var filelabs = {
-        "flaggedLabs": files,
-        "selectedProviders": providers,
-        "selectedFavorites": favorites,
-        "searchProviderNo": jQuery("input[name='searchProviderNo']").val(),
-        "ajax": "yes"
-    };
-    bulkInboxAction(url, filelabs);
+    
+    // Temporarily remove Prototype.js toJSON to prevent double-stringification
+    // var arrayToJson = Array.prototype.toJSON;
+    // delete Array.prototype.toJSON;
+    
+    // try {
+        var filesArray = Array.isArray(files) ? files : [files];
+        
+        var filelabs = {
+            "flaggedLabs": JSON.stringify({ "files": filesArray }),
+            "selectedProviders": JSON.stringify({ "providers": providers }),
+            "selectedFavorites": JSON.stringify({ "favorites": favorites }),
+            "searchProviderNo": jQuery("input[name='searchProviderNo']").val(),
+            "ajax": "yes"
+        };
+        
+        bulkInboxAction(url, filelabs);
+    // } finally {
+    //     // Restore it in case other code depends on it
+    //     Array.prototype.toJSON = arrayToJson;
+    // }
 }
 
 function updateDocLabData(doclabid) {//remove doclabid from global variables
