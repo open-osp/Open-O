@@ -1279,11 +1279,6 @@ function styleDialogAsCard() {
 function forwardLabs(files, providers, favorites) {
     var url = ctx + "/oscarMDS/ReportReassign.do";
     
-    // Temporarily remove Prototype.js toJSON to prevent double-stringification
-    // var arrayToJson = Array.prototype.toJSON;
-    // delete Array.prototype.toJSON;
-    
-    // try {
         var filesArray = Array.isArray(files) ? files : [files];
         
         var filelabs = {
@@ -1293,12 +1288,7 @@ function forwardLabs(files, providers, favorites) {
             "searchProviderNo": jQuery("input[name='searchProviderNo']").val(),
             "ajax": "yes"
         };
-        
         bulkInboxAction(url, filelabs);
-    // } finally {
-    //     // Restore it in case other code depends on it
-    //     Array.prototype.toJSON = arrayToJson;
-    // }
 }
 
 function updateDocLabData(doclabid) {//remove doclabid from global variables
