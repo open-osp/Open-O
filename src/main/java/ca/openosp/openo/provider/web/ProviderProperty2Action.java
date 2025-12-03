@@ -2679,7 +2679,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         Map<String, Object> json = new HashMap<>();
         json.put("status", status);
-        writeJsonResponse(response, json.toString());
+        writeJsonResponse(response, json);
         return null;
     }
 
@@ -2695,11 +2695,11 @@ public class ProviderProperty2Action extends ActionSupport {
 
         Map<String, Object> json = new HashMap<>();
         json.put("status", status);
-        writeJsonResponse(response, json.toString());
+        writeJsonResponse(response, json);
         return null;
     }
 
-    private void writeJsonResponse(HttpServletResponse response, String json) {
+    private void writeJsonResponse(HttpServletResponse response, Object json) {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
