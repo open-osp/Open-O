@@ -199,11 +199,16 @@ public class ReportReassign2Action extends ActionSupport {
             newURL = request.getRequestURI();
 
             if (newURL.contains("labDisplay.jsp")) {
-                newURL = newURL + "?providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&segmentID=" + flaggedLabsList.get(0);
+                newURL = newURL + "?providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status;
                 // the segmentID is needed when being called from a lab display
             } else {
-                newURL = newURL + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&segmentID=" + flaggedLabsList.get(0);
+                newURL = newURL + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status;
             }
+
+            if (!flaggedLabsList.isEmpty()) {
+                newURL = newURL + "&segmentID=" + flaggedLabsList.get(0);
+            }
+            
             if (request.getParameter("lname") != null) {
                 newURL = newURL + "&lname=" + request.getParameter("lname");
             }
