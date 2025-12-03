@@ -347,17 +347,13 @@
                 const wtInput = rowWT.querySelectorAll('td')[2]?.querySelector('input');
                 const htInput = rowHT.querySelectorAll('td')[2]?.querySelector('input');
 
-                if (wtInput) {
+                if (wtInput && htInput) {
                     wtInput.addEventListener('keyup', function () {
-                        const htValue = rowHT.querySelectorAll('td')[2]?.querySelector('input')?.value;
-                        calcBMI(this.value, htValue);
+                        calcBMI(this.value, htInput.value);
                     });
-                }
 
-                if (htInput) {
                     htInput.addEventListener('keyup', function () {
-                        const wtValue = rowWT.querySelectorAll('td')[2]?.querySelector('input')?.value;
-                        calcBMI(wtValue, this.value);
+                        calcBMI(wtInput.value, this.value);
                     });
                 }
             }
