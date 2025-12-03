@@ -448,7 +448,7 @@ function FileSelectedRows(files, searchProviderNo, status) {
 //            }
 //        });
 //    }
-    let filelabs = { "flaggedLabs": JSON.stringify({ "files": files })};
+    let filelabs = {"flaggedLabs": "{\"files\" : " + JSON.stringify(files) + "}"};
     let url = ctx + "/oscarMDS/FileLabs.do";
     bulkInboxAction(url, filelabs);
 }
