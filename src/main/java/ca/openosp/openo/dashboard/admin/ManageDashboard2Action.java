@@ -83,8 +83,8 @@ public class ManageDashboard2Action extends ActionSupport {
         String method = request.getParameter("method");
         if ("importTemplate".equals(method)) {
             return importTemplate();
-        } else if ("importTemplate".equals(method)) {
-            return importTemplate();
+        } else if ("exportTemplate".equals(method)) {
+            return exportTemplate();
         } else if ("assignDashboard".equals(method)) {
             return assignDashboard();
         } else if ("saveDashboard".equals(method)) {
