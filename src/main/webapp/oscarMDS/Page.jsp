@@ -73,7 +73,11 @@
 <% if (isListView && pageNum == 0) { %>
 <script type="text/javascript">
     function submitLabel(lblval) {
-        document.forms['TDISLabelForm'].label.value = document.forms['acknowledgeForm'].label.value;
+        var tdisForm = document.forms['TDISLabelForm'];
+        var ackForm = document.forms['acknowledgeForm'];
+        if (tdisForm && tdisForm.label && ackForm && ackForm.label) {
+            tdisForm.label.value = ackForm.label.value;
+        }
     }
 </script>
 

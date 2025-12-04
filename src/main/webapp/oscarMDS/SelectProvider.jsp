@@ -51,23 +51,25 @@
         var fwdProviders = "";
         var fwdFavorites = "";
 
+        var fwdProvidersEl = document.getElementById("fwdProviders");
+        var favoritesEl = document.getElementById("favorites");
 
-        for (i = 0; i < document.getElementById("fwdProviders").options.length; i++) {
-
-            if (fwdProviders != "") {
-                fwdProviders = fwdProviders + ",";
+        if (fwdProvidersEl) {
+            for (i = 0; i < fwdProvidersEl.options.length; i++) {
+                if (fwdProviders != "") {
+                    fwdProviders = fwdProviders + ",";
+                }
+                fwdProviders = fwdProviders + fwdProvidersEl.options[i].value;
             }
-
-            fwdProviders = fwdProviders + document.getElementById("fwdProviders").options[i].value;
         }
 
-        for (i = 0; i < document.getElementById("favorites").options.length; i++) {
-
-            if (fwdFavorites != "") {
-                fwdFavorites = fwdFavorites + ",";
+        if (favoritesEl) {
+            for (i = 0; i < favoritesEl.options.length; i++) {
+                if (fwdFavorites != "") {
+                    fwdFavorites = fwdFavorites + ",";
+                }
+                fwdFavorites = fwdFavorites + favoritesEl.options[i].value;
             }
-
-            fwdFavorites = fwdFavorites + document.getElementById("favorites").options[i].value;
         }
 
         var isListView = <%=request.getParameter("isListView")%>;
@@ -77,18 +79,26 @@
 
         if (docId != "null" && labDisplay == "null") {
             frm += "_" + docId;
-            self.opener.document.forms[frm].selectedProviders.value = fwdProviders;
-            self.opener.document.forms[frm].favorites.value = fwdFavorites;
+            var form = self.opener.document.forms[frm];
+            if (form) {
+                if (form.selectedProviders) form.selectedProviders.value = fwdProviders;
+                if (form.favorites) form.favorites.value = fwdFavorites;
+            }
             self.opener.forwardDocument(docId);
             self.close();
         } else if (isListView != "null" && isListView == true) {
-            // self.opener.document.forms[frm].selectedProviders.value = fwdProviders;
-            forwardLabs(document.getElementById("forwardList").value, fwdProviders);
+            var forwardListEl = document.getElementById("forwardList");
+            if (forwardListEl) {
+                forwardLabs(forwardListEl.value, fwdProviders);
+            }
         } else {
             frm += "_" + docId;
-            self.opener.document.forms[frm].selectedProviders.value = fwdProviders;
-            self.opener.document.forms[frm].favorites.value = fwdFavorites;
-            self.opener.document.forms[frm].submit();
+            var form = self.opener.document.forms[frm];
+            if (form) {
+                if (form.selectedProviders) form.selectedProviders.value = fwdProviders;
+                if (form.favorites) form.favorites.value = fwdFavorites;
+                form.submit();
+            }
             self.close();
         }
 
@@ -173,21 +183,24 @@
         oAC.queryMatchContains = true;
 
         oAC.itemSelectEvent.subscribe(function (type, args) {
-            document.getElementById("autocompleteprov").value = "";
+            var autocompleteEl = document.getElementById("autocompleteprov");
+            if (autocompleteEl) autocompleteEl.value = "";
             var name = args[2][2] + ", " + args[2][1];
             var id = args[2][0];
 
             var selectObj = document.getElementById("fwdProviders");
-            var option = document.createElement("option");
-            option.text = name;
-            option.value = id;
-            option.id = id;
+            if (selectObj) {
+                var option = document.createElement("option");
+                option.text = name;
+                option.value = id;
+                option.id = id;
 
-            try {
-                // for IE earlier than version 8
-                selectObj.add(option, selectObj.options[null]);
-            } catch (e) {
-                selectObj.add(option, null);
+                try {
+                    // for IE earlier than version 8
+                    selectObj.add(option, selectObj.options[null]);
+                } catch (e) {
+                    selectObj.add(option, null);
+                }
             }
 
         });
@@ -199,15 +212,20 @@
         };
     }();
 
-    document.getElementById("autocompleteprov").focus();
+    var autocompleteprovEl = document.getElementById("autocompleteprov");
+    if (autocompleteprovEl) autocompleteprovEl.focus();
 
     function removeProvider(selectObj) {
         selectObj.remove(selectObj.selectedIndex);
     }
 
     function copyProvider(to, from) {
-        var fromOptions = document.getElementById(from).options;
-        var toOptions = document.getElementById(to).options;
+        var fromEl = document.getElementById(from);
+        var toEl = document.getElementById(to);
+        if (!fromEl || !toEl) return;
+
+        var fromOptions = fromEl.options;
+        var toOptions = toEl.options;
 
         for (var idx = 0; idx < fromOptions.length; ++idx) {
             if (fromOptions[idx].selected && toOptions.namedItem(fromOptions[idx].id) == null) {
@@ -220,9 +238,9 @@
                 option.id = fromOptions[idx].id;
                 try {
                     // for IE earlier than version 8
-                    document.getElementById(to).add(option, document.getElementById(to).options[null]);
+                    toEl.add(option, toEl.options[null]);
                 } catch (e) {
-                    document.getElementById(to).add(option, null);
+                    toEl.add(option, null);
                 }
             }
         }

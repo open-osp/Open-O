@@ -511,21 +511,23 @@
         function updateListView() {
             var query = getQuery();
             console.log(query);
+            var docViewsEl = document.getElementById("docViews");
             if (page == 1) {
-                document.getElementById("docViews").innerHTML = "";
+                if (docViewsEl) docViewsEl.innerHTML = "";
                 canLoad = true;
             }
 
             if (isListView && page == 1) {
-                document.getElementById("docViews").innerHTML = "<div id='tempLoader'><img src='" + ctx + "/images/DMSLoader.gif'> Loading reports...</div>"
+                if (docViewsEl) docViewsEl.innerHTML = "<div id='tempLoader'><img src='" + ctx + "/images/DMSLoader.gif'> Loading reports...</div>"
             } else if (isListView) {
-                document.getElementById("loader").style.display = "block";
+                var loaderEl = document.getElementById("loader");
+                if (loaderEl) loaderEl.style.display = "block";
             } else {
                 jQuery("#docViews").append(jQuery("<div id='tempLoader'><img src='" + ctx + "/images/DMSLoader.gif'> Loading reports...</div>"));
             }
             var div;
             if (!isListView || page == 1) {
-                div = document.getElementById("docViews");
+                div = docViewsEl;
             } else {
                 div = document.getElementById("summaryBody");
             }
@@ -595,11 +597,15 @@
                 var listSwitcherEl = document.getElementById("listSwitcher");
                 if (readerSwitcherEl) readerSwitcherEl.disabled = false;
                 if (listSwitcherEl) listSwitcherEl.disabled = false;
+
+                abortController = null;
             })
             .catch(function(error) {
                 if (error.name !== 'AbortError') {
                     console.error('Fetch error:', error);
                 }
+                loadingDocs = false;
+                abortController = null;
             });
         }
 
@@ -676,7 +682,8 @@
             selected_category = type;
             selected_category_patient = patientId;
             selected_category_type = subtype;
-            document.getElementById("docViews").innerHTML = "";
+            var docViewsEl = document.getElementById("docViews");
+            if (docViewsEl) docViewsEl.innerHTML = "";
 
             changePage(1);
         }
@@ -698,7 +705,8 @@
             jQuery('input[name=isListView]').val(isListView);
 
             loadingDocs = true;
-            document.getElementById("docViews").innerHTML = "";
+            var docViewsEl = document.getElementById("docViews");
+            if (docViewsEl) docViewsEl.innerHTML = "";
             var list = document.getElementById("listSwitcher");
             var view = document.getElementById("readerSwitcher");
             var active, passive;

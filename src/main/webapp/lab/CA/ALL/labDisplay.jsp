@@ -850,12 +850,16 @@ request.setAttribute("missingTests", missingTests);
             }
             var commentVal = prompt('<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.msgComment"/>', comment);
 
+            var ackForm = document.forms['acknowledgeForm_' + segmentId];
             if (commentVal == null) {
                 ret = false;
-            } else if (commentVal != null && commentVal.length > 0)
-                document.forms['acknowledgeForm_' + segmentId].comment.value = commentVal;
-            else
-                document.forms['acknowledgeForm_' + segmentId].comment.value = comment;
+            } else if (ackForm && ackForm.comment) {
+                if (commentVal.length > 0) {
+                    ackForm.comment.value = commentVal;
+                } else {
+                    ackForm.comment.value = comment;
+                }
+            }
 
             if (ret) handleLab('acknowledgeForm_' + segmentId, segmentId, action);
 
@@ -864,8 +868,11 @@ request.setAttribute("missingTests", missingTests);
 
         function printPDF(labid) {
             var frm = "acknowledgeForm_" + labid;
-            document.forms[frm].action = "lab/CA/ALL/PrintPDF.do";
-            document.forms[frm].submit();
+            var form = document.forms[frm];
+            if (form) {
+                form.action = "lab/CA/ALL/PrintPDF.do";
+                form.submit();
+            }
         }
 
         function linkreq(rptId, reqId) {
@@ -997,11 +1004,15 @@ request.setAttribute("missingTests", missingTests);
             var url = '<%=request.getContextPath()%>' + "/oscarMDS/UpdateStatus.do?method=addComment";
 
             var labStatusEl = document.getElementById("labStatus_" + labid);
-            if (labStatusEl.value === "") {
+            if (labStatusEl && labStatusEl.value === "") {
                 labStatusEl.value = "N";
             }
 
             var formEl = document.getElementById(formid);
+            if (!formEl) {
+                console.error("Form not found: " + formid);
+                return;
+            }
             var data = new URLSearchParams(new FormData(formEl)).toString();
             console.log(url);
             console.log(data);
@@ -1016,9 +1027,13 @@ request.setAttribute("missingTests", missingTests);
         }
 
         function submitLabel(lblval, segmentID) {
-            let newlabelvalue = document.forms['acknowledgeForm_' + segmentID].label.value;
-            if (newlabelvalue.length > 1) {
-                document.forms['TDISLabelForm_' + segmentID].label.value = newlabelvalue;
+            var ackForm = document.forms['acknowledgeForm_' + segmentID];
+            var tdisForm = document.forms['TDISLabelForm_' + segmentID];
+            if (ackForm && ackForm.label && tdisForm && tdisForm.label) {
+                let newlabelvalue = ackForm.label.value;
+                if (newlabelvalue.length > 1) {
+                    tdisForm.label.value = newlabelvalue;
+                }
             }
         }
     </script>
@@ -1083,7 +1098,8 @@ request.setAttribute("missingTests", missingTests);
                 }
             })
             jQuery("#labelspan_<%=Encode.forJavaScript(segmentID)%> i").text(jQuery("#label_<%=Encode.forJavaScript(segmentID)%>").val());
-            document.forms['acknowledgeForm_<%=Encode.forJavaScript(segmentID)%>'].label.value = "";
+            var ackForm = document.forms['acknowledgeForm_<%=Encode.forJavaScript(segmentID)%>'];
+            if (ackForm && ackForm.label) ackForm.label.value = "";
         });
     });
 

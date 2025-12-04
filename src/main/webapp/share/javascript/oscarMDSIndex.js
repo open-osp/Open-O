@@ -79,21 +79,66 @@ function serializeFormToObject(form) {
     return obj;
 }
 
+/**
+ * Helper function to make a POST request with form-urlencoded data.
+ * Centralizes fetch boilerplate for form submissions.
+ * @param {string} url - The URL to POST to
+ * @param {string|Object} data - URL-encoded string or object to be converted
+ * @returns {Promise<Response>}
+ */
+function postForm(url, data) {
+    return fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: typeof data === 'string' ? data : new URLSearchParams(data).toString()
+    });
+}
+
+/**
+ * Helper function to make a GET request.
+ * @param {string} url - The URL to fetch
+ * @returns {Promise<Response>}
+ */
+function fetchGet(url) {
+    return fetch(url, { method: 'GET' });
+}
+
+/**
+ * Helper function to append HTML content to a container and execute any scripts.
+ * Browsers don't execute scripts inserted via innerHTML/insertAdjacentHTML,
+ * so this function parses the HTML, extracts script tags, and re-adds them
+ * as real script elements to ensure execution.
+ * @param {HTMLElement} container - The container element to append HTML to
+ * @param {string} html - HTML string that may contain script tags
+ */
+function appendHtmlWithScripts(container, html) {
+    if (!container || !html) return;
+
+    container.insertAdjacentHTML('beforeend', html);
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    doc.querySelectorAll('script').forEach(script => {
+        const newScript = document.createElement('script');
+        if (script.src) {
+            newScript.src = script.src;
+        } else {
+            newScript.textContent = script.textContent;
+        }
+        document.head.appendChild(newScript).parentNode.removeChild(newScript);
+    });
+}
+
 function updateDocStatusInQueue(docid) {//change status of queue document link row to I=inactive
     console.log('in updateDocStatusInQueue, docid ' + docid);
     const url = ctx + "/documentManager/inboxManage.do";
     const data = "docid=" + docid + "&method=updateDocStatusInQueue";
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
-    .then(response => response.text())
-    .then(text => console.log(text))
-    .catch(error => console.error('Error:', error));
+    postForm(url, data)
+        .then(response => response.text())
+        .then(text => console.log(text))
+        .catch(error => console.error('Error:', error));
 }
 
 function saveNext(docid) {
@@ -101,10 +146,10 @@ function saveNext(docid) {
 }
 
 function initPatientIds(s) {
-    var r = new Array();
-    var t = s.split(',');
-    for (var i = 0; i < t.length; i++) {
-        var e = t[i];
+    const r = [];
+    const t = s.split(',');
+    for (let i = 0; i < t.length; i++) {
+        const e = t[i];
         e.replace(/\s/g, '');
         if (e.length > 0) {
             r.push(e);
@@ -138,15 +183,15 @@ function initAbnormals(s) {
 }
 
 function initPatientIdNames(s) {//;1=abc,def;2=dksi,skal;3=dks,eiw
-    var ar = s.split(';');
-    var r = new Object();
-    for (var i = 0; i < ar.length; i++) {
-        var e = ar[i];
+    const ar = s.split(';');
+    const r = new Object();
+    for (let i = 0; i < ar.length; i++) {
+        const e = ar[i];
         if (e.length > 0) {
-            var ear = e.split('=');
+            const ear = e.split('=');
             if (ear && ear != null && ear.length > 1) {
-                var k = ear[0];
-                var v = ear[1];
+                const k = ear[0];
+                const v = ear[1];
                 r[k] = v;
             }
         }
@@ -158,20 +203,20 @@ function initHashtableWithList(s) {//for typeDocLab,patientDocs
     s = s.replace('{', '');
     s = s.replace('}', '');
     if (s.length > 0) {
-        var sar = s.split('],');
-        var r = new Object();
-        for (var i = 0; i < sar.length; i++) {
-            var ele = sar[i];
+        const sar = s.split('],');
+        const r = new Object();
+        for (let i = 0; i < sar.length; i++) {
+            let ele = sar[i];
             ele = ele.replace(/\s/g, '');
-            var elear = ele.split('=');
-            var key = elear[0];
-            var val = elear[1];
+            const elear = ele.split('=');
+            const key = elear[0];
+            let val = elear[1];
             val = val.replace('[', '');
             val = val.replace(']', '');
             val = val.replace(/\s/g, '');
             //console.log(key);
             //console.log(val);
-            var valar = val.split(',');
+            const valar = val.split(',');
             r[key] = valar;
         }
         return r;
@@ -185,15 +230,15 @@ function initHashtableWithString(s) {//for docStatus,docType
     s = s.replace('{', '');
     s = s.replace('}', '');
     s = s.replace(/\s/g, '');
-    var sar = s.split(',');
-    var r = new Object();
-    for (var i = 0; i < sar.length; i++) {
-        var ele = sar[i];
+    const sar = s.split(',');
+    const r = new Object();
+    for (let i = 0; i < sar.length; i++) {
+        const ele = sar[i];
         if (ele.length > 0) {
-            var ear = ele.split('=');
+            const ear = ele.split('=');
             if (ear.length > 0) {
-                var key = ear[0];
-                var val = ear[1];
+                const key = ear[0];
+                const val = ear[1];
                 r[key] = val;
             }
         }
@@ -206,10 +251,10 @@ function initList(s) {//normals,abnormals
     s = s.replace(']', '');
     s = s.replace(/\s/g, '');
     if (s.length > 0) {
-        var sar = s.split(',');
+        const sar = s.split(',');
         return sar;
     } else {
-        var re = new Array();
+        const re = [];
         return re;
     }
 }
@@ -232,12 +277,12 @@ function removeIdFromDocType(doclabid) {
 }
 
 function removeIdFromTypeDocLab(doclabid) {
-    for (var j = 0; j < types.length; j++) {
-        var cat = types[j];
-        var a = typeDocLab[cat];
+    for (let j = 0; j < types.length; j++) {
+        const cat = types[j];
+        const a = typeDocLab[cat];
         if (a && a != null) {
             if (a.length > 0) {
-                var i = a.indexOf(doclabid);
+                const i = a.indexOf(doclabid);
                 if (i != -1) {
                     a.splice(i, 1);
                     typeDocLab[cat] = a;
@@ -250,14 +295,14 @@ function removeIdFromTypeDocLab(doclabid) {
 }
 
 function removeNormal(doclabid) {
-    var index = normals.indexOf(doclabid);
+    const index = normals.indexOf(doclabid);
     if (index != -1) {
         normals.splice(index, 1);
     }
 }
 
 function removeAbnormal(doclabid) {
-    var index = abnormals.indexOf(doclabid);
+    const index = abnormals.indexOf(doclabid);
     if (index != -1) {
         abnormals.splice(index, 1);
     }
@@ -265,7 +310,7 @@ function removeAbnormal(doclabid) {
 
 function removePatientId(pid) {
     if (pid) {
-        var i = patientIds.indexOf(pid);
+        const i = patientIds.indexOf(pid);
         //console.log('i='+i+'patientIds='+patientIds);
         if (i != -1) {
             patientIds.splice(i, 1);
@@ -275,10 +320,10 @@ function removePatientId(pid) {
 }
 
 function removeEmptyPairFromPatientDocs() {
-    var notUsedPid = new Array();
-    for (var i = 0; i < patientIds.length; i++) {
-        var pid = patientIds[i];
-        var e = patientDocs[pid];
+    const notUsedPid = [];
+    for (let i = 0; i < patientIds.length; i++) {
+        const pid = patientIds[i];
+        const e = patientDocs[pid];
 
         if (!e) {
             notUsedPid.push(pid);
@@ -287,7 +332,7 @@ function removeEmptyPairFromPatientDocs() {
         }
     }
     //console.log(notUsedPid);
-    for (var i = 0; i < notUsedPid.length; i++) {
+    for (let i = 0; i < notUsedPid.length; i++) {
         removePatientId(notUsedPid[i]);//remove pid if it doesn't relate to any doclab
     }
 }
@@ -296,13 +341,13 @@ function removeIdFromPatientDocs(doclabid) {
 //	console.log('in removeidfrompatientdocs'+doclabid);
 //console.log(patientIds);
 //console.log(patientDocs);
-    for (var i = 0; i < patientIds.length; i++) {
-        var pid = patientIds[i];
-        var a = patientDocs[pid];
+    for (let i = 0; i < patientIds.length; i++) {
+        const pid = patientIds[i];
+        const a = patientDocs[pid];
         //console.log('a');
         //console.log(a);
         if (a && a.length > 0) {
-            var f = a.indexOf(doclabid);
+            const f = a.indexOf(doclabid);
             //console.log('before splice');
             //console.log(patientDocs);
             if (f != -1) {
@@ -322,12 +367,12 @@ function removeIdFromPatientDocs(doclabid) {
 }
 
 function addIdToPatient(did, pid) {
-    var a = patientDocs[pid];
+    const a = patientDocs[pid];
     if (a && a != null) {
         a.push(did);
         patientDocs[pid] = a;
     } else {
-        var ar = [did];
+        const ar = [did];
         patientDocs[pid] = ar;
     }
 }
@@ -337,7 +382,7 @@ function addPatientId(pid) {
 }
 
 function addPatientIdName(pid, name) {
-    var n = patientIdNames[pid];
+    const n = patientIdNames[pid];
     if (n || n == null) {
         patientIdNames[pid] = name;
     }
@@ -345,26 +390,19 @@ function addPatientIdName(pid, name) {
 }
 
 function sendMRP(ele) {
-    var doclabid = ele.id;
+    let doclabid = ele.id;
     doclabid = doclabid.split('_')[1];
-    var demofindEl = document.getElementById('demofind' + doclabid);
-    var demoId = demofindEl ? demofindEl.value : '-1';
+    const demofindEl = document.getElementById('demofind' + doclabid);
+    const demoId = demofindEl ? demofindEl.value : '-1';
     if (demoId == '-1') {
         alert('Please enter a valid demographic');
         ele.checked = false;
-    } else {
-        if (confirm('Send to Most Responsible Provider?')) {
-            var type = checkType(doclabid);
-            var url = contextpath + "/oscarMDS/SendMRP.do";
-            var data = 'demoId=' + demoId + '&docLabType=' + type + '&docLabId=' + doclabid;
+    } else if (confirm('Send to Most Responsible Provider?')) {
+        const type = checkType(doclabid);
+        const url = contextpath + "/oscarMDS/SendMRP.do";
+        const data = 'demoId=' + demoId + '&docLabType=' + type + '&docLabId=' + doclabid;
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: data
-            })
+        postForm(url, data)
             .then(response => {
                 if (response.ok) {
                     ele.disabled = true;
@@ -377,122 +415,95 @@ function sendMRP(ele) {
                 ele.checked = false;
                 showElement('mrp_fail_' + doclabid);
             });
-        } else {
-            ele.checked = false;
-        }
+    } else {
+        ele.checked = false;
     }
 }
 
 function rotate180(id) {
     jQuery("#rotate180btn_" + id).attr('disabled', 'disabled');
-    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
-    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
+    const displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+    const displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-    fetch(contextpath + "/documentManager/SplitDocument.do", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: "method=rotate180&document=" + id
-    })
-    .then(response => response.text())
-    .then(data => {
-        jQuery("#rotate180btn_" + id).removeAttr('disabled');
-        if (displayDocumentAs == "PDF") {
-            showPDF(id, contextpath);
-        } else {
-            jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    postForm(contextpath + "/documentManager/SplitDocument.do", "method=rotate180&document=" + id)
+        .then(response => response.text())
+        .then(data => {
+            jQuery("#rotate180btn_" + id).removeAttr('disabled');
+            if (displayDocumentAs == "PDF") {
+                showPDF(id, contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function rotate90(id) {
     jQuery("#rotate90btn_" + id).attr('disabled', 'disabled');
-    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
-    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
+    const displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+    const displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-    fetch(contextpath + "/documentManager/SplitDocument.do", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: "method=rotate90&document=" + id
-    })
-    .then(response => response.text())
-    .then(data => {
-        jQuery("#rotate90btn_" + id).removeAttr('disabled');
-        if (displayDocumentAs == "PDF") {
-            showPDF(id, contextpath);
-        } else {
-            jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-        }
-    })
-    .catch(error => console.error('Error:', error));
+    postForm(contextpath + "/documentManager/SplitDocument.do", "method=rotate90&document=" + id)
+        .then(response => response.text())
+        .then(data => {
+            jQuery("#rotate90btn_" + id).removeAttr('disabled');
+            if (displayDocumentAs == "PDF") {
+                showPDF(id, contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function removeFirstPage(id) {
     jQuery("#removeFirstPagebtn_" + id).attr('disabled', 'disabled');
     if (confirm("!! This is a destructive action that can cause loss of document data !! \n Click OK to delete the first page of this document, or Cancel to abort.")) {
         ShowSpin(true);
-        var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
-        var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
+        const displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+        const displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-        fetch(contextpath + "/documentManager/SplitDocument.do", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: "method=removeFirstPage&document=" + id
-        })
-        .then(response => response.text())
-        .then(data => {
-            if (displayDocumentAs == "PDF") {
-                showPDF(id, contextpath);
-            } else {
-                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-            }
-            var numPages = parseInt(jQuery("#numPages_" + id).text()) - 1;
-            jQuery("#numPages_" + id).text("" + numPages);
+        postForm(contextpath + "/documentManager/SplitDocument.do", "method=removeFirstPage&document=" + id)
+            .then(response => response.text())
+            .then(data => {
+                if (displayDocumentAs == "PDF") {
+                    showPDF(id, contextpath);
+                } else {
+                    jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
+                }
+                const numPages = parseInt(jQuery("#numPages_" + id).text()) - 1;
+                jQuery("#numPages_" + id).text("" + numPages);
 
-            if (numPages <= 1) {
-                jQuery("#numPages_" + id).removeClass("multiPage");
-                jQuery("#removeFirstPagebtn_" + id).remove();
-            }
-            HideSpin();
-            jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            HideSpin();
-            jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
-        });
+                if (numPages <= 1) {
+                    jQuery("#numPages_" + id).removeClass("multiPage");
+                    jQuery("#removeFirstPagebtn_" + id).remove();
+                }
+                HideSpin();
+                jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                HideSpin();
+                jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+            });
     }
 }
 
 function split(id) {
-    var loc = contextpath + "/oscarMDS/Split.jsp?document=" + id;
+    const loc = contextpath + "/oscarMDS/Split.jsp?document=" + id;
     popupStart(1400, 1400, loc, "Splitter");
 }
 
 function hideTopBtn() {
     hideElement('topFRBtn');
-    var topFBtn = document.getElementById('topFBtn');
-    var topFileBtn = document.getElementById('topFileBtn');
-    if (topFBtn && topFileBtn) {
-        hideElement('topFBtn');
-        hideElement('topFileBtn');
-    }
+    hideElement('topFBtn');
+    hideElement('topFileBtn');
 }
 
 function showTopBtn() {
     showElement('topFRBtn');
-    var topFBtn = document.getElementById('topFBtn');
-    var topFileBtn = document.getElementById('topFileBtn');
-    if (topFBtn && topFileBtn) {
-        showElement('topFBtn');
-        showElement('topFileBtn');
-    }
+    showElement('topFBtn');
+    showElement('topFileBtn');
 }
 
 function popupStart(vheight, vwidth, varpage, windowname) {
@@ -501,57 +512,26 @@ function popupStart(vheight, vwidth, varpage, windowname) {
     if (!windowname)
         windowname = "helpwindow";
     //console.log(vheight+"--"+ vwidth+"--"+ varpage+"--"+ windowname);
-    var page = varpage;
-    var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-    var popup = window.open(varpage, windowname, windowprops);
+    const page = varpage;
+    const windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
+    const popup = window.open(varpage, windowname, windowprops);
 }
 
 function reportWindow(page, height, width) {
     //console.log(page);
-    var windowprops;
+    let windowprops;
     if (height && width) {
         windowprops = "height=" + height + ", width=" + width + ", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     } else {
         windowprops = "height=660, width=960, location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     }
-    var popup = window.open(encodeURI(page), "labreport", windowprops);
+    const popup = window.open(encodeURI(page), "labreport", windowprops);
     popup.focus();
 }
 
 function FileSelectedRows(files, searchProviderNo, status) {
-
-    //TODO figure out this awkward HRM part when needed.
-
-//	var hrmQueryMethod = "method=signOff";
-//	var hrmQuery = "";
-//	var labs = jQuery("input[name='flaggedLabs']:checked");
-//	for (var i = 0; i < labs.length; i++) {
-//	    if(labs[i].next().value == "HRM"){
-//	        hrmQuery += "&signedOff=1&reportId=" + labs[i].value;
-//        } else {
-//            query += "&flaggedLabs=" + labs[i].value;
-//            query += "&" + labs[i].next().name + "=" + labs[i].next().value;
-//        }
-//
-//	}
-//	if(!hrmQuery.empty()){
-//        jQuery.ajax({
-//            type: "POST",
-//            url: ctx + "/hospitalReportManager/Modify.do",
-//            data: hrmQueryMethod + hrmQuery,
-//            success: function(data) {
-//                updateCategoryList();
-//
-//                jQuery("input[name='flaggedLabs']:checked").each(function () {
-//                    jQuery(this).parent().parent().remove();
-//                });
-//
-//                fakeScroll();
-//            }
-//        });
-//    }
-    let filelabs = {"flaggedLabs": "{\"files\" : " + JSON.stringify(files) + "}"};
-    let url = ctx + "/oscarMDS/FileLabs.do";
+    const filelabs = {"flaggedLabs": "{\"files\" : " + JSON.stringify(files) + "}"};
+    const url = ctx + "/oscarMDS/FileLabs.do";
     bulkInboxAction(url, filelabs);
 }
 
@@ -569,7 +549,7 @@ function submitFile(searchProviderNo, status) {
 }
 
 function submitForward(searchProviderNo, status) {
-    var files = [];
+    const files = [];
     jQuery("input[name='flaggedLabs']:checkbox:checked").each(function (key, value) {
         files[key] = value.value;
     })
@@ -620,7 +600,7 @@ function bulkInboxAction(url, filelabs) {
 }
 
 function isRowShown(rowid) {
-    var el = document.getElementById(rowid);
+    const el = document.getElementById(rowid);
     if (el && el.style.display == 'none')
         return false;
     else
@@ -628,9 +608,9 @@ function isRowShown(rowid) {
 }
 
 function checkAllLabs(formId) {
-    var val = document.getElementsByName("checkA")[0].checked;
-    var labs = document.getElementsByName("flaggedLabs");
-    for (var i = 0; i < labs.length; i++) {
+    const val = document.getElementsByName("checkA")[0].checked;
+    const labs = document.getElementsByName("flaggedLabs");
+    for (let i = 0; i < labs.length; i++) {
         if (labs[i].disabled === false) {
             labs[i].checked = val;
         }
@@ -649,14 +629,14 @@ function wrapUp() {
 function showDocLab(childId, docNo, providerNo, searchProviderNo, status, demoName, showhide) {//showhide is 0 = document currently hidden, 1=currently shown
     //create child element in docViews
     docNo = docNo.replace(' ', '');//trim
-    var type = checkType(docNo);
+    const type = checkType(docNo);
     //oscarLog('type'+type);
     //var div=childId;
 
     //var div=window.frames[0].document.getElementById(childId);
-    var div = document.getElementById(childId);
+    const div = document.getElementById(childId);
     //alert(div);
-    var url = '';
+    let url = '';
     if (type == 'DOC')
         url = "../documentManager/showDocument.jsp";
     else if (type == 'MDS')
@@ -670,48 +650,30 @@ function showDocLab(childId, docNo, providerNo, searchProviderNo, status, demoNa
 
     docNo = docNo.replace('d', '');
     //oscarLog('url='+url);
-    var data = "segmentID=" + docNo + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&demoName=" + demoName;
+    const data = "segmentID=" + docNo + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&demoName=" + demoName;
     //oscarLog('url='+url+'+-+ \n data='+data);
 
-    fetch(url + '?' + data, {
-        method: 'GET'
-    })
-    .then(response => response.text())
-    .then(html => {
-        if (div) {
-            // Append to bottom of div
-            div.insertAdjacentHTML('beforeend', html);
-            // Execute any scripts in the returned HTML
-            const parser = new DOMParser();
-            const tempDoc = parser.parseFromString(html, 'text/html');
-            const scripts = tempDoc.querySelectorAll('script');
-            scripts.forEach(script => {
-                const newScript = document.createElement('script');
-                if (script.src) {
-                    newScript.src = script.src;
-                } else {
-                    newScript.textContent = script.textContent;
-                }
-                document.head.appendChild(newScript).parentNode.removeChild(newScript);
-            });
-        }
-        focusFirstDocLab();
-    })
-    .catch(error => console.error('Error loading document:', error));
+    fetchGet(url + '?' + data)
+        .then(response => response.text())
+        .then(html => {
+            appendHtmlWithScripts(div, html);
+            focusFirstDocLab();
+        })
+        .catch(error => console.error('Error loading document:', error));
 }
 
 function createNewElement(parent, child) {
     //oscarLog('11 create new leme');
-    var newdiv = document.createElement('div');
+    const newdiv = document.createElement('div');
     //oscarLog('22 after create new leme');
     newdiv.setAttribute('id', child);
-    var parentdiv = document.getElementById(parent);
+    const parentdiv = document.getElementById(parent);
     parentdiv.appendChild(newdiv);
     //oscarLog('55 after create new leme');
 }
 
 function clearDocView() {
-    var docview = document.getElementById('docViews');
+    const docview = document.getElementById('docViews');
     //var docview=window.frames[0].document.getElementById('docViews');
     if (docview) docview.textContent = '';
 }
@@ -733,7 +695,7 @@ function un_bold(ele) {
     if (ele == null || currentBold == ele.id) {
         ;
     } else {
-        var currentBoldEl = document.getElementById(currentBold);
+        const currentBoldEl = document.getElementById(currentBold);
         if (currentBold && currentBoldEl != null) {
             currentBoldEl.style.fontWeight = '';
         }
@@ -744,25 +706,25 @@ function un_bold(ele) {
 }
 
 function re_bold(id) {
-    var el = document.getElementById(id);
+    const el = document.getElementById(id);
     if (id && el != null) {
         el.style.fontWeight = 'bold';
     }
 }
 
 function showPageNumber(page) {
-    var totalNoRowEl = document.getElementById('totalNumberRow');
-    var totalNoRow = totalNoRowEl ? totalNoRowEl.value : 0;
-    var newStartIndex = number_of_row_per_page * (parseInt(page) - 1);
-    var newEndIndex = parseInt(newStartIndex) + 19;
-    var isLastPage = false;
+    const totalNoRowEl = document.getElementById('totalNumberRow');
+    const totalNoRow = totalNoRowEl ? totalNoRowEl.value : 0;
+    const newStartIndex = number_of_row_per_page * (parseInt(page) - 1);
+    let newEndIndex = parseInt(newStartIndex) + 19;
+    let isLastPage = false;
     if (newEndIndex > totalNoRow) {
         newEndIndex = totalNoRow;
         isLastPage = true;
     }
     //oscarLog("new start="+newStartIndex+";new end="+newEndIndex);
-    for (var i = 0; i < totalNoRow; i++) {
-        var rowEl = document.getElementById('row' + i);
+    for (let i = 0; i < totalNoRow; i++) {
+        const rowEl = document.getElementById('row' + i);
         if (rowEl && parseInt(newStartIndex) <= i && i <= parseInt(newEndIndex)) {
             //oscarLog("show row-"+i);
             showElement(rowEl);
@@ -772,158 +734,158 @@ function showPageNumber(page) {
         }
     }
     //update current page
-    var currentPageNumEl = document.getElementById('currentPageNum');
+    const currentPageNumEl = document.getElementById('currentPageNum');
     if (currentPageNumEl) currentPageNumEl.textContent = page;
     if (page == 1) {
-        var msgPreviousEl = document.getElementById('msgPrevious');
+        const msgPreviousEl = document.getElementById('msgPrevious');
         if (msgPreviousEl) hideElement(msgPreviousEl);
     } else if (page > 1) {
-        var msgPreviousEl = document.getElementById('msgPrevious');
+        const msgPreviousEl = document.getElementById('msgPrevious');
         if (msgPreviousEl) showElement(msgPreviousEl);
     }
     if (isLastPage) {
-        var msgNextEl = document.getElementById('msgNext');
+        const msgNextEl = document.getElementById('msgNext');
         if (msgNextEl) hideElement(msgNextEl);
     } else {
-        var msgNextEl = document.getElementById('msgNext');
+        const msgNextEl = document.getElementById('msgNext');
         if (msgNextEl) showElement(msgNextEl);
     }
 }
 
 function showTypePageNumber(page, type) {
-    var eles;
-    var numberPerPage = 20;
+    let eles;
+    const numberPerPage = 20;
     if (type == 'D') {
         eles = document.getElementsByName('scannedDoc');
-        var length = eles.length;
-        var startindex = (parseInt(page) - 1) * numberPerPage;
-        var endindex = startindex + numberPerPage - 1;
+        const length = eles.length;
+        const startindex = (parseInt(page) - 1) * numberPerPage;
+        let endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
             endindex = length - 1;
         }
         //only display current page
-        for (var i = startindex; i < endindex + 1; i++) {
-            var ele = eles[i];
+        for (let i = startindex; i < endindex + 1; i++) {
+            const ele = eles[i];
             ele.style.display = 'table-row';
         }
         //hide previous page
-        for (var i = 0; i < startindex; i++) {
-            var ele = eles[i];
+        for (let i = 0; i < startindex; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
         //hide later page
-        for (var i = endindex; i < length; i++) {
-            var ele = eles[i];
+        for (let i = endindex; i < length; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
         //hide all labs
         eles = document.getElementsByName('HL7lab');
-        for (var i = 0; i < eles.length; i++) {
-            var ele = eles[i];
+        for (let i = 0; i < eles.length; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
     } else if (type == 'H') {
         eles = document.getElementsByName('HL7lab');
-        var length = eles.length;
-        var startindex = (parseInt(page) - 1) * numberPerPage;
-        var endindex = startindex + numberPerPage - 1;
+        const length = eles.length;
+        const startindex = (parseInt(page) - 1) * numberPerPage;
+        let endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
             endindex = length - 1;
         }
         //only display current page
-        for (var i = startindex; i < endindex + 1; i++) {
-            var ele = eles[i];
+        for (let i = startindex; i < endindex + 1; i++) {
+            const ele = eles[i];
             ele.style.display = 'table-row';
         }
         //hide previous page
-        for (var i = 0; i < startindex; i++) {
-            var ele = eles[i];
+        for (let i = 0; i < startindex; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
         //hide later page
-        for (var i = endindex; i < length; i++) {
-            var ele = eles[i];
+        for (let i = endindex; i < length; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
         //hide all labs
         eles = document.getElementsByName('scannedDoc');
-        for (var i = 0; i < eles.length; i++) {
-            var ele = eles[i];
+        for (let i = 0; i < eles.length; i++) {
+            const ele = eles[i];
             ele.style.display = 'none';
         }
     } else if (type == 'N') {
-        var eles1 = document.getElementsByClassName('NormalRes');
-        var length = eles1.length;
-        var startindex = (parseInt(page) - 1) * numberPerPage;
-        var endindex = startindex + numberPerPage - 1;
+        const eles1 = document.getElementsByClassName('NormalRes');
+        const length = eles1.length;
+        const startindex = (parseInt(page) - 1) * numberPerPage;
+        let endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
             endindex = length - 1;
         }
 
-        for (var i = startindex; i < endindex + 1; i++) {
-            var ele = eles1[i];
+        for (let i = startindex; i < endindex + 1; i++) {
+            const ele = eles1[i];
             ele.style.display = 'table-row';
         }
         //hide previous page
-        for (var i = 0; i < startindex; i++) {
-            var ele = eles1[i];
+        for (let i = 0; i < startindex; i++) {
+            const ele = eles1[i];
             ele.style.display = 'none';
         }
         //hide later page
-        for (var i = endindex; i < length; i++) {
-            var ele = eles1[i];
+        for (let i = endindex; i < length; i++) {
+            const ele = eles1[i];
             ele.style.display = 'none';
         }
         //hide all abnormals
-        var eles2 = document.getElementsByClassName('AbnormalRes');
-        for (var i = 0; i < eles2.length; i++) {
-            var ele = eles2[i];
+        const eles2 = document.getElementsByClassName('AbnormalRes');
+        for (let i = 0; i < eles2.length; i++) {
+            const ele = eles2[i];
             ele.style.display = 'none';
         }
     } else if (type == 'AB') {
-        var eles1 = document.getElementsByClassName('AbnormalRes');
-        var length = eles1.length;
-        var startindex = (parseInt(page) - 1) * numberPerPage;
-        var endindex = startindex + numberPerPage - 1;
+        const eles1 = document.getElementsByClassName('AbnormalRes');
+        const length = eles1.length;
+        const startindex = (parseInt(page) - 1) * numberPerPage;
+        let endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
             endindex = length - 1;
         }
-        for (var i = startindex; i < endindex + 1; i++) {
-            var ele = eles1[i];
+        for (let i = startindex; i < endindex + 1; i++) {
+            const ele = eles1[i];
             ele.style.display = 'table-row';
         }
         //hide previous page
-        for (var i = 0; i < startindex; i++) {
-            var ele = eles1[i];
+        for (let i = 0; i < startindex; i++) {
+            const ele = eles1[i];
             ele.style.display = 'none';
         }
         //hide later page
-        for (var i = endindex; i < length; i++) {
-            var ele = eles1[i];
+        for (let i = endindex; i < length; i++) {
+            const ele = eles1[i];
             ele.style.display = 'none';
         }
         //hide all normals
-        var eles2 = document.getElementsByClassName('NormalRes');
-        for (var i = 0; i < eles2.length; i++) {
-            var ele = eles2[i];
+        const eles2 = document.getElementsByClassName('NormalRes');
+        for (let i = 0; i < eles2.length; i++) {
+            const ele = eles2[i];
             ele.style.display = 'none';
         }
     }
 }
 
 function setTotalRows() {
-    var ds = document.getElementsByName('scannedDoc');
-    var ls = document.getElementsByName('HL7lab');
-    for (var i = 0; i < ds.length; i++) {
-        var ele = ds[i];
+    const ds = document.getElementsByName('scannedDoc');
+    const ls = document.getElementsByName('HL7lab');
+    for (let i = 0; i < ds.length; i++) {
+        const ele = ds[i];
         total_rows.push(ele.id);
     }
-    for (var i = 0; i < ls.length; i++) {
-        var ele = ls[i];
+    for (let i = 0; i < ls.length; i++) {
+        const ele = ls[i];
         total_rows.push(ele.id);
     }
     total_rows = sortRowId(uniqueArray(total_rows));
-    current_category = new Array();
+    current_category = [];
     current_category[0] = document.getElementsByName('scannedDoc');
     current_category[1] = document.getElementsByName('HL7lab');
     current_category[2] = document.getElementsByClassName('NormalRes');
@@ -931,12 +893,12 @@ function setTotalRows() {
 }
 
 function checkBox() {
-    var view = "all";
-    var documentCB = document.getElementById('documentCB');
-    var hl7CB = document.getElementById('hl7CB');
-    var normalCB = document.getElementById('normalCB');
-    var abnormalCB = document.getElementById('abnormalCB');
-    var unassignedCB = document.getElementById('unassignedCB');
+    let view = "all";
+    const documentCB = document.getElementById('documentCB');
+    const hl7CB = document.getElementById('hl7CB');
+    const normalCB = document.getElementById('normalCB');
+    const abnormalCB = document.getElementById('abnormalCB');
+    const unassignedCB = document.getElementById('unassignedCB');
 
     if (documentCB && documentCB.checked == 1) {
         view = "documents";
@@ -957,14 +919,14 @@ function checkBox() {
 function displayCategoryPage(page) {
     //oscarLog('in displaycategorypage, page='+page);
     //write all row ids to an array
-    var displayrowids = new Array();
-    for (var p = 0; p < current_category.length; p++) {
-        var elements = new Array();
+    let displayrowids = [];
+    for (let p = 0; p < current_category.length; p++) {
+        let elements = [];
         elements = current_category[p];
         //oscarLog("elements.lenght="+elements.length);
-        for (var j = 0; j < elements.length; j++) {
-            var e = elements[j];
-            var rowid = e.id;
+        for (let j = 0; j < elements.length; j++) {
+            const e = elements[j];
+            const rowid = e.id;
             displayrowids.push(rowid);
         }
     }
@@ -973,25 +935,25 @@ function displayCategoryPage(page) {
     displayrowids = sortRowId(displayrowids);
     //oscarLog('sort and unique displaywords='+displayrowids);
 
-    var numOfRows = displayrowids.length;
+    const numOfRows = displayrowids.length;
     //oscarLog(numOfRows);
     current_numberofpages = Math.ceil(numOfRows / number_of_row_per_page);
     //oscarLog(current_numberofpages);
-    var startIndex = (parseInt(page) - 1) * number_of_row_per_page;
-    var endIndex = startIndex + (number_of_row_per_page - 1);
+    const startIndex = (parseInt(page) - 1) * number_of_row_per_page;
+    let endIndex = startIndex + (number_of_row_per_page - 1);
     if (endIndex > displayrowids.length - 1) {
         endIndex = displayrowids.length - 1;
     }
     //set current displaying rows
-    current_rows = new Array();
-    for (var i = startIndex; i < endIndex + 1; i++) {
+    current_rows = [];
+    for (let i = startIndex; i < endIndex + 1; i++) {
         if (document.getElementById(displayrowids[i])) {
             current_rows.push(displayrowids[i]);
         }
     }
     //loop through every thing,if it's in displayrowids, show it , if it's not hide it.
-    for (var i = 0; i < total_rows.length; i++) {
-        var rowid = total_rows[i];
+    for (let i = 0; i < total_rows.length; i++) {
+        const rowid = total_rows[i];
         if (a_contain_b(current_rows, rowid)) {
             showElement(rowid);
         } else
@@ -1000,11 +962,11 @@ function displayCategoryPage(page) {
 }
 
 function initializeNavigation() {
-    var currentPageNumEl = document.getElementById('currentPageNum');
+    const currentPageNumEl = document.getElementById('currentPageNum');
     if (currentPageNumEl) currentPageNumEl.textContent = 1;
     //update the page number shown and update previous and next words
-    var msgNextEl = document.getElementById('msgNext');
-    var msgPreviousEl = document.getElementById('msgPrevious');
+    const msgNextEl = document.getElementById('msgNext');
+    const msgPreviousEl = document.getElementById('msgPrevious');
     if (current_numberofpages > 1) {
         if (msgNextEl != null) showElement(msgNextEl);
         if (msgPreviousEl != null) hideElement(msgPreviousEl);
@@ -1016,12 +978,12 @@ function initializeNavigation() {
         if (msgPreviousEl != null) hideElement(msgPreviousEl);
     }
     //oscarLog("current_numberofpages "+current_numberofpages);
-    var currentIndividualPagesEl = document.getElementById('current_individual_pages');
+    const currentIndividualPagesEl = document.getElementById('current_individual_pages');
     if (currentIndividualPagesEl != null) {
         currentIndividualPagesEl.textContent = "";
         if (current_numberofpages > 1) {
-            for (var i = 1; i <= current_numberofpages; i++) {
-                var link = document.createElement('a');
+            for (let i = 1; i <= current_numberofpages; i++) {
+                const link = document.createElement('a');
                 link.style.textDecoration = 'none';
                 link.href = 'javascript:void(0);';
                 link.setAttribute('data-page', i);
@@ -1036,25 +998,25 @@ function initializeNavigation() {
 }
 
 function sortRowId(a) {
-    var numArray = new Array();
+    const numArray = [];
     //sort array
-    for (var i = 0; i < a.length; i++) {
-        var id = a[i];
-        var n = id.replace('row', '');
+    for (let i = 0; i < a.length; i++) {
+        const id = a[i];
+        const n = id.replace('row', '');
         numArray.push(parseInt(n));
     }
     numArray.sort(function (a, b) {
         return a - b;
     });
-    a = new Array();
-    for (var i = 0; i < numArray.length; i++) {
+    a = [];
+    for (let i = 0; i < numArray.length; i++) {
         a.push('row' + numArray[i]);
     }
     return a;
 }
 
 function a_contain_b(a, b) {//a is an array, b maybe an element in a.
-    for (var i = 0; i < a.length; i++) {
+    for (let i = 0; i < a.length; i++) {
         if (a[i] == b) {
             return true;
         }
@@ -1063,9 +1025,9 @@ function a_contain_b(a, b) {//a is an array, b maybe an element in a.
 }
 
 function uniqueArray(a) {
-    var r = new Array();
-    o:for (var i = 0, n = a.length; i < n; i++) {
-        for (var x = 0, y = r.length; x < y; x++) {
+    const r = [];
+    o:for (let i = 0, n = a.length; i < n; i++) {
+        for (let x = 0, y = r.length; x < y; x++) {
             if (r[x] == a[i]) continue o;
         }
         r[r.length] = a[i];
@@ -1074,8 +1036,8 @@ function uniqueArray(a) {
 }
 
 function navigatePage(p) {
-    var currentPageNumEl = document.getElementById('currentPageNum');
-    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
+    const currentPageNumEl = document.getElementById('currentPageNum');
+    const pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
     if (p == 'Previous') {
         navigatePage(pagenum - 1);
     } else if (p == 'Next') {
@@ -1087,10 +1049,10 @@ function navigatePage(p) {
 
 // TODO: Remove unused function.
 function changeNavigationBar() {
-    var currentPageNumEl = document.getElementById('currentPageNum');
-    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
-    var msgNextEl = document.getElementById('msgNext');
-    var msgPreviousEl = document.getElementById('msgPrevious');
+    const currentPageNumEl = document.getElementById('currentPageNum');
+    const pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
+    const msgNextEl = document.getElementById('msgNext');
+    const msgPreviousEl = document.getElementById('msgPrevious');
     if (current_numberofpages == 1) {
         hideElement(msgNextEl);
         hideElement(msgPreviousEl);
@@ -1107,43 +1069,43 @@ function changeNavigationBar() {
 }
 
 function syncCB(ele) {
-    var id = ele.id;
+    const id = ele.id;
     if (id == 'documentCB') {
-        var cb2 = document.getElementById('documentCB2');
+        const cb2 = document.getElementById('documentCB2');
         if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'documentCB2') {
-        var cb = document.getElementById('documentCB');
+        const cb = document.getElementById('documentCB');
         if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'hl7CB') {
-        var cb2 = document.getElementById('hl7CB2');
+        const cb2 = document.getElementById('hl7CB2');
         if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'hl7CB2') {
-        var cb = document.getElementById('hl7CB');
+        const cb = document.getElementById('hl7CB');
         if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'normalCB') {
-        var cb2 = document.getElementById('normalCB2');
+        const cb2 = document.getElementById('normalCB2');
         if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'normalCB2') {
-        var cb = document.getElementById('normalCB');
+        const cb = document.getElementById('normalCB');
         if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'abnormalCB') {
-        var cb2 = document.getElementById('abnormalCB2');
+        const cb2 = document.getElementById('abnormalCB2');
         if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'abnormalCB2') {
-        var cb = document.getElementById('abnormalCB');
+        const cb = document.getElementById('abnormalCB');
         if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     }
 }
 
 function showAb_Normal(ab_normal) {
 
-    var ids = new Array();
+    let ids = [];
     if (ab_normal == 'normal') {
         ids = normals;
     } else if (ab_normal == 'abnormal') {
         ids = abnormals;
     }
-    var childId;
+    let childId;
     if (ab_normal == 'normal') {
         childId = 'normals';
     } else if (ab_normal == 'abnormal') {
@@ -1153,11 +1115,11 @@ function showAb_Normal(ab_normal) {
     if (childId != null && childId.length > 0) {
         clearDocView();
         createNewElement('docViews', childId);
-        for (var i = 0; i < ids.length; i++) {
-            var docLabId = ids[i].replace(/\s/g, '');
-            var ackStatus = getAckStatusFromDocLabId(docLabId);
-            var patientId = getPatientIdFromDocLabId(docLabId);
-            var patientName = getPatientNameFromPatientId(patientId);
+        for (let i = 0; i < ids.length; i++) {
+            const docLabId = ids[i].replace(/\s/g, '');
+            const ackStatus = getAckStatusFromDocLabId(docLabId);
+            const patientId = getPatientIdFromDocLabId(docLabId);
+            const patientName = getPatientNameFromPatientId(patientId);
             if (current_first_doclab == 0) current_first_doclab = docLabId;
             showDocLab(childId, docLabId, providerNo, searchProviderNo, ackStatus, patientName, ab_normal + 'show');
         }
@@ -1165,21 +1127,21 @@ function showAb_Normal(ab_normal) {
 }
 
 function showSubType(patientId, subType) {
-    var labdocsArr = getLabDocFromPatientId(patientId);
+    const labdocsArr = getLabDocFromPatientId(patientId);
     if (labdocsArr && labdocsArr != null) {
-        var childId = 'subType' + subType + patientId;
+        const childId = 'subType' + subType + patientId;
         if (labdocsArr.length > 0) {
             //if(toggleElement(childId));
             // else{
             clearDocView();
             createNewElement('docViews', childId);
-            for (var i = 0; i < labdocsArr.length; i++) {
-                var labdoc = labdocsArr[i];
+            for (let i = 0; i < labdocsArr.length; i++) {
+                let labdoc = labdocsArr[i];
                 labdoc = labdoc.replace(' ', '');
                 //oscarLog('check type input='+labdoc);
-                var type = checkType(labdoc);
-                var ackStatus = getAckStatusFromDocLabId(labdoc);
-                var patientName = getPatientNameFromPatientId(patientId);
+                const type = checkType(labdoc);
+                const ackStatus = getAckStatusFromDocLabId(labdoc);
+                const patientName = getPatientNameFromPatientId(patientId);
                 if (current_first_doclab == 0) current_first_doclab = labdoc;
                 //oscarLog("type="+type+"--subType="+subType);
                 if (type == subType)
@@ -1193,30 +1155,24 @@ function showSubType(patientId, subType) {
 }
 
 function getPatientNameFromPatientId(patientId) {
-    var pn = patientIdNames[patientId];
+    const pn = patientIdNames[patientId];
     if (pn && pn != null) {
         return pn;
     } else {
-        var url = contextpath + "/documentManager/ManageDocument.do";
-        var data = 'method=getDemoNameAjax&demo_no=' + patientId;
+        const url = contextpath + "/documentManager/ManageDocument.do";
+        const data = 'method=getDemoNameAjax&demo_no=' + patientId;
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: data
-        })
-        .then(response => response.json())
-        .then(json => {
-            if (json != null) {
-                var pn = json.demoName;//get name from id
-                addPatientIdName(patientId, pn);
-                addPatientId(patientId);
-                return pn;
-            }
-        })
-        .catch(error => console.error('Error:', error));
+        postForm(url, data)
+            .then(response => response.json())
+            .then(json => {
+                if (json != null) {
+                    const pn = json.demoName;//get name from id
+                    addPatientIdName(patientId, pn);
+                    addPatientId(patientId);
+                    return pn;
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
 }
 
@@ -1227,8 +1183,8 @@ function getAckStatusFromDocLabId(docLabId) {
 function showAllDocLabs() {
 
     clearDocView();
-    for (var i = 0; i < patientIds.length; i++) {
-        var id = patientIds[i];
+    for (let i = 0; i < patientIds.length; i++) {
+        const id = patientIds[i];
         //oscarLog("ids in showalldoclabs="+id);
         if (id.length > 0) {
             showThisPatientDocs(id, true);
@@ -1240,22 +1196,22 @@ function showAllDocLabs() {
 
 function showCategory(cat) {
     if (cat.length > 0) {
-        var sA = getDocLabFromCat(cat);
+        const sA = getDocLabFromCat(cat);
         if (sA && sA.length > 0) {
             //oscarLog("sA="+sA);
-            var childId = "category" + cat;
+            const childId = "category" + cat;
             //if(toggleElement(childId));
             // else{
             clearDocView();
             createNewElement('docViews', childId);
-            for (var i = 0; i < sA.length; i++) {
-                var docLabId = sA[i];
+            for (let i = 0; i < sA.length; i++) {
+                let docLabId = sA[i];
                 docLabId = docLabId.replace(/\s/g, "");
                 //oscarLog("docLabId="+docLabId);
-                var patientId = getPatientIdFromDocLabId(docLabId);
+                const patientId = getPatientIdFromDocLabId(docLabId);
                 //oscarLog("patientId="+patientId);
-                var patientName = getPatientNameFromPatientId(patientId);
-                var ackStatus = getAckStatusFromDocLabId(docLabId);
+                const patientName = getPatientNameFromPatientId(patientId);
+                const ackStatus = getAckStatusFromDocLabId(docLabId);
                 //oscarLog("patientName="+patientName);
                 //oscarLog("ackStatus="+ackStatus);
 
@@ -1273,11 +1229,11 @@ function getPatientIdFromDocLabId(docLabId) {
     //console.log('in getpatientidfromdoclabid='+docLabId);
     //console.log(patientIds);
     //console.log(patientDocs);
-    var notUsedPid = new Array();
-    for (var i = 0; i < patientIds.length; i++) {
+    const notUsedPid = [];
+    for (let i = 0; i < patientIds.length; i++) {
 
-        var pid = patientIds[i];
-        var e = patientDocs[pid];
+        const pid = patientIds[i];
+        const e = patientDocs[pid];
         //console.log('e'+e);
         if (!e) {
             //console.log('if');
@@ -1290,7 +1246,7 @@ function getPatientIdFromDocLabId(docLabId) {
         }
     }
     //console.log(notUsedPid);
-    for (var i = 0; i < notUsedPid.length; i++) {
+    for (let i = 0; i < notUsedPid.length; i++) {
 
         removePatientId(notUsedPid[i]);
     }
@@ -1304,20 +1260,20 @@ function getLabDocFromPatientId(patientId) {//return array of doc ids and lab id
 
 function showThisPatientDocs(patientId, keepPrevious) {
     //oscarLog("patientId in show this patientdocs="+patientId);
-    var labDocsArr = getLabDocFromPatientId(patientId);
-    var patientName = getPatientNameFromPatientId(patientId);
+    const labDocsArr = getLabDocFromPatientId(patientId);
+    const patientName = getPatientNameFromPatientId(patientId);
     if (patientName != null && patientName.length > 0 && labDocsArr != null && labDocsArr.length > 0) {
         //oscarLog(patientName);
-        var childId = 'patient' + patientId;
+        const childId = 'patient' + patientId;
         //if(toggleElement(childId));
         //else{
         if (keepPrevious) ;
         else clearDocView();
         createNewElement('docViews', childId);
-        for (var i = 0; i < labDocsArr.length; i++) {
-            var docId = labDocsArr[i].replace(' ', '');
+        for (let i = 0; i < labDocsArr.length; i++) {
+            const docId = labDocsArr[i].replace(' ', '');
             if (current_first_doclab == 0) current_first_doclab = docId;
-            var ackStatus = getAckStatusFromDocLabId(docId);
+            const ackStatus = getAckStatusFromDocLabId(docId);
             //oscarLog('childId='+childId+',docId='+docId+',ackStatus='+ackStatus);
             showDocLab(childId, docId, providerNo, searchProviderNo, ackStatus, patientName, 'labdoc' + patientId + 'show');
         }
@@ -1325,9 +1281,9 @@ function showThisPatientDocs(patientId, keepPrevious) {
 }
 
 function popupConsultation(segmentId) {
-    var page = contextpath + '/oscarEncounter/ViewRequest.do?segmentId=' + segmentId;
-    var windowprops = "height=960,width=700,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
-    var popup = window.open(page, msgConsReq, windowprops);
+    const page = contextpath + '/oscarEncounter/ViewRequest.do?segmentId=' + segmentId;
+    const windowprops = "height=960,width=700,location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
+    const popup = window.open(page, msgConsReq, windowprops);
     if (popup != null) {
         if (popup.opener == null) {
             popup.opener = self;
@@ -1340,19 +1296,19 @@ function checkType(docNo) {
 }
 
 function ForwardSelectedRows(files, searchProviderNo, status) {
-    var isListView = jQuery("input[name=isListView]").val();
-    var url = ctx + "/oscarMDS/SelectProvider.jsp";
+    const isListView = jQuery("input[name=isListView]").val();
+    const url = ctx + "/oscarMDS/SelectProvider.jsp";
 
     // not sure why this is a parameter, but, just in case...
-    var data = {
+    const data = {
         "isListView": isListView,
         "forwardList": files + ""
     };
-    var dialogContainer = jQuery("#dialog");
+    let dialogContainer = jQuery("#dialog");
     if (!dialogContainer.length) {
         dialogContainer = drawDialogContainer();
     }
-    var dialog = dialogContainer.load(url, data).dialog({
+    const dialog = dialogContainer.load(url, data).dialog({
         modal: true,
         width: 685,
         height: 355,
@@ -1361,11 +1317,11 @@ function ForwardSelectedRows(files, searchProviderNo, status) {
         buttons: {
             "Forward": function () {
                 // workaround for JQuery bug with multiselect items that are not "selected"
-                var fwdProviders = jQuery(this).find("select[multiple]#fwdProviders option").map(function (i, e) {
+                const fwdProviders = jQuery(this).find("select[multiple]#fwdProviders option").map(function (i, e) {
                     return jQuery(e).val();
                 }).toArray();
 
-                var fwdFavorites = jQuery(this).find("select[multiple]#favorites option").map(function (i, e) {
+                const fwdFavorites = jQuery(this).find("select[multiple]#favorites option").map(function (i, e) {
                     return jQuery(e).val();
                 }).toArray();
 
@@ -1392,7 +1348,7 @@ function ForwardSelectedRows(files, searchProviderNo, status) {
 }
 
 function drawDialogContainer() {
-    var $div = jQuery('<div />').appendTo('body');
+    const $div = jQuery('<div />').appendTo('body');
     $div.attr('id', 'dialog');
     return $div;
 }
@@ -1416,11 +1372,11 @@ function styleDialogAsCard() {
 }
 
 function forwardLabs(files, providers, favorites) {
-    var url = ctx + "/oscarMDS/ReportReassign.do";
+    const url = ctx + "/oscarMDS/ReportReassign.do";
 
-        var filesArray = Array.isArray(files) ? files : [files];
+        const filesArray = Array.isArray(files) ? files : [files];
 
-        var filelabs = {
+        const filelabs = {
             "flaggedLabs": JSON.stringify({ "files": filesArray }),
             "selectedProviders": JSON.stringify({ "providers": providers }),
             "selectedFavorites": JSON.stringify({ "favorites": favorites }),
@@ -1431,7 +1387,7 @@ function forwardLabs(files, providers, favorites) {
 }
 
 function updateDocLabData(doclabid) {//remove doclabid from global variables
-    var doclabidNum = doclabid
+    const doclabidNum = doclabid
     if (checkType(doclabid + "d") == "DOC") {
         doclabid += "d";
     }
@@ -1456,17 +1412,17 @@ function checkAb_normal(doclabid) {
 
 function updateSideNav(doclabid) {
     //oscarLog('in updatesidenav');
-    var totalNumDocsEl = document.getElementById('totalNumDocs');
-    var n = totalNumDocsEl ? totalNumDocsEl.textContent : '0';
+    const totalNumDocsEl = document.getElementById('totalNumDocs');
+    let n = totalNumDocsEl ? totalNumDocsEl.textContent : '0';
     n = parseInt(n);
     if (n > 0) {
         n = n - 1;
         if (totalNumDocsEl) totalNumDocsEl.textContent = n;
     }
-    var type = checkType(doclabid);
+    const type = checkType(doclabid);
     //oscarLog('type='+type);
     if (type == 'DOC') {
-        var totalDocsNumEl = document.getElementById('totalDocsNum');
+        const totalDocsNumEl = document.getElementById('totalDocsNum');
         n = totalDocsNumEl ? totalDocsNumEl.textContent : '0';
         //oscarLog('n='+n);
         n = parseInt(n);
@@ -1475,7 +1431,7 @@ function updateSideNav(doclabid) {
             if (totalDocsNumEl) totalDocsNumEl.textContent = n;
         }
     } else if (type == 'HL7') {
-        var totalHL7NumEl = document.getElementById('totalHL7Num');
+        const totalHL7NumEl = document.getElementById('totalHL7Num');
         n = totalHL7NumEl ? totalHL7NumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
@@ -1483,10 +1439,10 @@ function updateSideNav(doclabid) {
             if (totalHL7NumEl) totalHL7NumEl.textContent = n;
         }
     }
-    var ab_normal = checkAb_normal(doclabid);
+    const ab_normal = checkAb_normal(doclabid);
     //oscarLog('normal or abnormal?'+ab_normal);
     if (ab_normal == 'normal') {
-        var normalNumEl = document.getElementById('normalNum');
+        const normalNumEl = document.getElementById('normalNum');
         n = normalNumEl ? normalNumEl.textContent : '0';
         //oscarLog('normal inner='+n);
         n = parseInt(n);
@@ -1495,7 +1451,7 @@ function updateSideNav(doclabid) {
             if (normalNumEl) normalNumEl.textContent = n;
         }
     } else if (ab_normal == 'abnormal') {
-        var abnormalNumEl = document.getElementById('abnormalNum');
+        const abnormalNumEl = document.getElementById('abnormalNum');
         n = abnormalNumEl ? abnormalNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
@@ -1505,9 +1461,9 @@ function updateSideNav(doclabid) {
     }
 
     //update patient and patient's subtype
-    var patientId = getPatientIdFromDocLabId(doclabid);
+    const patientId = getPatientIdFromDocLabId(doclabid);
     //oscarLog('xx '+patientId+'--'+n);
-    var patientNumDocsEl = document.getElementById('patientNumDocs' + patientId);
+    const patientNumDocsEl = document.getElementById('patientNumDocs' + patientId);
     n = patientNumDocsEl ? patientNumDocsEl.textContent : '0';
     //oscarLog('xx xx '+patientId+'--'+n);
     n = parseInt(n);
@@ -1516,14 +1472,14 @@ function updateSideNav(doclabid) {
     }
 
     if (type == 'DOC') {
-        var pDocNumEl = document.getElementById('pDocNum_' + patientId);
+        const pDocNumEl = document.getElementById('pDocNum_' + patientId);
         n = pDocNumEl ? pDocNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
             if (pDocNumEl) pDocNumEl.textContent = n - 1;
         }
     } else if (type == 'HL7') {
-        var pLabNumEl = document.getElementById('pLabNum_' + patientId);
+        const pLabNumEl = document.getElementById('pLabNum_' + patientId);
         n = pLabNumEl ? pLabNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
@@ -1533,8 +1489,8 @@ function updateSideNav(doclabid) {
 }
 
 function getRowIdFromDocLabId(doclabid) {
-    var rowid;
-    for (var i = 0; i < doclabid_seq.length; i++) {
+    let rowid;
+    for (let i = 0; i < doclabid_seq.length; i++) {
         if (doclabid == doclabid_seq[i]) {
             rowid = 'row' + i;
             break;
@@ -1545,10 +1501,10 @@ function getRowIdFromDocLabId(doclabid) {
 
 function hideRowUsingId(doclabid) {
     if (doclabid != null) {
-        var rowid;
+        let rowid;
         doclabid = doclabid.replace(' ', '');
         rowid = getRowIdFromDocLabId(doclabid);
-        var rowEl = document.getElementById(rowid);
+        const rowEl = document.getElementById(rowid);
         if (rowEl) rowEl.remove();
     }
 }
@@ -1559,10 +1515,10 @@ function resetCurrentFirstDocLab() {
 
 function focusFirstDocLab() {
     if (current_first_doclab > 0) {
-        var doc_lab = checkType(current_first_doclab);
+        const doc_lab = checkType(current_first_doclab);
         if (doc_lab == 'DOC') {
             //oscarLog('docDesc_'+current_first_doclab);
-            var docDescEl = document.getElementById('docDesc_' + current_first_doclab);
+            const docDescEl = document.getElementById('docDesc_' + current_first_doclab);
             if (docDescEl) docDescEl.focus();
         } else if (doc_lab == 'HL7') {
             //do nothing
@@ -1576,8 +1532,8 @@ function updateGlobalDataAndSideNav(doclabid, patientId) {
 
     if (doclabid.length > 0 && typeof patientDocs !== 'undefined') {
         //delete doclabid from not assigned list
-        var na = patientDocs['-1'];
-        var index = na.indexOf(doclabid);
+        const na = patientDocs['-1'];
+        const index = na.indexOf(doclabid);
         if (index !== -1) {
             na.splice(index, 1);
             addIdToPatient(doclabid, patientId);//add to patient
@@ -1589,8 +1545,8 @@ function updateGlobalDataAndSideNav(doclabid, patientId) {
 function updatePatientDocLabNav(num, patientId) {
     //oscarLog(num+';;'+patientId);
     if (num && patientId) {
-        var changed = false;
-        var type = checkType(num);
+        let changed = false;
+        const type = checkType(num);
         //oscarLog($('patient'+patientId+'all'));
         if (document.getElementById('patient' + patientId + 'all')) {
             //oscarLog('if');
@@ -1603,9 +1559,9 @@ function updatePatientDocLabNav(num, patientId) {
                     increaseCount('pDocNum_' + patientId);
                     changed = true;
                 } else {
-                    var newEle = createNewDocEle(patientId);
+                    const newEle = createNewDocEle(patientId);
                     //oscarLog($('labdoc'+patientId+'showSublist'));
-                    var sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
+                    const sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
                     if (sublistEl) sublistEl.insertAdjacentHTML('beforeend', newEle);
                     changed = true;
                 }
@@ -1614,8 +1570,8 @@ function updatePatientDocLabNav(num, patientId) {
                     increaseCount('pLabNum_' + patientId);
                     changed = true;
                 } else {
-                    var newEle = createNewHL7Ele(patientId);
-                    var sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
+                    const newEle = createNewHL7Ele(patientId);
+                    const sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
                     if (sublistEl) sublistEl.insertAdjacentHTML('beforeend', newEle);
                     changed = true;
                 }
@@ -1628,7 +1584,7 @@ function updatePatientDocLabNav(num, patientId) {
             //case 2, patientname doesn't exists in nav bar at all
             //create patientname, check if labdoc is a lab or a doc.
             //create lab/doc nav
-            var ele = createPatientDocLabEle(patientId, num);
+            const ele = createPatientDocLabEle(patientId, num);
             changed = true;
         }
         if (changed) {//decrease Not,Assigned by 1
@@ -1644,28 +1600,22 @@ function updatePatientDocLabNav(num, patientId) {
 }
 
 function createPatientDocLabEle(patientId, doclabid) {
-    var url = ctx + "/documentManager/ManageDocument.do";
-    var data = 'method=getDemoNameAjax&demo_no=' + patientId;
+    const url = ctx + "/documentManager/ManageDocument.do";
+    const data = 'method=getDemoNameAjax&demo_no=' + patientId;
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
-    .then(response => response.json())
-    .then(json => {
+    postForm(url, data)
+        .then(response => response.json())
+        .then(json => {
         //oscarLog(json);
         if (json != null) {
-            var patientName = json.demoName;//get name from id
+            const patientName = json.demoName;//get name from id
             addPatientId(patientId);
             addPatientIdName(patientId, patientName);
-            var e = '<dt><img id="plus' + patientId + '" alt="plus" src="' + ctx + '/images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="' + ctx + '/images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
+            let e = '<dt><img id="plus' + patientId + '" alt="plus" src="' + ctx + '/images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="' + ctx + '/images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
             '<a id="patient' + patientId + 'all" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showThisPatientDocs(\'' + patientId + '\');un_bold(this);" title="' + patientName + '">' + patientName + ' (<span id="patientNumDocs' + patientId + '">1</span>)</a>' +
             '<dl id="labdoc' + patientId + 'showSublist" style="display:none">';
-            var type = checkType(doclabid);
-            var s;
+            const type = checkType(doclabid);
+            let s;
             //oscarLog('type='+type);
             //oscarLog('eee='+e);
             if (type == 'DOC') {
@@ -1679,7 +1629,7 @@ function createPatientDocLabEle(patientId, doclabid) {
             e += '</dl></dt>';
             //oscarLog('jjjjje='+e);
             //oscarLog('before return e');
-            var patientsdoclabsEl = document.getElementById('patientsdoclabs');
+            const patientsdoclabsEl = document.getElementById('patientsdoclabs');
             if (patientsdoclabsEl) patientsdoclabsEl.insertAdjacentHTML('beforeend', e);
             return e;
         }
@@ -1689,21 +1639,21 @@ function createPatientDocLabEle(patientId, doclabid) {
 }
 
 function createNewDocEle(patientId) {
-    var newEle = '<dt><a id="patient' + patientId + 'docs" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\'' + patientId + '\',\'DOC\');un_bold(this);" title="Documents">Documents(<span id="pDocNum_' + patientId + '">1</span>)</a></dt>';
+    const newEle = '<dt><a id="patient' + patientId + 'docs" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\'' + patientId + '\',\'DOC\');un_bold(this);" title="Documents">Documents(<span id="pDocNum_' + patientId + '">1</span>)</a></dt>';
     //oscarLog('newEle='+newEle);
     return newEle;
 }
 
 function createNewHL7Ele(patientId) {
-    var newEle = '<dt><a id="patient' + patientId + 'hl7s" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\'' + patientId + '\',\'HL7\');un_bold(this);" title="HL7s">HL7s(<span id="pLabNum_' + patientId + '">1</span>)</a></dt>';
+    const newEle = '<dt><a id="patient' + patientId + 'hl7s" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showSubType(\'' + patientId + '\',\'HL7\');un_bold(this);" title="HL7s">HL7s(<span id="pLabNum_' + patientId + '">1</span>)</a></dt>';
     //oscarLog('newEle='+newEle);
     return newEle;
 }
 
 function increaseCount(eleId) {
-    var el = document.getElementById(eleId);
+    const el = document.getElementById(eleId);
     if (el) {
-        var n = el.textContent;
+        let n = el.textContent;
         if (n.length > 0) {
             n = parseInt(n);
             n++;
@@ -1713,9 +1663,9 @@ function increaseCount(eleId) {
 }
 
 function decreaseCount(eleId) {
-    var el = document.getElementById(eleId);
+    const el = document.getElementById(eleId);
     if (el) {
-        var n = el.textContent;
+        let n = el.textContent;
         if (n.length > 0) {
             n = parseInt(n);
             if (n > 0) {
@@ -1733,15 +1683,9 @@ function updateDocumentAndNext(eleId) {//save doc info
     const formEl = document.getElementById(eleId);
     const data = serializeForm(formEl);
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
-    .then(response => response.json())
-    .then(json => {
+    postForm(url, data)
+        .then(response => response.json())
+        .then(json => {
         if (json != null) {
             const patientId = json.patientId;
 
@@ -1749,10 +1693,10 @@ function updateDocumentAndNext(eleId) {//save doc info
             const num = ar[1].replace(/\s/g, '');
 
             showElement("saveSucessMsg_" + num);
-            var savedEl = document.getElementById('saved' + num);
+            const savedEl = document.getElementById('saved' + num);
             if (savedEl) savedEl.value = 'true';
 
-            var msgBtnEl = document.getElementById("msgBtn_" + num);
+            const msgBtnEl = document.getElementById("msgBtn_" + num);
             if (msgBtnEl) {
                 msgBtnEl.onclick = function () {
                     popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
@@ -1769,12 +1713,12 @@ function updateDocumentAndNext(eleId) {//save doc info
             } else {
                 //Hide document with slide up animation
                 jQuery('#labdoc_' + num).slideUp();
-                var success = updateGlobalDataAndSideNav(num, patientId);
+                const success = updateGlobalDataAndSideNav(num, patientId);
                 if (success) {
-                    success = updatePatientDocLabNav(num, patientId);
-                    if (success) {
+                    const innerSuccess = updatePatientDocLabNav(num, patientId);
+                    if (innerSuccess) {
                         //disable demo input
-                        var autocompletedemoEl = document.getElementById('autocompletedemo' + num);
+                        const autocompletedemoEl = document.getElementById('autocompletedemo' + num);
                         if (autocompletedemoEl) autocompletedemoEl.disabled = true;
                     }
                 }
@@ -1792,37 +1736,31 @@ function updateDocument(eleId) {
     }
 
     //save doc info
-    var url = "../documentManager/ManageDocument.do";
-    var formEl = document.getElementById(eleId);
-    var data = serializeForm(formEl);
+    const url = "../documentManager/ManageDocument.do";
+    const formEl = document.getElementById(eleId);
+    const data = serializeForm(formEl);
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
-    .then(response => response.text())
-    .then(responseText => {
-        var ar = eleId.split("_");
-        var num = ar[1].replace(/\s/g, '');
+    postForm(url, data)
+        .then(response => response.text())
+        .then(responseText => {
+        const ar = eleId.split("_");
+        const num = ar[1].replace(/\s/g, '');
 
-        var msg = document.getElementById("saveSucessMsg_" + num);
+        const msg = document.getElementById("saveSucessMsg_" + num);
         if (msg) msg.style.display = "inline";
 
-        var savedField = document.getElementById("saved" + num);
+        const savedField = document.getElementById("saved" + num);
         if (savedField) savedField.value = "true";
 
-        var success = false;
-        var patientId = null;
+        let success = false;
+        let patientId = null;
 
         try {
-            var json = JSON.parse(responseText);
+            const json = JSON.parse(responseText);
             if (json && json.patientId) {
                 patientId = json.patientId;
 
-                var msgBtn = document.getElementById("msgBtn_" + num);
+                const msgBtn = document.getElementById("msgBtn_" + num);
                 if (msgBtn) {
                     msgBtn.onclick = function () {
                         popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
@@ -1839,9 +1777,9 @@ function updateDocument(eleId) {
                 }
 
                 if (success) {
-                    success = updatePatientDocLabNav(num, patientId);
-                    if (success) {
-                        var ac = document.getElementById("autocompletedemo" + num);
+                    const updateSuccess = updatePatientDocLabNav(num, patientId);
+                    if (updateSuccess) {
+                        const ac = document.getElementById("autocompletedemo" + num);
                         if (ac) ac.disabled = true;
                     }
                 }
@@ -1857,10 +1795,10 @@ function updateDocument(eleId) {
 
 function checkObservationDate(formid) {
     // regular expression to match required date format
-    var re = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
-    var re2 = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
+    const re = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
+    const re2 = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
 
-    var form = document.getElementById(formid);
+    const form = document.getElementById(formid);
     if (form.elements["observationDate"].value == "") {
         alert("Blank Date: " + form.elements["observationDate"].value);
         form.elements["observationDate"].focus();
@@ -1877,7 +1815,7 @@ function checkObservationDate(formid) {
             form.elements["observationDate"].value = form.elements["observationDate"].value.replace("/", "-");
         }
     }
-    var regs = form.elements["observationDate"].value.split("-");
+    const regs = form.elements["observationDate"].value.split("-");
     // day value between 1 and 31
     if (regs[2] < 1 || regs[2] > 31) {
         alert("Invalid value for day: " + regs[2]);
@@ -1900,12 +1838,12 @@ function checkObservationDate(formid) {
 }
 
 function updateStatus(formid) {//acknowledge
-    var num = formid.split("_");
-    var doclabid = num[1];
+    const num = formid.split("_");
+    const doclabid = num[1];
     if (doclabid) {
 
-        var demoId = "0";
-        var saved = true
+        let demoId = "0";
+        let saved = true
         if (jQuery('#demofind' + doclabid).length) {
             demoId = jQuery('#demofind' + doclabid).val();
         }
@@ -1918,9 +1856,9 @@ function updateStatus(formid) {//acknowledge
         if (demoId === '-1' || !saved) {
             alert('Document is not assigned and saved to a patient,please file it');
         } else {
-            var url = contextpath + "/oscarMDS/UpdateStatus.do";
-            var formEl = document.getElementById(formid);
-            var data = serializeFormToObject(formEl);
+            const url = contextpath + "/oscarMDS/UpdateStatus.do";
+            const formEl = document.getElementById(formid);
+            const data = serializeFormToObject(formEl);
             console.log("Updating status. URL: " + url);
             console.log(data);
 
@@ -1958,41 +1896,35 @@ function fileDoc(docId) {
     if (docId) {
         docId = docId.replace(/\s/, '');
         if (docId.length > 0) {
-            var demofindEl = document.getElementById('demofind' + docId);
-            var demoId = demofindEl ? demofindEl.value : '-1';
-            var isFile = true;
+            const demofindEl = document.getElementById('demofind' + docId);
+            const demoId = demofindEl ? demofindEl.value : '-1';
+            let isFile = true;
             if (demoId == '-1') {
                 isFile = confirm('Document is not assigned to any patient, do you still want to file it?');
             }
             if (isFile) {
-                var type = 'DOC';
+                const type = 'DOC';
                 if (type) {
-                    var url = '../oscarMDS/FileLabs.do';
-                    var data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
+                    const url = '../oscarMDS/FileLabs.do';
+                    const data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
 
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        },
-                        body: data
-                    })
-                    .then(response => response.text())
-                    .then(responseText => {
-                        updateDocStatusInQueue(docId);
+                    postForm(url, data)
+                        .then(response => response.text())
+                        .then(responseText => {
+                            updateDocStatusInQueue(docId);
 
-                        if (typeof _in_window !== 'undefined' && _in_window) {
-                            if (typeof self.opener.removeReport !== 'undefined') {
-                                self.opener.removeReport(docId);
+                            if (typeof _in_window !== 'undefined' && _in_window) {
+                                if (typeof self.opener.removeReport !== 'undefined') {
+                                    self.opener.removeReport(docId);
+                                }
+
+                                window.close();
+                            } else {
+                                // Slide up animation using jQuery
+                                jQuery('#labdoc_' + docId).slideUp();
                             }
-
-                            window.close();
-                        } else {
-                            // Slide up animation using jQuery
-                            jQuery('#labdoc_' + docId).slideUp();
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
+                        })
+                        .catch(error => console.error('Error:', error));
                 }
             }
         }
@@ -2004,35 +1936,29 @@ function handleQueueListChange(queueListSelectElement, refileBtnElement, docCurr
 }
 
 function refileDoc(id) {
-    var queueListEl = document.getElementById('queueList_' + id);
-    var queueId = queueListEl.options[queueListEl.selectedIndex].value;
-    var url = contextpath + "/documentManager/ManageDocument.do";
-    var data = 'method=refileDocumentAjax&documentId=' + id + "&queueId=" + queueId;
+    const queueListEl = document.getElementById('queueList_' + id);
+    const queueId = queueListEl.options[queueListEl.selectedIndex].value;
+    const url = contextpath + "/documentManager/ManageDocument.do";
+    const data = 'method=refileDocumentAjax&documentId=' + id + "&queueId=" + queueId;
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
-    .then(response => response.text())
-    .then(responseText => {
-        fileDoc(id);
-    })
-    .catch(error => console.error('Error:', error));
+    postForm(url, data)
+        .then(response => response.text())
+        .then(responseText => {
+            fileDoc(id);
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function addDocToList(provNo, provName, docId) {
-    var bdoc = document.createElement('a');
+    const bdoc = document.createElement('a');
     bdoc.setAttribute("onclick", "removeProv(this);");
     bdoc.setAttribute("style", "cursor: pointer;");
     bdoc.appendChild(document.createTextNode(" -remove- "));
     //oscarLog("--");
-    var adoc = document.createElement('div');
+    const adoc = document.createElement('div');
     adoc.appendChild(document.createTextNode(provName));
     //oscarLog("--==");
-    var idoc = document.createElement('input');
+    const idoc = document.createElement('input');
     idoc.setAttribute("type", "hidden");
     idoc.setAttribute("name", "flagproviders");
     idoc.setAttribute("value", provNo);
@@ -2040,21 +1966,15 @@ function addDocToList(provNo, provName, docId) {
     adoc.appendChild(idoc);
 
     adoc.appendChild(bdoc);
-    var providerList = document.getElementById('providerList' + docId);
+    const providerList = document.getElementById('providerList' + docId);
     if (providerList) providerList.appendChild(adoc);
 }
 
 function removeLink(docType, docId, providerNo, e) {
-    var url = "../documentManager/ManageDocument.do";
-    var data = 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo;
+    const url = "../documentManager/ManageDocument.do";
+    const data = 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo;
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
+    postForm(url, data)
     .then(response => response.text())
     .then(responseText => {
         updateDocLabData(docId);
@@ -2065,14 +1985,14 @@ function removeLink(docType, docId, providerNo, e) {
 }
 
 function replaceQueryString(url, param, value) {
-    var re = new RegExp("([?|&])" + param + "=.*?(&|$)", "i");
+    const re = new RegExp("([?|&])" + param + "=.*?(&|$)", "i");
     if (url.match(re))
         return url.replace(re, '$1' + param + "=" + value + '$2');
     else
         return url + '&' + param + "=" + value;
 }
 
-var CATEGORY_ALL = 1,
+const CATEGORY_ALL = 1,
     CATEGORY_DOCUMENTS = 2,
     CATEGORY_HL7 = 3,
     CATEGORY_NORMAL = 4,
@@ -2126,19 +2046,21 @@ function reloadChangeView() {
 }
 
 function inSummaryView() {
-    var summaryViewEl = document.getElementById('summaryView');
-    return summaryViewEl && summaryViewEl.style.display != 'none';
+    const summaryViewEl = document.getElementById('summaryView');
+    if (!summaryViewEl) return false;
+    const computedDisplay = window.getComputedStyle(summaryViewEl).display;
+    return computedDisplay !== 'none';
 }
 
 function refreshView() {
     if (inSummaryView()) {
         location.reload();
     } else {
-        var cat = selected_category;
-        var patId = selected_category_patient;
-        var catType = selected_category_type;
-        var preview = inSummaryView() ? "0" : "1";
-        var search = location.search;
+        const cat = selected_category;
+        const patId = selected_category_patient;
+        const catType = selected_category_type;
+        const preview = inSummaryView() ? "0" : "1";
+        let search = location.search;
         search = replaceQueryString(search, "selectedCategory", cat);
         search = replaceQueryString(search, "selectedCategoryPatient", patId);
         search = replaceQueryString(search, "selectedCategoryType", catType);
@@ -2148,7 +2070,7 @@ function refreshView() {
 }
 
 function getWidth() {
-    var myWidth = 0;
+    let myWidth = 0;
     if (typeof (window.innerWidth) == 'number') {
         //Non-IE
         myWidth = window.innerWidth;
@@ -2164,7 +2086,7 @@ function getWidth() {
 
 
 function getHeight() {
-    var myHeight = 0;
+    let myHeight = 0;
     if (typeof (window.innerHeight) == 'number') {
         //Non-IE
         myHeight = window.innerHeight;
@@ -2191,12 +2113,12 @@ function showPDF(docid, cp) {
     //     width=getWidth()-650;
     // }
 
-    var url = cp + '/documentManager/ManageDocument.do?method=display&doc_no=' + encodeURIComponent(docid) + '&rand=' + Math.random() + '#view=fitV&page=1';
+    const url = cp + '/documentManager/ManageDocument.do?method=display&doc_no=' + encodeURIComponent(docid) + '&rand=' + Math.random() + '#view=fitV&page=1';
 
-    var container = document.getElementById('docDispPDF_' + docid);
+    const container = document.getElementById('docDispPDF_' + docid);
     if (container) {
         container.textContent = '';
-        var pdfObject = document.createElement('object');
+        const pdfObject = document.createElement('object');
         pdfObject.style.width = '100%';
         pdfObject.style.height = '92vh';
         pdfObject.type = 'application/pdf';
@@ -2207,24 +2129,22 @@ function showPDF(docid, cp) {
 }
 
 function showPageImg(docid, pn, cp) {
-    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + docid);
-    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
+    const displayDocumentAsEl = document.getElementById('displayDocumentAs_' + docid);
+    const displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
     if (displayDocumentAs == "PDF") {
         showPDF(docid, cp);
-    } else {
-        if (docid && pn && cp) {
-            var e = document.getElementById('docImg_' + docid);
-            var url = cp + '/documentManager/ManageDocument.do?method=viewDocPage&doc_no=' + docid + '&curPage=' + pn;
-            if (e) e.setAttribute('src', url);
-        }
+    } else if (docid && pn && cp) {
+        const e = document.getElementById('docImg_' + docid);
+        const url = cp + '/documentManager/ManageDocument.do?method=viewDocPage&doc_no=' + docid + '&curPage=' + pn;
+        if (e) e.setAttribute('src', url);
     }
 }
 
 function nextPage(docid, cp) {
-    var curPageEl = document.getElementById('curPage_' + docid);
-    var totalPageEl = document.getElementById('totalPage_' + docid);
-    var curPage = curPageEl ? parseInt(curPageEl.value) : 1;
-    var totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
+    const curPageEl = document.getElementById('curPage_' + docid);
+    const totalPageEl = document.getElementById('totalPage_' + docid);
+    let curPage = curPageEl ? parseInt(curPageEl.value) : 1;
+    const totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
     curPage++;
     if (curPage > totalPage) {
         curPage = totalPage;
@@ -2232,7 +2152,7 @@ function nextPage(docid, cp) {
         showPrev(docid);
     }
     if (curPageEl) curPageEl.value = curPage;
-    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    const viewedPageEl = document.getElementById('viewedPage_' + docid);
     if (viewedPageEl) viewedPageEl.textContent = curPage;
 
     showPageImg(docid, curPage, cp);
@@ -2246,8 +2166,8 @@ function nextPage(docid, cp) {
 }
 
 function prevPage(docid, cp) {
-    var curPageEl = document.getElementById('curPage_' + docid);
-    var curPage = curPageEl ? parseInt(curPageEl.value) : 1;
+    const curPageEl = document.getElementById('curPage_' + docid);
+    let curPage = curPageEl ? parseInt(curPageEl.value) : 1;
     curPage--;
     if (curPage < 1) {
         curPage = 1;
@@ -2255,7 +2175,7 @@ function prevPage(docid, cp) {
         showNext(docid);
     }
     if (curPageEl) curPageEl.value = curPage;
-    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    const viewedPageEl = document.getElementById('viewedPage_' + docid);
     if (viewedPageEl) viewedPageEl.textContent = curPage;
 
     showPageImg(docid, curPage, cp);
@@ -2270,9 +2190,9 @@ function prevPage(docid, cp) {
 }
 
 function firstPage(docid, cp) {
-    var curPageEl = document.getElementById('curPage_' + docid);
+    const curPageEl = document.getElementById('curPage_' + docid);
     if (curPageEl) curPageEl.value = 1;
-    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    const viewedPageEl = document.getElementById('viewedPage_' + docid);
     if (viewedPageEl) viewedPageEl.textContent = 1;
     showPageImg(docid, 1, cp);
     hidePrev(docid);
@@ -2280,12 +2200,12 @@ function firstPage(docid, cp) {
 }
 
 function lastPage(docid, cp) {
-    var totalPageEl = document.getElementById('totalPage_' + docid);
-    var totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
+    const totalPageEl = document.getElementById('totalPage_' + docid);
+    const totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
 
-    var curPageEl = document.getElementById('curPage_' + docid);
+    const curPageEl = document.getElementById('curPage_' + docid);
     if (curPageEl) curPageEl.value = totalPage;
-    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    const viewedPageEl = document.getElementById('viewedPage_' + docid);
     if (viewedPageEl) viewedPageEl.textContent = totalPage;
     showPageImg(docid, totalPage, cp);
     hideNext(docid);
@@ -2294,10 +2214,10 @@ function lastPage(docid, cp) {
 
 function hidePrev(docid) {
     //disable previous link
-    var prevP = document.getElementById("prevP_" + docid);
-    var firstP = document.getElementById("firstP_" + docid);
-    var prevP2 = document.getElementById("prevP2_" + docid);
-    var firstP2 = document.getElementById("firstP2_" + docid);
+    const prevP = document.getElementById("prevP_" + docid);
+    const firstP = document.getElementById("firstP_" + docid);
+    const prevP2 = document.getElementById("prevP2_" + docid);
+    const firstP2 = document.getElementById("firstP2_" + docid);
     if (prevP) prevP.style.display = 'none';
     if (firstP) firstP.style.display = 'none';
     if (prevP2) prevP2.style.display = 'none';
@@ -2306,10 +2226,10 @@ function hidePrev(docid) {
 
 function hideNext(docid) {
     //disable next link
-    var nextP = document.getElementById("nextP_" + docid);
-    var lastP = document.getElementById("lastP_" + docid);
-    var nextP2 = document.getElementById("nextP2_" + docid);
-    var lastP2 = document.getElementById("lastP2_" + docid);
+    const nextP = document.getElementById("nextP_" + docid);
+    const lastP = document.getElementById("lastP_" + docid);
+    const nextP2 = document.getElementById("nextP2_" + docid);
+    const lastP2 = document.getElementById("lastP2_" + docid);
     if (nextP) nextP.style.display = 'none';
     if (lastP) lastP.style.display = 'none';
     if (nextP2) nextP2.style.display = 'none';
@@ -2318,10 +2238,10 @@ function hideNext(docid) {
 
 function showPrev(docid) {
     //disable previous link
-    var prevP = document.getElementById("prevP_" + docid);
-    var firstP = document.getElementById("firstP_" + docid);
-    var prevP2 = document.getElementById("prevP2_" + docid);
-    var firstP2 = document.getElementById("firstP2_" + docid);
+    const prevP = document.getElementById("prevP_" + docid);
+    const firstP = document.getElementById("firstP_" + docid);
+    const prevP2 = document.getElementById("prevP2_" + docid);
+    const firstP2 = document.getElementById("firstP2_" + docid);
     if (prevP) prevP.style.display = 'inline';
     if (firstP) firstP.style.display = 'inline';
     if (prevP2) prevP2.style.display = 'inline';
@@ -2330,10 +2250,10 @@ function showPrev(docid) {
 
 function showNext(docid) {
     //disable next link
-    var nextP = document.getElementById("nextP_" + docid);
-    var lastP = document.getElementById("lastP_" + docid);
-    var nextP2 = document.getElementById("nextP2_" + docid);
-    var lastP2 = document.getElementById("lastP2_" + docid);
+    const nextP = document.getElementById("nextP_" + docid);
+    const lastP = document.getElementById("lastP_" + docid);
+    const nextP2 = document.getElementById("nextP2_" + docid);
+    const lastP2 = document.getElementById("lastP2_" + docid);
     if (nextP) nextP.style.display = 'inline';
     if (lastP) lastP.style.display = 'inline';
     if (nextP2) nextP2.style.display = 'inline';
@@ -2341,21 +2261,15 @@ function showNext(docid) {
 }
 
 function handleDocSave(docid, action) {
-    var url = contextpath + "/documentManager/inboxManage.do";
-    var data = 'method=isDocumentLinkedToDemographic&docId=' + docid;
+    const url = contextpath + "/documentManager/inboxManage.do";
+    const data = 'method=isDocumentLinkedToDemographic&docId=' + docid;
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: data
-    })
+    postForm(url, data)
     .then(response => response.json())
     .then(json => {
         if (json != null) {
-            var success = json.isLinkedToDemographic;
-            var demoid = '';
+            const success = json.isLinkedToDemographic;
+            let demoid = '';
 
             if (success) {
                 if (action == 'addTickler') {
@@ -2372,18 +2286,18 @@ function handleDocSave(docid, action) {
 }
 
 
-function addDocComment(docId, providerNo, sync) {
+function addDocComment(docId, providerNo) {
 
-    var ret = true;
-    var comment = "";
-    var text = jQuery("#comment_" + docId + "_" + providerNo);
+    let ret = true;
+    let comment = "";
+    const text = jQuery("#comment_" + docId + "_" + providerNo);
     if (text.length > 0) {
         comment = jQuery("#comment_" + docId + "_" + providerNo).html();
         if (comment == null || comment == "no comment") {
             comment = "";
         }
     }
-    var commentVal = prompt("Please enter a comment (max. 255 characters)", comment);
+    const commentVal = prompt("Please enter a comment (max. 255 characters)", comment);
 
     if (commentVal == null) {
         ret = false;
@@ -2393,31 +2307,25 @@ function addDocComment(docId, providerNo, sync) {
         jQuery("#" + "comment_" + docId).val(comment);
 
     if (ret) {
-        var statusEl = document.getElementById("status_" + docId);
+        const statusEl = document.getElementById("status_" + docId);
         if (statusEl) statusEl.value = 'N';
-        var url = ctx + "/oscarMDS/UpdateStatus.do";
-        var formid = "acknowledgeForm_" + docId;
-        var data = serializeForm(formid);
+        const url = ctx + "/oscarMDS/UpdateStatus.do";
+        const formid = "acknowledgeForm_" + docId;
+        let data = serializeForm(formid);
         data += "&method=addComment";
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: data
-        })
+        postForm(url, data)
         .then(response => response.json())
         .then(json => {
             if (json != null) {
-                var date = json.date;
-                var timestampEl = document.getElementById("timestamp_" + docId + "_" + providerNo);
+                const date = json.date;
+                const timestampEl = document.getElementById("timestamp_" + docId + "_" + providerNo);
                 if (timestampEl) timestampEl.textContent = date;
             }
-            var statusEl2 = document.getElementById("status_" + docId);
+            const statusEl2 = document.getElementById("status_" + docId);
             if (statusEl2) statusEl2.value = "A";
-            var commentDisplayEl = document.getElementById("comment_" + docId + "_" + providerNo);
-            var commentInputEl = document.getElementById("comment_" + docId);
+            const commentDisplayEl = document.getElementById("comment_" + docId + "_" + providerNo);
+            const commentInputEl = document.getElementById("comment_" + docId);
             if (commentDisplayEl && commentInputEl) {
                 commentDisplayEl.textContent = commentInputEl.value;
                 commentInputEl.value = "";
@@ -2429,16 +2337,16 @@ function addDocComment(docId, providerNo, sync) {
 
 function getDocComment(docId, providerNo, inQueueB) {
 
-    var ret = true;
-    var comment = "";
-    var text = jQuery("#comment_" + docId + "_" + providerNo);
+    let ret = true;
+    let comment = "";
+    const text = jQuery("#comment_" + docId + "_" + providerNo);
     if (text.length > 0) {
         comment = jQuery("#comment_" + docId + "_" + providerNo).html();
         if (comment == null || comment == "no comment") {
             comment = "";
         }
     }
-    var commentVal = prompt("Please enter a comment (max. 255 characters)", comment);
+    const commentVal = prompt("Please enter a comment (max. 255 characters)", comment);
 
     if (commentVal == null) {
         ret = false;
