@@ -449,7 +449,7 @@
         var url = ctx + "/documentManager/inboxManage.do?";
         const startDate = "${requestScope.startDate}";
         const endDate = "${requestScope.endDate}";
-        var request = null;
+        var abortController = null;
         var canLoad = true;
         console.log("<%= isListView == null %>");
         var isListView = <%= isListView %>;
@@ -465,10 +465,10 @@
             } else {
                 page = p;
             }
-            if (request != null) {
-                request.abort();
+            if (abortController != null) {
+                abortController.abort();
             }
-            request = updateListView();
+            updateListView();
         };
 
         function handleScroll(e) {
@@ -532,53 +532,63 @@
             jQuery("#readerSwitcher").prop("disabled", true);
             jQuery("#listSwitcher").prop("disabled", true);
 
-            return jQuery.ajax({
-                type: 'GET',
-                url: url + query,
-                dataType: 'html',
-                success: function (responseText) {
-                    // Append the response HTML to the target div
-                    jQuery(div).append(responseText);
+            abortController = new AbortController();
 
-                    loadingDocs = false;
-                    var tmp = jQuery("#tempLoader");
-                    if (tmp != null) {
-                        tmp.remove();
-                    }
-                    if (isListView) {
-                        if (page == 1) {
-                            jQuery("#tempLoader").remove();
-                        } else {
-                            document.getElementById("loader").style.display = "none";
-                        }
-                    }
+            fetch(url + query, {
+                method: 'GET',
+                signal: abortController.signal
+            })
+            .then(function(response) {
+                return response.text();
+            })
+            .then(function(responseText) {
+                // Append the response HTML to the target div
+                div.insertAdjacentHTML('beforeend', responseText);
 
-                    // Parsing HTML with DOMParser, checking to see if input with the name of "NoMoreItems"
-                    // is not null, if true then set and update html to show information about "NoMoreItems"
-                    // if null, then it will fake scroll to populate the information in the list
-                    var parser = new DOMParser();
-                    var doc = parser.parseFromString(responseText, "text/html");
-                    var noMoreItems = doc.querySelector("input[name='NoMoreItems']");
-
-                    if (noMoreItems) {
-                        canLoad = false;
-                        var summaryDiv = document.getElementById("summaryBody");
-                        var newDiv = "<tbody id=\"newBody\"></tbody>";
-                        summaryDiv.insertAdjacentHTML("beforeBegin", newDiv);
-                        newDiv = document.getElementById("newBody");
-                        newDiv.innerHTML = summaryDiv.innerHTML;
-                        summaryDiv.innerHTML = "";
-                        newDiv.id = "summaryBody";
-                        summaryDiv.id = "";
-                        jQuery("#summaryView").trigger("updateRows");
+                loadingDocs = false;
+                var tmp = document.getElementById("tempLoader");
+                if (tmp != null) {
+                    tmp.remove();
+                }
+                if (isListView) {
+                    if (page == 1) {
+                        var tempLoader = document.getElementById("tempLoader");
+                        if (tempLoader) tempLoader.remove();
                     } else {
-                        // It is possible that the current amount of loaded items has not filled up the page enough
-                        // to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
-                        setTimeout("fakeScroll()", 500);
+                        document.getElementById("loader").style.display = "none";
                     }
+                }
 
-                    jQuery("#readerSwitcher").prop("disabled", false);
-                    jQuery("#listSwitcher").prop("disabled", false);
+                // Parsing HTML with DOMParser, checking to see if input with the name of "NoMoreItems"
+                // is not null, if true then set and update html to show information about "NoMoreItems"
+                // if null, then it will fake scroll to populate the information in the list
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(responseText, "text/html");
+                var noMoreItems = doc.querySelector("input[name='NoMoreItems']");
+
+                if (noMoreItems) {
+                    canLoad = false;
+                    var summaryDiv = document.getElementById("summaryBody");
+                    var newDiv = "<tbody id=\"newBody\"></tbody>";
+                    summaryDiv.insertAdjacentHTML("beforeBegin", newDiv);
+                    newDiv = document.getElementById("newBody");
+                    newDiv.innerHTML = summaryDiv.innerHTML;
+                    summaryDiv.innerHTML = "";
+                    newDiv.id = "summaryBody";
+                    summaryDiv.id = "";
+                    jQuery("#summaryView").trigger("updateRows");
+                } else {
+                    // It is possible that the current amount of loaded items has not filled up the page enough
+                    // to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
+                    setTimeout("fakeScroll()", 500);
+                }
+
+                document.getElementById("readerSwitcher").disabled = false;
+                document.getElementById("listSwitcher").disabled = false;
+            })
+            .catch(function(error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Fetch error:', error);
                 }
             });
         }

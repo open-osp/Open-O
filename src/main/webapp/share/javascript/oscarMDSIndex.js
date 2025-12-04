@@ -682,9 +682,9 @@ function showDocLab(childId, docNo, providerNo, searchProviderNo, status, demoNa
             // Append to bottom of div
             div.insertAdjacentHTML('beforeend', html);
             // Execute any scripts in the returned HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-            const scripts = tempDiv.querySelectorAll('script');
+            const parser = new DOMParser();
+            const tempDoc = parser.parseFromString(html, 'text/html');
+            const scripts = tempDoc.querySelectorAll('script');
             scripts.forEach(script => {
                 const newScript = document.createElement('script');
                 if (script.src) {
@@ -713,7 +713,7 @@ function createNewElement(parent, child) {
 function clearDocView() {
     var docview = document.getElementById('docViews');
     //var docview=window.frames[0].document.getElementById('docViews');
-    if (docview) docview.innerHTML = '';
+    if (docview) docview.textContent = '';
 }
 
 function showhideSubCat(plus_minus, patientId) {
@@ -773,7 +773,7 @@ function showPageNumber(page) {
     }
     //update current page
     var currentPageNumEl = document.getElementById('currentPageNum');
-    if (currentPageNumEl) currentPageNumEl.innerHTML = page;
+    if (currentPageNumEl) currentPageNumEl.textContent = page;
     if (page == 1) {
         var msgPreviousEl = document.getElementById('msgPrevious');
         if (msgPreviousEl) hideElement(msgPreviousEl);
@@ -1001,7 +1001,7 @@ function displayCategoryPage(page) {
 
 function initializeNavigation() {
     var currentPageNumEl = document.getElementById('currentPageNum');
-    if (currentPageNumEl) currentPageNumEl.innerHTML = 1;
+    if (currentPageNumEl) currentPageNumEl.textContent = 1;
     //update the page number shown and update previous and next words
     var msgNextEl = document.getElementById('msgNext');
     var msgPreviousEl = document.getElementById('msgPrevious');
@@ -1018,10 +1018,18 @@ function initializeNavigation() {
     //oscarLog("current_numberofpages "+current_numberofpages);
     var currentIndividualPagesEl = document.getElementById('current_individual_pages');
     if (currentIndividualPagesEl != null) {
-        currentIndividualPagesEl.innerHTML = "";
+        currentIndividualPagesEl.textContent = "";
         if (current_numberofpages > 1) {
             for (var i = 1; i <= current_numberofpages; i++) {
-                currentIndividualPagesEl.innerHTML += '<a style="text-decoration:none;" href="javascript:void(0);" onclick="navigatePage(' + i + ')> [ ' + i + ' ] </a>';
+                var link = document.createElement('a');
+                link.style.textDecoration = 'none';
+                link.href = 'javascript:void(0);';
+                link.setAttribute('data-page', i);
+                link.textContent = ' [ ' + i + ' ] ';
+                link.addEventListener('click', function() {
+                    navigatePage(parseInt(this.getAttribute('data-page')));
+                });
+                currentIndividualPagesEl.appendChild(link);
             }
         }
     }
@@ -1067,7 +1075,7 @@ function uniqueArray(a) {
 
 function navigatePage(p) {
     var currentPageNumEl = document.getElementById('currentPageNum');
-    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.innerHTML : 1);
+    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
     if (p == 'Previous') {
         navigatePage(pagenum - 1);
     } else if (p == 'Next') {
@@ -1080,7 +1088,7 @@ function navigatePage(p) {
 // TODO: Remove unused function.
 function changeNavigationBar() {
     var currentPageNumEl = document.getElementById('currentPageNum');
-    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.innerHTML : 1);
+    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.textContent : 1);
     var msgNextEl = document.getElementById('msgNext');
     var msgPreviousEl = document.getElementById('msgPrevious');
     if (current_numberofpages == 1) {
@@ -1449,50 +1457,50 @@ function checkAb_normal(doclabid) {
 function updateSideNav(doclabid) {
     //oscarLog('in updatesidenav');
     var totalNumDocsEl = document.getElementById('totalNumDocs');
-    var n = totalNumDocsEl ? totalNumDocsEl.innerHTML : '0';
+    var n = totalNumDocsEl ? totalNumDocsEl.textContent : '0';
     n = parseInt(n);
     if (n > 0) {
         n = n - 1;
-        if (totalNumDocsEl) totalNumDocsEl.innerHTML = n;
+        if (totalNumDocsEl) totalNumDocsEl.textContent = n;
     }
     var type = checkType(doclabid);
     //oscarLog('type='+type);
     if (type == 'DOC') {
         var totalDocsNumEl = document.getElementById('totalDocsNum');
-        n = totalDocsNumEl ? totalDocsNumEl.innerHTML : '0';
+        n = totalDocsNumEl ? totalDocsNumEl.textContent : '0';
         //oscarLog('n='+n);
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            if (totalDocsNumEl) totalDocsNumEl.innerHTML = n;
+            if (totalDocsNumEl) totalDocsNumEl.textContent = n;
         }
     } else if (type == 'HL7') {
         var totalHL7NumEl = document.getElementById('totalHL7Num');
-        n = totalHL7NumEl ? totalHL7NumEl.innerHTML : '0';
+        n = totalHL7NumEl ? totalHL7NumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            if (totalHL7NumEl) totalHL7NumEl.innerHTML = n;
+            if (totalHL7NumEl) totalHL7NumEl.textContent = n;
         }
     }
     var ab_normal = checkAb_normal(doclabid);
     //oscarLog('normal or abnormal?'+ab_normal);
     if (ab_normal == 'normal') {
         var normalNumEl = document.getElementById('normalNum');
-        n = normalNumEl ? normalNumEl.innerHTML : '0';
+        n = normalNumEl ? normalNumEl.textContent : '0';
         //oscarLog('normal inner='+n);
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            if (normalNumEl) normalNumEl.innerHTML = n;
+            if (normalNumEl) normalNumEl.textContent = n;
         }
     } else if (ab_normal == 'abnormal') {
         var abnormalNumEl = document.getElementById('abnormalNum');
-        n = abnormalNumEl ? abnormalNumEl.innerHTML : '0';
+        n = abnormalNumEl ? abnormalNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            if (abnormalNumEl) abnormalNumEl.innerHTML = n;
+            if (abnormalNumEl) abnormalNumEl.textContent = n;
         }
     }
 
@@ -1500,26 +1508,26 @@ function updateSideNav(doclabid) {
     var patientId = getPatientIdFromDocLabId(doclabid);
     //oscarLog('xx '+patientId+'--'+n);
     var patientNumDocsEl = document.getElementById('patientNumDocs' + patientId);
-    n = patientNumDocsEl ? patientNumDocsEl.innerHTML : '0';
+    n = patientNumDocsEl ? patientNumDocsEl.textContent : '0';
     //oscarLog('xx xx '+patientId+'--'+n);
     n = parseInt(n);
     if (n > 0) {
-        if (patientNumDocsEl) patientNumDocsEl.innerHTML = n - 1;
+        if (patientNumDocsEl) patientNumDocsEl.textContent = n - 1;
     }
 
     if (type == 'DOC') {
         var pDocNumEl = document.getElementById('pDocNum_' + patientId);
-        n = pDocNumEl ? pDocNumEl.innerHTML : '0';
+        n = pDocNumEl ? pDocNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
-            if (pDocNumEl) pDocNumEl.innerHTML = n - 1;
+            if (pDocNumEl) pDocNumEl.textContent = n - 1;
         }
     } else if (type == 'HL7') {
         var pLabNumEl = document.getElementById('pLabNum_' + patientId);
-        n = pLabNumEl ? pLabNumEl.innerHTML : '0';
+        n = pLabNumEl ? pLabNumEl.textContent : '0';
         n = parseInt(n);
         if (n > 0) {
-            if (pLabNumEl) pLabNumEl.innerHTML = n - 1;
+            if (pLabNumEl) pLabNumEl.textContent = n - 1;
         }
     }
 }
@@ -1695,11 +1703,11 @@ function createNewHL7Ele(patientId) {
 function increaseCount(eleId) {
     var el = document.getElementById(eleId);
     if (el) {
-        var n = el.innerHTML;
+        var n = el.textContent;
         if (n.length > 0) {
             n = parseInt(n);
             n++;
-            el.innerHTML = n;
+            el.textContent = n;
         }
     }
 }
@@ -1707,7 +1715,7 @@ function increaseCount(eleId) {
 function decreaseCount(eleId) {
     var el = document.getElementById(eleId);
     if (el) {
-        var n = el.innerHTML;
+        var n = el.textContent;
         if (n.length > 0) {
             n = parseInt(n);
             if (n > 0) {
@@ -1715,7 +1723,7 @@ function decreaseCount(eleId) {
             } else {
                 n = 0;
             }
-            el.innerHTML = n;
+            el.textContent = n;
         }
     }
 }
@@ -2183,9 +2191,19 @@ function showPDF(docid, cp) {
     //     width=getWidth()-650;
     // }
 
-    var url = cp + '/documentManager/ManageDocument.do?method=display&doc_no=' + docid + '&rand=' + Math.random() + '#view=fitV&page=1';
+    var url = cp + '/documentManager/ManageDocument.do?method=display&doc_no=' + encodeURIComponent(docid) + '&rand=' + Math.random() + '#view=fitV&page=1';
 
-    document.getElementById('docDispPDF_' + docid).innerHTML = '<object style="width:100%;height:92vh"  type="application/pdf" data="' + url + '" id="docPDF_' + docid + '"></object>';
+    var container = document.getElementById('docDispPDF_' + docid);
+    if (container) {
+        container.textContent = '';
+        var pdfObject = document.createElement('object');
+        pdfObject.style.width = '100%';
+        pdfObject.style.height = '92vh';
+        pdfObject.type = 'application/pdf';
+        pdfObject.data = url;
+        pdfObject.id = 'docPDF_' + docid;
+        container.appendChild(pdfObject);
+    }
 }
 
 function showPageImg(docid, pn, cp) {
@@ -2215,7 +2233,7 @@ function nextPage(docid, cp) {
     }
     if (curPageEl) curPageEl.value = curPage;
     var viewedPageEl = document.getElementById('viewedPage_' + docid);
-    if (viewedPageEl) viewedPageEl.innerHTML = curPage;
+    if (viewedPageEl) viewedPageEl.textContent = curPage;
 
     showPageImg(docid, curPage, cp);
     if (curPage + 1 > totalPage) {
@@ -2238,7 +2256,7 @@ function prevPage(docid, cp) {
     }
     if (curPageEl) curPageEl.value = curPage;
     var viewedPageEl = document.getElementById('viewedPage_' + docid);
-    if (viewedPageEl) viewedPageEl.innerHTML = curPage;
+    if (viewedPageEl) viewedPageEl.textContent = curPage;
 
     showPageImg(docid, curPage, cp);
     if (curPage == 1) {
@@ -2255,7 +2273,7 @@ function firstPage(docid, cp) {
     var curPageEl = document.getElementById('curPage_' + docid);
     if (curPageEl) curPageEl.value = 1;
     var viewedPageEl = document.getElementById('viewedPage_' + docid);
-    if (viewedPageEl) viewedPageEl.innerHTML = 1;
+    if (viewedPageEl) viewedPageEl.textContent = 1;
     showPageImg(docid, 1, cp);
     hidePrev(docid);
     showNext(docid);
@@ -2268,7 +2286,7 @@ function lastPage(docid, cp) {
     var curPageEl = document.getElementById('curPage_' + docid);
     if (curPageEl) curPageEl.value = totalPage;
     var viewedPageEl = document.getElementById('viewedPage_' + docid);
-    if (viewedPageEl) viewedPageEl.innerHTML = totalPage;
+    if (viewedPageEl) viewedPageEl.textContent = totalPage;
     showPageImg(docid, totalPage, cp);
     hideNext(docid);
     showPrev(docid);
@@ -2394,15 +2412,15 @@ function addDocComment(docId, providerNo, sync) {
             if (json != null) {
                 var date = json.date;
                 var timestampEl = document.getElementById("timestamp_" + docId + "_" + providerNo);
-                if (timestampEl) timestampEl.innerHTML = date;
+                if (timestampEl) timestampEl.textContent = date;
             }
             var statusEl2 = document.getElementById("status_" + docId);
             if (statusEl2) statusEl2.value = "A";
             var commentDisplayEl = document.getElementById("comment_" + docId + "_" + providerNo);
             var commentInputEl = document.getElementById("comment_" + docId);
             if (commentDisplayEl && commentInputEl) {
-                commentDisplayEl.innerHTML = commentInputEl.value;
-                commentInputEl.innerHTML = "";
+                commentDisplayEl.textContent = commentInputEl.value;
+                commentInputEl.value = "";
             }
         })
         .catch(error => console.error('Error:', error));
