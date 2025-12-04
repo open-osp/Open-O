@@ -60,9 +60,23 @@
     <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
     <link href="${pageContext.request.contextPath}/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
 
+    <style>
+        form[name="testForm"] fieldset table td {
+            padding: 5px 10px;
+        }
+
+        form[name="testForm"] fieldset table td label {
+            margin-right: 5px;
+        }
+
+        form[name="testForm"] .lab-test-table td label {
+            display: block;
+            margin-bottom: 3px;
+        }
+    </style>
+
     <!-- jquery -->
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <!-- migrate needed for some of the syntax used by external scripts for autocomplete provider -->
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-migrate-3.4.0.js"></script>
     <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
 
@@ -77,9 +91,13 @@
                 minLength: 2,
 
                 focus: function( event, ui ) {
-                    const myArray = ui.item.formattedName.split(",");
-                    $("#lastname").val( myArray[0].trim() );
-                    $("#firstname").val( myArray[1].trim() );
+                    if (ui.item.formattedName) {
+                        const myArray = ui.item.formattedName.split(",");
+                        if (myArray.length > 1) {
+                            $("#lastname").val( myArray[0].trim() );
+                            $("#firstname").val( myArray[1].trim() );
+                        }
+                    }
                     return false;
                 },
                 select: function( event, ui ) {
@@ -88,10 +106,23 @@
                         $("#lastname").val( myArray[0].trim() );
                         $("#firstname").val( myArray[1].trim() );
                     }
-                    let str = ui.item.label;
-                    let dob = str.replace(/[^0-9-]/g, "");
-                    if (dob.length > 0) {
-                        $("#dob").val( dob );
+
+                    // Check for dedicated DOB field (note: backend has typo "fomattedDob")
+                    let dob = null;
+                    if (ui.item.fomattedDob) {
+                        dob = ui.item.fomattedDob;
+                    } else if (ui.item.formattedDob) {
+                        dob = ui.item.formattedDob;
+                    } else if (typeof ui.item.label === "string") {
+                        // Extract YYYY-MM-DD pattern from label
+                        const dobMatch = ui.item.label.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+                        if (dobMatch && dobMatch[1]) {
+                            dob = dobMatch[1];
+                        }
+                    }
+
+                    if (dob) {
+                        $("#dob").val(dob);
                     }
 
                     return false;
@@ -136,7 +167,7 @@
             jQuery("#test_num").val(total);
             jQuery.ajax({url:'CreateLabTest.jsp?id='+total,async:false, success:function(data) {
                     jQuery("#test_container").append(data);
-                    jQuery(':input[type="submit"]').prop('disabled', false);
+                    jQuery('form[name="testForm"] :submit').prop('disabled', false);
                 }});
         }
 
@@ -154,7 +185,7 @@
             total--;
             jQuery("#test_num").val(total);
             if (total<1) {
-                jQuery(':input[type="submit"]').prop('disabled', true);
+                jQuery('form[name="testForm"] :submit').prop('disabled', true);
             }
         }
 
@@ -230,10 +261,6 @@
 
         <fieldset>
             <legend>Patient Information</legend>
-            <style>
-                fieldset table td { padding: 5px 10px; }
-                fieldset table td label { margin-right: 5px; }
-            </style>
             <table>
                 <tr>
                     <td><label>Last Name:</label><input type="text" name="lastname" id="lastname" required></td>

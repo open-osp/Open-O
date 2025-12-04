@@ -54,12 +54,7 @@
 					<fieldset>
                 <legend>Test Information</legend>
 
-                <style>
-                    #test_<%=id%> table td { padding: 5px 10px; }
-                    #test_<%=id%> table td label { display: block; margin-bottom: 3px; }
-                </style>
-
-                <table border="0">
+                <table border="0" class="lab-test-table">
 					<tr>
 						<td  class="input-append"><label>Date:</label><input type="text" name="test_<%=id%>.valDate" id="test_<%=id%>.valDate" class="input-medium" required><img src="<%=request.getContextPath()%>/images/cal.gif" id="test_<%=id%>.valDate_cal" class="add-on" required></td>
 						<td><label>Flag:</label>
