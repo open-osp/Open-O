@@ -112,7 +112,7 @@ public class AddPrevention2Action extends ActionSupport {
         String given = request.getParameter("given");
         String prevDate = request.getParameter("prevDate");
         String providerName = request.getParameter("providerName");
-        String providerNo = request.getParameter("providerNo");
+        String provider = request.getParameter("provider");
 
         String nextDate = request.getParameter("nextDate");
         String neverWarn = request.getParameter("neverWarn");
@@ -210,7 +210,7 @@ public class AddPrevention2Action extends ActionSupport {
 
 
         //let's do some validation
-        List<String> valid = validate(preventionType, demographic_no, id, delete, action, submitToDhir, given, prevDate, providerNo, nextDate, neverWarn,
+        List<String> valid = validate(preventionType, demographic_no, id, delete, action, submitToDhir, given, prevDate, provider, nextDate, neverWarn,
                 snomedId, refused, extraData, lotItem, dose, doseUnit);
         if (valid != null && valid.size() > 0) {
             request.setAttribute("errors", valid);
@@ -221,14 +221,14 @@ public class AddPrevention2Action extends ActionSupport {
         String operation = null;
 
         if (id == null || id.equals("null")) { //New
-            preventionId = PreventionData.insertPreventionData(sessionUser, demographic_no, prevDate, providerNo, providerName, preventionType, refused, nextDate, neverWarn, extraData, snomedId, null);
+            preventionId = PreventionData.insertPreventionData(sessionUser, demographic_no, prevDate, provider, providerName, preventionType, refused, nextDate, neverWarn, extraData, snomedId, null);
             operation = "new_prevention";
         } else if (id != null && delete != null) {  // Delete
             PreventionData.deletePreventionData(id);
             operation = "delete_prevention";
         } else if (id != null && delete == null) { //Update
             addHashtoArray(extraData, id, "previousId");
-            preventionId = PreventionData.updatetPreventionData(id, sessionUser, demographic_no, prevDate, providerNo, providerName, preventionType, refused, nextDate, neverWarn, extraData, snomedId);
+            preventionId = PreventionData.updatetPreventionData(id, sessionUser, demographic_no, prevDate, provider, providerName, preventionType, refused, nextDate, neverWarn, extraData, snomedId);
             operation = "update_prevention";
         }
 
@@ -238,7 +238,7 @@ public class AddPrevention2Action extends ActionSupport {
 
         PreventionManager prvMgr = (PreventionManager) SpringUtils.getBean(PreventionManager.class);
         prvMgr.removePrevention(demographic_no);
-        MiscUtils.getLogger().debug("Given " + given + " prevDate " + prevDate + " providerName " + providerName + " provider " + providerNo);
+        MiscUtils.getLogger().debug("Given " + given + " prevDate " + prevDate + " providerName " + providerName + " provider " + provider);
 
 
         if (submitToDhir) {
@@ -281,7 +281,7 @@ public class AddPrevention2Action extends ActionSupport {
 
 
     private List<String> validate(String preventionType, String demographic_no, String id, String delete, String action,
-                                  boolean submitToDhir, String given, String prevDate, String providerNo, String nextDate,
+                                  boolean submitToDhir, String given, String prevDate, String provider, String nextDate,
                                   String neverWarn, String snomedId, String refused, ArrayList<Map<String, String>> extraData, String lotItem, String dose, String doseUnit) {
         List<String> result = new ArrayList<String>();
 
