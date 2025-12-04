@@ -23,9 +23,8 @@
 
 package org.oscarehr.managers;
 
-import org.oscarehr.common.exception.UserSessionNotFoundException;
-
 import javax.servlet.http.HttpSession;
+import java.util.Collection;
 
 /**
  * Manages user sessions.  Provides methods to register, unregister, and retrieve user sessions based on a user security code.
@@ -35,24 +34,26 @@ import javax.servlet.http.HttpSession;
 public interface UserSessionManager {
 
     /**
-     * Registers a user session.
-     * @param userSecurityCode The user's security code.
-     * @param session The HTTP session object.
+     * Registers a user session with a policy to either invalidate existing sessions or keep them.
+     *
+     * @param userSecurityCode the user's security code
+     * @param session the HTTP session
+     * @param invalidateExisting if true, invalidate all existing sessions for the user before registering the new one; if false, keep existing sessions and add the new one
      */
-    void registerUserSession(Integer userSecurityCode, HttpSession session);
+    void registerUserSession(Integer userSecurityCode, HttpSession session, boolean invalidateExisting);
 
     /**
-     * Unregisters a user session.
-     * @param userSecurityCode The user's security code.
-     * @return The unregistered HTTP session object.
-     * @throws UserSessionNotFoundException If the user session is not found.
+     * Unregister a specific session for a user. If the session or user is not present, this is a no-op.
+     * @param userSecurityCode the user's security code
+     * @param session the HTTP session to unregister
      */
-    HttpSession unregisterUserSession(Integer userSecurityCode) throws UserSessionNotFoundException;
+    void unregisterUserSession(Integer userSecurityCode, HttpSession session);
 
     /**
-     * Retrieves a registered user session.
-     * @param userSecurityCode The user's security code.
-     * @return The registered HTTP session object, or null if not found.
+     * Returns all registered sessions for a user. Returns an empty collection if none are present.
+     * @param userSecurityCode the user's security code
+     * @return collection of sessions
      */
-    HttpSession getRegisteredSession(Integer userSecurityCode);
+    Collection<HttpSession> getRegisteredSessions(Integer userSecurityCode);
+
 }
