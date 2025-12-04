@@ -70,7 +70,7 @@
         </ul>
     </div>
 <% } %>
-    <form action="${pageContext.request.contextPath}/oscarEncounter/oscarMeasurements/DeleteData.do" method="post">
+    <form action="${pageContext.request.contextPath}/oscarEncounter/oscarMeasurements/DeleteData2.do" method="post">
         <table>
             <tr>
                 <td>
