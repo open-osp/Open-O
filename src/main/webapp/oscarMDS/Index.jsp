@@ -384,10 +384,6 @@
             src="${pageContext.servletContext.contextPath}/share/calendar/calendar-setup.js"></script>
     <!-- calendar style sheet -->
 
-    <script type="text/javascript"
-            src="${pageContext.servletContext.contextPath}/share/javascript/prototype.js"></script>
-    <script type="text/javascript"
-            src="${pageContext.servletContext.contextPath}/share/javascript/scriptaculous.js"></script>
 
     <script type="text/javascript"
             src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
@@ -470,8 +466,7 @@
                 page = p;
             }
             if (request != null) {
-                request.transport.onreadystatechange = Prototype.emptyFunction;
-                request.transport.abort();
+                request.abort();
             }
             request = updateListView();
         };
@@ -482,9 +477,10 @@
             }
             var evt = e || window.event;
             var loadMore = false;
-            if (isListView && evt.scrollHeight > $("listViewDocs").clientHeight && evt.scrollTop > 0 && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
+            var listViewDocsEl = document.getElementById("listViewDocs");
+            if (isListView && listViewDocsEl && evt.scrollHeight > listViewDocsEl.clientHeight && evt.scrollTop > 0 && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
                 loadMore = true;
-            } else if (isListView && evt.scrollHeight <= $("listViewDocs").clientHeight) {
+            } else if (isListView && listViewDocsEl && evt.scrollHeight <= listViewDocsEl.clientHeight) {
                 loadMore = true;
             } else if (!isListView && evt.scrollTop + evt.offsetHeight >= evt.scrollHeight) {
                 loadMore = true;
@@ -536,12 +532,14 @@
             jQuery("#readerSwitcher").prop("disabled", true);
             jQuery("#listSwitcher").prop("disabled", true);
 
-            return new Ajax.Updater(div, url, {
-                method: 'get',
-                parameters: query,
-                insertion: Insertion.Bottom,
-                evalScripts: true,
-                onSuccess: function (transport) {
+            return jQuery.ajax({
+                type: 'GET',
+                url: url + query,
+                dataType: 'html',
+                success: function (responseText) {
+                    // Append the response HTML to the target div
+                    jQuery(div).append(responseText);
+
                     loadingDocs = false;
                     var tmp = jQuery("#tempLoader");
                     if (tmp != null) {
@@ -559,19 +557,19 @@
                     // is not null, if true then set and update html to show information about "NoMoreItems"
                     // if null, then it will fake scroll to populate the information in the list
                     var parser = new DOMParser();
-                    var doc = parser.parseFromString(transport.responseText, "text/html");
+                    var doc = parser.parseFromString(responseText, "text/html");
                     var noMoreItems = doc.querySelector("input[name='NoMoreItems']");
 
                     if (noMoreItems) {
                         canLoad = false;
-                        var div = document.getElementById("summaryBody");
+                        var summaryDiv = document.getElementById("summaryBody");
                         var newDiv = "<tbody id=\"newBody\"></tbody>";
-                        div.insertAdjacentHTML("beforeBegin", newDiv);
+                        summaryDiv.insertAdjacentHTML("beforeBegin", newDiv);
                         newDiv = document.getElementById("newBody");
-                        newDiv.innerHTML = div.innerHTML;
-                        div.innerHTML = "";
+                        newDiv.innerHTML = summaryDiv.innerHTML;
+                        summaryDiv.innerHTML = "";
                         newDiv.id = "summaryBody";
-                        div.id = "";
+                        summaryDiv.id = "";
                         jQuery("#summaryView").trigger("updateRows");
                     } else {
                         // It is possible that the current amount of loaded items has not filled up the page enough
@@ -675,7 +673,7 @@
 
         jQuery(document).ready(function () {
             if (isListView == null) {
-                isListView = selected_category_patient.empty();
+                isListView = !selected_category_patient || selected_category_patient.length === 0;
             }
             jQuery('input[name=isListView]').val(isListView);
 

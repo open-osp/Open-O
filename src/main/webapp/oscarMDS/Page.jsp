@@ -163,10 +163,11 @@
                         Integer total_row_index = labdocs.size() - 1;
                         if (total_row_index < 0 || (totalNoPages != null && totalNoPages.intValue() == (pageNum + 1))) {
                     %>
-                    <input type="hidden" name="NoMoreItems" value="true"/> <%
+                    <%
                         if (isListView) { %>
                     <tr>
                         <td colspan="10" align="center">
+                            <input type="hidden" name="NoMoreItems" value="true"/>
                             <i><% if (pageNum == 1) { %>
                                 <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.index.msgNoReports"/>
                                 <% } else { %>
@@ -180,6 +181,7 @@
                     %>
 
                     <div>
+                        <input type="hidden" name="NoMoreItems" value="true"/>
                         <% if (pageNum == 1) { %>
                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.index.msgNoReports"/>
                         <% } else { %>

@@ -18,21 +18,82 @@
  *  McMaster University
  *  Hamilton
  *  Ontario, Canada   Creates a new instance of CommonLabResultData
-
+ *
+ *  Refactored to remove prototype.js dependencies and use native JS/fetch API
  */
 
 
 /************init global data methods*****************/
 let oldestLab;
 
-function updateDocStatusInQueue(docid) {//change status of queue document link row to I=inactive
-    console.log('in updateDocStatusInQueue, docid ' + docid);
-    var url = ctx + "/documentManager/inboxManage.do", data = "docid=" + docid + "&method=updateDocStatusInQueue";
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            console.log(transport)
+/**
+ * Helper function to show an element
+ * @param {HTMLElement|string} el - Element or element ID
+ */
+function showElement(el) {
+    const element = typeof el === 'string' ? document.getElementById(el) : el;
+    if (element) element.style.display = '';
+}
+
+/**
+ * Helper function to hide an element
+ * @param {HTMLElement|string} el - Element or element ID
+ */
+function hideElement(el) {
+    const element = typeof el === 'string' ? document.getElementById(el) : el;
+    if (element) element.style.display = 'none';
+}
+
+/**
+ * Helper function to serialize form data to URL-encoded string
+ * @param {HTMLFormElement|string} form - Form element or form ID
+ * @returns {string}
+ */
+function serializeForm(form) {
+    const formElement = typeof form === 'string' ? document.getElementById(form) : form;
+    if (!formElement) return '';
+    const formData = new FormData(formElement);
+    return new URLSearchParams(formData).toString();
+}
+
+/**
+ * Helper function to serialize form data to object
+ * @param {HTMLFormElement|string} form - Form element or form ID
+ * @returns {Object}
+ */
+function serializeFormToObject(form) {
+    const formElement = typeof form === 'string' ? document.getElementById(form) : form;
+    if (!formElement) return {};
+    const formData = new FormData(formElement);
+    const obj = {};
+    formData.forEach((value, key) => {
+        if (obj.hasOwnProperty(key)) {
+            if (!Array.isArray(obj[key])) {
+                obj[key] = [obj[key]];
+            }
+            obj[key].push(value);
+        } else {
+            obj[key] = value;
         }
     });
+    return obj;
+}
+
+function updateDocStatusInQueue(docid) {//change status of queue document link row to I=inactive
+    console.log('in updateDocStatusInQueue, docid ' + docid);
+    const url = ctx + "/documentManager/inboxManage.do";
+    const data = "docid=" + docid + "&method=updateDocStatusInQueue";
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.text())
+    .then(text => console.log(text))
+    .catch(error => console.error('Error:', error));
 }
 
 function saveNext(docid) {
@@ -148,7 +209,7 @@ function initList(s) {//normals,abnormals
         var sar = s.split(',');
         return sar;
     } else {
-        var re = new Arrays();
+        var re = new Array();
         return re;
     }
 }
@@ -286,7 +347,8 @@ function addPatientIdName(pid, name) {
 function sendMRP(ele) {
     var doclabid = ele.id;
     doclabid = doclabid.split('_')[1];
-    var demoId = $('demofind' + doclabid).value;
+    var demofindEl = document.getElementById('demofind' + doclabid);
+    var demoId = demofindEl ? demofindEl.value : '-1';
     if (demoId == '-1') {
         alert('Please enter a valid demographic');
         ele.checked = false;
@@ -295,14 +357,25 @@ function sendMRP(ele) {
             var type = checkType(doclabid);
             var url = contextpath + "/oscarMDS/SendMRP.do";
             var data = 'demoId=' + demoId + '&docLabType=' + type + '&docLabId=' + doclabid;
-            new Ajax.Request(url, {
-                method: 'post', parameters: data, onSuccess: function (transport) {
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data
+            })
+            .then(response => {
+                if (response.ok) {
                     ele.disabled = true;
-                    $('mrp_fail_' + doclabid).hide();
-                }, onFailure: function (transport) {
-                    ele.checked = false;
-                    $('mrp_fail_' + doclabid).show();
+                    hideElement('mrp_fail_' + doclabid);
+                } else {
+                    throw new Error('Request failed');
                 }
+            })
+            .catch(error => {
+                ele.checked = false;
+                showElement('mrp_fail_' + doclabid);
             });
         } else {
             ele.checked = false;
@@ -312,59 +385,87 @@ function sendMRP(ele) {
 
 function rotate180(id) {
     jQuery("#rotate180btn_" + id).attr('disabled', 'disabled');
-    var displayDocumentAs = $('displayDocumentAs_' + id).value;
+    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-    new Ajax.Request(contextpath + "/documentManager/SplitDocument.do", {
-        method: 'post', parameters: "method=rotate180&document=" + id, onSuccess: function (data) {
-            jQuery("#rotate180btn_" + id).removeAttr('disabled');
-            if (displayDocumentAs == "PDF") {
-                showPDF(id, contextpath);
-            } else {
-                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-            }
+    fetch(contextpath + "/documentManager/SplitDocument.do", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "method=rotate180&document=" + id
+    })
+    .then(response => response.text())
+    .then(data => {
+        jQuery("#rotate180btn_" + id).removeAttr('disabled');
+        if (displayDocumentAs == "PDF") {
+            showPDF(id, contextpath);
+        } else {
+            jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
         }
-    });
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function rotate90(id) {
     jQuery("#rotate90btn_" + id).attr('disabled', 'disabled');
-    var displayDocumentAs = $('displayDocumentAs_' + id).value;
+    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-    new Ajax.Request(contextpath + "/documentManager/SplitDocument.do", {
-        method: 'post', parameters: "method=rotate90&document=" + id, onSuccess: function (data) {
-            jQuery("#rotate90btn_" + id).removeAttr('disabled');
-            if (displayDocumentAs == "PDF") {
-                showPDF(id, contextpath);
-            } else {
-                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-            }
+    fetch(contextpath + "/documentManager/SplitDocument.do", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: "method=rotate90&document=" + id
+    })
+    .then(response => response.text())
+    .then(data => {
+        jQuery("#rotate90btn_" + id).removeAttr('disabled');
+        if (displayDocumentAs == "PDF") {
+            showPDF(id, contextpath);
+        } else {
+            jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
         }
-    });
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function removeFirstPage(id) {
     jQuery("#removeFirstPagebtn_" + id).attr('disabled', 'disabled');
     if (confirm("!! This is a destructive action that can cause loss of document data !! \n Click OK to delete the first page of this document, or Cancel to abort.")) {
         ShowSpin(true);
-        var displayDocumentAs = $('displayDocumentAs_' + id).value;
-        new Ajax.Request(contextpath + "/documentManager/SplitDocument.do", {
-            method: 'post', parameters: "method=removeFirstPage&document=" + id,
-            onSuccess: function (data) {
-                if (displayDocumentAs == "PDF") {
-                    showPDF(id, contextpath);
-                } else {
-                    jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
-                }
-                var numPages = parseInt(jQuery("#numPages_" + id).text()) - 1;
-                jQuery("#numPages_" + id).text("" + numPages);
+        var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + id);
+        var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
 
-                if (numPages <= 1) {
-                    jQuery("#numPages_" + id).removeClass("multiPage");
-                    jQuery("#removeFirstPagebtn_" + id).remove();
-                }
-                HideSpin();
-                jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+        fetch(contextpath + "/documentManager/SplitDocument.do", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: "method=removeFirstPage&document=" + id
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (displayDocumentAs == "PDF") {
+                showPDF(id, contextpath);
+            } else {
+                jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=viewDocPage&doc_no=" + id + "&curPage=1&rand=" + (new Date().getTime()));
             }
+            var numPages = parseInt(jQuery("#numPages_" + id).text()) - 1;
+            jQuery("#numPages_" + id).text("" + numPages);
+
+            if (numPages <= 1) {
+                jQuery("#numPages_" + id).removeClass("multiPage");
+                jQuery("#removeFirstPagebtn_" + id).remove();
+            }
+            HideSpin();
+            jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            HideSpin();
+            jQuery("#removeFirstPagebtn_" + id).removeAttr('disabled');
         });
     }
 }
@@ -375,23 +476,23 @@ function split(id) {
 }
 
 function hideTopBtn() {
-    $('topFRBtn').hide();
-    if ($('topFBtn') && $('topFileBtn')) {
-        $('topFBtn').hide();
-        $('topFileBtn').hide();
+    hideElement('topFRBtn');
+    var topFBtn = document.getElementById('topFBtn');
+    var topFileBtn = document.getElementById('topFileBtn');
+    if (topFBtn && topFileBtn) {
+        hideElement('topFBtn');
+        hideElement('topFileBtn');
     }
 }
 
 function showTopBtn() {
-    $('topFRBtn').show();
-    if ($('topFBtn') && $('topFileBtn')) {
-        $('topFBtn').show();
-        $('topFileBtn').show();
+    showElement('topFRBtn');
+    var topFBtn = document.getElementById('topFBtn');
+    var topFileBtn = document.getElementById('topFileBtn');
+    if (topFBtn && topFileBtn) {
+        showElement('topFBtn');
+        showElement('topFileBtn');
     }
-}
-
-function popupStart(vheight, vwidth, varpage) {
-    popupStart(vheight, vwidth, varpage, "helpwindow");
 }
 
 function popupStart(vheight, vwidth, varpage, windowname) {
@@ -401,12 +502,13 @@ function popupStart(vheight, vwidth, varpage, windowname) {
         windowname = "helpwindow";
     //console.log(vheight+"--"+ vwidth+"--"+ varpage+"--"+ windowname);
     var page = varpage;
-    windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
+    var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
     var popup = window.open(varpage, windowname, windowprops);
 }
 
 function reportWindow(page, height, width) {
     //console.log(page);
+    var windowprops;
     if (height && width) {
         windowprops = "height=" + height + ", width=" + width + ", location=no, scrollbars=yes, menubars=no, toolbars=no, resizable=yes, top=0, left=0";
     } else {
@@ -518,7 +620,8 @@ function bulkInboxAction(url, filelabs) {
 }
 
 function isRowShown(rowid) {
-    if ($(rowid).style.display == 'none')
+    var el = document.getElementById(rowid);
+    if (el && el.style.display == 'none')
         return false;
     else
         return true;
@@ -527,7 +630,7 @@ function isRowShown(rowid) {
 function checkAllLabs(formId) {
     var val = document.getElementsByName("checkA")[0].checked;
     var labs = document.getElementsByName("flaggedLabs");
-    for (i = 0; i < labs.length; i++) {
+    for (var i = 0; i < labs.length; i++) {
         if (labs[i].disabled === false) {
             labs[i].checked = val;
         }
@@ -551,7 +654,7 @@ function showDocLab(childId, docNo, providerNo, searchProviderNo, status, demoNa
     //var div=childId;
 
     //var div=window.frames[0].document.getElementById(childId);
-    var div = $(childId);
+    var div = document.getElementById(childId);
     //alert(div);
     var url = '';
     if (type == 'DOC')
@@ -569,16 +672,32 @@ function showDocLab(childId, docNo, providerNo, searchProviderNo, status, demoNa
     //oscarLog('url='+url);
     var data = "segmentID=" + docNo + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&demoName=" + demoName;
     //oscarLog('url='+url+'+-+ \n data='+data);
-    new Ajax.Updater(div, url, {
-        method: 'get',
-        parameters: data,
-        insertion: Insertion.Bottom,
-        evalScripts: true,
-        onSuccess: function (transport) {
-            focusFirstDocLab();
-        }
-    });
 
+    fetch(url + '?' + data, {
+        method: 'GET'
+    })
+    .then(response => response.text())
+    .then(html => {
+        if (div) {
+            // Append to bottom of div
+            div.insertAdjacentHTML('beforeend', html);
+            // Execute any scripts in the returned HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            const scripts = tempDiv.querySelectorAll('script');
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                if (script.src) {
+                    newScript.src = script.src;
+                } else {
+                    newScript.textContent = script.textContent;
+                }
+                document.head.appendChild(newScript).parentNode.removeChild(newScript);
+            });
+        }
+        focusFirstDocLab();
+    })
+    .catch(error => console.error('Error loading document:', error));
 }
 
 function createNewElement(parent, child) {
@@ -586,26 +705,26 @@ function createNewElement(parent, child) {
     var newdiv = document.createElement('div');
     //oscarLog('22 after create new leme');
     newdiv.setAttribute('id', child);
-    var parentdiv = $(parent);
+    var parentdiv = document.getElementById(parent);
     parentdiv.appendChild(newdiv);
     //oscarLog('55 after create new leme');
 }
 
 function clearDocView() {
-    var docview = $('docViews');
+    var docview = document.getElementById('docViews');
     //var docview=window.frames[0].document.getElementById('docViews');
-    docview.innerHTML = '';
+    if (docview) docview.innerHTML = '';
 }
 
 function showhideSubCat(plus_minus, patientId) {
     if (plus_minus == 'plus') {
-        $('plus' + patientId).hide();
-        $('minus' + patientId).show();
-        $('labdoc' + patientId + 'showSublist').show();
+        hideElement('plus' + patientId);
+        showElement('minus' + patientId);
+        showElement('labdoc' + patientId + 'showSublist');
     } else {
-        $('minus' + patientId).hide();
-        $('plus' + patientId).show();
-        $('labdoc' + patientId + 'showSublist').hide();
+        hideElement('minus' + patientId);
+        showElement('plus' + patientId);
+        hideElement('labdoc' + patientId + 'showSublist');
     }
 }
 
@@ -614,8 +733,9 @@ function un_bold(ele) {
     if (ele == null || currentBold == ele.id) {
         ;
     } else {
-        if (currentBold && $(currentBold) != null) {
-            $(currentBold).style.fontWeight = '';
+        var currentBoldEl = document.getElementById(currentBold);
+        if (currentBold && currentBoldEl != null) {
+            currentBoldEl.style.fontWeight = '';
         }
         ele.style.fontWeight = 'bold';
         currentBold = ele.id;
@@ -624,13 +744,15 @@ function un_bold(ele) {
 }
 
 function re_bold(id) {
-    if (id && $(id) != null) {
-        $(id).style.fontWeight = 'bold';
+    var el = document.getElementById(id);
+    if (id && el != null) {
+        el.style.fontWeight = 'bold';
     }
 }
 
 function showPageNumber(page) {
-    var totalNoRow = $('totalNumberRow').value;
+    var totalNoRowEl = document.getElementById('totalNumberRow');
+    var totalNoRow = totalNoRowEl ? totalNoRowEl.value : 0;
     var newStartIndex = number_of_row_per_page * (parseInt(page) - 1);
     var newEndIndex = parseInt(newStartIndex) + 19;
     var isLastPage = false;
@@ -640,25 +762,31 @@ function showPageNumber(page) {
     }
     //oscarLog("new start="+newStartIndex+";new end="+newEndIndex);
     for (var i = 0; i < totalNoRow; i++) {
-        if ($('row' + i) && parseInt(newStartIndex) <= i && i <= parseInt(newEndIndex)) {
+        var rowEl = document.getElementById('row' + i);
+        if (rowEl && parseInt(newStartIndex) <= i && i <= parseInt(newEndIndex)) {
             //oscarLog("show row-"+i);
-            $('row' + i).show();
-        } else if ($('row' + i)) {
+            showElement(rowEl);
+        } else if (rowEl) {
             //oscarLog("hide row-"+i);
-            $('row' + i).hide();
+            hideElement(rowEl);
         }
     }
     //update current page
-    $('currentPageNum').innerHTML = page;
+    var currentPageNumEl = document.getElementById('currentPageNum');
+    if (currentPageNumEl) currentPageNumEl.innerHTML = page;
     if (page == 1) {
-        if ($('msgPrevious')) $('msgPrevious').hide();
+        var msgPreviousEl = document.getElementById('msgPrevious');
+        if (msgPreviousEl) hideElement(msgPreviousEl);
     } else if (page > 1) {
-        if ($('msgPrevious')) $('msgPrevious').show();
+        var msgPreviousEl = document.getElementById('msgPrevious');
+        if (msgPreviousEl) showElement(msgPreviousEl);
     }
     if (isLastPage) {
-        if ($('msgNext')) $('msgNext').hide();
+        var msgNextEl = document.getElementById('msgNext');
+        if (msgNextEl) hideElement(msgNextEl);
     } else {
-        if ($('msgNext')) $('msgNext').show();
+        var msgNextEl = document.getElementById('msgNext');
+        if (msgNextEl) showElement(msgNextEl);
     }
 }
 
@@ -676,23 +804,23 @@ function showTypePageNumber(page, type) {
         //only display current page
         for (var i = startindex; i < endindex + 1; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'table-row'});
+            ele.style.display = 'table-row';
         }
         //hide previous page
         for (var i = 0; i < startindex; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
         //hide later page
         for (var i = endindex; i < length; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
         //hide all labs
         eles = document.getElementsByName('HL7lab');
-        for (i = 0; i < eles.length; i++) {
+        for (var i = 0; i < eles.length; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
     } else if (type == 'H') {
         eles = document.getElementsByName('HL7lab');
@@ -705,27 +833,27 @@ function showTypePageNumber(page, type) {
         //only display current page
         for (var i = startindex; i < endindex + 1; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'table-row'});
+            ele.style.display = 'table-row';
         }
         //hide previous page
         for (var i = 0; i < startindex; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
         //hide later page
         for (var i = endindex; i < length; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
         //hide all labs
         eles = document.getElementsByName('scannedDoc');
-        for (i = 0; i < eles.length; i++) {
+        for (var i = 0; i < eles.length; i++) {
             var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
     } else if (type == 'N') {
         var eles1 = document.getElementsByClassName('NormalRes');
-        var length = eles.length;
+        var length = eles1.length;
         var startindex = (parseInt(page) - 1) * numberPerPage;
         var endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
@@ -734,28 +862,27 @@ function showTypePageNumber(page, type) {
 
         for (var i = startindex; i < endindex + 1; i++) {
             var ele = eles1[i];
-            ele.setStyle({display: 'table-row'});
+            ele.style.display = 'table-row';
         }
         //hide previous page
         for (var i = 0; i < startindex; i++) {
-            var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            var ele = eles1[i];
+            ele.style.display = 'none';
         }
         //hide later page
         for (var i = endindex; i < length; i++) {
-            var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            var ele = eles1[i];
+            ele.style.display = 'none';
         }
         //hide all abnormals
         var eles2 = document.getElementsByClassName('AbnormalRes');
-        i = 0;
-        for (i = 0; i < eles2.length; i++) {
+        for (var i = 0; i < eles2.length; i++) {
             var ele = eles2[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
     } else if (type == 'AB') {
         var eles1 = document.getElementsByClassName('AbnormalRes');
-        var length = eles.length;
+        var length = eles1.length;
         var startindex = (parseInt(page) - 1) * numberPerPage;
         var endindex = startindex + numberPerPage - 1;
         if (endindex > length - 1) {
@@ -763,23 +890,23 @@ function showTypePageNumber(page, type) {
         }
         for (var i = startindex; i < endindex + 1; i++) {
             var ele = eles1[i];
-            ele.setStyle({display: 'table-row'});
+            ele.style.display = 'table-row';
         }
         //hide previous page
         for (var i = 0; i < startindex; i++) {
-            var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            var ele = eles1[i];
+            ele.style.display = 'none';
         }
         //hide later page
         for (var i = endindex; i < length; i++) {
-            var ele = eles[i];
-            ele.setStyle({display: 'none'});
+            var ele = eles1[i];
+            ele.style.display = 'none';
         }
         //hide all normals
         var eles2 = document.getElementsByClassName('NormalRes');
         for (var i = 0; i < eles2.length; i++) {
             var ele = eles2[i];
-            ele.setStyle({display: 'none'});
+            ele.style.display = 'none';
         }
     }
 }
@@ -805,17 +932,22 @@ function setTotalRows() {
 
 function checkBox() {
     var view = "all";
+    var documentCB = document.getElementById('documentCB');
+    var hl7CB = document.getElementById('hl7CB');
+    var normalCB = document.getElementById('normalCB');
+    var abnormalCB = document.getElementById('abnormalCB');
+    var unassignedCB = document.getElementById('unassignedCB');
 
-    if ($('documentCB').checked == 1) {
+    if (documentCB && documentCB.checked == 1) {
         view = "documents";
-    } else if ($('hl7CB').checked == 1) {
+    } else if (hl7CB && hl7CB.checked == 1) {
         view = "labs";
-    } else if ($('normalCB').checked == 1) {
+    } else if (normalCB && normalCB.checked == 1) {
         checkedArray.push('normal');
         view = "normal";
-    } else if ($('abnormalCB').checked == 1) {
+    } else if (abnormalCB && abnormalCB.checked == 1) {
         view = "abnormal";
-    } else if ($('unassignedCB').checked == 1) {
+    } else if (unassignedCB && unassignedCB.checked == 1) {
         view = "unassigned";
     }
     window.location.search = replaceQueryString(window.location.search, "view", view);
@@ -853,7 +985,7 @@ function displayCategoryPage(page) {
     //set current displaying rows
     current_rows = new Array();
     for (var i = startIndex; i < endIndex + 1; i++) {
-        if ($(displayrowids[i])) {
+        if (document.getElementById(displayrowids[i])) {
             current_rows.push(displayrowids[i]);
         }
     }
@@ -861,31 +993,35 @@ function displayCategoryPage(page) {
     for (var i = 0; i < total_rows.length; i++) {
         var rowid = total_rows[i];
         if (a_contain_b(current_rows, rowid)) {
-            $(rowid).show();
+            showElement(rowid);
         } else
-            $(rowid).hide();
+            hideElement(rowid);
     }
 }
 
 function initializeNavigation() {
-    $('currentPageNum').innerHTML = 1;
+    var currentPageNumEl = document.getElementById('currentPageNum');
+    if (currentPageNumEl) currentPageNumEl.innerHTML = 1;
     //update the page number shown and update previous and next words
+    var msgNextEl = document.getElementById('msgNext');
+    var msgPreviousEl = document.getElementById('msgPrevious');
     if (current_numberofpages > 1) {
-        if ($('msgNext') != null) $('msgNext').show();
-        if ($('msgPrevious') != null) $('msgPrevious').hide();
+        if (msgNextEl != null) showElement(msgNextEl);
+        if (msgPreviousEl != null) hideElement(msgPreviousEl);
     } else if (current_numberofpages < 1) {
-        if ($('msgNext') != null) $('msgNext').hide();
-        if ($('msgPrevious') != null) $('msgPrevious').hide();
+        if (msgNextEl != null) hideElement(msgNextEl);
+        if (msgPreviousEl != null) hideElement(msgPreviousEl);
     } else if (current_numberofpages == 1) {
-        if ($('msgNext') != null) $('msgNext').hide();
-        if ($('msgPrevious') != null) $('msgPrevious').hide();
+        if (msgNextEl != null) hideElement(msgNextEl);
+        if (msgPreviousEl != null) hideElement(msgPreviousEl);
     }
     //oscarLog("current_numberofpages "+current_numberofpages);
-    if ($('current_individual_pages') != null) {
-        $('current_individual_pages').innerHTML = "";
+    var currentIndividualPagesEl = document.getElementById('current_individual_pages');
+    if (currentIndividualPagesEl != null) {
+        currentIndividualPagesEl.innerHTML = "";
         if (current_numberofpages > 1) {
             for (var i = 1; i <= current_numberofpages; i++) {
-                $('current_individual_pages').innerHTML += '<a style="text-decoration:none;" href="javascript:void(0);" onclick="navigatePage(' + i + ')> [ ' + i + ' ] </a>';
+                currentIndividualPagesEl.innerHTML += '<a style="text-decoration:none;" href="javascript:void(0);" onclick="navigatePage(' + i + ')> [ ' + i + ' ] </a>';
             }
         }
     }
@@ -930,7 +1066,8 @@ function uniqueArray(a) {
 }
 
 function navigatePage(p) {
-    var pagenum = parseInt($('currentPageNum').innerHTML);
+    var currentPageNumEl = document.getElementById('currentPageNum');
+    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.innerHTML : 1);
     if (p == 'Previous') {
         navigatePage(pagenum - 1);
     } else if (p == 'Next') {
@@ -942,64 +1079,51 @@ function navigatePage(p) {
 
 // TODO: Remove unused function.
 function changeNavigationBar() {
-    var pagenum = parseInt($('currentPageNum').innerHTML);
+    var currentPageNumEl = document.getElementById('currentPageNum');
+    var pagenum = parseInt(currentPageNumEl ? currentPageNumEl.innerHTML : 1);
+    var msgNextEl = document.getElementById('msgNext');
+    var msgPreviousEl = document.getElementById('msgPrevious');
     if (current_numberofpages == 1) {
-        $('msgNext').hide();
-        $('msgPrevious').hide();
+        hideElement(msgNextEl);
+        hideElement(msgPreviousEl);
     } else if (current_numberofpages > 1 && current_numberofpages == pagenum) {
-        $('msgNext').hide();
-        $('msgPrevious').show();
+        hideElement(msgNextEl);
+        showElement(msgPreviousEl);
     } else if (current_numberofpages > 1 && pagenum == 1) {
-        $('msgNext').show();
-        $('msgPrevious').hide();
+        showElement(msgNextEl);
+        hideElement(msgPreviousEl);
     } else if (pagenum < current_numberofpages && pagenum > 1) {
-        $('msgNext').show();
-        $('msgPrevious').show();
+        showElement(msgNextEl);
+        showElement(msgPreviousEl);
     }
 }
 
 function syncCB(ele) {
     var id = ele.id;
     if (id == 'documentCB') {
-        if (ele.checked == 1)
-            $('documentCB2').checked = 1;
-        else
-            $('documentCB2').checked = 0;
+        var cb2 = document.getElementById('documentCB2');
+        if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'documentCB2') {
-        if (ele.checked == 1)
-            $('documentCB').checked = 1;
-        else
-            $('documentCB').checked = 0;
+        var cb = document.getElementById('documentCB');
+        if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'hl7CB') {
-        if (ele.checked == 1)
-            $('hl7CB2').checked = 1;
-        else
-            $('hl7CB2').checked = 0;
+        var cb2 = document.getElementById('hl7CB2');
+        if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'hl7CB2') {
-        if (ele.checked == 1)
-            $('hl7CB').checked = 1;
-        else
-            $('hl7CB').checked = 0;
+        var cb = document.getElementById('hl7CB');
+        if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'normalCB') {
-        if (ele.checked == 1)
-            $('normalCB2').checked = 1;
-        else
-            $('normalCB2').checked = 0;
+        var cb2 = document.getElementById('normalCB2');
+        if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'normalCB2') {
-        if (ele.checked == 1)
-            $('normalCB').checked = 1;
-        else
-            $('normalCB').checked = 0;
+        var cb = document.getElementById('normalCB');
+        if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'abnormalCB') {
-        if (ele.checked == 1)
-            $('abnormalCB2').checked = 1;
-        else
-            $('abnormalCB2').checked = 0;
+        var cb2 = document.getElementById('abnormalCB2');
+        if (cb2) cb2.checked = ele.checked == 1 ? 1 : 0;
     } else if (id == 'abnormalCB2') {
-        if (ele.checked == 1)
-            $('abnormalCB').checked = 1;
-        else
-            $('abnormalCB').checked = 0;
+        var cb = document.getElementById('abnormalCB');
+        if (cb) cb.checked = ele.checked == 1 ? 1 : 0;
     }
 }
 
@@ -1067,17 +1191,24 @@ function getPatientNameFromPatientId(patientId) {
     } else {
         var url = contextpath + "/documentManager/ManageDocument.do";
         var data = 'method=getDemoNameAjax&demo_no=' + patientId;
-        new Ajax.Request(url, {
-            method: 'post', parameters: data, onSuccess: function (transport) {
-                var json = transport.responseText.evalJSON();
-                if (json != null) {
-                    var pn = json.demoName;//get name from id
-                    addPatientIdName(patientId, pn);
-                    addPatientId(patientId);
-                    return pn;
-                }
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data
+        })
+        .then(response => response.json())
+        .then(json => {
+            if (json != null) {
+                var pn = json.demoName;//get name from id
+                addPatientIdName(patientId, pn);
+                addPatientId(patientId);
+                return pn;
             }
-        });
+        })
+        .catch(error => console.error('Error:', error));
     }
 }
 
@@ -1241,10 +1372,10 @@ function ForwardSelectedRows(files, searchProviderNo, status) {
                 jQuery(this).dialog("close");
             }
         },
-			open: function() {
-				// Applies Bootstrap 5 card styles if Bootstrap is included; otherwise, it will render as a normal jQuery dialog box.
-				styleDialogAsCard();
-			},
+		open: function() {
+			// Applies Bootstrap 5 card styles if Bootstrap is included; otherwise, it will render as a normal jQuery dialog box.
+			styleDialogAsCard();
+		},
         close: function () {
             jQuery(this).find("select[multiple]#fwdProviders").val('');
             jQuery(this).find("select[multiple]#fwdFavorites").val('');
@@ -1278,9 +1409,9 @@ function styleDialogAsCard() {
 
 function forwardLabs(files, providers, favorites) {
     var url = ctx + "/oscarMDS/ReportReassign.do";
-    
+
         var filesArray = Array.isArray(files) ? files : [files];
-        
+
         var filelabs = {
             "flaggedLabs": JSON.stringify({ "files": filesArray }),
             "selectedProviders": JSON.stringify({ "providers": providers }),
@@ -1317,70 +1448,78 @@ function checkAb_normal(doclabid) {
 
 function updateSideNav(doclabid) {
     //oscarLog('in updatesidenav');
-    var n = $('totalNumDocs').innerHTML;
+    var totalNumDocsEl = document.getElementById('totalNumDocs');
+    var n = totalNumDocsEl ? totalNumDocsEl.innerHTML : '0';
     n = parseInt(n);
     if (n > 0) {
         n = n - 1;
-        $('totalNumDocs').innerHTML = n;
+        if (totalNumDocsEl) totalNumDocsEl.innerHTML = n;
     }
     var type = checkType(doclabid);
     //oscarLog('type='+type);
     if (type == 'DOC') {
-        n = $('totalDocsNum').innerHTML;
+        var totalDocsNumEl = document.getElementById('totalDocsNum');
+        n = totalDocsNumEl ? totalDocsNumEl.innerHTML : '0';
         //oscarLog('n='+n);
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            $('totalDocsNum').innerHTML = n;
+            if (totalDocsNumEl) totalDocsNumEl.innerHTML = n;
         }
     } else if (type == 'HL7') {
-        n = $('totalHL7Num').innerHTML;
+        var totalHL7NumEl = document.getElementById('totalHL7Num');
+        n = totalHL7NumEl ? totalHL7NumEl.innerHTML : '0';
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            $('totalHL7Num').innerHTML = n;
+            if (totalHL7NumEl) totalHL7NumEl.innerHTML = n;
         }
     }
     var ab_normal = checkAb_normal(doclabid);
     //oscarLog('normal or abnormal?'+ab_normal);
     if (ab_normal == 'normal') {
-        n = $('normalNum').innerHTML;
+        var normalNumEl = document.getElementById('normalNum');
+        n = normalNumEl ? normalNumEl.innerHTML : '0';
         //oscarLog('normal inner='+n);
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            $('normalNum').innerHTML = n;
+            if (normalNumEl) normalNumEl.innerHTML = n;
         }
     } else if (ab_normal == 'abnormal') {
-        n = $('abnormalNum').innerHTML;
+        var abnormalNumEl = document.getElementById('abnormalNum');
+        n = abnormalNumEl ? abnormalNumEl.innerHTML : '0';
         n = parseInt(n);
         if (n > 0) {
             n = n - 1;
-            $('abnormalNum').innerHTML = n;
+            if (abnormalNumEl) abnormalNumEl.innerHTML = n;
         }
     }
 
     //update patient and patient's subtype
     var patientId = getPatientIdFromDocLabId(doclabid);
     //oscarLog('xx '+patientId+'--'+n);
-    n = $('patientNumDocs' + patientId).innerHTML;
+    var patientNumDocsEl = document.getElementById('patientNumDocs' + patientId);
+    n = patientNumDocsEl ? patientNumDocsEl.innerHTML : '0';
     //oscarLog('xx xx '+patientId+'--'+n);
     n = parseInt(n);
     if (n > 0) {
-        $('patientNumDocs' + patientId).innerHTML = n - 1;
+        if (patientNumDocsEl) patientNumDocsEl.innerHTML = n - 1;
     }
 
     if (type == 'DOC') {
-        n = $('pDocNum_' + patientId).innerHTML;
+        var pDocNumEl = document.getElementById('pDocNum_' + patientId);
+        n = pDocNumEl ? pDocNumEl.innerHTML : '0';
         n = parseInt(n);
         if (n > 0) {
-            $('pDocNum_' + patientId).innerHTML = n - 1;
+            if (pDocNumEl) pDocNumEl.innerHTML = n - 1;
         }
     } else if (type == 'HL7') {
-        n = $('pLabNum_' + patientId).innerHTML;
+        var pLabNumEl = document.getElementById('pLabNum_' + patientId);
+        n = pLabNumEl ? pLabNumEl.innerHTML : '0';
         n = parseInt(n);
         if (n > 0) {
-            $('pLabNum_' + patientId).innerHTML = n - 1;
+            if (pLabNumEl) pLabNumEl.innerHTML = n - 1;
         }
     }
 }
@@ -1401,7 +1540,8 @@ function hideRowUsingId(doclabid) {
         var rowid;
         doclabid = doclabid.replace(' ', '');
         rowid = getRowIdFromDocLabId(doclabid);
-        $(rowid).remove();
+        var rowEl = document.getElementById(rowid);
+        if (rowEl) rowEl.remove();
     }
 }
 
@@ -1414,7 +1554,8 @@ function focusFirstDocLab() {
         var doc_lab = checkType(current_first_doclab);
         if (doc_lab == 'DOC') {
             //oscarLog('docDesc_'+current_first_doclab);
-            $('docDesc_' + current_first_doclab).focus();
+            var docDescEl = document.getElementById('docDesc_' + current_first_doclab);
+            if (docDescEl) docDescEl.focus();
         } else if (doc_lab == 'HL7') {
             //do nothing
         }
@@ -1443,29 +1584,31 @@ function updatePatientDocLabNav(num, patientId) {
         var changed = false;
         var type = checkType(num);
         //oscarLog($('patient'+patientId+'all'));
-        if ($('patient' + patientId + 'all')) {
+        if (document.getElementById('patient' + patientId + 'all')) {
             //oscarLog('if');
             //case 1,patientName exists
             //check the type of doclab,
             //check if the type is present, if yes, increase by 1; if not, create and set to 1.
 
             if (type == 'DOC') {
-                if ($('patient' + patientId + 'docs')) {
+                if (document.getElementById('patient' + patientId + 'docs')) {
                     increaseCount('pDocNum_' + patientId);
                     changed = true;
                 } else {
                     var newEle = createNewDocEle(patientId);
                     //oscarLog($('labdoc'+patientId+'showSublist'));
-                    new Insertion.Bottom('labdoc' + patientId + 'showSublist', newEle);
+                    var sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
+                    if (sublistEl) sublistEl.insertAdjacentHTML('beforeend', newEle);
                     changed = true;
                 }
             } else if (type == 'HL7') {
-                if ($('patient' + patientId + 'hl7s')) {
+                if (document.getElementById('patient' + patientId + 'hl7s')) {
                     increaseCount('pLabNum_' + patientId);
                     changed = true;
                 } else {
                     var newEle = createNewHL7Ele(patientId);
-                    new Insertion.Bottom('labdoc' + patientId + 'showSublist', newEle);
+                    var sublistEl = document.getElementById('labdoc' + patientId + 'showSublist');
+                    if (sublistEl) sublistEl.insertAdjacentHTML('beforeend', newEle);
                     changed = true;
                 }
             }
@@ -1495,37 +1638,45 @@ function updatePatientDocLabNav(num, patientId) {
 function createPatientDocLabEle(patientId, doclabid) {
     var url = ctx + "/documentManager/ManageDocument.do";
     var data = 'method=getDemoNameAjax&demo_no=' + patientId;
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            var json = transport.responseText.evalJSON();
-            //oscarLog(json);
-            if (json != null) {
-                var patientName = json.demoName;//get name from id
-                addPatientId(patientId);
-                addPatientIdName(patientId, patientName);
-                var e = '<dt><img id="plus' + patientId + '" alt="plus" src="' + ctx + '/images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="' + ctx + '/images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
-                '<a id="patient' + patientId + 'all" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showThisPatientDocs(\'' + patientId + '\');un_bold(this);" title="' + patientName + '">' + patientName + ' (<span id="patientNumDocs' + patientId + '">1</span>)</a>' +
-                '<dl id="labdoc' + patientId + 'showSublist" style="display:none">';
-                var type = checkType(doclabid);
-                var s;
-                //oscarLog('type='+type);
-                //oscarLog('eee='+e);
-                if (type == 'DOC') {
-                    s = createNewDocEle(patientId);
-                } else if (type == 'HL7') {
-                    s = createNewHL7Ele(patientId);
-                } else {
-                    return '';
-                }
-                e += s;
-                e += '</dl></dt>';
-                //oscarLog('jjjjje='+e);
-                //oscarLog('before return e');
-                new Insertion.Bottom('patientsdoclabs', e);
-                return e;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(json => {
+        //oscarLog(json);
+        if (json != null) {
+            var patientName = json.demoName;//get name from id
+            addPatientId(patientId);
+            addPatientIdName(patientId, patientName);
+            var e = '<dt><img id="plus' + patientId + '" alt="plus" src="' + ctx + '/images/plus.png" onclick="showhideSubCat(\'plus\',\'' + patientId + '\');"/><img id="minus' + patientId + '" alt="minus" style="display:none;" src="' + ctx + '/images/minus.png" onclick="showhideSubCat(\'minus\',\'' + patientId + '\');"/>' +
+            '<a id="patient' + patientId + 'all" href="javascript:void(0);" onclick="resetCurrentFirstDocLab();showThisPatientDocs(\'' + patientId + '\');un_bold(this);" title="' + patientName + '">' + patientName + ' (<span id="patientNumDocs' + patientId + '">1</span>)</a>' +
+            '<dl id="labdoc' + patientId + 'showSublist" style="display:none">';
+            var type = checkType(doclabid);
+            var s;
+            //oscarLog('type='+type);
+            //oscarLog('eee='+e);
+            if (type == 'DOC') {
+                s = createNewDocEle(patientId);
+            } else if (type == 'HL7') {
+                s = createNewHL7Ele(patientId);
+            } else {
+                return '';
             }
+            e += s;
+            e += '</dl></dt>';
+            //oscarLog('jjjjje='+e);
+            //oscarLog('before return e');
+            var patientsdoclabsEl = document.getElementById('patientsdoclabs');
+            if (patientsdoclabsEl) patientsdoclabsEl.insertAdjacentHTML('beforeend', e);
+            return e;
         }
-    });
+    })
+    .catch(error => console.error('Error:', error));
 
 }
 
@@ -1542,19 +1693,21 @@ function createNewHL7Ele(patientId) {
 }
 
 function increaseCount(eleId) {
-    if ($(eleId)) {
-        var n = $(eleId).innerHTML;
+    var el = document.getElementById(eleId);
+    if (el) {
+        var n = el.innerHTML;
         if (n.length > 0) {
             n = parseInt(n);
             n++;
-            $(eleId).innerHTML = n;
+            el.innerHTML = n;
         }
     }
 }
 
 function decreaseCount(eleId) {
-    if ($(eleId)) {
-        var n = $(eleId).innerHTML;
+    var el = document.getElementById(eleId);
+    if (el) {
+        var n = el.innerHTML;
         if (n.length > 0) {
             n = parseInt(n);
             if (n > 0) {
@@ -1562,69 +1715,66 @@ function decreaseCount(eleId) {
             } else {
                 n = 0;
             }
-            $(eleId).innerHTML = n;
+            el.innerHTML = n;
         }
     }
 }
 
-function popupStart(vheight, vwidth, varpage, windowname) {
-    //oscarLog("in popupStart ");
-    if (!windowname)
-        windowname = "helpwindow";
-    var page = varpage;
-    var windowprops = "height=" + vheight + ",width=" + vwidth + ",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes";
-    //oscarLog(varpage);
-    //oscarLog(windowname);
-    //oscarLog(windowprops);
-    var popup = window.open(varpage, windowname, windowprops);
-}
-
 function updateDocumentAndNext(eleId) {//save doc info
     const url = "../documentManager/ManageDocument.do"
-    const data = $(eleId).serialize(true);
+    const formEl = document.getElementById(eleId);
+    const data = serializeForm(formEl);
 
-    new Ajax.Request(url,
-        {
-            method: 'post',
-            parameters: data,
-            onSuccess: function (transport) {
-                const json = transport.responseText.evalJSON();
-                if (json != null) {
-                    const patientId = json.patientId;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json != null) {
+            const patientId = json.patientId;
 
-                    const ar = eleId.split("_");
-                    const num = ar[1].replace(/\s/g, '');
+            const ar = eleId.split("_");
+            const num = ar[1].replace(/\s/g, '');
 
-                    $("saveSucessMsg_" + num).show();
-                    $('saved' + num).value = 'true';
+            showElement("saveSucessMsg_" + num);
+            var savedEl = document.getElementById('saved' + num);
+            if (savedEl) savedEl.value = 'true';
 
-                    $("msgBtn_" + num).onclick = function () {
-                        popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
-                    };
+            var msgBtnEl = document.getElementById("msgBtn_" + num);
+            if (msgBtnEl) {
+                msgBtnEl.onclick = function () {
+                    popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
+                };
+            }
 
-                    updateDocStatusInQueue(num);
+            updateDocStatusInQueue(num);
 
-                    if (typeof _in_window !== 'undefined' && _in_window) {
-                        if (typeof self.opener.removeReport !== 'undefined') {
-                            self.opener.removeReport(num);
-                        }
-                        window.close();
-                    } else {
-                        //Hide document
-                        Effect.BlindUp('labdoc_' + num);
-                        success = updateGlobalDataAndSideNav(num, patientId);
-                        if (success) {
-                            success = updatePatientDocLabNav(num, patientId);
-                            if (success) {
-                                //disable demo input
-                                $('autocompletedemo' + num).disabled = true;
-                            }
-                        }
+            if (typeof _in_window !== 'undefined' && _in_window) {
+                if (typeof self.opener.removeReport !== 'undefined') {
+                    self.opener.removeReport(num);
+                }
+                window.close();
+            } else {
+                //Hide document with slide up animation
+                jQuery('#labdoc_' + num).slideUp();
+                var success = updateGlobalDataAndSideNav(num, patientId);
+                if (success) {
+                    success = updatePatientDocLabNav(num, patientId);
+                    if (success) {
+                        //disable demo input
+                        var autocompletedemoEl = document.getElementById('autocompletedemo' + num);
+                        if (autocompletedemoEl) autocompletedemoEl.disabled = true;
                     }
                 }
             }
         }
-    );
+    })
+    .catch(error => console.error('Error:', error));
+
     return false;
 }
 
@@ -1635,69 +1785,72 @@ function updateDocument(eleId) {
 
     //save doc info
     var url = "../documentManager/ManageDocument.do";
-    var data = $(eleId).serialize(true);
+    var formEl = document.getElementById(eleId);
+    var data = serializeForm(formEl);
 
-    new Ajax.Request(url, {
-        method: 'post',
-        parameters: data,
-        onSuccess: function (transport) {
-            var ar = eleId.split("_");
-            var num = ar[1].replace(/\s/g, '');
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.text())
+    .then(responseText => {
+        var ar = eleId.split("_");
+        var num = ar[1].replace(/\s/g, '');
 
-            var msg = document.getElementById("saveSucessMsg_" + num);
-            if (msg) msg.style.display = "inline";
+        var msg = document.getElementById("saveSucessMsg_" + num);
+        if (msg) msg.style.display = "inline";
 
-            var savedField = document.getElementById("saved" + num);
-            if (savedField) savedField.value = "true";
+        var savedField = document.getElementById("saved" + num);
+        if (savedField) savedField.value = "true";
 
-            var success = false;
-            var patientId = null;
+        var success = false;
+        var patientId = null;
 
-            try {
-                var json = transport.responseText.evalJSON();
-                if (json && json.patientId) {
-                    patientId = json.patientId;
+        try {
+            var json = JSON.parse(responseText);
+            if (json && json.patientId) {
+                patientId = json.patientId;
 
-                    var msgBtn = document.getElementById("msgBtn_" + num);
-                    if (msgBtn) {
-                        msgBtn.onclick = function () {
-                            popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
-                        };
+                var msgBtn = document.getElementById("msgBtn_" + num);
+                if (msgBtn) {
+                    msgBtn.onclick = function () {
+                        popup(700, 960, contextpath + '/messenger/SendDemoMessage.do?demographic_no=' + patientId, 'msg');
+                    };
+                }
+
+                if (typeof _in_window !== 'undefined' && _in_window) {
+                    if (typeof self.opener.removeReport !== 'undefined') {
+                        self.opener.removeReport(num);
+                        success = true;
                     }
+                } else {
+                    success = updateGlobalDataAndSideNav(num, patientId);
+                }
 
-                    if (typeof _in_window !== 'undefined' && _in_window) {
-                        if (typeof self.opener.removeReport !== 'undefined') {
-                            self.opener.removeReport(num);
-                            success = true;
-                        }
-                    } else {
-                        success = updateGlobalDataAndSideNav(num, patientId);
-                    }
-
+                if (success) {
+                    success = updatePatientDocLabNav(num, patientId);
                     if (success) {
-                        success = updatePatientDocLabNav(num, patientId);
-                        if (success) {
-                            var ac = document.getElementById("autocompletedemo" + num);
-                            if (ac) ac.disabled = true;
-                        }
+                        var ac = document.getElementById("autocompletedemo" + num);
+                        if (ac) ac.disabled = true;
                     }
                 }
-            } catch (e) {
-                console.warn("Not JSON");
             }
-        },
-        onFailure: function () {
-            console.error("Save failed");
+        } catch (e) {
+            console.warn("Not JSON");
         }
-    });
+    })
+    .catch(error => console.error("Save failed:", error));
 
     return false;
 }
 
 function checkObservationDate(formid) {
     // regular expression to match required date format
-    re = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
-    re2 = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
+    var re = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
+    var re2 = /^\d{4}\/\d{1,2}\/\d{1,2}$/;
 
     var form = document.getElementById(formid);
     if (form.elements["observationDate"].value == "") {
@@ -1716,7 +1869,7 @@ function checkObservationDate(formid) {
             form.elements["observationDate"].value = form.elements["observationDate"].value.replace("/", "-");
         }
     }
-    regs = form.elements["observationDate"].value.split("-");
+    var regs = form.elements["observationDate"].value.split("-");
     // day value between 1 and 31
     if (regs[2] < 1 || regs[2] > 31) {
         alert("Invalid value for day: " + regs[2]);
@@ -1758,7 +1911,8 @@ function updateStatus(formid) {//acknowledge
             alert('Document is not assigned and saved to a patient,please file it');
         } else {
             var url = contextpath + "/oscarMDS/UpdateStatus.do";
-            var data = $(formid).serialize(true);
+            var formEl = document.getElementById(formid);
+            var data = serializeFormToObject(formEl);
             console.log("Updating status. URL: " + url);
             console.log(data);
 
@@ -1796,7 +1950,8 @@ function fileDoc(docId) {
     if (docId) {
         docId = docId.replace(/\s/, '');
         if (docId.length > 0) {
-            var demoId = $('demofind' + docId).value;
+            var demofindEl = document.getElementById('demofind' + docId);
+            var demoId = demofindEl ? demofindEl.value : '-1';
             var isFile = true;
             if (demoId == '-1') {
                 isFile = confirm('Document is not assigned to any patient, do you still want to file it?');
@@ -1806,22 +1961,30 @@ function fileDoc(docId) {
                 if (type) {
                     var url = '../oscarMDS/FileLabs.do';
                     var data = 'method=fileLabAjax&flaggedLabId=' + docId + '&labType=' + type;
-                    new Ajax.Request(url, {
-                        method: 'post', parameters: data, onSuccess: function (transport) {
-                            updateDocStatusInQueue(docId);
 
-                            if (typeof _in_window !== 'undefined' && _in_window) {
-                                if (typeof self.opener.removeReport !== 'undefined') {
-                                    self.opener.removeReport(docId);
-                                }
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: data
+                    })
+                    .then(response => response.text())
+                    .then(responseText => {
+                        updateDocStatusInQueue(docId);
 
-                                window.close();
-                            } else {
-                                Effect.BlindUp('labdoc_' + docId);
+                        if (typeof _in_window !== 'undefined' && _in_window) {
+                            if (typeof self.opener.removeReport !== 'undefined') {
+                                self.opener.removeReport(docId);
                             }
 
+                            window.close();
+                        } else {
+                            // Slide up animation using jQuery
+                            jQuery('#labdoc_' + docId).slideUp();
                         }
-                    });
+                    })
+                    .catch(error => console.error('Error:', error));
                 }
             }
         }
@@ -1833,14 +1996,23 @@ function handleQueueListChange(queueListSelectElement, refileBtnElement, docCurr
 }
 
 function refileDoc(id) {
-    var queueId = document.getElementById('queueList_' + id).options[document.getElementById('queueList_' + id).selectedIndex].value;
+    var queueListEl = document.getElementById('queueList_' + id);
+    var queueId = queueListEl.options[queueListEl.selectedIndex].value;
     var url = contextpath + "/documentManager/ManageDocument.do";
     var data = 'method=refileDocumentAjax&documentId=' + id + "&queueId=" + queueId;
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            fileDoc(id);
-        }
-    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.text())
+    .then(responseText => {
+        fileDoc(id);
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 function addDocToList(provNo, provName, docId) {
@@ -1860,18 +2032,26 @@ function addDocToList(provNo, provName, docId) {
     adoc.appendChild(idoc);
 
     adoc.appendChild(bdoc);
-    var providerList = $('providerList' + docId);
-    providerList.appendChild(adoc);
+    var providerList = document.getElementById('providerList' + docId);
+    if (providerList) providerList.appendChild(adoc);
 }
 
 function removeLink(docType, docId, providerNo, e) {
     var url = "../documentManager/ManageDocument.do";
     var data = 'method=removeLinkFromDocument&docType=' + docType + '&docId=' + docId + '&providerNo=' + providerNo;
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            updateDocLabData(docId);
-        }
-    });
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.text())
+    .then(responseText => {
+        updateDocLabData(docId);
+    })
+    .catch(error => console.error('Error:', error));
 
     e.parentNode.remove(e);
 }
@@ -1900,37 +2080,37 @@ function reloadChangeView() {
     switch (selected_category) {
         case CATEGORY_ALL:
             showAllDocLabs();
-            un_bold($('totalAll'))
+            un_bold(document.getElementById('totalAll'))
             break;
         case CATEGORY_DOCUMENTS:
             showCategory('DOC');
-            un_bold($('totalDocs'));
+            un_bold(document.getElementById('totalDocs'));
             break;
         case CATEGORY_HL7:
             showCategory('HL7');
-            un_bold($('totalHL7s'));
+            un_bold(document.getElementById('totalHL7s'));
             break;
         case CATEGORY_NORMAL:
             showAb_Normal('normal');
-            un_bold($('totalNormals'));
+            un_bold(document.getElementById('totalNormals'));
             break;
         case CATEGORY_ABNORMAL:
             showAb_Normal('abnormal');
-            un_bold($('totalAbnormals'));
+            un_bold(document.getElementById('totalAbnormals'));
             break;
         case CATEGORY_PATIENT:
             showThisPatientDocs(selected_category_patient);
-            un_bold($('patient' + selected_category_patient + 'all'));
+            un_bold(document.getElementById('patient' + selected_category_patient + 'all'));
             break;
         case CATEGORY_PATIENT_SUB:
             showSubType(selected_category_patient, selected_category_type);
             showhideSubCat('plus', selected_category_patient);
             switch (selected_category_type) {
                 case CATEGORY_TYPE_DOC:
-                    un_bold($('patient' + selected_category_patient + 'docs'));
+                    un_bold(document.getElementById('patient' + selected_category_patient + 'docs'));
                     break;
                 case CATEGORY_TYPE_HL7:
-                    un_bold($('patient' + selected_category_patient + 'hl7s'));
+                    un_bold(document.getElementById('patient' + selected_category_patient + 'hl7s'));
                     break;
             }
             break;
@@ -1938,7 +2118,8 @@ function reloadChangeView() {
 }
 
 function inSummaryView() {
-    return $('summaryView').getStyle('display') != 'none';
+    var summaryViewEl = document.getElementById('summaryView');
+    return summaryViewEl && summaryViewEl.style.display != 'none';
 }
 
 function refreshView() {
@@ -2008,29 +2189,33 @@ function showPDF(docid, cp) {
 }
 
 function showPageImg(docid, pn, cp) {
-    var displayDocumentAs = $('displayDocumentAs_' + docid).value;
+    var displayDocumentAsEl = document.getElementById('displayDocumentAs_' + docid);
+    var displayDocumentAs = displayDocumentAsEl ? displayDocumentAsEl.value : '';
     if (displayDocumentAs == "PDF") {
         showPDF(docid, cp);
     } else {
         if (docid && pn && cp) {
-            var e = $('docImg_' + docid);
+            var e = document.getElementById('docImg_' + docid);
             var url = cp + '/documentManager/ManageDocument.do?method=viewDocPage&doc_no=' + docid + '&curPage=' + pn;
-            e.setAttribute('src', url);
+            if (e) e.setAttribute('src', url);
         }
     }
 }
 
 function nextPage(docid, cp) {
-    var curPage = $('curPage_' + docid).value;
-    var totalPage = $('totalPage_' + docid).value;
+    var curPageEl = document.getElementById('curPage_' + docid);
+    var totalPageEl = document.getElementById('totalPage_' + docid);
+    var curPage = curPageEl ? parseInt(curPageEl.value) : 1;
+    var totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
     curPage++;
     if (curPage > totalPage) {
         curPage = totalPage;
         hideNext(docid);
         showPrev(docid);
     }
-    $('curPage_' + docid).value = curPage;
-    $('viewedPage_' + docid).innerHTML = curPage;
+    if (curPageEl) curPageEl.value = curPage;
+    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    if (viewedPageEl) viewedPageEl.innerHTML = curPage;
 
     showPageImg(docid, curPage, cp);
     if (curPage + 1 > totalPage) {
@@ -2043,15 +2228,17 @@ function nextPage(docid, cp) {
 }
 
 function prevPage(docid, cp) {
-    var curPage = $('curPage_' + docid).value;
+    var curPageEl = document.getElementById('curPage_' + docid);
+    var curPage = curPageEl ? parseInt(curPageEl.value) : 1;
     curPage--;
     if (curPage < 1) {
         curPage = 1;
         hidePrev(docid);
         showNext(docid);
     }
-    $('curPage_' + docid).value = curPage;
-    $('viewedPage_' + docid).innerHTML = curPage;
+    if (curPageEl) curPageEl.value = curPage;
+    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    if (viewedPageEl) viewedPageEl.innerHTML = curPage;
 
     showPageImg(docid, curPage, cp);
     if (curPage == 1) {
@@ -2065,18 +2252,23 @@ function prevPage(docid, cp) {
 }
 
 function firstPage(docid, cp) {
-    $('curPage_' + docid).value = 1;
-    $('viewedPage_' + docid).innerHTML = 1;
+    var curPageEl = document.getElementById('curPage_' + docid);
+    if (curPageEl) curPageEl.value = 1;
+    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    if (viewedPageEl) viewedPageEl.innerHTML = 1;
     showPageImg(docid, 1, cp);
     hidePrev(docid);
     showNext(docid);
 }
 
 function lastPage(docid, cp) {
-    var totalPage = $('totalPage_' + docid).value;
+    var totalPageEl = document.getElementById('totalPage_' + docid);
+    var totalPage = totalPageEl ? parseInt(totalPageEl.value) : 1;
 
-    $('curPage_' + docid).value = totalPage;
-    $('viewedPage_' + docid).innerHTML = totalPage;
+    var curPageEl = document.getElementById('curPage_' + docid);
+    if (curPageEl) curPageEl.value = totalPage;
+    var viewedPageEl = document.getElementById('viewedPage_' + docid);
+    if (viewedPageEl) viewedPageEl.innerHTML = totalPage;
     showPageImg(docid, totalPage, cp);
     hideNext(docid);
     showPrev(docid);
@@ -2084,62 +2276,81 @@ function lastPage(docid, cp) {
 
 function hidePrev(docid) {
     //disable previous link
-    $("prevP_" + docid).setStyle({display: 'none'});
-    $("firstP_" + docid).setStyle({display: 'none'});
-    $("prevP2_" + docid).setStyle({display: 'none'});
-    $("firstP2_" + docid).setStyle({display: 'none'});
+    var prevP = document.getElementById("prevP_" + docid);
+    var firstP = document.getElementById("firstP_" + docid);
+    var prevP2 = document.getElementById("prevP2_" + docid);
+    var firstP2 = document.getElementById("firstP2_" + docid);
+    if (prevP) prevP.style.display = 'none';
+    if (firstP) firstP.style.display = 'none';
+    if (prevP2) prevP2.style.display = 'none';
+    if (firstP2) firstP2.style.display = 'none';
 }
 
 function hideNext(docid) {
     //disable next link
-    $("nextP_" + docid).setStyle({display: 'none'});
-    $("lastP_" + docid).setStyle({display: 'none'});
-    $("nextP2_" + docid).setStyle({display: 'none'});
-    $("lastP2_" + docid).setStyle({display: 'none'});
-
+    var nextP = document.getElementById("nextP_" + docid);
+    var lastP = document.getElementById("lastP_" + docid);
+    var nextP2 = document.getElementById("nextP2_" + docid);
+    var lastP2 = document.getElementById("lastP2_" + docid);
+    if (nextP) nextP.style.display = 'none';
+    if (lastP) lastP.style.display = 'none';
+    if (nextP2) nextP2.style.display = 'none';
+    if (lastP2) lastP2.style.display = 'none';
 }
 
 function showPrev(docid) {
     //disable previous link
-    $("prevP_" + docid).setStyle({display: 'inline'});
-    $("firstP_" + docid).setStyle({display: 'inline'});
-    $("prevP2_" + docid).setStyle({display: 'inline'});
-    $("firstP2_" + docid).setStyle({display: 'inline'});
-
+    var prevP = document.getElementById("prevP_" + docid);
+    var firstP = document.getElementById("firstP_" + docid);
+    var prevP2 = document.getElementById("prevP2_" + docid);
+    var firstP2 = document.getElementById("firstP2_" + docid);
+    if (prevP) prevP.style.display = 'inline';
+    if (firstP) firstP.style.display = 'inline';
+    if (prevP2) prevP2.style.display = 'inline';
+    if (firstP2) firstP2.style.display = 'inline';
 }
 
 function showNext(docid) {
-
     //disable next link
-    $("nextP_" + docid).setStyle({display: 'inline'});
-    $("lastP_" + docid).setStyle({display: 'inline'});
-    $("nextP2_" + docid).setStyle({display: 'inline'});
-    $("lastP2_" + docid).setStyle({display: 'inline'});
-
+    var nextP = document.getElementById("nextP_" + docid);
+    var lastP = document.getElementById("lastP_" + docid);
+    var nextP2 = document.getElementById("nextP2_" + docid);
+    var lastP2 = document.getElementById("lastP2_" + docid);
+    if (nextP) nextP.style.display = 'inline';
+    if (lastP) lastP.style.display = 'inline';
+    if (nextP2) nextP2.style.display = 'inline';
+    if (lastP2) lastP2.style.display = 'inline';
 }
 
 function handleDocSave(docid, action) {
     var url = contextpath + "/documentManager/inboxManage.do";
     var data = 'method=isDocumentLinkedToDemographic&docId=' + docid;
-    new Ajax.Request(url, {
-        method: 'post', parameters: data, onSuccess: function (transport) {
-            var json = transport.responseText.evalJSON();
-            if (json != null) {
-                var success = json.isLinkedToDemographic;
-                var demoid = '';
 
-                if (success) {
-                    if (action == 'addTickler') {
-                        demoid = json.demoId;
-                        if (demoid != null && demoid.length > 0)
-                            popupStart(450, 600, contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=' + demoid, 'tickler')
-                    }
-                } else {
-                    alert("Make sure demographic is linked and document changes saved!");
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: data
+    })
+    .then(response => response.json())
+    .then(json => {
+        if (json != null) {
+            var success = json.isLinkedToDemographic;
+            var demoid = '';
+
+            if (success) {
+                if (action == 'addTickler') {
+                    demoid = json.demoId;
+                    if (demoid != null && demoid.length > 0)
+                        popupStart(450, 600, contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=' + demoid, 'tickler')
                 }
+            } else {
+                alert("Make sure demographic is linked and document changes saved!");
             }
         }
-    });
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 
@@ -2164,25 +2375,37 @@ function addDocComment(docId, providerNo, sync) {
         jQuery("#" + "comment_" + docId).val(comment);
 
     if (ret) {
-        $("status_" + docId).value = 'N';
+        var statusEl = document.getElementById("status_" + docId);
+        if (statusEl) statusEl.value = 'N';
         var url = ctx + "/oscarMDS/UpdateStatus.do";
         var formid = "acknowledgeForm_" + docId;
-        var data = $(formid).serialize();
+        var data = serializeForm(formid);
         data += "&method=addComment";
 
-        new Ajax.Request(url, {
-                method: 'post', parameters: data, asynchronous: sync, onSuccess: function (transport) {
-                    var json = transport.responseText.evalJSON();
-                    if (json != null) {
-                        var date = json.date;
-                        $("timestamp_" + docId + "_" + providerNo).update(date);
-                    }
-                    $("status_" + docId).value = "A";
-                    $("comment_" + docId + "_" + providerNo).update($("comment_" + docId).value);
-                    $("comment_" + docId).update("");
-                }
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data
+        })
+        .then(response => response.json())
+        .then(json => {
+            if (json != null) {
+                var date = json.date;
+                var timestampEl = document.getElementById("timestamp_" + docId + "_" + providerNo);
+                if (timestampEl) timestampEl.innerHTML = date;
             }
-        );
+            var statusEl2 = document.getElementById("status_" + docId);
+            if (statusEl2) statusEl2.value = "A";
+            var commentDisplayEl = document.getElementById("comment_" + docId + "_" + providerNo);
+            var commentInputEl = document.getElementById("comment_" + docId);
+            if (commentDisplayEl && commentInputEl) {
+                commentDisplayEl.innerHTML = commentInputEl.value;
+                commentInputEl.innerHTML = "";
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 }
 
