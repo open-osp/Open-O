@@ -543,7 +543,9 @@
             })
             .then(function(responseText) {
                 // Append the response HTML to the target div
-                div.insertAdjacentHTML('beforeend', responseText);
+                if (div) {
+                    div.insertAdjacentHTML('beforeend', responseText);
+                }
 
                 loadingDocs = false;
                 var tmp = document.getElementById("tempLoader");
@@ -555,7 +557,8 @@
                         var tempLoader = document.getElementById("tempLoader");
                         if (tempLoader) tempLoader.remove();
                     } else {
-                        document.getElementById("loader").style.display = "none";
+                        var loaderEl = document.getElementById("loader");
+                        if (loaderEl) loaderEl.style.display = "none";
                     }
                 }
 
@@ -569,22 +572,29 @@
                 if (noMoreItems) {
                     canLoad = false;
                     var summaryDiv = document.getElementById("summaryBody");
-                    var newDiv = "<tbody id=\"newBody\"></tbody>";
-                    summaryDiv.insertAdjacentHTML("beforeBegin", newDiv);
-                    newDiv = document.getElementById("newBody");
-                    newDiv.innerHTML = summaryDiv.innerHTML;
-                    summaryDiv.innerHTML = "";
-                    newDiv.id = "summaryBody";
-                    summaryDiv.id = "";
-                    jQuery("#summaryView").trigger("updateRows");
+                    // Only do table manipulation if we're in list view and summaryBody exists
+                    if (summaryDiv && isListView) {
+                        var newDiv = "<tbody id=\"newBody\"></tbody>";
+                        summaryDiv.insertAdjacentHTML("beforeBegin", newDiv);
+                        newDiv = document.getElementById("newBody");
+                        newDiv.textContent = '';
+                        while (summaryDiv.firstChild) {
+                            newDiv.appendChild(summaryDiv.firstChild);
+                        }
+                        newDiv.id = "summaryBody";
+                        summaryDiv.id = "";
+                        jQuery("#summaryView").trigger("updateRows");
+                    }
                 } else {
                     // It is possible that the current amount of loaded items has not filled up the page enough
                     // to create a scroll bar. So we fake a scroll (since no scroll bar is equivalent to reaching the bottom).
                     setTimeout("fakeScroll()", 500);
                 }
 
-                document.getElementById("readerSwitcher").disabled = false;
-                document.getElementById("listSwitcher").disabled = false;
+                var readerSwitcherEl = document.getElementById("readerSwitcher");
+                var listSwitcherEl = document.getElementById("listSwitcher");
+                if (readerSwitcherEl) readerSwitcherEl.disabled = false;
+                if (listSwitcherEl) listSwitcherEl.disabled = false;
             })
             .catch(function(error) {
                 if (error.name !== 'AbortError') {
