@@ -428,8 +428,8 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
     }
 
     public void setAbnormal(String abnormal) {
-        if (abnormal.equalsIgnoreCase("checked")) this.abnormal = "true";
-        else if (abnormal == null || abnormal.length() == 0) this.abnormal = "false";
+        if (abnormal == null || abnormal.length() == 0) this.abnormal = "false";
+        else if (abnormal.equalsIgnoreCase("checked")) this.abnormal = "true";
         else this.abnormal = abnormal;
     }
 
