@@ -88,7 +88,7 @@
         </ul>
     </div>
 <% } %>
-    <form action="${pageContext.request.contextPath}/oscarEncounter/oscarMeasurements/DeleteData.do" method="post">
+    <form action="${pageContext.request.contextPath}/oscarEncounter/oscarMeasurements/DeleteData2.do" method="post">
 
         <table style="border-width: 2px; width: 100%; border-spacing: 0px; ">
             <c:if test="${not empty messages}">
