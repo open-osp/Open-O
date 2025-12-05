@@ -41,6 +41,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 public class EctDeleteData2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -72,7 +73,7 @@ public class EctDeleteData2Action extends ActionSupport {
         }
 
         if (this.getType() != null) {
-            response.sendRedirect(request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=" + this.getType());
+            response.sendRedirect(request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=" + URLEncoder.encode(this.getType());
             return NONE;
         }
         return SUCCESS;
