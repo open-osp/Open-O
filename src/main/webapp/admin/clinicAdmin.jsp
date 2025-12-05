@@ -74,7 +74,7 @@
             <input type="hidden" name="method" id="method" value="update"/>
 
             <div class="control-group">
-                <label class="control-label" for="clinic.clinicName">Clinic Name</label>
+                <label class="control-label" for="clinic.clinicName"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.clinicName"/></label>
                 <div class="controls">
                     <input type="text" name="clinic.clinicName" id="clinic.clinicName" value="<%=Encode.forHtmlAttribute(clinic.getClinicName() != null ? clinic.getClinicName() : "")%>" />
                 </div>
