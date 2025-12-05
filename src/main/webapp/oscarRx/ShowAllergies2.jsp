@@ -43,6 +43,7 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -474,6 +475,7 @@
                                             <tr>
                                                 <td><b>Status</b></td>
                                                 <td><b>Entry Date</b></td>
+                                                <td><b>Last Updated Date</b></td>
                                                 <td><b>Description</b></td>
                                                 <td><b>Allergy Type</b></td>
 
@@ -559,6 +561,8 @@
                                                 <td><%=labelStatus%>
                                                 </td>
                                                 <td><%=entryDate == null ? "" : entryDate %>
+                                                </td>
+                                                <td><%=allergy.getLastUpdateDate() != null ? DateUtils.formatDate(allergy.getLastUpdateDate(), request.getLocale()) : "" %>
                                                 </td>
                                                 <td <%=title%> ><%=allergy.getDescription() %>
                                                 </td>
