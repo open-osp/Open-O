@@ -62,7 +62,7 @@
     %>
     <body>
 
-    <nested:form action="/report/DxresearchReport?method=editDesc">
+    <form action="<%= request.getContextPath() %>/report/DxresearchReport.do?method=editDesc">
 
         <input type="hidden" name="editingCodeType" value=<%=editingCodeType%>/>
         <input type="hidden" name="editingCodeCode" value=<%=editingCodeCode%>/>
@@ -84,7 +84,7 @@
             </tr>
         </table>
 
-    </nested:form>
+    </form>
 
     </body>
 </html>
