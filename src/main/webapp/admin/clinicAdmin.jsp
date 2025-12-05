@@ -69,8 +69,8 @@
     <div class="well">
 
         <form action="<%=request.getContextPath() %>/admin/ManageClinic.do" class="form-horizontal">
-            <input type="hidden" name="clinic.id" id="clinic.id" value="<%=clinic.getId()%>"/>
-            <input type="hidden" name="clinic.status" id="clinic.status" value="<%=clinic.getStatus()%>"/>
+            <input type="hidden" name="clinic.id" id="clinic.id" value="<%=clinic.getId() != null ? clinic.getId() : ""%>"/>
+            <input type="hidden" name="clinic.status" id="clinic.status" value="A"/>
             <input type="hidden" name="method" id="method" value="update"/>
 
             <div class="control-group">
