@@ -506,6 +506,7 @@ public final class EDocUtil {
             currentdoc.setReviewDateTime(ConversionUtils.toTimestampString(d.getReviewdatetime()));
             currentdoc.setReviewDateTimeDate(d.getReviewdatetime());
             currentdoc.setContentDateTime(d.getContentdatetime());
+            currentdoc.setAbnormal(String.valueOf(d.isAbnormal()));
         }
 
         return currentdoc;
@@ -617,6 +618,7 @@ public final class EDocUtil {
         if (d.isRestrictToProgram() != null && d.isRestrictToProgram()) {
             currentdoc.setRestrictToProgram(true);
         }
+        currentdoc.setAbnormal(String.valueOf(d.isAbnormal()));
         return currentdoc;
     }
 
@@ -778,7 +780,7 @@ public final class EDocUtil {
             if (d.isRestrictToProgram() != null) {
                 currentdoc.setRestrictToProgram(d.isRestrictToProgram());
             }
-
+            currentdoc.setAbnormal(String.valueOf(d.isAbnormal()));
 
         }
 
