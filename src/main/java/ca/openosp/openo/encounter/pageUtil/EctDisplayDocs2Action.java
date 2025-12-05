@@ -181,6 +181,10 @@ public class EctDisplayDocs2Action extends EctDisplayAction {
                     item.setBgColour("#FFCCCC");
                 }
 
+                if ("true".equals(curDoc.getAbnormal())) {
+                    item.setColour("red");
+                }
+
                 Dao.addItem(item);
 
             }
