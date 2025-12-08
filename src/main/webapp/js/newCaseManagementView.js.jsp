@@ -27,7 +27,7 @@
     <%@page import="ca.openosp.openo.utility.SpringUtils"%>
     <%@page import="ca.openosp.openo.commn.dao.UserPropertyDAO"%>
     <%@page import="ca.openosp.OscarProperties"%>
-    <%@page contentType="text/javascript; charset=UTF-8"%>
+    <%@page contentType="text/javascript; charset=UTF-8" pageEncoding="UTF-8"%>
     <%@page import="ca.openosp.openo.casemgmt.common.Colour"%>
     <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 

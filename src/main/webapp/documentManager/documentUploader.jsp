@@ -8,7 +8,7 @@
     and "gnu.org/licenses/gpl-2.0.html".
 
 --%>
-<%@page contentType="text/html; charset=UTF-8" %>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@page import="java.util.*,ca.openosp.openo.lab.ca.on.CommonLabResultData,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.dao.QueueDao, ca.openosp.openo.mds.data.ProviderData" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao, ca.openosp.openo.commn.model.Provider" %>
 <%@page import="ca.openosp.OscarProperties" %>

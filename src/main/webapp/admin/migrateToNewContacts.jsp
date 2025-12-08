@@ -25,7 +25,7 @@
 --%>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ page import="ca.openosp.openo.admin.web.MigrateRelationshipsToContactsHelper" %>
-<%@page contentType="text/html; charset=UTF-8" %>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%

@@ -40,7 +40,7 @@
 
 <%@page import="ca.openosp.OscarProperties" %>
 <%@page import="java.util.List" %>
-<%@page contentType="text/html; charset=UTF-8" %>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@page import="ca.openosp.openo.commn.model.UserProperty" %>
 <%@ include file="/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>

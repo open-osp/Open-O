@@ -73,7 +73,7 @@
 %>
 
 
-<%@page contentType='text/xml; charset=UTF-8'
+<%@page contentType='text/xml; charset=UTF-8' pageEncoding='UTF-8'
         import="ca.openosp.openo.messenger.docxfer.send.*, ca.openosp.openo.messenger.docxfer.util.*" %>
 <%@ page import="ca.openosp.openo.messenger.docxfer.util.MsgCommxml" %>
 <%@ page import="ca.openosp.openo.messenger.pageUtil.MsgSessionBean" %>

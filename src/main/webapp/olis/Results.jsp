@@ -22,7 +22,7 @@
 <%@page import="ca.openosp.openo.lab.ca.all.upload.MessageUploader" %>
 <%@page import="ca.openosp.openo.olis.model.OLISRequestNomenclature" %>
 <%@page import="ca.openosp.openo.olis.dao.OLISRequestNomenclatureDao" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@page import="com.indivica.olis.queries.*,java.util.*,ca.openosp.openo.lab.ca.all.parsers.Factory, ca.openosp.openo.lab.ca.all.parsers.OLISHL7Handler, ca.openosp.openo.lab.ca.all.parsers.OLISHL7Handler.OLISError, ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.utility.MiscUtils" %>
 <%@ page import="ca.openosp.openo.olis.OLISResults2Action" %>
