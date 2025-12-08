@@ -849,6 +849,11 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
     }
 
     @Override
+    public void saveIssue(Issue issue) {
+        issueDAO.saveIssue(issue);
+    }
+
+    @Override
     public List<Issue> getIssueInfoBySearch(String providerNo, String search, List accessRight) {
         List<Issue> issList = issueDAO.findIssueBySearch(search);
         // filter the issue list by role

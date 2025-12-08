@@ -1212,7 +1212,9 @@
         }
 
         YAHOO.example.BasicRemote = function () {
-            if ($("lotNumberToAdd2") && $("lotNumberToAdd2_choices")) {
+            let lotNumberInput = document.getElementById("lotNumberToAdd2");
+            let lotNumberChoices = document.getElementById("lotNumberToAdd2_choices");
+            if (lotNumberInput && lotNumberChoices) {
                 var url = "<%=request.getContextPath()%>/cvc.do?method=query";
                 var oDS = new YAHOO.util.XHRDataSource(url, {
                     connMethodPost: true,
