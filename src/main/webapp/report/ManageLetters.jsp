@@ -227,11 +227,11 @@
                         </td>
                         <td><%=h.get("report_name")%>
                         </td>
-                        <td><a href="DownloadLetter.do?reportID=<%=h.get("ID")%>"><%=h.get("file_name")%>
+                        <td><a href="<%= request.getContextPath() %>/report/DownloadLetter.do?reportID=<%=h.get("ID")%>"><%=h.get("file_name")%>
                         </a></td>
                         <td><%=h.get("date_time")%>
                         </td>
-                        <td><a href="DeleteLetter.do?reportID=<%=h.get("ID")%>">del</a></td>
+                        <td><a href="<%= request.getContextPath() %>/report/DeleteLetter.do?reportID=<%=h.get("ID")%>">del</a></td>
                     </tr>
                     <%}%>
                 </table>
