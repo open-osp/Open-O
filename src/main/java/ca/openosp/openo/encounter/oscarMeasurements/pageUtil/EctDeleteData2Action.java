@@ -73,7 +73,7 @@ public class EctDeleteData2Action extends ActionSupport {
         }
 
         if (this.getType() != null) {
-            response.sendRedirect(request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=" + URLEncoder.encode(this.getType());
+            response.sendRedirect(request.getContextPath() + "/oscarEncounter/oscarMeasurements/SetupDisplayHistory.do?type=" + URLEncoder.encode(this.getType()));
             return NONE;
         }
         return SUCCESS;

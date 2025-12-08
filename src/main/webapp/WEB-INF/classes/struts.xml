@@ -300,7 +300,7 @@
             <result name="success">/oscarRx/ShowAllergies.jsp</result>
         </action>
         <action name="oscarRx/addAllergy2" class="ca.openosp.openo.prescript.pageUtil.RxAddAllergy2Action">
-            <result name="success">/oscarRx/ShowAllergies2.jsp</result>
+            <result name="success" type="redirect">/oscarRx/ShowAllergies2.jsp</result>
         </action>
         <action name="oscarRx/addReaction" class="ca.openosp.openo.prescript.pageUtil.RxAddReaction2Action">
             <result name="success">/oscarRx/AddReaction.jsp</result>
