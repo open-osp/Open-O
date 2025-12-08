@@ -261,14 +261,12 @@ public class AddEditDocument2Action extends ActionSupport {
 
             // save local file
             File file = writeLocalFile(Files.newInputStream(docFile.toPath()), fileName2);
+            newDoc.setContentType(this.docFileContentType);
 
             if (fileName2.toLowerCase().endsWith(".pdf")) {
                 newDoc.setContentType("application/pdf");
                 int numberOfPages = countNumOfPages(fileName2);
                 newDoc.setNumberOfPages(numberOfPages);
-            } else {
-                int dotIndex = fileName2.lastIndexOf('.');
-                newDoc.setContentType(fileName2.substring(dotIndex + 1));
             }
 
 

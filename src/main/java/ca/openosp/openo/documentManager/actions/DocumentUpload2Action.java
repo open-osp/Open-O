@@ -141,7 +141,7 @@ public class DocumentUpload2Action extends ActionSupport {
 
             // write file to local dir
             writeLocalFile(docFile, fileName);
-            //newDoc.setContentType(docFile.getContentType());
+            newDoc.setContentType(this.filedataContentType);
             if (fileName.endsWith(".PDF") || fileName.endsWith(".pdf")) {
                 newDoc.setContentType("application/pdf");
                 // get number of pages when document is a PDF
