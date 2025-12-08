@@ -39,7 +39,7 @@
 %>
 
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no" ?>
-<%@ page contentType="image/svg-xml" %>
+<%@ page contentType="image/svg+xml" %>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
 "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg width="600" height="600" xmlns="http://www.w3.org/2000/svg">
