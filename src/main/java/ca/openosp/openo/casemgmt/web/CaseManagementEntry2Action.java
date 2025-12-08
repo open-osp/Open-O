@@ -2837,9 +2837,10 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         boolean printRx = request.getParameter("printRx").equalsIgnoreCase("true");
         boolean printLabs = request.getParameter("printLabs") != null && request.getParameter("printLabs").equalsIgnoreCase("true");
         boolean printPreventions = request.getParameter("printPreventions") != null && request.getParameter("printPreventions").equalsIgnoreCase("true");
+        boolean printAllergies = request.getParameter("printAllergies") != null && request.getParameter("printAllergies").equalsIgnoreCase("true");
 
         CaseManagementPrint cmp = new CaseManagementPrint();
-        cmp.doPrint(loggedInInfo, demographicNo, printAllNotes, noteIds, printCPP, printRx, printLabs, printPreventions, (pType != null && "dates".equals(pType)) ? true : false, cStartDate, cEndDate, request, response.getOutputStream());
+        cmp.doPrint(loggedInInfo, demographicNo, printAllNotes, noteIds, printCPP, printRx, printLabs, printPreventions, printAllergies, (pType != null && "dates".equals(pType)) ? true : false, cStartDate, cEndDate, request, response.getOutputStream());
 
         return null;
     }
