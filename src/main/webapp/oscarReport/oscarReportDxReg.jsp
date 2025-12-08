@@ -17,7 +17,7 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="ca.openosp.openo.utility.SessionConstants" %>
 <%@ page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 <%@ include file="/taglibs.jsp" %>
