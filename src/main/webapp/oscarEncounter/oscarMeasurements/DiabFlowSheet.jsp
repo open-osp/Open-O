@@ -10,7 +10,7 @@
 --%>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <% long startTime = System.currentTimeMillis(); %>
-<%@page contentType="text/html" %>
+<%@page contentType="text/html; charset=UTF-8" %>
 <%@page import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.encounter.oscarMeasurements.*,ca.openosp.openo.encounter.oscarMeasurements.bean.*,java.net.*, ca.openosp.openo.rx.util.*" %>
 <%@page import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.log.*" %>
 <%@page import="org.springframework.web.context.WebApplicationContext,ca.openosp.openo.dxresearch.bean.*" %>

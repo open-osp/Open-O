@@ -43,7 +43,7 @@
 <%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@page import="java.util.List" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@page contentType="text/html" %>
+<%@page contentType="text/html; charset=UTF-8" %>
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%

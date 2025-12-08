@@ -28,7 +28,7 @@
 	Date: Dec 2016
  --%>
 
-<%@page language="java" contentType="text/html" %>
+<%@page language="java" contentType="text/html; charset=UTF-8" %>
 <%@page import="java.util.*,
                 ca.openosp.openo.util.*,
                 org.springframework.web.context.support.WebApplicationContextUtils,

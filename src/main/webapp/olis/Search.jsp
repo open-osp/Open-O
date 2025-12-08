@@ -9,7 +9,7 @@
 
 --%>
 <%@page import="org.apache.commons.lang3.StringUtils" %>
-<%@page contentType="text/html" %>
+<%@page contentType="text/html; charset=UTF-8" %>
 <%@page import="java.util.*,
                 ca.openosp.openo.commn.dao.DemographicDao,
                 ca.openosp.openo.commn.model.Demographic,
