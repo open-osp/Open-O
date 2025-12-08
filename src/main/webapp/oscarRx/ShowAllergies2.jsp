@@ -190,18 +190,25 @@
                         var url = form.attr('action');
                         var json = {};
 
-                        // Manually build JSON with proper boolean values for checkboxes
-                        form.find('input, select, textarea').each(function() {
-                            var $elem = $(this);
-                            var name = $elem.attr('name');
-                            if (name && name !== 'typeSelectAll') {  // Skip typeSelectAll
-                                if ($elem.attr('type') === 'checkbox') {
-                                    json[name] = $elem.is(':checked');
-                                } else {
-                                    json[name] = $elem.val() || '';
+                        // Build JSON with boolean values for checkboxes (Jackson expects boolean, not "on"/"off")
+                        form.find('input:enabled[name]:not([type=submit]):not([type=button]), select:enabled[name], textarea:enabled[name]')
+                            .each(function () {
+                                const $elem = $(this);
+                                const name = $elem.attr('name');
+                                const type = $elem.attr('type');
+
+                                // Skip radios/checkboxes if not checked (serializeArray behavior)
+                                if ((type === 'checkbox' || type === 'radio') && !$elem.is(':checked')) { return; }
+
+                                // Checkboxes → boolean true
+                                if (type === 'checkbox') {
+                                    json[name] = true;
+                                    return;
                                 }
-                            }
-                        });
+
+                                // All other inputs → value
+                                json[name] = $elem.val() || '';
+                            });
 
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
