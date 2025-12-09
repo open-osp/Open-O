@@ -436,14 +436,16 @@
                     <div>
                         Patient Demographic Query:
                         <select name="patientSet" id="patientSet">
-                            <option value="-1">--Select Query--</option>
+                            <option value="-1" ${patientSet == '-1' || patientSet == null ? 'selected' : ''}>--Select Query--</option>
                             <%
+                                String selectedPatientSet = (String) request.getAttribute("patientSet");
                                 for (int i = 0; i < queryArray.size(); i++) {
                                     RptSearchData.SearchCriteria sc = (RptSearchData.SearchCriteria) queryArray.get(i);
                                     String qId = sc.id;
                                     String qName = sc.queryName;
+                                    String selected = qId.equals(selectedPatientSet) ? "selected" : "";
                             %>
-                            <option value="<%=qId%>"><%=qName%>
+                            <option value="<%=qId%>" <%=selected%>><%=qName%>
                             </option>
                             <%}%>
                         </select>
