@@ -209,6 +209,8 @@ public interface CaseManagementManager {
 
     public Issue getIssueInfoByTypeAndCode(String type, String code);
 
+    public void saveIssue(Issue issue);
+
     public List<Issue> getIssueInfoBySearch(String providerNo, String search, List accessRight);
 
     public void addNewIssueToConcern(String demoNo, String issueName);

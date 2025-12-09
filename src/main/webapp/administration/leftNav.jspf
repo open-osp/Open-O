@@ -358,7 +358,7 @@ String curProvider_no = (String)session.getAttribute("user");
 								
 					<caisi:isModuleLoad moduleName="caisi">		
 						<li><a href="javascript:void(0);"
-						class="xlink" rel="${ctx}/PMmodule/Reports/ProgramActivityReport" styleClass="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.activityRpt"/></a></li>
+						class="xlink contentLink" rel="${ctx}/PMmodule/Reports/ProgramActivityReport"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.activityRpt"/></a></li>
 					</caisi:isModuleLoad>			
 								
 					<li><a href="${ctx}/oscarReport/patientlist.jsp"
