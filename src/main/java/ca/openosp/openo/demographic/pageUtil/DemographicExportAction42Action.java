@@ -2481,7 +2481,13 @@ public class DemographicExportAction42Action extends ActionSupport {
                                         exportError.add("Error! No Date for Diabetes Self-management Collaborative Goal Setting (id=" + meas.getId() + ") for Patient " + demoNo);
                                     }
                                     dsco.setCodeValue(cdsDt.DiabetesSelfManagementCollaborative.CodeValue.X_44943_9);
-                                    dsco.setDocumentedGoals(meas.getDataField());
+                                    String documentedGoals = meas.getDataField();
+                                    if (!StringUtils.empty(meas.getComments())) {
+                                        documentedGoals = StringUtils.empty(documentedGoals)
+                                            ? meas.getComments()
+                                            : documentedGoals + " - " + meas.getComments();
+                                    }
+                                    dsco.setDocumentedGoals(documentedGoals);
                                     addOneEntry(CAREELEMENTS);
                                 } else if (meas.getType().equals("HYPE")) { //Hypoglycemic Episodes
                                     if (StringUtils.isInteger(meas.getDataField().trim())) {
