@@ -1715,8 +1715,9 @@ public class DemographicExportAction42Action extends ActionSupport {
                                 if (StringUtils.filled(duration)) {
                                     String durunit = StringUtils.noNull(arr[p].getDurationUnit());
                                     Integer fctr = 1;
-                                    if (durunit.equals("W")) fctr = 7;
-                                    else if (durunit.equals("M")) fctr = 30;
+                                    if (durunit.equalsIgnoreCase("W")) fctr = 7;
+                                    else if (durunit.equalsIgnoreCase("M")) fctr = 30;
+                                    else if (durunit.equalsIgnoreCase("Y")) fctr = 365;
 
                                     if (NumberUtils.isDigits(duration)) {
                                         duration = String.valueOf(Integer.parseInt(duration) * fctr);
