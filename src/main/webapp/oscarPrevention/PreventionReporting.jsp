@@ -445,7 +445,7 @@
                                     String qName = sc.queryName;
                                     String selected = qId.equals(selectedPatientSet) ? "selected" : "";
                             %>
-                            <option value="<%=qId%>" <%=selected%>><%=qName%>
+                            <option value="<%=Encode.forHtmlAttribute(qId)%>" <%=selected%>><%=Encode.forHtmlContent(qName)%>
                             </option>
                             <%}%>
                         </select>
