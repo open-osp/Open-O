@@ -2017,6 +2017,12 @@ public class DemographicExportAction42Action extends ActionSupport {
                                     exportError.add("Error! Document \"" + f.getName() + "\" too big to be exported. Not enough memory!");
                                 } else {
                                     Reports rpr = patientRec.addNewReports();
+                                    if (edoc.getType() != null) {
+                                        cdsDt.ReportMedia.Enum mediaEnum = cdsDt.ReportMedia.Enum.forString(formatHrmEnum(edoc.getType()));
+                                        if (mediaEnum != null) {
+                                            rpr.setMedia(mediaEnum);
+                                        }
+                                    }
                                     rpr.setFormat(cdsDt.ReportFormat.TEXT);
 
                                     cdsDt.ReportContent rpc = rpr.addNewContent();
