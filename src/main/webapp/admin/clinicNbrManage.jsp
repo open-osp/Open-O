@@ -22,7 +22,7 @@
         return;
     }
 %>
-<%@page contentType="text/html" %>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%@page import="ca.openosp.openo.commn.model.ClinicNbr" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
