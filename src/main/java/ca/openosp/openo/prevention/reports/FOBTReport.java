@@ -110,12 +110,14 @@ public class FOBTReport implements PreventionReport {
                 }
 
                 Calendar cal = Calendar.getInstance();
+                cal.setTime(asofDate);
                 cal.add(Calendar.YEAR, -2);
                 Date dueDate = cal.getTime();
                 cal.add(Calendar.MONTH, -6);
                 Date cutoffDate = cal.getTime();
 
                 Calendar cal2 = GregorianCalendar.getInstance();
+                cal2.setTime(asofDate);
                 cal2.add(Calendar.YEAR, -2);
                 //Date dueDate2 = cal.getTime();
                 //cal2.roll(Calendar.YEAR, -1);
@@ -182,7 +184,7 @@ public class FOBTReport implements PreventionReport {
                     prd.numMonths = numMonths;
                     prd.color = "pink";
 
-                } else if (dueDate.before(prevDate)) {  // recorded done
+                } else if (dueDate.before(prevDate) || dueDate.equals(prevDate)) {  // recorded done (prevDate >= dueDate)
                     prd.rank = 4;
                     prd.lastDate = prevDateStr;
                     prd.state = "Up to date";

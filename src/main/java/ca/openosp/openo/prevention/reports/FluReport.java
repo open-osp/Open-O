@@ -217,7 +217,7 @@ public class FluReport implements PreventionReport {
                     prd.state = "Refused";
                     prd.numMonths = numMonths;
                     prd.color = "orange"; //FF9933
-                } else if (dueDate.before(prevDate)) {  // recorded done
+                } else if (dueDate.before(prevDate) || dueDate.equals(prevDate)) {  // recorded done (prevDate >= dueDate)
                     prd.rank = 4;
                     prd.lastDate = prevDateStr;
                     prd.state = "Up to date";
@@ -225,7 +225,7 @@ public class FluReport implements PreventionReport {
                     prd.color = "green";
                     //done++;
                 } else {
-                    log.error("Mised case : refused=" + refused + ", prevDate=" + prevDate + ", dueDate=" + dueDate + ", cutoffDate=" + cutoffDate);
+                    log.error("Missed case : refused=" + refused + ", prevDate=" + prevDate + ", dueDate=" + dueDate + ", cutoffDate=" + cutoffDate);
                 }
             }
 
