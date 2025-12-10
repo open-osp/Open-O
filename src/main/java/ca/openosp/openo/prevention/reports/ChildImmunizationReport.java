@@ -86,8 +86,8 @@ public class ChildImmunizationReport implements PreventionReport {
             log.debug("fieldList " + fieldList.size());
 
             // search prevention_date prevention_type deleted refused
-            ArrayList<Map<String, Object>> prevs1 = PreventionData.getPreventionData(loggedInInfo, "DTap-IPV", demo);
-            PreventionData.addRemotePreventions(loggedInInfo, prevs1, demo, "DTap-IPV", null);
+            ArrayList<Map<String, Object>> prevs1 = PreventionData.getPreventionData(loggedInInfo, "DTaP-IPV", demo);
+            PreventionData.addRemotePreventions(loggedInInfo, prevs1, demo, "DTaP-IPV", null);
             ArrayList<Map<String, Object>> prevsDtapIPVHIB = PreventionData.getPreventionData(loggedInInfo, "DTaP-IPV-Hib", demo);
             PreventionData.addRemotePreventions(loggedInInfo, prevsDtapIPVHIB, demo, "DTaP-IPV-Hib", null);
             ArrayList<Map<String, Object>> prevs2 = PreventionData.getPreventionData(loggedInInfo, "Hib", demo);
