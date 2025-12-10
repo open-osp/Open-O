@@ -195,14 +195,20 @@
                             .each(function () {
                                 const $elem = $(this);
                                 const name = $elem.attr('name');
-                                const type = $elem.attr('type');
+                                const type = ($elem.attr('type') || '').toLowerCase();
 
                                 // Skip radios/checkboxes if not checked (serializeArray behavior)
                                 if ((type === 'checkbox' || type === 'radio') && !$elem.is(':checked')) { return; }
 
-                                // Checkboxes → boolean true
-                                if (type === 'checkbox') {
+                                // Checkboxes → boolean true (also check using jQuery :checkbox selector as fallback)
+                                if (type === 'checkbox' || $elem.is(':checkbox')) {
                                     json[name] = true;
+                                    return;
+                                }
+
+                                // Radio buttons → value
+                                if (type === 'radio' || $elem.is(':radio')) {
+                                    json[name] = $elem.val() || '';
                                     return;
                                 }
 
