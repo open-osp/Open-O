@@ -56,7 +56,7 @@ public class FOBTReport implements PreventionReport {
 
 
     /**
-     * Creates a new instance of MammogramReport
+     * Creates a new instance of FOBTReport
      */
     public FOBTReport() {
     }
@@ -74,6 +74,7 @@ public class FOBTReport implements PreventionReport {
             //search   prevention_date prevention_type  deleted   refused
             ArrayList<Map<String, Object>> prevs = PreventionData.getPreventionData(loggedInInfo, "FOBT", demo);
             PreventionData.addRemotePreventions(loggedInInfo, prevs, demo, "FOBT", null);
+            ArrayList<Map<String, Object>> noFutureItems = removeFutureItems(prevs, asofDate);
             ArrayList<Map<String, Object>> colonoscopys = PreventionData.getPreventionData(loggedInInfo, "COLONOSCOPY", demo);
             PreventionData.addRemotePreventions(loggedInInfo, colonoscopys, demo, "COLONOSCOPY", null);
             PreventionReportDisplay prd = new PreventionReportDisplay();
@@ -88,14 +89,14 @@ public class FOBTReport implements PreventionReport {
                 prd.numMonths = "------";
                 prd.color = "grey";
                 inList++;
-            } else if (prevs.size() == 0) {// no info
+            } else if (noFutureItems.size() == 0) {// no info
                 prd.rank = 1;
                 prd.lastDate = "------";
                 prd.state = "No Info";
                 prd.numMonths = "------";
                 prd.color = "Magenta";
             } else {
-                Map<String, Object> h = prevs.get(prevs.size() - 1);
+                Map<String, Object> h = noFutureItems.get(noFutureItems.size() - 1);
                 DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 String prevDateStr = (String) h.get("prevention_date");
 
@@ -370,6 +371,26 @@ public class FOBTReport implements PreventionReport {
             }
         }
         return null;
+    }
+
+    private ArrayList<Map<String, Object>> removeFutureItems(ArrayList<Map<String, Object>> list, Date asOfDate) {
+        ArrayList<Map<String, Object>> noFutureItems = new ArrayList<Map<String, Object>>();
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (int i = 0; i < list.size(); i++) {
+            Map<String, Object> map = list.get(i);
+            String prevDateStr = (String) map.get("prevention_date");
+            Date prevDate = null;
+            try {
+                prevDate = formatter.parse(prevDateStr);
+            } catch (Exception e) {
+                log.error("Error parsing prevention date: " + prevDateStr, e);
+            }
+
+            if (prevDate != null && prevDate.before(asOfDate)) {
+                noFutureItems.add(map);
+            }
+        }
+        return noFutureItems;
     }
 
 }
