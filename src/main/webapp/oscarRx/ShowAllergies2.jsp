@@ -188,11 +188,28 @@
                         $(".highLightButton").removeClass("highLightButton");
                         var form = $("#searchAllergy2");
                         var url = form.attr('action');
-                        var params = form.serializeArray();
                         var json = {};
-                        $.each(params, function () {
-                            json[this.name] = this.value || '';
-                        });
+
+                        // Build JSON with boolean values for checkboxes (Jackson expects boolean, not "on"/"off")
+                        form.find('input:enabled[name]:not([type=submit]):not([type=button]), select:enabled[name], textarea:enabled[name]')
+                            .each(function () {
+                                const $elem = $(this);
+                                const name = $elem.attr('name');
+                                const type = $elem.attr('type');
+
+                                // Skip radios/checkboxes if not checked (serializeArray behavior)
+                                if ((type === 'checkbox' || type === 'radio') && !$elem.is(':checked')) { return; }
+
+                                // Checkboxes → boolean true
+                                if (type === 'checkbox') {
+                                    json[name] = true;
+                                    return;
+                                }
+
+                                // All other inputs → value
+                                json[name] = $elem.val() || '';
+                            });
+
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
                         param = "jsonData=" + JSON.stringify(json);
