@@ -182,7 +182,7 @@ public class ChildImmunizationReport implements PreventionReport {
                     Date prevDate = null;
                     try {
                         prevDate = formatter.parse(mmrDateStr);
-                        if (prevDate.after(lastDate)) {
+                        if (lastDate == null || prevDate.after(lastDate)) {
                             lastDate = prevDate;
                             prevDateStr = mmrDateStr;
                         }
