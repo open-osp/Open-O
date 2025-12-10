@@ -141,12 +141,14 @@ public class ChildImmunizationReport implements PreventionReport {
                 prd.lastDate = "------";
                 prd.state = "No Info";
                 prd.numMonths = "------";
+                prd.numShots = "0";
                 prd.color = "Magenta";
             } else if ((prevs1.size() > 0 && ineligible(prevs1.get(prevs1.size() - 1))) || (prevs2.size() > 0 && ineligible(prevs2.get(prevs2.size() - 1))) || (prevs4.size() > 0 && ineligible(prevs4.get(prevs4.size() - 1)))) {
                 prd.rank = 5;
                 prd.lastDate = "------";
                 prd.state = "Ineligible";
                 prd.numMonths = "------";
+                prd.numShots = "" + totalImmunizations;
                 prd.color = "grey";
                 inList++;
             } else {
