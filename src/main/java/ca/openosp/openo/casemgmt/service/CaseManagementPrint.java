@@ -63,6 +63,8 @@ public class CaseManagementPrint {
 
     private PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
 
+    private AllergyDao allergyDao = SpringUtils.getBean(AllergyDao.class);
+
     /*
      *This method was in CaseManagementEntry2Action but has been moved out so that both the classic Echart and the flat echart can use the same printing method.
      *
@@ -214,7 +216,6 @@ public class CaseManagementPrint {
 
         List<Allergy> allergies = null;
         if (printAllergies) {
-            AllergyDao allergyDao = SpringUtils.getBean(AllergyDao.class);
             allergies = allergyDao.findAllergies(demographicNo);
         }
 
@@ -244,7 +245,7 @@ public class CaseManagementPrint {
             printer.printCPP(cpp);
             printer.printRx(demoNo, othermeds);
             printer.printPreventions(preventions);
-            if (printAllergies && allergies != null && !allergies.isEmpty()) {
+            if (printAllergies && allergies != null) {
                 printer.printAllergies(allergies);
             }
             printer.printNotes(notes);

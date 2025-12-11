@@ -265,11 +265,12 @@ public class CaseManagementPrintPdf {
                 document.add(p);
             }
         }
-        if (preventions.size() == 0) {
-            curFont = normal;
-            phrase = new Phrase(LEADING, "", curFont);
-            phrase.add("No preventions found");
-            p.add(phrase);
+        if (preventions.isEmpty()) {
+            p = new Paragraph();
+            p.setAlignment(Paragraph.ALIGN_LEFT);
+            Phrase noPreventionsPhrase = new Phrase(LEADING, "", normal);
+            noPreventionsPhrase.add("No preventions found");
+            p.add(noPreventionsPhrase);
             document.add(p);
         }
     }
@@ -301,7 +302,7 @@ public class CaseManagementPrintPdf {
             p = new Paragraph();
             p.setAlignment(Paragraph.ALIGN_LEFT);
             phrase = new Phrase(LEADING, "", obsfont);
-            phrase.add(allergy.getDescription());
+            phrase.add(StringUtils.defaultIfBlank(allergy.getDescription(), "Unknown"));
             p.add(phrase);
             document.add(p);
             curFont = normal;
@@ -361,11 +362,12 @@ public class CaseManagementPrintPdf {
             }
             document.add(new Phrase("\n", curFont));
         }
-        if (allergies.size() == 0) {
-            curFont = normal;
-            phrase = new Phrase(LEADING, "", curFont);
-            phrase.add("No allergies found");
-            p.add(phrase);
+        if (allergies.isEmpty()) {
+            p = new Paragraph();
+            p.setAlignment(Paragraph.ALIGN_LEFT);
+            Phrase noAllergiesPhrase = new Phrase(LEADING, "", normal);
+            noAllergiesPhrase.add("No allergies found");
+            p.add(noAllergiesPhrase);
             document.add(p);
         }
     }
