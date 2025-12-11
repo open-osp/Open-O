@@ -75,7 +75,7 @@ public final class PreventionReportUtil {
 
         List<DemographicArchive> archives = demographicArchiveDao.findByDemographicNo(demographicId);
         for (DemographicArchive archive : archives) {
-            if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate()) && providerNo.equals(archive.getRosterEnrolledTo()))
+            if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate()) && providerNo.equals(demographic.getRosterEnrolledTo()))
                 return (true);
         }
 
@@ -96,7 +96,7 @@ public final class PreventionReportUtil {
 
         List<DemographicArchive> archives = demographicArchiveDao.findByDemographicNo(demographicId);
         for (DemographicArchive archive : archives) {
-            if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate()) && providerNo.equals(archive.getProviderNo()))
+            if (rosteredDuringThisTimeDemographicArchive(onThisDate, archive.getRosterDate(), archive.getRosterTerminationDate()) && providerNo.equals(demographic.getProviderNo()))
                 return (true);
         }
 

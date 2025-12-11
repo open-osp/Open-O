@@ -144,10 +144,7 @@ public class FOBTReport implements PreventionReport {
                     prd.state = "due";
                     prd.numMonths = numMonths;
                     prd.color = "yellow"; //FF00FF
-                    if (!prd.bonusStatus.equals("Y")) {
-                        prd.bonusStatus = "Y";
-                        doneWithGrace++;
-                    }
+                    doneWithGrace++;
 
                 } else if (prevDate != null && !refused && cutoffDate.after(prevDate)) { // overdue
                     prd.rank = 2;
