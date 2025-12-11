@@ -352,7 +352,7 @@
                     href="javascript:window.close();">Close Window</a></td>
             <td valign="top" class="MainTableRightColumn">
 
-                <form method="post" name="contactForm" id="contactForm" action="Contact.do">
+                <form method="post" name="contactForm" id="contactForm" action="<%= request.getContextPath() %>/demographic/Contact.do">
                     <input type="hidden" name="method" value="saveManage"/>
                     <input type="hidden" name="demographic_no" value="<%=demographic_no%>"/>
 

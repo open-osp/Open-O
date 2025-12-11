@@ -1715,8 +1715,9 @@ public class DemographicExportAction42Action extends ActionSupport {
                                 if (StringUtils.filled(duration)) {
                                     String durunit = StringUtils.noNull(arr[p].getDurationUnit());
                                     Integer fctr = 1;
-                                    if (durunit.equals("W")) fctr = 7;
-                                    else if (durunit.equals("M")) fctr = 30;
+                                    if (durunit.equalsIgnoreCase("W")) fctr = 7;
+                                    else if (durunit.equalsIgnoreCase("M")) fctr = 30;
+                                    else if (durunit.equalsIgnoreCase("Y")) fctr = 365;
 
                                     if (NumberUtils.isDigits(duration)) {
                                         duration = String.valueOf(Integer.parseInt(duration) * fctr);
@@ -2017,6 +2018,12 @@ public class DemographicExportAction42Action extends ActionSupport {
                                     exportError.add("Error! Document \"" + f.getName() + "\" too big to be exported. Not enough memory!");
                                 } else {
                                     Reports rpr = patientRec.addNewReports();
+                                    if (edoc.getType() != null) {
+                                        cdsDt.ReportMedia.Enum mediaEnum = cdsDt.ReportMedia.Enum.forString(formatHrmEnum(edoc.getType()));
+                                        if (mediaEnum != null) {
+                                            rpr.setMedia(mediaEnum);
+                                        }
+                                    }
                                     rpr.setFormat(cdsDt.ReportFormat.TEXT);
 
                                     cdsDt.ReportContent rpc = rpr.addNewContent();
@@ -2481,7 +2488,13 @@ public class DemographicExportAction42Action extends ActionSupport {
                                         exportError.add("Error! No Date for Diabetes Self-management Collaborative Goal Setting (id=" + meas.getId() + ") for Patient " + demoNo);
                                     }
                                     dsco.setCodeValue(cdsDt.DiabetesSelfManagementCollaborative.CodeValue.X_44943_9);
-                                    dsco.setDocumentedGoals(meas.getDataField());
+                                    String documentedGoals = meas.getDataField();
+                                    if (!StringUtils.empty(meas.getComments())) {
+                                        documentedGoals = StringUtils.empty(documentedGoals)
+                                            ? meas.getComments()
+                                            : documentedGoals + " - " + meas.getComments();
+                                    }
+                                    dsco.setDocumentedGoals(documentedGoals);
                                     addOneEntry(CAREELEMENTS);
                                 } else if (meas.getType().equals("HYPE")) { //Hypoglycemic Episodes
                                     if (StringUtils.isInteger(meas.getDataField().trim())) {
