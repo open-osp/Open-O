@@ -74,7 +74,8 @@ public class UploadTemplates2Action extends ActionSupport {
                 byte[] bytes = Files.readAllBytes(templateFile.toPath());
                 xml = new String(bytes);
             } catch (SecurityException se) {
-                message = "Error: Invalid file upload";
+                MiscUtils.getLogger().warn("SecurityException during file upload: " + se.getMessage(), se);
+                message = "Error: File upload failed due to security policy violation.";
                 request.setAttribute("message", message);
                 request.setAttribute("action", action);
                 return SUCCESS;

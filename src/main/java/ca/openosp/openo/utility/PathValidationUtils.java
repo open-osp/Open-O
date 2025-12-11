@@ -153,8 +153,8 @@ public final class PathValidationUtils {
         try {
             String baseCanonical = allowedBaseDir.getCanonicalPath();
             String fileCanonical = file.getCanonicalPath();
-
-            if (!fileCanonical.startsWith(baseCanonical + File.separator)) {
+            
+            if (!fileCanonical.equals(baseCanonical) && !fileCanonical.startsWith(baseCanonical + File.separator)) {
                 logger.error("Path " + fileCanonical + " is outside allowed directory " + baseCanonical);
                 throw new SecurityException("Invalid file path");
             }
@@ -196,8 +196,10 @@ public final class PathValidationUtils {
             return false;
         }
         String name = file.getName();
-        // Struts2/Tomcat temp files look like: upload_c850bd37_8bd7_40cb_88ae_1e86670a61ee_00000000.tmp
-        return name.endsWith(".tmp") || name.startsWith("upload_");
+        // Struts2/Tomcat temp files follow pattern: upload_<hex_ids>_<counter>.tmp
+        // Examples: upload__37055a77_11ac9568d10__7ffe_00000033.tmp
+        //           upload_c850bd37_8bd7_40cb_88ae_1e86670a61ee_00000000.tmp
+        return name.matches("^upload_+[a-f0-9_\\-]+\\.tmp$");
     }
 
     private static boolean isWithinDirectory(File file, File directory) {
@@ -208,7 +210,7 @@ public final class PathValidationUtils {
         try {
             String canonicalPath = file.getCanonicalPath();
             String dirCanonical = directory.getCanonicalPath();
-            return canonicalPath.startsWith(dirCanonical + File.separator);
+            return canonicalPath.equals(dirCanonical) || canonicalPath.startsWith(dirCanonical + File.separator);
         } catch (IOException e) {
             logger.error("Error checking if file is within directory", e);
             return false;
@@ -231,7 +233,7 @@ public final class PathValidationUtils {
             }
 
             for (String allowedDir : allowedDirectories) {
-                if (canonicalPath.startsWith(allowedDir + File.separator)) {
+                if (canonicalPath.equals(allowedDir) || canonicalPath.startsWith(allowedDir + File.separator)) {
                     return true;
                 }
             }
