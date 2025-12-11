@@ -1213,29 +1213,50 @@ public final class EDocUtil {
             throw new IllegalArgumentException("File name cannot be null or empty");
         }
 
-        Path inputPath = Paths.get(fileName);
-        
         try {
             String docDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-
             File documentDir = new File(docDir);
             String canonicalDocDir = documentDir.getCanonicalPath();
 
-            String canonicalTempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalPath(); 
+            // System temp directory (e.g., /tmp)
+            String canonicalTempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalPath();
+
+            // Tomcat temp directory (e.g., /path/to/tomcat/temp) - used for fax PDFs
+            String catalinaBase = System.getProperty("catalina.base");
+            String canonicalCatalinaTempDir = null;
+            if (catalinaBase != null && !catalinaBase.isEmpty()) {
+                File catalinaTempDir = new File(catalinaBase, "temp");
+                canonicalCatalinaTempDir = catalinaTempDir.getCanonicalPath();
+            }
+
+            // Determine the input file - if relative, resolve against document directory
+            Path inputPath = Paths.get(fileName);
+            File inputFile;
+            if (inputPath.isAbsolute()) {
+                inputFile = inputPath.toFile();
+            } else {
+                // Relative path - resolve against document directory
+                inputFile = new File(documentDir, fileName);
+            }
 
             // Get the canonical path to resolve any symbolic links or relative paths
-            File inputFile = inputPath.toFile();
             String canonicalPath = inputFile.getCanonicalPath();
-            
+
             // Validate that the resolved path is within the allowed document/temp directories
-            if (!canonicalPath.startsWith(canonicalDocDir + File.separator) && 
-                !canonicalPath.startsWith(canonicalTempDir + File.separator)) {
-                logger.warn("Path is outside of the allowed directories: " + fileName);
+            boolean isAllowed = canonicalPath.startsWith(canonicalDocDir + File.separator) ||
+                                canonicalPath.equals(canonicalDocDir) ||
+                                canonicalPath.startsWith(canonicalTempDir + File.separator) ||
+                                canonicalPath.equals(canonicalTempDir) ||
+                                (canonicalCatalinaTempDir != null &&
+                                 (canonicalPath.startsWith(canonicalCatalinaTempDir + File.separator) ||
+                                  canonicalPath.equals(canonicalCatalinaTempDir)));
+
+            if (!isAllowed) {
+                logger.error("Security violation: Attempted to access file outside allowed directory: ");
                 throw new SecurityException("Access denied: File is outside the allowed directories");
             }
-            
+
             return canonicalPath;
-            
         } catch (IOException e) {
             logger.error("Error resolving file path: " + fileName, e);
             throw new SecurityException("Unable to resolve file path securely", e);
@@ -1312,16 +1333,25 @@ public final class EDocUtil {
     public static int getPDFPageCount(String fileName) {
         int pagecount = 0;
 
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return 0;
+        }
+
         try {
-            // resolvePath now validates the path is within allowed directories
+            // For absolute paths, check if file exists first before security validation
+            // This handles stale data from different environments gracefully
+            Path inputPath = Paths.get(fileName);
+            if (inputPath.isAbsolute() && !Files.exists(inputPath)) {
+                logger.debug("File not found (may be from different environment): " + fileName);
+                return 0;
+            }
+            // resolvePath validates the path is within allowed directories
             String resolvedPath = resolvePath(fileName);
             Path path = Paths.get(resolvedPath);
-            
+
             if (Files.exists(path)) {
-                try {
-                    PDDocument pdf = PDDocument.load(path.toFile());
+                try (PDDocument pdf = PDDocument.load(path.toFile())) {
                     pagecount = pdf.getNumberOfPages();
-                    pdf.close();
                 } catch (IOException e) {
                     logger.error("Could not read PDF file: " + fileName, e);
                 }
@@ -1335,7 +1365,7 @@ public final class EDocUtil {
             logger.error("Invalid file name provided: " + fileName, e);
             // Return 0 to indicate error
         }
-        
+
         return pagecount;
     }
 
