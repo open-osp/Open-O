@@ -217,6 +217,6 @@
     %>
     </form>
     <br>
-    <a href="Contact.do?method=addContact">Add/Edit Contact</a>
+    <a href="<%= request.getContextPath() %>/demographic/Contact.do?method=addContact">Add/Edit Contact</a>
     </body>
 </html>
