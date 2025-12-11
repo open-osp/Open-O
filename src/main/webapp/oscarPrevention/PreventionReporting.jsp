@@ -77,6 +77,18 @@
     String asofDate = request.getParameter("asofDate");
     // Create current date value to display as a fallback
     if (asofDate == null) asofDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+    // Get patientSet from parameter first, then fall back to attribute
+    String patientSet = request.getParameter("patientSet");
+    if (patientSet == null) {
+        patientSet = (String) request.getAttribute("patientSet");
+    }
+
+    // Get prevention from parameter first, then fall back to attribute
+    String prevention = request.getParameter("prevention");
+    if (prevention == null) {
+        prevention = (String) request.getAttribute("prevention");
+    }
 %>
 
 <html>
@@ -436,14 +448,13 @@
                     <div>
                         Patient Demographic Query:
                         <select name="patientSet" id="patientSet">
-                            <option value="-1" ${patientSet == '-1' || patientSet == null ? 'selected' : ''}>--Select Query--</option>
+                            <option value="-1" <%=("-1".equals(patientSet) || patientSet == null) ? "selected" : ""%>>--Select Query--</option>
                             <%
-                                String selectedPatientSet = (String) request.getAttribute("patientSet");
                                 for (int i = 0; i < queryArray.size(); i++) {
                                     RptSearchData.SearchCriteria sc = (RptSearchData.SearchCriteria) queryArray.get(i);
                                     String qId = sc.id;
                                     String qName = sc.queryName;
-                                    String selected = qId.equals(selectedPatientSet) ? "selected" : "";
+                                    String selected = (patientSet != null && patientSet.equals(qId)) ? "selected" : "";
                             %>
                             <option value="<%=Encode.forHtmlAttribute(qId)%>" <%=selected%>><%=Encode.forHtmlContent(qName)%>
                             </option>
@@ -453,12 +464,12 @@
                     <div>
                         Prevention:
                         <select name="prevention" id="prevention">
-                            <option value="-1" ${prevention == '-1' ? 'selected' : ''} >--Select Prevention--</option>
-                            <option value="PAP" ${prevention == 'PAP' ? 'selected' : ''} >PAP</option>
-                            <option value="Mammogram" ${prevention == 'Mammogram' ? 'selected' : ''} >Mammogram</option>
-                            <option value="Flu" ${prevention == 'Flu' ? 'selected' : ''} >Flu</option>
-                            <option value="ChildImmunizations" ${prevention == 'ChildImmunizations' ? 'selected' : ''} >Child Immunizations</option>
-                            <option value="FOBT" ${prevention == 'FOBT' ? 'selected' : ''} >FOBT</option>
+                            <option value="-1" <%=("-1".equals(prevention) || prevention == null) ? "selected" : ""%>>--Select Prevention--</option>
+                            <option value="PAP" <%="PAP".equals(prevention) ? "selected" : ""%>>PAP</option>
+                            <option value="Mammogram" <%="Mammogram".equals(prevention) ? "selected" : ""%>>Mammogram</option>
+                            <option value="Flu" <%="Flu".equals(prevention) ? "selected" : ""%>>Flu</option>
+                            <option value="ChildImmunizations" <%="ChildImmunizations".equals(prevention) ? "selected" : ""%>>Child Immunizations</option>
+                            <option value="FOBT" <%="FOBT".equals(prevention) ? "selected" : ""%>>FOBT</option>
                         </select>
                     </div>
                     <div>
