@@ -171,6 +171,8 @@ public class CaseManagementEntry2Action extends ActionSupport implements Session
         } else if ("ticklerGetNote".equals(method)) {
             return ticklerGetNote();
         }
+
+        // Defaulting to edit method
         return edit();
     }
 

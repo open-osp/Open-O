@@ -39,6 +39,12 @@
         return;
     }
 %>
+<%
+    String caseNote_history = (String) request.getAttribute("caseNote_history");
+    if (caseNote_history == null) {
+        caseNote_history = "";
+    }
+%>
 
 <html>
 <head>

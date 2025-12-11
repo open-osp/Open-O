@@ -278,13 +278,18 @@ public class EctMeasurements2Action extends ActionSupport {
             request.setAttribute("groupName", groupName);
             request.setAttribute("css", css);
             request.setAttribute("demographicNo", demographicNo);
-            System.out.println("Set demographicNo attribute: " + demographicNo);
-            System.out.println("=== END DEBUG ===");
 
             if (ajax) {
                 ObjectNode obj = objectMapper.createObjectNode();
                 ArrayNode errorObj = objectMapper.createArrayNode();
-                obj.put("errors", errorObj);
+                for (String error : getActionErrors()) {
+                    if (error != null && !error.trim().isEmpty()) {
+                        errorObj.add(error);
+                    }
+                }
+                obj.set("errors", errorObj);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
                 response.getWriter().write(obj.toString());
                 return null;
             }
