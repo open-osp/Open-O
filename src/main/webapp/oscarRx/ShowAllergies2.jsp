@@ -196,18 +196,31 @@
                             .each(function () {
                                 const $elem = $(this);
                                 const name = $elem.attr('name');
-                                const type = $elem.attr('type');
+                                const rawType = ($elem.attr('type') || '').toLowerCase();
+                                const isCheckbox = rawType === 'checkbox' || $elem.is(':checkbox');
+                                const isRadio = rawType === 'radio' || $elem.is(':radio');
 
-                                // Skip radios/checkboxes if not checked (serializeArray behavior)
-                                if ((type === 'checkbox' || type === 'radio') && !$elem.is(':checked')) { return; }
-
-                                // Checkboxes → boolean true
-                                if (type === 'checkbox') {
-                                    json[name] = true;
+                                // Skip unchecked radios/checkboxes (serializeArray behavior)
+                                if ((isCheckbox || isRadio) && !$elem.is(':checked')) {
                                     return;
                                 }
 
-                                // All other inputs → value
+                                // Checkbox → boolean true
+                                if (isCheckbox) {
+                                    // Skip typeSelectAll - UI-only field
+                                    if (name !== 'typeSelectAll') {
+                                        json[name] = true;
+                                    }
+                                    return;
+                                }
+
+                                // Radio → actual value
+                                if (isRadio) {
+                                    json[name] = $elem.val() || '';
+                                    return;
+                                }
+
+                                // Other input/select/textarea → value
                                 json[name] = $elem.val() || '';
                             });
 
