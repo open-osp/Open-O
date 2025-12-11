@@ -26,6 +26,8 @@ package ca.openosp.openo.provider.web;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Logger;
+
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.commn.dao.CtlBillingServiceDao;
 import ca.openosp.openo.commn.dao.QueueDao;
@@ -38,24 +40,35 @@ import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.eform.EFormUtil;
 import ca.openosp.openo.log.LogAction;
+import ca.openosp.openo.managers.ProviderManager2;
+import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.function.Supplier;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author rjonasz
  */
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.struts2.ServletActionContext;
+
 import ca.openosp.openo.util.LabelValueBean;
 
 public class ProviderProperty2Action extends ActionSupport {
+    private static final Logger logger = MiscUtils.getLogger();
+
     HttpServletRequest request = ServletActionContext.getRequest();
     HttpServletResponse response = ServletActionContext.getResponse();
+
+    private ProviderManager2 providerManager2 = SpringUtils.getBean(ProviderManager2.class);
+    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     private UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
 
@@ -2638,6 +2651,66 @@ public class ProviderProperty2Action extends ActionSupport {
         return "genLabMacroPrefs";
     }
 
+    public String viewHl7LabResultPrefs() {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.READ, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        boolean offerFileForOthers = providerManager2.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+        boolean allowOthersFileForYou = providerManager2.isHl7AllowOthersFileForYou(loggedInInfo, providerNo);
+
+        request.setAttribute("offerFileForOthers", offerFileForOthers);
+        request.setAttribute("allowOthersFileForYou", allowOthersFileForYou);
+
+        return "genHl7LabResultPrefs";
+    }
+
+     public String setOfferFileForOthersPref() {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+        
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String value = request.getParameter("value");
+        boolean status = providerManager2.updateHl7OfferFileForOthers(loggedInInfo, providerNo, value);
+
+        Map<String, Object> json = new HashMap<>();
+        json.put("status", status);
+        writeJsonResponse(response, json);
+        return null;
+    }
+
+    public String setAllowOthersFileForYouPref() {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+			throw new RuntimeException("missing required security object _lab");
+		}
+
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String value = request.getParameter("value");
+        boolean status = providerManager2.updateHl7AllowOthersFileForYou(loggedInInfo, providerNo, value);
+
+        Map<String, Object> json = new HashMap<>();
+        json.put("status", status);
+        writeJsonResponse(response, json);
+        return null;
+    }
+
+    private void writeJsonResponse(HttpServletResponse response, Object json) {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+       try {
+          ObjectMapper mapper = new ObjectMapper();
+          mapper.writeValue(response.getWriter(), json);
+        } catch (Exception e) {
+            logger.error("An error occurred while writing JSON response to the output stream", e);
+        }
+    }
+
     private static final Map<String, Supplier<String>> methodMap = new HashMap<>();
 
     @PostConstruct
@@ -2647,16 +2720,22 @@ public class ProviderProperty2Action extends ActionSupport {
         methodMap.put("save", this::save);
         methodMap.put("viewDefaultSex", this::viewDefaultSex);
         methodMap.put("saveDefaultSex", this::saveDefaultSex);
+        methodMap.put("viewHCType", this::viewHCType);
+        methodMap.put("saveHCType", this::saveHCType);
         methodMap.put("viewRxPageSize", this::viewRxPageSize);
         methodMap.put("saveRxPageSize", this::saveRxPageSize);
-        methodMap.put("viewUseRx3", this::viewUseRx3);
-        methodMap.put("saveUseRx3", this::saveUseRx3);
-        methodMap.put("viewCppSingleLine", this::viewCppSingleLine);
-        methodMap.put("saveUseCppSingleLine", this::saveUseCppSingleLine);
+        methodMap.put("saveDefaultDocQueue", this::saveDefaultDocQueue);
+        methodMap.put("viewDefaultDocQueue", this::viewDefaultDocQueue);
+        methodMap.put("viewRxProfileView", this::viewRxProfileView);
+        methodMap.put("saveRxProfileView", this::saveRxProfileView);
         methodMap.put("viewShowPatientDOB", this::viewShowPatientDOB);
         methodMap.put("saveShowPatientDOB", this::saveShowPatientDOB);
+        methodMap.put("viewUseRx3", this::viewUseRx3);
+        methodMap.put("saveUseRx3", this::saveUseRx3);
         methodMap.put("viewDefaultQuantity", this::viewDefaultQuantity);
         methodMap.put("saveDefaultQuantity", this::saveDefaultQuantity);
+        methodMap.put("viewOntarioMDId", this::viewOntarioMDId);
+        methodMap.put("saveOntarioMDId", this::saveOntarioMDId);
         methodMap.put("viewConsultationRequestCuffOffDate", this::viewConsultationRequestCuffOffDate);
         methodMap.put("saveConsultationRequestCuffOffDate", this::saveConsultationRequestCuffOffDate);
         methodMap.put("viewConsultationRequestTeamWarning", this::viewConsultationRequestTeamWarning);
@@ -2667,36 +2746,43 @@ public class ProviderProperty2Action extends ActionSupport {
         methodMap.put("saveConsultPasteFmt", this::saveConsultPasteFmt);
         methodMap.put("viewFavouriteEformGroup", this::viewFavouriteEformGroup);
         methodMap.put("saveFavouriteEformGroup", this::saveFavouriteEformGroup);
-        methodMap.put("viewHCType", this::viewHCType);
-        methodMap.put("saveHCType", this::saveHCType);
-        methodMap.put("viewCommentLab", this::viewCommentLab);
-        methodMap.put("saveCommentLab", this::saveCommentLab);
-        methodMap.put("viewLabRecall", this::viewLabRecall);
-        methodMap.put("saveLabRecallPrefs", this::saveLabRecallPrefs);
-        methodMap.put("viewEncounterWindowSize", this::viewEncounterWindowSize);
-        methodMap.put("saveEncounterWindowSize", this::saveEncounterWindowSize);
-        methodMap.put("viewQuickChartSize", this::viewQuickChartSize);
-        methodMap.put("saveQuickChartSize", this::saveQuickChartSize);
+        methodMap.put("viewCppSingleLine", this::viewCppSingleLine);
+        methodMap.put("saveUseCppSingleLine", this::saveUseCppSingleLine);
         methodMap.put("viewEDocBrowserInDocumentReport", this::viewEDocBrowserInDocumentReport);
         methodMap.put("saveEDocBrowserInDocumentReport", this::saveEDocBrowserInDocumentReport);
         methodMap.put("viewEDocBrowserInMasterFile", this::viewEDocBrowserInMasterFile);
         methodMap.put("saveEDocBrowserInMasterFile", this::saveEDocBrowserInMasterFile);
+        methodMap.put("viewCommentLab", this::viewCommentLab);
+        methodMap.put("saveCommentLab", this::saveCommentLab);
+        methodMap.put("viewLabRecall", this::viewLabRecall);
+        methodMap.put("saveLabRecallPrefs", this::saveLabRecallPrefs);
+        methodMap.put("viewTicklerTaskAssignee", this::viewTicklerTaskAssignee);
+        methodMap.put("saveTicklerTaskAssignee", this::saveTicklerTaskAssignee);
+        methodMap.put("viewEncounterWindowSize", this::viewEncounterWindowSize);
+        methodMap.put("saveEncounterWindowSize", this::saveEncounterWindowSize);
+        methodMap.put("viewQuickChartSize", this::viewQuickChartSize);
+        methodMap.put("saveQuickChartSize", this::saveQuickChartSize);
+        methodMap.put("viewIntegratorProperties", this::viewIntegratorProperties);
+        methodMap.put("saveIntegratorProperties", this::saveIntegratorProperties);
         methodMap.put("viewPatientNameLength", this::viewPatientNameLength);
         methodMap.put("savePatientNameLength", this::savePatientNameLength);
         methodMap.put("viewDisplayDocumentAs", this::viewDisplayDocumentAs);
         methodMap.put("saveDisplayDocumentAs", this::saveDisplayDocumentAs);
-        methodMap.put("viewAppointmentCardPrefs", this::viewAppointmentCardPrefs);
-        methodMap.put("saveAppointmentCardPrefs", this::saveAppointmentCardPrefs);
+        methodMap.put("viewHideOldEchartLinkInAppt", this::viewHideOldEchartLinkInAppt);
+        methodMap.put("saveHideOldEchartLinkInAppt", this::saveHideOldEchartLinkInAppt);
         methodMap.put("viewDashboardPrefs", this::viewDashboardPrefs);
         methodMap.put("saveDashboardPrefs", this::saveDashboardPrefs);
+        methodMap.put("viewAppointmentCardPrefs", this::viewAppointmentCardPrefs);
+        methodMap.put("saveAppointmentCardPrefs", this::saveAppointmentCardPrefs);
         methodMap.put("viewPreventionPrefs", this::viewPreventionPrefs);
         methodMap.put("savePreventionPrefs", this::savePreventionPrefs);
         methodMap.put("viewClinicalConnectPrefs", this::viewClinicalConnectPrefs);
         methodMap.put("saveClinicalConnectPrefs", this::saveClinicalConnectPrefs);
         methodMap.put("viewLabMacroPrefs", this::viewLabMacroPrefs);
         methodMap.put("saveLabMacroPrefs", this::saveLabMacroPrefs);
-        methodMap.put("viewTicklerTaskAssignee", this::viewTicklerTaskAssignee);
-        methodMap.put("saveTicklerTaskAssignee", this::saveTicklerTaskAssignee);
+        methodMap.put("viewHl7LabResultPrefs", this::viewHl7LabResultPrefs);
+        methodMap.put("setOfferFileForOthersPref", this::setOfferFileForOthersPref);
+        methodMap.put("setAllowOthersFileForYouPref", this::setAllowOthersFileForYouPref);
     }
 
     private UserProperty dateProperty;

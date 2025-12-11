@@ -813,6 +813,15 @@
                              onclick="return printInfo(this, 'printPreventions');"
                              src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Preventions.title"/></td>
                 </tr>
+                <tr>
+                    <td></td>
+                    <td><img style="cursor: pointer;"
+                             title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.print.title"/>"
+                             id='imgPrintAllergies'
+                             alt="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.togglePrintAllergies.title"/>"
+                             onclick="return printInfo(this, 'printAllergies');"
+                             src='<c:out value="${ctx}"/>/oscarEncounter/graphics/printer.png'>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.Allergies.title"/></td>
+                </tr>
                 <!--  extension point -->
                 <tr id="printDateRow">
                     <td><input type="radio" id="printopDates" name="printop"

@@ -184,12 +184,6 @@
         <!-- calendar stylesheet -->
         <link rel="stylesheet" type="text/css" media="all"
               href="${pageContext.servletContext.contextPath}/share/calendar/calendar.css" title="win2k-cold-1"/>
-        <script type="text/javascript"
-                src="${pageContext.servletContext.contextPath}/share/javascript/prototype.js"></script>
-        <script type="text/javascript"
-                src="${pageContext.servletContext.contextPath}/share/javascript/effects.js"></script>
-        <script type="text/javascript"
-                src="${pageContext.servletContext.contextPath}/share/javascript/controls.js"></script>
         <!-- jquery -->
         <script language="javascript" type="text/javascript"
                 src="${pageContext.servletContext.contextPath}/share/javascript/Oscar.js"></script>
@@ -211,25 +205,36 @@
 
             function handleDocSave(docid, action) {
                 var url = contextpath + "/documentManager/inboxManage.do";
-                var data = 'method=isDocumentLinkedToDemographic&docId=' + docid;
-                new Ajax.Request(url, {
-                    method: 'post', parameters: data, onSuccess: function (transport) {
-                        var json = transport.responseText.evalJSON();
-                        if (json != null) {
-                            var success = json.isLinkedToDemographic;
-                            var demoid = '';
+                var data = 'method=isDocumentLinkedToDemographic&docId=' + encodeURIComponent(docid);
 
-                            if (success) {
-                                if (action == 'addTickler') {
-                                    demoid = json.demoId;
-                                    if (demoid != null && demoid.length > 0)
-                                        popupStart(450, 600, contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + docid + '&demographic_no=' + demoid, 'tickler')
-                                }
-                            } else {
-                                alert("Make sure demographic is linked and document changes saved!");
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: data
+                })
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(json) {
+                    if (json != null) {
+                        var success = json.isLinkedToDemographic;
+                        var demoid = '';
+
+                        if (success) {
+                            if (action == 'addTickler') {
+                                demoid = json.demoId;
+                                if (demoid != null && demoid.length > 0)
+                                    popupStart(450, 600, contextpath + '/tickler/ForwardDemographicTickler.do?docType=DOC&docId=' + encodeURIComponent(docid) + '&demographic_no=' + encodeURIComponent(demoid), 'tickler')
                             }
+                        } else {
+                            alert("Make sure demographic is linked and document changes saved!");
                         }
                     }
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
                 });
             }
 
@@ -237,12 +242,20 @@
             function rotate90(id) {
                 jQuery("#rotate90btn_" + id).attr('disabled', 'disabled');
 
-                new Ajax.Request(contextpath + "/documentManager/SplitDocument.do", {
-                    method: 'post', parameters: "method=rotate90&document=" + id, onSuccess: function (data) {
-                        jQuery("#rotate90btn_" + id).removeAttr('disabled');
-                        jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=showPage&doc_no=" + id + "&page=1&rand=" + (new Date().getTime()));
-
-                    }
+                fetch(contextpath + "/documentManager/SplitDocument.do", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: "method=rotate90&document=" + encodeURIComponent(id)
+                })
+                .then(function(response) {
+                    jQuery("#rotate90btn_" + id).removeAttr('disabled');
+                    jQuery("#docImg_" + id).attr('src', contextpath + "/documentManager/ManageDocument.do?method=showPage&doc_no=" + encodeURIComponent(id) + "&page=1&rand=" + (new Date().getTime()));
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    jQuery("#rotate90btn_" + id).removeAttr('disabled');
                 });
             }
 
@@ -305,7 +318,7 @@
         <% if (demographicID != null && !demographicID.equals("") && !demographicID.equalsIgnoreCase("null") && !ackedOrFiled) {%>
         <input type="submit" id="ackBtn_<%=docId%>"
                value="<fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>">
-        <input type="button" value="Comment" onclick="addDocComment('<%=docId%>','<%=providerNo%>',true)"/>
+        <input type="button" value="Comment" onclick="addDocComment('<%=docId%>','<%=providerNo%>')"/>
         <%}%>
         <input type="button" id="fwdBtn_<%=docId%>" value="<fmt:message key="oscarMDS.index.btnForward"/>"
                onClick="ForwardSelectedRows(<%=docId%> + ':DOC', null, null);">
@@ -725,7 +738,8 @@
 <script type="text/javascript" src="showDocument.js"></script>
 <script type="text/javascript">
 
-    if ($('displayDocumentAs_<%=docId%>').value == "<%=UserProperty.PDF%>") {
+    var displayDocAsEl = document.getElementById('displayDocumentAs_<%=docId%>');
+    if (displayDocAsEl && displayDocAsEl.value == "<%=UserProperty.PDF%>") {
         showPDF('<%=docId%>', contextpath);
     }
 
