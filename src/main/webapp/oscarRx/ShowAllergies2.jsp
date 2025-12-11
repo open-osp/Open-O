@@ -43,6 +43,7 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -188,11 +189,28 @@
                         $(".highLightButton").removeClass("highLightButton");
                         var form = $("#searchAllergy2");
                         var url = form.attr('action');
-                        var params = form.serializeArray();
                         var json = {};
-                        $.each(params, function () {
-                            json[this.name] = this.value || '';
-                        });
+
+                        // Build JSON with boolean values for checkboxes (Jackson expects boolean, not "on"/"off")
+                        form.find('input:enabled[name]:not([type=submit]):not([type=button]), select:enabled[name], textarea:enabled[name]')
+                            .each(function () {
+                                const $elem = $(this);
+                                const name = $elem.attr('name');
+                                const type = $elem.attr('type');
+
+                                // Skip radios/checkboxes if not checked (serializeArray behavior)
+                                if ((type === 'checkbox' || type === 'radio') && !$elem.is(':checked')) { return; }
+
+                                // Checkboxes → boolean true
+                                if (type === 'checkbox') {
+                                    json[name] = true;
+                                    return;
+                                }
+
+                                // All other inputs → value
+                                json[name] = $elem.val() || '';
+                            });
+
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
                         param = "jsonData=" + JSON.stringify(json);
@@ -474,6 +492,7 @@
                                             <tr>
                                                 <td><b>Status</b></td>
                                                 <td><b>Entry Date</b></td>
+                                                <td><b>Last Updated Date</b></td>
                                                 <td><b>Description</b></td>
                                                 <td><b>Allergy Type</b></td>
 
@@ -559,6 +578,8 @@
                                                 <td><%=labelStatus%>
                                                 </td>
                                                 <td><%=entryDate == null ? "" : entryDate %>
+                                                </td>
+                                                <td><%=allergy.getLastUpdateDate() != null ? DateUtils.formatDate(allergy.getLastUpdateDate(), request.getLocale()) : "" %>
                                                 </td>
                                                 <td <%=title%> ><%=allergy.getDescription() %>
                                                 </td>

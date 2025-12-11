@@ -112,7 +112,7 @@
         formdata.setRestrictToProgram(currentDoc.isRestrictToProgram());
         lastUpdate = currentDoc.getDateTimeStamp();
         fileName = currentDoc.getFileName();
-        formdata.setAbnormal((currentDoc.getAbnormal().equals("1")) ? "checked" : "");
+        formdata.setAbnormal((currentDoc.getAbnormal().equals("true")) ? "checked" : "");
         formdata.setReceivedDate(currentDoc.getReceivedDate());
 
         extraReviewers = documentExtraReviewerDao.findByDocumentNo(Integer.parseInt(editDocumentNo));
