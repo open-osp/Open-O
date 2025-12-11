@@ -199,7 +199,8 @@ public final class PathValidationUtils {
         // Struts2/Tomcat temp files follow pattern: upload_<hex_ids>_<counter>.tmp
         // Examples: upload__37055a77_11ac9568d10__7ffe_00000033.tmp
         //           upload_c850bd37_8bd7_40cb_88ae_1e86670a61ee_00000000.tmp
-        return name.matches("^upload_+[a-f0-9_\\-]+\\.tmp$");
+        // Using possessive quantifiers (++) to prevent ReDoS via catastrophic backtracking
+        return name.matches("^upload_++[a-f0-9_\\-]++\\.tmp$");
     }
 
     private static boolean isWithinDirectory(File file, File directory) {
