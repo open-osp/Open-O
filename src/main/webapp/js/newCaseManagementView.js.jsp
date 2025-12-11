@@ -3411,7 +3411,7 @@ function autoSave(async) {
             printAll();
         }
 
-        if ($F("notes2print").length == 0 && $F("printCPP") == "false" && $F("printRx") == "false" && $F("printLabs") == "false" && $F("printPreventions") == "false") {
+        if ($F("notes2print").length == 0 && $F("printCPP") == "false" && $F("printRx") == "false" && $F("printLabs") == "false" && $F("printPreventions") == "false" && $F("printAllergies") == "false") {
             alert(nothing2PrintMsg);
             return false;
         }
@@ -3475,6 +3475,9 @@ function autoSave(async) {
 
         if ($F("printRx") == "true")
             printInfo("imgPrintRx", "printRx");
+
+        if ($F("printAllergies") == "true")
+            printInfo("imgPrintAllergies", "printAllergies");
 
         // Clear date fields
         if ($("printStartDate"))
