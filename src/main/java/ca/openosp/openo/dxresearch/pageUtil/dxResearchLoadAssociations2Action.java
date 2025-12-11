@@ -71,19 +71,19 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String execute() throws Exception {
-        getAllAssociations();
-
         String method = request.getParameter("method");
-        if ("uploadFile".equals(method)) {
-            uploadFile();
-        }
-        if ("clearAssociations".equals(method)) {
+
+        if ("getAllAssociations".equals(method)) {
+            getAllAssociations();
+        } else if ("clearAssociations".equals(method)) {
             clearAssociations();
-        }
-        if ("export".equals(method)) {
+        } else if ("addAssociation".equals(method)) {
+            addAssociation();
+        } else if ("export".equals(method)) {
             export();
-        }
-        if ("autoPopulateAssociations".equals(method)) {
+        } else if ("uploadFile".equals(method)) {
+            uploadFile();
+        } else if ("autoPopulateAssociations".equals(method)) {
             autoPopulateAssociations();
         }
 

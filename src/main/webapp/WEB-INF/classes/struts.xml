@@ -1334,6 +1334,7 @@
             <result name="success">/provider/setNoteStaleDate.jsp</result>
             <result name="gen">/provider/setGenProperty.jsp</result>
             <result name="genRxPageSize">/provider/setGenRxPageSizeProperty.jsp</result>
+            <result name="genHl7LabResultPrefs">/provider/setHl7LabResultPrefs.jsp</result>
             <result name="genRxDefaultQuantity">/provider/setGenRxDefaultQuantityProperty.jsp</result>
             <result name="genRxProfileView">/provider/setGenRxProfileViewProperty.jsp</result>
             <result name="genRxUseRx3">/provider/setToUseRx3.jsp</result>
