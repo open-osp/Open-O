@@ -309,13 +309,11 @@ public class FlowSheetCustom2Action extends ActionSupport {
         logger.debug("IN DELETE");
         String flowsheet = request.getParameter("flowsheet");
         String measurement = request.getParameter("measurement");
-        String demographicNo = "0";
-        if (request.getParameter("demographic") != null) {
-            demographicNo = request.getParameter("demographic");
-        }
+        String demographicNo = request.getParameter("demographic");
         String scope = request.getParameter("scope");
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+        String demographicNoForSecurity = (demographicNo != null && !"0".equals(demographicNo)) ? demographicNo : "0";
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNoForSecurity)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
 
@@ -323,13 +321,26 @@ public class FlowSheetCustom2Action extends ActionSupport {
         cust.setAction(FlowSheetCustomization.DELETE);
         cust.setFlowsheet(flowsheet);
         cust.setMeasurement(measurement);
-        cust.setProviderNo("clinic".equals(scope) || demographicNo != null ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
-        cust.setDemographicNo(demographicNo);
+
+        // Determine scope and set providerNo/demographicNo appropriately
+        if ("clinic".equals(scope)) {
+            // Clinic scope - empty provider, demographicNo = "0"
+            cust.setProviderNo("");
+            cust.setDemographicNo("0");
+        } else if (demographicNo != null && !"0".equals(demographicNo)) {
+            // Patient scope - empty provider, specific patient
+            cust.setProviderNo("");
+            cust.setDemographicNo(demographicNo);
+        } else {
+            // Provider scope ("Your Patients") - specific provider, demographicNo = "0"
+            cust.setProviderNo(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
+            cust.setDemographicNo("0");
+        }
 
         flowSheetCustomizationDao.persist(cust);
         logger.debug("DELETE " + cust);
 
-        request.setAttribute("demographic", demographicNo);
+        request.setAttribute("demographic", demographicNoForSecurity);
         request.setAttribute("flowsheet", flowsheet);
         return SUCCESS;
     }
@@ -338,43 +349,38 @@ public class FlowSheetCustom2Action extends ActionSupport {
         logger.debug("IN RESTORE");
         String flowsheet = request.getParameter("flowsheet");
         String measurement = request.getParameter("measurement");
-        String demographicNo = "0";
-        if (request.getParameter("demographic") != null) {
-            demographicNo = request.getParameter("demographic");
-        }
+        String demographicNo = request.getParameter("demographic");
         String scope = request.getParameter("scope");
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+        String demographicNoForSecurity = (demographicNo != null && !"0".equals(demographicNo)) ? demographicNo : "0";
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNoForSecurity)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
 
         if ("clinic".equals(scope)) {
-            //clinic level
+            // Clinic level
             for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet)) {
                 if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
                     flowSheetCustomizationDao.remove(cust.getId());
                 }
             }
-
-        } else {
-            if (demographicNo == null) {
-                //providers level
-                for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo())) {
-                    if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
-                        flowSheetCustomizationDao.remove(cust.getId());
-                    }
+        } else if (demographicNo != null && !"0".equals(demographicNo)) {
+            // Patient level
+            for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet, demographicNo)) {
+                if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
+                    flowSheetCustomizationDao.remove(cust.getId());
                 }
-            } else {
-                //patient level
-                for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet, demographicNo)) {
-                    if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
-                        flowSheetCustomizationDao.remove(cust.getId());
-                    }
+            }
+        } else {
+            // Provider level ("Your Patients")
+            for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo())) {
+                if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
+                    flowSheetCustomizationDao.remove(cust.getId());
                 }
             }
         }
 
-        request.setAttribute("demographic", demographicNo);
+        request.setAttribute("demographic", demographicNoForSecurity);
         request.setAttribute("flowsheet", flowsheet);
         return SUCCESS;
     }

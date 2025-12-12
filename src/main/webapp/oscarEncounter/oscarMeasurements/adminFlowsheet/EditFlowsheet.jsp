@@ -366,15 +366,12 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		                <%}else{%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
-		                <%--
-		                    Commenting out the 'Delete' button for now because it is breaking flowsheets
-		                    and seems to be incorrectly removing measurements. This code is commented
-		                    out until a correct solution is found.
-		                --%>
 		               <%
 		                if(mFlowsheet.getFlowSheetItem(mstring).isHide()){
 		               %>
-		               	<a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>">RESTORE</a>
+		               	<a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Restore this measurement" class="action-icon"><i class="icon-eye-open"></i></a>
+		               <% } else { %>
+		                <a href="FlowSheetCustomAction.do?method=delete&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Hide this measurement" class="action-icon"><i class="icon-trash"></i></a>
 		               <% } %>
 
 
