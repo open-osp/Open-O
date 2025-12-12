@@ -518,9 +518,7 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
             UUID uuid = UUID.randomUUID();
             note.setUuid(uuid.toString());
         }
-        if (note.getUpdate_date() == null) {
-            note.setUpdate_date(new Date());
-        }
+        note.setUpdate_date(new Date());
         this.getHibernateTemplate().save(note);
         this.getHibernateTemplate().flush();
     }
@@ -532,9 +530,7 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
             UUID uuid = UUID.randomUUID();
             note.setUuid(uuid.toString());
         }
-        if (note.getUpdate_date() == null) {
-            note.setUpdate_date(new Date());
-        }
+        note.setUpdate_date(new Date());
         return this.getHibernateTemplate().save(note);
     }
 
