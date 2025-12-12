@@ -137,7 +137,7 @@
     }
 
     MeasurementInfo mi = new MeasurementInfo(demographic_no);
-    List<String> measurementLs = mFlowsheet.getMeasurementList();
+    List<String> measurementLs = mFlowsheet.getVisibleMeasurementList();
     ArrayList<String> measurements = new ArrayList(measurementLs);
     long startTimeToGetM = System.currentTimeMillis();
 
