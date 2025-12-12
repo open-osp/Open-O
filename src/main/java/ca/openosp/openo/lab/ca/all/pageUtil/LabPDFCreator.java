@@ -68,7 +68,6 @@ import ca.openosp.openo.lab.ca.all.Hl7textResultsData;
 import ca.openosp.openo.lab.ca.all.parsers.CLSHandler;
 import ca.openosp.openo.lab.ca.all.parsers.ExcellerisOntarioHandler;
 import ca.openosp.openo.lab.ca.all.parsers.Factory;
-import ca.openosp.openo.lab.ca.all.parsers.GDMLHandler;
 import ca.openosp.openo.lab.ca.all.parsers.MEDITECHHandler;
 import ca.openosp.openo.lab.ca.all.parsers.MessageHandler;
 import ca.openosp.openo.lab.ca.all.parsers.PATHL7Handler;
@@ -791,7 +790,7 @@ public class LabPDFCreator extends PdfPageEventHelper {
                                 table.addCell(cell);
 
                                 String status = handler.getOBXResultStatus(j, k);
-                                if ("GDML".equals(handler.getMsgType()) && ((GDMLHandler) handler).isTestResultBlocked(j, k)) {
+                                if (handler.isTestResultBlocked(j, k)) {
                                     if (!StringUtils.isEmpty(status)) {
                                         status += "/";
                                     }
