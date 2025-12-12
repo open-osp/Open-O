@@ -1235,7 +1235,7 @@ public class MDSHandler implements MessageHandler {
                 }
             }
         } catch (HL7Exception e) {
-            logger.debug("Could not retrieve ZPD segment for blocked status check", e);
+            logger.error("Could not retrieve ZPD segment for blocked status check", e);
         }
         return false;
     }
