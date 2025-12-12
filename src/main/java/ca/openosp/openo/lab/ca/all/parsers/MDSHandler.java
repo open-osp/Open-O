@@ -1235,7 +1235,8 @@ public class MDSHandler implements MessageHandler {
                 }
             }
         } catch (HL7Exception e) {
-            logger.error("Could not retrieve ZPD segment for blocked status check", e);
+            // ZPD segment not present - this is normal for non-blocked labs
+            logger.debug("No ZPD segment found - lab result is not blocked");
         }
         return false;
     }
