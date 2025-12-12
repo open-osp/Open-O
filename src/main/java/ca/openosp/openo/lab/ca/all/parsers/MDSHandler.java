@@ -1226,8 +1226,21 @@ public class MDSHandler implements MessageHandler {
      * @return true if the test result is blocked, false otherwise
      */
     public boolean isTestResultBlocked(int i, int j) {
+        Segment zpd;
         try {
-            Segment zpd = terser.getSegment("/.ZPD");
+            zpd = terser.getSegment("/.ZPD");
+        } catch (HL7Exception e) {
+            // "End of message reached" means ZPD segment not present - normal for non-blocked labs
+            if (e.getMessage() != null && e.getMessage().contains("End of message")) {
+                logger.debug("No ZPD segment found - lab result is not blocked");
+            } else {
+                // Other HL7 exceptions are unexpected and should be logged
+                logger.warn("Unexpected error retrieving ZPD segment", e);
+            }
+            return false;
+        }
+
+        try {
             if (zpd != null) {
                 String indicator = Terser.get(zpd, 3, 0, 1, 1);
                 if ("Y".equalsIgnoreCase(indicator)) {
@@ -1235,8 +1248,8 @@ public class MDSHandler implements MessageHandler {
                 }
             }
         } catch (HL7Exception e) {
-            // ZPD segment not present - this is normal for non-blocked labs
-            logger.debug("No ZPD segment found - lab result is not blocked");
+            // Error parsing ZPD structure - log as warning since segment exists but is malformed
+            logger.warn("Error parsing ZPD segment for blocked status", e);
         }
         return false;
     }
