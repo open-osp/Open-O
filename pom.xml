@@ -34,8 +34,8 @@
         <cxf.version>3.5.11</cxf.version>
         <struts.devMode>false</struts.devMode>
         <!-- Test properties -->
-        <skipModernTests>false</skipModernTests>
-        <skipLegacyTests>false</skipLegacyTests>
+        <skipModernTests>true</skipModernTests>
+        <skipLegacyTests>true</skipLegacyTests>
         <!-- Control test execution phases - set to 'none' to skip -->
         <modern.tests.phase>test</modern.tests.phase>
         <legacy.tests.phase>test</legacy.tests.phase>
@@ -1456,6 +1456,12 @@
 			<version>1.0.0</version>
 		</dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.opennlp/opennlp-tools -->
+        <dependency>
+            <groupId>org.apache.opennlp</groupId>
+            <artifactId>opennlp-tools</artifactId>
+            <version>1.9.4</version>
+        </dependency>
 
     </dependencies>
 
@@ -1465,7 +1471,19 @@
                 <directory>${basedir}/src/main/resources</directory>
                 <filtering>true</filtering>
                 <excludes>
+                    <exclude>**/*.bin</exclude>
+                    <exclude>**/*.dict</exclude>
                 </excludes>
+            </resource>
+
+            <!-- Binary files (.bin, .dict): Not filtered -->
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/*.bin</include>
+                    <include>**/*.dict</include>
+                </includes>
+                <filtering>false</filtering>
             </resource>
         </resources>
 

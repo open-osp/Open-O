@@ -1,0 +1,553 @@
+inh|U-ROUTE one|B-FREQ time|I-FREQ a|I-FREQ day|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT .|O
+take|U-METHOD 2|U-MAX tabs|U-FORM orally|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT .|O
+take|U-METHOD 3|U-MAX tabs|U-FORM po|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD two|U-MAX po|U-ROUTE daily|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD two|U-MAX po|U-ROUTE weekly|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 3|U-MAX po|U-ROUTE weekly|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 2|U-MAX once|B-FREQ daily|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|U-MAX once|B-FREQ daily|L-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX twice|B-FREQ daily|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsule|U-FORM twice|B-FREQ daily|L-FREQ for|O 7|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 2|U-MAX cap|U-FORM twice-daily|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+once|B-FREQ daily|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+2|U-MAX tabs|U-FORM po|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+daily|U-FREQ 10|U-MAX tablets|U-FORM for|O 3|U-DUR_VAL -|O months|U-DUR_UNIT
+1|U-MAX -|O tab|U-FORM take|U-METHOD po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL -|O tabs|U-DUR_UNIT
+one|U-MAX tab|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL -|O tabs|U-DUR_UNIT
+take|U-METHOD 3|U-MAX tablets|U-FORM once|B-FREQ daily|L-FREQ po|U-ROUTE for|O 90|U-DUR_VAL -|O tabs|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 3|U-MAX po|U-ROUTE once|B-FREQ daily|L-FREQ for|O 4|U-DUR_VAL weeks|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX patches|U-ROUTE weekly|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+taken|U-METHOD 2|U-MAX tablets|U-FORM po|U-ROUTE tid|U-FREQ for|O 10|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM sl|U-ROUTE for|O 2|U-DUR_VAL weeks|U-DUR_UNIT
+1|U-MAX patch|U-ROUTE apply|U-METHOD weekly|U-FREQ for|O 4|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tablet|U-FORM po|U-ROUTE qhs|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX qhs|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX qhs|U-FREQ po|U-ROUTE for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 2|U-MAX qhs|U-FREQ po|U-ROUTE for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tablets|U-FORM daily|U-FREQ po|U-ROUTE for|O 7|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MIN -|U-TO 3|U-MAX tablets|U-FORM take|U-METHOD po|U-ROUTE qid|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+two|U-MIN -|U-TO three|U-MAX tablets|U-FORM take|U-METHOD po|U-ROUTE qid|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+inh|U-ROUTE once|B-FREQ daily|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+inh|U-ROUTE one|B-FREQ time|I-FREQ a|I-FREQ day|L-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX daily|U-FREQ on|O top|U-ROUTE for|O 14|U-DUR_VAL days|U-DUR_UNIT
+taken|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tablet|U-FORM po|U-ROUTE qam|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tablet|U-FORM po|U-ROUTE for|O 90|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT left|B-ROUTE eye|L-ROUTE qid|U-FREQ for|O 5|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT right|B-ROUTE eye|L-ROUTE daily|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+4|U-MIN -|U-TO 5|U-MAX tablets|U-FORM weekly|U-FREQ
+take|U-METHOD 2|U-MIN -|U-TO 3|U-MAX tablets|U-FORM po|U-ROUTE daily|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsules|U-FORM po|U-ROUTE tid|U-FREQ for|O 1|U-DUR_VAL week|U-DUR_UNIT
+take|U-METHOD at|B-OMIT least|L-OMIT 2|U-MIN -|U-TO 3|U-MAX tablets|U-FORM po|U-ROUTE q12h|U-FREQ for|O 6|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX supp|U-ROUTE qhs|U-FREQ for|O 3|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX im|U-ROUTE daily|U-FREQ for|O 10|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX subcut|U-ROUTE for|O 5|U-DUR_VAL days|U-DUR_UNIT
+rub|B-METHOD well|L-METHOD 1|U-MAX top|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL weeks|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX top|U-ROUTE qpm|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 3|U-MAX tablets|U-FORM po|U-ROUTE q6h|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+1|B-MIN /|I-MIN 2|L-MIN -|U-TO 1|U-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 1|B-MIN /|I-MIN 4|L-MIN -|U-TO 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM po|U-ROUTE BID|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 1|B-MIN /|I-MIN 4|L-MIN -|U-TO 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 1|B-MIN /|I-MIN 4|L-MIN -|U-TO 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM supp|U-ROUTE twice|B-FREQ daily|L-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 0|B-MAX .|I-MAX 5|L-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+0.5|B-MIN to|I-MIN 1|L-MIN tablet|U-FORM po|U-ROUTE Q6H|U-FREQ for|O 2|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|B-MIN –|I-MIN 2|I-MIN tablets|L-MIN po|U-ROUTE Q8H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+0.25|B-MIN to|I-MIN 0.5|L-MIN capsule|U-FORM po|U-ROUTE Q12H|U-FREQ for|O 5|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|B-MIN to|I-MIN 1.5|L-MIN tab|U-FORM po|U-ROUTE Q4H|U-FREQ for|O 48|U-DUR_VAL hours|U-DUR_UNIT
+2|B-MIN to|I-MIN 3|L-MIN tablets|U-FORM po|U-ROUTE Q24H|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 0.5|B-MIN –|I-MIN 1|I-MIN capsule|L-MIN po|U-ROUTE Q3H|U-FREQ for|O 12|U-DUR_VAL hours|U-DUR_UNIT
+1|B-MIN to|I-MIN 2|L-MIN tablets|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 6|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 0.5|B-MIN to|I-MIN 1|L-MIN tab|U-FORM po|U-ROUTE q1h|U-FREQ for|O 4|U-DUR_VAL hours|U-DUR_UNIT
+1|B-MIN –|I-MIN 2|I-MIN capsules|L-MIN po|U-ROUTE Q6H|U-FREQ for|O 3|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 0.25|B-MIN to|I-MIN 0.75|L-MIN tablet|U-FORM po|U-ROUTE Q12H|U-FREQ for|O 10|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-ROUTE q1m|U-FREQ for|O 6|U-DUR_VAL months|U-DUR_UNIT
+1|U-MAX patch|U-ROUTE apply|U-METHOD o.d.|U-FREQ for|O 3|U-DUR_VAL weeks|U-DUR_UNIT
+inh|U-ROUTE twice|U-MAX daily|U-FREQ for|O 1|U-DUR_VAL week|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX daily|U-FREQ to|O both|B-ROUTE eyes|L-ROUTE for|O 2|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tablet|U-FORM po|U-ROUTE daily|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tablets|U-FORM po|U-ROUTE q3-4h|U-FREQ for|O 5|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tablet|U-FORM sl|U-ROUTE tid|U-FREQ for|O 10|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX patch|U-ROUTE Q2Week|U-FREQ for|O 8|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 3|U-MAX tablets|U-FORM po|U-ROUTE daily|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsules|U-FORM po|U-ROUTE qid|U-FREQ for|O 2|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 2-3|U-MAX tablets|U-FORM po|U-ROUTE q1-2h|U-FREQ for|O 14|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX supp|U-ROUTE for|O 7|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX 3|U-TO tid|U-FREQ im|U-ROUTE for|O 5|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX subcut|U-ROUTE q4h|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
+rub|B-METHOD well|L-METHOD 1|U-MAX top|U-ROUTE qam|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX top|U-ROUTE qhs|U-FREQ for|O 2|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tablets|U-FORM po|U-ROUTE q1h|U-FREQ for|O 12|U-DUR_VAL hours|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM po|U-ROUTE everyday|U-FREQ for|O 6|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT eye|U-ROUTE tid>|U-FREQ for|O 1|U-DUR_VAL week|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT eye|U-ROUTE for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 2-3|U-MAX tablets|U-FORM po|U-ROUTE q8h|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsules|U-FORM po|U-ROUTE daily|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2-3|U-MAX tablets|U-FORM po|U-ROUTE q12h|U-FREQ for|O three|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX top|U-ROUTE for|O 10|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX inh|U-ROUTE q4h|U-FREQ for|O one|U-DUR_VAL weeks|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tablet|U-FORM po|U-ROUTE qpm|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-ROUTE q3month|U-FREQ for|O 9|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tablet|U-FORM po|U-ROUTE daily|U-FREQ for|O 12|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 3|U-MAX capsules|U-FORM po|U-ROUTE for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 3|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE qid|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE bid|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 16|U-MAX units|U-FORM sc|U-ROUTE qam|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX puffs|U-FORM inh|U-ROUTE qid|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ prn|B-OMIT for|L-OMIT 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE bid|U-FREQ for|O 2|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 0|U-DUR_VAL days|U-DUR_UNIT -|U-TO lt|U-LONG-TERM
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX puffs|U-FORM inh|U-ROUTE qid|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ prn|U-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ as|B-PRN needed|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ as|B-PRN necessary|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ if|B-PRN needed|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ if|B-PRN necessary|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ as|B-PRN required|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX units|U-FORM sc|U-ROUTE od|U-FREQ if|B-PRN required|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 4|U-MAX units|U-FORM po|U-ROUTE one|B-FREQ time|I-FREQ a|I-FREQ day|L-FREQ as|B-PRN needed|L-PRN for|O 1|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE bid|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tabs|U-FORM po|U-ROUTE od|U-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE bid|U-FREQ for|O two|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 1|U-MAX caps|U-FORM 2|B-FREQ x|I-FREQ daily|L-FREQ sl|U-ROUTE for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsule|U-FORM sl|U-ROUTE 3|B-FREQ x|I-FREQ daily|L-FREQ for|O 3|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 3|U-MAX capsules|U-FORM po|U-ROUTE 3xdaily|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
+take|U-METHOD 1|U-MAX capsule|U-FORM sl|U-ROUTE 4|B-FREQ x|I-FREQ daily|L-FREQ for|O 3|U-DUR_VAL months|U-DUR_UNIT
+take|U-METHOD 2|U-MIN -|U-TO 3|U-MAX tabs|U-FORM thrice|B-FREQ daily|L-FREQ po|U-ROUTE for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 2|U-MIN -|U-TO 3|U-MAX tabs|U-FORM po|U-ROUTE quad|B-FREQ daily|L-FREQ for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD one|U-MAX tablet|U-FORM with|O 30|U-DOSAGE mg|U-DOSAGE|UNIT tab|U-FORM at|B-FREQ bedtime|L-FREQ
+take|U-METHOD one|U-MAX tablet|U-FORM with|O 15|U-DOSAGE mg|U-DOSAGE|UNIT tab|U-FORM at|B-FREQ bedtime|L-FREQ
+take|U-METHOD 6|U-MAX tabs|U-FORM PO|U-ROUTE Q4-6H|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 7|U-MAX tablets|U-FORM PO|U-ROUTE Q4-6H|U-FREQ for|O 1|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 8|U-MAX capsules|U-FORM PO|U-ROUTE Q4-6H|U-FREQ for|O 2|U-DUR_VAL m|U-DUR_UNIT
+take|U-METHOD 9|U-MAX tabs|U-FORM PO|U-ROUTE monthly|U-FREQ for|O 6|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 3|U-MIN -|U-TO 4|U-MAX tabs|U-FORM PO|U-ROUTE 3|B-FREQ x|I-FREQ day|L-FREQ for|O 10|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM PO|U-ROUTE 4|B-FREQ x|I-FREQ day|L-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM Q1Week|U-FREQ for|O 3|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM Q1Month|U-FREQ for|O 6|U-DUR_VAL months|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM Q2Week|U-FREQ for|O 1|U-DUR_VAL year|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX cream|U-FORM TOP|U-ROUTE BID|U-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX ointment|U-FORM TOP|U-ROUTE 3|B-FREQ x|I-FREQ day|L-FREQ
+take|U-METHOD 3|U-MIN -|U-TO 4|U-MAX capsules|U-FORM PO|U-ROUTE Q12H|U-FREQ for|O 7|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD 6|U-MAX tablets|U-FORM PO|U-ROUTE Q4H|U-FREQ for|O 24|U-DUR_VAL h|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM Q3Month|U-FREQ for|O 9|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 7|U-MAX tabs|U-FORM PO|U-ROUTE Q6H|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 8|U-MAX pills|U-FORM PO|U-ROUTE Q8H|U-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 2|U-MAX gel|U-FORM TOP|U-ROUTE 4|B-FREQ x|I-FREQ day|L-FREQ
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM PO|U-ROUTE Q4-6H|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM PO|U-ROUTE Q1Week|U-FREQ for|O 4|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM PO|U-ROUTE Q1Month|U-FREQ for|O 6|U-DUR_VAL mo|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX application|U-FORM top|U-ROUTE daily|U-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE bid|U-FREQ for|O 14|U-DUR_VAL d|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE tid|U-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 2|U-MAX inches|U-FORM top|U-ROUTE qid|U-FREQ for|O 3|U-DUR_VAL w|U-DUR_UNIT
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX ointment|U-FORM top|U-ROUTE qam|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX lotion|U-FORM top|U-ROUTE qpm|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM left|B-ROUTE eye|L-ROUTE q|B-FREQ 1|I-FREQ h|L-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM right|B-ROUTE eye|L-ROUTE q2h|U-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM both|B-ROUTE eyes|L-ROUTE q3-4h|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX drops|U-FORM left|B-ROUTE eye|L-ROUTE q4-6h|U-FREQ for|O 3|U-DUR_VAL d|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX drops|U-FORM right|B-ROUTE eye|L-ROUTE q6h|U-FREQ for|O 7|U-DUR_VAL d|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX drops|U-FORM both|B-ROUTE eyes|L-ROUTE q8h|U-FREQ for|O 10|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tab|U-FORM po|U-ROUTE q1-2h|U-FREQ prn|U-PRN
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tab|U-FORM po|U-ROUTE q3-4h|U-FREQ as|B-PRN needed|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q4-6h|U-FREQ if|B-PRN needed|L-PRN
+take|U-METHOD 1|B-MAX -|I-MAX 2|L-MAX tabs|U-FORM po|U-ROUTE q4h|U-FREQ
+take|U-METHOD 2|B-MAX -|I-MAX 3|L-MAX tabs|U-FORM po|U-ROUTE q6h|U-FREQ
+take|U-METHOD 3|B-MAX -|I-MAX 4|L-MAX tabs|U-FORM po|U-ROUTE q12h|U-FREQ
+take|U-METHOD 1|U-MAX tablet|U-FORM sl|U-ROUTE qam|U-FREQ
+take|U-METHOD 1|U-MAX tablet|U-FORM sl|U-ROUTE qpm|U-FREQ
+take|U-METHOD 1|U-MAX tablet|U-FORM sl|U-ROUTE qhs|U-FREQ
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE once|B-FREQ daily|L-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE twice|B-FREQ daily|L-FREQ for|O 2|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE 3x|U-FREQ daily|L-FREQ for|O 3|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE 4x|U-FREQ daily|L-FREQ for|O 6|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 2|U-MAX pills|U-FORM po|U-ROUTE 3|B-FREQ x|I-FREQ day|L-FREQ for|O 1|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 2|U-MAX pills|U-FORM po|U-ROUTE 4|B-FREQ x|I-FREQ day|L-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX injection|U-FORM im|U-ROUTE q1week|U-FREQ
+take|U-METHOD 1|U-MAX injection|U-FORM im|U-ROUTE q2week|U-FREQ
+take|U-METHOD 1|U-MAX injection|U-FORM im|U-ROUTE q1month|U-FREQ
+take|U-METHOD 1|U-MAX injection|U-FORM im|U-ROUTE q3month|U-FREQ
+take|U-METHOD 1|U-MAX shot|U-FORM subcut|U-ROUTE monthly|U-FREQ
+take|U-METHOD 1|U-MAX shot|U-FORM subcut|U-ROUTE weekly|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q1week|U-FREQ for|O 4|U-DUR_VAL w|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q2week|U-FREQ for|O 8|U-DUR_VAL w|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q1month|U-FREQ for|O 3|U-DUR_VAL mo|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE qhs|U-FREQ for|O 3|U-DUR_VAL d|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE bid|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX inh|U-FORM inh|U-ROUTE q4h|U-FREQ
+take|U-METHOD 2|U-MAX puffs|U-FORM inh|U-ROUTE q6h|U-FREQ
+take|U-METHOD 1|U-MAX puff|U-FORM inh|U-ROUTE qid|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE daily|U-FREQ for|O 30|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE daily|U-FREQ for|O 4|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE daily|U-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+take|U-METHOD 5|U-MAX mg|U-DOSAGE po|U-ROUTE od|U-FREQ
+take|U-METHOD 10|U-MAX mg|U-DOSAGE po|U-ROUTE bid|U-FREQ
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE as|B-PRN necessary|L-PRN
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE if|B-PRN required|L-PRN
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE as|B-PRN required|L-PRN
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX amount|U-FORM top|U-ROUTE 3x|U-FREQ daily|L-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX amount|U-FORM top|U-ROUTE 4x|U-FREQ daily|L-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM left|B-ROUTE eye|L-ROUTE qam|U-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM right|B-ROUTE eye|L-ROUTE qpm|U-FREQ
+apply|U-METHOD 1|U-MAX drop|U-FORM both|B-ROUTE eyes|L-ROUTE qhs|U-FREQ
+take|U-METHOD 4|U-MAX tabs|U-FORM po|U-ROUTE one|B-FREQ time|I-FREQ a|I-FREQ day|L-FREQ
+take|U-METHOD 4|U-MAX tabs|U-FORM po|U-ROUTE two|B-FREQ times|I-FREQ a|I-FREQ day|L-FREQ
+take|U-METHOD 4|U-MAX tabs|U-FORM po|U-ROUTE three|B-FREQ times|I-FREQ a|I-FREQ day|L-FREQ
+take|U-METHOD 4|U-MAX tabs|U-FORM po|U-ROUTE four|B-FREQ times|I-FREQ a|I-FREQ day|L-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE daily|U-FREQ for|O 3|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE bid|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE tid|U-FREQ for|O 1|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 2|U-MAX caps|U-FORM po|U-ROUTE qid|U-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE qam|U-FREQ for|O 1|U-DUR_VAL m|U-DUR_UNIT
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE qpm|U-FREQ for|O 3|U-DUR_VAL m|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE qhs|U-FREQ for|O 6|U-DUR_VAL mo|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE weekly|U-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q1week|U-FREQ for|O 4|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE st|U-SHORT-TERM
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE lt|U-LONG-TERM
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE daily|U-FREQ st|U-SHORT-TERM
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE daily|U-FREQ lt|U-LONG-TERM
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE q4-6h|U-FREQ st|U-SHORT-TERM
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE qam|U-FREQ long|B-LONG-TERM term|L-LONG-TERM
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE qpm|U-FREQ short|B-SHORT-TERM term|L-SHORT-TERM
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE qid|U-FREQ for|O short|B-SHORT-TERM term|L-SHORT-TERM use|O
+apply|U-METHOD 1|U-MAX drop|U-FORM left|B-ROUTE eye|L-ROUTE q1h|U-FREQ prn|U-PRN
+apply|U-METHOD 1|U-MAX drop|U-FORM right|B-ROUTE eye|L-ROUTE q2h|U-FREQ as|B-PRN needed|L-PRN
+apply|U-METHOD 1|U-MAX drop|U-FORM both|B-ROUTE eyes|L-ROUTE q3-4h|U-FREQ if|B-PRN needed|L-PRN
+apply|U-METHOD 2|U-MAX drops|U-FORM left|B-ROUTE eye|L-ROUTE q4h|U-FREQ as|B-PRN necessary|L-PRN
+apply|U-METHOD 2|U-MAX drops|U-FORM right|B-ROUTE eye|L-ROUTE q6h|U-FREQ if|B-PRN necessary|L-PRN
+apply|U-METHOD 2|U-MAX drops|U-FORM both|B-ROUTE eyes|L-ROUTE q8h|U-FREQ as|B-PRN required|L-PRN
+apply|U-METHOD 1|U-MAX drop|U-FORM left|B-ROUTE eye|L-ROUTE q12h|U-FREQ if|B-PRN required|L-PRN
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE q4h|U-FREQ prn|U-PRN pain|O
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE q6h|U-FREQ as|B-PRN needed|L-PRN for|O pain|O
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX tabs|U-FORM po|U-ROUTE q8h|U-FREQ if|B-PRN needed|L-PRN for|O anxiety|O
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q1-2h|U-FREQ as|B-PRN necessary|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q3-4h|U-FREQ if|B-PRN necessary|L-PRN
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE q4-6h|U-FREQ as|B-PRN required|L-PRN
+take|U-METHOD 2|U-MAX tabs|U-FORM po|U-ROUTE qid|U-FREQ if|B-PRN required|L-PRN
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q1h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q2h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX lotion|U-FORM top|U-ROUTE q4h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX ointment|U-FORM top|U-ROUTE q6h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q8h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q12h|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tab|U-FORM po|U-ROUTE q1-2h|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tab|U-FORM po|U-ROUTE q3-4h|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 2|L-MAX tab|U-FORM po|U-ROUTE q4-6h|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tab|U-FORM po|U-ROUTE bid|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tab|U-FORM po|U-ROUTE tid|U-FREQ
+take|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tab|U-FORM po|U-ROUTE qid|U-FREQ
+take|U-METHOD 3|U-MIN -|U-TO 4|U-MAX tabs|U-FORM po|U-ROUTE qam|U-FREQ
+take|U-METHOD 4|U-MIN -|U-TO 5|U-MAX tabs|U-FORM po|U-ROUTE qpm|U-FREQ
+take|U-METHOD 5|U-MIN -|U-TO 6|U-MAX tabs|U-FORM po|U-ROUTE qhs|U-FREQ
+take|U-METHOD 6|U-MIN -|U-TO 7|U-MAX tabs|U-FORM po|U-ROUTE daily|U-FREQ
+take|U-METHOD 7|U-MIN -|U-TO 8|U-MAX tabs|U-FORM po|U-ROUTE once|B-FREQ daily|L-FREQ
+take|U-METHOD 8|U-MIN -|U-TO 9|U-MAX tabs|U-FORM po|U-ROUTE twice|B-FREQ daily|L-FREQ
+take|U-METHOD 1|U-MIN -|U-TO 3|U-MAX tabs|U-FORM po|U-ROUTE 3x|B-FREQ daily|L-FREQ
+take|U-METHOD 2|U-MIN -|U-TO 4|U-MAX tabs|U-FORM po|U-ROUTE 4x|B-FREQ daily|L-FREQ
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE qam|U-FREQ
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE qpm|U-FREQ
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE qid|U-FREQ for|O 3|U-DUR_VAL d|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX supp|U-FORM supp|U-ROUTE tid|U-FREQ for|O 1|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX spray|U-FORM sl|U-ROUTE q1-2h|U-FREQ
+take|U-METHOD 2|U-MAX sprays|U-FORM sl|U-ROUTE q3-4h|U-FREQ
+take|U-METHOD 1|U-MAX spray|U-FORM sl|U-ROUTE q4-6h|U-FREQ if|B-PRN needed|L-PRN
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX sprays|U-FORM sl|U-ROUTE q1h|U-FREQ
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX sprays|U-FORM sl|U-ROUTE q2h|U-FREQ
+apply|U-METHOD 1|U-MAX spray|U-FORM top|U-ROUTE qid|U-FREQ for|O 1|U-DUR_VAL w|U-DUR_UNIT
+apply|U-METHOD 2|U-MAX sprays|U-FORM top|U-ROUTE bid|U-FREQ for|O 2|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX solution|U-FORM po|U-ROUTE daily|U-FREQ
+take|U-METHOD 2|U-MAX solution|U-FORM po|U-ROUTE bid|U-FREQ
+take|U-METHOD 3|U-MAX solution|U-FORM po|U-ROUTE tid|U-FREQ
+take|U-METHOD 1|U-MAX liquid|U-FORM po|U-ROUTE qam|U-FREQ for|O 5|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX liquid|U-FORM po|U-ROUTE qpm|U-FREQ for|O 10|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MAX syrup|U-FORM po|U-ROUTE qhs|U-FREQ for|O 3|U-DUR_VAL d|U-DUR_UNIT
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX syrup|U-FORM po|U-ROUTE q4h|U-FREQ as|B-PRN needed|L-PRN
+take|U-METHOD 2|U-MIN -|U-TO 3|U-MAX syrup|U-FORM po|U-ROUTE q6h|U-FREQ if|B-PRN needed|L-PRN
+take|U-METHOD 1|U-MAX powder|U-FORM po|U-ROUTE daily|U-FREQ
+take|U-METHOD 1|U-MAX powder|U-FORM po|U-ROUTE every|B-FREQ week|L-FREQ
+take|U-METHOD 1|U-MAX powder|U-FORM po|U-ROUTE monthly|U-FREQ
+apply|U-METHOD 1|U-MAX lotion|U-FORM top|U-ROUTE bid|U-FREQ
+apply|U-METHOD 1|U-MAX lotion|U-FORM top|U-ROUTE tid|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX lotion|U-FORM top|U-ROUTE qid|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q1-2h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q3-4h|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX ointment|U-FORM top|U-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM top|U-ROUTE qam|U-FREQ st|U-SHORT-TERM
+apply|U-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE qpm|U-FREQ lt|U-LONG-TERM
+take|U-METHOD 1|U-MAX inhaler|U-FORM inh|U-ROUTE q4h|U-FREQ
+take|U-METHOD 2|U-MAX inhaler|U-FORM inh|U-ROUTE q6h|U-FREQ
+take|U-METHOD 1|U-MIN -|U-TO 2|U-MAX inhaler|U-FORM inh|U-ROUTE qid|U-FREQ
+take|U-METHOD 1|U-MAX drop|U-FORM po|U-ROUTE daily|U-FREQ
+take|U-METHOD 2|U-MAX drops|U-FORM po|U-ROUTE bid|U-FREQ
+take|U-METHOD 3|U-MAX drops|U-FORM po|U-ROUTE tid|U-FREQ
+take|U-METHOD 4|U-MAX drops|U-FORM po|U-ROUTE qid|U-FREQ
+take|U-METHOD 5|U-MAX drops|U-FORM po|U-ROUTE q1-2h|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q1week|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q2week|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q1month|U-FREQ
+take|U-METHOD 1|U-MAX tab|U-FORM po|U-ROUTE q3month|U-FREQ
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE q1week|U-FREQ
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE q2week|U-FREQ
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE q1month|U-FREQ
+take|U-METHOD 1|U-MAX cap|U-FORM po|U-ROUTE q3month|U-FREQ
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE q1week|U-FREQ
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE q2week|U-FREQ
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE q1month|U-FREQ
+take|U-METHOD 1|U-MAX pill|U-FORM po|U-ROUTE q3month|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q1week|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q2week|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q1month|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q3month|U-FREQ
+apply|U-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q1week|U-FREQ
+apply|U-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q2week|U-FREQ
+apply|U-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q1month|U-FREQ
+apply|U-METHOD 1|U-MAX cream|U-FORM top|U-ROUTE q3month|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q1week|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q2week|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q1month|U-FREQ
+rub|B-METHOD well|I-METHOD in|L-METHOD 1|U-MAX gel|U-FORM top|U-ROUTE q3month|U-FREQ
+take|U-METHOD 6|U-MAX tabs|U-FORM po|U-ROUTE q4h|U-FREQ
+take|U-METHOD 7|U-MAX tabs|U-FORM po|U-ROUTE q6h|U-FREQ
+take|U-METHOD 8|U-MAX tabs|U-FORM po|U-ROUTE q8h|U-FREQ
+take|U-METHOD 9|U-MAX tabs|U-FORM po|U-ROUTE q12h|U-FREQ
+take|U-METHOD 6|U-MAX pills|U-FORM po|U-ROUTE daily|U-FREQ
+take|U-METHOD 7|U-MAX pills|U-FORM po|U-ROUTE bid|U-FREQ
+take|U-METHOD 8|U-MAX pills|U-FORM po|U-ROUTE tid|U-FREQ
+take|U-METHOD 9|U-MAX pills|U-FORM po|U-ROUTE qid|U-FREQ
+take|U-METHOD 6|U-MIN -|U-TO 7|U-MAX caps|U-FORM po|U-ROUTE qam|U-FREQ
+take|U-METHOD 7|U-MIN -|U-TO 8|U-MAX caps|U-FORM po|U-ROUTE qpm|U-FREQ
+take|U-METHOD 8|U-MIN -|U-TO 9|U-MAX caps|U-FORM po|U-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM left|B-ROUTE eye|L-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM right|B-ROUTE eye|L-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM both|B-ROUTE eyes|L-ROUTE qhs|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM left|B-ROUTE eye|L-ROUTE bid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM right|B-ROUTE eye|L-ROUTE bid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM both|B-ROUTE eyes|L-ROUTE bid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM left|B-ROUTE eye|L-ROUTE tid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM right|B-ROUTE eye|L-ROUTE tid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM both|B-ROUTE eyes|L-ROUTE tid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM left|B-ROUTE eye|L-ROUTE qid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM right|B-ROUTE eye|L-ROUTE qid|U-FREQ
+apply|U-METHOD 1|U-MAX ointment|U-FORM both|B-ROUTE eyes|L-ROUTE qid|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q24h|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q48h|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q72h|U-FREQ
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q72h|U-FREQ for|O 1|U-DUR_VAL mo|U-DUR_UNIT
+apply|U-METHOD 1|U-MAX patch|U-FORM patch|U-ROUTE q72h|U-FREQ for|O 4|U-DUR_VAL w|U-DUR_UNIT
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE prn|U-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE as|B-PRN needed|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE if|B-PRN needed|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE as|B-PRN necessary|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE if|B-PRN necessary|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE as|B-PRN required|L-PRN
+take|U-METHOD 1|U-MAX tab|U-FORM sl|U-ROUTE if|B-PRN required|L-PRN
+lt|U-LONG-TERM
+long|B-LONG-TERM term|L-LONG-TERM
+st|U-SHORT-TERM
+short|B-SHORT-TERM term|L-SHORT-TERM
+prn|U-PRN
+as|B-PRN needed|L-PRN
+as|B-PRN necessary|L-PRN
+if|B-PRN needed|L-PRN
+if|B-PRN necessary|L-PRN
+as|B-PRN required|L-PRN
+if|B-PRN required|L-PRN
+for|O
+on|O
+at|O
+least|O
+times|O
+one|U-MIN
+two|U-MIN
+three|U-MIN
+four|U-MIN
+five|U-MIN
+1|U-MIN
+2|U-MIN
+3|U-MIN
+4|U-MIN
+5|U-MIN
+6|U-MIN
+7|U-MIN
+8|U-MIN
+9|U-MIN
+10|U-MIN
+one|U-MAX
+two|U-MAX
+three|U-MAX
+four|U-MAX
+five|U-MAX
+twice|U-MAX
+thrice|U-MAX
+1|U-MAX
+2|U-MAX
+3|U-MAX
+4|U-MAX
+5|U-MAX
+6|U-MAX
+7|U-MAX
+8|U-MAX
+9|U-MAX
+10|U-MAX
+1|B-MAX /|I-MAX 4|L-MAX
+0|B-MAX .|I-MAX 5|L-MAX
+1|B-MAX /|I-MAX 2|L-MAX
+1x|U-MAX
+2x|U-MAX
+3x|U-MAX
+4x|U-MAX
+5x|U-MAX
+1|U-MIN -|U-TO 2|U-MAX
+2|U-MIN -|U-TO 3|U-MAX
+3|U-MIN -|U-TO 4|U-MAX
+4|U-MIN -|U-TO 5|U-MAX
+o.d.|U-FREQ
+od|U-FREQ
+daily|U-FREQ
+everyday|U-FREQ
+weekly|U-FREQ
+every|B-FREQ week|L-FREQ
+monthly|U-FREQ
+every|B-FREQ month|L-FREQ
+bid|U-FREQ
+qid|U-FREQ
+q1m|U-FREQ
+qhs|U-FREQ
+qam|U-FREQ
+qpm|U-FREQ
+q1-2h|U-FREQ
+q3-4h|U-FREQ
+q4-6h|U-FREQ
+q1h|U-FREQ
+q|B-FREQ 1|I-FREQ hour|L-FREQ
+q|B-FREQ 1|I-FREQ hr|L-FREQ
+q|B-FREQ 1|I-FREQ h|L-FREQ
+q2h|U-FREQ
+q4h|U-FREQ
+q6h|U-FREQ
+q8h|U-FREQ
+q12h|U-FREQ
+q1week|U-FREQ
+q2week|U-FREQ
+q1month|U-FREQ
+q3month|U-FREQ
+tid|U-FREQ
+times|B-FREQ a|I-FREQ day|L-FREQ
+once|B-FREQ daily|L-FREQ
+twice-daily|U-FREQ
+thrice-daily|U-FREQ
+twice|B-FREQ daily|L-FREQ
+thrice|B-FREQ daily|L-FREQ
+2x|B-FREQ daily|L-FREQ
+3x|B-FREQ daily|L-FREQ
+4x|B-FREQ daily|L-FREQ
+2|B-FREQ x|I-FREQ daily|L-FREQ
+3|B-FREQ x|I-FREQ daily|L-FREQ
+2xdaily|U-FREQ
+3xdaily|U-FREQ
+4xdaily|U-FREQ
+4|B-FREQ x|I-FREQ daily|L-FREQ
+2x|B-FREQ day|L-FREQ
+3x|B-FREQ day|L-FREQ
+4x|B-FREQ day|L-FREQ
+2|B-FREQ x|I-FREQ day|L-FREQ
+3|B-FREQ x|I-FREQ day|L-FREQ
+4|B-FREQ x|I-FREQ day|L-FREQ
+2xday|U-FREQ
+3xday|U-FREQ
+4xday|U-FREQ
+po|U-ROUTE
+sl|U-ROUTE
+im|U-ROUTE
+top|U-ROUTE
+supp|U-ROUTE
+inh|U-ROUTE
+eye|U-ROUTE
+both|B-ROUTE eyes|L-ROUTE
+left|B-ROUTE eye|L-ROUTE
+right|B-ROUTE eye|L-ROUTE
+eyes|U-ROUTE
+patch|U-ROUTE
+inh|U-ROUTE
+subcut|U-ROUTE
+orally|U-ROUTE
+take|U-METHOD
+take|U-METHOD
+apply|U-METHOD
+apply|U-METHOD
+rub|U-METHOD
+rub|U-METHOD
+rub|B-METHOD well|I-METHOD in|L-METHOD
+rub|B-METHOD well|I-METHOD in|L-METHOD
+inject|U-METHOD
+Inject|U-METHOD
+pill|U-FORM
+pills|U-FORM
+tab|U-FORM
+tabs|U-FORM
+tablet|U-FORM
+tablets|U-FORM
+capsules|U-FORM
+capsule|U-FORM
+patch|U-FORM
+patches|U-FORM
+supp|U-FORM
+suppS|U-FORM
+eye|B-FORM drops|L-FORM
+eye|B-FORM drop|L-FORM
+ointment|U-FORM
+solution|U-FORM
+cream|U-FORM
+gel|U-FORM
+lotion|U-FORM
+inhaler|U-FORM
+spray|U-FORM
+sprays|U-FORM
+liquid|U-FORM
+powder|U-FORM
+syrup|U-FORM
+drops|U-FORM
+drop|U-FORM
+1|U-DUR_VAL
+2|U-DUR_VAL
+3|U-DUR_VAL
+4|U-DUR_VAL
+5|U-DUR_VAL
+6|U-DUR_VAL
+7|U-DUR_VAL
+8|U-DUR_VAL
+9|U-DUR_VAL
+10|U-DUR_VAL
+15|U-DUR_VAL
+20|U-DUR_VAL
+30|U-DUR_VAL
+60|U-DUR_VAL
+90|U-DUR_VAL
+120|U-DUR_VAL
+180|U-DUR_VAL
+months|U-DUR_UNIT
+month|U-DUR_UNIT
+m|U-DUR_UNIT
+weeks|U-DUR_UNIT
+week|U-DUR_UNIT
+w|U-DUR_UNIT
+days|U-DUR_UNIT
+day|U-DUR_UNIT
+d|U-DUR_UNIT
+hours|U-DUR_UNIT
+hour|U-DUR_UNIT
+h|U-DUR_UNIT
+minutes|U-DUR_UNIT
+minute|U-DUR_UNIT
+.|O
