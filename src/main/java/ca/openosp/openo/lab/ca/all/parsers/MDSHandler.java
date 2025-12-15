@@ -1215,8 +1215,42 @@ public class MDSHandler implements MessageHandler {
         return "";
     }
 
-    //for OMD validation
+    /**
+     * Checks if the test result is blocked based on the ZPD segment in the HL7 message.
+     * The ZPD segment is generated during import when BlockedTestResult is "Y" in the XML.
+     * Format: ZPD|||Y| where field 3 contains "Y" if blocked.
+     * Uses HAPI segment access pattern consistent with OLISHL7Handler.isOBRBlocked().
+     *
+     * @param i OBR index (unused, blocked status applies to entire message)
+     * @param j OBX index (unused, blocked status applies to entire message)
+     * @return true if the test result is blocked, false otherwise
+     */
     public boolean isTestResultBlocked(int i, int j) {
+        Segment zpd;
+        try {
+            zpd = terser.getSegment("/.ZPD");
+        } catch (HL7Exception e) {
+            // "End of message reached" means ZPD segment not present - normal for non-blocked labs
+            if (e.getMessage() != null && e.getMessage().contains("End of message")) {
+                logger.debug("No ZPD segment found - lab result is not blocked");
+            } else {
+                // Other HL7 exceptions are unexpected and should be logged
+                logger.warn("Unexpected error retrieving ZPD segment", e);
+            }
+            return false;
+        }
+
+        try {
+            if (zpd != null) {
+                String indicator = Terser.get(zpd, 3, 0, 1, 1);
+                if ("Y".equalsIgnoreCase(indicator)) {
+                    return true;
+                }
+            }
+        } catch (HL7Exception e) {
+            // Error parsing ZPD structure - log as warning since segment exists but is malformed
+            logger.warn("Error parsing ZPD segment for blocked status", e);
+        }
         return false;
     }
 
