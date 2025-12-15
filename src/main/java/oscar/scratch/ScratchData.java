@@ -24,16 +24,15 @@
 
 package oscar.scratch;
 
+import org.oscarehr.common.dao.ScratchPadDao;
+import org.oscarehr.common.model.ScratchPad;
+import org.oscarehr.util.SpringUtils;
+import oscar.util.ConversionUtils;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.oscarehr.common.dao.ScratchPadDao;
-import org.oscarehr.common.model.ScratchPad;
-import org.oscarehr.util.SpringUtils;
-
-import oscar.util.ConversionUtils;
 
 /**
  create table scratch_pad (
@@ -50,7 +49,7 @@ public class ScratchData {
 	public ScratchData() {
 	}
 	
-	public List<Object[]>getAllDates(String providerNo) {
+	public List<ScratchPad>getAllDates(String providerNo) {
 		ScratchPadDao dao = SpringUtils.getBean(ScratchPadDao.class);
 		return dao.findAllDatesByProviderNo(providerNo);
 	}
