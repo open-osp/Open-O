@@ -62,14 +62,88 @@ public class FlowSheetCustom2Action extends ActionSupport {
     private FlowSheetUserCreatedDao flowSheetUserCreatedDao = SpringUtils.getBean(FlowSheetUserCreatedDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+    /**
+     * Helper class to hold scope context for flowsheet operations.
+     */
+    private static class ScopeContext {
+        final String flowsheet;
+        final String measurement;
+        final String demographicNo;
+        final String scope;
+        final String providerNo;
+        final boolean isClinicScope;
+        final boolean isPatientScope;
+
+        ScopeContext(String flowsheet, String measurement, String demographicNo, String scope, String providerNo) {
+            this.flowsheet = flowsheet;
+            this.measurement = measurement;
+            this.demographicNo = demographicNo;
+            this.scope = scope;
+            this.providerNo = providerNo;
+            this.isClinicScope = "clinic".equals(scope);
+            this.isPatientScope = demographicNo != null && !"0".equals(demographicNo);
+        }
+    }
+
+    /**
+     * Create a ScopeContext object from request parameters.
+     *
+     * @return ScopeContext with resolved values
+     */
+    private ScopeContext parseScopeContext() {
+        String flowsheet = request.getParameter("flowsheet");
+        String measurement = request.getParameter("measurement");
+        String demographicNoParam = request.getParameter("demographic");
+        String scope = request.getParameter("scope");
+        String demographicNo;
+        String providerNo;
+        boolean isClinicScope = "clinic".equals(scope);
+        boolean isPatientScope = !isClinicScope && demographicNoParam != null && !"0".equals(demographicNoParam);
+
+        if (isClinicScope) {
+            demographicNo = "0";
+            providerNo = "";
+        } else if (isPatientScope) {
+            demographicNo = demographicNoParam;
+            providerNo = "";
+        } else {
+            demographicNo = "0";
+            providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
+        }
+
+        return new ScopeContext(flowsheet, measurement, demographicNo, scope, providerNo);
+    }
+
+    /**
+     * Validates that the current user has write permission for the demographic.
+     *
+     * @param demographicNo the demographic number to check access for
+     * @throws SecurityException if the user lacks required privileges
+     */
+    private void validateDemographicAccess(String demographicNo) {
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+            throw new SecurityException("missing required sec object (_demographic)");
+        }
+    }
+
+    /**
+     * Sets standard response attributes after a flowsheet operation.
+     *
+     * @param ctx the scope context containing flowsheet and demographic info
+     */
+    private void setResponseAttributes(ScopeContext ctx) {
+        request.setAttribute("demographic", ctx.demographicNo);
+        request.setAttribute("flowsheet", ctx.flowsheet);
+    }
+
     public String execute() throws Exception {
         String method = request.getParameter("method");
         if ("save".equals(method)) {
             return save();
         } else if ("update".equals(method)) {
             return update();
-        } else if ("delete".equals(method)) {
-            return delete();
+        } else if ("hide".equals(method)) {
+            return hide();
         } else if ("restore".equals(method)) {
             return restore();
         } else if ("archiveMod".equals(method)) {
@@ -228,22 +302,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
                         rec.setRecommendationCondition(conds);
                         recommendations.add(rec);
                     }
-                    //////
-                    /*  Strength:   <select name="strength<%=count%>">
-                        Text: <input type="text" name="text<%=count%>" length="100"  value="<%=e.getText()%>" />
-                        <select name="type<%=count%>c<%=condCount%>" >
-                        Param: <input type="text" name="param<%=count%>c<%=condCount%>" value="<%=s(cond.getParam())%>" />
-                        Value: <input type="text" name="value<%=count%>c<%=condCount%>" value="<%=cond.getValue()%>" />
-                    */
-                    //////
-
-
-//                    String mRange = request.getParameter("monthrange" + extrachar);
-//                    String strn = request.getParameter("strength" + extrachar);
-//                    String dsText = request.getParameter("text" + extrachar);
-//                    if (!mRange.trim().equals("")){
-//                       ds.add(new Recommendation("" + h.get("measurement_type"), mRange, strn, dsText));
-//                    }
                 } else if (s.startsWith("col")) {
                     String extrachar = s.replaceAll("col", "").trim();
                     logger.debug("EXTRA CHA " + extrachar);
@@ -305,83 +363,49 @@ public class FlowSheetCustom2Action extends ActionSupport {
         return SUCCESS;
     }
 
-    public String delete() {
-        logger.debug("IN DELETE");
-        String flowsheet = request.getParameter("flowsheet");
-        String measurement = request.getParameter("measurement");
-        String demographicNo = request.getParameter("demographic");
-        String scope = request.getParameter("scope");
-
-        String demographicNoForSecurity = (demographicNo != null && !"0".equals(demographicNo)) ? demographicNo : "0";
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNoForSecurity)) {
-            throw new SecurityException("missing required sec object (_demographic)");
-        }
+    public String hide() {
+        logger.debug("IN HIDE");
+        ScopeContext ctx = parseScopeContext();
+        validateDemographicAccess(ctx.demographicNo);
 
         FlowSheetCustomization cust = new FlowSheetCustomization();
         cust.setAction(FlowSheetCustomization.DELETE);
-        cust.setFlowsheet(flowsheet);
-        cust.setMeasurement(measurement);
-
-        // Determine scope and set providerNo/demographicNo appropriately
-        if ("clinic".equals(scope)) {
-            // Clinic scope - empty provider, demographicNo = "0"
-            cust.setProviderNo("");
-            cust.setDemographicNo("0");
-        } else if (demographicNo != null && !"0".equals(demographicNo)) {
-            // Patient scope - empty provider, specific patient
-            cust.setProviderNo("");
-            cust.setDemographicNo(demographicNo);
-        } else {
-            // Provider scope ("Your Patients") - specific provider, demographicNo = "0"
-            cust.setProviderNo(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
-            cust.setDemographicNo("0");
-        }
+        cust.setFlowsheet(ctx.flowsheet);
+        cust.setMeasurement(ctx.measurement);
+        cust.setProviderNo(ctx.providerNo);
+        cust.setDemographicNo(ctx.demographicNo);
 
         flowSheetCustomizationDao.persist(cust);
-        logger.debug("DELETE " + cust);
+        logger.debug("HIDE " + cust);
 
-        request.setAttribute("demographic", demographicNoForSecurity);
-        request.setAttribute("flowsheet", flowsheet);
+        setResponseAttributes(ctx);
         return SUCCESS;
     }
 
     public String restore() {
         logger.debug("IN RESTORE");
-        String flowsheet = request.getParameter("flowsheet");
-        String measurement = request.getParameter("measurement");
-        String demographicNo = request.getParameter("demographic");
-        String scope = request.getParameter("scope");
+        ScopeContext ctx = parseScopeContext();
+        validateDemographicAccess(ctx.demographicNo);
 
-        String demographicNoForSecurity = (demographicNo != null && !"0".equals(demographicNo)) ? demographicNo : "0";
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNoForSecurity)) {
-            throw new SecurityException("missing required sec object (_demographic)");
-        }
-
-        if ("clinic".equals(scope)) {
+        List<FlowSheetCustomization> customizations;
+        if (ctx.isClinicScope) {
             // Clinic level
-            for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet)) {
-                if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
-                    flowSheetCustomizationDao.remove(cust.getId());
-                }
-            }
-        } else if (demographicNo != null && !"0".equals(demographicNo)) {
+            customizations = flowSheetCustomizationDao.getFlowSheetCustomizations(ctx.flowsheet);
+        } else if (ctx.isPatientScope) {
             // Patient level
-            for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet, demographicNo)) {
-                if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
-                    flowSheetCustomizationDao.remove(cust.getId());
-                }
-            }
+            customizations = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(ctx.flowsheet, ctx.demographicNo);
         } else {
-            // Provider level ("Your Patients")
-            for (FlowSheetCustomization cust : flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo())) {
-                if ("delete".equals(cust.getAction()) && cust.getMeasurement().equals(measurement)) {
-                    flowSheetCustomizationDao.remove(cust.getId());
-                }
+            // Provider level
+            customizations = flowSheetCustomizationDao.getFlowSheetCustomizations(ctx.flowsheet, ctx.providerNo);
+        }
+
+        for (FlowSheetCustomization cust : customizations) {
+            if (FlowSheetCustomization.DELETE.equals(cust.getAction()) && ctx.measurement.equals(cust.getMeasurement())) {
+                flowSheetCustomizationDao.remove(cust.getId());
             }
         }
 
-        request.setAttribute("demographic", demographicNoForSecurity);
-        request.setAttribute("flowsheet", flowsheet);
+        setResponseAttributes(ctx);
         return SUCCESS;
     }
 

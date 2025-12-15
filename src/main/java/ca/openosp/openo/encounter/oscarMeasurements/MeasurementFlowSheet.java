@@ -257,7 +257,7 @@ public class MeasurementFlowSheet {
         return getMeasurementList()
             .stream()
             .filter(id -> { 
-                FlowSheetItem item = (FlowSheetItem) itemList.get(id);
+                FlowSheetItem item = getFlowSheetItem(id);
                 return item != null && !item.isHide();
             })
             .collect(Collectors.toList());
