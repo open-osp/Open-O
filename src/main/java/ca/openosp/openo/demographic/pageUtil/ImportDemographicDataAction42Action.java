@@ -3083,6 +3083,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                     //participating providers
                     if (p < participatingProviders.length) {
+                        // Participating providers are editors, not signers
+                        cmNote.setSigned(false);
+
                         if (participatingProviders[p].getDateTimeNoteCreated() == null)
                             cmNote.setUpdate_date(new Date());
                         else
