@@ -88,11 +88,13 @@ import ca.openosp.openo.managers.NioFileManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.SessionConstants;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.webserv.LabUploadWs;
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.demographic.data.DemographicAddResult;
 import ca.openosp.openo.demographic.data.DemographicData;
+import ca.openosp.openo.demographic.data.DemographicRelationship;
 import ca.openosp.openo.encounter.data.EctProgram;
 import ca.openosp.openo.encounter.oscarMeasurements.data.ImportExportMeasurements;
 import ca.openosp.openo.lab.FileUploadCheck;
@@ -684,9 +686,40 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
             String contactNote = StringUtils.noNull(contt[i].getNote());
             String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
+            String cPatient = cLastName + "," + cFirstName;
+
+            // If contact not found, create as "Contact-only" demographic
+            if (StringUtils.empty(cDemoNo)) {
+                String psDate = UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd");
+                DemographicAddResult demoRes = dd.addDemographic(loggedInInfo,
+                        "", cLastName, cFirstName, "", // title, last, first, middleNames
+                        "", "", "", "", // address, city, province, postal
+                        "", "", "", "", // residentialAddress, residentialCity, residentialProvince, residentialPostal
+                        homePhone, workPhone, // phone, phone2
+                        "", "", "", "", "", // year_of_birth, month, date, hin, ver
+                        "Contact-only", psDate, "", "", "", // roster_status, roster_date, termination_date, termination_reason, enrolledTo
+                        "IN", psDate, "", "", // patient_status, patient_status_date, date_joined, chart_no
+                        "", "", "", // official_lang, spoken_lang, provider_no
+                        "U", "", "", "", "", "", "", // sex, end_date, eff_date, pcn_indicator, hc_type, hc_renew_date, family_doctor
+                        cEmail, "", "", "", "", "", ""); // email, alias, previousAddress, children, sourceOfIncome, citizenship, sin
+                cDemoNo = demoRes.getId();
+
+                // Save phone extensions and cellPhone to demographicExt
+                String providerNo = loggedInInfo.getLoggedInProviderNo();
+                if (StringUtils.filled(workExt)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "wPhoneExt", workExt);
+                }
+                if (StringUtils.filled(homeExt)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "hPhoneExt", homeExt);
+                }
+                if (StringUtils.filled(cellPhone)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "demo_cell", cellPhone);
+                }
+
+                insertIntoAdmission(cDemoNo);
+            }
 
             logger.info("adding contacts: " + cLastName + "," + cFirstName + " = " + cDemoNo);
-
 
             cdsDt.PurposeEnumOrPlainText[] contactPurposes = contt[i].getContactPurposeArray();
             String sdm = "", emc = "", cPurpose = null;
@@ -714,88 +747,23 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
             }
 
+            // Create demographic relationships
             if (StringUtils.filled(cDemoNo)) {
-                //this contact was found as a patient in the system, so we will link as an "internal"
+                Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
+                Integer facilityId = null;
+                if (facility != null) facilityId = facility.getId();
 
                 for (int j = 0; j < rel.length; j++) {
                     if (rel[j] == null) continue;
 
-                    DemographicContact demoContact = new DemographicContact();
-                    demoContact.setCreated(new Date());
-                    demoContact.setUpdateDate(new Date());
-                    demoContact.setDemographicNo(patient.getDemographicNo());
-                    demoContact.setContactId(cDemoNo);
-                    demoContact.setType(1);
-                    demoContact.setCategory("personal");
-                    demoContact.setRole(rel[j]);
-                    demoContact.setEc(emc);
-                    demoContact.setSdm(sdm);
-                    demoContact.setNote(contactNote);
-                    demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-                    contactDao.persist(demoContact);
+                    DemographicRelationship demoRel = new DemographicRelationship();
+                    demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
 
                     //clear emc, sdm, contactNote after 1st save
                     emc = "";
                     sdm = "";
                     contactNote = "";
                 }
-
-            } else {
-                //this contact was NOT found in the DB, so we will create an external contact
-                logger.info("need to create external contact for " + cLastName + "," + cFirstName);
-
-                // String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
-
-                Contact c = new Contact();
-                c.setLastName(cLastName);
-                c.setFirstName(cFirstName);
-                c.setPhone(homePhone);
-                c.setWorkPhone(workPhone);
-                c.setEmail(cEmail);
-
-                ContactDao cDao = SpringUtils.getBean(ContactDao.class);
-                cDao.persist(c);
-
-                for (int j = 0; j < rel.length; j++) {
-                    if (rel[j] == null) continue;
-
-                    DemographicContact demoContact = new DemographicContact();
-                    demoContact.setCreated(new Date());
-                    demoContact.setUpdateDate(new Date());
-                    demoContact.setDemographicNo(patient.getDemographicNo());
-                    demoContact.setContactId(String.valueOf(c.getId()));
-                    demoContact.setType(DemographicContact.TYPE_CONTACT);
-                    demoContact.setCategory("personal");
-                    demoContact.setRole(rel[j]);
-                    demoContact.setEc(emc);
-                    demoContact.setSdm(sdm);
-                    demoContact.setNote(contactNote);
-                    demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-                    contactDao.persist(demoContact);
-
-                    //clear emc, sdm, contactNote after 1st save
-                    emc = "";
-                    sdm = "";
-                    contactNote = "";
-                }
-/*
-            		Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
-			        Integer facilityId = null;
-			        if (facility!=null) facilityId = facility.getId();
-
-			        for (int j=0; j<rel.length; j++) {
-			        	if (rel[j]==null) continue;
-
-						DemographicRelationship demoRel = new DemographicRelationship();
-						demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
-
-                    	//clear emc, sdm, contactNote after 1st save
-                    	emc = "";
-                    	sdm = "";
-                    	contactNote = "";
-			        }
-            	}
-*/
             }
         }
 
