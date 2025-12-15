@@ -2862,7 +2862,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         err_data.add("Error! No value for Waist Circumference in Care Element (" + (i + 1) + ")");
                     if (wc.getWaistCircumferenceUnit() == null)
                         err_data.add("Error! No unit for Waist Circumference in Care Element (" + (i + 1) + ")");
-                    ImportExportMeasurements.saveMeasurements("WC", demographicNo, admProviderNo, dataField, dataUnit, dateObserved);
+                    ImportExportMeasurements.saveMeasurements("WAIS", demographicNo, admProviderNo, dataField, dataUnit, dateObserved);
                     addOneEntry(CAREELEMENTS);
                 }
                 cdsDt.BloodPressure[] bloodp = ce.getBloodPressureArray();
