@@ -1598,9 +1598,10 @@
                                                                             HashMap relHash = (HashMap) relList.get(reCounter);
                                                                             String dNo = (String) relHash.get("demographicNo");
                                                                             String workPhone = demographicManager.getDemographicWorkPhoneAndExtension(loggedInInfo, Integer.valueOf(dNo));
-
+                                                                            String cellPhone = demographicExtDao.getValueForDemoKey(Integer.valueOf(dNo), "demo_cell");
 
                                                                             String formattedWorkPhone = (workPhone != null && workPhone.length() > 0 && !workPhone.equals("null")) ? "  W:" + workPhone : "";
+                                                                            String formattedCellPhone = (cellPhone != null && cellPhone.length() > 0 && !cellPhone.equals("null")) ? "  C:" + cellPhone : "";
                                                                             String sdb = relHash.get("subDecisionMaker") == null ? "" : ((Boolean) relHash.get("subDecisionMaker")).booleanValue() ? "<span title=\"SDM\" >/SDM</span>" : "";
                                                                             String ec = relHash.get("emergencyContact") == null ? "" : ((Boolean) relHash.get("emergencyContact")).booleanValue() ? "<span title=\"Emergency Contact\">/EC</span>" : "";
                                                                             String masterLink = "<a target=\"demographic" + dNo + "\" href=\"" + request.getContextPath() + "/demographic/demographiccontrol.jsp?demographic_no=" + dNo + "&displaymode=edit&dboperation=search_detail\">M</a>";
@@ -1608,7 +1609,7 @@
                                                                     %>
                                                                     <li><span
                                                                             class="label"><%=relHash.get("relation")%><%=sdb%><%=ec%>:</span>
-                                                                        <span class="info"><%=relHash.get("lastName")%>, <%=relHash.get("firstName")%>, H:<%=relHash.get("phone") == null ? "" : relHash.get("phone")%><%=formattedWorkPhone%> <%=masterLink%> <%=encounterLink %></span>
+                                                                        <span class="info"><%=relHash.get("lastName")%>, <%=relHash.get("firstName")%>, H:<%=relHash.get("phone") == null ? "" : relHash.get("phone")%><%=formattedWorkPhone%><%=formattedCellPhone%> <%=masterLink%> <%=encounterLink %></span>
                                                                     </li>
                                                                     <%}%>
 

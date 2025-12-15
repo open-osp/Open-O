@@ -26,6 +26,7 @@ import javax.persistence.Query;
 import ca.openosp.openo.utility.MiscUtils;
 import org.apache.http.impl.cookie.DateUtils;
 import org.apache.logging.log4j.Logger;
+import ca.openosp.openo.commn.model.Document;
 import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.utility.SpringUtils;
 
@@ -565,10 +566,15 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
 
                 logger.debug("DOCUMENT " + lbData.isMatchedToPatient());
                 lbData.accessionNumber = "";
-                lbData.resultStatus = "N";
 
                 DocumentDao documentDao = (DocumentDao) SpringUtils.getBean(DocumentDao.class);
-                Date contentDateTime = documentDao.findActiveByDocumentNo(Integer.parseInt(getStringValue(r[docNoLoc]))).get(0).getContentdatetime();
+                Document document = documentDao.findActiveByDocumentNo(Integer.parseInt(getStringValue(r[docNoLoc]))).get(0);
+                Date contentDateTime = document.getContentdatetime();
+
+                // Set result status based on document abnormal flag
+                // "A" for abnormal (displays in red), "N" for normal
+                lbData.resultStatus = document.isAbnormal() ? "A" : "N";
+                lbData.abn = document.isAbnormal();
 
                 if (!StringUtils.isNullOrEmpty(getStringValue(r[obsDateLoc]))) {
                     //if observation is not null, set that as date
