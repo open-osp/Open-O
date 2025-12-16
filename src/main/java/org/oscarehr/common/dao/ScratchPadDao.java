@@ -26,11 +26,12 @@
  */
 package org.oscarehr.common.dao;
 
-import java.util.List;
 import org.oscarehr.common.model.ScratchPad;
+
+import java.util.List;
 
 public interface ScratchPadDao extends AbstractDao<ScratchPad> {
     boolean isScratchFilled(String providerNo);
     ScratchPad findByProviderNo(String providerNo);
-    List<Object[]> findAllDatesByProviderNo(String providerNo);
+    List<ScratchPad> findAllDatesByProviderNo(String providerNo);
 }
