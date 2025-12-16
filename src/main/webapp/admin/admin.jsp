@@ -344,9 +344,9 @@
                     <li><a href="#"
                            onclick='popupPage(700,640, "${pageContext.request.contextPath}/billing/CA/ON/billingCorrection.jsp?billing_no=");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingCorrection"/></a></li>
                     <li><a href="#"
-                           onclick='popupPage(700,820, "${pageContext.request.contextPath}/billing/CA/ON/batchBilling.jsp?service_code=all"/>);return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBatchBilling"/></a></li>
+                           onclick='popupPage(700,820, "${pageContext.request.contextPath}/billing/CA/ON/batchBilling.jsp?service_code=all");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBatchBilling"/></a></li>
                     <li><a href="#"
-                           onclick='popupPage(700,640, "${pageContext.request.contextPath}/billing/CA/ON/inr/reportINR.jspprovider_no=all");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnINRBatchBilling"/></a></li>
+                           onclick='popupPage(700,640, "${pageContext.request.contextPath}/billing/CA/ON/inr/reportINR.jsp?provider_no=all");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnINRBatchBilling"/></a></li>
                     <li><a href="#"
                            onclick='popupPage(600,900, "${pageContext.request.contextPath}/billing/CA/ON/billingONUpload.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.uploadMOHFile"/></a></li>
                     <% if (OscarProperties.getInstance().isPropertyActive("moh_file_management_enabled")) { %>
