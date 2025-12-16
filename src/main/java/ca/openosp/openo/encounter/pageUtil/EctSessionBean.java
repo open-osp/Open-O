@@ -48,6 +48,7 @@ import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.encounter.oscarConsultation.data.EctConProviderData;
 import ca.openosp.openo.util.ConversionUtils;
+import ca.openosp.openo.util.StringUtils;
 import ca.openosp.openo.util.UtilDateUtilities;
 
 @Deprecated
@@ -158,19 +159,15 @@ public class EctSessionBean implements java.io.Serializable {
         roster = d.getRosterStatus();
         patientSex = d.getSex();
 
-        if (yearOfBirth.equals("null") || yearOfBirth == "") {
-            yearOfBirth = "0";
-        }
-        if (monthOfBirth.equals("null") || monthOfBirth == "") {
-            monthOfBirth = "0";
-        }
-        if (dateOfBirth.equals("null") || dateOfBirth == "") {
-            dateOfBirth = "0";
-        }
+        // Normalize birth date fields - set to "0" if null, empty, or "null" string
+        yearOfBirth = (StringUtils.empty(yearOfBirth) || "null".equals(yearOfBirth)) ? "0" : yearOfBirth;
+        monthOfBirth = (StringUtils.empty(monthOfBirth) || "null".equals(monthOfBirth)) ? "0" : monthOfBirth;
+        dateOfBirth = (StringUtils.empty(dateOfBirth) || "null".equals(dateOfBirth)) ? "0" : dateOfBirth;
 
-        if (yearOfBirth != "" && yearOfBirth != null)
+        if (StringUtils.filled(yearOfBirth) && !"0".equals(yearOfBirth)) {
             patientAge = UtilDateUtilities
                     .calcAge(UtilDateUtilities.calcDate(yearOfBirth, monthOfBirth, dateOfBirth));
+        }
 
         OscarAppointmentDao apptDao = SpringUtils.getBean(OscarAppointmentDao.class);
         for (Appointment appt : apptDao.findByProviderAndDate(curProviderNo, ConversionUtils.fromDateString(appointmentDate))) {
