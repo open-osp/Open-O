@@ -58,24 +58,43 @@ public class ImageUpload2Action extends ActionSupport {
         }
 
         try {
-            if (!imageFileName.matches("^[a-zA-Z0-9._-]+$")) {
-                throw new IllegalArgumentException("Invalid image file name");
-            }
-            
-            OutputStream fos = ImageUpload2Action.getEFormImageOutputStream(imageFileName);
-            InputStream fis = Files.newInputStream(image.toPath());
-            byte[] buffer = new byte[4096]; 
-            int bytesRead;
-            while ((bytesRead = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
-            }
-            fos.flush();
+            // Sanitize the filename and track if it changed
+            String originalFileName = imageFileName;
+            imageFileName = MiscUtils.sanitizeFileName(imageFileName);
+            boolean fileNameWasSanitized = !originalFileName.equals(imageFileName);
 
+            // Validate that sanitized filename is not empty
+            if (imageFileName == null || imageFileName.isEmpty()) {
+                addActionError("Invalid filename: filename cannot be empty after sanitization");
+                return ERROR;
+            }
+
+            // Ensure upload directory exists
+            getImageFolder();
+
+            // Upload the file
+            try (InputStream fis = Files.newInputStream(image.toPath());
+                 OutputStream fos = ImageUpload2Action.getEFormImageOutputStream(imageFileName)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+                fos.flush();
+            }
+
+            // Pass sanitization info to JSP for display in success message
+            if (fileNameWasSanitized) {
+                request.setAttribute("sanitizedFileName", imageFileName);
+            }
             request.setAttribute("status", "uploaded");
-        } catch (Exception e) {
-            MiscUtils.getLogger().error("Error", e);
+            return SUCCESS;
+
+        } catch (IOException e) {
+            addActionError("Upload failed: " + e.getMessage());
+            MiscUtils.getLogger().error("Image upload failed", e);
+            return ERROR;
         }
-        return SUCCESS;
     }
 
     public static OutputStream getEFormImageOutputStream(String imageFileName) throws IOException {
