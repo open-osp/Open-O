@@ -105,7 +105,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
             providerNo = "";
         } else if (isPatientScope) {
             demographicNo = demographicNoParam;
-            providerNo = "";
+            providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
         } else {
             demographicNo = "0";
             providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
