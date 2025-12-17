@@ -25,11 +25,16 @@
 
 package ca.openosp.openo.prescript.util;
 
+import java.io.InputStream;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ca.openosp.ai.rx.instruction.parser.InstructionParser;
+import ca.openosp.ai.rx.instruction.parser.InstructionSpecs;
+import ca.openosp.ai.rx.instruction.parser.impl.OpenNlpInstructionParser;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.DrugDao;
 import ca.openosp.openo.commn.dao.UserPropertyDAO;
@@ -49,6 +54,28 @@ public class RxUtil {
     private static String defaultQuantity = "30";
     private static final Logger logger = MiscUtils.getLogger();
     private static String[] zeroToTen = {"(?i)zero", "(?i)one", "(?i)two", "(?i)three", "(?i)four", "(?i)five", "(?i)six", "(?i)seven", "(?i)eight", "(?i)nine", "(?i)ten"};
+
+    private static InstructionParser instructionParser = null;
+    static {
+        // Load classpath resource locations from properties with sensible defaults
+        final String modelPath = OscarProperties.getInstance().getProperty("ai.rx.instruction.parser.model.path");
+        final String dictionaryPath = OscarProperties.getInstance().getProperty("ai.rx.instruction.parser.dictionary.path");
+
+        ClassLoader cl = RxUtil.class.getClassLoader();
+        InputStream modelStream = cl.getResourceAsStream(modelPath);
+        if (modelStream == null) {
+            logger.warn("RxUtil: Unable to load model from '{}'", modelPath);
+        }
+
+        InputStream dictionaryStream = cl.getResourceAsStream(dictionaryPath);
+        if (dictionaryStream == null) {
+            logger.warn("RxUtil: Unable to load dictionary from '{}'", dictionaryPath);
+        }
+
+        if (modelStream != null || dictionaryStream != null) {
+            instructionParser = new OpenNlpInstructionParser(modelStream, dictionaryStream);
+        }
+    }
 
     public static void setDefaultQuantity(String quantity) {
         defaultQuantity = quantity;
@@ -478,6 +505,84 @@ public class RxUtil {
     }
 
     public static void instrucParser(RxPrescriptionData.Prescription rx) {
+        if(Objects.isNull(instructionParser)) {
+            instructionParser(rx);
+        } else {
+            parseInstructionUsingNER(rx);
+        }
+    }
+
+
+    public static void parseInstructionUsingNER(RxPrescriptionData.Prescription rx) {
+        if (rx == null) {
+            return;
+        }
+        String instructions = rx.getSpecial();
+        if (instructions == null) {
+            instructions = "";
+        }
+
+        // All values should be reset before each iteration as it is unknown if any previously entered
+        // quantity values have been removed.
+        setEmptyValues(rx);
+
+        //do we have some policies/restrictions we want to run?
+        List<String> policyViolations = RxInstructionPolicy.checkInstructions(instructions.trim());
+
+        if (!instructions.isEmpty()) {
+            rx.setMethod("");
+            rx.setRoute("");
+            rx.setFrequencyCode("");
+            rx.setDuration("");
+            rx.setDurationUnit("");
+            rx.setTakeMin(Float.parseFloat("0"));
+            rx.setTakeMax(Float.parseFloat("0"));
+
+
+            InstructionSpecs instructionSpecs = instructionParser.parse(instructions);
+            instructionSpecs.print();
+
+            for (InstructionSpecs.IdentifiedData data : instructionSpecs.identifiedData()) {
+                String val = data.lemma();
+                switch (data.tag()) {
+                    case "METHOD": rx.setMethod(val);
+                        break;
+                    case "ROUTE": rx.setRoute(val);
+                        break;
+                    case "FREQ": rx.setFrequencyCode(val);
+                        break;
+                    case "DUR_VAL": rx.setDuration(val);
+                        break;
+                    case "DUR_UNIT": rx.setDurationUnit(val);
+                        break;
+                    case "MIN":
+                        try {
+                            rx.setTakeMin(Float.parseFloat(val));
+                        } catch (NumberFormatException ignore) {
+
+                        }
+                        break;
+                    case "MAX":
+                        try {
+                            rx.setTakeMax(Float.parseFloat(val));
+                        } catch (NumberFormatException ignore) {
+
+                        }
+                        break;
+                    case "PRN": rx.setPrn(true);
+                        break;
+                }
+            }
+        }
+
+        if (rx.getTakeMin() == 0) {
+            rx.setTakeMin(rx.getTakeMax());
+        }
+
+        rx.setPolicyViolations(policyViolations);
+    }
+
+    public static void instructionParser(RxPrescriptionData.Prescription rx) {
         if (rx == null) {
             return;
         }

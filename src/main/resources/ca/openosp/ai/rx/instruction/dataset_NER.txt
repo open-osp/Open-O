@@ -33,6 +33,7 @@ inh|U-ROUTE one|B-FREQ time|I-FREQ a|I-FREQ day|L-FREQ for|O 2|U-DUR_VAL months|
 apply|U-METHOD 2|U-MAX daily|U-FREQ on|O top|U-ROUTE for|O 14|U-DUR_VAL days|U-DUR_UNIT
 taken|U-METHOD 1|B-MAX /|I-MAX 4|L-MAX tablet|U-FORM po|U-ROUTE qam|U-FREQ for|O 30|U-DUR_VAL days|U-DUR_UNIT
 take|U-METHOD 1|U-MAX tablet|U-FORM po|U-ROUTE for|O 90|U-DUR_VAL days|U-DUR_UNIT
+take|U-METHOD half|U-MAX tablet|U-FORM po|U-ROUTE for|O 90|U-DUR_VAL days|U-DUR_UNIT
 apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT left|B-ROUTE eye|L-ROUTE qid|U-FREQ for|O 5|U-DUR_VAL days|U-DUR_UNIT
 apply|U-METHOD 1|U-MAX times|B-OMIT on|L-OMIT right|B-ROUTE eye|L-ROUTE daily|U-FREQ for|O 1|U-DUR_VAL month|U-DUR_UNIT
 4|U-MIN -|U-TO 5|U-MAX tablets|U-FORM weekly|U-FREQ
@@ -52,6 +53,7 @@ take|U-METHOD 1|B-MIN /|I-MIN 4|L-MIN -|U-TO 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FO
 1|B-MAX /|I-MAX 2|L-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
 take|U-METHOD 0|B-MAX .|I-MAX 5|L-MAX tablet|U-FORM po|U-ROUTE Q2H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
 0.5|B-MIN to|I-MIN 1|L-MIN tablet|U-FORM po|U-ROUTE Q6H|U-FREQ for|O 2|U-DUR_VAL days|U-DUR_UNIT
+half|B-MIN to|I-MIN 1|L-MIN tablet|U-FORM po|U-ROUTE Q6H|U-FREQ for|O 2|U-DUR_VAL days|U-DUR_UNIT
 take|U-METHOD 1|B-MIN –|I-MIN 2|I-MIN tablets|L-MIN po|U-ROUTE Q8H|U-FREQ for|O 24|U-DUR_VAL hours|U-DUR_UNIT
 0.25|B-MIN to|I-MIN 0.5|L-MIN capsule|U-FORM po|U-ROUTE Q12H|U-FREQ for|O 5|U-DUR_VAL days|U-DUR_UNIT
 take|U-METHOD 1|B-MIN to|I-MIN 1.5|L-MIN tab|U-FORM po|U-ROUTE Q4H|U-FREQ for|O 48|U-DUR_VAL hours|U-DUR_UNIT
@@ -383,6 +385,7 @@ five|U-MIN
 8|U-MIN
 9|U-MIN
 10|U-MIN
+half|U-MAX
 one|U-MAX
 two|U-MAX
 three|U-MAX
