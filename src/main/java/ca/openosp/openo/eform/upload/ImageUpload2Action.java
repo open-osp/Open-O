@@ -69,8 +69,13 @@ public class ImageUpload2Action extends ActionSupport {
                 return ERROR;
             }
 
-            // Ensure upload directory exists
-            getImageFolder();
+            // Ensure upload directory exists (throws IOException if creation fails)
+            File imageFolder = getImageFolder();
+            if (!imageFolder.exists()) {
+                MiscUtils.getLogger().error("Image folder does not exist after creation attempt: {}", imageFolder.getAbsolutePath());
+                addActionError("Upload failed: unable to prepare upload directory");
+                return ERROR;
+            }
 
             // Upload the file
             try (InputStream fis = Files.newInputStream(image.toPath());
@@ -91,8 +96,10 @@ public class ImageUpload2Action extends ActionSupport {
             return SUCCESS;
 
         } catch (IOException e) {
-            addActionError("Upload failed: " + e.getMessage());
-            MiscUtils.getLogger().error("Image upload failed", e);
+            // Log full exception details for debugging, but show generic message to user
+            // to avoid leaking internal paths, permissions, or environment details
+            MiscUtils.getLogger().error("Image upload failed for file: {}", imageFileName, e);
+            addActionError("Upload failed: an error occurred while saving the image. Please try again or contact support.");
             return ERROR;
         }
     }
