@@ -76,7 +76,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
-import org.apache.tika.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import ca.openosp.openo.PMmodule.dao.ProgramDao;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.PMmodule.dao.SecUserRoleDao;

@@ -2379,14 +2379,6 @@
     "optional" : false,
     "integrity" : "sha512:6t+uUpMgr3cUbXNb/dD4h69D25eM3TIoH9yl0bBYFOaOj2N0JIz2hdiolkRxz2U1zknw+VU+/JjPSlH4ChlGlw=="
   }, {
-    "groupId" : "org.apache.tika",
-    "artifactId" : "tika-core",
-    "version" : "1.28.5",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:XOr3rZ5itO/1EsAFQcd/gH13oHN6EdUlAdCyUCS4xXjnt+ivekad5vblSr8c4Co10zVozzXUhSwALBBXYve7nQ=="
-  }, {
     "groupId" : "org.apache.velocity.tools",
     "artifactId" : "velocity-tools-generic",
     "version" : "3.1",
