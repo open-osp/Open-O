@@ -48,6 +48,32 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%!
+    /**
+     * Check if a measurement is hidden at a higher level than current scope.
+     * For patient scope: checks clinic and provider level hides.
+     * For provider scope: checks clinic level hides.
+     */
+    private boolean isHiddenAtHigherLevel(List<FlowSheetCustomization> custList, String measurement, String scope, String demographic, String currentProvider) {
+        if (custList == null) return false;
+        for (FlowSheetCustomization cust : custList) {
+            if (!"delete".equals(cust.getAction()) || !measurement.equals(cust.getMeasurement())) continue;
+
+            // If viewing patient scope, check for clinic or provider level hides
+            if (demographic != null && !demographic.isEmpty()) {
+                // Clinic level
+                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+                // Provider level
+                if (currentProvider.equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+            }
+            // If viewing provider scope, check for clinic level hides
+            else if (!"clinic".equals(scope)) {
+                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+            }
+        }
+        return false;
+    }
+%>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed2 = true;
@@ -102,7 +128,7 @@
         if (demographic == null || demographic.isEmpty()) {
             custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"));
         } else {
-            custList = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet, demographic);
+            custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"), Integer.parseInt(demographic));
         }
     }
     Enumeration en = flowsheetNames.keys();
@@ -367,10 +393,22 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
 		               <%
-		                if(mFlowsheet.getFlowSheetItem(mstring).isHide()){
+		                boolean isHidden = mFlowsheet.getFlowSheetItem(mstring).isHide();
+		                boolean isInherited = isHiddenAtHigherLevel(custList, mstring, scope, demographic, (String) session.getAttribute("user"));
+
+		                if (isHidden && isInherited) {
+		                    // Read-only closed eye for inherited hides (from clinic or provider level)
+		               %>
+		                   <i class="icon-eye-close action-icon" style="opacity:0.4;" title="Hidden at clinic or provider level"></i>
+		               <%
+		                } else if (isHidden) {
+		                    // Clickable restore for same-level hides
 		               %>
 		                   <a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Show this measurement" class="action-icon"><i class="icon-eye-close"></i></a>
-		               <% } else { %>
+		               <%
+		                } else {
+		                    // Clickable hide
+		               %>
 		                   <a href="FlowSheetCustomAction.do?method=hide&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Hide this measurement" class="action-icon"><i class="icon-eye-open"></i></a>
 		               <% } %>
 
