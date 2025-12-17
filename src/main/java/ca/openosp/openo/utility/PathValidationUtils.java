@@ -12,10 +12,16 @@ import java.util.List;
 /**
  * Utility class for validating file paths to prevent path traversal attacks.
  *
- * <p>Usage for validating a path within a directory (read or write):</p>
+ * <p>Usage for validating a user-provided filename (sanitizes and constructs safe path):</p>
  * <pre>
  * File safePath = PathValidationUtils.validatePath(userProvidedFileName, allowedDir);
  * // Now safe to read from or write to safePath
+ * </pre>
+ *
+ * <p>Usage for validating an existing/internal path (containment check only, no sanitization):</p>
+ * <pre>
+ * File validatedFile = PathValidationUtils.validateExistingPath(file, allowedDir);
+ * // Now safe to access or delete validatedFile
  * </pre>
  *
  * <p>Usage for validating uploaded temp files:</p>
@@ -69,6 +75,22 @@ public final class PathValidationUtils {
         validateWithinDirectory(path, allowedDir);
 
         return path;
+    }
+
+    /**
+     * Validates that an existing file path is within the allowed directory.
+     * Use this for validating internal/application-created paths before deletion or access.
+     * Unlike validatePath(), this does NOT sanitize or reconstruct the path - it validates
+     * the actual file location.
+     *
+     * @param file the file to validate
+     * @param allowedDir the directory the file must be within
+     * @return the validated File (same as input if valid)
+     * @throws SecurityException if the file is outside the allowed directory
+     */
+    public static File validateExistingPath(File file, File allowedDir) {
+        validateWithinDirectory(file, allowedDir);
+        return file;
     }
 
     // ========================================================================
