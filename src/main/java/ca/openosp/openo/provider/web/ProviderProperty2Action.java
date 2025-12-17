@@ -248,7 +248,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgPrefs", "provider.setDefaultSex.msgPrefs");
         request.setAttribute("providermsgProvider", "provider.setDefaultSex.msgDefaultSex");
         request.setAttribute("providermsgEdit", "provider.setDefaultSex.msgEdit");
-        request.setAttribute("providerbtnSubmit", "providers.btnSubmit");
+        request.setAttribute("providerbtnSubmit", "provider.setDefaultSex.btnSubmit");
         request.setAttribute("providermsgSuccess", "provider.setDefaultSex.msgSuccess");
         request.setAttribute("method", "saveDefaultSex");
 
@@ -394,7 +394,7 @@ public class ProviderProperty2Action extends ActionSupport {
             request.setAttribute("providertitle", "provider.setDefaultDocumentQueue.title"); //=Set Default Document Queue
             request.setAttribute("providermsgPrefs", "provider.setDefaultDocumentQueue.msgPrefs"); //=Preferences
             request.setAttribute("providermsgProvider", "provider.setDefaultDocumentQueue.msgProfileView"); //=Default Document Queue
-            request.setAttribute("providermsgSuccess", "providers.setDefaultDocumentQueue.msgNotSaved"); //=Default Document Queue has NOT been saved
+            request.setAttribute("providermsgSuccess", "provider.setDefaultDocumentQueue.msgNotSaved"); //=Default Document Queue has NOT been saved
             request.setAttribute("method", "saveDefaultDocQueue");
             return "genDefaultDocQueue";
         }
@@ -650,7 +650,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setRxRxUseRx3.msgProfileView"); //=Use Rx3
         request.setAttribute("providermsgEdit", "provider.setRxUseRx3.msgEdit"); //=Do you want to use Rx3?
         request.setAttribute("providerbtnSubmit", "provider.setRxUseRx3.btnSubmit"); //=Save
-        request.setAttribute("providermsgSuccess", "providers.setRxUseRx3.msgSuccess"); //=Rx3 Selection saved
+        request.setAttribute("providermsgSuccess", "provider.setRxUseRx3.msgSuccess_selected"); //=Rx3 Selection saved
         request.setAttribute("method", "saveUseRx3");
 
         this.setRxUseRx3Property(prop);
@@ -1308,7 +1308,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setCppSingleLine.msgProfileView"); //=Use Rx3
         request.setAttribute("providermsgEdit", "provider.setCppSingleLine.msgEdit"); //=Do you want to use Rx3?
         request.setAttribute("providerbtnSubmit", "provider.setCppSingleLine.btnSubmit"); //=Save
-        request.setAttribute("providermsgSuccess", "providers.setCppSingleLine.msgSuccess"); //=Rx3 Selection saved
+        request.setAttribute("providermsgSuccess", "provider.setCppSingleLine.msgSuccess_selected"); //=CPP Single Line saved
         request.setAttribute("method", "saveUseCppSingleLine");
 
         this.setCppSingleLineProperty(prop);
@@ -1381,7 +1381,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setEDocBrowserInDocumentReport.msgProfileView");
         request.setAttribute("providermsgEdit", "provider.setEDocBrowserInDocumentReport.msgEdit");
         request.setAttribute("providerbtnSubmit", "provider.setEDocBrowserInDocumentReport.btnSubmit");
-        request.setAttribute("providermsgSuccess", "providers.setEDocBrowserInDocumentReport.msgSuccess");
+        request.setAttribute("providermsgSuccess", "provider.setEDocBrowserInDocumentReport.msgSuccess_selected");
         request.setAttribute("method", "saveEDocBrowserInDocumentReport");
 
         this.seteDocBrowserInDocumentReportProperty(prop);
@@ -1454,7 +1454,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setEDocBrowserInMasterFile.msgProfileView"); //=Use Rx3
         request.setAttribute("providermsgEdit", "provider.setEDocBrowserInMasterFile.msgEdit"); //=Do you want to use Rx3?
         request.setAttribute("providerbtnSubmit", "provider.setEDocBrowserInMasterFile.btnSubmit"); //=Save
-        request.setAttribute("providermsgSuccess", "providers.setEDocBrowserInMasterFile.msgSuccess"); //=Rx3 Selection saved
+        request.setAttribute("providermsgSuccess", "provider.setEDocBrowserInMasterFile.msgSuccess_selected"); //=EDoc Browser saved
         request.setAttribute("method", "saveEDocBrowserInMasterFile");
 
         this.seteDocBrowserInMasterFileProperty(prop);
@@ -1527,7 +1527,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setAckComment.msgProfileView");
         request.setAttribute("providermsgEdit", "provider.setAckComment.msgEdit");
         request.setAttribute("providerbtnSubmit", "provider.setAckComment.btnSubmit");
-        request.setAttribute("providermsgSuccess", "providers.setAckComment.msgSuccess");
+        request.setAttribute("providermsgSuccess", "provider.setAckComment.msgSuccess_selected");
         request.setAttribute("method", "saveCommentLab");
 
         this.setLabAckCommentProperty(prop);
@@ -1563,7 +1563,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgProvider", "provider.setAckComment.msgProfileView");
         request.setAttribute("providermsgEdit", "provider.setAckComment.msgEdit");
         request.setAttribute("providerbtnSubmit", "provider.setAckComment.btnSubmit");
-        request.setAttribute("providermsgSuccess", "providers.setAckComment.msgSuccess");
+        request.setAttribute("providermsgSuccess", "provider.setAckComment.msgSuccess_selected");
         request.setAttribute("method", "saveCommentLab");
 
         if (checked)
@@ -2183,7 +2183,7 @@ public class ProviderProperty2Action extends ActionSupport {
         request.setAttribute("providermsgPrefs", "provider.displayDocumentAs.msgPrefs");
         request.setAttribute("providermsgProvider", "provider.displayDocumentAs.msgProvider");
         request.setAttribute("providermsgEdit", "provider.displayDocumentAs.msgEdit");
-        request.setAttribute("providerbtnSubmit", "providers.btnSubmit");
+        request.setAttribute("providerbtnSubmit", "provider.displayDocumentAs.btnSubmit");
         request.setAttribute("providermsgSuccess", "provider.displayDocumentAs.msgSuccess");
         request.setAttribute("method", "saveDisplayDocumentAs");
 

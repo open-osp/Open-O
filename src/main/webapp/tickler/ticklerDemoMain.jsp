@@ -107,7 +107,6 @@
     int curDay = now.get(Calendar.DAY_OF_MONTH);
 %>
 <%
-    //String providerview=request.getParameter("providers")==null?"":request.getParameter("providers");
     String ticklerview = request.getParameter("ticklerview") == null ? "A" : request.getParameter("ticklerview");
     String xml_vdate = request.getParameter("xml_vdate") == null ? "" : request.getParameter("xml_vdate");
     String xml_appointment_date = request.getParameter("xml_appointment_date") == null ? "8888-12-31" : request.getParameter("xml_appointment_date");
