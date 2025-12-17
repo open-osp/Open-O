@@ -60,6 +60,7 @@ import ca.openosp.openo.casemgmt.model.CaseManagementNoteExt;
 import ca.openosp.openo.commn.dao.PartialDateDao;
 import ca.openosp.openo.commn.model.PartialDate;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import ca.openosp.openo.prevention.PreventionDisplayConfig;
@@ -206,32 +207,25 @@ public class Util {
     }
 
     static public boolean cleanFile(String filename) {
-        try {
-            // Validate path to prevent directory traversal attacks
-            File f = new File(filename);
-            
-            // Get the canonical path to resolve any symbolic links or relative paths
-            String canonicalPath = f.getCanonicalPath();
-            
-            // Additional check: ensure file is within application's working directory or temp directory
-            String workingDir = System.getProperty("user.dir");
-            String tempDir = System.getProperty("java.io.tmpdir");
-            
-            if (!canonicalPath.startsWith(workingDir) && !canonicalPath.startsWith(tempDir)) {
-                // If not in working or temp directory, check if it's in a configured document directory
-                OscarProperties props = OscarProperties.getInstance();
-                String docDir = props.getProperty("DOCUMENT_DIR");
-                if (docDir != null && !canonicalPath.startsWith(new File(docDir).getCanonicalPath())) {
-                    logger.error("Error! File is outside allowed directories: " + canonicalPath);
-                    return false;
+        File f = new File(filename);
+        OscarProperties props = OscarProperties.getInstance();
+
+        // Check against configured directories (DOCUMENT_DIR and TMP_DIR for exports)
+        String[] allowedDirProps = {"DOCUMENT_DIR", "TMP_DIR"};
+        for (String prop : allowedDirProps) {
+            String dir = props.getProperty(prop);
+            if (dir != null) {
+                try {
+                    PathValidationUtils.validatePath(f.getName(), new File(dir));
+                    return cleanFile(f);
+                } catch (SecurityException e) {
+                    logger.warn("File validation failed for directory {}: {}", dir, e.getMessage());
                 }
             }
-            
-            return cleanFile(f);
-        } catch (IOException e) {
-            logger.error("Error validating file path for deletion", e);
-            return false;
         }
+
+        logger.error("Error! File is outside allowed directories: " + filename);
+        return false;
     }
 
     static public boolean cleanFile(File file) {
