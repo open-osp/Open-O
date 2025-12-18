@@ -2,6 +2,7 @@ package ca.openosp.openo.webserv.rest.util;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -21,8 +22,8 @@ import java.util.Date;
  */
 public class SmartDateSerializer extends JsonSerializer<Date> implements ContextualSerializer {
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd"));
+    private static final ThreadLocal<SimpleDateFormat> TIME_FORMAT = ThreadLocal.withInitial(() -> new SimpleDateFormat("HH:mm:ss"));
     private final boolean forceEpoch;
 
     public SmartDateSerializer() {
@@ -60,11 +61,11 @@ public class SmartDateSerializer extends JsonSerializer<Date> implements Context
 
         // If date is epoch date (1970-01-01), treat as time-only and serialize as HH:mm:ss
         if (year == 1970 && month == 0 && day == 1) {
-            gen.writeString(TIME_FORMAT.format(date));
+            gen.writeString(TIME_FORMAT.get().format(date));
         }
         // If time is exactly midnight (00:00:00.000), treat as date-only and serialize as string
         else if (hour == 0 && minute == 0 && second == 0 && millisecond == 0) {
-            gen.writeString(DATE_FORMAT.format(date));
+            gen.writeString(DATE_FORMAT.get().format(date));
         } else {
             // Otherwise, serialize as epoch timestamp
             gen.writeNumber(date.getTime());
@@ -73,8 +74,9 @@ public class SmartDateSerializer extends JsonSerializer<Date> implements Context
 
     @Override
     public JsonSerializer<?> createContextual(SerializerProvider prov, BeanProperty property) {
-        if (property != null) {
-            JsonFormat.Value format = prov.getAnnotationIntrospector().findFormat(property.getMember());
+        AnnotationIntrospector ai = prov.getAnnotationIntrospector();
+        if (property != null && ai != null && property.getMember() != null) {
+            JsonFormat.Value format = ai.findFormat(property.getMember());
             if (format != null && format.getShape() == JsonFormat.Shape.NUMBER) {
                 return new SmartDateSerializer(true);
             }
