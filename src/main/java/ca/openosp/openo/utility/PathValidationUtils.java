@@ -73,14 +73,14 @@ public final class PathValidationUtils {
      * @throws SecurityException if validation fails
      */
     public static File validatePath(String userProvidedFileName, File allowedDir) {
-    	 // 1. Sanitize filename
-	 String safeName = sanitizeFileName(userProvidedFileName);
-        
-	 // 2. Build and validate path
-	 File path = new File(allowedDir, safeName);
-	 validateWithinDirectory(path, allowedDir);
-        
-	 return path;
+		// 1. Sanitize filename
+		String safeName = sanitizeFileName(userProvidedFileName);
+
+		// 2. Build and validate path
+		File path = new File(allowedDir, safeName);
+		validateWithinDirectory(path, allowedDir);
+
+		return path;
     }
 
     /**
@@ -160,12 +160,11 @@ public final class PathValidationUtils {
             File sourceFile,
             String userProvidedFileName,
             File destinationDir) {
-        
-	 // 1. Validate source
-	 validateSource(sourceFile, destinationDir);
-        
-	 // 2. Validate destination path
-	 return validatePath(userProvidedFileName, destinationDir);
+		// 1. Validate source
+		validateSource(sourceFile, destinationDir);
+
+		// 2. Validate destination path
+		return validatePath(userProvidedFileName, destinationDir);
     }
 
     // ========================================================================
@@ -195,7 +194,7 @@ public final class PathValidationUtils {
             return;
         }
 
-        logger.error("Invalid upload source path: " + sourceFile.getPath());
+        logger.error("Invalid upload source path: {}", sourceFile.getPath());
         throw new SecurityException("Invalid upload source");
     }
 
@@ -209,7 +208,7 @@ public final class PathValidationUtils {
             String fileCanonical = file.getCanonicalPath();
 
             if (!fileCanonical.equals(baseCanonical) && !fileCanonical.startsWith(baseCanonical + File.separator)) {
-                logger.error("Path " + fileCanonical + " is outside allowed directory " + baseCanonical);
+                logger.error("Path {} is outside allowed directory {}", fileCanonical, baseCanonical);
                 throw new SecurityException("Invalid file path");
             }
         } catch (IOException e) {
@@ -228,13 +227,13 @@ public final class PathValidationUtils {
 
         // Reject hidden files (starting with .)
         if (baseName.startsWith(".")) {
-            logger.warn("Hidden filenames not allowed: " + fileName);
+            logger.warn("Hidden filenames not allowed: {}", fileName);
             throw new SecurityException("Invalid filename: hidden files not allowed");
         }
 
         // Ensure the result is not empty
         if (baseName.trim().isEmpty()) {
-            logger.warn("Filename became empty after sanitization: " + fileName);
+            logger.warn("Filename became empty after sanitization: {}", fileName);
             throw new SecurityException("Invalid filename");
         }
 
@@ -270,8 +269,7 @@ public final class PathValidationUtils {
             Set<String> tempDirs = getAllowedTempDirectories();
 
             if (tempDirs.isEmpty()) {
-                logger.warn("No temp directories configured - temp file operations will be rejected. " +
-                           "Check java.io.tmpdir and catalina.base/catalina.home system properties.");
+                logger.warn("No temp directories configured - temp file operations will be rejected. Check java.io.tmpdir and catalina.base/catalina.home system properties.");
                 return false;
             }
 
@@ -281,7 +279,7 @@ public final class PathValidationUtils {
                 }
             }
 
-            logger.error("File not in allowed temp directory: " + canonicalPath);
+            logger.error("File not in allowed temp directory: {}", canonicalPath);
             return false;
         } catch (IOException e) {
             logger.error("Error validating file path", e);
