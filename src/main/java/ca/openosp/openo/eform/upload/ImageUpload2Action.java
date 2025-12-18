@@ -31,6 +31,7 @@ import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.OscarProperties;
 
@@ -41,8 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class ImageUpload2Action extends ActionSupport {
     HttpServletRequest request = ServletActionContext.getRequest();
@@ -65,6 +64,7 @@ public class ImageUpload2Action extends ActionSupport {
 
             // Validate that sanitized filename is not empty
             if (imageFileName == null || imageFileName.isEmpty()) {
+                MiscUtils.getLogger().warn("Image upload rejected: filename '{}' empty after sanitization", originalFileName);
                 addActionError("Invalid filename: filename cannot be empty after sanitization");
                 return ERROR;
             }
@@ -77,9 +77,12 @@ public class ImageUpload2Action extends ActionSupport {
                 return ERROR;
             }
 
+            // Validate upload: source file location + destination path traversal protection
+            File destinationFile = PathValidationUtils.validateUpload(image, imageFileName, imageFolder);
+
             // Upload the file
             try (InputStream fis = Files.newInputStream(image.toPath());
-                 OutputStream fos = ImageUpload2Action.getEFormImageOutputStream(imageFileName)) {
+                 OutputStream fos = Files.newOutputStream(destinationFile.toPath())) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = fis.read(buffer)) != -1) {
@@ -95,19 +98,15 @@ public class ImageUpload2Action extends ActionSupport {
             request.setAttribute("status", "uploaded");
             return SUCCESS;
 
+        } catch (SecurityException se) {
+            MiscUtils.getLogger().warn("SecurityException during image upload: " + se.getMessage(), se);
+            addActionError("Upload failed: invalid file or security policy violation");
+            return ERROR;
         } catch (IOException e) {
-            // Log full exception details for debugging, but show generic message to user
-            // to avoid leaking internal paths, permissions, or environment details
             MiscUtils.getLogger().error("Image upload failed for file: {}", imageFileName, e);
             addActionError("Upload failed: an error occurred while saving the image. Please try again or contact support.");
             return ERROR;
         }
-    }
-
-    public static OutputStream getEFormImageOutputStream(String imageFileName) throws IOException {
-        Path path = Paths.get(OscarProperties.getInstance().getEformImageDirectory(), imageFileName);
-        return Files.newOutputStream(path);
-        
     }
 
     public static File getImageFolder() throws IOException {
