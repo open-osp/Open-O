@@ -73,14 +73,14 @@ public final class PathValidationUtils {
      * @throws SecurityException if validation fails
      */
     public static File validatePath(String userProvidedFileName, File allowedDir) {
-        // 1. Sanitize filename
-	String safeName = sanitizeFileName(userProvidedFileName);
+    	 // 1. Sanitize filename
+	 String safeName = sanitizeFileName(userProvidedFileName);
         
-	// 2. Build and validate path
-	File path = new File(allowedDir, safeName);
-	validateWithinDirectory(path, allowedDir);
+	 // 2. Build and validate path
+	 File path = new File(allowedDir, safeName);
+	 validateWithinDirectory(path, allowedDir);
         
-	return path;
+	 return path;
     }
 
     /**
@@ -161,11 +161,11 @@ public final class PathValidationUtils {
             String userProvidedFileName,
             File destinationDir) {
         
-	// 1. Validate source
-	validateSource(sourceFile, destinationDir);
+	 // 1. Validate source
+	 validateSource(sourceFile, destinationDir);
         
-	// 2. Validate destination path
-	return validatePath(userProvidedFileName, destinationDir);
+	 // 2. Validate destination path
+	 return validatePath(userProvidedFileName, destinationDir);
     }
 
     // ========================================================================
