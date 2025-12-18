@@ -359,7 +359,7 @@
     </div>
     <div class="form">
         <form id="noswfupload_form" method="post"
-              action="<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&provider=<%=provider%>"
+              action="<%=request.getContextPath()%>/documentManager/addEditDocument.do?method=html5MultiUpload&queue=<%=queueId%>&providers=<%=provider%>"
               enctype="multipart/form-data">
             <div>
                 <input type="file" name="filedata"/>

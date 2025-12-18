@@ -242,8 +242,8 @@
             <table id="integratorPrefTable" border=0>
                 <tr>
                     <td></td>
-                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="providers.integratorPreferences.enabled"/></th>
-                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="providers.integratorPreferences.disabled"/></th>
+                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.integratorPreferences.enabled"/></th>
+                    <th><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.integratorPreferences.disabled"/></th>
                 </tr>
                 <tr>
                     <td>Demographic Records</td>

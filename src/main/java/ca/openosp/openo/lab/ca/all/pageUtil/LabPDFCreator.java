@@ -56,7 +56,7 @@ import com.itextpdf.text.pdf.*;
 import com.lowagie.text.rtf.RtfWriter2;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import ca.openosp.openo.commn.dao.Hl7TextMessageDao;
 import ca.openosp.openo.commn.model.Hl7TextMessage;
 import ca.openosp.openo.commn.printing.FontSettings;

@@ -1516,6 +1516,7 @@
             <result name="error">/errorpage.jsp</result>
         </action>
         <action name="demographic/DemographicExport" class="ca.openosp.openo.demographic.pageUtil.DemographicExportAction42Action">
+            <result name="success">/demographic/demographicExport.jsp</result>
             <result name="fail">/demographic/demographicExport.jsp</result>
         </action>
         <action name="demographic/cihiExportOMD4" class="ca.openosp.openo.demographic.pageUtil.CihiExport2Action" method="execute">

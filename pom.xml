@@ -1147,13 +1147,6 @@
             <version>8.3.3</version>
         </dependency>
 
-        <!-- Apache Tika - MimeType handling for downloaded files (ie. XDS) -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.28.5</version>
-        </dependency>
-
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark</artifactId>
