@@ -6,8 +6,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Utility class for validating file paths to prevent path traversal attacks.
@@ -43,6 +43,12 @@ public final class PathValidationUtils {
 
     private static final Logger logger = MiscUtils.getLogger();
 
+    /**
+     * Lazily-initialized set of allowed temp directories.
+     * Uses LinkedHashSet to preserve insertion order for debugging.
+     */
+    private static volatile Set<String> allowedTempDirectories;
+
     private PathValidationUtils() {
         // Utility class - prevent instantiation
     }
@@ -68,13 +74,13 @@ public final class PathValidationUtils {
      */
     public static File validatePath(String userProvidedFileName, File allowedDir) {
         // 1. Sanitize filename
-        String safeName = sanitizeFileName(userProvidedFileName);
-
-        // 2. Build and validate path
-        File path = new File(allowedDir, safeName);
-        validateWithinDirectory(path, allowedDir);
-
-        return path;
+	String safeName = sanitizeFileName(userProvidedFileName);
+        
+	// 2. Build and validate path
+	File path = new File(allowedDir, safeName);
+	validateWithinDirectory(path, allowedDir);
+        
+	return path;
     }
 
     /**
@@ -83,14 +89,40 @@ public final class PathValidationUtils {
      * Unlike validatePath(), this does NOT sanitize or reconstruct the path - it validates
      * the actual file location.
      *
+     * <p>If the allowed directory is null or the file is not within it, this method will
+     * fall back to checking if the file is within a known system temp directory
+     * (java.io.tmpdir, Tomcat work directories). This provides resilience against
+     * misconfigured directory properties while still maintaining security.</p>
+     *
      * @param file the file to validate
-     * @param allowedDir the directory the file must be within
+     * @param allowedDir the directory the file must be within (may be null)
      * @return the validated File (same as input if valid)
-     * @throws SecurityException if the file is outside the allowed directory
+     * @throws SecurityException if the file is outside all allowed directories
      */
     public static File validateExistingPath(File file, File allowedDir) {
-        validateWithinDirectory(file, allowedDir);
-        return file;
+        if (file == null) {
+            throw new SecurityException("File is null");
+        }
+
+        // Try explicit directory first
+        if (allowedDir != null && isWithinDirectory(file, allowedDir)) {
+            return file;
+        }
+
+        // Fallback to temp directories for read/delete operations
+        if (isInAllowedTempDirectory(file)) {
+            if (allowedDir != null) {
+                logger.debug("File {} not in configured directory, but found in allowed temp directory",
+                            file.getPath());
+            }
+            return file;
+        }
+
+        // Both checks failed
+        String configuredPath = allowedDir != null ? allowedDir.getPath() : "null";
+        logger.error("File {} is outside allowed directory ({}) and not in any temp directory",
+                    file.getPath(), configuredPath);
+        throw new SecurityException("Invalid file path");
     }
 
     // ========================================================================
@@ -128,12 +160,12 @@ public final class PathValidationUtils {
             File sourceFile,
             String userProvidedFileName,
             File destinationDir) {
-
-        // 1. Validate source
-        validateSource(sourceFile, destinationDir);
-
-        // 2. Validate destination path
-        return validatePath(userProvidedFileName, destinationDir);
+        
+	// 1. Validate source
+	validateSource(sourceFile, destinationDir);
+        
+	// 2. Validate destination path
+	return validatePath(userProvidedFileName, destinationDir);
     }
 
     // ========================================================================
@@ -158,8 +190,8 @@ public final class PathValidationUtils {
             return;
         }
 
-        // Fallback: check temp directories only if file looks like a temp file
-        if (isTempFile(sourceFile) && isInAllowedTempDirectory(sourceFile)) {
+        // Fallback: check temp directories - they're always valid sources for uploads
+        if (isInAllowedTempDirectory(sourceFile)) {
             return;
         }
 
@@ -175,7 +207,7 @@ public final class PathValidationUtils {
         try {
             String baseCanonical = allowedBaseDir.getCanonicalPath();
             String fileCanonical = file.getCanonicalPath();
-            
+
             if (!fileCanonical.equals(baseCanonical) && !fileCanonical.startsWith(baseCanonical + File.separator)) {
                 logger.error("Path " + fileCanonical + " is outside allowed directory " + baseCanonical);
                 throw new SecurityException("Invalid file path");
@@ -210,20 +242,8 @@ public final class PathValidationUtils {
     }
 
     // ========================================================================
-    // INTERNAL HELPER METHODS
+    // DIRECTORY MANAGEMENT
     // ========================================================================
-
-    private static boolean isTempFile(File file) {
-        if (file == null) {
-            return false;
-        }
-        String name = file.getName();
-        // Struts2/Tomcat temp files follow pattern: upload_<hex_ids>_<counter>.tmp
-        // Examples: upload__37055a77_11ac9568d10__7ffe_00000033.tmp
-        //           upload_c850bd37_8bd7_40cb_88ae_1e86670a61ee_00000000.tmp
-        // Using possessive quantifiers (++) to prevent ReDoS via catastrophic backtracking
-        return name.matches("^upload_++[a-f0-9_\\-]++\\.tmp$");
-    }
 
     private static boolean isWithinDirectory(File file, File directory) {
         if (file == null || directory == null) {
@@ -247,15 +267,15 @@ public final class PathValidationUtils {
 
         try {
             String canonicalPath = file.getCanonicalPath();
-            List<String> allowedDirectories = getTempDirectories();
+            Set<String> tempDirs = getAllowedTempDirectories();
 
-            if (allowedDirectories.isEmpty()) {
-                logger.warn("No temp directories configured - temp file uploads will be rejected. " +
+            if (tempDirs.isEmpty()) {
+                logger.warn("No temp directories configured - temp file operations will be rejected. " +
                            "Check java.io.tmpdir and catalina.base/catalina.home system properties.");
                 return false;
             }
 
-            for (String allowedDir : allowedDirectories) {
+            for (String allowedDir : tempDirs) {
                 if (canonicalPath.equals(allowedDir) || canonicalPath.startsWith(allowedDir + File.separator)) {
                     return true;
                 }
@@ -264,47 +284,82 @@ public final class PathValidationUtils {
             logger.error("File not in allowed temp directory: " + canonicalPath);
             return false;
         } catch (IOException e) {
-            logger.error("Error validating upload file path", e);
+            logger.error("Error validating file path", e);
             return false;
         }
     }
 
-    private static List<String> getTempDirectories() {
-        List<String> tempDirs = new ArrayList<>();
-
-        // System temp directory
-        String tempDir = System.getProperty("java.io.tmpdir");
-        if (tempDir != null) {
-            try {
-                File tempDirFile = new File(tempDir);
-                tempDirs.add(tempDirFile.getCanonicalPath());
-            } catch (IOException e) {
-                logger.warn("Could not resolve canonical path for java.io.tmpdir", e);
+    /**
+     * Returns the set of allowed temp directories. Uses lazy initialization with
+     * double-checked locking for thread safety.
+     *
+     * @return Set of canonical paths for allowed temp directories
+     */
+    private static Set<String> getAllowedTempDirectories() {
+        if (allowedTempDirectories == null) {
+            synchronized (PathValidationUtils.class) {
+                if (allowedTempDirectories == null) {
+                    allowedTempDirectories = buildAllowedTempDirectories();
+                }
             }
         }
+        return allowedTempDirectories;
+    }
 
-        // Tomcat work directory (where Struts2/Tomcat stores uploaded files)
-        String catalinaBase = System.getProperty("catalina.base");
-        if (catalinaBase != null) {
-            try {
-                File tomcatWorkDir = new File(catalinaBase, "work");
-                tempDirs.add(tomcatWorkDir.getCanonicalPath());
-            } catch (IOException e) {
-                logger.warn("Could not resolve canonical path for Tomcat work directory", e);
-            }
+    /**
+     * Builds the set of allowed temp directories from system properties.
+     * Uses LinkedHashSet to maintain insertion order and automatically handle duplicates.
+     *
+     * <p>Temp directories are checked in the following order:</p>
+     * <ol>
+     *   <li>java.io.tmpdir - System temp directory (primary)</li>
+     *   <li>catalina.base/work - Tomcat work directory (where Struts2 stores uploads)</li>
+     *   <li>catalina.home/work - Tomcat home work directory (fallback if different from base)</li>
+     * </ol>
+     *
+     * @return Set of canonical paths for temp directories
+     */
+    private static Set<String> buildAllowedTempDirectories() {
+        Set<String> dirs = new LinkedHashSet<>();
+
+        // System temp directory - primary location for temp files
+        addTempDir(dirs, System.getProperty("java.io.tmpdir"));
+
+        // Tomcat work directories - where Struts2 stores uploaded files
+        addTempDir(dirs, System.getProperty("catalina.base"), "work");
+        addTempDir(dirs, System.getProperty("catalina.home"), "work");
+
+        return dirs;
+    }
+
+    /**
+     * Adds a temp directory to the set if the path is valid and resolvable.
+     *
+     * @param dirs the set to add the directory to
+     * @param basePath the base path (typically from a system property)
+     */
+    private static void addTempDir(Set<String> dirs, String basePath) {
+        addTempDir(dirs, basePath, null);
+    }
+
+    /**
+     * Adds a temp directory to the set if the path is valid and resolvable.
+     * The Set naturally handles duplicates (e.g., when catalina.home == catalina.base).
+     *
+     * @param dirs the set to add the directory to
+     * @param basePath the base path (typically from a system property)
+     * @param subDir optional subdirectory to append
+     */
+    private static void addTempDir(Set<String> dirs, String basePath, String subDir) {
+        if (basePath == null || basePath.trim().isEmpty()) {
+            return;
         }
 
-        // Also check catalina.home in case work dir is there
-        String catalinaHome = System.getProperty("catalina.home");
-        if (catalinaHome != null && !catalinaHome.equals(catalinaBase)) {
-            try {
-                File tomcatWorkDir = new File(catalinaHome, "work");
-                tempDirs.add(tomcatWorkDir.getCanonicalPath());
-            } catch (IOException e) {
-                logger.warn("Could not resolve canonical path for Tomcat home work directory", e);
-            }
+        try {
+            File dir = (subDir != null) ? new File(basePath, subDir) : new File(basePath);
+            dirs.add(dir.getCanonicalPath());
+        } catch (IOException e) {
+            logger.debug("Could not resolve canonical path for {}: {}", basePath, e.getMessage());
         }
-
-        return tempDirs;
     }
 }
