@@ -125,8 +125,23 @@ RUN mkdir -p $OSCAR_DOCUMENT/oscar/document \
     $OSCAR_DOCUMENT/oscar/onEDTDocs/archive \
     $OSCAR_DOCUMENT/oscar/oscarEncounter/oscarMeasurements/styles \
     $OSCAR_DOCUMENT/oscar/incomingdocs \
+    $OSCAR_DOCUMENT/oscar/export \
     $DB_DOCS \
-    $DOCS_DEST 
+    $DOCS_DEST
+
+# Set up GPG for PGP encryption (used by demographic export)
+# Create the GNUPGHOME directory and generate a test key for development
+RUN mkdir -p /usr/local/gnupg && chmod 700 /usr/local/gnupg \
+    && gpg --homedir /usr/local/gnupg --batch --passphrase '' --quick-gen-key "OpenO Dev (Development) <dev@openosp.ca>" default default never \
+    && chmod -R 700 /usr/local/gnupg
+
+# Create GPG wrapper script to handle modern GPG argument requirements
+# PGPEncrypt.java expects: bin cmd file recipient -> gpg -e file recipient
+# Modern GPG needs: gpg -e -r recipient file
+# Output file must use .pgp extension (not .gpg) to match Java code expectations
+RUN echo '#!/bin/bash' > /usr/local/bin/gpg-encrypt-wrapper \
+    && echo 'exec /usr/bin/gpg "$1" -r "$3" --batch --yes --trust-model always -o "$2.pgp" "$2"' >> /usr/local/bin/gpg-encrypt-wrapper \
+    && chmod +x /usr/local/bin/gpg-encrypt-wrapper 
 
 # Convert script files from DOS to Unix format (if necessary)
 RUN dos2unix /scripts/* \

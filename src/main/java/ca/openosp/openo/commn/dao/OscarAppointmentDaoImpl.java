@@ -705,7 +705,7 @@ public class OscarAppointmentDaoImpl extends AbstractDaoImpl<Appointment> implem
         return query.getResultList();
     }
 
-    @NativeSql({"demographic", "appointment", "drugs", "providers"})
+    @NativeSql({"demographic", "appointment", "drugs", "provider"})
     @Override
     public List<Object[]> findAppointmentsByDemographicIds(Set<String> demoIds, Date from, Date to) {
         String sql = "" +
