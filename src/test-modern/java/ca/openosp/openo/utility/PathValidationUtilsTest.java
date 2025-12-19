@@ -315,51 +315,32 @@ public class PathValidationUtilsTest {
     }
 
     // ========================================================================
-    // TEMP FILE PATTERN MATCHING
+    // TEMP FILE VALIDATION
     // ========================================================================
 
     @Nested
-    @DisplayName("Temp File Pattern Tests")
-    class TempFilePatternTests {
+    @DisplayName("Temp File Validation Tests")
+    class TempFileValidationTests {
 
         @ParameterizedTest
-        @DisplayName("should recognize valid Struts2 temp file patterns")
+        @DisplayName("should accept files in system temp directory regardless of naming pattern")
         @ValueSource(strings = {
             "upload_c850bd37_8bd7_40cb_88ae_1e86670a61ee_00000000.tmp",
             "upload__37055a77_11ac9568d10__7ffe_00000033.tmp",
-            "upload_abcdef12_3456_7890_abcd_ef1234567890_00000001.tmp"
+            "any_filename.tmp",
+            "document.pdf",
+            "random_file.txt"
         })
-        void shouldRecognizeValidTempFilePatterns(String tempFileName) throws IOException {
-            // Given - create a file with valid temp pattern in system temp dir
+        void shouldAcceptFilesInTempDirectory(String tempFileName) throws IOException {
+            // Given - create a file in system temp dir
             String systemTempDir = System.getProperty("java.io.tmpdir");
             File tempFile = new File(systemTempDir, tempFileName);
             tempFile.createNewFile();
             tempFile.deleteOnExit();
 
-            // When/Then - should not throw (file is valid temp file in temp directory)
+            // When/Then - should not throw (file is in allowed temp directory)
             assertThatCode(() -> PathValidationUtils.validateUpload(tempFile))
                 .doesNotThrowAnyException();
-        }
-
-        @ParameterizedTest
-        @DisplayName("should reject invalid temp file patterns")
-        @ValueSource(strings = {
-            "notupload_abc123.tmp",
-            "upload_UPPERCASE.tmp",
-            "upload_abc123.txt",
-            "malicious.tmp",
-            "upload_.exe"
-        })
-        void shouldRejectInvalidTempFilePatterns(String invalidFileName) throws IOException {
-            // Given - create a file with invalid pattern in system temp dir
-            String systemTempDir = System.getProperty("java.io.tmpdir");
-            File invalidFile = new File(systemTempDir, invalidFileName);
-            invalidFile.createNewFile();
-            invalidFile.deleteOnExit();
-
-            // When/Then - should throw because pattern doesn't match Struts2 temp files
-            assertThatThrownBy(() -> PathValidationUtils.validateUpload(invalidFile))
-                .isInstanceOf(SecurityException.class);
         }
     }
 
@@ -495,16 +476,16 @@ public class PathValidationUtilsTest {
         @Test
         @DisplayName("should block symlink escape via upload validation")
         void shouldBlockSymlinkEscape_viaUploadValidation() throws IOException {
-            // Given - create a file outside the allowed directory
-            Path outsideDir = Files.createTempDirectory("outside");
-            outsideDir.toFile().deleteOnExit();
+            // Given - use a file that exists outside any temp directory
+            // /etc/hostname exists on Linux and is definitely not in /tmp or Tomcat work dirs
+            Path outsideFile = Path.of("/etc/hostname");
 
-            Path outsideFile = outsideDir.resolve("secret.txt");
-            Files.createFile(outsideFile);
-            outsideFile.toFile().deleteOnExit();
+            // Skip test if the outside file doesn't exist (different OS or environment)
+            Assumptions.assumeTrue(Files.exists(outsideFile),
+                "Test requires /etc/hostname to exist (Linux-specific)");
 
-            // Create symlink inside allowed dir pointing to outside file
-            Path symlink = tempDir.resolve("symlink_to_secret.txt");
+            // Create symlink inside temp dir pointing to the outside file
+            Path symlink = tempDir.resolve("symlink_to_outside.txt");
             try {
                 Files.createSymbolicLink(symlink, outsideFile);
                 symlink.toFile().deleteOnExit();
@@ -514,14 +495,10 @@ public class PathValidationUtilsTest {
                 return;
             }
 
-            // When/Then - the symlink file exists in tempDir but points outside
-            // validateUpload should reject it because canonical path resolves outside allowed dirs
+            // When/Then - the symlink's canonical path resolves to /etc/hostname
+            // which is outside all allowed temp directories
             File symlinkFile = symlink.toFile();
 
-            // This should fail because:
-            // 1. It's not in expectedBaseDir (null in single-arg validateUpload)
-            // 2. It's not a valid temp file pattern
-            // 3. Even if it were, canonical path would resolve to outside location
             assertThatThrownBy(() -> PathValidationUtils.validateUpload(symlinkFile))
                 .isInstanceOf(SecurityException.class);
         }
