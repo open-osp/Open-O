@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -89,40 +90,21 @@ public final class PathValidationUtils {
      * Unlike validatePath(), this does NOT sanitize or reconstruct the path - it validates
      * the actual file location.
      *
-     * <p>If the allowed directory is null or the file is not within it, this method will
-     * fall back to checking if the file is within a known system temp directory
-     * (java.io.tmpdir, Tomcat work directories). This provides resilience against
-     * misconfigured directory properties while still maintaining security.</p>
+     * <p>This method performs strict validation with NO fallback to temp directories.
+     * Use {@link #isInAllowedTempDirectory(File)} separately if you need to check
+     * temp directories as a fallback.</p>
      *
      * @param file the file to validate
-     * @param allowedDir the directory the file must be within (may be null)
+     * @param allowedDir the directory the file must be within
      * @return the validated File (same as input if valid)
-     * @throws SecurityException if the file is outside all allowed directories
+     * @throws SecurityException if the file is outside the allowed directory
      */
     public static File validateExistingPath(File file, File allowedDir) {
         if (file == null) {
             throw new SecurityException("File is null");
         }
-
-        // Try explicit directory first
-        if (allowedDir != null && isWithinDirectory(file, allowedDir)) {
-            return file;
-        }
-
-        // Fallback to temp directories for read/delete operations
-        if (isInAllowedTempDirectory(file)) {
-            if (allowedDir != null) {
-                logger.debug("File {} not in configured directory, but found in allowed temp directory",
-                            file.getPath());
-            }
-            return file;
-        }
-
-        // Both checks failed
-        String configuredPath = allowedDir != null ? allowedDir.getPath() : "null";
-        logger.error("File {} is outside allowed directory ({}) and not in any temp directory",
-                    file.getPath(), configuredPath);
-        throw new SecurityException("Invalid file path");
+        validateWithinDirectory(file, allowedDir);
+        return file;
     }
 
     // ========================================================================
@@ -165,6 +147,54 @@ public final class PathValidationUtils {
 
 		// 2. Validate destination path
 		return validatePath(userProvidedFileName, destinationDir);
+    }
+
+    // ========================================================================
+    // TEMP DIRECTORY VALIDATION
+    // ========================================================================
+
+    /**
+     * Checks if a file is located within an allowed system temp directory.
+     *
+     * <p>Allowed temp directories include:</p>
+     * <ul>
+     *   <li>java.io.tmpdir - System temp directory</li>
+     *   <li>catalina.base/work - Tomcat work directory (where Struts2 stores uploads)</li>
+     *   <li>catalina.home/work - Tomcat home work directory</li>
+     * </ul>
+     *
+     * <p>Use this method as a fallback when validating files that may legitimately
+     * be in system temp directories, such as application-created temp files or
+     * files awaiting cleanup.</p>
+     *
+     * @param file the file to check
+     * @return true if the file is within an allowed temp directory, false otherwise
+     */
+    public static boolean isInAllowedTempDirectory(File file) {
+        if (file == null) {
+            return false;
+        }
+
+        try {
+            String canonicalPath = file.getCanonicalPath();
+            Set<String> tempDirs = getAllowedTempDirectories();
+
+            if (tempDirs.isEmpty()) {
+                logger.warn("No temp directories configured - temp file operations will be rejected. Check java.io.tmpdir and catalina.base/catalina.home system properties.");
+                return false;
+            }
+
+            for (String allowedDir : tempDirs) {
+                if (canonicalPath.equals(allowedDir) || canonicalPath.startsWith(allowedDir + File.separator)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (IOException e) {
+            logger.error("Error validating file path", e);
+            return false;
+        }
     }
 
     // ========================================================================
@@ -259,45 +289,17 @@ public final class PathValidationUtils {
         }
     }
 
-    private static boolean isInAllowedTempDirectory(File file) {
-        if (file == null) {
-            return false;
-        }
-
-        try {
-            String canonicalPath = file.getCanonicalPath();
-            Set<String> tempDirs = getAllowedTempDirectories();
-
-            if (tempDirs.isEmpty()) {
-                logger.warn("No temp directories configured - temp file operations will be rejected. Check java.io.tmpdir and catalina.base/catalina.home system properties.");
-                return false;
-            }
-
-            for (String allowedDir : tempDirs) {
-                if (canonicalPath.equals(allowedDir) || canonicalPath.startsWith(allowedDir + File.separator)) {
-                    return true;
-                }
-            }
-
-            logger.error("File not in allowed temp directory: {}", canonicalPath);
-            return false;
-        } catch (IOException e) {
-            logger.error("Error validating file path", e);
-            return false;
-        }
-    }
-
     /**
      * Returns the set of allowed temp directories. Uses lazy initialization with
      * double-checked locking for thread safety.
      *
-     * @return Set of canonical paths for allowed temp directories
+     * @return Unmodifiable set of canonical paths for allowed temp directories
      */
     private static Set<String> getAllowedTempDirectories() {
         if (allowedTempDirectories == null) {
             synchronized (PathValidationUtils.class) {
                 if (allowedTempDirectories == null) {
-                    allowedTempDirectories = buildAllowedTempDirectories();
+                    allowedTempDirectories = Collections.unmodifiableSet(buildAllowedTempDirectories());
                 }
             }
         }

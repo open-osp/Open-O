@@ -210,8 +210,7 @@ public class Util {
         File f = new File(filename);
         OscarProperties props = OscarProperties.getInstance();
 
-        // Check configured allowed directories (TMP_DIR, DOCUMENT_DIR)
-        // validateExistingPath also falls back to system temp dirs if file isn't in the configured dir
+        // Try configured directories first (strict validation, no temp fallback)
         String[] allowedDirProperties = {"TMP_DIR", "DOCUMENT_DIR"};
         for (String propName : allowedDirProperties) {
             String dirPath = props.getProperty(propName);
@@ -220,10 +219,15 @@ public class Util {
                     File validatedFile = PathValidationUtils.validateExistingPath(f, new File(dirPath));
                     return cleanFile(validatedFile);
                 } catch (SecurityException e) {
-                    // File not in this directory or temp dirs, try next configured directory
+                    // File not in this directory, try next configured directory
                     logger.debug("File validation failed for {}: {}", propName, e.getMessage());
                 }
             }
+        }
+
+        // Fall back to system temp directories for app-created temp files
+        if (PathValidationUtils.isInAllowedTempDirectory(f)) {
+            return cleanFile(f);
         }
 
         logger.error("File validation failed - file is outside all allowed directories: {}", filename);
