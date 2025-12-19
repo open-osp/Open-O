@@ -91,26 +91,12 @@
 <%
     long startTimeToGetP = System.currentTimeMillis();
 
-    String module = "";
-    String htQueryString = "";
-    if (request.getParameter("htracker") != null) {
-        module = "htracker";
-        htQueryString = "&" + module;
-    }
-
-    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
-        module = "slim";
-        htQueryString = htQueryString + "=slim";
-    }
-
     String temp = "";
     if (request.getParameter("flowsheet") != null) {
         temp = request.getParameter("flowsheet");
     }else if(request.getAttribute("flowsheet") != null)
 	{
 		temp = (String) request.getAttribute("flowsheet");
-    } else {
-        temp = "tracker";
     }
 
     String flowsheet = temp;
@@ -171,16 +157,6 @@
     <link rel="shortcut icon" href="ico/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/DT_bootstrap.css">
-
-    <%
-        if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
-    %>
-<style>
-        #container-main {
-            width: 720px !important;
-        }
-    </style>
-    <%}%>
 
 <style>
 
@@ -278,14 +254,7 @@
                         tracker = "&tracker=slim";
                     }
 
-                    String flowsheetPath = "";
-                    String folderPath = "oscarEncounter/oscarMeasurements/";
-
-                    if (request.getParameter("htracker") != null) {
-                        flowsheetPath = folderPath + "HealthTrackerPage.jspf";
-                    } else {
-                        flowsheetPath = folderPath + "TemplateFlowSheet.jsp";
-                    }
+                    String flowsheetPath = "oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp";
             %>
 
             <a href="<%= request.getContextPath() %>/<%=flowsheetPath%>?demographic_no=<%=demographic%>&template=<%=flowsheet%><%=tracker%>"
@@ -532,9 +501,6 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 
                     <form name="FlowSheetCustomActionForm" id="FlowSheetCustomActionForm" class="well"
                           action="FlowSheetCustomAction.do" method="post">
-                        <%if (request.getParameter("htracker") != null) { %>
-                        <input type="hidden" name="htracker" value="<%=module%>">
-                        <%}%>
                         <input type="hidden" name="flowsheet" value="<%=temp%>"/>
                         <input type="hidden" name="method" value="save"/>
                         <%if (demographic != null) {%>
