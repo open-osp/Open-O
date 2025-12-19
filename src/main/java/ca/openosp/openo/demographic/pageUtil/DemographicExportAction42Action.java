@@ -1284,7 +1284,7 @@ public class DemographicExportAction42Action extends ActionSupport {
 
                                     AbstractCodeSystemDao dao = null;
                                     try {
-                                        dao = (AbstractCodeSystemDao) SpringUtils.getBean(Class.forName("org.oscarehr.common.dao." + org.apache.commons.lang3.StringUtils.capitalize(dx.getCodingSystem()) + "Dao"));
+                                        dao = (AbstractCodeSystemDao) SpringUtils.getBean(Class.forName("ca.openosp.openo.commn.dao." + org.apache.commons.lang3.StringUtils.capitalize(dx.getCodingSystem()) + "Dao"));
                                     } catch (ClassNotFoundException e) {
                                         logger.warn("DAO class not found for coding system: " + dx.getCodingSystem(), e);
                                     }
