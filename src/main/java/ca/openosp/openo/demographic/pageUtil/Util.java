@@ -210,18 +210,27 @@ public class Util {
         File f = new File(filename);
         OscarProperties props = OscarProperties.getInstance();
 
-        // Only allow deletion within TMP_DIR (used for export temp files/directories)
-        String tmpDir = props.getProperty("TMP_DIR");
-        if (tmpDir != null) {
-            try {
-                File validatedFile = PathValidationUtils.validateExistingPath(f, new File(tmpDir));
-                return cleanFile(validatedFile);
-            } catch (SecurityException e) {
-                logger.warn("File validation failed for TMP_DIR: {}", e.getMessage());
+        // Try configured directories first (strict validation, no temp fallback)
+        String[] allowedDirProperties = {"TMP_DIR", "DOCUMENT_DIR"};
+        for (String propName : allowedDirProperties) {
+            String dirPath = props.getProperty(propName);
+            if (dirPath != null && !dirPath.trim().isEmpty()) {
+                try {
+                    File validatedFile = PathValidationUtils.validateExistingPath(f, new File(dirPath));
+                    return cleanFile(validatedFile);
+                } catch (SecurityException e) {
+                    // File not in this directory, try next configured directory
+                    logger.debug("File validation failed for {}: {}", propName, e.getMessage());
+                }
             }
         }
 
-        logger.error("Error! File is outside TMP_DIR: " + filename);
+        // Fall back to system temp directories for app-created temp files
+        if (PathValidationUtils.isInAllowedTempDirectory(f)) {
+            return cleanFile(f);
+        }
+
+        logger.error("File validation failed - file is outside all allowed directories: {}", filename);
         return false;
     }
 
