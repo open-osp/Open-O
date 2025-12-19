@@ -99,21 +99,12 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @return the passwd (decrypted plain text)
      */
     public String getPasswd() {
-        try {
-            if (passwd != null && !passwd.isEmpty()) {
-                if (EncryptionUtils.isEncrypted(passwd)) {
-                    return EncryptionUtils.decrypt(passwd);
-                } else {
-                    // Legacy unencrypted password - encrypt and save it for future use
-                    this.setPasswd(passwd);
-                    return passwd;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to decrypt password - possible key rotation or corruption", e);
-            return "";
+        String decrypted = decryptField(passwd, "password");
+        // Auto-migrate legacy unencrypted passwords
+        if (decrypted != null && !decrypted.isEmpty() && !EncryptionUtils.isEncrypted(passwd)) {
+            this.setPasswd(decrypted);
         }
-        return "";
+        return decrypted;
     }
 
 
@@ -121,15 +112,7 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @param passwd the passwd to set (plain text, will be encrypted immediately)
      */
     public void setPasswd(String passwd) {
-        try {
-            if (passwd != null && !passwd.isEmpty()) {
-                this.passwd = EncryptionUtils.encrypt(passwd);
-            } else {
-                this.passwd = passwd;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to encrypt password", e);
-        }
+        this.passwd = encryptField(passwd, "password");
     }
 
 
@@ -153,21 +136,12 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @return the faxPasswd (decrypted plain text)
      */
     public String getFaxPasswd() {
-        try {
-            if (faxPasswd != null && !faxPasswd.isEmpty()) {
-                if (EncryptionUtils.isEncrypted(faxPasswd)) {
-                    return EncryptionUtils.decrypt(faxPasswd);
-                } else {
-                    // Legacy unencrypted password - encrypt and save it for future use
-                    this.setFaxPasswd(faxPasswd);
-                    return faxPasswd;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to decrypt fax password - possible key rotation or corruption", e);
-            return "";
+        String decrypted = decryptField(faxPasswd, "fax password");
+        // Auto-migrate legacy unencrypted passwords
+        if (decrypted != null && !decrypted.isEmpty() && !EncryptionUtils.isEncrypted(faxPasswd)) {
+            this.setFaxPasswd(decrypted);
         }
-        return "";
+        return decrypted;
     }
 
 
@@ -175,14 +149,49 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @param faxPasswd the faxPasswd to set (plain text, will be encrypted immediately)
      */
     public void setFaxPasswd(String faxPasswd) {
+        this.faxPasswd = encryptField(faxPasswd, "fax password");
+    }
+
+    /**
+     * Shared helper method to decrypt a password field.
+     * Handles legacy unencrypted passwords and decryption failures gracefully.
+     *
+     * @param value the field value (may be encrypted or legacy plain text)
+     * @param fieldLabel descriptive label for error messages
+     * @return decrypted plain text password, or empty string if decryption fails
+     */
+    private String decryptField(String value, String fieldLabel) {
         try {
-            if (faxPasswd != null && !faxPasswd.isEmpty()) {
-                this.faxPasswd = EncryptionUtils.encrypt(faxPasswd);
-            } else {
-                this.faxPasswd = faxPasswd;
+            if (value != null && !value.isEmpty()) {
+                if (EncryptionUtils.isEncrypted(value)) {
+                    return EncryptionUtils.decrypt(value);
+                }
+                // Legacy plain text - return as-is, caller decides whether to re-encrypt
+                return value;
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to encrypt fax password", e);
+            logger.error("Failed to decrypt " + fieldLabel + " - possible key rotation or corruption", e);
+            return "";
+        }
+        return "";
+    }
+
+    /**
+     * Shared helper method to encrypt a password field.
+     *
+     * @param plainText the plain text password to encrypt
+     * @param fieldLabel descriptive label for error messages
+     * @return encrypted password value, or original value if null/empty
+     * @throws RuntimeException if encryption fails
+     */
+    private String encryptField(String plainText, String fieldLabel) {
+        try {
+            if (plainText != null && !plainText.isEmpty()) {
+                return EncryptionUtils.encrypt(plainText);
+            }
+            return plainText; // null/empty preserved
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt " + fieldLabel, e);
         }
     }
 
