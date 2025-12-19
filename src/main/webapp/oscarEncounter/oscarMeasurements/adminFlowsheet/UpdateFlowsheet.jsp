@@ -470,7 +470,7 @@ display:inline-block;
                         <%if (request.getParameter("demographic") == null) { %>
                         <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>" class="btn">Cancel</a>
                         <%} else { %>
-                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%>"
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%>"
                            class="btn">Cancel</a>
                         <%} %>
                         <input type="submit" class="btn btn-primary" value="Update"/>
