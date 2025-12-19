@@ -57,6 +57,12 @@ public class ImageUpload2Action extends ActionSupport {
         }
 
         try {
+            if (imageFileName == null || imageFileName.isEmpty()) {
+                MiscUtils.getLogger().warn("Image upload rejected: no filename provided");
+                addActionError("Upload failed: no file was selected.");
+                return ERROR;
+            }
+
             // Sanitize the filename and track if it changed
             String originalFileName = imageFileName;
             imageFileName = MiscUtils.sanitizeFileName(imageFileName);

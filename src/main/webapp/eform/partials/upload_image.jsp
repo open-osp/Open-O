@@ -25,6 +25,7 @@
 --%>
 <!DOCTYPE html>
 <%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.OscarProperties, ca.openosp.openo.eform.*, java.util.*" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -82,7 +83,7 @@
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong>Success!</strong> Your image was uploaded.
             <c:if test="${ not empty sanitizedFileName }">
-                <br/>Saved as: <strong>${sanitizedFileName}</strong> (filename was sanitized)
+                <br/>Saved as: <strong>${Encode.formHtmlContent(sanitizedFileName)}</strong>
             </c:if>
         </div>
         <script>
