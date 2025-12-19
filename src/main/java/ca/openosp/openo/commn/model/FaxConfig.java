@@ -42,19 +42,8 @@ public class FaxConfig extends AbstractModel<Integer> {
 
     private String url = "";
     private String siteUser = "";
-
-    @Column(name = "passwd")
-    private String encryptedPasswd = "";
-
-    @Transient
     private String passwd = "";
-
     private String faxUser = "";
-
-    @Column(name = "faxPasswd")
-    private String encryptedFaxPasswd = "";
-
-    @Transient
     private String faxPasswd = "";
 
     private String faxNumber = "";
@@ -110,15 +99,37 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @return the passwd (decrypted plain text)
      */
     public String getPasswd() {
-        return passwd;
+        try {
+            if (passwd != null && !passwd.isEmpty()) {
+                if (EncryptionUtils.isEncrypted(passwd)) {
+                    return EncryptionUtils.decrypt(passwd);
+                } else {
+                    // Legacy unencrypted password - encrypt and save it for future use
+                    this.setPasswd(passwd);
+                    return passwd;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to decrypt password - possible key rotation or corruption", e);
+            return "";
+        }
+        return "";
     }
 
 
     /**
-     * @param passwd the passwd to set (plain text, will be encrypted before persistence)
+     * @param passwd the passwd to set (plain text, will be encrypted immediately)
      */
     public void setPasswd(String passwd) {
-        this.passwd = passwd;
+        try {
+            if (passwd != null && !passwd.isEmpty()) {
+                this.passwd = EncryptionUtils.encrypt(passwd);
+            } else {
+                this.passwd = passwd;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt password", e);
+        }
     }
 
 
@@ -142,15 +153,37 @@ public class FaxConfig extends AbstractModel<Integer> {
      * @return the faxPasswd (decrypted plain text)
      */
     public String getFaxPasswd() {
-        return faxPasswd;
+        try {
+            if (faxPasswd != null && !faxPasswd.isEmpty()) {
+                if (EncryptionUtils.isEncrypted(faxPasswd)) {
+                    return EncryptionUtils.decrypt(faxPasswd);
+                } else {
+                    // Legacy unencrypted password - encrypt and save it for future use
+                    this.setFaxPasswd(faxPasswd);
+                    return faxPasswd;
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Failed to decrypt fax password - possible key rotation or corruption", e);
+            return "";
+        }
+        return "";
     }
 
 
     /**
-     * @param faxPasswd the faxPasswd to set (plain text, will be encrypted before persistence)
+     * @param faxPasswd the faxPasswd to set (plain text, will be encrypted immediately)
      */
     public void setFaxPasswd(String faxPasswd) {
-        this.faxPasswd = faxPasswd;
+        try {
+            if (faxPasswd != null && !faxPasswd.isEmpty()) {
+                this.faxPasswd = EncryptionUtils.encrypt(faxPasswd);
+            } else {
+                this.faxPasswd = faxPasswd;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt fax password", e);
+        }
     }
 
 
@@ -254,75 +287,5 @@ public class FaxConfig extends AbstractModel<Integer> {
 
     public void setDownload(boolean download) {
         this.download = download;
-    }
-
-    /**
-     * JPA lifecycle callback to decrypt passwords after loading from database.
-     * Automatically handles migration of legacy unencrypted passwords.
-     */
-    @PostLoad
-    private void decryptPasswords() {
-        this.passwd = decryptPassword(encryptedPasswd);
-        this.faxPasswd = decryptPassword(encryptedFaxPasswd);
-    }
-
-    /**
-     * JPA lifecycle callback to encrypt passwords before persisting to database.
-     * Called before both INSERT and UPDATE operations.
-     */
-    @PrePersist
-    @PreUpdate
-    private void encryptPasswords() {
-        // Only encrypt and overwrite if plaintext password is non-null and non-empty
-        if (passwd != null && !passwd.isEmpty()) {
-            this.encryptedPasswd = encryptPassword(passwd, "passwd");
-        }
-        if (faxPasswd != null && !faxPasswd.isEmpty()) {
-            this.encryptedFaxPasswd = encryptPassword(faxPasswd, "faxPasswd");
-        }
-    }
-
-    /**
-     * Helper method to decrypt a password field.
-     * Handles legacy unencrypted passwords and decryption failures gracefully.
-     *
-     * @param encryptedValue the encrypted password value from database
-     * @return decrypted plain text password, or empty string if decryption fails
-     */
-    private String decryptPassword(String encryptedValue) {
-        try {
-            if (encryptedValue != null && !encryptedValue.isEmpty()) {
-                if (EncryptionUtils.isEncrypted(encryptedValue)) {
-                    return EncryptionUtils.decrypt(encryptedValue);
-                } else {
-                    // Legacy unencrypted password - use as-is and it will be encrypted on next save
-                    return encryptedValue;
-                }
-            }
-        } catch (Exception e) {
-            logger.error("Failed to decrypt fax password - possible key rotation or corruption. Field will need to be re-entered.", e);
-            // Return empty to force credential re-entry rather than using potentially compromised value
-            return "";
-        }
-        return "";
-    }
-
-    /**
-     * Helper method to encrypt a password field.
-     *
-     * @param plainText the plain text password to encrypt
-     * @param fieldName the name of the field being encrypted (for error messages)
-     * @return encrypted password value
-     * @throws RuntimeException if encryption fails
-     */
-    private String encryptPassword(String plainText, String fieldName) {
-        try {
-            if (plainText != null && !plainText.isEmpty()) {
-                return EncryptionUtils.encrypt(plainText);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to encrypt " + fieldName, e);
-        }
-        return "";
     }
 }
