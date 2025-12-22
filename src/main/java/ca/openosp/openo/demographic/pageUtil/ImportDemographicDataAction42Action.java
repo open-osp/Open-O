@@ -3846,15 +3846,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
     /**
      * Extracts the string value from a ResultNormalAbnormalFlag complex type.
-     * The field contains either resultNormalAbnormalFlagAsEnum or resultNormalAbnormalFlagAsPlainText.
+     * Per the XSD schema, this is defined as xs:choice so valid XML should only have one child element set.
+     * If both are unexpectedly set, enum takes precedence for consistency with HL7CreateFile.java.
      *
      * @param flag the ResultNormalAbnormalFlag object to extract from
-     * @return the flag value as a string, or null if the flag is null
+     * @return the flag value as a string (e.g., "H", "L", "N"), or null if the flag is null
      */
     String getResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag flag) {
         if (flag == null) return null;
 
         if (flag.getResultNormalAbnormalFlagAsEnum() != null) {
+            // Using toString() to match HL7CreateFile.java pattern; returns HL7 abnormal flag codes (e.g., "H", "L", "A")
             return flag.getResultNormalAbnormalFlagAsEnum().toString();
         }
         if (flag.getResultNormalAbnormalFlagAsPlainText() != null) {
