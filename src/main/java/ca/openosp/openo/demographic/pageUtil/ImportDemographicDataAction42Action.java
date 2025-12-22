@@ -3844,6 +3844,25 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         return ret;
     }
 
+    /**
+     * Extracts the string value from a ResultNormalAbnormalFlag complex type.
+     * The field contains either resultNormalAbnormalFlagAsEnum or resultNormalAbnormalFlagAsPlainText.
+     *
+     * @param flag the ResultNormalAbnormalFlag object to extract from
+     * @return the flag value as a string, or null if the flag is null
+     */
+    String getResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag flag) {
+        if (flag == null) return null;
+
+        if (flag.getResultNormalAbnormalFlagAsEnum() != null) {
+            return flag.getResultNormalAbnormalFlagAsEnum().toString();
+        }
+        if (flag.getResultNormalAbnormalFlagAsPlainText() != null) {
+            return flag.getResultNormalAbnormalFlagAsPlainText();
+        }
+        return null;
+    }
+
     String mapPreventionTypeByCode(cdsDt.Code imCode) {
         if (imCode == null) return null;
         if (!imCode.getCodingSystem().equalsIgnoreCase("DIN")) return null;
@@ -4045,7 +4064,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             }
         }
 
-        appendIfNotNull(s, "ResultNormalAbnormalFlag", "" + labRes.getResultNormalAbnormalFlag());
+        appendIfNotNull(s, "ResultNormalAbnormalFlag", getResultNormalAbnormalFlag(labRes.getResultNormalAbnormalFlag()));
         appendIfNotNull(s, "TestResultsInformationreportedbytheLaboratory", labRes.getTestResultsInformationReportedByTheLab());
         appendIfNotNull(s, "NotesFromLab", labRes.getNotesFromLab());
         appendIfNotNull(s, "PhysiciansNotes", labRes.getPhysiciansNotes());
