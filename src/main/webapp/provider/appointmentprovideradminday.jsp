@@ -1602,13 +1602,11 @@
                                                 <c:out value='<%=curProviderName[nProvider]  + " (" + appointmentCount + ") " %>'/>
                                             </a>
                                                 <oscar:oscarPropertiesCheck value="yes" property="TOGGLE_REASON_BY_PROVIDER" defaultVal="yes">
-                                                    <a
-                                                        href="#"
-                                                        class="expand-reason-btn"
-                                                        data-provider="<%= curProvider_no[nProvider] %>"
-                                                        onclick="toggleReason(event, '<%= curProvider_no[nProvider] %>');"
-                                                        title="<fmt:setBundle basename='oscarResources'/>
-                                                        <fmt:message key='provider.appointmentProviderAdminDay.expandreason'/>"
+                                                    <a href="#"
+                                                       class="expand-reason-btn"
+                                                       data-provider="<%= curProvider_no[nProvider] %>"
+                                                       onclick="toggleReason(event, '<%= curProvider_no[nProvider] %>');"
+                                                       title="<fmt:setBundle basename='oscarResources'/><fmt:message key='provider.appointmentProviderAdminDay.expandreason'/>"
                                                     >*</a>
                                                 </oscar:oscarPropertiesCheck>
 
@@ -1941,10 +1939,29 @@
                                                         %>
 
 
+                                                        <%
+                                                            // Build tooltip variants for privacy-compliant display (dot-name format)
+                                                            // Only include reason/notes in tooltip if they have actual content
+                                                            // Check for null, empty, "null" string, and whitespace-only values
+                                                            String timeRange = iS + ":" + (iSm > 10 ? "" : "0") + iSm + "-" + iE + ":" + iEm;
+                                                            String dotTooltipShort = timeRange + " " + Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
+                                                            StringBuilder dotTooltipFullBuilder = new StringBuilder(dotTooltipShort);
+                                                            String dotReasonTrimmed = (reason != null) ? reason.trim() : "";
+                                                            String dotNotesTrimmed = (notes != null) ? notes.trim() : "";
+                                                            if (!dotReasonTrimmed.isEmpty() && !"null".equals(dotReasonTrimmed)) {
+                                                                dotTooltipFullBuilder.append("&#013;&#010;reason: ").append(Encode.forHtmlAttribute(dotReasonTrimmed));
+                                                            }
+                                                            if (!dotNotesTrimmed.isEmpty() && !"null".equals(dotNotesTrimmed)) {
+                                                                dotTooltipFullBuilder.append("&#013;&#010;notes: ").append(Encode.forHtmlAttribute(dotNotesTrimmed));
+                                                            }
+                                                            String dotTooltipFull = dotTooltipFullBuilder.toString();
+                                                        %>
                                                         <a href="javascript:void(0)"
+                                                           class="appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>"
                                                            onClick="popupPage(600,780,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=0&displaymode=edit&dboperation=search');return false;"
-                                                           title="<%=iS+":"+(iSm>10?"":"0")+iSm%>-<%=iE+":"+iEm%>
-                                                                <%=Encode.forHtmlAttribute(name)%><%= (type != null && ! type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "" %>&#013;&#010;<%="reason: " + Encode.forHtmlAttribute(reason)%>&#013;&#010;<%="notes: " + Encode.forHtmlAttribute(notes)%>">
+                                                           data-title-full="<%=dotTooltipFull%>"
+                                                           data-title-short="<%=dotTooltipShort%>"
+                                                           title="<%=dotTooltipFull%>">
                                                             <span>
                                                             .<%=(view == 0 && numAvailProvider != 1) ? (name.length() > len ? name.substring(0, len).toUpperCase() : Encode.forHtmlContent(name.toUpperCase())) : Encode.forHtmlContent(name.toUpperCase())%>
                                                             </span>
@@ -2031,12 +2048,30 @@
                                                             start_time += iSm + ":00";
                                                         %>
 
-                                                        <a class="apptLink" href="javascript:void(0)"
+                                                        <%
+                                                            // Build tooltip variants for privacy-compliant display
+                                                            // Only include reason/notes in tooltip if they have actual content
+                                                            // Check for null, empty, "null" string, and whitespace-only values
+                                                            String tooltipShort = Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
+                                                            StringBuilder tooltipFullBuilder = new StringBuilder(tooltipShort);
+                                                            String reasonTrimmed = (reason != null) ? reason.trim() : "";
+                                                            String notesTrimmed = (notes != null) ? notes.trim() : "";
+                                                            if (!reasonTrimmed.isEmpty() && !"null".equals(reasonTrimmed)) {
+                                                                tooltipFullBuilder.append("&#013;&#010;reason: ").append(Encode.forHtmlAttribute(reasonTrimmed));
+                                                            }
+                                                            if (!notesTrimmed.isEmpty() && !"null".equals(notesTrimmed)) {
+                                                                tooltipFullBuilder.append("&#013;&#010;notes: ").append(Encode.forHtmlAttribute(notesTrimmed));
+                                                            }
+                                                            String tooltipFull = tooltipFullBuilder.toString();
+                                                        %>
+                                                        <a class="apptLink appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>" href="javascript:void(0)"
                                                            onClick="popupPage(535,860,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search');return false;"
+                                                           data-title-full="<%=tooltipFull%>"
+                                                           data-title-short="<%=tooltipShort%>"
                                                                 <oscar:oscarPropertiesCheck
                                                                         property="SHOW_APPT_REASON_TOOLTIP" value="yes"
                                                                         defaultVal="true">
-                                                                    title="<%=Encode.forHtmlAttribute(name)%><%= (type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "" %>&#013;&#010;<%="reason: " + Encode.forHtmlAttribute(reason)%>&#013;&#010;<%="notes: " + Encode.forHtmlAttribute(notes)%>"
+                                                                    title="<%=tooltipFull%>"
                                                                 </oscar:oscarPropertiesCheck> >
                                                             <%=(name.length() > len ? Encode.forHtmlContent(name.substring(0, len)) : Encode.forHtmlContent(name))%>
                                                         </a>
