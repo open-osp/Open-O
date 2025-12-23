@@ -1941,20 +1941,12 @@
 
                                                         <%
                                                             // Build tooltip variants for privacy-compliant display (dot-name format)
-                                                            // Only include reason/notes in tooltip if they have actual content
-                                                            // Check for null, empty, "null" string, and whitespace-only values
+                                                            // Always show reason/notes labels, but handle "null" string from String.valueOf(null)
                                                             String timeRange = iS + ":" + (iSm > 10 ? "" : "0") + iSm + "-" + iE + ":" + iEm;
                                                             String dotTooltipShort = timeRange + " " + Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
-                                                            StringBuilder dotTooltipFullBuilder = new StringBuilder(dotTooltipShort);
-                                                            String dotReasonTrimmed = (reason != null) ? reason.trim() : "";
-                                                            String dotNotesTrimmed = (notes != null) ? notes.trim() : "";
-                                                            if (!dotReasonTrimmed.isEmpty() && !"null".equals(dotReasonTrimmed)) {
-                                                                dotTooltipFullBuilder.append("&#013;&#010;reason: ").append(Encode.forHtmlAttribute(dotReasonTrimmed));
-                                                            }
-                                                            if (!dotNotesTrimmed.isEmpty() && !"null".equals(dotNotesTrimmed)) {
-                                                                dotTooltipFullBuilder.append("&#013;&#010;notes: ").append(Encode.forHtmlAttribute(dotNotesTrimmed));
-                                                            }
-                                                            String dotTooltipFull = dotTooltipFullBuilder.toString();
+                                                            String dotReasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
+                                                            String dotNotesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
+                                                            String dotTooltipFull = dotTooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(dotReasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(dotNotesDisplay);
                                                         %>
                                                         <a href="javascript:void(0)"
                                                            class="appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>"
@@ -2050,19 +2042,11 @@
 
                                                         <%
                                                             // Build tooltip variants for privacy-compliant display
-                                                            // Only include reason/notes in tooltip if they have actual content
-                                                            // Check for null, empty, "null" string, and whitespace-only values
+                                                            // Always show reason/notes labels, but handle "null" string from String.valueOf(null)
                                                             String tooltipShort = Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
-                                                            StringBuilder tooltipFullBuilder = new StringBuilder(tooltipShort);
-                                                            String reasonTrimmed = (reason != null) ? reason.trim() : "";
-                                                            String notesTrimmed = (notes != null) ? notes.trim() : "";
-                                                            if (!reasonTrimmed.isEmpty() && !"null".equals(reasonTrimmed)) {
-                                                                tooltipFullBuilder.append("&#013;&#010;reason: ").append(Encode.forHtmlAttribute(reasonTrimmed));
-                                                            }
-                                                            if (!notesTrimmed.isEmpty() && !"null".equals(notesTrimmed)) {
-                                                                tooltipFullBuilder.append("&#013;&#010;notes: ").append(Encode.forHtmlAttribute(notesTrimmed));
-                                                            }
-                                                            String tooltipFull = tooltipFullBuilder.toString();
+                                                            String reasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
+                                                            String notesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
+                                                            String tooltipFull = tooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(reasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(notesDisplay);
                                                         %>
                                                         <a class="apptLink appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>" href="javascript:void(0)"
                                                            onClick="popupPage(535,860,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search');return false;"
