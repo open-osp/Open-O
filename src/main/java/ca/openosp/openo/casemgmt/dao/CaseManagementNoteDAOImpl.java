@@ -51,6 +51,8 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.Query;
+
 import ca.openosp.openo.PMmodule.model.Program;
 import ca.openosp.openo.casemgmt.model.CaseManagementNote;
 import ca.openosp.openo.casemgmt.model.CaseManagementSearchBean;
@@ -637,27 +639,21 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
 
     @Override
     public int getNoteCountForProviderForDateRange(String providerNo, Date startDate, Date endDate) {
-        int ret = 0;
-
-        Connection c = null;
         try {
-            c = DbConnectionFilter.getThreadLocalDbConnection();
-            String sqlCommand = "select count(distinct uuid) from casemgmt_note where provider_no = ?1 and observation_date >= ?2 and observation_date <= ?3";
-            try (PreparedStatement ps = c.prepareStatement(sqlCommand)) {
-                ps.setString(1, providerNo);
-                ps.setTimestamp(2, new Timestamp(startDate.getTime()));
-                ps.setTimestamp(3, new Timestamp(endDate.getTime()));
+            Session session = currentSession();
+            String sqlCommand = "select count(distinct uuid) from casemgmt_note where provider_no = :providerNo and observation_date >= :startDate and observation_date <= :endDate";
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        ret = rs.getInt(1);
-                    }
-                }
-            }
+            Query<?> query = session.createNativeQuery(sqlCommand);
+            query.setParameter("providerNo", providerNo);
+            query.setParameter("startDate", new Timestamp(startDate.getTime()));
+            query.setParameter("endDate", new Timestamp(endDate.getTime()));
+
+            Number result = (Number) query.uniqueResult();
+            return result != null ? result.intValue() : 0;
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
+            return 0;
         }
-        return ret;
     }
 
     @Override
