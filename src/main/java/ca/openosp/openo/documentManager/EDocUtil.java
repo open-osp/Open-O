@@ -80,6 +80,7 @@ import ca.openosp.openo.managers.ProgramManager2;
 import ca.openosp.openo.managers.TicklerManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import ca.openosp.MyDateFormat;
@@ -1216,18 +1217,6 @@ public final class EDocUtil {
         try {
             String docDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
             File documentDir = new File(docDir);
-            String canonicalDocDir = documentDir.getCanonicalPath();
-
-            // System temp directory (e.g., /tmp)
-            String canonicalTempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalPath();
-
-            // Tomcat temp directory (e.g., /path/to/tomcat/temp) - used for fax PDFs
-            String catalinaBase = System.getProperty("catalina.base");
-            String canonicalCatalinaTempDir = null;
-            if (catalinaBase != null && !catalinaBase.isEmpty()) {
-                File catalinaTempDir = new File(catalinaBase, "temp");
-                canonicalCatalinaTempDir = catalinaTempDir.getCanonicalPath();
-            }
 
             // Determine the input file - if relative, resolve against document directory
             Path inputPath = Paths.get(fileName);
@@ -1242,21 +1231,19 @@ public final class EDocUtil {
             // Get the canonical path to resolve any symbolic links or relative paths
             String canonicalPath = inputFile.getCanonicalPath();
 
-            // Validate that the resolved path is within the allowed document/temp directories
-            boolean isAllowed = canonicalPath.startsWith(canonicalDocDir + File.separator) ||
-                                canonicalPath.equals(canonicalDocDir) ||
-                                canonicalPath.startsWith(canonicalTempDir + File.separator) ||
-                                canonicalPath.equals(canonicalTempDir) ||
-                                (canonicalCatalinaTempDir != null &&
-                                 (canonicalPath.startsWith(canonicalCatalinaTempDir + File.separator) ||
-                                  canonicalPath.equals(canonicalCatalinaTempDir)));
-
-            if (!isAllowed) {
-                logger.error("Security violation: Attempted to access file outside allowed directory: ");
+            // Use PathValidationUtils for validation
+            // First try document directory
+            try {
+                PathValidationUtils.validateExistingPath(inputFile, documentDir);
+                return canonicalPath;
+            } catch (SecurityException e) {
+                // Not in document directory, check temp directories
+                if (PathValidationUtils.isInAllowedTempDirectory(inputFile)) {
+                    return canonicalPath;
+                }
+                logger.error("Security violation: Attempted to access file outside allowed directory");
                 throw new SecurityException("Access denied: File is outside the allowed directories");
             }
-
-            return canonicalPath;
         } catch (IOException e) {
             logger.error("Error resolving file path: " + fileName, e);
             throw new SecurityException("Unable to resolve file path securely", e);
@@ -1264,47 +1251,42 @@ public final class EDocUtil {
     }
 
     private static void writeContent(String fileName, byte[] content) throws IOException {
-        if (fileName.contains("..")) {
-            throw new SecurityException("Invalid filename");
+        String docDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+        File docDirFile = new File(docDir);
+
+        // Use PathValidationUtils to validate and get safe file path
+        File targetFile;
+        try {
+            targetFile = PathValidationUtils.validatePath(fileName, docDirFile);
+        } catch (SecurityException e) {
+            throw new SecurityException("Invalid filename: " + fileName);
         }
 
-        String docDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-        Path docDirPath = Paths.get(docDir).toAbsolutePath().normalize();
-        
-        
-        Path targetPath = docDirPath.resolve(fileName).normalize();
+        Path docDirPath = docDirFile.toPath().toAbsolutePath().normalize();
+        Path targetPath = targetFile.toPath();
 
-        // Resolve any symbolic links to get the real path
+        // Additional symlink protection for existing files
         try {
             // toRealPath() follows symlinks and gives you the actual path
             Path realPath = targetPath.toRealPath();
-            
-            // Now check if the REAL path is still within docDir
-            if (!realPath.startsWith(docDirPath.toRealPath())) {
-                throw new SecurityException("Invalid file path - escapes document directory");
-            }
+
+            // Now check if the REAL path is still within docDir using PathValidationUtils
+            PathValidationUtils.validateExistingPath(realPath.toFile(), docDirPath.toRealPath().toFile());
         } catch (NoSuchFileException e) {
             // File doesn't exist yet (for new files), check the parent directory
             Path parentPath = targetPath.getParent();
             if (parentPath != null && Files.exists(parentPath)) {
                 Path realParentPath = parentPath.toRealPath();
-                if (!realParentPath.startsWith(docDirPath.toRealPath())) {
-                    throw new SecurityException("Invalid file path - parent escapes document directory");
-                }
-            }
-            // If parent doesn't exist either, the original check is sufficient
-            else if (!targetPath.startsWith(docDirPath)) {
-                throw new SecurityException("Invalid file path");
+                PathValidationUtils.validateExistingPath(realParentPath.toFile(), docDirPath.toRealPath().toFile());
             }
         }
 
         OutputStream os = null;
         try {
-            File file = new File(targetPath.toString());
-            if (!file.exists()) {
-                file.createNewFile();
+            if (!targetFile.exists()) {
+                targetFile.createNewFile();
             }
-            os = new BufferedOutputStream(new FileOutputStream(file));
+            os = new BufferedOutputStream(new FileOutputStream(targetFile));
             os.write(content);
             os.flush();
         } finally {

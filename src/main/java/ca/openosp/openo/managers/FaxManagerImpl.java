@@ -45,6 +45,7 @@ import ca.openosp.openo.fax.core.FaxRecipient;
 import ca.openosp.openo.fax.core.FaxSchedulerJob;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.openosp.openo.form.util.FormTransportContainer;
@@ -52,6 +53,7 @@ import ca.openosp.openo.log.LogAction;
 import ca.openosp.openo.util.ConcatPDF;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -775,39 +777,18 @@ public class FaxManagerImpl implements FaxManager {
             throw new SecurityException("Invalid file path detected: path traversal patterns not allowed");
         }
 
-        // Validate the path is within allowed directories
+        // Use PathValidationUtils for validation
+        File file = new File(filePath);
+        File documentDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"));
+
         try {
-            Path path = Path.of(filePath);
-            Path canonicalPath = path.normalize();
-
-            // Define allowed base directories for fax files
-            String[] allowedBasePaths = {
-                OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"),
-                OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/"),
-                System.getProperty("java.io.tmpdir"),
-                "/usr/local/tomcat/temp/"  // Tomcat temp directory
-            };
-
-            boolean isValidPath = false;
-            for (String basePath : allowedBasePaths) {
-                if (basePath != null && !basePath.isEmpty()) {
-                    Path basePathObj = Path.of(basePath).normalize();
-                    if (canonicalPath.startsWith(basePathObj)) {
-                        isValidPath = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!isValidPath) {
+            PathValidationUtils.validateExistingPath(file, documentDir);
+        } catch (SecurityException e) {
+            // File not in document dir, check if it's in allowed temp directories
+            if (!PathValidationUtils.isInAllowedTempDirectory(file)) {
                 logger.error("File path outside allowed directories: " + filePath);
                 throw new SecurityException("File path must be within allowed directories");
             }
-        } catch (SecurityException e) {
-            throw e;  // Re-throw security exceptions
-        } catch (Exception e) {
-            logger.error("Error validating file path: " + filePath, e);
-            throw new SecurityException("Invalid file path: " + e.getMessage());
         }
     }
 
@@ -829,35 +810,21 @@ public class FaxManagerImpl implements FaxManager {
         // First validate with existing security checks
         validateFilePath(filePath);
 
-        // Additional robust path containment validation
-        // Define allowed base directories for fax files
-        String documentDir = OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/");
-        String tmpDir = OscarProperties.getInstance().getProperty("TMP_DIR", "/tmp/");
-        String javaIoTmpDir = System.getProperty("java.io.tmpdir");
-        String tomcatTempDir = "/usr/local/tomcat/temp/";
+        // Use PathValidationUtils for robust path containment validation
+        File file = new File(filePath);
+        File documentDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"));
 
-        Path resolvedPath = Path.of(filePath).normalize();
-
-        // Check if the resolved path is within one of the allowed base directories
-        boolean isPathContained = false;
-        Path[] allowedBasePaths = {
-            Path.of(documentDir).normalize(),
-            Path.of(tmpDir).normalize(),
-            javaIoTmpDir != null ? Path.of(javaIoTmpDir).normalize() : null,
-            Path.of(tomcatTempDir).normalize()
-        };
-
-        for (Path basePath : allowedBasePaths) {
-            if (basePath != null && resolvedPath.startsWith(basePath)) {
-                isPathContained = true;
-                break;
+        try {
+            PathValidationUtils.validateExistingPath(file, documentDir);
+        } catch (SecurityException e) {
+            // File not in document dir, check if it's in allowed temp directories
+            if (!PathValidationUtils.isInAllowedTempDirectory(file)) {
+                logger.error("Path containment check failed - file path outside allowed directories: " + filePath);
+                throw new SecurityException("File path must be within allowed directories");
             }
         }
 
-        if (!isPathContained) {
-            logger.error("Path containment check failed - file path outside allowed directories: " + filePath);
-            throw new SecurityException("File path must be within allowed directories");
-        }
+        Path resolvedPath = file.toPath().normalize();
 
         // Ensure the file exists and is a regular file
         if (!Files.exists(resolvedPath) || !Files.isRegularFile(resolvedPath)) {

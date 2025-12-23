@@ -74,6 +74,7 @@ import ca.openosp.openo.hospitalReportManager.model.HRMProviderConfidentialitySt
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import ca.openosp.OscarProperties;
@@ -189,23 +190,11 @@ public class HRM2Action extends ActionSupport {
                     // Copy uploaded file to document directory
                     File destinationFile = new File(downloadDirectory, safeFileName);
 
-                    // Validate that the uploaded file is a real file inside the temp directory
-                    File tempDir = (File) request.getServletContext().getAttribute("javax.servlet.context.tempdir");
-                    if (tempDir != null) {
-                        try {
-                            String tempDirCanonicalPath = tempDir.getCanonicalPath();
-                            String uploadedFileCanonicalPath = uploadedFile.getCanonicalPath();
-                            if (!uploadedFileCanonicalPath.startsWith(tempDirCanonicalPath + File.separator)
-                                    || !uploadedFile.isFile() || !uploadedFile.canRead()) {
-                                MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFileCanonicalPath);
-                                obj.put("message", "Error: Invalid uploaded file location");
-                                throw new RuntimeException("Invalid uploaded file location");
-                            }
-                        } catch (IOException ioException) {
-                            MiscUtils.getLogger().error("Error validating uploaded file path", ioException);
-                            obj.put("message", "Error: File validation failed");
-                            throw new RuntimeException("File validation failed", ioException);
-                        }
+                    // Validate that the uploaded file is in an allowed temp directory
+                    if (!PathValidationUtils.isInAllowedTempDirectory(uploadedFile)) {
+                        MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFile.getPath());
+                        obj.put("message", "Error: Invalid uploaded file location");
+                        throw new RuntimeException("Invalid uploaded file location");
                     }
 
                     try (InputStream inputStream = new FileInputStream(uploadedFile)) {
@@ -294,23 +283,11 @@ public class HRM2Action extends ActionSupport {
                     // Copy uploaded file to private key directory
                     File destinationFile = new File(privateKeyDirectory, safeFileName);
 
-                    // Validate that the uploaded file is a real file inside the temp directory
-                    File tempDir = (File) request.getServletContext().getAttribute("javax.servlet.context.tempdir");
-                    if (tempDir != null) {
-                        try {
-                            String tempDirCanonicalPath = tempDir.getCanonicalPath();
-                            String uploadedFileCanonicalPath = uploadedFile.getCanonicalPath();
-                            if (!uploadedFileCanonicalPath.startsWith(tempDirCanonicalPath + File.separator)
-                                    || !uploadedFile.isFile() || !uploadedFile.canRead()) {
-                                MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFileCanonicalPath);
-                                obj.put("message", "Error: Invalid uploaded file location");
-                                throw new RuntimeException("Invalid uploaded file location");
-                            }
-                        } catch (IOException ioException) {
-                            MiscUtils.getLogger().error("Error validating uploaded file path", ioException);
-                            obj.put("message", "Error: File validation failed");
-                            throw new RuntimeException("File validation failed", ioException);
-                        }
+                    // Validate that the uploaded file is in an allowed temp directory
+                    if (!PathValidationUtils.isInAllowedTempDirectory(uploadedFile)) {
+                        MiscUtils.getLogger().error("Attempted to read uploaded file outside of tempdir: '{}'", uploadedFile.getPath());
+                        obj.put("message", "Error: Invalid uploaded file location");
+                        throw new RuntimeException("Invalid uploaded file location");
                     }
 
                     try (InputStream inputStream = new FileInputStream(uploadedFile)) {

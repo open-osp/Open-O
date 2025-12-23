@@ -47,6 +47,7 @@ import ca.openosp.openo.commn.model.DxAssociation;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import com.Ostermiller.util.ExcelCSVParser;
@@ -251,7 +252,7 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
     /**
      * Validates that the uploaded file is within the expected temporary directory
      * and prevents path traversal attacks.
-     * 
+     *
      * @param uploadedFile the file to validate
      * @return true if the file is valid, false otherwise
      */
@@ -260,31 +261,14 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
             return false;
         }
 
-        try {
-            // Get the canonical path to resolve any symbolic links or relative paths
-            String canonicalPath = uploadedFile.getCanonicalPath();
-            
-            // Struts2 uploads files to the system temp directory or servlet container's work directory
-            String tempDir = System.getProperty("java.io.tmpdir");
-            File tempDirectory = new File(tempDir);
-            String tempCanonicalPath = tempDirectory.getCanonicalPath();
-            
-            // Also check the servlet container's work directory
-            File workDir = (File) ServletActionContext.getServletContext().getAttribute("javax.servlet.context.tempdir");
-            String workCanonicalPath = workDir != null ? workDir.getCanonicalPath() : null;
-            
-            // The uploaded file must be within one of the expected temporary directories
-            boolean inTempDir = canonicalPath.startsWith(tempCanonicalPath + File.separator);
-            boolean inWorkDir = workCanonicalPath != null && canonicalPath.startsWith(workCanonicalPath + File.separator);
-            
-            // Additionally verify the file exists and is a regular file (not a directory or special file)
-            boolean isRegularFile = uploadedFile.exists() && uploadedFile.isFile();
-            
-            return isRegularFile && (inTempDir || inWorkDir);
-        } catch (IOException e) {
-            MiscUtils.getLogger().error("Error validating uploaded file path", e);
+        // Use PathValidationUtils for temp directory validation
+        // This checks system temp dir and Tomcat work directories
+        if (!PathValidationUtils.isInAllowedTempDirectory(uploadedFile)) {
             return false;
         }
+
+        // Additionally verify the file exists and is a regular file
+        return uploadedFile.exists() && uploadedFile.isFile();
     }
 
     private File file; // Uploaded file

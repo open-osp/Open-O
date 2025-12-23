@@ -43,6 +43,7 @@ import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.utility.WebUtils;
 import ca.openosp.openo.util.DateUtils;
@@ -93,18 +94,11 @@ public class OruR01Upload2Action extends ActionSupport {
             if (!formFile.canRead()) {
                 throw new SecurityException("File is not readable");
             }
-            
-            // For Struts2 uploads, the file should be in the temporary directory
-            // Get the expected temp directory from servlet context
-            File tempDir = (File) ServletActionContext.getServletContext().getAttribute("javax.servlet.context.tempdir");
-            if (tempDir != null) {
-                String tempDirPath = tempDir.getCanonicalPath();
-                // Ensure the file is within the temp directory
-                if (!canonicalPath.startsWith(tempDirPath + File.separator) && 
-                    !canonicalPath.equals(tempDirPath)) {
-                    logger.error("Attempted path traversal detected - file outside temp directory: " + canonicalPath);
-                    throw new SecurityException("Access denied: file outside permitted directory");
-                }
+
+            // Use PathValidationUtils to validate the uploaded file is in temp directory
+            if (!PathValidationUtils.isInAllowedTempDirectory(formFile)) {
+                logger.error("Attempted path traversal detected - file outside temp directory: " + canonicalPath);
+                throw new SecurityException("Access denied: file outside permitted directory");
             }
 
             Demographic demographic = getDemographicObject(form);
