@@ -1947,13 +1947,14 @@
                                                             String dotReasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
                                                             String dotNotesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
                                                             String dotTooltipFull = dotTooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(dotReasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(dotNotesDisplay);
+
+                                                            // Check if tooltips should be shown (defaults to true if property not set)
+                                                            boolean showTooltipDot = OscarProperties.getInstance().getBooleanProperty("SHOW_APPT_REASON_TOOLTIP", "yes");
                                                         %>
                                                         <a href="javascript:void(0)"
-                                                           class="appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>"
+                                                           class="<%= showTooltipDot ? "appt-reason-tooltip appt-tooltip-provider-" + curProvider_no[nProvider] : "" %>"
                                                            onClick="popupPage(600,780,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=0&displaymode=edit&dboperation=search');return false;"
-                                                           data-title-full="<%=dotTooltipFull%>"
-                                                           data-title-short="<%=dotTooltipShort%>"
-                                                           title="<%=dotTooltipFull%>">
+                                                           <%= showTooltipDot ? "data-title-full=\"" + dotTooltipFull + "\" data-title-short=\"" + dotTooltipShort + "\" title=\"" + dotTooltipFull + "\"" : "" %>>
                                                             <span>
                                                             .<%=(view == 0 && numAvailProvider != 1) ? (name.length() > len ? name.substring(0, len).toUpperCase() : Encode.forHtmlContent(name.toUpperCase())) : Encode.forHtmlContent(name.toUpperCase())%>
                                                             </span>
@@ -2047,16 +2048,13 @@
                                                             String reasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
                                                             String notesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
                                                             String tooltipFull = tooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(reasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(notesDisplay);
+
+                                                            // Check if tooltips should be shown (defaults to true if property not set)
+                                                            boolean showTooltip = OscarProperties.getInstance().getBooleanProperty("SHOW_APPT_REASON_TOOLTIP", "yes");
                                                         %>
-                                                        <a class="apptLink appt-reason-tooltip appt-tooltip-provider-<%=curProvider_no[nProvider]%>" href="javascript:void(0)"
+                                                        <a class="apptLink<%= showTooltip ? " appt-reason-tooltip appt-tooltip-provider-" + curProvider_no[nProvider] : "" %>" href="javascript:void(0)"
                                                            onClick="popupPage(535,860,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search');return false;"
-                                                           data-title-full="<%=tooltipFull%>"
-                                                           data-title-short="<%=tooltipShort%>"
-                                                                <oscar:oscarPropertiesCheck
-                                                                        property="SHOW_APPT_REASON_TOOLTIP" value="yes"
-                                                                        defaultVal="true">
-                                                                    title="<%=tooltipFull%>"
-                                                                </oscar:oscarPropertiesCheck> >
+                                                           <%= showTooltip ? "data-title-full=\"" + tooltipFull + "\" data-title-short=\"" + tooltipShort + "\" title=\"" + tooltipFull + "\"" : "" %> >
                                                             <%=(name.length() > len ? Encode.forHtmlContent(name.substring(0, len)) : Encode.forHtmlContent(name))%>
                                                         </a>
                                                         <% if (len == lenLimitedL || view != 0 || numAvailProvider == 1) {%>
