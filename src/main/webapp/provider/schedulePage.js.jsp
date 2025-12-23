@@ -62,12 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setDefaultReasonView() {
-    var hideReasonEl = document.getElementById("hideReason");
-    var currentDefault = hideReasonEl ? hideReasonEl.value : "false";
+    const hideReasonEl = document.getElementById("hideReason");
+    const currentDefault = hideReasonEl ? hideReasonEl.value : "false";
 
     // True to show the reason. Default is to hide.
     // Apply default tooltip state to all providers (before per-provider overrides)
-    var showReasonDefault = (currentDefault === "true");
+    const showReasonDefault = (currentDefault === "true");
     if (showReasonDefault) {
         // Remove hideReason class from all spans
         document.querySelectorAll("span.hideReason").forEach(function(el) {
@@ -76,22 +76,22 @@ function setDefaultReasonView() {
     } else {
         // If default is to hide, also hide reason from all tooltips initially
         document.querySelectorAll(".appt-reason-tooltip").forEach(function(el) {
-            var titleShort = el.dataset.titleShort;
+            const titleShort = el.dataset.titleShort;
             if (titleShort) {
                 el.setAttribute("title", titleShort);
             }
         });
     }
 
-    // toggle reason views for each of the provider preferences.
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var value = localStorage.getItem(key);
+    // Toggle reason views for each of the provider preferences.
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
 
         // Keys are stored as "reason_<providerNo>" but used as CSS selectors ".reason_<providerNo>"
         if (key.startsWith("reason_")) {
-            var selector = "." + key;
-            var providerNo = key.substring(7); // Extract provider number from "reason_<providerNo>"
+            const selector = "." + key;
+            const providerNo = key.substring(7); // Extract provider number from "reason_<providerNo>"
 
             // If true show the reason. If false hide the reason
             document.querySelectorAll(selector).forEach(function(el) {
@@ -104,7 +104,7 @@ function setDefaultReasonView() {
             });
 
             // Update tooltips based on stored preference
-            var showReason = (value === "true");
+            const showReason = (value === "true");
             updateTooltipsForProvider(providerNo, showReason);
         }
     }
@@ -117,9 +117,9 @@ function setDefaultReasonView() {
 
 function toggleReason(event, providerNo) {
     event.preventDefault();
-    var selector = ".reason_" + providerNo;
-    var elements = document.querySelectorAll(selector);
-    var isVisible = false;
+    const selector = ".reason_" + providerNo;
+    const elements = document.querySelectorAll(selector);
+    let isVisible = false;
 
     elements.forEach(function(el) {
         // Toggle visibility
@@ -133,7 +133,7 @@ function toggleReason(event, providerNo) {
         }
     });
 
-    var storageKey = "reason_" + providerNo;
+    const storageKey = "reason_" + providerNo;
     localStorage.setItem(storageKey, isVisible);
 
     // Update tooltips for this provider's appointments to respect privacy toggle
@@ -148,9 +148,9 @@ function toggleReason(event, providerNo) {
  * @param showReason true to show full tooltip with reason/notes, false to hide them
  */
 function updateTooltipsForProvider(providerNo, showReason) {
-    var selector = ".appt-tooltip-provider-" + providerNo;
+    const selector = ".appt-tooltip-provider-" + providerNo;
     document.querySelectorAll(selector).forEach(function(el) {
-        var titleAttr = showReason ? el.dataset.titleFull : el.dataset.titleShort;
+        const titleAttr = showReason ? el.dataset.titleFull : el.dataset.titleShort;
         if (titleAttr) {
             el.setAttribute("title", titleAttr);
         }
