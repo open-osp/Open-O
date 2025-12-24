@@ -262,8 +262,8 @@ public final class ImageRenderingServlet extends HttpServlet {
                 }
 
                 // Re-validate at point of use for static analysis visibility
-                PathValidationUtils.validateUpload(targetFile);
-                fileInputStream = new FileInputStream(targetFile);
+                File validatedTargetFile = PathValidationUtils.validateUpload(targetFile);
+                fileInputStream = new FileInputStream(validatedTargetFile);
                 byte[] imageBytes = new byte[1024 * 256];
                 fileInputStream.read(imageBytes);
                 renderImage(response, imageBytes, "jpeg");

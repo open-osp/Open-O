@@ -507,14 +507,9 @@ public class ManageDocument2Action extends ActionSupport {
 
         // Sanitize the cache directory name to prevent path traversal
         String safeCacheDirName = MiscUtils.sanitizeFileName(documentDirName + "_cache");
-        File cacheDir = new File(parentDir, safeCacheDirName);
 
-        // Validate cacheDir is within parentDir to prevent path traversal
-        try {
-            PathValidationUtils.validateExistingPath(cacheDir.getParentFile(), parentDir);
-        } catch (SecurityException e) {
-            throw new SecurityException("Invalid cache directory path");
-        }
+        // Use validatePath to create a validated cache directory path
+        File cacheDir = PathValidationUtils.validatePath(safeCacheDirName, parentDir);
 
         if (!cacheDir.exists()) {
             cacheDir.mkdir();
@@ -1099,7 +1094,7 @@ public class ManageDocument2Action extends ActionSupport {
         String incomingDocDir = OscarProperties.getInstance().getProperty("INCOMINGDOCUMENT_DIR");
         if (incomingDocDir != null && !incomingDocDir.isEmpty()) {
             File incomingDir = new File(incomingDocDir);
-            PathValidationUtils.validateExistingPath(f1, incomingDir);
+            f1 = PathValidationUtils.validateExistingPath(f1, incomingDir);
         }
 
         boolean success = f1.renameTo(new File(destFilePath));
@@ -1314,8 +1309,8 @@ public class ManageDocument2Action extends ActionSupport {
 
         try {
             // Re-validate file path at point of use for static analysis visibility
-            PathValidationUtils.validateExistingPath(file, baseDir);
-            bfis = new BufferedInputStream(new FileInputStream(file));
+            File validatedFile = PathValidationUtils.validateExistingPath(file, baseDir);
+            bfis = new BufferedInputStream(new FileInputStream(validatedFile));
 
             org.apache.commons.io.IOUtils.copy(bfis, outs);
             outs.flush();
@@ -1436,8 +1431,8 @@ public class ManageDocument2Action extends ActionSupport {
         PdfDecoder decode_pdf = new PdfDecoder(true);
 
         // Re-validate file path at point of use for static analysis visibility
-        PathValidationUtils.validateExistingPath(file, baseDir);
-        try (FileInputStream is = new FileInputStream(file)) {
+        File validatedFile = PathValidationUtils.validateExistingPath(file, baseDir);
+        try (FileInputStream is = new FileInputStream(validatedFile)) {
 
             FontMappings.setFontReplacements();
 

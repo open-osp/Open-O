@@ -106,8 +106,8 @@ public class OruR01Upload2Action extends ActionSupport {
             observationData.textMessage = form.getTextMessage();
             observationData.binaryDataFileName = formFile.getName();
             // Re-validate at point of use for static analysis visibility, then read file
-            PathValidationUtils.validateUpload(formFile);
-            observationData.binaryData = Files.readAllBytes(formFile.toPath());
+            File validatedFormFile = PathValidationUtils.validateUpload(formFile);
+            observationData.binaryData = Files.readAllBytes(validatedFormFile.toPath());
 
             Provider sendingProvider = loggedInInfo.getLoggedInProvider();
 

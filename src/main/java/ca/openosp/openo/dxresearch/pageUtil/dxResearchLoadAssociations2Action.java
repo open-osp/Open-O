@@ -180,8 +180,8 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
         }
 
         // Re-validate at point of use for static analysis visibility
-        PathValidationUtils.validateUpload(file);
-        String[][] data = ExcelCSVParser.parse(new FileReader(file));
+        File validatedFile = PathValidationUtils.validateUpload(file);
+        String[][] data = ExcelCSVParser.parse(new FileReader(validatedFile));
 
         int rowsInserted = 0;
 

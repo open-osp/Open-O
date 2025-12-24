@@ -83,7 +83,7 @@ public class DocumentUpload2Action extends ActionSupport {
         } else {
             // Validate uploaded file is from temp directory for all destinations
             try {
-                PathValidationUtils.validateUpload(docFile);
+                docFile = PathValidationUtils.validateUpload(docFile);
             } catch (SecurityException e) {
                 logger.error("Invalid upload source - potential path traversal: " + docFile.getPath());
                 map.put("error", "Invalid file upload");
@@ -282,8 +282,8 @@ public class DocumentUpload2Action extends ActionSupport {
         }
 
         // Write the file - validate source file at point of use for static analysis visibility
-        PathValidationUtils.validateUpload(docFile);
-        try (InputStream fis = Files.newInputStream(docFile.toPath());
+        File validatedDocFile = PathValidationUtils.validateUpload(docFile);
+        try (InputStream fis = Files.newInputStream(validatedDocFile.toPath());
                 FileOutputStream fos = new FileOutputStream(destinationFile)) {
             IOUtils.copy(fis, fos);
         } catch (IOException e) {

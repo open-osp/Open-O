@@ -291,8 +291,8 @@ public class HRM2Action extends ActionSupport {
                     }
 
                     // Re-validate at point of use for static analysis visibility
-                    PathValidationUtils.validateUpload(uploadedFile);
-                    try (InputStream inputStream = new FileInputStream(uploadedFile)) {
+                    File validatedUploadedFile = PathValidationUtils.validateUpload(uploadedFile);
+                    try (InputStream inputStream = new FileInputStream(validatedUploadedFile)) {
                         java.nio.file.Files.copy(inputStream, destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     }
 

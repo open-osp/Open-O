@@ -78,8 +78,8 @@ public class ClientImage2Action extends ActionSupport {
             }
 
             // Re-validate at point of use for static analysis visibility
-            PathValidationUtils.validateUpload(clientImage);
-            byte[] imageData = Files.readAllBytes(clientImage.toPath());
+            File validatedImage = PathValidationUtils.validateUpload(clientImage);
+            byte[] imageData = Files.readAllBytes(validatedImage.toPath());
 
             ClientImage clientImageObj = new ClientImage();
             clientImageObj.setDemographic_no(Integer.parseInt(id));

@@ -74,7 +74,7 @@ public class LabUpload2Action extends ActionSupport {
 
             // Validate file is from an allowed temp directory
             try {
-                PathValidationUtils.validateUpload(importFile);
+                importFile = PathValidationUtils.validateUpload(importFile);
             } catch (SecurityException e) {
                 _logger.error("Invalid upload source - potential path traversal: " + importFile.getPath());
                 outcome = "exception";
@@ -84,8 +84,8 @@ public class LabUpload2Action extends ActionSupport {
 
             MiscUtils.getLogger().debug("Lab Upload content type = " + importFile.getName());
             // Re-validate at point of use for static analysis visibility
-            PathValidationUtils.validateUpload(importFile);
-            InputStream is = Files.newInputStream(importFile.toPath());
+            File validatedImportFile = PathValidationUtils.validateUpload(importFile);
+            InputStream is = Files.newInputStream(validatedImportFile.toPath());
             filename = importFile.getName();
 
             int check = FileUploadCheck.addFile(filename, is, proNo);
