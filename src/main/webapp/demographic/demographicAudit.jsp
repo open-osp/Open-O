@@ -112,7 +112,7 @@
         </td>
         <td><%=log.getContent() %>
         </td>
-        <td><%=log.getContentId() != null && !"null".equals(log.getContentId()) ? log.getContentId() : "" %>
+        <td><%=log.getContentId() != null && !"null".equals(log.getContentId()) ? Encode.forHtml(log.getContentId()) : "" %>
         </td>
         <td><%=log.getData() != null && !"null".equals(log.getData()) ? Encode.forHtml(log.getData()) : "" %>
         </td>
