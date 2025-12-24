@@ -27,6 +27,7 @@
 
 package ca.openosp.openo.casemgmt.dao;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,6 +52,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 import ca.openosp.openo.PMmodule.model.Program;
@@ -643,12 +645,13 @@ public class CaseManagementNoteDAOImpl extends HibernateDaoSupport implements Ca
             Session session = currentSession();
             String sqlCommand = "select count(distinct uuid) from casemgmt_note where provider_no = :providerNo and observation_date >= :startDate and observation_date <= :endDate";
 
-            Query<?> query = session.createNativeQuery(sqlCommand);
+            @SuppressWarnings("unchecked")
+            NativeQuery<BigInteger> query = session.createNativeQuery(sqlCommand);
             query.setParameter("providerNo", providerNo);
             query.setParameter("startDate", new Timestamp(startDate.getTime()));
             query.setParameter("endDate", new Timestamp(endDate.getTime()));
 
-            Number result = (Number) query.uniqueResult();
+            BigInteger result = query.uniqueResult();
             return result != null ? result.intValue() : 0;
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error", e);
