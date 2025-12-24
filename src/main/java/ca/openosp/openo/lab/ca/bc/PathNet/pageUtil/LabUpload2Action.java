@@ -83,6 +83,8 @@ public class LabUpload2Action extends ActionSupport {
             }
 
             MiscUtils.getLogger().debug("Lab Upload content type = " + importFile.getName());
+            // Re-validate at point of use for static analysis visibility
+            PathValidationUtils.validateUpload(importFile);
             InputStream is = Files.newInputStream(importFile.toPath());
             filename = importFile.getName();
 

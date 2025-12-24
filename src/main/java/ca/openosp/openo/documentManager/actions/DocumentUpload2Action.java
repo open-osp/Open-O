@@ -80,7 +80,18 @@ public class DocumentUpload2Action extends ActionSupport {
         ResourceBundle props = ResourceBundle.getBundle("oscarResources");
         if (docFile == null) {
             map.put("error", 4);
-        } else if (destination != null && destination.equals("incomingDocs")) {
+        } else {
+            // Validate uploaded file is from temp directory for all destinations
+            try {
+                PathValidationUtils.validateUpload(docFile);
+            } catch (SecurityException e) {
+                logger.error("Invalid upload source - potential path traversal: " + docFile.getPath());
+                map.put("error", "Invalid file upload");
+                docFile = null; // Treat as if no file was uploaded
+            }
+        }
+
+        if (docFile != null && destination != null && destination.equals("incomingDocs")) {
             String fileName = this.filedataFileName;
             if (!fileName.toLowerCase().endsWith(".pdf")) {
                 map.put("error", props.getString("dms.documentUpload.onlyPdf"));
@@ -270,7 +281,8 @@ public class DocumentUpload2Action extends ActionSupport {
             return false;
         }
 
-        // Write the file
+        // Write the file - validate source file at point of use for static analysis visibility
+        PathValidationUtils.validateUpload(docFile);
         try (InputStream fis = Files.newInputStream(docFile.toPath());
                 FileOutputStream fos = new FileOutputStream(destinationFile)) {
             IOUtils.copy(fis, fos);

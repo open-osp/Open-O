@@ -290,6 +290,8 @@ public class HRM2Action extends ActionSupport {
                         throw new RuntimeException("Invalid uploaded file location");
                     }
 
+                    // Re-validate at point of use for static analysis visibility
+                    PathValidationUtils.validateUpload(uploadedFile);
                     try (InputStream inputStream = new FileInputStream(uploadedFile)) {
                         java.nio.file.Files.copy(inputStream, destinationFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
                     }

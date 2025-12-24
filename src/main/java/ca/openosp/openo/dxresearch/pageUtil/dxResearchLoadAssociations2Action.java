@@ -179,6 +179,8 @@ public class dxResearchLoadAssociations2Action extends ActionSupport {
             return ERROR;
         }
 
+        // Re-validate at point of use for static analysis visibility
+        PathValidationUtils.validateUpload(file);
         String[][] data = ExcelCSVParser.parse(new FileReader(file));
 
         int rowsInserted = 0;

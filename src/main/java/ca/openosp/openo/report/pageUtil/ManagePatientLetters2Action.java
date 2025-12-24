@@ -98,6 +98,8 @@ public class ManagePatientLetters2Action extends ActionSupport {
                 return SUCCESS;
             }
 
+            // Re-validate at point of use for static analysis visibility
+            PathValidationUtils.validateUpload(reportFile);
             fileData = Files.readAllBytes(reportFile.toPath());
             String reportName = request.getParameter("reportName");
 

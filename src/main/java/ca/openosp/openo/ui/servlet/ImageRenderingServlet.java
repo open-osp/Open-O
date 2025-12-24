@@ -261,6 +261,8 @@ public final class ImageRenderingServlet extends HttpServlet {
                     throw new IllegalArgumentException("Invalid file path");
                 }
 
+                // Re-validate at point of use for static analysis visibility
+                PathValidationUtils.validateUpload(targetFile);
                 fileInputStream = new FileInputStream(targetFile);
                 byte[] imageBytes = new byte[1024 * 256];
                 fileInputStream.read(imageBytes);

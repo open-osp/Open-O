@@ -505,7 +505,16 @@ public class ManageDocument2Action extends ActionSupport {
         String documentDirName = docDir.getName();
         File parentDir = docDir.getParentFile();
 
-        File cacheDir = new File(parentDir, documentDirName + "_cache");
+        // Sanitize the cache directory name to prevent path traversal
+        String safeCacheDirName = MiscUtils.sanitizeFileName(documentDirName + "_cache");
+        File cacheDir = new File(parentDir, safeCacheDirName);
+
+        // Validate cacheDir is within parentDir to prevent path traversal
+        try {
+            PathValidationUtils.validateExistingPath(cacheDir.getParentFile(), parentDir);
+        } catch (SecurityException e) {
+            throw new SecurityException("Invalid cache directory path");
+        }
 
         if (!cacheDir.exists()) {
             cacheDir.mkdir();
@@ -1085,6 +1094,14 @@ public class ManageDocument2Action extends ActionSupport {
 
         newDoc.setContentType(docType);
         File f1 = new File(sourceFilePath);
+
+        // Validate source file is within INCOMINGDOCUMENT_DIR to prevent path traversal
+        String incomingDocDir = OscarProperties.getInstance().getProperty("INCOMINGDOCUMENT_DIR");
+        if (incomingDocDir != null && !incomingDocDir.isEmpty()) {
+            File incomingDir = new File(incomingDocDir);
+            PathValidationUtils.validateExistingPath(f1, incomingDir);
+        }
+
         boolean success = f1.renameTo(new File(destFilePath));
         if (!success) {
             log.error("Not able to move " + f1.getName() + " to " + destFilePath);
@@ -1296,7 +1313,8 @@ public class ManageDocument2Action extends ActionSupport {
         ServletOutputStream outs = response.getOutputStream();
 
         try {
-
+            // Re-validate file path at point of use for static analysis visibility
+            PathValidationUtils.validateExistingPath(file, baseDir);
             bfis = new BufferedInputStream(new FileInputStream(file));
 
             org.apache.commons.io.IOUtils.copy(bfis, outs);
@@ -1417,6 +1435,8 @@ public class ManageDocument2Action extends ActionSupport {
 
         PdfDecoder decode_pdf = new PdfDecoder(true);
 
+        // Re-validate file path at point of use for static analysis visibility
+        PathValidationUtils.validateExistingPath(file, baseDir);
         try (FileInputStream is = new FileInputStream(file)) {
 
             FontMappings.setFontReplacements();

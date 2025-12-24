@@ -77,6 +77,8 @@ public class ClientImage2Action extends ActionSupport {
                 throw new IllegalArgumentException("Invalid file path: " + clientImage.getPath());
             }
 
+            // Re-validate at point of use for static analysis visibility
+            PathValidationUtils.validateUpload(clientImage);
             byte[] imageData = Files.readAllBytes(clientImage.toPath());
 
             ClientImage clientImageObj = new ClientImage();
