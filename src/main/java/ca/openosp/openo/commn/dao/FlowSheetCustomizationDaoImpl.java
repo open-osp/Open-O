@@ -60,7 +60,8 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
 
     @Override
     public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet, String provider) {
-        Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 and fd.archived=0 and fd.providerNo = ?2  and fd.demographicNo = 0");
+        // Include both clinic-level (providerNo='') and provider-level customizations
+        Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 and fd.archived=0 and (fd.providerNo = '' or (fd.providerNo = ?2 and fd.demographicNo = 0)) order by fd.providerNo, fd.demographicNo");
         query.setParameter(1, flowsheet);
         query.setParameter(2, provider);
 
@@ -88,5 +89,49 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
         @SuppressWarnings("unchecked")
         List<FlowSheetCustomization> list = query.getResultList();
         return list;
+    }
+
+    @Override
+    public FlowSheetCustomization findHigherLevelCustomization(
+            String flowsheet, String measurement, String action,
+            String providerNo, String demographicNo) {
+
+        boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
+        boolean isProviderScope = !isPatientScope && providerNo != null && !providerNo.isEmpty();
+
+        // Clinic scope: nothing is higher
+        if (!isPatientScope && !isProviderScope) {
+            return null;
+        }
+
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT fd FROM FlowSheetCustomization fd ");
+        queryBuilder.append("WHERE fd.flowsheet=?1 AND fd.measurement=?2 AND fd.action=?3 AND fd.archived=0 ");
+
+        if (isPatientScope) {
+            // Patient scope: check clinic level (providerNo='', demographicNo='0')
+            // and provider level (providerNo=current, demographicNo='0')
+            queryBuilder.append("AND ((fd.providerNo='' AND fd.demographicNo='0') ");
+            queryBuilder.append("OR (fd.providerNo=?4 AND fd.demographicNo='0')) ");
+        } else {
+            // Provider scope: check clinic level only
+            queryBuilder.append("AND (fd.providerNo='' AND fd.demographicNo='0') ");
+        }
+
+        // Order by providerNo ASC so clinic (empty string) comes first
+        queryBuilder.append("ORDER BY fd.providerNo ASC");
+
+        Query query = entityManager.createQuery(queryBuilder.toString());
+        query.setParameter(1, flowsheet);
+        query.setParameter(2, measurement);
+        query.setParameter(3, action);
+        if (isPatientScope) {
+            query.setParameter(4, providerNo);
+        }
+        query.setMaxResults(1);
+
+        @SuppressWarnings("unchecked")
+        List<FlowSheetCustomization> results = query.getResultList();
+        return results.isEmpty() ? null : results.get(0);
     }
 }

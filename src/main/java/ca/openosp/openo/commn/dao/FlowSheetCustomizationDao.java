@@ -41,4 +41,27 @@ public interface FlowSheetCustomizationDao extends AbstractDao<FlowSheetCustomiz
     List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet);
 
     List<FlowSheetCustomization> getFlowSheetCustomizationsForPatient(String flowsheet, String demographicNo);
+
+    /**
+     * Finds a customization at a higher scope level for a specific measurement and action.
+     * Used to enforce cascading rules where higher levels (clinic/provider) block lower levels.
+     *
+     * <p>Scope hierarchy: clinic > provider > patient</p>
+     * <ul>
+     *   <li>For patient scope: checks clinic and provider levels</li>
+     *   <li>For provider scope: checks clinic level only</li>
+     *   <li>For clinic scope: returns null (nothing is higher)</li>
+     * </ul>
+     *
+     * @param flowsheet the flowsheet name
+     * @param measurement the measurement name
+     * @param action the action type (ADD, UPDATE, DELETE)
+     * @param providerNo current provider number (empty string for clinic scope)
+     * @param demographicNo current demographic number ("0" for clinic/provider scope)
+     * @return the blocking customization from a higher level, or null if none exists
+     * @since 2025-12-23
+     */
+    FlowSheetCustomization findHigherLevelCustomization(
+        String flowsheet, String measurement, String action,
+        String providerNo, String demographicNo);
 }

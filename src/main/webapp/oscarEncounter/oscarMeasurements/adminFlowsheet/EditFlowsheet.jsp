@@ -36,6 +36,7 @@
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBeanHandler" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
@@ -50,26 +51,87 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%!
     /**
+     * Represents a customization inherited from a higher scope level.
+     */
+    private static class InheritedCustomization {
+        final FlowSheetCustomization customization;
+        final String sourceLevel;
+
+        InheritedCustomization(FlowSheetCustomization cust, String level) {
+            this.customization = cust;
+            this.sourceLevel = level;
+        }
+    }
+
+    /**
+     * Gets any customization for a measurement from a higher level than current scope.
+     * @param custList list of all customizations
+     * @param measurement the measurement name
+     * @param action the action type to check (add, update, delete)
+     * @param scope current scope (clinic, provider, or null for patient)
+     * @param demographic current demographic number (null for provider/clinic scope)
+     * @param currentProvider current provider number
+     * @return InheritedCustomization if found, null otherwise
+     */
+    private InheritedCustomization getInheritedCustomization(
+            List<FlowSheetCustomization> custList, String measurement, String action,
+            String scope, String demographic, String currentProvider) {
+
+        if (custList == null) return null;
+
+        for (FlowSheetCustomization cust : custList) {
+            if (!action.equals(cust.getAction())) continue;
+            if (!measurement.equals(cust.getMeasurement())) continue;
+
+            boolean isClinicLevel = "".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo());
+            boolean isProviderLevel = currentProvider.equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo());
+
+            // Patient scope: inherit from clinic or provider
+            if (demographic != null && !demographic.isEmpty()) {
+                if (isClinicLevel) return new InheritedCustomization(cust, "clinic");
+                if (isProviderLevel) return new InheritedCustomization(cust, "provider");
+            }
+            // Provider scope: inherit from clinic only
+            else if (!"clinic".equals(scope)) {
+                if (isClinicLevel) return new InheritedCustomization(cust, "clinic");
+            }
+        }
+        return null;
+    }
+
+    /**
      * Check if a measurement is hidden at a higher level than current scope.
-     * For patient scope: checks clinic and provider level hides.
-     * For provider scope: checks clinic level hides.
+     * Legacy method for backward compatibility.
      */
     private boolean isHiddenAtHigherLevel(List<FlowSheetCustomization> custList, String measurement, String scope, String demographic, String currentProvider) {
-        if (custList == null) return false;
-        for (FlowSheetCustomization cust : custList) {
-            if (!"delete".equals(cust.getAction()) || !measurement.equals(cust.getMeasurement())) continue;
+        return getInheritedCustomization(custList, measurement, "delete", scope, demographic, currentProvider) != null;
+    }
 
-            // If viewing patient scope, check for clinic or provider level hides
-            if (demographic != null && !demographic.isEmpty()) {
-                // Clinic level
-                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
-                // Provider level
-                if (currentProvider.equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
-            }
-            // If viewing provider scope, check for clinic level hides
-            else if (!"clinic".equals(scope)) {
-                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
-            }
+    /**
+     * Determines the scope level name for a customization.
+     */
+    private String getScopeLevelName(FlowSheetCustomization cust) {
+        if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) {
+            return "clinic";
+        } else if (!"0".equals(cust.getDemographicNo())) {
+            return "patient";
+        } else {
+            return "provider";
+        }
+    }
+
+    /**
+     * Checks if a customization is from a higher scope than current.
+     */
+    private boolean isFromHigherScope(FlowSheetCustomization cust, String scope, String demographic, String currentProvider) {
+        String custScope = getScopeLevelName(cust);
+        boolean isCurrentPatientScope = demographic != null && !demographic.isEmpty();
+        boolean isCurrentProviderScope = !isCurrentPatientScope && !"clinic".equals(scope);
+
+        if (isCurrentPatientScope) {
+            return "clinic".equals(custScope) || "provider".equals(custScope);
+        } else if (isCurrentProviderScope) {
+            return "clinic".equals(custScope);
         }
         return false;
     }
@@ -335,6 +397,13 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                 <li><a href="#add" data-toggle="tab"><i class="icon-plus-sign"></i> Add</a></li>
             </ul>
 
+            <% if (request.getAttribute("errorMessage") != null) { %>
+            <div class="alert alert-error">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <%= Encode.forHtml((String)request.getAttribute("errorMessage")) %>
+            </div>
+            <% } %>
+
             <%
                 if (scope == null) {
                     if (demographic != null) {
@@ -387,9 +456,16 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		               %>
 		                <tr>
 		         		<td>
-		         		<%if(mFlowsheet.getFlowSheetItem(mstring).getPreventionType()!=null){ %>
+		         		<%
+		         		    // Check for inherited UPDATE customization
+		         		    InheritedCustomization inheritedUpdate = getInheritedCustomization(
+		         		        custList, mstring, "update", scope, demographic, (String) session.getAttribute("user"));
+
+		         		    if(mFlowsheet.getFlowSheetItem(mstring).getPreventionType()!=null){ %>
 		         		<i class="icon-pencil action-icon"  rel="popover" data-container="body"  data-toggle="popover" data-placement="right" data-content="unable to edit a prevention item" data-trigger="hover" title=""></i>
-		                <%}else{%>
+		                <%} else if (inheritedUpdate != null) { %>
+		                <i class="icon-pencil action-icon" style="opacity:0.4;" title="Customized at <%=inheritedUpdate.sourceLevel%> level - cannot edit"></i>
+		                <%} else {%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
 		               <%
@@ -472,13 +548,25 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                                         } catch (Exception e) {
                                             //do nothing
                                         }
+
+                                        // Check if this customization is from a higher scope
+                                        boolean isHigherScope = isFromHigherScope(cust, scope, demographic, (String) session.getAttribute("user"));
+                                        String custLevel = getScopeLevelName(cust);
                                 %>
                                 <tr>
                                     <td>
-                                        <a href="FlowSheetCustomAction.do?method=archiveMod&id=<%=cust.getId()%>&flowsheet=<%=flowsheet%><%=demographicStr%><%=htQueryString%>"
-                                           class="action-icon"><i class="icon-trash"></i></a></td>
+                                        <% if (isHigherScope) { %>
+                                        <i class="icon-lock action-icon" style="opacity:0.4;" title="Cannot remove - created at <%=custLevel%> level"></i>
+                                        <% } else { %>
+                                        <a href="FlowSheetCustomAction.do?method=archiveMod&id=<%=cust.getId()%>&flowsheet=<%=flowsheet%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>"
+                                           class="action-icon"><i class="icon-trash"></i></a>
+                                        <% } %>
+                                    </td>
 
                                     <td><%=cust.getAction()%>
+                                        <% if (isHigherScope) { %>
+                                        <span class="label label-info" title="Inherited from <%=custLevel%> level">Inherited</span>
+                                        <% } %>
                                     </td>
 
                                     <%if (cust.getAction().equals("add")) { %>

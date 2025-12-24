@@ -89,6 +89,29 @@ if(scope != null && "clinic".equals(scope)) {
     }
 }
 
+    // Check for inherited UPDATE customization
+    boolean isInheritedUpdate = false;
+    String inheritedFrom = null;
+    String currentProvider = (String) session.getAttribute("user");
+
+    for (FlowSheetCustomization cust : custList) {
+        if (!"update".equals(cust.getAction())) continue;
+        if (!measurement.equals(cust.getMeasurement())) continue;
+
+        boolean isClinicLevel = "".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo());
+        boolean isProviderLevel = currentProvider.equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo());
+
+        // Patient scope: inherit from clinic or provider
+        if (demographic != null && !demographic.isEmpty()) {
+            if (isClinicLevel) { isInheritedUpdate = true; inheritedFrom = "clinic"; break; }
+            if (isProviderLevel) { isInheritedUpdate = true; inheritedFrom = "provider"; break; }
+        }
+        // Provider scope: inherit from clinic only
+        else if (!"clinic".equals(scope)) {
+            if (isClinicLevel) { isInheritedUpdate = true; inheritedFrom = "clinic"; break; }
+        }
+    }
+
     String module = "";
     String htQueryString = "";
     if (request.getParameter("htracker") != null) {
@@ -166,6 +189,13 @@ display:inline-block;
 
 <div class="container-fluid" id="container-main">
 
+    <% if (isInheritedUpdate) { %>
+    <div class="alert alert-warning">
+        <strong>Read Only:</strong> This measurement has been customized at the
+        <strong><%=inheritedFrom%></strong> level. You cannot modify it at this level.
+    </div>
+    <% } %>
+
         <div class="span8">
 <form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
 
@@ -193,17 +223,17 @@ display:inline-block;
 
                         <div class="mtype-details">
                             Display Name: <br/>
-                            <input type="text" name="display_name" value="<%= h2.get("display_name")%>"/>
+                            <input type="text" name="display_name" value="<%= h2.get("display_name")%>" <%=isInheritedUpdate ? "disabled" : ""%>/>
                         </div>
 
                         <div class="mtype-details">
                             Guideline: <br/>
-                            <input type="text" name="guideline" value="<%=h2.get("guideline")%>"/>
+                            <input type="text" name="guideline" value="<%=h2.get("guideline")%>" <%=isInheritedUpdate ? "disabled" : ""%>/>
                         </div>
 
                         <div class="mtype-details">
                             Graphable: <br/>
-                            <select name="graphable" style="width:80px">
+                            <select name="graphable" style="width:80px" <%=isInheritedUpdate ? "disabled" : ""%>>
                                 <option value="yes" <%=sel("" + h2.get("graphable"), "yes")%> >YES</option>
                                 <option value="no"  <%=sel("" + h2.get("graphable"), "no")%> >NO</option>
                             </select>
@@ -211,7 +241,7 @@ display:inline-block;
 
                         <div class="mtype-details">
                             Value Name:<br/>
-                            <input type="text" name="value_name" value="<%=h2.get("value_name")%>"/>
+                            <input type="text" name="value_name" value="<%=h2.get("value_name")%>" <%=isInheritedUpdate ? "disabled" : ""%>/>
                         </div>
                     </div>
 
@@ -489,12 +519,14 @@ display:inline-block;
 
                     <div style="width:100%;text-align:right">
                         <%if (request.getParameter("demographic") == null) { %>
-                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>" class="btn">Cancel</a>
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=scope != null ? "&scope=" + scope : ""%>" class="btn"><%=isInheritedUpdate ? "Back" : "Cancel"%></a>
                         <%} else { %>
-                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%>"
-                           class="btn">Cancel</a>
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%><%=scope != null ? "&scope=" + scope : ""%>"
+                           class="btn"><%=isInheritedUpdate ? "Back" : "Cancel"%></a>
                         <%} %>
+                        <% if (!isInheritedUpdate) { %>
                         <input type="submit" class="btn btn-primary" value="Update"/>
+                        <% } %>
                     </div>
 
                 </fieldset>

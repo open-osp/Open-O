@@ -33,6 +33,8 @@ import ca.openosp.openo.commn.dao.FlowSheetCustomizationDao;
 import ca.openosp.openo.commn.dao.FlowSheetUserCreatedDao;
 import ca.openosp.openo.commn.model.FlowSheetCustomization;
 import ca.openosp.openo.commn.model.FlowSheetUserCreated;
+import ca.openosp.openo.commn.service.FlowSheetCustomizationService;
+import ca.openosp.openo.commn.service.FlowSheetCustomizationService.CascadeCheckResult;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
@@ -61,6 +63,17 @@ public class FlowSheetCustom2Action extends ActionSupport {
     private FlowSheetCustomizationDao flowSheetCustomizationDao = SpringUtils.getBean(FlowSheetCustomizationDao.class);
     private FlowSheetUserCreatedDao flowSheetUserCreatedDao = SpringUtils.getBean(FlowSheetUserCreatedDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private FlowSheetCustomizationService flowSheetCustomizationService;
+
+    /**
+     * Gets the FlowSheetCustomizationService lazily.
+     */
+    private FlowSheetCustomizationService getFlowSheetCustomizationService() {
+        if (flowSheetCustomizationService == null) {
+            flowSheetCustomizationService = new FlowSheetCustomizationService();
+        }
+        return flowSheetCustomizationService;
+    }
 
     /**
      * Helper class to hold scope context for flowsheet operations.
@@ -162,9 +175,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
         String scope = request.getParameter("scope");
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_demographic", "w", demographicNo)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
+
+        // Validate scope permission - clinic level requires admin
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
 
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
         MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet);
@@ -209,6 +227,23 @@ public class FlowSheetCustom2Action extends ActionSupport {
             }
 
             if (h.get("measurement_type") != null) {
+                String measurementType = h.get("measurement_type");
+                String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
+
+                // Check for blocking customization from higher level
+                CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+                    flowsheet, measurementType, FlowSheetCustomization.ADD, providerNo, demographicNo);
+
+                if (cascadeResult.isBlocked()) {
+                    logger.warn("Cannot add measurement {} - already added at {} level",
+                        measurementType, cascadeResult.getBlockingLevel());
+                    request.setAttribute("errorMessage",
+                        "Cannot add measurement: already customized at " + cascadeResult.getBlockingLevel() + " level");
+                    request.setAttribute("demographic", demographicNo);
+                    request.setAttribute("flowsheet", flowsheet);
+                    return ERROR;
+                }
+
                 FlowSheetItem item = new FlowSheetItem(h);
                 item.setRecommendations(ds);
                 Element va = templateConfig.getItemFromObject(item);
@@ -221,7 +256,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 cust.setPayload(outp.outputString(va));
                 cust.setFlowsheet(flowsheet);
                 cust.setMeasurement(prevItem);//THIS THE MEASUREMENT TO SET THIS AFTER!
-                cust.setProviderNo("clinic".equals(scope) ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
+                cust.setProviderNo(providerNo);
                 cust.setDemographicNo(demographicNo);
                 cust.setCreateDate(new Date());
 
@@ -246,9 +281,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
         String scope = request.getParameter("scope");
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_demographic", "w", demographicNo)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
+
+        // Validate scope permission - clinic level requires admin
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
 
         logger.debug("UPDATING FOR demographic " + demographicNo);
 
@@ -259,6 +299,23 @@ public class FlowSheetCustom2Action extends ActionSupport {
             h.put("guideline", request.getParameter("guideline"));
             h.put("graphable", request.getParameter("graphable"));
             h.put("value_name", request.getParameter("value_name"));
+
+            String measurementType = h.get("measurement_type");
+            String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
+
+            // Check for blocking customization from higher level
+            CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+                flowsheet, measurementType, FlowSheetCustomization.UPDATE, providerNo, demographicNo);
+
+            if (cascadeResult.isBlocked()) {
+                logger.warn("Cannot update measurement {} - already customized at {} level",
+                    measurementType, cascadeResult.getBlockingLevel());
+                request.setAttribute("errorMessage",
+                    "Cannot update measurement: already customized at " + cascadeResult.getBlockingLevel() + " level");
+                request.setAttribute("demographic", demographicNo);
+                request.setAttribute("flowsheet", flowsheet);
+                return ERROR;
+            }
 
             FlowSheetItem item = new FlowSheetItem(h);
 
@@ -351,7 +408,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 cust.setDemographicNo(demographicNo);
             }
             cust.setMeasurement(item.getItemName());//THIS THE MEASUREMENT TO SET THIS AFTER!
-            cust.setProviderNo("clinic".equals(scope) ? "" : LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo());
+            cust.setProviderNo(providerNo);
 
             logger.debug("UPDATE " + cust);
 
@@ -367,6 +424,23 @@ public class FlowSheetCustom2Action extends ActionSupport {
         logger.debug("IN HIDE");
         ScopeContext ctx = parseScopeContext();
         validateDemographicAccess(ctx.demographicNo);
+
+        // Validate scope permission - clinic level requires admin
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+
+        // Check for blocking customization from higher level
+        CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
+
+        if (cascadeResult.isBlocked()) {
+            logger.warn("Cannot hide measurement {} - already hidden at {} level",
+                ctx.measurement, cascadeResult.getBlockingLevel());
+            request.setAttribute("errorMessage",
+                "Cannot hide measurement: already hidden at " + cascadeResult.getBlockingLevel() + " level");
+            setResponseAttributes(ctx);
+            return ERROR;
+        }
 
         FlowSheetCustomization cust = new FlowSheetCustomization();
         cust.setAction(FlowSheetCustomization.DELETE);
@@ -386,6 +460,23 @@ public class FlowSheetCustom2Action extends ActionSupport {
         logger.debug("IN RESTORE");
         ScopeContext ctx = parseScopeContext();
         validateDemographicAccess(ctx.demographicNo);
+
+        // Validate scope permission - clinic level requires admin
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+
+        // Check for blocking hide from higher level - cannot restore if hidden at higher level
+        CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
+
+        if (cascadeResult.isBlocked()) {
+            logger.warn("Cannot restore measurement {} - hidden at {} level",
+                ctx.measurement, cascadeResult.getBlockingLevel());
+            request.setAttribute("errorMessage",
+                "Cannot restore measurement: hidden at " + cascadeResult.getBlockingLevel() + " level");
+            setResponseAttributes(ctx);
+            return ERROR;
+        }
 
         List<FlowSheetCustomization> customizations;
         if (ctx.isClinicScope) {
@@ -415,13 +506,35 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
         String flowsheet = request.getParameter("flowsheet");
         String demographicNo = request.getParameter("demographic");
+        String scope = request.getParameter("scope");
 
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_demographic", "w", demographicNo)) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_demographic", "w", demographicNo)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
 
+        // Validate scope permission - clinic level requires admin
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
+
         FlowSheetCustomization cust = flowSheetCustomizationDao.getFlowSheetCustomization(Integer.parseInt(id));
         if (cust != null) {
+            String currentProviderNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
+
+            // Check if trying to archive a customization from a higher scope
+            CascadeCheckResult canArchive = getFlowSheetCustomizationService().checkCanArchive(
+                cust, scope, currentProviderNo, demographicNo);
+
+            if (canArchive.isBlocked()) {
+                logger.warn("Cannot archive customization {} - created at {} level",
+                    id, canArchive.getBlockingLevel());
+                request.setAttribute("errorMessage",
+                    "Cannot remove customization: created at " + canArchive.getBlockingLevel() + " level");
+                request.setAttribute("demographic", demographicNo);
+                request.setAttribute("flowsheet", flowsheet);
+                return ERROR;
+            }
+
             cust.setArchived(true);
             cust.setArchivedDate(new Date());
             flowSheetCustomizationDao.merge(cust);
