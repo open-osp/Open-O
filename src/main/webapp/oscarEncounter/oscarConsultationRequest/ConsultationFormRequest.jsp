@@ -48,6 +48,7 @@
 <%@ taglib uri="/WEB-INF/special_tag.tld" prefix="special" %>
 <!-- end -->
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
 
 
 <%@page import="java.util.ArrayList, java.util.List, java.util.*, ca.openosp.OscarProperties, ca.openosp.openo.lab.ca.on.*" %>
@@ -339,10 +340,11 @@
 
             setHealthCareTeam(demographicContacts, healthCareTeam, consultationServices, consultationServiceDao);
 
-            pageContext.setAttribute("consultUtil", consultUtil);
             pageContext.setAttribute("consultationServices", consultationServices);
             pageContext.setAttribute("healthCareTeam", healthCareTeam);
         }
+
+        pageContext.setAttribute("consultUtil", consultUtil);
     %>
     <%!
         private static DemographicContact addDemographicContact(LoggedInInfo loggedInInfo,
@@ -1506,14 +1508,16 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadFax").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
 
                 document.getElementById("letterheadFaxSpan").textContent = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>";
-                document.getElementById("faxAccount").value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
 
                 let faxAccountOptions = document.getElementById("faxAccount");
-                for(let i = 0; i < faxAccountOptions.options.length; i++) {
-                    let option = faxAccountOptions.options[i];
-                    if(option.value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
-                        faxAccountOptions.value = "<%=clinic.getClinicFax()%>".replace(/[^0-9.]/g, '');
-                        break;
+                if (faxAccountOptions) {
+                    faxAccountOptions.value = "<%=Encode.forHtmlAttribute(clinic.getClinicFax()) %>".replace(/[^0-9.]/g, '');
+                    for(let i = 0; i < faxAccountOptions.options.length; i++) {
+                        let option = faxAccountOptions.options[i];
+                        if(option.value === "<%=clinic.getClinicFax() %>".replace(/[^0-9.]/g, '')) {
+                            faxAccountOptions.value = "<%=clinic.getClinicFax()%>".replace(/[^0-9.]/g, '');
+                            break;
+                        }
                     }
                 }
             } else {
@@ -1529,12 +1533,14 @@ if (OscarProperties.getInstance().getBooleanProperty("consultation_program_lette
                 document.getElementById("letterheadPhoneSpan").textContent = providerData[value]['phone'];
                 document.getElementById("letterheadFax").value = providerData[value]['fax'];
                 document.getElementById("letterheadFaxSpan").textContent = providerData[value]['fax'];
-                
+
                 let faxAccountOptions = document.getElementById("faxAccount");
-                for(let option in faxAccountOptions.options) {
-                    if(faxAccountOptions.options[option].value === providerData[value]['fax'].replace(/[^0-9.]/g, '')) {
-                        faxAccountOptions.value = providerData[value]['fax'].replace(/[^0-9.]/g, '');
-                        break;
+                if (faxAccountOptions) {
+                    for(let option in faxAccountOptions.options) {
+                        if(faxAccountOptions.options[option].value === providerData[value]['fax'].replace(/[^0-9.]/g, '')) {
+                            faxAccountOptions.value = providerData[value]['fax'].replace(/[^0-9.]/g, '');
+                            break;
+                        }
                     }
                 }
             }
@@ -2550,7 +2556,7 @@ if (userAgent != null) {
                                                         <%=(thisForm.getLetterheadName() != null && !thisForm.getLetterheadName().isEmpty() && thisForm.getLetterheadName().equalsIgnoreCase(p.getProviderNo())) ? "selected" : ((thisForm.getLetterheadName() == null || thisForm.getLetterheadName().isEmpty()) && p.getProviderNo().equalsIgnoreCase(providerDefault) && lhndType.equals("providers") ? "selected" : "") %>>
                                                     <%=Encode.forHtmlContent(p.getSurname())%>
                                                     ,&nbsp;<%=Encode.forHtmlContent(p.getFirstName().replace("Dr.", ""))%>
-                                                </option>
+                                                        </option>
                                                 <% }
                                                 }
 
@@ -2620,13 +2626,13 @@ if (userAgent != null) {
                                         <td  class="tite1" style="width:70%;">
 								<c:choose>
 								    <c:when test="${not empty consultUtil.letterheadFax}">
-									    <input type="hidden" name="letterheadFax" id="letterheadFax" value="<encode:forHtmlAttribute value="${consultUtil.letterheadFax}"/>" />
+									    <input type="hidden" name="letterheadFax" id="letterheadFax" value="${e:forHtmlAttribute(consultUtil.letterheadFax)}" />
 									    <span id="letterheadFaxSpan">
-										    <c:out value="${consultUtil.letterheadFax}" />
+										    <e:forHtmlContent value="${consultUtil.letterheadFax}" />
 									    </span>
 								    </c:when>
 									<c:otherwise>
-										<input type="hidden" name="letterheadFax" id="letterheadFax" value="<%=Encode.forHtmlContent(clinic.getClinicFax())%>" />
+										<input type="hidden" name="letterheadFax" id="letterheadFax" value="<%=Encode.forHtmlAttribute(clinic.getClinicFax())%>" />
 										<span id="letterheadFaxSpan">
 										    <%=Encode.forHtmlContent(clinic.getClinicFax())%>
 									    </span>
@@ -3066,6 +3072,7 @@ if (userAgent != null) {
             * Clinic address is set if no selection is detected.
             */
             if("${empty pageScope.consultUtil.letterheadName}" === "true") {
+                // New consultation - set default letterhead
                 if("${pageScope.lhndType eq 'providers'}" === "true"){
                     switchProvider("${pageScope.providerDefault}");
                 } else if("${pageScope.lhndType eq 'clinic'}" === "true"){
@@ -3073,6 +3080,9 @@ if (userAgent != null) {
                 } else {
                     switchProvider("-1");
                 }
+            } else {
+                // Existing consultation - load saved letterhead
+                switchProvider("${pageScope.consultUtil.letterheadName}");
             }
         })
     </script>
