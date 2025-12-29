@@ -290,14 +290,15 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
         return hd;
     }
 
+    /** Flag indicating whether Report X generation succeeded. */
+    private boolean reportXIsGenerated = true;
+
     /**
      * Generate Claim File Rejection Report (X).
      *
-     * @param file
-     * @return
+     * @param file the file input stream to process
+     * @return list of message strings for the report
      */
-    private boolean reportXIsGenerated = true;
-
     private ArrayList<String> generateReportX(FileInputStream file) {
         ArrayList<String> messages = new ArrayList<String>();
         messages.add("M01 | Message Reason         Length     Msg Type   Filler  Record Image");

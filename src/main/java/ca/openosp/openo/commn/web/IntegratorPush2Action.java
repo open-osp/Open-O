@@ -103,13 +103,9 @@ public class IntegratorPush2Action extends ActionSupport {
     }
 
     /**
-     * We basically just set a system property in the DB so that the next time the job runs, it either, does or not based on the property
+     * We basically just set a system property in the DB so that the next time the job runs, it either, does or not based on the property.
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
+     * @return JSON result string
      */
     public String disableNextAndFuturePushes() {
 

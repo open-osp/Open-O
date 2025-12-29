@@ -83,12 +83,11 @@ public class MessagingManagerImpl implements MessagingManager {
      * Get the entire inbox for the logged-in provider only.
      * Results can be reduced by specifying the message status and/or a result limit.
      *
-     * @param loggedInInfo
-     * @param providerNo
-     * @param messageStatus
-     * @param offset
-     * @param limit
-     * @return
+     * @param loggedInInfo the logged in user information
+     * @param messageStatus the message status to filter by
+     * @param offset the offset for pagination
+     * @param limit the limit for pagination
+     * @return list of display messages
      */
     public List<MsgDisplayMessage> getInbox(LoggedInInfo loggedInInfo, String messageStatus, int offset, int limit) {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.READ, null)) {
@@ -277,9 +276,10 @@ public class MessagingManagerImpl implements MessagingManager {
     /**
      * Change the status of a message (sent, read, del, new)
      *
-     * @param loggedInInfo
-     * @param messageId
-     * @param status
+     * @param loggedInInfo the logged in user information
+     * @param messageList the message list to update
+     * @param status the new status
+     * @return the message ID
      */
     public Long setMessageStatus(LoggedInInfo loggedInInfo, MessageList messageList, String status) {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_msg", SecurityInfoManager.UPDATE, null)) {
@@ -409,11 +409,10 @@ public class MessagingManagerImpl implements MessagingManager {
     /**
      * Attach all providers that should receive this message.
      *
-     * @param loggedInInfo
-     * @param messageId
-     * @param recipients
-     * @param destinationFacility
-     * @param sourceFacilityId
+     * @param loggedInInfo the logged in user information
+     * @param messageId the message ID
+     * @param contactIdentifier array of contact identifiers
+     * @param status the message status
      */
     public void addRecipientsToMessage(LoggedInInfo loggedInInfo, int messageId, ContactIdentifier[] contactIdentifier, String status) {
         for (ContactIdentifier contact : contactIdentifier) {

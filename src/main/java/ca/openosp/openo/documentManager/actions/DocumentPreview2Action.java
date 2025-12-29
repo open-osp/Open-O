@@ -224,7 +224,7 @@ public class DocumentPreview2Action extends ActionSupport {
         String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 
         populateCommonDocs(loggedInInfo, demographicNo);
-		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
+		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(Integer.valueOf(demographicNo), true);
         request.setAttribute("allEForms", allEForms);
 
         return "fetchDocuments";
