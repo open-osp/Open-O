@@ -77,7 +77,6 @@ public class RxManagerImpl implements RxManager {
      * @param info          details regarding the current user
      * @param demographicNo the demographic to get current drugs for.
      * @param status        the status to filter on the meds, one of {ALL, CURRENT, ARCHIVED}
-      * @param status        the status to filter on the meds, one of {ALL, CURRENT, ARCHIVED}
      * @return a list of the drugs that are marked as current in the demographics record.
      * @throws UnsupportedOperationException when a status that is not supported is requested.
      */

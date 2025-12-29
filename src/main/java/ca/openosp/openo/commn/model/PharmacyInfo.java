@@ -231,7 +231,9 @@ public class PharmacyInfo extends AbstractModel<Integer> implements Comparable<P
 
 
     /**
-     * @param persist the persist to set
+     * Sets the persistent flag.
+     *
+     * @param persistent the persistent flag to set
      */
     public void setPersistent(Boolean persistent) {
         this.persistent = persistent;
