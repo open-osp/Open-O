@@ -116,10 +116,12 @@ public final class PathValidationUtils {
      * Use this when reading uploaded file content without writing to a destination.
      *
      * @param sourceFile the uploaded file (from Struts2/Tomcat)
+     * @return the validated File (same as input if valid) - use this return value for file operations
      * @throws SecurityException if validation fails
      */
-    public static void validateUpload(File sourceFile) {
+    public static File validateUpload(File sourceFile) {
         validateSource(sourceFile, null);
+        return sourceFile;
     }
 
     /**

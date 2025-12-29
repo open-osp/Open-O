@@ -51,6 +51,7 @@ import ca.openosp.openo.managers.FaxManager;
 import ca.openosp.openo.managers.FormsManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.documentManager.EDoc;
@@ -332,19 +333,16 @@ public class ConsultationAttachDocs2Action extends ActionSupport {
                 return null;
             }
 
-            // Create the base directory path and normalize it
-            Path baseDir = Paths.get(documentDir).normalize().toAbsolutePath();
-            
-            // Create the full path by combining base directory with file name
-            // Since we've already validated that fileName contains no path separators,
-            // this is safe
-            Path filePath = baseDir.resolve(fileName).normalize().toAbsolutePath();
-            
-            // Verify the resolved path is still within the base directory
-            if (!filePath.startsWith(baseDir)) {
+            // Validate file path using PathValidationUtils
+            File baseDirFile = new File(documentDir);
+            File validatedFile;
+            try {
+                validatedFile = PathValidationUtils.validatePath(fileName, baseDirFile);
+            } catch (SecurityException e) {
                 logger.error("Path traversal attempt: resolved path escapes base directory");
                 return null;
             }
+            Path filePath = validatedFile.toPath();
             
             // Verify the file exists and is a regular file
             if (!Files.exists(filePath)) {

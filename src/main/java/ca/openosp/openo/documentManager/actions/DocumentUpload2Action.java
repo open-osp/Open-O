@@ -44,6 +44,7 @@ import ca.openosp.openo.managers.ProgramManager2;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -79,7 +80,18 @@ public class DocumentUpload2Action extends ActionSupport {
         ResourceBundle props = ResourceBundle.getBundle("oscarResources");
         if (docFile == null) {
             map.put("error", 4);
-        } else if (destination != null && destination.equals("incomingDocs")) {
+        } else {
+            // Validate uploaded file is from temp directory for all destinations
+            try {
+                docFile = PathValidationUtils.validateUpload(docFile);
+            } catch (SecurityException e) {
+                logger.error("Invalid upload source - potential path traversal: " + docFile.getPath());
+                map.put("error", "Invalid file upload");
+                docFile = null; // Treat as if no file was uploaded
+            }
+        }
+
+        if (docFile != null && destination != null && destination.equals("incomingDocs")) {
             String fileName = this.filedataFileName;
             if (!fileName.toLowerCase().endsWith(".pdf")) {
                 map.put("error", props.getString("dms.documentUpload.onlyPdf"));
@@ -213,22 +225,11 @@ public class DocumentUpload2Action extends ActionSupport {
             if (!documentDir.endsWith(File.separator)) {
                 documentDir += File.separator;
             }
-            String savePath = documentDir + fileName;
-
-            // Validate the canonical path to ensure file ends up in the intended destination
+            // Validate the destination path using PathValidationUtils
             File baseDir = new File(documentDir);
-            String canonicalBase = baseDir.getCanonicalPath();
+            File destinationFile = PathValidationUtils.validatePath(fileName, baseDir);
 
-            File destinationFile = new File(savePath);
-            String canonicalDest = destinationFile.getCanonicalPath();
-
-            // Ensure the canonical path is within the allowed directory
-            if (!canonicalDest.startsWith(canonicalBase + File.separator) &&
-                !canonicalDest.equals(canonicalBase)) {
-                throw new SecurityException("Destination file is outside allowed directory");
-            }
-
-            fos = new FileOutputStream(savePath);
+            fos = new FileOutputStream(destinationFile);
             byte[] buf = new byte[128 * 1024];
             int i = 0;
             while ((i = fis.read(buf)) != -1) {
@@ -264,34 +265,26 @@ public class DocumentUpload2Action extends ActionSupport {
 
         String savePath = IncomingDocUtil.getAndCreateIncomingDocumentFilePathName(queueId, PdfDir, fileName);
 
-        // Validate the canonical path to ensure file ends up in the intended destination
-        try {
-            String incomingDocDir = OscarProperties.getInstance().getProperty("INCOMINGDOCUMENT_DIR");
-            if (incomingDocDir == null || incomingDocDir.isEmpty()) {
-                logger.error("INCOMINGDOCUMENT_DIR not configured");
-                return false;
-            }
-
-            File baseDir = new File(incomingDocDir);
-            String canonicalBase = baseDir.getCanonicalPath();
-
-            File destinationFile = new File(savePath);
-            String canonicalDest = destinationFile.getCanonicalPath();
-
-            // Ensure the canonical path is within the allowed directory
-            if (!canonicalDest.startsWith(canonicalBase + File.separator) &&
-                !canonicalDest.equals(canonicalBase)) {
-                logger.error("Destination file is outside allowed directory: " + canonicalDest);
-                return false;
-            }
-        } catch (IOException e) {
-            logger.error("Error validating canonical path", e);
+        // Validate the destination path using PathValidationUtils
+        String incomingDocDir = OscarProperties.getInstance().getProperty("INCOMINGDOCUMENT_DIR");
+        if (incomingDocDir == null || incomingDocDir.isEmpty()) {
+            logger.error("INCOMINGDOCUMENT_DIR not configured");
             return false;
         }
 
-        // Write the file
-        try (InputStream fis = Files.newInputStream(docFile.toPath());
-                FileOutputStream fos = new FileOutputStream(savePath)) {
+        File baseDir = new File(incomingDocDir);
+        File destinationFile = new File(savePath);
+        try {
+            PathValidationUtils.validateExistingPath(destinationFile.getParentFile(), baseDir);
+        } catch (SecurityException e) {
+            logger.error("Destination file is outside allowed directory: " + savePath);
+            return false;
+        }
+
+        // Write the file - validate source file at point of use for static analysis visibility
+        File validatedDocFile = PathValidationUtils.validateUpload(docFile);
+        try (InputStream fis = Files.newInputStream(validatedDocFile.toPath());
+                FileOutputStream fos = new FileOutputStream(destinationFile)) {
             IOUtils.copy(fis, fos);
         } catch (IOException e) {
             logger.error("Error writing file to incoming docs", e);
