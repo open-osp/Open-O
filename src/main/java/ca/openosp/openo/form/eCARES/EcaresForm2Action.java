@@ -54,9 +54,22 @@ public class EcaresForm2Action extends ActionSupport {
     private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     ;
 
-    public String exexute() {
-        if ("getTickler".equals(request.getParameter("method"))) {
+    public String execute() {
+        String method = request.getParameter("method");
+        if ("getTickler".equals(method)) {
             return getTickler();
+        } else if ("get".equals(method)) {
+            get();
+            return null;
+        } else if ("save".equals(method)) {
+            save();
+            return null;
+        } else if ("createTickler".equals(method)) {
+            createTickler();
+            return null;
+        } else if ("export".equals(method)) {
+            export();
+            return null;
         }
         return fetch();
     }
