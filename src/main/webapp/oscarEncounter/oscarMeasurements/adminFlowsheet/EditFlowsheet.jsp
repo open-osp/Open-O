@@ -108,6 +108,39 @@
     }
 
     /**
+     * Check if the current scope has its own UPDATE customization for a measurement.
+     * Used to show the Revert button.
+     */
+    private boolean hasOwnUpdateCustomization(List<FlowSheetCustomization> custList, String measurement, String scope, String demographic, String currentProvider) {
+        if (custList == null) return false;
+
+        for (FlowSheetCustomization cust : custList) {
+            if (!"update".equals(cust.getAction())) continue;
+            if (!measurement.equals(cust.getMeasurement())) continue;
+
+            boolean isCurrentScopeMatch = false;
+            if (demographic != null && !demographic.isEmpty()) {
+                // Patient scope: providerNo="" AND demographicNo=demographic
+                isCurrentScopeMatch = "".equals(cust.getProviderNo()) &&
+                                      demographic.equals(cust.getDemographicNo());
+            } else if ("clinic".equals(scope)) {
+                // Clinic scope: providerNo="" AND demographicNo="0"
+                isCurrentScopeMatch = "".equals(cust.getProviderNo()) &&
+                                      "0".equals(cust.getDemographicNo());
+            } else {
+                // Provider scope: providerNo=currentProvider AND demographicNo="0"
+                isCurrentScopeMatch = currentProvider.equals(cust.getProviderNo()) &&
+                                      "0".equals(cust.getDemographicNo());
+            }
+
+            if (isCurrentScopeMatch) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines the scope level name for a customization.
      */
     private String getScopeLevelName(FlowSheetCustomization cust) {
@@ -457,14 +490,9 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		                <tr>
 		         		<td>
 		         		<%
-		         		    // Check for inherited UPDATE customization
-		         		    InheritedCustomization inheritedUpdate = getInheritedCustomization(
-		         		        custList, mstring, "update", scope, demographic, (String) session.getAttribute("user"));
-
+		         		    // Prevention items cannot be edited
 		         		    if(mFlowsheet.getFlowSheetItem(mstring).getPreventionType()!=null){ %>
 		         		<i class="icon-pencil action-icon"  rel="popover" data-container="body"  data-toggle="popover" data-placement="right" data-content="unable to edit a prevention item" data-trigger="hover" title=""></i>
-		                <%} else if (inheritedUpdate != null) { %>
-		                <i class="icon-pencil action-icon" style="opacity:0.4;" title="Customized at <%=inheritedUpdate.sourceLevel%> level - cannot edit"></i>
 		                <%} else {%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
@@ -487,7 +515,15 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		               %>
 		                   <a href="FlowSheetCustomAction.do?method=hide&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Hide this measurement" class="action-icon"><i class="icon-eye-open"></i></a>
 		               <% } %>
-
+		               <%
+		                // Show Revert button if current scope has its own UPDATE customization
+		                boolean hasOwnUpdate = hasOwnUpdateCustomization(custList, mstring, scope, demographic, (String) session.getAttribute("user"));
+		                if (hasOwnUpdate) {
+		               %>
+		                   <a href="FlowSheetCustomAction.do?method=revertUpdate&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>"
+		                      title="Revert to settings from higher scope" class="action-icon"
+		                      onclick="return confirm('Revert this measurement to settings from higher scope?');"><i class="icon-refresh"></i></a>
+		               <% } %>
 
 		                </td>
 		                <td><%=counter%></td>

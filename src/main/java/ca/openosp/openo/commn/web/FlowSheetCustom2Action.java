@@ -163,6 +163,8 @@ public class FlowSheetCustom2Action extends ActionSupport {
             return archiveMod();
         } else if ("createNewFlowSheet".equals(method)) {
             return createNewFlowSheet();
+        } else if ("revertUpdate".equals(method)) {
+            return revertUpdate();
         }
         return SUCCESS;
     }
@@ -303,19 +305,8 @@ public class FlowSheetCustom2Action extends ActionSupport {
             String measurementType = h.get("measurement_type");
             String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
-            // Check for blocking customization from higher level
-            CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
-                flowsheet, measurementType, FlowSheetCustomization.UPDATE, providerNo, demographicNo);
-
-            if (cascadeResult.isBlocked()) {
-                logger.warn("Cannot update measurement {} - already customized at {} level",
-                    measurementType, cascadeResult.getBlockingLevel());
-                request.setAttribute("errorMessage",
-                    "Cannot update measurement: already customized at " + cascadeResult.getBlockingLevel() + " level");
-                request.setAttribute("demographic", demographicNo);
-                request.setAttribute("flowsheet", flowsheet);
-                return ERROR;
-            }
+            // UPDATE customizations are allowed at any level - no cascade blocking
+            // Users can revert to higher-scope settings using the Revert button
 
             FlowSheetItem item = new FlowSheetItem(h);
 
@@ -493,6 +484,49 @@ public class FlowSheetCustom2Action extends ActionSupport {
         for (FlowSheetCustomization cust : customizations) {
             if (FlowSheetCustomization.DELETE.equals(cust.getAction()) && ctx.measurement.equals(cust.getMeasurement())) {
                 flowSheetCustomizationDao.remove(cust.getId());
+            }
+        }
+
+        setResponseAttributes(ctx);
+        return SUCCESS;
+    }
+
+    /**
+     * Reverts an UPDATE customization at the current scope level.
+     * After reversion, the measurement settings fall back to the next highest
+     * scope's customization (or base flowsheet settings if none).
+     *
+     * @return SUCCESS after archiving the customization
+     */
+    public String revertUpdate() {
+        logger.debug("IN REVERT_UPDATE");
+        ScopeContext ctx = parseScopeContext();
+        validateDemographicAccess(ctx.demographicNo);
+
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+
+        // Get customizations at CURRENT scope level only
+        List<FlowSheetCustomization> customizations;
+        if (ctx.isClinicScope) {
+            customizations = flowSheetCustomizationDao.getClinicLevelCustomizations(ctx.flowsheet);
+        } else if (ctx.isPatientScope) {
+            customizations = flowSheetCustomizationDao.getPatientLevelCustomizations(
+                ctx.flowsheet, ctx.demographicNo);
+        } else {
+            customizations = flowSheetCustomizationDao.getProviderLevelCustomizations(
+                ctx.flowsheet, ctx.providerNo);
+        }
+
+        // Archive UPDATE customization for this measurement
+        for (FlowSheetCustomization cust : customizations) {
+            if (FlowSheetCustomization.UPDATE.equals(cust.getAction()) &&
+                ctx.measurement.equals(cust.getMeasurement())) {
+                cust.setArchived(true);
+                cust.setArchivedDate(new Date());
+                flowSheetCustomizationDao.merge(cust);
+                logger.info("Reverted UPDATE customization {} for measurement {}",
+                    cust.getId(), ctx.measurement);
             }
         }
 

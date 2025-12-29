@@ -92,6 +92,50 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
     }
 
     @Override
+    public List<FlowSheetCustomization> getClinicLevelCustomizations(String flowsheet) {
+        // Clinic level: providerNo='' AND demographicNo='0'
+        Query query = entityManager.createQuery(
+            "SELECT fd FROM FlowSheetCustomization fd " +
+            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
+            "AND fd.providerNo='' AND fd.demographicNo='0'");
+        query.setParameter(1, flowsheet);
+
+        @SuppressWarnings("unchecked")
+        List<FlowSheetCustomization> list = query.getResultList();
+        return list;
+    }
+
+    @Override
+    public List<FlowSheetCustomization> getProviderLevelCustomizations(String flowsheet, String providerNo) {
+        // Provider level: specific providerNo AND demographicNo='0'
+        Query query = entityManager.createQuery(
+            "SELECT fd FROM FlowSheetCustomization fd " +
+            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
+            "AND fd.providerNo=?2 AND fd.demographicNo='0'");
+        query.setParameter(1, flowsheet);
+        query.setParameter(2, providerNo);
+
+        @SuppressWarnings("unchecked")
+        List<FlowSheetCustomization> list = query.getResultList();
+        return list;
+    }
+
+    @Override
+    public List<FlowSheetCustomization> getPatientLevelCustomizations(String flowsheet, String demographicNo) {
+        // Patient level: providerNo='' AND specific demographicNo
+        Query query = entityManager.createQuery(
+            "SELECT fd FROM FlowSheetCustomization fd " +
+            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
+            "AND fd.providerNo='' AND fd.demographicNo=?2");
+        query.setParameter(1, flowsheet);
+        query.setParameter(2, demographicNo);
+
+        @SuppressWarnings("unchecked")
+        List<FlowSheetCustomization> list = query.getResultList();
+        return list;
+    }
+
+    @Override
     public FlowSheetCustomization findHigherLevelCustomization(
             String flowsheet, String measurement, String action,
             String providerNo, String demographicNo) {
