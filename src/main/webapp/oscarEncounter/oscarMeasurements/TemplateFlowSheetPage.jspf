@@ -840,7 +840,7 @@ div.recommendations ul{
     String prevType = (String) h2.get("prevention_type");
     long startPrevType = System.currentTimeMillis();
     ArrayList<Map<String,Object>> alist = PreventionData.getPreventionData(loggedInInfo, prevType, Integer.parseInt(demographic_no));
-    //HERE FOR recommendations/warnings for preventions
+
 %>
 
 
@@ -857,6 +857,7 @@ div.recommendations ul{
     </div>
     <%
         out.flush();
+        int prevCount = 0;
         for (int k = 0; k < alist.size(); k++){
       	  	Map<String,Object> hdata = alist.get(k);
             String com = PreventionData.getPreventionComment(""+hdata.get("id"));
@@ -867,8 +868,33 @@ div.recommendations ul{
             }else{
                 com ="";
             }
+            String hider = "";
+
+            int num = numElementsToShow;
+            if (request.getParameter("show") != null && request.getParameter("show").equals("lastOnly")) {
+                num = 1;
+            }
+            Date prevDate = (Date) hdata.get("prevention_date_asDate");
+
+            // Check if item passes date filter first
+            boolean passesDateFilter = true;
+            if (sdate != null && prevDate != null && prevDate.before(sdate)) {
+                passesDateFilter = false;
+                hider = "style=\"display:none\"";
+            }
+            if (edate != null && prevDate != null && prevDate.after(edate)) {
+                passesDateFilter = false;
+                hider = "style=\"display:none\"";
+            }
+            // Only count items that pass the date filter for the element limit
+            if (passesDateFilter) {
+                prevCount++;
+                if (prevCount > num) {
+                    hider = "style=\"display:none;\"";
+                }
+            }
     %>
-    <div class="preventionProcedure"  onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
+    <div class="preventionProcedure" <%=hider%> onclick="javascript:fsPopup(465,635,'${ pageContext.request.contextPath }/oscarPrevention/AddPreventionData.jsp?id=<%=hdata.get("id")%>&amp;demographic_no=<%=demographic_no%>','addPreventionData')" >
         <p <%=r(hdata.get("refused"))%> title="fade=[on] header=[<%=hdata.get("age")%> -- Date:<%=hdata.get("prevention_date")%>] body=[<%=com%>]" >Age: <%=hdata.get("age")%> <br/>
             <!--<%=refused(hdata.get("refused"))%>-->Date: <%=hdata.get("prevention_date")%>
             <%if (comb) {%>
