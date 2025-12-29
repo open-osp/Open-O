@@ -1549,6 +1549,7 @@
         </action>
         <action name="eform/imageUpload" class="ca.openosp.openo.eform.upload.ImageUpload2Action">
             <result name="success">/eform/partials/upload_image.jsp</result>
+            <result name="error">/eform/partials/upload_image.jsp</result>
         </action>
         <action name="eform/delEForm" class="ca.openosp.openo.eform.actions.DelEForm2Action">
             <result name="success">/eform/efmformmanager.jsp</result>
