@@ -126,6 +126,10 @@ public class ManageDocument2Action extends ActionSupport {
         ACTIONS.put("displayIncomingDocs", ctx -> { ctx.displayIncomingDocs(); return null; });
         ACTIONS.put("documentUpdate", ctx -> { ctx.documentUpdate(); return null; });
         ACTIONS.put("documentUpdateAjax", ctx -> { ctx.documentUpdateAjax(); return null; });
+        ACTIONS.put("getDemoNameAjax", ctx -> { ctx.getDemoNameAjax(); return null; });
+        ACTIONS.put("showPage", ctx -> { ctx.showPage(); return null; });
+        ACTIONS.put("view", ctx -> { ctx.view(); return null; });
+        ACTIONS.put("addIncomingDocument", ctx -> ctx.addIncomingDocument());
         //  Enable calling the method to remove providers
         ACTIONS.put("removeLinkFromDocument", new ActionHandler() {
             public String handle(ManageDocument2Action action) {
@@ -133,6 +137,7 @@ public class ManageDocument2Action extends ActionSupport {
                 return null;
             }
         });
+        ACTIONS.put("viewDocumentInfo", ctx -> { ctx.viewDocumentInfo(); return null; });
     }
 
     // Called on default by struts.xml, finds the correct method to use by finding what the URL "method" param is equal to
