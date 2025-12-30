@@ -81,17 +81,6 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
     }
 
     @Override
-    public List<FlowSheetCustomization> getFlowSheetCustomizationsForPatient(String flowsheet, String demographicNo) {
-        Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 and fd.archived=0 and fd.demographicNo = ?2");
-        query.setParameter(1, flowsheet);
-        query.setParameter(2, demographicNo);
-
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
-    }
-
-    @Override
     public List<FlowSheetCustomization> getClinicLevelCustomizations(String flowsheet) {
         // Clinic level: providerNo='' AND demographicNo='0'
         Query query = entityManager.createQuery(

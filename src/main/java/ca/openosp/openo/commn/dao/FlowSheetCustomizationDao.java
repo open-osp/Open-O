@@ -40,8 +40,6 @@ public interface FlowSheetCustomizationDao extends AbstractDao<FlowSheetCustomiz
 
     List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet);
 
-    List<FlowSheetCustomization> getFlowSheetCustomizationsForPatient(String flowsheet, String demographicNo);
-
     /**
      * Gets customizations created at clinic level only (providerNo="" AND demographicNo="0").
      * Does not include provider-level or patient-level customizations.

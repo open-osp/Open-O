@@ -472,13 +472,13 @@ public class FlowSheetCustom2Action extends ActionSupport {
         List<FlowSheetCustomization> customizations;
         if (ctx.isClinicScope) {
             // Clinic level
-            customizations = flowSheetCustomizationDao.getFlowSheetCustomizations(ctx.flowsheet);
+            customizations = flowSheetCustomizationDao.getClinicLevelCustomizations(ctx.flowsheet);
         } else if (ctx.isPatientScope) {
             // Patient level
-            customizations = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(ctx.flowsheet, ctx.demographicNo);
+            customizations = flowSheetCustomizationDao.getPatientLevelCustomizations(ctx.flowsheet, ctx.demographicNo);
         } else {
             // Provider level
-            customizations = flowSheetCustomizationDao.getFlowSheetCustomizations(ctx.flowsheet, ctx.providerNo);
+            customizations = flowSheetCustomizationDao.getProviderLevelCustomizations(ctx.flowsheet, ctx.providerNo);
         }
 
         for (FlowSheetCustomization cust : customizations) {
