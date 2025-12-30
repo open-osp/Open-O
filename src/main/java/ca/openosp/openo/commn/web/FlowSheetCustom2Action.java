@@ -63,17 +63,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
     private FlowSheetCustomizationDao flowSheetCustomizationDao = SpringUtils.getBean(FlowSheetCustomizationDao.class);
     private FlowSheetUserCreatedDao flowSheetUserCreatedDao = SpringUtils.getBean(FlowSheetUserCreatedDao.class);
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-    private FlowSheetCustomizationService flowSheetCustomizationService;
-
-    /**
-     * Gets the FlowSheetCustomizationService lazily.
-     */
-    private FlowSheetCustomizationService getFlowSheetCustomizationService() {
-        if (flowSheetCustomizationService == null) {
-            flowSheetCustomizationService = new FlowSheetCustomizationService();
-        }
-        return flowSheetCustomizationService;
-    }
+    private FlowSheetCustomizationService flowSheetCustomizationService = SpringUtils.getBean(FlowSheetCustomizationService.class);
 
     /**
      * Helper class to hold scope context for flowsheet operations.
@@ -184,7 +174,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
 
         // Validate scope permission - clinic level requires admin
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
 
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
         MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet);
@@ -233,7 +223,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
                 // Check for blocking customization from higher level
-                CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+                CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
                     flowsheet, measurementType, FlowSheetCustomization.ADD, providerNo, demographicNo);
 
                 if (cascadeResult.isBlocked()) {
@@ -290,7 +280,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
 
         // Validate scope permission - clinic level requires admin
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
 
         logger.debug("UPDATING FOR demographic " + demographicNo);
 
@@ -418,10 +408,10 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
         // Validate scope permission - clinic level requires admin
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
         // Check for blocking customization from higher level
-        CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+        CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
             ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
 
         if (cascadeResult.isBlocked()) {
@@ -454,10 +444,10 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
         // Validate scope permission - clinic level requires admin
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
         // Check for blocking hide from higher level - cannot restore if hidden at higher level
-        CascadeCheckResult cascadeResult = getFlowSheetCustomizationService().checkCascadingBlocked(
+        CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
             ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
 
         if (cascadeResult.isBlocked()) {
@@ -504,7 +494,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
         validateDemographicAccess(ctx.demographicNo);
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, ctx.scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
         // Get customizations at CURRENT scope level only
         List<FlowSheetCustomization> customizations;
@@ -549,14 +539,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
 
         // Validate scope permission - clinic level requires admin
-        getFlowSheetCustomizationService().validateScopePermission(loggedInInfo, scope);
+        flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
 
         FlowSheetCustomization cust = flowSheetCustomizationDao.getFlowSheetCustomization(Integer.parseInt(id));
         if (cust != null) {
             String currentProviderNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
             // Check if trying to archive a customization from a higher scope
-            CascadeCheckResult canArchive = getFlowSheetCustomizationService().checkCanArchive(
+            CascadeCheckResult canArchive = flowSheetCustomizationService.checkCanArchive(
                 cust, scope, currentProviderNo, demographicNo);
 
             if (canArchive.isBlocked()) {

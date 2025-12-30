@@ -31,7 +31,8 @@ import ca.openosp.openo.commn.dao.FlowSheetCustomizationDao;
 import ca.openosp.openo.commn.model.FlowSheetCustomization;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
-import ca.openosp.openo.utility.SpringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Service layer for FlowSheetCustomization cascading rules.
@@ -42,29 +43,65 @@ import ca.openosp.openo.utility.SpringUtils;
  *
  * @since 2025-12-23
  */
+@Service
 public class FlowSheetCustomizationService {
 
-    private FlowSheetCustomizationDao flowSheetCustomizationDao;
-    private SecurityInfoManager securityInfoManager;
+    private final FlowSheetCustomizationDao flowSheetCustomizationDao;
+    private final SecurityInfoManager securityInfoManager;
 
     /**
-     * Gets the FlowSheetCustomizationDao lazily to avoid initialization issues.
+     * Constructs the service with required dependencies.
+     *
+     * @param flowSheetCustomizationDao DAO for flowsheet customization operations
+     * @param securityInfoManager manager for security privilege checks
      */
-    private FlowSheetCustomizationDao getFlowSheetCustomizationDao() {
-        if (flowSheetCustomizationDao == null) {
-            flowSheetCustomizationDao = SpringUtils.getBean(FlowSheetCustomizationDao.class);
-        }
-        return flowSheetCustomizationDao;
+    @Autowired
+    public FlowSheetCustomizationService(
+            FlowSheetCustomizationDao flowSheetCustomizationDao,
+            SecurityInfoManager securityInfoManager) {
+        this.flowSheetCustomizationDao = flowSheetCustomizationDao;
+        this.securityInfoManager = securityInfoManager;
     }
 
     /**
-     * Gets the SecurityInfoManager lazily to avoid initialization issues.
+     * Represents the scope hierarchy levels for flowsheet customizations.
+     *
+     * <p>Higher rank values indicate higher authority levels. Clinic-level
+     * customizations take precedence over provider-level, which take
+     * precedence over patient-level.</p>
      */
-    private SecurityInfoManager getSecurityInfoManager() {
-        if (securityInfoManager == null) {
-            securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    public enum ScopeLevel {
+        /** Patient-specific customization (lowest priority). */
+        PATIENT(1),
+        /** Provider-specific customization (medium priority). */
+        PROVIDER(2),
+        /** Clinic-wide customization (highest priority). */
+        CLINIC(3);
+
+        private final int rank;
+
+        ScopeLevel(int rank) {
+            this.rank = rank;
         }
-        return securityInfoManager;
+
+        /**
+         * Checks if this scope level is higher than another.
+         *
+         * @param other the scope level to compare against
+         * @return true if this level has higher authority than the other
+         */
+        public boolean isHigherThan(ScopeLevel other) {
+            return this.rank > other.rank;
+        }
+
+        /**
+         * Returns the lowercase name of this scope level.
+         *
+         * @return "clinic", "provider", or "patient"
+         */
+        public String getName() {
+            return this.name().toLowerCase();
+        }
     }
 
     /**
@@ -72,10 +109,10 @@ public class FlowSheetCustomizationService {
      */
     public static class CascadeCheckResult {
         private final boolean blocked;
-        private final String blockingLevel;
+        private final ScopeLevel blockingLevel;
         private final FlowSheetCustomization blockingCustomization;
 
-        private CascadeCheckResult(boolean blocked, String blockingLevel, FlowSheetCustomization blockingCustomization) {
+        private CascadeCheckResult(boolean blocked, ScopeLevel blockingLevel, FlowSheetCustomization blockingCustomization) {
             this.blocked = blocked;
             this.blockingLevel = blockingLevel;
             this.blockingCustomization = blockingCustomization;
@@ -93,11 +130,11 @@ public class FlowSheetCustomizationService {
         /**
          * Creates a result indicating the operation is blocked.
          *
-         * @param blockingLevel the scope level that is blocking (clinic or provider)
+         * @param blockingLevel the scope level that is blocking
          * @param blockingCustomization the customization that is blocking
          * @return CascadeCheckResult with blocked=true
          */
-        public static CascadeCheckResult blocked(String blockingLevel, FlowSheetCustomization blockingCustomization) {
+        public static CascadeCheckResult blocked(ScopeLevel blockingLevel, FlowSheetCustomization blockingCustomization) {
             return new CascadeCheckResult(true, blockingLevel, blockingCustomization);
         }
 
@@ -113,10 +150,19 @@ public class FlowSheetCustomizationService {
         /**
          * Returns the scope level that is blocking.
          *
-         * @return "clinic" or "provider", or null if not blocked
+         * @return the blocking ScopeLevel, or null if not blocked
+         */
+        public ScopeLevel getBlockingScopeLevel() {
+            return blockingLevel;
+        }
+
+        /**
+         * Returns the scope level name that is blocking (for backward compatibility).
+         *
+         * @return "clinic", "provider", or "patient", or null if not blocked
          */
         public String getBlockingLevel() {
-            return blockingLevel;
+            return blockingLevel != null ? blockingLevel.getName() : null;
         }
 
         /**
@@ -143,15 +189,31 @@ public class FlowSheetCustomizationService {
             String flowsheet, String measurement, String action,
             String providerNo, String demographicNo) {
 
-        FlowSheetCustomization blocking = getFlowSheetCustomizationDao().findHigherLevelCustomization(
+        FlowSheetCustomization blocking = flowSheetCustomizationDao.findHigherLevelCustomization(
             flowsheet, measurement, action, providerNo, demographicNo);
 
         if (blocking == null) {
             return CascadeCheckResult.allowed();
         }
 
-        String blockingLevel = getScopeLevelName(blocking);
+        ScopeLevel blockingLevel = getScopeLevel(blocking);
         return CascadeCheckResult.blocked(blockingLevel, blocking);
+    }
+
+    /**
+     * Determines the scope level for a customization.
+     *
+     * @param cust the FlowSheetCustomization to check
+     * @return the ScopeLevel (CLINIC, PROVIDER, or PATIENT)
+     */
+    public ScopeLevel getScopeLevel(FlowSheetCustomization cust) {
+        if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) {
+            return ScopeLevel.CLINIC;
+        } else if (!"0".equals(cust.getDemographicNo())) {
+            return ScopeLevel.PATIENT;
+        } else {
+            return ScopeLevel.PROVIDER;
+        }
     }
 
     /**
@@ -161,13 +223,7 @@ public class FlowSheetCustomizationService {
      * @return "clinic", "provider", or "patient"
      */
     public String getScopeLevelName(FlowSheetCustomization cust) {
-        if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) {
-            return "clinic";
-        } else if (!"0".equals(cust.getDemographicNo())) {
-            return "patient";
-        } else {
-            return "provider";
-        }
+        return getScopeLevel(cust).getName();
     }
 
     /**
@@ -181,10 +237,28 @@ public class FlowSheetCustomizationService {
      */
     public void validateScopePermission(LoggedInInfo loggedInInfo, String scope) {
         if ("clinic".equals(scope)) {
-            if (!getSecurityInfoManager().hasPrivilege(loggedInInfo, "_admin", "w", null)) {
+            if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", "w", null)) {
                 throw new SecurityException("Clinic-level customization requires admin privileges");
             }
         }
+    }
+
+    /**
+     * Resolves the current scope level from the parameters.
+     *
+     * @param currentScope the scope string ("clinic" or other)
+     * @param currentDemographicNo the demographic number ("0" or patient ID)
+     * @return the resolved ScopeLevel
+     */
+    private ScopeLevel resolveCurrentScopeLevel(String currentScope, String currentDemographicNo) {
+        boolean isCurrentPatientScope = currentDemographicNo != null && !"0".equals(currentDemographicNo);
+        if (isCurrentPatientScope) {
+            return ScopeLevel.PATIENT;
+        }
+        if ("clinic".equals(currentScope)) {
+            return ScopeLevel.CLINIC;
+        }
+        return ScopeLevel.PROVIDER;
     }
 
     /**
@@ -202,22 +276,11 @@ public class FlowSheetCustomizationService {
             FlowSheetCustomization cust,
             String currentScope, String currentProviderNo, String currentDemographicNo) {
 
-        String custScope = getScopeLevelName(cust);
-        boolean isCurrentPatientScope = currentDemographicNo != null && !"0".equals(currentDemographicNo);
-        boolean isCurrentProviderScope = !isCurrentPatientScope && !"clinic".equals(currentScope);
+        ScopeLevel custLevel = getScopeLevel(cust);
+        ScopeLevel currentLevel = resolveCurrentScopeLevel(currentScope, currentDemographicNo);
 
-        boolean isHigherLevel = false;
-
-        if (isCurrentPatientScope) {
-            // Patient scope - cannot archive clinic or provider level
-            isHigherLevel = "clinic".equals(custScope) || "provider".equals(custScope);
-        } else if (isCurrentProviderScope) {
-            // Provider scope - cannot archive clinic level
-            isHigherLevel = "clinic".equals(custScope);
-        }
-
-        if (isHigherLevel) {
-            return CascadeCheckResult.blocked(custScope, cust);
+        if (custLevel.isHigherThan(currentLevel)) {
+            return CascadeCheckResult.blocked(custLevel, cust);
         }
 
         return CascadeCheckResult.allowed();
