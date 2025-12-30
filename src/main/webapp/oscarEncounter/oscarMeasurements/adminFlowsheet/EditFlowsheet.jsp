@@ -186,6 +186,18 @@
 <%
     long startTimeToGetP = System.currentTimeMillis();
 
+    String module = "";
+    String htQueryString = "";
+    if (request.getParameter("htracker") != null) {
+        module = "htracker";
+        htQueryString = "&" + module;
+    }
+
+    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
+        module = "slim";
+        htQueryString = htQueryString + "=slim";
+    }
+
     String temp = "";
     if (request.getParameter("flowsheet") != null) {
         temp = request.getParameter("flowsheet");

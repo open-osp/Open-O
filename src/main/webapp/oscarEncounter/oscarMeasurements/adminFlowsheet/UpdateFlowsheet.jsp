@@ -75,6 +75,18 @@ String measurement = request.getParameter("measurement");
 String demographic = request.getParameter("demographic");
 String scope = request.getParameter("scope");
 
+    String module = "";
+    String htQueryString = "";
+    if (request.getParameter("htracker") != null) {
+        module = "htracker";
+        htQueryString = "&" + module;
+    }
+
+    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
+        module = "slim";
+        htQueryString = htQueryString + "=slim";
+    }
+
     long start = System.currentTimeMillis();
 
     List<FlowSheetCustomization> custList = null;
