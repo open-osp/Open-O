@@ -542,8 +542,8 @@ public class ProviderData {
     }
 
     /**
-     * getters && setters
-     **/
+     * Getters and setters for provider properties.
+     */
 
     public java.lang.String getPractitionerNo() {
         return practitionerNo;

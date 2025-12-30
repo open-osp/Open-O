@@ -48,6 +48,7 @@ import org.jpedal.exception.PdfException;
 import org.jpedal.fonts.FontMappings;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -117,7 +118,9 @@ public class NioFileManagerImpl implements NioFileManager {
         outfile = outfile.normalize().toAbsolutePath();
         
         // Verify the file is within the cache directory (defense in depth)
-        if (!outfile.startsWith(normalizedCacheDir)) {
+        try {
+            PathValidationUtils.validateExistingPath(outfile.toFile(), normalizedCacheDir.toFile());
+        } catch (SecurityException e) {
             log.error("Path traversal attempt detected in hasCacheVersion2: " + filename);
             return null;
         }
@@ -188,7 +191,9 @@ public class NioFileManagerImpl implements NioFileManager {
                 normalizedSourceDir = Paths.get(sourceDirectory).normalize().toAbsolutePath();
                 
                 // Ensure the source directory is within the allowed base document directory
-                if (!normalizedSourceDir.startsWith(baseDocumentPath)) {
+                try {
+                    PathValidationUtils.validateExistingPath(normalizedSourceDir.toFile(), baseDocumentPath.toFile());
+                } catch (SecurityException e) {
                     log.error("Source directory is outside allowed base path: " + sourceDirectory);
                     return null;
                 }
@@ -204,9 +209,11 @@ public class NioFileManagerImpl implements NioFileManager {
             }
             
             Path sourceFile = normalizedSourceDir.resolve(sanitizedFilename).normalize().toAbsolutePath();
-            
+
             // Ensure source file is within the source directory
-            if (!sourceFile.startsWith(normalizedSourceDir)) {
+            try {
+                PathValidationUtils.validateExistingPath(sourceFile.toFile(), normalizedSourceDir.toFile());
+            } catch (SecurityException e) {
                 log.error("Path traversal attempt in source file: " + filename);
                 return null;
             }
@@ -217,7 +224,9 @@ public class NioFileManagerImpl implements NioFileManager {
             cacheFilePath = cacheFilePath.normalize().toAbsolutePath();
             
             // Verify the cache file path is within the cache directory
-            if (!cacheFilePath.startsWith(normalizedCacheDir)) {
+            try {
+                PathValidationUtils.validateExistingPath(cacheFilePath.toFile(), normalizedCacheDir.toFile());
+            } catch (SecurityException e) {
                 log.error("Path traversal attempt in cache file creation: " + filename);
                 return null;
             }
@@ -277,7 +286,9 @@ public class NioFileManagerImpl implements NioFileManager {
             Path normalizedPath = cacheFilePath.normalize().toAbsolutePath();
             
             // Double-check that the file is within the cache directory after normalization
-            if (!normalizedPath.startsWith(normalizedCacheDir)) {
+            try {
+                PathValidationUtils.validateExistingPath(normalizedPath.toFile(), normalizedCacheDir.toFile());
+            } catch (SecurityException e) {
                 log.error("Attempt to delete file outside of cache directory: " + fileName);
                 throw new SecurityException("Path traversal attempt detected");
             }
@@ -355,7 +366,9 @@ public class NioFileManagerImpl implements NioFileManager {
         Path file = directory.resolve(sanitizedName).normalize();
 
         // Ensure the resolved path is still within the temp directory
-        if (!file.startsWith(directory)) {
+        try {
+            PathValidationUtils.validateExistingPath(file.toFile(), directory.toFile());
+        } catch (SecurityException e) {
             throw new SecurityException("File can only be created in temporary directory.");
         }
 
@@ -381,7 +394,9 @@ public class NioFileManagerImpl implements NioFileManager {
             }
             
             // Validate that the file is within the system temp directory
-            if (!tempfile.startsWith(systemTempDir)) {
+            try {
+                PathValidationUtils.validateExistingPath(tempfile.toFile(), systemTempDir.toFile());
+            } catch (SecurityException e) {
                 log.error("Attempt to delete file outside of temp directory: " + fileName);
                 throw new SecurityException("Path traversal attempt detected");
             }
@@ -422,7 +437,9 @@ public class NioFileManagerImpl implements NioFileManager {
         Path oscarDocument = documentDir.resolve(sanitizedFileName).normalize().toAbsolutePath();
         
         // Ensure the file is within the document directory
-        if (!oscarDocument.startsWith(documentDir)) {
+        try {
+            PathValidationUtils.validateExistingPath(oscarDocument.toFile(), documentDir.toFile());
+        } catch (SecurityException e) {
             log.error("Path traversal attempt in getOscarDocument: " + fileName);
             throw new SecurityException("Path traversal attempt detected");
         }
@@ -464,16 +481,8 @@ public class NioFileManagerImpl implements NioFileManager {
                 return null;
             }
 
-            // Use canonical paths to resolve symlinks and ensure path containment
-            String canonicalDocPath = documentDir.getCanonicalPath();
-            String canonicalDestPath = destinationFile.getCanonicalPath();
-
-            // Ensure destination is within the document directory using canonical paths
-            // This prevents symlink-based path traversal attacks
-            if (!canonicalDestPath.startsWith(canonicalDocPath + File.separator)) {
-                log.error("Path traversal attempt in copyFileToOscarDocuments: " + tempFilePath);
-                throw new SecurityException("Path traversal attempt detected");
-            }
+            // Validate destination path using PathValidationUtils
+            destinationFile = PathValidationUtils.validatePath(sanitizedFileName, documentDir);
 
             // Perform the copy operation
             Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

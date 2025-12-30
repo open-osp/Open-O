@@ -2301,14 +2301,16 @@ public class CaseManagementManagerImpl implements CaseManagementManager {
     }
 
     /**
-     * gets all the notes
-     * if we have a key, and the note is locked, consider it
-     * caisi - filter notes
-     * grab the last one, where i am providers, and it's not signed
+     * Gets all the notes.
+     * If we have a key, and the note is locked, consider it.
+     * Caisi - filter notes.
+     * Grab the last one, where I am providers, and it's not signed.
      *
-     * @param request
-     * @param demono
-     * @param providerNo
+     * @param programId the program ID
+     * @param demono the demographic number
+     * @param providerNo the provider number
+     * @param unlockedNotesMap map of unlocked notes
+     * @return the last saved case management note
      */
     @Override
     public CaseManagementNote getLastSaved(String programId, String demono, String providerNo, Map unlockedNotesMap) {

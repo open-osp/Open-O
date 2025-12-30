@@ -253,17 +253,17 @@ public final class ImageRenderingServlet extends HttpServlet {
                 }
                 
                 String tempFilePath = DigitalSignatureUtils.getTempFilePath(signatureRequestId);
-                
-                // Additional validation: ensure the resolved path is within the temp directory
-                File tempDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();
-                File targetFile = new File(tempFilePath).getCanonicalFile();
-                
-                if (!targetFile.getCanonicalPath().startsWith(tempDir.getCanonicalPath() + File.separator)) {
+
+                // Use PathValidationUtils to validate the temp file path
+                File targetFile = new File(tempFilePath);
+                if (!PathValidationUtils.isInAllowedTempDirectory(targetFile)) {
                     logger.warn("SECURITY WARNING: Attempt to access file outside temp directory: {}", tempFilePath);
                     throw new IllegalArgumentException("Invalid file path");
                 }
-                
-                fileInputStream = new FileInputStream(targetFile);
+
+                // Re-validate at point of use for static analysis visibility
+                File validatedTargetFile = PathValidationUtils.validateUpload(targetFile);
+                fileInputStream = new FileInputStream(validatedTargetFile);
                 byte[] imageBytes = new byte[1024 * 256];
                 fileInputStream.read(imageBytes);
                 renderImage(response, imageBytes, "jpeg");

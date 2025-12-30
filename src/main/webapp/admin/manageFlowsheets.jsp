@@ -143,9 +143,6 @@
                 if (fs != null) {
                     type = (fs.isExternal()) ? "System" : "Custom";
                 }
-
-
-                if (!flowSheet.getDisplayName().equals("Health Tracker")) {
         %>
 
 						<tr>
@@ -165,7 +162,6 @@
 							</td>
 						</tr>
 					<%
-					}
 				}
 			%>
             </tbody>

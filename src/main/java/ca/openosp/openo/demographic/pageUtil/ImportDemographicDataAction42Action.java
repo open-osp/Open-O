@@ -88,6 +88,7 @@ import ca.openosp.openo.managers.NioFileManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SessionConstants;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.webserv.LabUploadWs;
@@ -230,13 +231,11 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Get context of the temp directory, get the file path to the the temp directory
         ServletContext servletContext = ServletActionContext.getServletContext();
 
-        // Validate the paths
+        // Validate the paths using PathValidationUtils
         File safeDir = (File) servletContext.getAttribute("javax.servlet.context.tempdir"); // Use a safe directory
-
-        String safeDirPath = safeDir.getCanonicalPath() + File.separator;
-
-        // Validate that the file path is within the safe directory
-        if (!filePath.startsWith(safeDirPath)) {
+        try {
+            PathValidationUtils.validateExistingPath(filePath.toFile(), safeDir);
+        } catch (SecurityException e) {
             throw new IllegalArgumentException("Invalid file path: Access outside the allowed directory is not permitted.");
         }
 
@@ -402,36 +401,24 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
      */
     private Path unzipFile(Path zipFilePath) throws IOException {
         Path directoryPath = zipFilePath.getParent();
-        // Get canonical path of the target directory to prevent path traversal
-        String canonicalTargetPath = directoryPath.toFile().getCanonicalPath();
-        
+        File targetDir = directoryPath.toFile();
+
         byte[] buffer = new byte[1024];
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
                 String entryName = zipEntry.getName();
-                
-                // Sanitize the entry name to prevent path traversal
-                // Remove any leading slashes and normalize the path
-                entryName = entryName.replaceAll("^[/\\\\]+", "");
-                
-                // Skip entries that contain path traversal sequences
-                if (entryName.contains("..") || entryName.contains("/..") || entryName.contains("\\..")) {
+
+                // Validate the zip entry path using PathValidationUtils
+                File newFile;
+                try {
+                    newFile = PathValidationUtils.validatePath(entryName, targetDir);
+                } catch (SecurityException e) {
                     logger.error("Skipping potentially malicious zip entry: " + entryName);
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
-                
-                File newFile = Paths.get(directoryPath.toString(), entryName).toFile();
-                
-                // Validate that the file will be extracted within the target directory
-                String canonicalFilePath = newFile.getCanonicalPath();
-                if (!canonicalFilePath.startsWith(canonicalTargetPath + File.separator)) {
-                    logger.error("Path is not in the correct directory: " + entryName);
-                    zipEntry = zis.getNextEntry();
-                    continue;
-                }
-                
+
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
                         throw new IOException("Failed to create directory " + newFile);
@@ -3844,6 +3831,27 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         return ret;
     }
 
+    /**
+     * Extracts the string value from a ResultNormalAbnormalFlag complex type.
+     * Per the XSD schema, this is defined as xs:choice so valid XML should only have one child element set.
+     * If both are unexpectedly set, enum takes precedence for consistency with HL7CreateFile.java.
+     *
+     * @param flag the ResultNormalAbnormalFlag object to extract from
+     * @return the flag value as a string (e.g., "H", "L", "N"), or null if the flag is null
+     */
+    String getResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag flag) {
+        if (flag == null) return null;
+
+        if (flag.getResultNormalAbnormalFlagAsEnum() != null) {
+            // Using toString() to match HL7CreateFile.java pattern; returns HL7 abnormal flag codes (e.g., "H", "L", "A")
+            return flag.getResultNormalAbnormalFlagAsEnum().toString();
+        }
+        if (flag.getResultNormalAbnormalFlagAsPlainText() != null) {
+            return flag.getResultNormalAbnormalFlagAsPlainText();
+        }
+        return null;
+    }
+
     String mapPreventionTypeByCode(cdsDt.Code imCode) {
         if (imCode == null) return null;
         if (!imCode.getCodingSystem().equalsIgnoreCase("DIN")) return null;
@@ -4045,7 +4053,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             }
         }
 
-        appendIfNotNull(s, "ResultNormalAbnormalFlag", "" + labRes.getResultNormalAbnormalFlag());
+        appendIfNotNull(s, "ResultNormalAbnormalFlag", getResultNormalAbnormalFlag(labRes.getResultNormalAbnormalFlag()));
         appendIfNotNull(s, "TestResultsInformationreportedbytheLaboratory", labRes.getTestResultsInformationReportedByTheLab());
         appendIfNotNull(s, "NotesFromLab", labRes.getNotesFromLab());
         appendIfNotNull(s, "PhysiciansNotes", labRes.getPhysiciansNotes());
