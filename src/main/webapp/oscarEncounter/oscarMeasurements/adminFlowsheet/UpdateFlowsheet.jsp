@@ -83,9 +83,9 @@ if(scope != null && "clinic".equals(scope)) {
     custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet);
 } else {
     if(demographic == null || demographic.isEmpty()) {
-        custList = flowSheetCustomizationDao.getFlowSheetCustomizations( flowsheet,(String) session.getAttribute("user"));
+        custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"));
     } else {
-        custList = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet,demographic);
+        custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"), Integer.parseInt(demographic));
     }
 }
 
