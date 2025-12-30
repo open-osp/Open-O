@@ -130,7 +130,7 @@
       jQuery(document).ready( function () {
         jQuery('#consultTable').DataTable({
           "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "<fmt:message key="oscarEncounter.LeftNavBar.AllLabs"/>"] ],
-          "order": [[5,'desc']],
+          "order": [[7, 'desc']], // Column 7 = Referral Date
           "language": {
             "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:message key="global.i18nLanguagecode"/>.json"
           },

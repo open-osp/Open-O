@@ -42,6 +42,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 
 public class DocumentUploadServlet extends HttpServlet {
 
@@ -72,31 +73,21 @@ public class DocumentUploadServlet extends HttpServlet {
             File documentDirectory = new File(foldername);
             File inboxDir = new File(inboxFolder);
             File archiveDir = new File(archiveFolder);
-            
-            // Use sanitized filename to construct safe file paths
-            File providedFile = new File(inboxDir, sanitizedFilename);
-            
-            try {
-                // Validate that the file is within the inbox directory using canonical paths
-                String canonicalInboxPath = inboxDir.getCanonicalPath();
-                String canonicalFilePath = providedFile.getCanonicalPath();
-                
-                if (!canonicalFilePath.startsWith(canonicalInboxPath + File.separator)) {
-                    MiscUtils.getLogger().error("File does not reside in the inbox path: " + providedFilename);
-                    return;
-                }
-                
-                // If file doesn't exist in inbox, check archive
-                if (!providedFile.exists()) {
-                    providedFile = new File(archiveDir, sanitizedFilename);
 
-                    String canonicalArchivePath = archiveDir.getCanonicalPath();
-                    canonicalFilePath = providedFile.getCanonicalPath();
-                    
-                    if (!canonicalFilePath.startsWith(canonicalArchivePath + File.separator)) {
-                        MiscUtils.getLogger().error("File does not reside in the archive path: " + providedFilename);
-                        return;
+            try {
+                // Use PathValidationUtils for secure path validation
+                File providedFile;
+                try {
+                    // First try inbox directory
+                    providedFile = PathValidationUtils.validatePath(sanitizedFilename, inboxDir);
+
+                    // If file doesn't exist in inbox, check archive
+                    if (!providedFile.exists()) {
+                        providedFile = PathValidationUtils.validatePath(sanitizedFilename, archiveDir);
                     }
+                } catch (SecurityException e) {
+                    MiscUtils.getLogger().error("File does not reside in a valid path: " + providedFilename);
+                    return;
                 }
                 
                 // Verify the file exists before copying
@@ -128,38 +119,24 @@ public class DocumentUploadServlet extends HttpServlet {
                     if (item.isFormField()) { //
                     } else {
                         String pathName = item.getName();
-                        String[] fullFile = pathName.split("[/|\\\\]");
-                        String uploadedFilename = fullFile[fullFile.length - 1];
-                        
-                        // Sanitize the uploaded filename to prevent path traversal
-                        String sanitizedUploadedFilename = FilenameUtils.getName(uploadedFilename);
-                        if (sanitizedUploadedFilename == null || sanitizedUploadedFilename.isEmpty()) {
-                            MiscUtils.getLogger().error("Invalid uploaded filename: " + uploadedFilename);
-                            continue; // Skip this file
-                        }
-                        
-                        File documentDir = new File(foldername);
-                        File savedFile = new File(documentDir, sanitizedUploadedFilename);
-                        
+
                         try {
-                            // Validate that the saved file will be within the document directory
-                            String canonicalDocPath = documentDir.getCanonicalPath();
-                            String canonicalSavedPath = savedFile.getCanonicalPath();
-                            
-                            if (!canonicalSavedPath.startsWith(canonicalDocPath + File.separator)) {
-                                MiscUtils.getLogger().error("File does not start with document path: " + uploadedFilename);
-                                continue; // Skip this file
-                            }
-                            
-                            fileheader = sanitizedUploadedFilename;
+                            // Use PathValidationUtils to sanitize and validate the destination path
+                            File documentDir = new File(foldername);
+                            File savedFile = PathValidationUtils.validatePath(pathName, documentDir);
+
+                            fileheader = savedFile.getName();
                             item.write(savedFile);
-                            
+
                             if (OscarProperties.getInstance().isPropertyActive("moh_file_management_enabled")) {
                                 File inboxDir = new File(inboxFolder);
                                 FileUtils.copyFileToDirectory(savedFile, inboxDir);
                             }
+                        } catch (SecurityException e) {
+                            MiscUtils.getLogger().error("Invalid uploaded filename: " + pathName);
+                            continue; // Skip this file
                         } catch (IOException e) {
-                            MiscUtils.getLogger().error("Error validating file path for: " + sanitizedUploadedFilename, e);
+                            MiscUtils.getLogger().error("Error processing file: " + pathName, e);
                             continue; // Skip this file
                         }
                     }

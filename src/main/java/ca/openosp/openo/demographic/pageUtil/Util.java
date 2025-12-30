@@ -174,36 +174,31 @@ public class Util {
     }
 
     static public boolean cleanFile(String filename, String dirname) {
-        try {
-            // Validate path to prevent directory traversal attacks
-            dirname = fixDirName(dirname);
-            
-            // Extract just the base filename, removing any directory components
-            String safeFileName = FilenameUtils.getName(filename);
-            if (!StringUtils.filled(safeFileName)) {
-                logger.error("Error! Invalid filename after sanitization");
-                return false;
-            }
-            
-            // Create the base directory and get its canonical path
-            File baseDir = new File(dirname);
-            String canonicalBaseDir = baseDir.getCanonicalPath();
-            
-            // Create the target file and get its canonical path
-            File f = new File(baseDir, safeFileName);
-            String canonicalFilePath = f.getCanonicalPath();
-            
-            // Validate that the resolved path is within the allowed directory
-            if (!canonicalFilePath.startsWith(canonicalBaseDir + File.separator)) {
-                logger.error("Error! Attempted path traversal attack detected for file: " + filename);
-                return false;
-            }
-            
-            return cleanFile(f);
-        } catch (IOException e) {
-            logger.error("Error validating file path for deletion", e);
+        // Validate path to prevent directory traversal attacks
+        dirname = fixDirName(dirname);
+
+        // Extract just the base filename, removing any directory components
+        String safeFileName = FilenameUtils.getName(filename);
+        if (!StringUtils.filled(safeFileName)) {
+            logger.error("Error! Invalid filename after sanitization");
             return false;
         }
+
+        // Create the base directory
+        File baseDir = new File(dirname);
+
+        // Create the target file
+        File f = new File(baseDir, safeFileName);
+
+        // Validate that the resolved path is within the allowed directory
+        try {
+            PathValidationUtils.validateExistingPath(f, baseDir);
+        } catch (SecurityException e) {
+            logger.error("Error! Attempted path traversal attack detected for file: " + filename);
+            return false;
+        }
+
+        return cleanFile(f);
     }
 
     static public boolean cleanFile(String filename) {
@@ -274,18 +269,15 @@ public class Util {
             // Create the file object with the sanitized filename
             File documentDir = new File(dirName);
             File requestedFile = new File(documentDir, safeFileName);
-            
-            // Get canonical paths to detect path traversal attempts
-            String canonicalDocDir = documentDir.getCanonicalPath();
-            String canonicalRequestedPath = requestedFile.getCanonicalPath();
-            
-            // Ensure the requested file is within the allowed directory
-            if (!canonicalRequestedPath.startsWith(canonicalDocDir + File.separator) && 
-                !canonicalRequestedPath.equals(canonicalDocDir)) {
+
+            // Validate the file path using PathValidationUtils
+            try {
+                PathValidationUtils.validateExistingPath(requestedFile, documentDir);
+            } catch (SecurityException e) {
                 logger.error("Path traversal attempt detected for file: " + fileName);
                 return;
             }
-            
+
             // Verify the file exists and is readable
             if (!requestedFile.exists() || !requestedFile.isFile() || !requestedFile.canRead()) {
                 logger.error("Error during file download: file does not exist or is not accessible - {}", fileName);
@@ -619,9 +611,12 @@ public class Util {
     }
 
     private static boolean isPathWithinDirectory(File file, String dirName) throws IOException {
-        File dir = new File(dirName).getCanonicalFile();
-        File canonicalFile = file.getCanonicalFile();
-        return canonicalFile.toPath().startsWith(dir.toPath());
+        try {
+            PathValidationUtils.validateExistingPath(file, new File(dirName));
+            return true;
+        } catch (SecurityException e) {
+            return false;
+        }
     }
 
     static public void putPartialDate(cdsDt.DateFullOrPartial dfp, CaseManagementNoteExt cme) {

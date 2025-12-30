@@ -1092,16 +1092,6 @@
             <result name="reload">/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp</result>
             <result name="failure">/oscarEncounter/oscarMeasurements/FlowUpdate.jsp</result>
         </action>
-        <action name="oscarEncounter/oscarMeasurements/TrackerUpdate" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.FormUpdate2Action">
-            <result name="success">/oscarEncounter/oscarMeasurements/close.jsp</result>
-            <result name="reload">/oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf?reload</result>
-            <result name="failure">/oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf</result>
-        </action>
-        <action name="oscarEncounter/oscarMeasurements/TrackerSlimUpdate" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.FormUpdate2Action">
-            <result name="success">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf?reload</result>
-            <result name="reload">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf?reload</result>
-            <result name="failure">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf</result>
-        </action>
         <action name="oscarEncounter/Measurements" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctMeasurements2Action">
             <result name="success">/oscarEncounter/oscarMeasurements/ProcessMeasurementsSubmission.jsp</result>
             <result name="failure">/oscarEncounter/oscarMeasurements/Measurements.jsp</result>
@@ -1549,6 +1539,7 @@
         </action>
         <action name="eform/imageUpload" class="ca.openosp.openo.eform.upload.ImageUpload2Action">
             <result name="success">/eform/partials/upload_image.jsp</result>
+            <result name="error">/eform/partials/upload_image.jsp</result>
         </action>
         <action name="eform/delEForm" class="ca.openosp.openo.eform.actions.DelEForm2Action">
             <result name="success">/eform/efmformmanager.jsp</result>

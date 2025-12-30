@@ -287,7 +287,7 @@ public class EctDisplayAction extends ActionSupport {
 
     /**
      * Checks if the action is enabled. Non-enabled actions should not render the encounter
-     * screen widget (i.e. return true in {@link #getInfo(EctSessionBean, javax.servlet.http.HttpServletRequest, NavBarDisplayDAO, org.apache.struts.util.MessageResources)}
+     * screen widget (i.e. return true in {@link #getInfo(EctSessionBean, HttpServletRequest, NavBarDisplayDAO)}
      * and must not modify the nav bar daos).
      *
      * @return Returns true of the actions is enabled and false otherwise.
@@ -298,7 +298,7 @@ public class EctDisplayAction extends ActionSupport {
 
     /**
      * Sets if the action is enabled. Non-enabled actions should not render the encounter
-     * screen widget (i.e. return true in {@link #getInfo(EctSessionBean, javax.servlet.http.HttpServletRequest, NavBarDisplayDAO, org.apache.struts.util.MessageResources)}
+     * screen widget (i.e. return true in {@link #getInfo(EctSessionBean, HttpServletRequest, NavBarDisplayDAO)}
      * and must not modify the nav bar daos).
      *
      * @param enabled Boolean flag that indicates if the actions is enabled.

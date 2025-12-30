@@ -112,14 +112,10 @@ public class dxCodeSearchJSON2Action extends ActionSupport {
     }
 
     /**
-     * This method searches the table by text description only. NOT by code
+     * This method searches the table by text description only. NOT by code.
      * This is intentional for smooth operation in BC Billing.
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param response
-     * @return
+     * @return JSON result string
      */
     @SuppressWarnings("unused")
     public String searchMSP() {

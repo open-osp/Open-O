@@ -38,7 +38,7 @@ import ca.openosp.openo.utility.SpringUtils;
  *
  * Endpoints:
  * - ConsultationLookup2Action.do?method=getServices - Returns all active consultation services
- * - ConsultationLookup2Action.do?method=getSpecialists&serviceId=X - Returns specialists for a service
+ * - ConsultationLookup2Action.do?method=getSpecialists&amp;serviceId=X - Returns specialists for a service
  *
  * @since 2025-11-20
  */

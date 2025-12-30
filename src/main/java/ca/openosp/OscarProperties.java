@@ -36,7 +36,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * This class will hold OSCAR & CAISI properties. It is a singleton class. Do not instantiate it, use the method getInstance(). Every time the properties file changes, tomcat must be restarted.
+ * This class will hold OpenO and CAISI properties. It is a singleton class. Do not instantiate it, use the method getInstance(). Every time the properties file changes, tomcat must be restarted.
  */
 public class OscarProperties extends Properties {
     private static final long serialVersionUID = -5965807410049845132L;

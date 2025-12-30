@@ -1602,13 +1602,11 @@
                                                 <c:out value='<%=curProviderName[nProvider]  + " (" + appointmentCount + ") " %>'/>
                                             </a>
                                                 <oscar:oscarPropertiesCheck value="yes" property="TOGGLE_REASON_BY_PROVIDER" defaultVal="yes">
-                                                    <a
-                                                        href="#"
-                                                        class="expand-reason-btn"
-                                                        data-provider="<%= curProvider_no[nProvider] %>"
-                                                        onclick="toggleReason(event, '<%= curProvider_no[nProvider] %>');"
-                                                        title="<fmt:setBundle basename='oscarResources'/>
-                                                        <fmt:message key='provider.appointmentProviderAdminDay.expandreason'/>"
+                                                    <a href="#"
+                                                       class="expand-reason-btn"
+                                                       data-provider="<%= curProvider_no[nProvider] %>"
+                                                       onclick="toggleReason(event, '<%= curProvider_no[nProvider] %>');"
+                                                       title="<fmt:setBundle basename='oscarResources'/><fmt:message key='provider.appointmentProviderAdminDay.expandreason'/>"
                                                     >*</a>
                                                 </oscar:oscarPropertiesCheck>
 
@@ -1941,10 +1939,22 @@
                                                         %>
 
 
+                                                        <%
+                                                            // Build tooltip variants for privacy-compliant display (dot-name format)
+                                                            // Always show reason/notes labels, but handle "null" string from String.valueOf(null)
+                                                            String timeRange = iS + ":" + (iSm > 10 ? "" : "0") + iSm + "-" + iE + ":" + iEm;
+                                                            String dotTooltipShort = timeRange + " " + Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
+                                                            String dotReasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
+                                                            String dotNotesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
+                                                            String dotTooltipFull = dotTooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(dotReasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(dotNotesDisplay);
+
+                                                            // Check if tooltips should be shown (defaults to true if property not set)
+                                                            boolean showTooltipDot = OscarProperties.getInstance().getBooleanProperty("SHOW_APPT_REASON_TOOLTIP", "yes");
+                                                        %>
                                                         <a href="javascript:void(0)"
+                                                           class="<%= showTooltipDot ? "appt-reason-tooltip appt-tooltip-provider-" + curProvider_no[nProvider] : "" %>"
                                                            onClick="popupPage(600,780,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=0&displaymode=edit&dboperation=search');return false;"
-                                                           title="<%=iS+":"+(iSm>10?"":"0")+iSm%>-<%=iE+":"+iEm%>
-                                                                <%=Encode.forHtmlAttribute(name)%><%= (type != null && ! type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "" %>&#013;&#010;<%="reason: " + Encode.forHtmlAttribute(reason)%>&#013;&#010;<%="notes: " + Encode.forHtmlAttribute(notes)%>">
+                                                           <%= showTooltipDot ? "data-title-full=\"" + dotTooltipFull + "\" data-title-short=\"" + dotTooltipShort + "\" title=\"" + dotTooltipFull + "\"" : "" %>>
                                                             <span>
                                                             .<%=(view == 0 && numAvailProvider != 1) ? (name.length() > len ? name.substring(0, len).toUpperCase() : Encode.forHtmlContent(name.toUpperCase())) : Encode.forHtmlContent(name.toUpperCase())%>
                                                             </span>
@@ -2031,13 +2041,20 @@
                                                             start_time += iSm + ":00";
                                                         %>
 
-                                                        <a class="apptLink" href="javascript:void(0)"
+                                                        <%
+                                                            // Build tooltip variants for privacy-compliant display
+                                                            // Always show reason/notes labels, but handle "null" string from String.valueOf(null)
+                                                            String tooltipShort = Encode.forHtmlAttribute(name) + ((type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "");
+                                                            String reasonDisplay = (reason != null && !"null".equals(reason)) ? reason : "";
+                                                            String notesDisplay = (notes != null && !"null".equals(notes)) ? notes : "";
+                                                            String tooltipFull = tooltipShort + "&#013;&#010;reason: " + Encode.forHtmlAttribute(reasonDisplay) + "&#013;&#010;notes: " + Encode.forHtmlAttribute(notesDisplay);
+
+                                                            // Check if tooltips should be shown (defaults to true if property not set)
+                                                            boolean showTooltip = OscarProperties.getInstance().getBooleanProperty("SHOW_APPT_REASON_TOOLTIP", "yes");
+                                                        %>
+                                                        <a class="apptLink<%= showTooltip ? " appt-reason-tooltip appt-tooltip-provider-" + curProvider_no[nProvider] : "" %>" href="javascript:void(0)"
                                                            onClick="popupPage(535,860,'<%= request.getContextPath() %>/appointment/appointmentcontrol.jsp?appointment_no=<%=appointment.getId()%>&provider_no=<%=curProvider_no[nProvider]%>&year=<%=year%>&month=<%=month%>&day=<%=day%>&start_time=<%=iS+":"+iSm%>&demographic_no=<%=demographic_no%>&displaymode=edit&dboperation=search');return false;"
-                                                                <oscar:oscarPropertiesCheck
-                                                                        property="SHOW_APPT_REASON_TOOLTIP" value="yes"
-                                                                        defaultVal="true">
-                                                                    title="<%=Encode.forHtmlAttribute(name)%><%= (type != null && !type.isEmpty()) ? "&#013;&#010;type: " + Encode.forHtmlAttribute(type) : "" %>&#013;&#010;<%="reason: " + Encode.forHtmlAttribute(reason)%>&#013;&#010;<%="notes: " + Encode.forHtmlAttribute(notes)%>"
-                                                                </oscar:oscarPropertiesCheck> >
+                                                           <%= showTooltip ? "data-title-full=\"" + tooltipFull + "\" data-title-short=\"" + tooltipShort + "\" title=\"" + tooltipFull + "\"" : "" %> >
                                                             <%=(name.length() > len ? Encode.forHtmlContent(name.substring(0, len)) : Encode.forHtmlContent(name))%>
                                                         </a>
                                                         <% if (len == lenLimitedL || view != 0 || numAvailProvider == 1) {%>

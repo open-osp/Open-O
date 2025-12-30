@@ -68,10 +68,10 @@ public class UploadTemplates2Action extends ActionSupport {
         if (templateFile != null) {
             try {
                 // Validate the uploaded temp file is from an allowed source
-                PathValidationUtils.validateUpload(templateFile);
+                File validatedTemplateFile = PathValidationUtils.validateUpload(templateFile);
 
                 // Read the file content
-                byte[] bytes = Files.readAllBytes(templateFile.toPath());
+                byte[] bytes = Files.readAllBytes(validatedTemplateFile.toPath());
                 xml = new String(bytes);
             } catch (SecurityException se) {
                 MiscUtils.getLogger().warn("SecurityException during file upload: " + se.getMessage(), se);
