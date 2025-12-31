@@ -108,7 +108,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
             providerNo = "";
         } else if (isPatientScope) {
             demographicNo = demographicNoParam;
-            providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
+            providerNo = "";
         } else {
             demographicNo = "0";
             providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
@@ -220,7 +220,8 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
             if (h.get("measurement_type") != null) {
                 String measurementType = h.get("measurement_type");
-                String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
+                boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
+                String providerNo = ("clinic".equals(scope) || isPatientScope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
                 // Check for blocking customization from higher level
                 CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
@@ -293,7 +294,8 @@ public class FlowSheetCustom2Action extends ActionSupport {
             h.put("value_name", request.getParameter("value_name"));
 
             String measurementType = h.get("measurement_type");
-            String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
+            boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
+            String providerNo = ("clinic".equals(scope) || isPatientScope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
             // UPDATE customizations are allowed at any level - no cascade blocking
             // Users can revert to higher-scope settings using the Revert button
