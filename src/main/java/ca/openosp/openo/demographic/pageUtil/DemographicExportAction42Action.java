@@ -3812,7 +3812,8 @@ public class DemographicExportAction42Action extends ActionSupport {
     private void setExportStatusCookie(HttpServletResponse response, String status) {
         Cookie cookie = new Cookie("exportStatus", status);
         cookie.setPath("/");
-        cookie.setMaxAge(60); // Cookie expires in 60 seconds
+        cookie.setMaxAge(60);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 }

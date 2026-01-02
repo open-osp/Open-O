@@ -194,9 +194,9 @@
                 }
             }
 
-            var exportCheckInterval = null;
-            var exportStartTime = null;
-            var MAX_EXPORT_WAIT_MS = 300000; // 5 minutes timeout
+            let exportCheckInterval = null;
+            let exportStartTime = null;
+            const MAX_EXPORT_WAIT_MS = 300000; // 5 minutes timeout
 
             /**
              * Clears the export status cookie.
@@ -244,7 +244,7 @@
                     return;
                 }
 
-                var status = getCookie('exportStatus');
+                const status = getCookie('exportStatus');
 
                 if (status === 'success') {
                     clearInterval(exportCheckInterval);
@@ -264,9 +264,9 @@
              * Gets a cookie value by name.
              */
             function getCookie(name) {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = cookies[i].trim();
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
                     if (cookie.indexOf(name + '=') === 0) {
                         return cookie.substring(name.length + 1);
                     }
