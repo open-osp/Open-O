@@ -223,9 +223,12 @@ public class FlowSheetCustom2Action extends ActionSupport {
                 boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
                 String providerNo = ("clinic".equals(scope) || isPatientScope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
+                // For cascade checking, use logged-in provider's ID to check for provider-level blocking
+                String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
+
                 // Check for blocking customization from higher level
                 CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
-                    flowsheet, measurementType, FlowSheetCustomization.ADD, providerNo, demographicNo);
+                    flowsheet, measurementType, FlowSheetCustomization.ADD, cascadeCheckProviderNo, demographicNo);
 
                 if (cascadeResult.isBlocked()) {
                     logger.warn("Cannot add measurement {} - already added at {} level",
@@ -412,9 +415,12 @@ public class FlowSheetCustom2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
+        // For cascade checking, use logged-in provider's ID to check for provider-level blocking
+        String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
+
         // Check for blocking customization from higher level
         CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
-            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
+            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, cascadeCheckProviderNo, ctx.demographicNo);
 
         if (cascadeResult.isBlocked()) {
             logger.warn("Cannot hide measurement {} - already hidden at {} level",
@@ -448,9 +454,12 @@ public class FlowSheetCustom2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
+        // For cascade checking, use logged-in provider's ID to check for provider-level blocking
+        String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
+
         // Check for blocking hide from higher level - cannot restore if hidden at higher level
         CascadeCheckResult cascadeResult = flowSheetCustomizationService.checkCascadingBlocked(
-            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, ctx.providerNo, ctx.demographicNo);
+            ctx.flowsheet, ctx.measurement, FlowSheetCustomization.DELETE, cascadeCheckProviderNo, ctx.demographicNo);
 
         if (cascadeResult.isBlocked()) {
             logger.warn("Cannot restore measurement {} - hidden at {} level",

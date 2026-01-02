@@ -47,11 +47,21 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
 
     @Override
     public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet, String provider, Integer demographic) {
-        Query query = entityManager.createQuery("SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 and fd.archived=0 and ( fd.providerNo='' or (fd.providerNo=?2 and fd.demographicNo=0) or (fd.providerNo=?3 and fd.demographicNo=?4) ) order by fd.providerNo, fd.demographicNo");
+        // Returns customizations for all applicable scopes:
+        // - Clinic level: providerNo='' AND demographicNo='0'
+        // - Provider level: providerNo=<provider> AND demographicNo='0'
+        // - Patient level (new): providerNo='' AND demographicNo=<demographic>
+        // - Patient level (old/legacy): providerNo=<provider> AND demographicNo=<demographic>
+        Query query = entityManager.createQuery(
+            "SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 AND fd.archived=0 " +
+            "AND ((fd.providerNo='' AND fd.demographicNo='0') " +
+            "OR (fd.providerNo=?2 AND fd.demographicNo='0') " +
+            "OR (fd.providerNo='' AND fd.demographicNo=?3) " +
+            "OR (fd.providerNo=?2 AND fd.demographicNo=?3)) " +
+            "ORDER BY fd.providerNo, fd.demographicNo");
         query.setParameter(1, flowsheet);
         query.setParameter(2, provider);
-        query.setParameter(3, provider);
-        query.setParameter(4, String.valueOf(demographic));
+        query.setParameter(3, String.valueOf(demographic));
 
         @SuppressWarnings("unchecked")
         List<FlowSheetCustomization> list = query.getResultList();
