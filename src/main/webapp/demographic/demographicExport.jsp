@@ -304,11 +304,11 @@
 
             #exportLoadingOverlay {
                 display: none;
-                position: fixed;
+                position: absolute;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 100%;
+                right: 0;
+                bottom: 0;
                 background-color: rgba(0, 0, 0, 0.4);
                 z-index: 9999;
             }
@@ -321,6 +321,7 @@
                 background: white;
                 padding: 20px 30px;
                 border: 1px solid #ccc;
+                border-radius: 4px;
                 text-align: center;
             }
 
@@ -348,14 +349,6 @@
     </head>
 
     <body>
-    <!-- Loading overlay shown during export -->
-    <div id="exportLoadingOverlay">
-        <div id="exportLoadingContent">
-            <div class="export-spinner"></div>
-            <div><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicexport.preparingExport"/></div>
-        </div>
-    </div>
-
     <!-- Hidden iframe for form submission -->
     <iframe id="exportDownloadFrame" name="exportDownloadFrame" style="display:none;"></iframe>
 
@@ -375,7 +368,14 @@
     } else {
     %>
 
-    <div class="container-fluid well">
+    <div class="container-fluid well" style="position: relative;">
+        <!-- Loading overlay shown during export -->
+        <div id="exportLoadingOverlay">
+            <div id="exportLoadingContent">
+                <div class="export-spinner"></div>
+                <div><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicexport.preparingExport"/></div>
+            </div>
+        </div>
         <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicexport.title"/> </h3>
 
         <div class="span2">
