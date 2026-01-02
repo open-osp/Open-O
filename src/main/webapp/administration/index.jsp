@@ -435,7 +435,7 @@
 
 
 <script type="text/javascript">
-    $(document).ready(function ($) {
+    $(document).ready(function () {
         $("a.contentLink").click(function (e) {
             e.preventDefault();
             $("#dynamic-content").removeClass("dynamic-iframe-content");
@@ -445,6 +445,9 @@
                         var msg = "Sorry but there was an error: ";
                         $("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
                     }
+
+                    // Re-initialize Bootstrap dropdowns for dynamically loaded content
+                    $("#dynamic-content .dropdown-toggle").dropdown();
 
                     $("html, body").animate({scrollTop: 0}, "slow");
                 });
