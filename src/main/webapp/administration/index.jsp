@@ -270,8 +270,8 @@
             overflow: hidden;
         }
 
-        /* Allow tooltips to overflow the container */
-        .dynamic-content:has(.css-tooltip) {
+        /* Allow tooltips to overflow the container (applied via JS for browser compatibility) */
+        .dynamic-content.has-tooltip {
             overflow: visible;
         }
 
@@ -453,6 +453,13 @@
 
                     // Re-initialize Bootstrap dropdowns for dynamically loaded content
                     $("#dynamic-content .dropdown-toggle").dropdown();
+
+                    // Toggle overflow for pages with CSS tooltips (for browser compatibility)
+                    if ($("#dynamic-content .css-tooltip").length > 0) {
+                        $("#dynamic-content").addClass("has-tooltip");
+                    } else {
+                        $("#dynamic-content").removeClass("has-tooltip");
+                    }
 
                     $("html, body").animate({scrollTop: 0}, "slow");
                 });

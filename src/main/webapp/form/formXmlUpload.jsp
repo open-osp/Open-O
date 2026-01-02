@@ -61,6 +61,10 @@
                 position: relative;
                 display: inline-block;
             }
+            .css-tooltip:focus {
+                outline: 2px solid #005a9c;
+                outline-offset: 2px;
+            }
             .tooltip-text {
                 display: none;
                 position: absolute;
@@ -79,7 +83,8 @@
                 color: #333;
                 z-index: 1000;
             }
-            .css-tooltip:hover .tooltip-text {
+            .css-tooltip:hover .tooltip-text,
+            .css-tooltip:focus-within .tooltip-text {
                 display: block;
             }
         </style>
@@ -111,9 +116,9 @@
             Select data in zip format:<br />
 
             <input type="file" name="file1" value="">
-            <span class="css-tooltip">
-                <img border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/>
-                <span class="tooltip-text"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/></span>
+            <span class="css-tooltip" tabindex="0" aria-describedby="upload-warning-tooltip">
+                <img border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif" alt="Warning"/>
+                <span id="upload-warning-tooltip" class="tooltip-text" role="tooltip"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/></span>
             </span>
 
             <input type="submit" name="Submit" class="btn btn-primary" value="Import">
