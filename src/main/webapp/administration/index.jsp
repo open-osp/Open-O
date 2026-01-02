@@ -270,6 +270,11 @@
             overflow: hidden;
         }
 
+        /* Allow tooltips to overflow the container */
+        .dynamic-content:has(.css-tooltip) {
+            overflow: visible;
+        }
+
         .dynamic-iframe-content {
             padding-top: 80%;
         }

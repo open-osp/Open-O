@@ -56,6 +56,33 @@
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnImportFormData"/></title>
+        <style>
+            .css-tooltip {
+                position: relative;
+                display: inline-block;
+            }
+            .tooltip-text {
+                display: none;
+                position: absolute;
+                left: 0;
+                top: 100%;
+                margin-top: 8px;
+                width: 250px;
+                padding: 12px;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+                font-family: Arial, sans-serif;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #333;
+                z-index: 1000;
+            }
+            .css-tooltip:hover .tooltip-text {
+                display: block;
+            }
+        </style>
     </head>
 
     <body>
@@ -84,9 +111,10 @@
             Select data in zip format:<br />
 
             <input type="file" name="file1" value="">
-            <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
-                  style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
-                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
+            <span class="css-tooltip">
+                <img border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/>
+                <span class="tooltip-text"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/></span>
+            </span>
 
             <input type="submit" name="Submit" class="btn btn-primary" value="Import">
 
