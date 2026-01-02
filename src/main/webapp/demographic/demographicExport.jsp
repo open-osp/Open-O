@@ -224,6 +224,11 @@
                 // Show loading overlay
                 document.getElementById('exportLoadingOverlay').style.display = 'block';
 
+                // Clear any existing polling interval to prevent multiple loops
+                if (exportCheckInterval) {
+                    clearInterval(exportCheckInterval);
+                }
+
                 // Start polling for the status cookie set by the server
                 exportStartTime = Date.now();
                 exportCheckInterval = setInterval(checkExportStatus, 500);
@@ -239,6 +244,7 @@
                 // Timeout check to prevent infinite polling
                 if (Date.now() - exportStartTime > MAX_EXPORT_WAIT_MS) {
                     clearInterval(exportCheckInterval);
+                    exportCheckInterval = null;
                     document.getElementById('exportLoadingOverlay').style.display = 'none';
                     document.getElementById('exportErrorMessage').style.display = 'block';
                     return;
@@ -248,11 +254,13 @@
 
                 if (status === 'success') {
                     clearInterval(exportCheckInterval);
+                    exportCheckInterval = null;
                     document.getElementById('exportLoadingOverlay').style.display = 'none';
                     document.getElementById('exportSuccessMessage').style.display = 'block';
                     clearExportStatusCookie();
                 } else if (status === 'error') {
                     clearInterval(exportCheckInterval);
+                    exportCheckInterval = null;
                     document.getElementById('exportLoadingOverlay').style.display = 'none';
                     document.getElementById('exportErrorMessage').style.display = 'block';
                     clearExportStatusCookie();
@@ -286,6 +294,11 @@
 
                 // Show loading overlay
                 document.getElementById('exportLoadingOverlay').style.display = 'block';
+
+                // Clear any existing polling interval to prevent multiple loops
+                if (exportCheckInterval) {
+                    clearInterval(exportCheckInterval);
+                }
 
                 // Start polling for the status cookie
                 exportStartTime = Date.now();

@@ -3806,6 +3806,9 @@ public class DemographicExportAction42Action extends ActionSupport {
      * Sets a cookie to signal export status to the client-side JavaScript.
      * This allows the UI to know when the export has completed or failed.
      *
+     * <p>The Secure flag is set based on the request protocol - only set for HTTPS
+     * to ensure the cookie works in both development (HTTP) and production (HTTPS).</p>
+     *
      * @param response the HTTP response to add the cookie to
      * @param status the export status ("success" or "error")
      */
@@ -3813,7 +3816,7 @@ public class DemographicExportAction42Action extends ActionSupport {
         Cookie cookie = new Cookie("exportStatus", status);
         cookie.setPath("/");
         cookie.setMaxAge(60);
-        cookie.setSecure(true);
+        cookie.setSecure(request.isSecure());
         response.addCookie(cookie);
     }
 }
