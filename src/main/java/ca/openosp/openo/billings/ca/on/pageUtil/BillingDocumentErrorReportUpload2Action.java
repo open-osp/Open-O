@@ -27,6 +27,8 @@
 package ca.openosp.openo.billings.ca.on.pageUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.commn.dao.BatchEligibilityDao;
 import ca.openosp.openo.commn.dao.DemographicCustDao;
@@ -66,9 +68,9 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
     public String execute() throws ServletException, IOException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        String filename = request.getParameter("filename") == null ? "null" : request.getParameter("filename");
+        String filename = request.getParameter("filename");
 
-        if ("null".equals(filename)) {
+        if (StringUtils.isBlank(filename)) {
             if (!saveFile(file1, file1FileName)) {
                 addActionError(getText("errors.fileNotAdded"));
                 return ERROR;
