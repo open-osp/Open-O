@@ -12,13 +12,13 @@
 // full day names
 Calendar._DN = new Array
 ("Domingo",
- "Segunda",
- "Terça",
- "Quarta",
- "Quinta",
- "Sexta",
- "Sabádo",
- "Domingo");
+    "Segunda",
+    "Terça",
+    "Quarta",
+    "Quinta",
+    "Sexta",
+    "Sabádo",
+    "Domingo");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -38,17 +38,17 @@ Calendar._DN = new Array
 // full month names
 Calendar._MN = new Array
 ("Janeiro",
- "Fevereiro",
- "Março",
- "Abril",
- "Maio",
- "Junho",
- "Julho",
- "Agosto",
- "Setembro",
- "Outubro",
- "Novembro",
- "Dezembro");
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro");
 
 // short month names
 // [No changes using default values]
@@ -58,24 +58,24 @@ Calendar._TT = {};
 Calendar._TT["INFO"] = "Sobre o calendário";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Time Selector\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
-"Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
-"\n\n" +
-"Translate to portuguese Brazil (pt-BR) by Fernando Dourado (fernando.dourado@ig.com.br)\n" +
-"Tradução para o português Brasil (pt-BR) por Fernando Dourado (fernando.dourado@ig.com.br)" +
-"\n\n" +
-"Selecionar data:\n" +
-"- Use as teclas \xab, \xbb para selecionar o ano\n" +
-"- Use as teclas " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " para selecionar o mês\n" +
-"- Clique e segure com o mouse em qualquer botão para selecionar rapidamente.";
+    "DHTML Date/Time Selector\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "For latest version visit: http://www.dynarch.com/projects/calendar/\n" +
+    "Distributed under GNU LGPL.  See http://gnu.org/licenses/lgpl.html for details." +
+    "\n\n" +
+    "Translate to portuguese Brazil (pt-BR) by Fernando Dourado (fernando.dourado@ig.com.br)\n" +
+    "Tradução para o português Brasil (pt-BR) por Fernando Dourado (fernando.dourado@ig.com.br)" +
+    "\n\n" +
+    "Selecionar data:\n" +
+    "- Use as teclas \xab, \xbb para selecionar o ano\n" +
+    "- Use as teclas " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " para selecionar o mês\n" +
+    "- Clique e segure com o mouse em qualquer botão para selecionar rapidamente.";
 
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Selecionar hora:\n" +
-"- Clique em qualquer uma das partes da hora para aumentar\n" +
-"- ou Shift-clique para diminuir\n" +
-"- ou clique e arraste para selecionar rapidamente.";
+    "Selecionar hora:\n" +
+    "- Clique em qualquer uma das partes da hora para aumentar\n" +
+    "- ou Shift-clique para diminuir\n" +
+    "- ou clique e arraste para selecionar rapidamente.";
 
 Calendar._TT["PREV_YEAR"] = "Ano anterior (clique e segure para menu)";
 Calendar._TT["PREV_MONTH"] = "Mês anterior (clique e segure para menu)";

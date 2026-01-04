@@ -25,231 +25,245 @@
 --%>
 
 <%
-  if(session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
-  String roleName$ = (String)session.getAttribute("userrole") + "," + (String)session.getAttribute("user");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
 %>
 
-<%@ page import="java.util.*,oscar.oscarReport.reportByTemplate.*,org.oscarehr.managers.RBTGroupManager"%>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.RBTGroup" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ page import="java.util.*,ca.openosp.openo.report.reportByTemplate.*,ca.openosp.openo.managers.RBTGroupManager" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.RBTGroup" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportManager" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.ReportObject" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
 <security:oscarSec roleName="<%=roleName$%>"
-	objectName="_admin,_report"	rights="r" reverse="<%=true%>">
-	<%
-		response.sendRedirect(request.getContextPath() + "/logout.jsp");
-	%>
+                   objectName="_admin,_report" rights="r" reverse="<%=true%>">
+    <%
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    %>
 </security:oscarSec>
 <!DOCTYPE html>
 
-<html:html lang="en">
-<head>
-<title>Report by Template</title>
+<html>
+    <head>
+        <title>Report by Template</title>
 
-<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
-<link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
-<script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
-<script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.2.js"></script>
-<script src="${pageContext.servletContext.contextPath}/js/global.js"></script>
+        <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="${pageContext.request.contextPath}/css/DT_bootstrap.css" rel="stylesheet" type="text/css">
+        <link href="${pageContext.request.contextPath}/css/bootstrap-responsive.css" rel="stylesheet" type="text/css">
+        <script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-1.12.0.min.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/bootstrap.min.2.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/global.js"></script>
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-<%@ include file="rbtTopNav.jspf"%>
+    <%@ include file="rbtTopNav.jspf" %>
 
-<h3>Template Library</h3>  <!-- add to oscarResources_en.properties? -->
-<%RBTGroupManager rbtGroupManager = SpringUtils.getBean(RBTGroupManager.class);
+    <h3>Template Library</h3>  <!-- add to oscarResources_en.properties? -->
+    <%
+        RBTGroupManager rbtGroupManager = SpringUtils.getBean(RBTGroupManager.class);
 
-LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-List<String> templateGroups = rbtGroupManager.getTemplateGroups(loggedInInfo);
-String value = "";
-%>
-<div class="row-fluid">
-	<form class="form-inline">
-		<div class="input-prepend">
-			<span class="add-on">Group</span>
-				<select name="templates" id="viewSelect">
-					<option value="all">All Templates</option>
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        List<String> templateGroups = rbtGroupManager.getTemplateGroups(loggedInInfo);
+        String value = "";
+    %>
+    <div class="row-fluid">
+        <form class="form-inline">
+            <div class="input-prepend">
+                <span class="add-on">Group</span>
+                <select name="templates" id="viewSelect">
+                    <option value="all">All Templates</option>
 
-				<%for (int i=0; i<templateGroups.size(); i++){
+                    <%
+                        for (int i = 0; i < templateGroups.size(); i++) {
 
-					List<RBTGroup> templatesInGroup = rbtGroupManager.getGroup(loggedInInfo, (templateGroups.get(i)));
-					value ="";
-					for (int x=0; x<templatesInGroup.size(); x++) {
-						value = value + String.valueOf((templatesInGroup.get(x)).getTemplateId()) + ",";
-					}%>
+                            List<RBTGroup> templatesInGroup = rbtGroupManager.getGroup(loggedInInfo, (templateGroups.get(i)));
+                            value = "";
+                            for (int x = 0; x < templatesInGroup.size(); x++) {
+                                value = value + String.valueOf((templatesInGroup.get(x)).getTemplateId()) + ",";
+                            }
+                    %>
 
-					<option value="<%=value%>"><%=templateGroups.get(i)%></option>
-				<% }%>
-				</select>
-		</div>
-		<input type="text" id="userSearch" placeholder="Search" />
-	</form>
-</div>
+                    <option value="<%=value%>"><%=templateGroups.get(i)%>
+                    </option>
+                    <% }%>
+                </select>
+            </div>
+            <input type="text" id="userSearch" placeholder="Search"/>
+        </form>
+    </div>
 
-<div class="row-fluid">
+    <div class="row-fluid">
 
-	<table class="table table-condensed table-striped table-hover" style="font-size:14px;" id="rbtTable">
-	<thead>
-		<tr>
-			<th onclick="sortTable(0)"><a class="contentLink">#</a></th>
-			<th onclick="sortTable(1)"><a class="contentLink">Template Name</a></th>
-			<th onclick="sortTable(2)"><a class="contentLink">Description</a></th>
-		</tr>
-	</thead>
+        <table class="table table-condensed table-striped table-hover" style="font-size:14px;" id="rbtTable">
+            <thead>
+            <tr>
+                <th onclick="sortTable(0)"><a class="contentLink">#</a></th>
+                <th onclick="sortTable(1)"><a class="contentLink">Template Name</a></th>
+                <th onclick="sortTable(2)"><a class="contentLink">Description</a></th>
+            </tr>
+            </thead>
 
-	<tbody id="tableData">
-	<%ArrayList templates = (new ReportManager()).getReportTemplatesNoParam();
-	            String templateViewId = request.getParameter("templateviewid");
-	            if (templateViewId == null) templateViewId = "";
-	            %>
-	<%for (int i=0; i<templates.size(); i++) {
-	                    ReportObject curReport = (ReportObject) templates.get(i);%>
-		<tr id="t<%=i%>">
-			<td align="center" ><%=String.valueOf(i+1)%></td>
-			<td> <a style="display:block;outline:none;" href="reportConfiguration.jsp?templateid=<%=curReport.getTemplateId()%>"><%=curReport.getTitle()%></a></td>
-			<td> <%=curReport.getDescription()%> </td>
-			<td style="display:none;" id="<%=curReport.getTemplateId()%>"></td>
-		</tr>
-				<% } %>
+            <tbody id="tableData">
+            <%
+                ArrayList templates = (new ReportManager()).getReportTemplatesNoParam();
+                String templateViewId = request.getParameter("templateviewid");
+                if (templateViewId == null) templateViewId = "";
+            %>
+            <%
+                for (int i = 0; i < templates.size(); i++) {
+                    ReportObject curReport = (ReportObject) templates.get(i);
+            %>
+            <tr id="t<%=i%>">
+                <td align="center"><%=String.valueOf(i + 1)%>
+                </td>
+                <td><a style="display:block;outline:none;"
+                       href="reportConfiguration.jsp?templateid=<%=curReport.getTemplateId()%>"><%=curReport.getTitle()%>
+                </a></td>
+                <td><%=curReport.getDescription()%>
+                </td>
+                <td style="display:none;" id="<%=curReport.getTemplateId()%>"></td>
+            </tr>
+            <% } %>
 
-		<%if (templates.isEmpty()) {%>
-		<tr>
-			<td align="center" >0</td>
-			<td>No Templates</td>
-			<td>No templates in the database, please create a template file by clicking on "Add Template"</td>
-		</tr>
-			<%}%>
-	</tbody>
-	</table>
-</div>
+            <%if (templates.isEmpty()) {%>
+            <tr>
+                <td align="center">0</td>
+                <td>No Templates</td>
+                <td>No templates in the database, please create a template file by clicking on "Add Template"</td>
+            </tr>
+            <%}%>
+            </tbody>
+        </table>
+    </div>
 
-<script type="text/javascript">
-//Table Display
-jQuery("#viewSelect").on("change",function() {
-	updateTableDisplay();
-});
+    <script type="text/javascript">
+        //Table Display
+        jQuery("#viewSelect").on("change", function () {
+            updateTableDisplay();
+        });
 
-function updateTableDisplay(){
-	var select = document.getElementById("viewSelect");
-	var value = select.value;
-	value = value.substring(0, value.length - 1);
-	var array = value.split(',');
-	var table = document.getElementById("tableData");
-	var rows = table.rows;
-	var index = "";
-	var i, tid;
+        function updateTableDisplay() {
+            var select = document.getElementById("viewSelect");
+            var value = select.value;
+            value = value.substring(0, value.length - 1);
+            var array = value.split(',');
+            var table = document.getElementById("tableData");
+            var rows = table.rows;
+            var index = "";
+            var i, tid;
 
-	for (i= 0; i< (rows.length); i++) {
-		tid = rows[i].getElementsByTagName("TD")[3].id.toString();
-		index = rows[i].id.toString();
-		if ((array.includes(tid, 1)) || value=="al"){
-			document.getElementById(index).style.display='table-row';
-		} else {
-			document.getElementById(index).style.display='none';
-		}
-	}
-}
+            for (i = 0; i < (rows.length); i++) {
+                tid = rows[i].getElementsByTagName("TD")[3].id.toString();
+                index = rows[i].id.toString();
+                if ((array.includes(tid, 1)) || value == "al") {
+                    document.getElementById(index).style.display = 'table-row';
+                } else {
+                    document.getElementById(index).style.display = 'none';
+                }
+            }
+        }
 
-function inGroup(element){
-	var select = document.getElementById("viewSelect");
-	var value = select.value;
-	value = value.substring(0, value.length - 1);
-	var array = value.split(',');
-	var bool = false;
-	var tid;
+        function inGroup(element) {
+            var select = document.getElementById("viewSelect");
+            var value = select.value;
+            value = value.substring(0, value.length - 1);
+            var array = value.split(',');
+            var bool = false;
+            var tid;
 
-	if (value =="al"){
-		return true;
-	}
+            if (value == "al") {
+                return true;
+            }
 
-	tid = element.getElementsByTagName("TD")[3].id.toString();
-	if (array.includes(tid)){
-		bool = true;
-	}
-	return bool;
-}
+            tid = element.getElementsByTagName("TD")[3].id.toString();
+            if (array.includes(tid)) {
+                bool = true;
+            }
+            return bool;
+        }
 
-// Search  NB .context is a jQuery 1.3 - 2.4 property
-jQuery(document).ready(function() {
-	jQuery("#userSearch").on("keyup", function() {
-		var value = jQuery(this).val().toLowerCase();
-		jQuery("#tableData tr").filter(
-			function() {
-				jQuery(this).toggle(
-					(jQuery(this).text().toLowerCase().indexOf(value) > -1) &&
-					inGroup(jQuery(this).context))
-		});
-	});
-});
-// Sort by table columns
-function sortTable(n) {
-	var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-	table = document.getElementById("tableData");
-	switching = true;
-	dir = "asc";
+        // Search  NB .context is a jQuery 1.3 - 2.4 property
+        jQuery(document).ready(function () {
+            jQuery("#userSearch").on("keyup", function () {
+                var value = jQuery(this).val().toLowerCase();
+                jQuery("#tableData tr").filter(
+                    function () {
+                        jQuery(this).toggle(
+                            (jQuery(this).text().toLowerCase().indexOf(value) > -1) &&
+                            inGroup(jQuery(this).context))
+                    });
+            });
+        });
 
-	while (switching) {
-		switching = false;
-		rows = table.rows;
-		for (i= 0; i< (rows.length - 1); i++) {
-			shouldSwitch = false;
-			x = rows[i].getElementsByTagName("TD")[n];
-			y = rows[i + 1].getElementsByTagName("TD")[n];
+        // Sort by table columns
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("tableData");
+            switching = true;
+            dir = "asc";
 
-			if (n == 1){
-				x = new DOMParser().parseFromString(x.innerHTML, "text/html").body.childNodes[0];
-				y = new DOMParser().parseFromString(y.innerHTML, "text/html").body.childNodes[0];
-			}
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 0; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
 
-			if (dir == "asc") {
-				/* If it is the first row then it is a number*/
-				if (n == 0){
-					if (Number(x.innerHTML) > Number(y.innerHTML)) {
-						shouldSwitch = true;
-				        break;
-					}
-				} else {
-					if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				}
-			} else if (dir == "desc") {
-				/* If it is the first row then it is a number*/
-				if (n == 0){
-					if (Number(x.innerHTML) < Number(y.innerHTML)) {
-						shouldSwitch = true;
-				        break;
-					}
-				} else {
-					if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-						shouldSwitch = true;
-						break;
-					}
-				}
-			}
-		}
+                    if (n == 1) {
+                        x = new DOMParser().parseFromString(x.innerHTML, "text/html").body.childNodes[0];
+                        y = new DOMParser().parseFromString(y.innerHTML, "text/html").body.childNodes[0];
+                    }
 
-		if (shouldSwitch) {
-			rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-			switching = true;
-			switchcount ++;
-		} else {
-			if (switchcount == 0 && dir == "asc") {
-				dir = "desc";
-				switching = true;
-			}
-		}
-	}
-}
-</script>
+                    if (dir == "asc") {
+                        /* If it is the first row then it is a number*/
+                        if (n == 0) {
+                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    } else if (dir == "desc") {
+                        /* If it is the first row then it is a number*/
+                        if (n == 0) {
+                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
 
-</body>
-</html:html>
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+
+    </body>
+</html>

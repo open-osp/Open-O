@@ -23,108 +23,110 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="oscar.OscarProperties" %>
-<%@page import="org.oscarehr.managers.DashboardManager" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@page import="ca.openosp.openo.managers.DashboardManager" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-	DashboardManager dashboardManager = SpringUtils.getBean(DashboardManager.class);	
-	LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-	String url = dashboardManager.getSharedOutcomesDashboardLaunchURL(loggedInInfo);
+    DashboardManager dashboardManager = SpringUtils.getBean(DashboardManager.class);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    String url = dashboardManager.getSharedOutcomesDashboardLaunchURL(loggedInInfo);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.js"></script>
-<script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/jquery-1.9.1.js"></script>
+    <script>
 
-function testListener( event ) {
-         console.log("got a message from the dashboard");
-        var data = event.data || event.originalEvent.data;
-        var source = event.source || event.originalEvent.source;
-        receiveOutcomesMessage1(event);
-}
+        function testListener(event) {
+            console.log("got a message from the dashboard");
+            var data = event.data || event.originalEvent.data;
+            var source = event.source || event.originalEvent.source;
+            receiveOutcomesMessage1(event);
+        }
 
-var outcomesWindow; 
+        var outcomesWindow;
 
-window.onbeforeunload = function() {
-	//outcomesWindow.close();
-    //return "You sure?";
-	outcomesWindow.postMessage({'response' : 'CLOSE'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
-};
-
-
-window.unload = function() {
-	outcomesWindow.postMessage({'response' : 'CLOSE'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
-};
-
-function launchOutcomesDashboard1(outcomesHostName) {
-	var url = '<%=url%>';
-	console.log('url=' + url.toString());
-	outcomesWindow = window.open( url.toString(), "OutcomesWindow","toolbar=1,scrollbars=1,status=1,statusbar=1,copyhistory=1,resizable=1,width=1280,height=1024");
-	outcomesWindow.focus();
-	
-	var oTimer = function() {
-		outcomesTimeout = setTimeout(function(){
-			outcomesWindow.postMessage({'response' : 'CONNECT'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
-			console.log('sending CONNECT');
-			oTimer();
-		}, 500);
-	};
-    oTimer();
-}
-
-var connected= false;
-
-function receiveOutcomesMessage1( event ) {
-	var data = event.data || event.originalEvent.data;
-	var outcomesData = data.outcomes;
-	var params = outcomesData.request;
-	switch( outcomesData.interaction ) {
-		case "CONNECTED" :
-			clearTimeout( outcomesTimeout );
-			console.log('Connected');
-			connected = true;
-			break;
-		case "handlePiePieceClick":
-			if(params && params.hasOwnProperty("query") && params.hasOwnProperty("group") && params.hasOwnProperty("username")) {
-				//console.log("query="+params.query); //OSCAR Metric Test
-				//console.log("group="+params.group); //Up to date, Overdue, ect (the label) - doesn't matter for us
-				//console.log("username="+params.username); //999998
-				$("#drillDownFrame").attr('src','DrilldownDisplay.do?method=getDrilldownBySharedMetricSetName&sharedMetricSetName=' + encodeURIComponent(params.query) + '&sharedMetricSetLable=' + encodeURIComponent(params.group) + "&providerNo=" + params.username);
-				outcomesWindow.postMessage( outcomesData.onSuccess, '*' );
-				//window.focus();
-			}
-			break;
-		case "submitQuery":
-			if(params && params.hasOwnProperty("queryList")) {
-				var data = params.queryList;
-				
-			       jQuery.ajax({
-		                url: "../OutcomesDashboard.do?method=refreshIndicators",
-		            type: 'POST',
-		            async:true,
-		            data: 'data=' + btoa(JSON.stringify(params)),
-		            dataType: 'json',
-		            success: function(data) {
-		            	outcomesWindow.postMessage( outcomesData.onSuccess, '*' );	
-		            }
-		        });
-			}
-			
-			break;			
-	}
-}
-
-$(document).ready(function(){
-	$( window ).on( "message", testListener );
-	launchOutcomesDashboard1();
-});
+        window.onbeforeunload = function () {
+            //outcomesWindow.close();
+            //return "You sure?";
+            outcomesWindow.postMessage({'response': 'CLOSE'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
+        };
 
 
-</script>
-<style>
-html, body { height: 100% }
-</style>
+        window.unload = function () {
+            outcomesWindow.postMessage({'response': 'CLOSE'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
+        };
+
+        function launchOutcomesDashboard1(outcomesHostName) {
+            var url = '<%=url%>';
+            console.log('url=' + url.toString());
+            outcomesWindow = window.open(url.toString(), "OutcomesWindow", "toolbar=1,scrollbars=1,status=1,statusbar=1,copyhistory=1,resizable=1,width=1280,height=1024");
+            outcomesWindow.focus();
+
+            var oTimer = function () {
+                outcomesTimeout = setTimeout(function () {
+                    outcomesWindow.postMessage({'response': 'CONNECT'}, '<%=OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_host") %>');
+                    console.log('sending CONNECT');
+                    oTimer();
+                }, 500);
+            };
+            oTimer();
+        }
+
+        var connected = false;
+
+        function receiveOutcomesMessage1(event) {
+            var data = event.data || event.originalEvent.data;
+            var outcomesData = data.outcomes;
+            var params = outcomesData.request;
+            switch (outcomesData.interaction) {
+                case "CONNECTED" :
+                    clearTimeout(outcomesTimeout);
+                    console.log('Connected');
+                    connected = true;
+                    break;
+                case "handlePiePieceClick":
+                    if (params && params.hasOwnProperty("query") && params.hasOwnProperty("group") && params.hasOwnProperty("username")) {
+                        //console.log("query="+params.query); //OSCAR Metric Test
+                        //console.log("group="+params.group); //Up to date, Overdue, ect (the label) - doesn't matter for us
+                        //console.log("username="+params.username); //999998
+                        $("#drillDownFrame").attr('src', 'DrilldownDisplay.do?method=getDrilldownBySharedMetricSetName&sharedMetricSetName=' + encodeURIComponent(params.query) + '&sharedMetricSetLable=' + encodeURIComponent(params.group) + "&providerNo=" + params.username);
+                        outcomesWindow.postMessage(outcomesData.onSuccess, '*');
+                        //window.focus();
+                    }
+                    break;
+                case "submitQuery":
+                    if (params && params.hasOwnProperty("queryList")) {
+                        var data = params.queryList;
+
+                        jQuery.ajax({
+                            url: "<%=request.getContextPath()%>/OutcomesDashboard.do?method=refreshIndicators",
+                            type: 'POST',
+                            async: true,
+                            data: 'data=' + btoa(JSON.stringify(params)),
+                            dataType: 'json',
+                            success: function (data) {
+                                outcomesWindow.postMessage(outcomesData.onSuccess, '*');
+                            }
+                        });
+                    }
+
+                    break;
+            }
+        }
+
+        $(document).ready(function () {
+            $(window).on("message", testListener);
+            launchOutcomesDashboard1();
+        });
+
+
+    </script>
+    <style>
+        html, body {
+            height: 100%
+        }
+    </style>
 </head>
 <body>
 <h5>OSCAR EMR - Keep window open to interact with Common Provider Dashboard window.</h5>

@@ -23,13 +23,15 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@ page import="org.oscarehr.common.model.UserProperty"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
-    if (session.getAttribute("userrole") == null) { response.sendRedirect("../logout.jsp"); }
+    if (session.getAttribute("userrole") == null) {
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    }
     String curUser_no = (String) session.getAttribute("user");
     UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
     String defaultPrinterNameAppointmentReceipt = "";
@@ -46,20 +48,22 @@
         }
     }
 %>
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="report.appointmentReceipt.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="report.appointmentReceipt.title"/></title>
     </head>
     <body>
-        <% if (!defaultPrinterNameAppointmentReceipt.isEmpty()) { 
-            if( silentPrintAppointmentReceipt == true) {%>
-                <bean:message key="report.appointmentReceipt.SilentlyPrintToDefaultPrinter"/>
-            <%} else {%> 
-                <bean:message key="report.appointmentReceipt.DefaultPrinter"/> 
-            <%}%>
-            <%=defaultPrinterNameAppointmentReceipt%>
-        <%}%>
-        <br>
-        <object id="apptpdf" type="application/pdf"  data="printAppointmentReceiptAction.do?appointment_no=<%=request.getParameter("appointment_no")%>" height="80%" width="100%"></object>  
+    <% if (!defaultPrinterNameAppointmentReceipt.isEmpty()) {
+        if (silentPrintAppointmentReceipt == true) {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.appointmentReceipt.SilentlyPrintToDefaultPrinter"/>
+    <%} else {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.appointmentReceipt.DefaultPrinter"/>
+    <%}%>
+    <%=defaultPrinterNameAppointmentReceipt%>
+    <%}%>
+    <br>
+    <object id="apptpdf" type="application/pdf"
+            data="printAppointmentReceiptAction.do?appointment_no=<%=request.getParameter("appointment_no")%>"
+            height="80%" width="100%"></object>
     </body>
-</html:html>
+</html>

@@ -29,415 +29,400 @@ var dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
 
 //--> check that all fields tagged "required" contain data.
 function checkFields() {
-	var verified = true;
-	
-	$("#ticklerAddForm .required").each(function(){
-		if( $(this).val().length == 0 ) {
-			verified = false;
-			paintErrorField($(this));	
-		}
-	})
+    var verified = true;
 
-	return verified;
+    $("#ticklerAddForm .required").each(function () {
+        if ($(this).val().length == 0) {
+            verified = false;
+            paintErrorField($(this));
+        }
+    })
+
+    return verified;
 }
 
 //paint a red border around missing fields
-function paintErrorField( fieldobject ) {
-	fieldobject.css( "border", "medium solid red" );
+function paintErrorField(fieldobject) {
+    fieldobject.css("border", "medium solid red");
 }
-
 
 
 //*--> MASTER AJAX METHOD <--*//
 function sendData(path, param, target) {
-	$.ajax({
-		url: ctx + path,
-	    type: 'POST',
-	    data: param,
-	  	dataType: 'html',
-	    success: function(data) {
-	    	if( target == "close") {
-	    		$('#assignTickler').modal('toggle');
-	    	} else if( target == "modal") {
-	    		$('#assignTickler').modal('show').find('.modal-body').html(data);
-	    	} else {
-		    	document.open();
-		    	document.write(data);
-		    	document.close();
-	    	}
-	    }
-	});
+    $.ajax({
+        url: ctx + path,
+        type: 'POST',
+        data: param,
+        dataType: 'html',
+        success: function (data) {
+            if (target == "close") {
+                $('#assignTickler').modal('toggle');
+            } else if (target == "modal") {
+                $('#assignTickler').modal('show').find('.modal-body').html(data);
+            } else {
+                document.open();
+                document.write(data);
+                document.close();
+            }
+        }
+    });
 }
 
 //--> Datatable Filter
-$.fn.dataTableExt.afnFiltering.push( function( oSettings, aData, iDataIndex ) {	
-    var inputLow = $( '#datatableFilterConditionGreaterThan').val();
-    var inputHigh = $( '#datatableFilterConditionLessThan').val();
+$.fn.dataTableExt.afnFiltering.push(function (oSettings, aData, iDataIndex) {
+    var inputLow = $('#datatableFilterConditionGreaterThan').val();
+    var inputHigh = $('#datatableFilterConditionLessThan').val();
     var iStartDateCol = $('#datatableFilterColumnSelector').val();
-    var iEndDateCol = $('#datatableFilterColumnSelector').val();   
+    var iEndDateCol = $('#datatableFilterColumnSelector').val();
     var condition = $('#datatableFilterConditionSelector').val();
 
     inputLow = inputLow.trim();
     inputHigh = inputHigh.trim();
-    
-    iFini = filterDate( inputLow ) * 1;
-    iFfin = filterDate( inputHigh ) * 1;
-    var datofini = filterDate( aData[iStartDateCol] );
-    var datoffin = filterDate( aData[iEndDateCol] );
 
-   	// alert("In Low: " + inputLow + ', Low Filter: ' + iFini + ", In High: " + inputHigh + ", High Filter: " + iFfin + ", Condition: " + condition + ", Data: " + datofini);
+    iFini = filterDate(inputLow) * 1;
+    iFfin = filterDate(inputHigh) * 1;
+    var datofini = filterDate(aData[iStartDateCol]);
+    var datoffin = filterDate(aData[iEndDateCol]);
 
-    if( condition === 'equal' 
-    	&& iFini !== iFini
-    	&& new RegExp( '^' + inputLow + '\.*$', 'i' ).test( datofini ) )
-    {
-    	return true;
-    }
-    else if ( condition === 'equal' && parseFloat(iFini) == parseFloat(datofini) ) 
-    {
-    	return true;
-    }
-    else if ( ( iFini === "" && iFfin === "" ) || ( iFini === 0 && iFfin === 0 ) ) 
-    {
-    	return true;
-    }
-    else if ( condition !== 'equal' && parseFloat(iFini) <= parseFloat(datofini) 
-    		&& ( iFfin === "" || iFfin === 0 ) )
-    {
-    	return true;
-    }
-    else if ( condition !== 'equal' && parseFloat(iFfin) >= parseFloat(datoffin) 
-    		&& ( iFini === "" || iFini === 0 ) )
-    {
-    	return true;
-    }
-    else if ( condition !== 'equal' && parseFloat(iFini) <= parseFloat(datofini) 
-    		&& parseFloat(iFfin) >= parseFloat(datoffin) )
-    {
-    	return true;
+    if (condition === 'equal'
+        && iFini !== iFini
+        && new RegExp('^' + inputLow.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '.*$', 'i').test(datofini)) {
+        return true;
+    } else if (condition === 'equal' && parseFloat(iFini) == parseFloat(datofini)) {
+        return true;
+    } else if ((iFini === "" && iFfin === "") || (iFini === 0 && iFfin === 0)) {
+        return true;
+    } else if (condition !== 'equal' && parseFloat(iFini) <= parseFloat(datofini)
+        && (iFfin === "" || iFfin === 0)) {
+        return true;
+    } else if (condition !== 'equal' && parseFloat(iFfin) >= parseFloat(datoffin)
+        && (iFini === "" || iFini === 0)) {
+        return true;
+    } else if (condition !== 'equal' && parseFloat(iFini) <= parseFloat(datofini)
+        && parseFloat(iFfin) >= parseFloat(datoffin)) {
+        return true;
     }
 
     return false;
 });
 
 // Returns Epoch time for easy sorting.
-function filterDate(str){
-	
-	if(str === null ) {
-		str = "";
-	}
-	
-	var time = str.replace(/-/g, "/");
-	time = time.match(dateRegex);
-	
-	if( time !== null ){
-		var m =+ time[1], d =+ time[2], y =+ time[3];
-		var date = new Date( y, m-1, d );
-		if( date.getFullYear() === y && date.getMonth() === m-1 ){
-			return date.getTime();   
-		}
-	}
-	return str;
+function filterDate(str) {
+
+    if (str === null) {
+        str = "";
+    }
+
+    var time = str.replace(/-/g, "/");
+    time = time.match(dateRegex);
+
+    if (time !== null) {
+        var m = +time[1], d = +time[2], y = +time[3];
+        var date = new Date(y, m - 1, d);
+        if (date.getFullYear() === y && date.getMonth() === m - 1) {
+            return date.getTime();
+        }
+    }
+    return str;
 }
 
-function isDate( str ) {
-	var time = str.replace(/-/g, "/");
-	return dateRegex.test(time);
+function isDate(str) {
+    var time = str.replace(/-/g, "/");
+    return dateRegex.test(time);
 }
 
 //--> date format detection
-$.fn.dataTable.moment( 'MM-DD-YYYY' );
-$.fn.dataTable.moment( 'MM-D-YYYY' );
-$.fn.dataTable.moment( 'M-DD-YYYY' );
-$.fn.dataTable.moment( 'M-D-YYYY' );
+$.fn.dataTable.moment('MM-DD-YYYY');
+$.fn.dataTable.moment('MM-D-YYYY');
+$.fn.dataTable.moment('M-DD-YYYY');
+$.fn.dataTable.moment('M-D-YYYY');
 
 //--> sort the checkboxes
-$.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col )
-{
-    return this.api().column( col, {order:'index'} ).nodes().map( function ( td, i ) {
+$.fn.dataTable.ext.order['dom-checkbox'] = function (settings, col) {
+    return this.api().column(col, {order: 'index'}).nodes().map(function (td, i) {
         return $('.patientChecked', td).prop('checked') ? '1' : '0';
-    } );
+    });
 };
 
-$(document).ready( function() {
+$(document).ready(function () {
 
-	//--> table init
-	var drilldownTable = $('#drilldownTable').DataTable({
+    //--> table init
+    var drilldownTable = $('#drilldownTable').DataTable({
 
         // 1. disable sorting and searching on the first column
-		// 2. make the tickler checkboxes sortable.
-	    "columnDefs": [ 
-	        {
-		        "searchable": false,
-		        "orderable": false,
-		        "targets": 0
-	    	},
-	    	{ 
-	    		"orderDataType": "dom-checkbox",
-	    		"targets": 1
-	    	}
-	    ],
-	    
-	    // turns the first column of the table into an ordered list.
-	    "order": [[ 1, 'asc' ]]
-	});
-	
-	// --> Number the Drilldown rows with static numbers.
-	drilldownTable.on( 'order.dt search.dt', function () {
-		drilldownTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
-            cell.innerHTML = i+1;
-        } );
-    } ).draw();
-	
+        // 2. make the tickler checkboxes sortable.
+        "columnDefs": [
+            {
+                "searchable": false,
+                "orderable": false,
+                "targets": 0
+            },
+            {
+                "orderDataType": "dom-checkbox",
+                "targets": 1
+            }
+        ],
 
-	//--> add a customizable user filter to the table.
-	$("#drilldownTable_filter").empty().prepend( function(){
-		
-		var filterGroup = $('#datatableFilterGroup');
-		
-		// add the columns and move the html into the header of the DataTable
-		var select = filterGroup.find( '#datatableFilterColumnSelector' );
-		
-		$( '#drilldownTable thead th' ).each( function() {
-			var id = this.id;
-			if( id > 1 ) {
-				 select.append( '<option value="' 
-						 + id 
-						 + '">' 
-						 + $(this).html() 
-						 + '</option>' );
-			}
-		});
-
-		filterGroup.find('#datatableFilterColumnSelector').replaceWith( select );
-		
-		// execute a filter based on the parameters in the tool set.
-		filterGroup.find( '#datatableFilterExecuteButton' ).on('click', function(){
-			drilldownTable.draw();
-		});
-		
-		// reset all the search values and restore the table.
-		filterGroup.find( '#datatableFilterResetButton' ).on('click', function(){
-			$( '#datatableFilterConditionGreaterThan').val("").show();
-	        $( '#datatableFilterConditionLessThan').val("");
-	        $('#datatableFilterColumnSelector').val('0');
-	        $('#datatableFilterConditionSelector').val('all');
-	        $('.andcondition').hide();
-			drilldownTable.draw();
-		});
-
-		// bind a show hide event to the additional field for range filtering
-		filterGroup.find('#datatableFilterConditionSelector').on('change', function(){
-			if( $(this).val() === 'between' ) {
-				$('#datatableFilterConditionGreaterThan').show();
-				$('.andcondition').show();
-			} else {
-				$('.andcondition').hide();
-			}
-			
-			if( $(this).val() === 'gt' || $(this).val() === 'equal' ) {
-				$('#datatableFilterConditionGreaterThan').val( $('#datatableFilterConditionLessThan').val() );
-				$('#datatableFilterConditionLessThan').val("")
-				$('#datatableFilterConditionGreaterThan').show();
-				$('.lessthancondition').hide();
-			}
-			
-			if( $(this).val() === 'lt' ) {
-				$('#datatableFilterConditionLessThan').val( $('#datatableFilterConditionGreaterThan').val() );
-				$('#datatableFilterConditionGreaterThan').val("");
-				$('#datatableFilterConditionGreaterThan').hide();
-				$('.lessthancondition').show();
-			}
-		});
-
-		return filterGroup.show();
-	});
-
-	// --> add the filters to the bottom footer.
-	$("#drilldownTable tfoot th.filter").each( function ( i ) {
-		var columnId = this.id;
-		
-		// exclude the first column. 
-		if( i > 0 ) {
-	        var select = $('<select class="form-control" ><option value="">All</option></select>')
-	            .appendTo( $(this).empty() )
-	            .on( 'change', function () {
-	            	drilldownTable.column( columnId ).search( $(this).val() ).draw();
-	            } );
-	 
-	        drilldownTable.column( columnId ).data().unique().sort().each( function ( d, j ) {
-	            select.append( '<option value="'+d+'">'+d+'</option>' )
-	        } );
-		}
-		
-    } );
-	
-	//--> Re-draw the dashboard.
-	$(".backtoDashboardBtn").on('click', function(event) {
-    	event.preventDefault();   	
-    	var url = "/web/dashboard/display/DashboardDisplay.do";
-    	var data = new Object();
-    	data.dashboardId = (this.id).split("_")[1];
-    	data.method = (this.id).split("_")[0];  
-
-    	sendData(url, data, "reload");
+        // turns the first column of the table into an ordered list.
+        "order": [[1, 'asc']]
     });
-	
-	//--> Check all for actions
-	$("#selectAllDrilldown").on('click', function(event) {
-		event.preventDefault();
-	    $('.patientChecked').prop('checked', 'checked');
-	});
-	
-	//--> Uncheck all for actions
-	$("#selectNoneDrilldown").on('click', function(event) {
-		event.preventDefault();
-	    $('.patientChecked').prop('checked', '');
-	});
 
-	function getSelectedPatientIds() {
-		var patientIds = [];
-
-		$("input:checkbox.patientChecked").each(function() {
-			if(this.checked) {
-				patientIds.push(this.id);
-			}
-		});
-
-		return patientIds;
-	}
-
-	//--> Assign Tickler to all checked items - returns the tickler dialog.
-	$("#assignTicklerChecked").on('click', function(event) {
-		
-		event.preventDefault();
-		var demographics = getSelectedPatientIds();
-		var param = "demographics=" + demographics;
-
-		if( demographics.length > 0 ) {
-    		sendData( $(this).attr('href'), param, "modal");
-		} else {
-			alert("Select at least 1 row to assign a Tickler.");
-		}
-	});
-
-	//--> Execute the tickler assignment - save
-	$("#saveTicklerBtn").on('click', function(event) {
-		event.preventDefault();
-		if( checkFields() ) {
-			sendData("/web/dashboard/display/AssignTickler.do", $("#ticklerAddForm").serialize(), "close")
-		}
-	});
+    // --> Number the Drilldown rows with static numbers.
+    drilldownTable.on('order.dt search.dt', function () {
+        drilldownTable.column(0, {search: 'applied', order: 'applied'}).nodes().each(function (cell, i) {
+            cell.innerHTML = i + 1;
+        });
+    }).draw();
 
 
-	$("#addToDiseaseRegistryChecked").on('click', function(event) {
-		event.preventDefault();
+    //--> add a customizable user filter to the table.
+    $("#drilldownTable_filter").empty().prepend(function () {
 
-		var patientIds = getSelectedPatientIds();
+        var filterGroup = $('#datatableFilterGroup');
 
-		if (patientIds.length < 1) {
-			alert("At least one patient must be selected to perform this action.");
-			return;
-		}
+        // add the columns and move the html into the header of the DataTable
+        var select = filterGroup.find('#datatableFilterColumnSelector');
 
-		var url = $(this).attr("href");
+        $('#drilldownTable thead th').each(function () {
+            var id = this.id;
+            if (id > 1) {
+                select.append('<option value="'
+                    + id
+                    + '">'
+                    + $(this).html()
+                    + '</option>');
+            }
+        });
 
-		$.ajax({
-			url: url,
-			dataType: "json",
-			success: function(data) {
-				$("#modalConfirmAddToDiseaseRegistry").modal("show");
-				$("#icd9code").text(data.icd9code);
-				$("#icd9description").text(data.description);
-			}
-		});
-	});
+        filterGroup.find('#datatableFilterColumnSelector').replaceWith(select);
 
-	$("#confirmAddToDiseaseRegistry").on('click', function(event) {
-		event.preventDefault();
+        // execute a filter based on the parameters in the tool set.
+        filterGroup.find('#datatableFilterExecuteButton').on('click', function () {
+            drilldownTable.draw();
+        });
 
-		var patientIds = getSelectedPatientIds();
+        // reset all the search values and restore the table.
+        filterGroup.find('#datatableFilterResetButton').on('click', function () {
+            $('#datatableFilterConditionGreaterThan').val("").show();
+            $('#datatableFilterConditionLessThan').val("");
+            $('#datatableFilterColumnSelector').val('0');
+            $('#datatableFilterConditionSelector').val('all');
+            $('.andcondition').hide();
+            drilldownTable.draw();
+        });
 
-		if (patientIds.length < 1) {
-			alert("At least one patient must be selected to perform this action.");
-			return;
-		}
+        // bind a show hide event to the additional field for range filtering
+        filterGroup.find('#datatableFilterConditionSelector').on('change', function () {
+            if ($(this).val() === 'between') {
+                $('#datatableFilterConditionGreaterThan').show();
+                $('.andcondition').show();
+            } else {
+                $('.andcondition').hide();
+            }
 
-		var url = $(this).attr("href");
-		var data = "patientIds=" + patientIds;
+            if ($(this).val() === 'gt' || $(this).val() === 'equal') {
+                $('#datatableFilterConditionGreaterThan').val($('#datatableFilterConditionLessThan').val());
+                $('#datatableFilterConditionLessThan').val("")
+                $('#datatableFilterConditionGreaterThan').show();
+                $('.lessthancondition').hide();
+            }
 
-		$.ajax({
-			url: url,
-			data: data,
-			success: function(data) {
-				$("#modalConfirmAddToDiseaseRegistry").modal("toggle");
-			}
-		});
-	});
+            if ($(this).val() === 'lt') {
+                $('#datatableFilterConditionLessThan').val($('#datatableFilterConditionGreaterThan').val());
+                $('#datatableFilterConditionGreaterThan').val("");
+                $('#datatableFilterConditionGreaterThan').hide();
+                $('.lessthancondition').show();
+            }
+        });
 
-	$("#excludePatientsChecked").on('click', function(event) {
-		event.preventDefault();
+        return filterGroup.show();
+    });
 
-		var patientIds = getSelectedPatientIds();
+    // --> add the filters to the bottom footer.
+    $("#drilldownTable tfoot th.filter").each(function (i) {
+        var columnId = this.id;
 
-		if (patientIds.length < 1) {
-			alert("At least one patient must be selected to perform this action.");
-			return;
-		}
+        // exclude the first column.
+        if (i > 0) {
+            var select = $('<select class="form-control" ><option value="">All</option></select>')
+                .appendTo($(this).empty())
+                .on('change', function () {
+                    drilldownTable.column(columnId).search($(this).val()).draw();
+                });
 
-		$("#modalConfirmPatientExclusion").modal("show");
-	});
+            drilldownTable.column(columnId).data().unique().sort().each(function (d, j) {
+                select.append('<option value="' + d + '">' + d + '</option>')
+            });
+        }
 
-	$("#confirmPatientExclusion").on('click', function(event) {
-		event.preventDefault();
+    });
 
-		var patientIds = getSelectedPatientIds();
-		// Note that indicatorId is already placed in the href
-		// querystring by the JSP code.
+    //--> Re-draw the dashboard.
+    $(".backtoDashboardBtn").on('click', function (event) {
+        event.preventDefault();
+        var url = "/www/dashboard/display/DashboardDisplay.do";
+        var data = new Object();
+        data.dashboardId = (this.id).split("_")[1];
+        data.method = (this.id).split("_")[0];
 
-		var url = $(this).attr("href");
-		var data = "patientIds=" + patientIds;
+        sendData(url, data, "reload");
+    });
 
-		$.ajax({
-			url: url,
-			data: data,
-			success: function(data) {
-				$("#modalConfirmPatientExclusion").modal("toggle");
-			}
-		});
-	});
+    //--> Check all for actions
+    $("#selectAllDrilldown").on('click', function (event) {
+        event.preventDefault();
+        $('.patientChecked').prop('checked', 'checked');
+    });
 
-	$("#patientStatusUpdateChecked").on('click', function(event) {
-		event.preventDefault();
+    //--> Uncheck all for actions
+    $("#selectNoneDrilldown").on('click', function (event) {
+        event.preventDefault();
+        $('.patientChecked').prop('checked', '');
+    });
 
-		var patientIds = getSelectedPatientIds();
+    function getSelectedPatientIds() {
+        var patientIds = [];
 
-		if (patientIds.length < 1) {
-			alert("At least one patient must be selected to perform this action.");
-			return;
-		}
+        $("input:checkbox.patientChecked").each(function () {
+            if (this.checked) {
+                patientIds.push(this.id);
+            }
+        });
 
-		$("#modalConfirmPatientStatusUpdate").modal("show");
+        return patientIds;
+    }
 
-	});
+    //--> Assign Tickler to all checked items - returns the tickler dialog.
+    $("#assignTicklerChecked").on('click', function (event) {
 
-	$("#confirmPatientStatusUpdate").on('click', function(event) {
-		event.preventDefault();
+        event.preventDefault();
+        var demographics = getSelectedPatientIds();
+        var param = "demographics=" + demographics;
 
-		var patientIds = getSelectedPatientIds();
-		// Note that indicatorId is already placed in the href
-		// querystring by the JSP code.
+        if (demographics.length > 0) {
+            sendData($(this).attr('href'), param, "modal");
+        } else {
+            alert("Select at least 1 row to assign a Tickler.");
+        }
+    });
 
-		var url = $(this).attr("href");
-		var data = "patientIds=" + patientIds;
+    //--> Execute the tickler assignment - save
+    $("#saveTicklerBtn").on('click', function (event) {
+        event.preventDefault();
+        if (checkFields()) {
+            sendData("/www/dashboard/display/AssignTickler.do", $("#ticklerAddForm").serialize(), "close")
+        }
+    });
 
-		$.ajax({
-			url: url,
-			data: data,
-			success: function(data) {
-				$("#modalConfirmPatientStatusUpdate").modal("toggle");
-			}
-		});
-	});
-    
+
+    $("#addToDiseaseRegistryChecked").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+
+        if (patientIds.length < 1) {
+            alert("At least one patient must be selected to perform this action.");
+            return;
+        }
+
+        var url = $(this).attr("href");
+
+        $.ajax({
+            url: url,
+            dataType: "json",
+            success: function (data) {
+                $("#modalConfirmAddToDiseaseRegistry").modal("show");
+                $("#icd9code").text(data.icd9code);
+                $("#icd9description").text(data.description);
+            }
+        });
+    });
+
+    $("#confirmAddToDiseaseRegistry").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+
+        if (patientIds.length < 1) {
+            alert("At least one patient must be selected to perform this action.");
+            return;
+        }
+
+        var url = $(this).attr("href");
+        var data = "patientIds=" + patientIds;
+
+        $.ajax({
+            url: url,
+            data: data,
+            success: function (data) {
+                $("#modalConfirmAddToDiseaseRegistry").modal("toggle");
+            }
+        });
+    });
+
+    $("#excludePatientsChecked").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+
+        if (patientIds.length < 1) {
+            alert("At least one patient must be selected to perform this action.");
+            return;
+        }
+
+        $("#modalConfirmPatientExclusion").modal("show");
+    });
+
+    $("#confirmPatientExclusion").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+        // Note that indicatorId is already placed in the href
+        // querystring by the JSP code.
+
+        var url = $(this).attr("href");
+        var data = "patientIds=" + patientIds;
+
+        $.ajax({
+            url: url,
+            data: data,
+            success: function (data) {
+                $("#modalConfirmPatientExclusion").modal("toggle");
+            }
+        });
+    });
+
+    $("#patientStatusUpdateChecked").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+
+        if (patientIds.length < 1) {
+            alert("At least one patient must be selected to perform this action.");
+            return;
+        }
+
+        $("#modalConfirmPatientStatusUpdate").modal("show");
+
+    });
+
+    $("#confirmPatientStatusUpdate").on('click', function (event) {
+        event.preventDefault();
+
+        var patientIds = getSelectedPatientIds();
+        // Note that indicatorId is already placed in the href
+        // querystring by the JSP code.
+
+        var url = $(this).attr("href");
+        var data = "patientIds=" + patientIds;
+
+        $.ajax({
+            url: url,
+            data: data,
+            success: function (data) {
+                $("#modalConfirmPatientStatusUpdate").modal("toggle");
+            }
+        });
+    });
+
 })

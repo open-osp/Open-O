@@ -1,4 +1,4 @@
-jQuery(document).ajaxError(function(event, request, options, error) { 
+jQuery(document).ajaxError(function (event, request, options, error) {
     /*
     * Ignoring any alert messages generated because of '/oscar/ws/rs/ocean/getSettings' endpoint.
     * These alerts appeared consistently whenever the consultation request form was opened with Ocean integration enabled.
@@ -11,7 +11,9 @@ jQuery(document).ajaxError(function(event, request, options, error) {
     * TODO: To solve it, the recommended solution is to import OceanService.java from the OscarPro codebase (https://bitbucket.org/oscaremr/oscarpro/src/master/).
     * Currently not importing it because we don't know its use cases. Once its use cases are identified, it should be imported.
     */
-    if (options.url.endsWith("/ocean/getSettings")) { return; }
+    if (options.url.endsWith("/ocean/getSettings")) {
+        return;
+    }
 
-    alert('Error contacting server, please try again. \n'+options.url); 
+    alert('Error contacting server, please try again. \n' + options.url);
 });

@@ -5,26 +5,26 @@
 */
 Calendar._DN = new Array
 ("Nedjelja",
- "Ponedjeljak",
- "Utorak",
- "Srijeda",
- "Četvrtak",
- "Petak",
- "Subota",
- "Nedjelja");
+    "Ponedjeljak",
+    "Utorak",
+    "Srijeda",
+    "Četvrtak",
+    "Petak",
+    "Subota",
+    "Nedjelja");
 Calendar._MN = new Array
 ("Siječanj",
- "Veljača",
- "Ožujak",
- "Travanj",
- "Svibanj",
- "Lipanj",
- "Srpanj",
- "Kolovoz",
- "Rujan",
- "Listopad",
- "Studeni",
- "Prosinac");
+    "Veljača",
+    "Ožujak",
+    "Travanj",
+    "Svibanj",
+    "Lipanj",
+    "Srpanj",
+    "Kolovoz",
+    "Rujan",
+    "Listopad",
+    "Studeni",
+    "Prosinac");
 
 // tooltips
 Calendar._TT = {};

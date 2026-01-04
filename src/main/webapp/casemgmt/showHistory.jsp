@@ -23,74 +23,67 @@
     Ontario, Canada
 
 --%>
-
-<%@ include file="/casemgmt/taglibs.jsp"%>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ include file="/casemgmt/taglibs.jsp" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_casemgmt.notes" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%@ page
-	import="org.springframework.web.context.*,org.springframework.web.context.support.*, org.oscarehr.PMmodule.service.ProviderManager, org.oscarehr.casemgmt.model.CaseManagementNote"%>
+        import="org.springframework.web.context.*,org.springframework.web.context.support.*, ca.openosp.openo.PMmodule.service.ProviderManager, ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
 <%
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    ProviderManager pMgr = (ProviderManager)ctx.getBean(ProviderManager.class);
- %>
+    ProviderManager pMgr = (ProviderManager) ctx.getBean(ProviderManager.class);
+%>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Note History</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Note History</title>
 </head>
 <body>
-<h3 style="text-align: center;"><nested:write name="title" /></h3>
-<h3 style="text-align: center;"><nested:write name="demoName" /></h3>
-<nested:iterate indexId="idx" id="note" name="history">
-	<div
-		style="width: 99%; background-color: #EFEFEF; font-size: 12px; border-left: thin groove #000000; border-bottom: thin groove #000000; border-right: thin groove #000000;">
-	<div>
-		<p>
-			<%
-				String theNote = ((CaseManagementNote) pageContext.getAttribute("note")).getNote();
-				theNote = theNote.replaceAll("\n", "<br/>");
-			%>
-			<%=theNote %>
-		
-		</p>
-	</div>
-	<div style="color: #0000FF;"><nested:notEmpty name="current">
-		<c:if test="${current[idx] == false}">
-			<div style="color: #FF0000;">REMOVED</div>
-		</c:if>
-	</nested:notEmpty>
-        <c:if test="${note.archived == true}">
-                <div style="color: #336633;">ARCHIVED</div>
-        </c:if>
-        
-        Documentation Date: <nested:write name="note"
-		property="observation_date" format="dd-MMM-yyyy H:mm" /><br>
-	<nested:equal name="note" property="signed" value="true"> 
-                             Signed by 
-                             <%                               
-                               CaseManagementNote n = (CaseManagementNote)note;
-                               out.println(pMgr.getProvider(n.getSigning_provider_no()).getFormattedName());
-                             %>
-	</nested:equal> <nested:notEqual name="note" property="signed" value="true"> 
-                             Saved by 
-                             <nested:write name="note"
-			property="provider.formattedName" />:
-                         </nested:notEqual> <nested:write name="note"
-		property="update_date" format="dd-MMM-yyyy H:mm" /></div>
-	</div>
-</nested:iterate>
+    <h3 style="text-align: center;">${title}</h3>
+    <h3 style="text-align: center;">${demoName}</h3>
+    <c:forEach var="note" items="${history}" varStatus="idx">
+        <div style="width: 99%; background-color: #EFEFEF; font-size: 12px; border-left: thin groove #000000; border-bottom: thin groove #000000; border-right: thin groove #000000;">
+            <div>
+                <p>
+                <c:out value="${note.note}" escapeXml="false" />
+                </p>
+            </div>
+            <div style="color: #0000FF;">
+                <c:if test="${not empty current[idx.index] and current[idx.index] == false}">
+                    <div style="color: #FF0000;">REMOVED</div>
+                </c:if>
+                <c:if test="${note.archived == true}">
+                    <div style="color: #336633;">ARCHIVED</div>
+                </c:if>
+    
+                Documentation Date: <fmt:formatDate value="${note.observation_date}" pattern="dd-MMM-yyyy H:mm" /><br />
+    
+                <c:if test="${note.signed == true}">
+                    Signed by
+                    <c:out value="${pMgr.getProvider(note.signing_provider_no).formattedName}" />
+                </c:if>
+    
+                <c:if test="${note.signed != true}">
+                    Saved by
+                    <c:out value="${note.provider.formattedName}" />:
+                </c:if>
+    
+                <fmt:formatDate value="${note.update_date}" pattern="dd-MMM-yyyy H:mm" />
+            </div>
+        </div>
+    </c:forEach>    
 </body>
 </html>

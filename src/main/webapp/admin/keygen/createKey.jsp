@@ -24,213 +24,217 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ page import="java.util.*,java.io.*,oscar.oscarLab.ca.all.util.KeyPairGen"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ page import="java.util.*,java.io.*,ca.openosp.openo.lab.ca.all.util.KeyPairGen" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-	String roleName$ = (String) session.getAttribute("userrole") + ","
-			+ (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + ","
+            + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<% 
-String name = request.getParameter("name");
-String type = request.getParameter("type");
-if (type != null && type.equals("OTHER"))
-    type = request.getParameter("otherType");
+<%
+    String name = request.getParameter("name");
+    String type = request.getParameter("type");
+    if (type != null && type.equals("OTHER"))
+        type = request.getParameter("otherType");
 
-String message = null;
-String failDisplay = "none";
+    String message = null;
+    String failDisplay = "none";
 
-String error = "false";
+    String error = "false";
 
-if (name != null){
-    if (name.equals("oscar")){
-        if(KeyPairGen.checkName(name)){
-            message = "Failed: The oscar key pair has already been created";
-            error = "true";
-        }else if(KeyPairGen.createKeys(name, null).equals("success")){
-            message = "Oscar key pair created successfully";
-        }else{
-            message = "Failed: Could not create the oscar key pair";
-            error = "true";
-        }
-    }else{
-        if(KeyPairGen.checkName(name)){
-            message = "Failed: Key pair has already been created for the service '"+name+"'";
-            error = "true";
-        }else{
-            String clientKey = KeyPairGen.createKeys(name, type);
-            String oscarKey = KeyPairGen.getPublic();
-
-            if (clientKey == null){
-                message = "Failed: Could not create key pair";
+    if (name != null) {
+        if (name.equals("oscar")) {
+            if (KeyPairGen.checkName(name)) {
+                message = "Failed: The oscar key pair has already been created";
                 error = "true";
-            }else if(oscarKey == null){
-                message = "Failed: Could not retrieve public key from oscar";
+            } else if (KeyPairGen.createKeys(name, null).equals("success")) {
+                message = "Oscar key pair created successfully";
+            } else {
+                message = "Failed: Could not create the oscar key pair";
                 error = "true";
-            }else{
+            }
+        } else {
+            if (KeyPairGen.checkName(name)) {
+                message = "Failed: Key pair has already been created for the service '" + name + "'";
+                error = "true";
+            } else {
+                String clientKey = KeyPairGen.createKeys(name, type);
+                String oscarKey = KeyPairGen.getPublic();
 
-                String keyPairOut = "-------- Service Name --------\n"+name+"\n------------------------------\n"+
-                        "----- Client Private Key -----\n"+clientKey+"\n------------------------------\n"+
-                        "------ Oscar Public Key ------\n"+oscarKey+"\n------------------------------";
-                response.setContentType("text");
-                response.setContentLength(keyPairOut.length());
-                response.setHeader("Content-Disposition","attachment; filename=keyPair.key");
-                ServletOutputStream output = null;
-
-                try{
-                    output = response.getOutputStream();
-                    output.print(keyPairOut);
-                    output.flush();
-                }catch(IOException e){
-                    message = "Failed: Could not save key pair";
+                if (clientKey == null) {
+                    message = "Failed: Could not create key pair";
                     error = "true";
-                }finally{
-                    if (output != null){
-                        try{
-                            output.close();
-                        }catch(IOException e){
-                            message = "Failed: Could not close output stream";
-                            error = "true";
+                } else if (oscarKey == null) {
+                    message = "Failed: Could not retrieve public key from oscar";
+                    error = "true";
+                } else {
+
+                    String keyPairOut = "-------- Service Name --------\n" + name + "\n------------------------------\n" +
+                            "----- Client Private Key -----\n" + clientKey + "\n------------------------------\n" +
+                            "------ Oscar Public Key ------\n" + oscarKey + "\n------------------------------";
+                    response.setContentType("text");
+                    response.setContentLength(keyPairOut.length());
+                    response.setHeader("Content-Disposition", "attachment; filename=keyPair.key");
+                    ServletOutputStream output = null;
+
+                    try {
+                        output = response.getOutputStream();
+                        output.print(keyPairOut);
+                        output.flush();
+                    } catch (IOException e) {
+                        message = "Failed: Could not save key pair";
+                        error = "true";
+                    } finally {
+                        if (output != null) {
+                            try {
+                                output.close();
+                            } catch (IOException e) {
+                                message = "Failed: Could not close output stream";
+                                error = "true";
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 
-if (message != null){
-    failDisplay = "block";
-}
+    if (message != null) {
+        failDisplay = "block";
+    }
 %>
 
-<%@page import="org.oscarehr.common.hl7.v2.oscar_to_oscar.OscarToOscarUtils"%><html>
+<%@page import="ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.OscarToOscarUtils" %>
+<html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Oscar - Key Pair Creation</title>
-<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
-<script type="text/javascript">
-            function selectOther(){                
-                if (document.getElementById('selection').value == "OTHER")
-                    document.getElementById('OTHER').style.visibility = "visible";
-                else
-                    document.getElementById('OTHER').style.visibility = "hidden";                
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>Oscar - Key Pair Creation</title>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/share/css/OscarStandardLayout.css">
+    <script type="text/javascript">
+        function selectOther() {
+            if (document.getElementById('selection').value == "OTHER")
+                document.getElementById('OTHER').style.visibility = "visible";
+            else
+                document.getElementById('OTHER').style.visibility = "hidden";
+        }
+
+        function checkInput() {
+
+            if (document.getElementById('name').value == "") {
+                alert("Please enter a service name");
+                return false;
+            } else if (document.getElementById('selection').value == "OTHER" && document.getElementById('otherType').value == "") {
+                alert("Please specify the other message type");
+                return false;
             }
-            function checkInput(){
-                
-                if (document.getElementById('name').value ==""){
-                    alert("Please enter a service name");
-                    return false;
-                }else if (document.getElementById('selection').value == "OTHER" && document.getElementById('otherType').value == ""){
-                    alert("Please specify the other message type");
-                    return false;
-                }
-                document.getElementById('success').style.display = "block";
-                document.getElementById('fail').style.display = "none";
-                return true;
-            }
-        </script>
+            document.getElementById('success').style.display = "block";
+            document.getElementById('fail').style.display = "none";
+            return true;
+        }
+    </script>
 </head>
 <body>
 <form method='POST' action=''>
-<table align="center" class="MainTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn" width="175">Key Pair
-		Creation</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td>
-				<div id="success" style="display: none;">Key pair created
-				successfully</div>
-				<div id="fail" style="display:<%= failDisplay %>;">
-				<%
-                                        if (message != null){
-                                            if(error.equals("false")){
-                                                out.print(message);
-                                            }else{
-                                                %><font color="red"><%= message %></font>
-				<%
-                                            }
+    <table align="center" class="MainTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn" width="175">Key Pair
+                Creation
+            </td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td>
+                            <div id="success" style="display: none;">Key pair created
+                                successfully
+                            </div>
+                            <div id="fail" style="display:<%= failDisplay %>;">
+                                <%
+                                    if (message != null) {
+                                        if (error.equals("false")) {
+                                            out.print(message);
+                                        } else {
+                                %><font color="red"><%= message %>
+                            </font>
+                                <%
                                         }
-                                        // reset the message after it has been used
-                                        message = null;
-                                        %>
-				</div>
-				</td>
-				<td>&nbsp;</td>
-				<td style="text-align: right"><oscar:help keywords="1.6.11" key="app.top1"/> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"><bean:message
-					key="global.about" /></a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"><bean:message
-					key="global.license" /></a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="submit" value="Create Key Pair"
-			onclick="return checkInput()"></td>
-		<td>
-		<table>
-			<tr>
-				<td>Your service name:</td>
-				<td><input type="text" id="name" name="name"></td>
-			</tr>
-			<tr>
-				<td>Lab type:</td>
-				<td><select name="type" id="selection" onClick="selectOther()">
-					<option value="ALPHA">ALPHA</option>
-					<option value="CML">CML</option>
-					<option value="EPSILON">EPSILON/MHL</option>
+                                    }
+                                    // reset the message after it has been used
+                                    message = null;
+                                %>
+                            </div>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Create Key Pair"
+                       onclick="return checkInput()"></td>
+            <td>
+                <table>
+                    <tr>
+                        <td>Your service name:</td>
+                        <td><input type="text" id="name" name="name"></td>
+                    </tr>
+                    <tr>
+                        <td>Lab type:</td>
+                        <td><select name="type" id="selection" onClick="selectOther()">
+                            <option value="ALPHA">ALPHA</option>
+                            <option value="CML">CML</option>
+                            <option value="EPSILON">EPSILON/MHL</option>
 
-					<option value="PATHL7"
-					<oscar:oscarPropertiesCheck property="PATHNET_LABS" value="yes">
-					selected
-					</oscar:oscarPropertiesCheck>>EXCELLERIS</option>
+                            <option value="PATHL7"
+                                    <oscar:oscarPropertiesCheck property="PATHNET_LABS" value="yes">
+                                        selected
+                                    </oscar:oscarPropertiesCheck>>EXCELLERIS
+                            </option>
 
-					<option value="GDML">GDML</option>
-					<option value="HHSEMR">HHSEMR</option>
-					<option value="HRMXML">HRM XML</option>
-					<option value="ICL">ICL</option>
-					<option value="IHA">IHA</option>
-					<option value="IHAPOI">IHAPOI</option>
-					<option value="MDS">MDS/Lifelabs</option>
-					<option value="MEDVUE">MEDVUE</option>
-					<!-- <option value="HL7">HL7</option> -->
-					<option value="OLIS_HL7">OLIS HL7</option>
-					<option value="OSCAR_TO_OSCAR_HL7_V2">OSCAR_TO_OSCAR_HL7_V2</option>
-					<option value="PFHT">PFHT</option>
-					<option value="SIOUX">SIOUX</option>
-					<option value="TDIS">TDIS</option>
-					<option value="Spire">Spire</option>
-                                        <option value="PDFDOC">PDFDOC</option>
-					<option value="BIOTEST">BioTest</option>
-					<option value="CLS">Calgary Lab Service (CLS)</option>
-					<option value="TRUENORTH">TRUENORTH</option>
-					<option value="OTHER">Other</option>
-				</select></td>
-			</tr>
-			<tr id="OTHER" style="visibility: hidden;">
-				<td>Please specify the other message type:</td>
-				<td><input type="text" id="otherType" name="otherType"></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
+                            <option value="GDML">GDML</option>
+                            <option value="HHSEMR">HHSEMR</option>
+                            <option value="HRMXML">HRM XML</option>
+                            <option value="ICL">ICL</option>
+                            <option value="IHA">IHA</option>
+                            <option value="IHAPOI">IHAPOI</option>
+                            <option value="MDS">MDS/Lifelabs</option>
+                            <option value="MEDVUE">MEDVUE</option>
+                            <!-- <option value="HL7">HL7</option> -->
+                            <option value="OLIS_HL7">OLIS HL7</option>
+                            <option value="OSCAR_TO_OSCAR_HL7_V2">OSCAR_TO_OSCAR_HL7_V2</option>
+                            <option value="PFHT">PFHT</option>
+                            <option value="SIOUX">SIOUX</option>
+                            <option value="TDIS">TDIS</option>
+                            <option value="Spire">Spire</option>
+                            <option value="PDFDOC">PDFDOC</option>
+                            <option value="BIOTEST">BioTest</option>
+                            <option value="CLS">Calgary Lab Service (CLS)</option>
+                            <option value="TRUENORTH">TRUENORTH</option>
+                            <option value="OTHER">Other</option>
+                        </select></td>
+                    </tr>
+                    <tr id="OTHER" style="visibility: hidden;">
+                        <td>Please specify the other message type:</td>
+                        <td><input type="text" id="otherType" name="otherType"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </form>
 </body>
 </html>

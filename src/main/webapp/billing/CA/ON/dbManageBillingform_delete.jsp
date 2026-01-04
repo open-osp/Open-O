@@ -19,33 +19,33 @@
 --%>
 
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
-<%@page import="org.oscarehr.common.model.CtlBillingType" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingTypeDao" %>
-<%@page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.CtlBillingType" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingTypeDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 
 
 <%
-	CtlBillingTypeDao billingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
-	CtlBillingServiceDao billingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
-	CtlDiagCodeDao diagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
+    CtlBillingTypeDao billingTypeDao = SpringUtils.getBean(CtlBillingTypeDao.class);
+    CtlBillingServiceDao billingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+    CtlDiagCodeDao diagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
 
-	String typeid = request.getParameter("servicetype");
-	
-	for(CtlBillingService b : billingServiceDao.findByServiceType(typeid)) {
-		billingServiceDao.remove(b.getId());
-	}
-	
-	for(CtlDiagCode d: diagCodeDao.findByServiceType(typeid)) {
-		diagCodeDao.remove(d.getId());
-	}
-	
-	billingTypeDao.remove(typeid);
+    String typeid = request.getParameter("servicetype");
+
+    for (CtlBillingService b : billingServiceDao.findByServiceType(typeid)) {
+        billingServiceDao.remove(b.getId());
+    }
+
+    for (CtlDiagCode d : diagCodeDao.findByServiceType(typeid)) {
+        diagCodeDao.remove(d.getId());
+    }
+
+    billingTypeDao.remove(typeid);
 %>
 
 <script LANGUAGE="JavaScript">

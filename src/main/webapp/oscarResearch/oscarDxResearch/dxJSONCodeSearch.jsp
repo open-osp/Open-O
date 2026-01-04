@@ -23,59 +23,61 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<style type="text/css" >
-	.ui-autocomplete-loading {
-		background: white url('../../images/ui-anim_basic_16x16.gif') right center no-repeat;
-	}
-	.ui-autocomplete {
-		max-height: 200px;
-		overflow-y: auto;
-		overflow-x: hidden;
-		background-color: whitesmoke;
-			border:#ccc thin solid;
-	}
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<style type="text/css">
+    .ui-autocomplete-loading {
+        background: white url('<%= request.getContextPath() %>/images/ui-anim_basic_16x16.gif') right center no-repeat;
+    }
 
-	.ui-menu .ui-menu {
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: whitesmoke;
+        border: #ccc thin solid;
+    }
 
-		background-color: whitesmoke;
-	}
+    .ui-menu .ui-menu {
 
-	.ui-menu .ui-menu-item a {
-		border-bottom:white thin solid;
-	}
-	.ui-menu .ui-menu-item a.ui-state-hover,
-	.ui-menu .ui-menu-item a.ui-state-active {
-		background-color: yellow;
-	}
+        background-color: whitesmoke;
+    }
+
+    .ui-menu .ui-menu-item a {
+        border-bottom: white thin solid;
+    }
+
+    .ui-menu .ui-menu-item a.ui-state-hover,
+    .ui-menu .ui-menu-item a.ui-state-active {
+        background-color: yellow;
+    }
 
 </style>
-<link rel="stylesheet" type="text/css" href="${ oscar_context_path }/css/jquery.ui.autocomplete.css" />
+<link rel="stylesheet" type="text/css" href="${ oscar_context_path }/css/jquery.ui.autocomplete.css"/>
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
 <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
-<script type="text/javascript" src="${ oscar_context_path }/js/dxJSONCodeSearch.js" ></script>
+<script type="text/javascript" src="${ oscar_context_path }/js/dxJSONCodeSearch.js"></script>
 
 <table>
-<logic:equal value="true" parameter="enableCodeSystemSelect">
-	<tr>
-	<td class="label"><label for="codingSystem" >Disease Code System</label></td>
-		<td>
-		<select name="codingSystem" id="codingSystem" >
-			<option value="icd9">icd9</option>
-			<%-- option value="limitUse">Limited Use</option --%>
-		</select>
-	</td>
-	</tr>
-</logic:equal>
-<logic:equal value="false" parameter="enableCodeSystemSelect">
-	<%-- default is icd9 --%>
-	<input type="hidden" name="codingSystem" id="codingSystem" value="icd9" />
-</logic:equal>
-	<tr>
-	<td><label for="jsonDxSearch" >Indication</label></td>
-	<td>
-		<input type="text" class="codeTxt" name="jsonDxSearch" id="jsonDxSearch" />
-	</td>
-	</tr>
+    <c:if test="${param.enableCodeSystemSelect == 'true'}">
+        <tr>
+            <td class="label"><label for="codingSystem">Disease Code System</label></td>
+            <td>
+                <select name="codingSystem" id="codingSystem">
+                    <option value="icd9">icd9</option>
+                        <%-- option value="limitUse">Limited Use</option --%>
+                </select>
+            </td>
+        </tr>
+    </c:if>
+    <c:if test="${param.enableCodeSystemSelect == 'false'}">
+        <%-- default is icd9 --%>
+        <input type="hidden" name="codingSystem" id="codingSystem" value="icd9"/>
+    </c:if>
+    <tr>
+        <td><label for="jsonDxSearch">Indication</label></td>
+        <td>
+            <input type="text" class="codeTxt" name="jsonDxSearch" id="jsonDxSearch"/>
+        </td>
+    </tr>
 
 </table>

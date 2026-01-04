@@ -25,89 +25,89 @@
 
 --%>
 
-<%@page import="java.util.*, java.io.*, org.oscarehr.util.MiscUtils"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@page import="java.util.*, java.io.*, ca.openosp.openo.utility.MiscUtils" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.measurements" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin.measurements");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin.measurements");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request" />
+<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
 
-<html:html lang="en">
+<html>
 
-<head>
-<title><bean:message key="admin.renal.managePatientLetter"/></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.renal.managePatientLetter"/></title>
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
 
-<%
-	if(request.getParameter("action") != null && request.getParameter("action").equals("save")) {
-		String documentDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR","");
-		try {
-			File f = new File(documentDir,"orn_patient_letter.txt");
-			PrintWriter pw = new PrintWriter(new FileWriter(f),true);
-			pw.println(request.getParameter("letter"));
-			pw.close();
-		}catch(IOException e) {
-			MiscUtils.getLogger().error("Error",e);
-		}
+        <%
+            if (request.getParameter("action") != null && request.getParameter("action").equals("save")) {
+                String documentDir = ca.openosp.OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "");
+                try {
+                    File f = new File(documentDir, "orn_patient_letter.txt");
+                    PrintWriter pw = new PrintWriter(new FileWriter(f), true);
+                    pw.println(request.getParameter("letter"));
+                    pw.close();
+                } catch (IOException e) {
+                    MiscUtils.getLogger().error("Error", e);
+                }
 
-	}
-%>
+            }
+        %>
 
-<%
-	String currentLetter = "";
+        <%
+            String currentLetter = "";
 
-	String documentDir = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR","");
-	File f = new File(documentDir,"orn_patient_letter.txt");
-	if(f.exists()) {
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(f));
-			String line =null;
-			while((line=in.readLine())!=null) {
-				currentLetter += line + "\n";
-			}
-			in.close();
-		}catch(IOException e) {
-			MiscUtils.getLogger().error("Error",e);
-		}
-	}
+            String documentDir = ca.openosp.OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "");
+            File f = new File(documentDir, "orn_patient_letter.txt");
+            if (f.exists()) {
+                try {
+                    BufferedReader in = new BufferedReader(new FileReader(f));
+                    String line = null;
+                    while ((line = in.readLine()) != null) {
+                        currentLetter += line + "\n";
+                    }
+                    in.close();
+                } catch (IOException e) {
+                    MiscUtils.getLogger().error("Error", e);
+                }
+            }
 
-%>
+        %>
 
-<style>
-input, textarea {
-    width: 800px;
-}
-</style>
-</head>
+        <style>
+            input, textarea {
+                width: 800px;
+            }
+        </style>
+    </head>
 
-<body>
-<h3><bean:message key="admin.renal.managePatientLetter"/></h3>
+    <body>
+    <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.renal.managePatientLetter"/></h3>
 
-<div class="container-fluid well">
-	Use this section to customize the patient letter generated from the screening report.
-	<br/>
-	<form action="patientLetterManager.jsp?action=save">
-		<input type="hidden" name="action" value="save"/>
-		<textarea name="letter" rows="30" cols="80"><%=currentLetter %></textarea>
-		<br/>
-		<input class="btn btn-primary" type="submit" value="Save"/>
-	</form>
-</div>
-</body>
-</html:html>
+    <div class="container-fluid well">
+        Use this section to customize the patient letter generated from the screening report.
+        <br/>
+        <form action="patientLetterManager.jsp?action=save">
+            <input type="hidden" name="action" value="save"/>
+            <textarea name="letter" rows="30" cols="80"><%=currentLetter%></textarea>
+            <br/>
+            <input class="btn btn-primary" type="submit" value="Save"/>
+        </form>
+    </div>
+    </body>
+</html>
 

@@ -17,63 +17,71 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ page errorPage="/errorpage.jsp"
-	import="java.util.*,java.math.*,java.net.*,java.sql.*,oscar.util.*,oscar.*"%>
-<%@ page import="oscar.oscarBilling.ca.on.pageUtil.*"%>
-<%@ page import="oscar.oscarBilling.ca.on.data.*"%>
-<%@page import="org.oscarehr.managers.SecurityInfoManager"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+         import="java.util.*,java.math.*,java.net.*,java.sql.*,ca.openosp.openo.util.*,ca.openosp.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.billing.ca.on.data.*" %>
+<%@page import="ca.openosp.openo.managers.SecurityInfoManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.BillingClaimHeader1Data" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.pageUtil.BillingCorrectionPrep" %>
 
 
 <%
-		SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
-		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-		if(securityInfoManager.hasPrivilege(loggedInInfo, "_billing", "w", null)) {
-			String billingNo = request.getParameter("xml_billing_no");
-			String error = null;
-			
-			if(billingNo != null && !billingNo.equals("")) {
-			
-				//String user_no = (String) session.getAttribute("user");
-				BillingCorrectionPrep bObj = new BillingCorrectionPrep();
-				List lObj = bObj.getBillingClaimHeaderObj(billingNo);
-				BillingClaimHeader1Data ch1Obj = (BillingClaimHeader1Data) lObj.get(0);
-				boolean bs = bObj.updateBillingClaimHeader(ch1Obj, request);
+    if (securityInfoManager.hasPrivilege(loggedInInfo, "_billing", "w", null)) {
+        String billingNo = request.getParameter("xml_billing_no");
+        String error = null;
 
-				// update item objs
-				if(lObj.size() > 1 && !"D".equals(ch1Obj.getStatus())) {
-					//lObj.remove(0);
-					bs = bObj.updateBillingItem(lObj, request);
-				}
-			
-			} else {
-				error = "No xml_billing_no parameter passed. Update failed";
-			}
-			
-		%>
+        if (billingNo != null && !billingNo.equals("")) {
+
+            //String user_no = (String) session.getAttribute("user");
+            BillingCorrectionPrep bObj = new BillingCorrectionPrep();
+            List lObj = bObj.getBillingClaimHeaderObj(billingNo);
+            BillingClaimHeader1Data ch1Obj = (BillingClaimHeader1Data) lObj.get(0);
+            boolean bs = bObj.updateBillingClaimHeader(ch1Obj, request);
+
+            // update item objs
+            if (lObj.size() > 1 && !"D".equals(ch1Obj.getStatus())) {
+                //lObj.remove(0);
+                bs = bObj.updateBillingItem(lObj, request);
+            }
+
+        } else {
+            error = "No xml_billing_no parameter passed. Update failed";
+        }
+
+%>
 <p>
-<%if(error == null) { %>
+        <%if(error == null) { %>
 <h1>Successful Update of a billing Record.</h1>
 <%} else { %>
-<h1 style="color:red"><%=error %></h1>
+<h1 style="color:red"><%=error %>
+</h1>
 <%} %>
 </p>
-<% if(request.getParameter("submit").equals("Submit&Correct Another")) { %>
-<center><input type='button' name='back' 
-	value='Correct Another'
-	onclick='window.location.href="billingONCorrection.jsp?billing_no="' />
+<% if (request.getParameter("submit").equals("Submit&Correct Another")) { %>
+<center><input type='button' name='back'
+               value='Correct Another'
+               onclick='window.location.href="billingONCorrection.jsp?billing_no="'/>
 </center>
-<%} else {
-if(error == null) {	
+<%
+} else {
+    if (error == null) {
 %>
 <script LANGUAGE="JavaScript">
-	self.close();
+    self.close();
 </script>
-<%} } } else {%>
-	<h1 style="color:red">You don't have billing rights!</h1>
+<%
+        }
+    }
+} else {
+%>
+<h1 style="color:red">You don't have billing rights!</h1>
 <% } %>

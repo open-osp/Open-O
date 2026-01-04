@@ -17,206 +17,208 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ page import="java.math.*, java.util.*, java.sql.*, oscar.*, oscar.oscarBilling.ca.on.OHIP.*, java.net.*" errorPage="/errorpage.jsp"%>
-<%@ include file="../../../admin/dbconnection.jsp"%>
+<%@ page import="java.math.*, java.util.*, java.sql.*, ca.openosp.*, ca.openosp.openo.billing.ca.on.OHIP.*, java.net.*"
+         errorPage="/errorpage.jsp" %>
+<%@ include file="/admin/dbconnection.jsp" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillActivity" %>
-<%@ page import="org.oscarehr.billing.CA.dao.BillActivityDao" %>
-<%@ page import="org.oscarehr.common.model.Provider" %>
-<%@ page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillActivity" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillActivityDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
+<%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.OHIP.ExtractBean" %>
+<%@ page import="ca.openosp.SxmlMisc" %>
 <%
-	BillActivityDao billActivityDao = SpringUtils.getBean(BillActivityDao.class);
-	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    BillActivityDao billActivityDao = SpringUtils.getBean(BillActivityDao.class);
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 %>
 
 <%
-boolean bHybridBilling = false;
-Vector vecGrpBillingPro = new Vector();
-if(oscarVariables.getProperty("hybrid_billing", "").equalsIgnoreCase("on")) {
-    bHybridBilling = true;
-	String proList = oscarVariables.getProperty("group_billing_providerNo", "");
-	String[] temp = proList.split("\\,");
-	for(int i = 0; i<temp.length; i++) {
-	    vecGrpBillingPro.add(temp[i].trim());
-	}
-}
+    boolean bHybridBilling = false;
+    Vector vecGrpBillingPro = new Vector();
+    if (oscarVariables.getProperty("hybrid_billing", "").equalsIgnoreCase("on")) {
+        bHybridBilling = true;
+        String proList = oscarVariables.getProperty("group_billing_providerNo", "");
+        String[] temp = proList.split("\\,");
+        for (int i = 0; i < temp.length; i++) {
+            vecGrpBillingPro.add(temp[i].trim());
+        }
+    }
 
-GregorianCalendar now=new GregorianCalendar();
-int curYear = now.get(Calendar.YEAR);
-int bCount = 1;
-String batchCount = "0";
+    GregorianCalendar now = new GregorianCalendar();
+    int curYear = now.get(Calendar.YEAR);
+    int bCount = 1;
+    String batchCount = "0";
 //String oscar_home= oscarVariables.getProperty("project_home")+".properties";
 
-String provider = request.getParameter("provider");
-String proOHIP="";
-String specialty_code;
-String billinggroup_no;
-String groupFile = "";
+    String provider = request.getParameter("providers");
+    String proOHIP = "";
+    String specialty_code;
+    String billinggroup_no;
+    String groupFile = "";
 
-if (provider.compareTo("all") == 0 ){
-	batchCount = "0";
-	int fileCount = 0;
-	for(Provider p:providerDao.getActiveProviders()) {
-		if(p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
-		    if(bHybridBilling && !vecGrpBillingPro.contains(p.getProviderNo())) continue;
+    if (provider.compareTo("all") == 0) {
+        batchCount = "0";
+        int fileCount = 0;
+        for (Provider p : providerDao.getActiveProviders()) {
+            if (p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
+                if (bHybridBilling && !vecGrpBillingPro.contains(p.getProviderNo())) continue;
 
-		    proOHIP = p.getOhipNo();
-			billinggroup_no= SxmlMisc.getXmlContent(p.getComments(),"<xml_p_billinggroup_no>","</xml_p_billinggroup_no>");
-			specialty_code = SxmlMisc.getXmlContent(p.getComments(),"<xml_p_specialty_code>","</xml_p_specialty_code>");
+                proOHIP = p.getOhipNo();
+                billinggroup_no = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_billinggroup_no>", "</xml_p_billinggroup_no>");
+                specialty_code = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_specialty_code>", "</xml_p_specialty_code>");
 
-			if (bCount == 1) {
-				
-				for(BillActivity ba:billActivityDao.findCurrentByMonthCodeAndGroupNo(request.getParameter("monthCode"),billinggroup_no, ConversionUtils.fromDateString(curYear+"-01-01"))) {
-					batchCount = String.valueOf(ba.getBatchCount());
-				}
+                if (bCount == 1) {
 
-				fileCount = Integer.parseInt(batchCount) + 1;
-				batchCount = String.valueOf(fileCount);
-			}
+                    for (BillActivity ba : billActivityDao.findCurrentByMonthCodeAndGroupNo(request.getParameter("monthCode"), billinggroup_no, ConversionUtils.fromDateString(curYear + "-01-01"))) {
+                        batchCount = String.valueOf(ba.getBatchCount());
+                    }
 
-			if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null")==0){
-				specialty_code = "00";
-			}
-			if ( billinggroup_no == null ||  billinggroup_no.compareTo("") == 0 ||  billinggroup_no.compareTo("null")==0){
-				billinggroup_no = "0000";
-			}
+                    fileCount = Integer.parseInt(batchCount) + 1;
+                    batchCount = String.valueOf(fileCount);
+                }
 
-			oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
-			extract.seteFlag("1");
-			//extract.setOscarHome(oscar_home);
-			extract.setOhipVer(request.getParameter("verCode"));
-			extract.setProviderNo(proOHIP);
-			extract.setOhipCenter(request.getParameter("billcenter"));
-			extract.setGroupNo(billinggroup_no);
-			extract.setSpecialty(specialty_code);
-			extract.setBatchCount(String.valueOf(bCount));
-			extract.dbQuery();
+                if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null") == 0) {
+                    specialty_code = "00";
+                }
+                if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0) {
+                    billinggroup_no = "0000";
+                }
 
-			int fLength = 3 - batchCount.length();
-			String zero ="";
-			if (fLength == 1) zero = "0";
-			if (fLength == 2) zero = "00";
-			String htmlFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "_" + proOHIP + "_" + zero +  batchCount + ".htm";
-			String ohipFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "." + zero + batchCount;
+                ExtractBean extract = new ExtractBean();
+                extract.seteFlag("1");
+                //extract.setOscarHome(oscar_home);
+                extract.setOhipVer(request.getParameter("verCode"));
+                extract.setProviderNo(proOHIP);
+                extract.setOhipCenter(request.getParameter("billcenter"));
+                extract.setGroupNo(billinggroup_no);
+                extract.setSpecialty(specialty_code);
+                extract.setBatchCount(String.valueOf(bCount));
+                extract.dbQuery();
 
-			BillActivity ba = new BillActivity();
-			ba.setMonthCode(request.getParameter("monthCode"));
-			ba.setBatchCount(Integer.parseInt(batchCount));
-			ba.setHtmlFilename(htmlFilename);
-			ba.setOhipFilename(ohipFilename);
-			ba.setProviderOhipNo(proOHIP);
-			ba.setGroupNo(billinggroup_no);
-			ba.setCreator(request.getParameter("curUser"));
-			ba.setHtmlContext(extract.getHtmlCode());
-			ba.setOhipContext(extract.getValue());
-			ba.setClaimRecord(extract.getOhipClaim()+"/"+extract.getOhipRecord());
-			ba.setUpdateDateTime(new java.util.Date());
-			ba.setStatus("A");
-			ba.setTotal(extract.getTotalAmount());
-			billActivityDao.persist(ba);
+                int fLength = 3 - batchCount.length();
+                String zero = "";
+                if (fLength == 1) zero = "0";
+                if (fLength == 2) zero = "00";
+                String htmlFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "_" + proOHIP + "_" + zero + batchCount + ".htm";
+                String ohipFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "." + zero + batchCount;
 
-
-			int rowsAffected = 1;
-
-			extract.setHtmlFilename(htmlFilename);
-			extract.setOhipFilename(ohipFilename);
-			String filecontext = extract.getValue();
-			String htmlcontext = extract.getHtmlCode();
-			// extract.writeFile(filecontext);
-			extract.writeHtml(htmlcontext);
-			groupFile = groupFile + filecontext ;
-			bCount = bCount + 1;
-			// repeat write here
-			extract.writeFile(groupFile);
-			groupFile =  groupFile+"\n"  ;			
-		}
-	}
-	
+                BillActivity ba = new BillActivity();
+                ba.setMonthCode(request.getParameter("monthCode"));
+                ba.setBatchCount(Integer.parseInt(batchCount));
+                ba.setHtmlFilename(htmlFilename);
+                ba.setOhipFilename(ohipFilename);
+                ba.setProviderOhipNo(proOHIP);
+                ba.setGroupNo(billinggroup_no);
+                ba.setCreator(request.getParameter("curUser"));
+                ba.setHtmlContext(extract.getHtmlCode());
+                ba.setOhipContext(extract.getValue());
+                ba.setClaimRecord(extract.getOhipClaim() + "/" + extract.getOhipRecord());
+                ba.setUpdateDateTime(new java.util.Date());
+                ba.setStatus("A");
+                ba.setTotal(extract.getTotalAmount());
+                billActivityDao.persist(ba);
 
 
-}else {
-	batchCount = "0";
-	int fileCount = 0;
-	Provider p = providerDao.getProvider(request.getParameter("provider").substring(0,6));
-	if(p != null) {
-		if(p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
+                int rowsAffected = 1;
 
-	    if(!(bHybridBilling && !vecGrpBillingPro.contains(p.getProviderNo()))) {
-
-	    proOHIP = p.getOhipNo();
-		billinggroup_no= SxmlMisc.getXmlContent(p.getComments(),"<xml_p_billinggroup_no>","</xml_p_billinggroup_no>");
-		specialty_code = SxmlMisc.getXmlContent(p.getComments(),"<xml_p_specialty_code>","</xml_p_specialty_code>");
-
-		if (bCount == 1) {
-			for(BillActivity ba:billActivityDao.findCurrentByMonthCodeAndGroupNo(request.getParameter("monthCode"),billinggroup_no, ConversionUtils.fromDateString(curYear+"-01-01"))) {
-				batchCount = String.valueOf(ba.getBatchCount());
-			}
-
-			fileCount = Integer.parseInt(batchCount) + 1;
-			batchCount = String.valueOf(fileCount);
-		}
-
-		if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null")==0){
-			specialty_code = "00";
-		}
-		if ( billinggroup_no == null ||  billinggroup_no.compareTo("") == 0 ||  billinggroup_no.compareTo("null")==0){
-			billinggroup_no = "0000";
-		}
-
-		oscar.oscarBilling.ca.on.OHIP.ExtractBean extract = new oscar.oscarBilling.ca.on.OHIP.ExtractBean();
-		//extract.setOscarHome(oscar_home);
-		extract.seteFlag("1");
-		extract.setOhipVer(request.getParameter("verCode"));
-		extract.setProviderNo(proOHIP);
-		extract.setOhipCenter(request.getParameter("billcenter"));
-		extract.setGroupNo(billinggroup_no);
-		extract.setSpecialty(specialty_code);
-		extract.setBatchCount(String.valueOf(bCount));
-		extract.dbQuery();
-
-		int fLength = 3 - batchCount.length();
-		String zero ="";
-		if (fLength == 1) zero = "0";
-		if (fLength == 2) zero = "00";
-		String htmlFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "_" + proOHIP + "_" + zero +  batchCount + ".htm";
-		String ohipFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "." + zero + batchCount;
-
-		BillActivity ba = new BillActivity();
-		ba.setMonthCode(request.getParameter("monthCode"));
-		ba.setBatchCount(Integer.parseInt(batchCount));
-		ba.setHtmlFilename(htmlFilename);
-		ba.setOhipFilename(ohipFilename);
-		ba.setProviderOhipNo(proOHIP);
-		ba.setGroupNo(billinggroup_no);
-		ba.setCreator(request.getParameter("curUser"));
-		ba.setHtmlContext(extract.getHtmlCode());
-		ba.setOhipContext(extract.getValue());
-		ba.setClaimRecord(extract.getOhipClaim()+"/"+extract.getOhipRecord());
-		ba.setUpdateDateTime(new java.util.Date());
-		ba.setStatus("A");
-		ba.setTotal(extract.getTotalAmount());
-		billActivityDao.persist(ba);
+                extract.setHtmlFilename(htmlFilename);
+                extract.setOhipFilename(ohipFilename);
+                String filecontext = extract.getValue();
+                String htmlcontext = extract.getHtmlCode();
+                // extract.writeFile(filecontext);
+                extract.writeHtml(htmlcontext);
+                groupFile = groupFile + filecontext;
+                bCount = bCount + 1;
+                // repeat write here
+                extract.writeFile(groupFile);
+                groupFile = groupFile + "\n";
+            }
+        }
 
 
-		int rowsAffected = 1;
+    } else {
+        batchCount = "0";
+        int fileCount = 0;
+        Provider p = providerDao.getProvider(request.getParameter("providers").substring(0, 6));
+        if (p != null) {
+            if (p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
 
-		extract.setHtmlFilename(htmlFilename);
-		extract.setOhipFilename(ohipFilename);
-		String filecontext = extract.getValue();
-		String htmlcontext = extract.getHtmlCode();
-		extract.writeFile(filecontext);
-		extract.writeHtml(htmlcontext);
-		}
-		}
-	}
-}
+                if (!(bHybridBilling && !vecGrpBillingPro.contains(p.getProviderNo()))) {
+
+                    proOHIP = p.getOhipNo();
+                    billinggroup_no = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_billinggroup_no>", "</xml_p_billinggroup_no>");
+                    specialty_code = SxmlMisc.getXmlContent(p.getComments(), "<xml_p_specialty_code>", "</xml_p_specialty_code>");
+
+                    if (bCount == 1) {
+                        for (BillActivity ba : billActivityDao.findCurrentByMonthCodeAndGroupNo(request.getParameter("monthCode"), billinggroup_no, ConversionUtils.fromDateString(curYear + "-01-01"))) {
+                            batchCount = String.valueOf(ba.getBatchCount());
+                        }
+
+                        fileCount = Integer.parseInt(batchCount) + 1;
+                        batchCount = String.valueOf(fileCount);
+                    }
+
+                    if (specialty_code == null || specialty_code.compareTo("") == 0 || specialty_code.compareTo("null") == 0) {
+                        specialty_code = "00";
+                    }
+                    if (billinggroup_no == null || billinggroup_no.compareTo("") == 0 || billinggroup_no.compareTo("null") == 0) {
+                        billinggroup_no = "0000";
+                    }
+
+                    ExtractBean extract = new ExtractBean();
+                    //extract.setOscarHome(oscar_home);
+                    extract.seteFlag("1");
+                    extract.setOhipVer(request.getParameter("verCode"));
+                    extract.setProviderNo(proOHIP);
+                    extract.setOhipCenter(request.getParameter("billcenter"));
+                    extract.setGroupNo(billinggroup_no);
+                    extract.setSpecialty(specialty_code);
+                    extract.setBatchCount(String.valueOf(bCount));
+                    extract.dbQuery();
+
+                    int fLength = 3 - batchCount.length();
+                    String zero = "";
+                    if (fLength == 1) zero = "0";
+                    if (fLength == 2) zero = "00";
+                    String htmlFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "_" + proOHIP + "_" + zero + batchCount + ".htm";
+                    String ohipFilename = "H" + request.getParameter("monthCode") + billinggroup_no + "." + zero + batchCount;
+
+                    BillActivity ba = new BillActivity();
+                    ba.setMonthCode(request.getParameter("monthCode"));
+                    ba.setBatchCount(Integer.parseInt(batchCount));
+                    ba.setHtmlFilename(htmlFilename);
+                    ba.setOhipFilename(ohipFilename);
+                    ba.setProviderOhipNo(proOHIP);
+                    ba.setGroupNo(billinggroup_no);
+                    ba.setCreator(request.getParameter("curUser"));
+                    ba.setHtmlContext(extract.getHtmlCode());
+                    ba.setOhipContext(extract.getValue());
+                    ba.setClaimRecord(extract.getOhipClaim() + "/" + extract.getOhipRecord());
+                    ba.setUpdateDateTime(new java.util.Date());
+                    ba.setStatus("A");
+                    ba.setTotal(extract.getTotalAmount());
+                    billActivityDao.persist(ba);
+
+
+                    int rowsAffected = 1;
+
+                    extract.setHtmlFilename(htmlFilename);
+                    extract.setOhipFilename(ohipFilename);
+                    String filecontext = extract.getValue();
+                    String htmlcontext = extract.getHtmlCode();
+                    extract.writeFile(filecontext);
+                    extract.writeHtml(htmlcontext);
+                }
+            }
+        }
+    }
 
 %>
 
 
 <jsp:forward page='billingOHIPreport.jsp'>
-	<jsp:param name="year" value='' />
+    <jsp:param name="year" value=''/>
 </jsp:forward>

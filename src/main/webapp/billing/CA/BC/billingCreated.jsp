@@ -39,21 +39,27 @@
     }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%
     if (session.getValue("user") == null)
         response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="oscar.oscarBilling.ca.bc.data.*,oscar.oscarBilling.ca.bc.pageUtil.*" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
+<%@ page import="ca.openosp.openo.billing.ca.bc.data.*,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingreferralDao" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingSessionBean" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.BillingBillingManager" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.pageUtil.WCBForm" %>
+<%@ page import="ca.openosp.openo.billings.ca.bc.data.BillingFormData" %>
+<%@ page import="ca.openosp.openo.demographic.data.DemographicData" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
     BillingreferralDao billingReferralDao = (BillingreferralDao) SpringUtils.getBean(BillingreferralDao.class);
 %>
@@ -61,8 +67,8 @@
 
     String color = "", colorflag = "";
     BillingSessionBean bean = (BillingSessionBean) pageContext.findAttribute("billingSessionBean");
-    oscar.oscarDemographic.data.DemographicData demoData = new oscar.oscarDemographic.data.DemographicData();
-    org.oscarehr.common.model.Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getPatientNo());
+    DemographicData demoData = new DemographicData();
+    Demographic demo = demoData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), bean.getPatientNo());
 
     ArrayList billItem = bean.getBillItem();
     BillingFormData billform = new BillingFormData();
@@ -73,7 +79,7 @@
 <!DOCTYPE HTML >
 <html>
 <head>
-    <title><bean:message key="billing.bc.title"/></title>
+    <title><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.bc.title"/></title>
 
     <link rel="stylesheet" type="text/css" media="all"
           href="${pageContext.servletContext.contextPath}/library/bootstrap/3.0.0/css/bootstrap.min.css"/>
@@ -297,12 +303,12 @@
 <body onLoad="setfocus();showHideLayers('Layer1','','hide')">
 
 <div class="wrapper">
-    <html:form styleClass="form-inline" action="/billing/CA/BC/SaveBilling">
+    <form class="form-inline" action="${pageContext.request.contextPath}/billing/CA/BC/SaveBilling.do" method="post">
 
         <div id="page-header">
             <table id="oscarBillingHeader">
                 <tr>
-                    <td id="oscarBillingHeaderLeftColumn"><h1><bean:message key="billing.bc.title"/></h1></td>
+                    <td id="oscarBillingHeaderLeftColumn"><h1><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.bc.title"/></h1></td>
 
                     <td id="oscarBillingHeaderCenterColumn">
                         Billing Summary
@@ -440,11 +446,11 @@
                                 <td>
                                     <table class="table table-condensed table-striped">
                                         <tr class="table-heading">
-                                            <td><bean:message key="billing.service.code"/></td>
-                                            <td><bean:message key="billing.service.desc"/></td>
-                                            <td><bean:message key="billing.service.unit"/></td>
-                                            <td><bean:message key="billing.service.fee"/></td>
-                                            <td><bean:message key="billing.service.total"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.service.code"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.service.desc"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.service.unit"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.service.fee"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.service.total"/></td>
                                         </tr>
                                         <% for (int i = 0; i < billItem.size(); i++) {
                                             BillingBillingManager.BillingItem bi = (BillingBillingManager.BillingItem) billItem.get(i);
@@ -475,9 +481,8 @@
 
                                     <table class="table table-condensed table-striped">
                                         <tr class="table-heading">
-                                            <td><bean:message
-                                                    key="billing.diagnostic.code"/></td>
-                                            <td><bean:message key="billing.diagnostic.desc"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.diagnostic.code"/></td>
+                                            <td><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.diagnostic.desc"/></td>
                                         </tr>
                                         <c:if test="${ not empty billingSessionBean.dx1 }">
                                             <tr>
@@ -576,7 +581,7 @@
 
 
         </div>
-    </html:form>
+    </form>
 
 </div>    <!--  end wrapper -->
 </body>

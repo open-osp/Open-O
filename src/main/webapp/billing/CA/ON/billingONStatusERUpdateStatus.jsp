@@ -17,20 +17,22 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<% 
-	if(session.getAttribute("user") == null)
-		response.sendRedirect("../logout.jsp");
-	//String user_no = (String) session.getAttribute("user");
+<%
+    if (session.getAttribute("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    //String user_no = (String) session.getAttribute("user");
 %>
 <%@ page
-	import="oscar.oscarBilling.ca.on.data.*, java.sql.*, oscar.*, java.net.*"
-	errorPage="../errorpage.jsp"%>
-<% 
-	String id = request.getParameter("id");
-	String val = request.getParameter("val");;
-	JdbcBillingErrorRepImpl dbObj = new JdbcBillingErrorRepImpl();
-	boolean bChecked = dbObj.updateErrorReportStatus(id, val);
-	String ret = "Y".equals(val) ? "checked" : "uncheck";
-	out.println(ret);
+        import="ca.openosp.openo.billing.ca.on.data.*, java.sql.*, ca.openosp.*, java.net.*"
+        errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingErrorRepImpl" %>
+<%
+    String id = request.getParameter("id");
+    String val = request.getParameter("val");
+    ;
+    JdbcBillingErrorRepImpl dbObj = new JdbcBillingErrorRepImpl();
+    boolean bChecked = dbObj.updateErrorReportStatus(id, val);
+    String ret = "Y".equals(val) ? "checked" : "uncheck";
+    out.println(ret);
 
 %>

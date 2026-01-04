@@ -25,39 +25,40 @@
 --%>
 
 <%@ page
-	import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+        import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
 <%
-	CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
+    CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
 %>
 <%
 
 
-String[] group = new String[4];
-String typeid = "", type="";
+    String[] group = new String[4];
+    String typeid = "", type = "";
 
-typeid = request.getParameter("typeid");
+    typeid = request.getParameter("typeid");
 
-for(CtlDiagCode d:ctlDiagCodeDao.findByServiceType(typeid)) {
-	ctlDiagCodeDao.remove(d.getId());
-}
+    for (CtlDiagCode d : ctlDiagCodeDao.findByServiceType(typeid)) {
+        ctlDiagCodeDao.remove(d.getId());
+    }
 
 %>
 
 <%
-for (int i=0; i<45; i++){
+    for (int i = 0; i < 45; i++) {
 
-if(request.getParameter("diagcode"+i).length() !=0){
-	CtlDiagCode cdc = new CtlDiagCode();
-	cdc.setServiceType(typeid);
-	cdc.setDiagnosticCode(request.getParameter("diagcode"+i));
-	cdc.setStatus("A");
-	ctlDiagCodeDao.persist(cdc);
-}}
+        if (request.getParameter("diagcode" + i).length() != 0) {
+            CtlDiagCode cdc = new CtlDiagCode();
+            cdc.setServiceType(typeid);
+            cdc.setDiagnosticCode(request.getParameter("diagcode" + i));
+            cdc.setStatus("A");
+            ctlDiagCodeDao.persist(cdc);
+        }
+    }
 %>
 
 <% response.sendRedirect("manageBillingform.jsp"); %>

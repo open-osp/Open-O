@@ -18,60 +18,63 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ page import="java.util.*,oscar.oscarReport.data.*, java.util.Properties, oscar.oscarBilling.ca.on.administration.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ page
+        import="java.util.*,ca.openosp.openo.report.data.*, java.util.Properties, ca.openosp.openo.billing.ca.on.administration.*" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
+<html>
 
-<%
+    <%
 
-Properties props = new Properties();
-GstControlAction db = new GstControlAction();
-props = db.readDatabase();
-String percent = props.getProperty("gstPercent");
+        Properties props = new Properties();
+        GstControl2Action db = new GstControl2Action();
+        props = db.readDatabase();
+        String percent = props.getProperty("gstPercent");
 
-%>
+    %>
 
-<script type="text/javascript">
-    function submitcheck(){
+    <script type="text/javascript">
+        function submitcheck() {
             document.getElementById("gstPercent").value = extractNums(document.getElementById("gstPercent").value);
-    }
-    function extractNums(str){
-        return str.replace(/\D/g, "");
-    }
-</script>
-<head>
-<title><bean:message key="admin.admin.manageGSTControl"/></title>
-<link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body onload="loadData()">
+        }
 
-<h3><bean:message key="admin.admin.manageGSTControl"/></h3>
+        function extractNums(str) {
+            return str.replace(/\D/g, "");
+        }
+    </script>
+    <head>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.manageGSTControl"/></title>
+        <link href="<%=request.getContextPath() %>/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body onload="loadData()">
 
-<html:form action="/admin/GstControl">
-GST:<br>
-<div class="input-append">
-	<input type="text" class="span2" maxlength="3" id="gstPercent" name="gstPercent" value="<%=percent%>" />
-	<span class="add-on">%</span>
-</div>
-<br>
-<input class="btn btn-primary" type="submit" value="save" onclick="submitcheck()" />
-</html:form>
-</body>
-</html:html>
+    <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.manageGSTControl"/></h3>
+
+    <form action="<%=request.getContextPath() %>/admin/GstControl.do">
+        GST:<br>
+        <div class="input-append">
+            <input type="text" class="span2" maxlength="3" id="gstPercent" name="gstPercent" value="<%=percent%>"/>
+            <span class="add-on">%</span>
+        </div>
+        <br>
+        <input class="btn btn-primary" type="submit" value="save" onclick="submitcheck()"/>
+    </form>
+    </body>
+</html>

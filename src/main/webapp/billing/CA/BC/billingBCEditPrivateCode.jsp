@@ -20,14 +20,14 @@
 --%>
 <%
     if (session.getAttribute("user") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
 %>
-<%@ page import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData" %>
-<%@ page import="oscar.oscarBilling.ca.on.administration.GstControlAction" %>
-<%@ page import="oscar.oscarBilling.ca.on.data.JdbcBillingCodeImpl" %>
+<%@ page import="java.util.*,ca.openosp.openo.billings.ca.bc.data.BillingCodeData" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.administration.GstControl2Action" %>
+<%@ page import="ca.openosp.openo.billings.ca.on.data.JdbcBillingCodeImpl" %>
 <%@ page import="java.math.BigDecimal" %>
-<%@ page import="org.oscarehr.common.model.BillingService" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
 <%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%
@@ -46,7 +46,7 @@
     JdbcBillingCodeImpl jdbc = new JdbcBillingCodeImpl();
 
     Properties prop = new Properties();
-    String gstPercent = new BigDecimal((new GstControlAction()).readDatabase().getProperty("gstPercent")).divide(new BigDecimal(100), 0).toString();
+    String gstPercent = new BigDecimal((new GstControl2Action()).readDatabase().getProperty("gstPercent")).divide(new BigDecimal(100), 0).toString();
 
     if (action.toLowerCase().startsWith("add")) {
         prop = new Properties();
@@ -146,14 +146,14 @@
     // List<BillingService> sL = bcds.findAllPrivateCodes();
     List<BillingService> sL = new ArrayList<>();
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <%@ taglib uri="http://displaytag.sf.net" prefix="display" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="admin.admin.ManagePrivFrm"/></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ManagePrivFrm"/></title>
         <script src="<%=request.getContextPath()%>/csrfguard" type="text/javascript"></script>
 
         <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet">
@@ -161,7 +161,7 @@
     </head>
 
     <body>
-    <h3><bean:message key="admin.admin.ManagePrivFrm"/></h3>
+    <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ManagePrivFrm"/></h3>
     <div class="container-fluid">
         <div class="select-code well">
             <form method="post" name="selectCode" action="billingBCEditPrivateCode.jsp" class="form-inline">
@@ -232,7 +232,7 @@
                     <input class="btn" type="submit" name="submit" value="Delete" onclick="return onDelete();"/>
                     <%}%>
                     <input class="btn" type="submit" name="submit"
-                           value="<bean:message key="admin.resourcebaseurl.btnSave"/>" onclick="return onSave();"/>
+                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.resourcebaseurl.btnSave"/>" onclick="return onSave();"/>
                 </div>
             </form>
         </div>
@@ -265,4 +265,4 @@
             $('#billingservice_date').datepicker();
         });
     </script>
-</html:html>
+</html>

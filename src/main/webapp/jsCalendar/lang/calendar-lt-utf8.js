@@ -12,13 +12,13 @@
 // full day names
 Calendar._DN = new Array
 ("Sekmadienis",
- "Pirmadienis",
- "Antradienis",
- "Trečiadienis",
- "Ketvirtadienis",
- "Pentadienis",
- "Šeštadienis",
- "Sekmadienis");
+    "Pirmadienis",
+    "Antradienis",
+    "Trečiadienis",
+    "Ketvirtadienis",
+    "Pentadienis",
+    "Šeštadienis",
+    "Sekmadienis");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -35,63 +35,63 @@ Calendar._DN = new Array
 // short day names
 Calendar._SDN = new Array
 ("Sek",
- "Pir",
- "Ant",
- "Tre",
- "Ket",
- "Pen",
- "Šeš",
- "Sek");
+    "Pir",
+    "Ant",
+    "Tre",
+    "Ket",
+    "Pen",
+    "Šeš",
+    "Sek");
 
 // full month names
 Calendar._MN = new Array
 ("Sausis",
- "Vasaris",
- "Kovas",
- "Balandis",
- "Gegužė",
- "Birželis",
- "Liepa",
- "Rugpjūtis",
- "Rugsėjis",
- "Spalis",
- "Lapkritis",
- "Gruodis");
+    "Vasaris",
+    "Kovas",
+    "Balandis",
+    "Gegužė",
+    "Birželis",
+    "Liepa",
+    "Rugpjūtis",
+    "Rugsėjis",
+    "Spalis",
+    "Lapkritis",
+    "Gruodis");
 
 // short month names
 Calendar._SMN = new Array
 ("Sau",
- "Vas",
- "Kov",
- "Bal",
- "Geg",
- "Bir",
- "Lie",
- "Rgp",
- "Rgs",
- "Spa",
- "Lap",
- "Gru");
+    "Vas",
+    "Kov",
+    "Bal",
+    "Geg",
+    "Bir",
+    "Lie",
+    "Rgp",
+    "Rgs",
+    "Spa",
+    "Lap",
+    "Gru");
 
 // tooltips
 Calendar._TT = {};
 Calendar._TT["INFO"] = "Apie kalendorių";
 
 Calendar._TT["ABOUT"] =
-"DHTML Date/Time Selector\n" +
-"(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"Naujausią versiją rasite: http://www.dynarch.com/projects/calendar/\n" +
-"Platinamas pagal GNU LGPL licenciją. Aplankykite http://gnu.org/licenses/lgpl.html" +
-"\n\n" +
-"Datos pasirinkimas:\n" +
-"- Metų pasirinkimas: \xab, \xbb\n" +
-"- Mėnesio pasirinkimas: " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
-"- Nuspauskite ir laikykite pelės klavišą greitesniam pasirinkimui.";
+    "DHTML Date/Time Selector\n" +
+    "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
+    "Naujausią versiją rasite: http://www.dynarch.com/projects/calendar/\n" +
+    "Platinamas pagal GNU LGPL licenciją. Aplankykite http://gnu.org/licenses/lgpl.html" +
+    "\n\n" +
+    "Datos pasirinkimas:\n" +
+    "- Metų pasirinkimas: \xab, \xbb\n" +
+    "- Mėnesio pasirinkimas: " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
+    "- Nuspauskite ir laikykite pelės klavišą greitesniam pasirinkimui.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Laiko pasirinkimas:\n" +
-"- Spustelkite ant valandų arba minučių - skaičius padidės vienetu.\n" +
-"- Jei spausite kartu su Shift, skaičius sumažės.\n" +
-"- Greitam pasirinkimui spustelkite ir pajudinkite pelę.";
+    "Laiko pasirinkimas:\n" +
+    "- Spustelkite ant valandų arba minučių - skaičius padidės vienetu.\n" +
+    "- Jei spausite kartu su Shift, skaičius sumažės.\n" +
+    "- Greitam pasirinkimui spustelkite ir pajudinkite pelę.";
 
 Calendar._TT["PREV_YEAR"] = "Ankstesni metai (laikykite, jei norite meniu)";
 Calendar._TT["PREV_MONTH"] = "Ankstesnis mėnuo (laikykite, jei norite meniu)";

@@ -25,32 +25,32 @@
 --%>
 
 <%
-  if(session.getValue("patient") == null)    response.sendRedirect("logout.jsp");
+    if (session.getValue("patient") == null) response.sendRedirect("logout.jsp");
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>PATIENT</title>
-<link rel="stylesheet" href="../web.css">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>PATIENT</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
 </head>
 <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">MAIL
-		US</font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">MAIL
+            US</font></th>
+    </tr>
 </table>
 
 <P>
 <center>
-<p>Your Message:</p>
-<p><textarea name="textfield" cols="70" rows="8"></textarea></p>
-<p><input type="submit" name="Submit" value="Submit"
-	onClick="window.location='patient_screen.jsp'"> <input
-	type="button" name="button" value="Cancel"
-	onClick="window.location='patient_screen.jsp'"></p>
+    <p>Your Message:</p>
+    <p><textarea name="textfield" cols="70" rows="8"></textarea></p>
+    <p><input type="submit" name="Submit" value="Submit"
+              onClick="window.location='patient_screen.jsp'"> <input
+            type="button" name="button" value="Cancel"
+            onClick="window.location='patient_screen.jsp'"></p>
 </center>
 </body>
 </html>

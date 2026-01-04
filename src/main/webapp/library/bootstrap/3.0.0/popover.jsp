@@ -25,45 +25,45 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Popover Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/html5shiv.js"></script>
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/respond.min.js"></script>
     <![endif]-->
-  </head>
-  <body>
+</head>
+<body>
 
 
+<div class="container">
 
-    <div class="container">
+    <div class="starter-template">
+        <h1>Hello, pops! <small><a href="index.jsp">view example list</a></small></h1>
 
-      <div class="starter-template">
-	<h1>Hello, pops! <small><a href="index.jsp">view example list</a></small></h1>
+        <a data-original-title="A Title" href="#" id="poppy" class="btn btn-lg btn-danger" data-toggle="popover"
+           title="" data-content="And here's some amazing content. It's very engaging. right?" role="button">Click to
+            toggle popover</a>
+    </div>
 
-	<a data-original-title="A Title" href="#" id="poppy" class="btn btn-lg btn-danger" data-toggle="popover" title="" data-content="And here's some amazing content. It's very engaging. right?" role="button">Click to toggle popover</a>
-      </div>
-
-    </div><!-- /.container -->
-
-
- 
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-
-	<script>
-	$('#poppy').popover();
-	</script>
+</div><!-- /.container -->
 
 
-  </body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<script>
+    $('#poppy').popover();
+</script>
+
+
+</body>
 </html>
 

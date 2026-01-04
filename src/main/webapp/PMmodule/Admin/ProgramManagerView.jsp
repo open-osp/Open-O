@@ -22,166 +22,178 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ include file="/taglibs.jsp"%>
-<%@ page import="org.oscarehr.PMmodule.web.formbean.*"%>
-<%@page import="org.oscarehr.PMmodule.model.Program"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
-<html:form action="/PMmodule/ProgramManagerView">
+<%@ include file="/taglibs.jsp" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.*" %>
+<%@page import="ca.openosp.openo.PMmodule.model.Program" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.ProgramManagerViewFormBean" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<form action="${pageContext.request.contextPath}/PMmodule/ProgramManagerView.do" method="post">
 
-	<html:hidden property="tab" />
-	<html:hidden property="subtab" />
-	<html:hidden property="vacancyOrTemplateId" />
-	<input type="hidden" name="id"
-		value="<c:out value="${requestScope.id}"/>" />
-	<input type="hidden" name="method" value="view" />
+    <input type="hidden" name="tab" id="tab"/>
+    <input type="hidden" name="subtab" id="subtab"/>
+    <input type="hidden" name="vacancyOrTemplateId" id="vacancyOrTemplateId"/>
+    <input type="hidden" name="id"
+           value="<c:out value="${requestScope.id}"/>"/>
+    <input type="hidden" name="method" value="view"/>
 
-	<script>
-		function clickTab(name) {
-			document.programManagerViewForm.tab.value=name;
-			document.programManagerViewForm.subtab.value=name;
-			document.programManagerViewForm.submit();
-		}
-		function clickTab2(tabName, subtabName) {
-			document.programManagerViewForm.tab.value=name;
-			document.programManagerViewForm.subtab.value=subtabName;
-			document.programManagerViewForm.submit();
-		}
-		
-		function clickLink(tabName, subtabName, id) {
-			document.programManagerViewForm.vacancyOrTemplateId.value=id;
-			clickTab2(tabName, subtabName);
-		}
-	</script>
+    <script>
+        function clickTab(name) {
+            document.programManagerViewForm.tab.value = name;
+            document.programManagerViewForm.subtab.value = name;
+            document.programManagerViewForm.submit();
+        }
 
-	<table width="100%">
-		<tr>
-			<td style="text-align: right;" align="right"><c:out
-				value="${program.name}" /></td>
-		</tr>
-	</table>
+        function clickTab2(tabName, subtabName) {
+            document.programManagerViewForm.tab.value = name;
+            document.programManagerViewForm.subtab.value = subtabName;
+            document.programManagerViewForm.submit();
+        }
 
-	<div class="tabs">
-	<%
-			String selectedTab = request.getParameter("tab");
-			String selectedSubtab = request.getParameter("subtab");
-				
-			if (selectedTab == null || selectedTab.trim().equals("")) {
-				selectedTab = ProgramManagerViewFormBean.tabs[0];
-			}
-			String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+        function clickLink(tabName, subtabName, id) {
+            document.programManagerViewForm.vacancyOrTemplateId.value = id;
+            clickTab2(tabName, subtabName);
+        }
+    </script>
 
-		%>
-	<table cellpadding="0" cellspacing="0" border="0">
-		<tr>
-			<%
-					Program program = (Program) request.getAttribute("program");
+    <table width="100%">
+        <tr>
+            <td style="text-align: right;" align="right"><c:out
+                    value="${program.name}"/></td>
+        </tr>
+    </table>
 
-					for (int i = 0; i < ProgramManagerViewFormBean.tabs.length; i++) {
-						if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Bed Check") && program.isService()) {
-							//break;
-							continue;
-						}
-						
-						if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase(selectedTab)) {
-				%>
-			<td style="background-color: #555;"><a href="javascript:void(0)"
-				onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i]%>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a>
-			</td>
-			<%
-						} else {
-							if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("General")) {
-				%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.general" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Staff")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.staff" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Function User")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.functionUser" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Teams")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.teams" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Clients")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.clients" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Queue")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.queue" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Access")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.access" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Bed Check")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.bedCheck" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Client Status")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.clientStatus" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Service Restrictions")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.serviceRestrictions" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} else if(ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Vacancies")) {
-						%>
-			<security:oscarSec roleName="<%=roleName$%>"
-				objectName="_pmm_editProgram.vacancies" rights="r">
-				<td><a href="javascript:void(0)"
-					onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%></a></td>
-			</security:oscarSec>
-			<%} 
-						%>
-			<%
-						}
-					}
-				%>
-			
-		</tr>
-	</table>
-	</div>
-	<jsp:include page="/common/messages.jsp" />
-	<% if (selectedSubtab != null &&!selectedSubtab.trim().equals("")&& !selectedTab.equals(selectedSubtab)) { %>
-		<jsp:include
-			page='<%="/PMmodule/Admin/ProgramView/" + selectedSubtab.toLowerCase().replaceAll(" ","_") + ".jsp"%>' />
-	<% } else { %>
-			<jsp:include
-				page='<%="/PMmodule/Admin/ProgramView/" + selectedTab.toLowerCase().replaceAll(" ","_") + ".jsp"%>' />
-	<%}%>
-</html:form>
+    <div class="tabs">
+        <%
+            String selectedTab = request.getParameter("tab");
+            String selectedSubtab = request.getParameter("subtab");
+
+            if (selectedTab == null || selectedTab.trim().equals("")) {
+                selectedTab = ProgramManagerViewFormBean.tabs[0];
+            }
+            String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+
+        %>
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <%
+                    Program program = (Program) request.getAttribute("program");
+
+                    for (int i = 0; i < ProgramManagerViewFormBean.tabs.length; i++) {
+
+                        if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase(selectedTab)) {
+                %>
+                <td style="background-color: #555;"><a href="javascript:void(0)"
+                                                       onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i]%>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                </a>
+                </td>
+                <%
+                } else {
+                    if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("General")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.general" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Staff")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.staff" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Function User")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.functionUser" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Teams")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.teams" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Clients")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.clients" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Queue")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.queue" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Access")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.access" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Client Status")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.clientStatus" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Service Restrictions")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.serviceRestrictions" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                } else if (ProgramManagerViewFormBean.tabs[i].equalsIgnoreCase("Vacancies")) {
+                %>
+                <security:oscarSec roleName="<%=roleName$%>"
+                                   objectName="_pmm_editProgram.vacancies" rights="r">
+                    <td><a href="javascript:void(0)"
+                           onclick="javascript:clickTab('<%=ProgramManagerViewFormBean.tabs[i] %>');return false;"><%=ProgramManagerViewFormBean.tabs[i]%>
+                    </a></td>
+                </security:oscarSec>
+                <%
+                    }
+                %>
+                <%
+                        }
+                    }
+                %>
+
+            </tr>
+        </table>
+    </div>
+    <jsp:include page="/common/messages.jsp"/>
+    <% if (selectedSubtab != null && !selectedSubtab.trim().equals("") && !selectedTab.equals(selectedSubtab)) { %>
+    <jsp:include
+            page='<%="/PMmodule/Admin/ProgramView/" + selectedSubtab.toLowerCase().replaceAll(" ","_") + ".jsp"%>'/>
+    <% } else { %>
+    <jsp:include
+            page='<%="/PMmodule/Admin/ProgramView/" + selectedTab.toLowerCase().replaceAll(" ","_") + ".jsp"%>'/>
+    <%}%>
+</form>

@@ -42,47 +42,46 @@
 
 
 <script>
-$( document ).ready(function( $ ) {
-
-$('a[data-confirm]').on("click", function(e) {
-
+$(document).ready(function($) {
+    // Prevent re-initialization
+    if (window.confirmModalInitialized) { return; }
+    window.confirmModalInitialized = true;
+    
+    // Use event delegation for dynamic content
+    $(document).on("click", 'a[data-confirm]', function(e) {
         var href = $(this).attr('href');
- 	e.preventDefault();
-
+        e.preventDefault();
         $('#confirmModalBody').html($(this).attr('data-confirm'));
         $('#dataConfirmed').attr('href', href);
         $('#confirmModal').modal('show');
-	
         return false;
-});
-
-$("#dataConfirmed").click(function(){
-	$('#confirmModal').modal('hide');
-});
-
-$("#dataConfirmOK").on("click", function(e) {
-	e.preventDefault();
-	$("#dynamic-content").load($(this).attr("href"), 
-		function(response, status, xhr) {
-	  		if (status == "error") {
-		    	var msg = "Sorry but there was an error: ";
-		    	$("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
-			}
-		}
-	);
-});
-
-$("a.contentLink").on("click", function(e) {
-	e.preventDefault();
-	$("#dynamic-content").load($(this).attr("href"), 
-		function(response, status, xhr) {
-	  		if (status == "error") {
-		    	var msg = "Sorry but there was an error: ";
-		    	$("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
-			}
-		}
-	);
-});
-		
+    });
+    
+    // Fix the double-handler issue
+    $(document).on("click", '#dataConfirmed', function(e) {
+        e.stopPropagation(); // Stop the contentLink handler from also firing
+        $('#confirmModal').modal('hide');
+    });
+    
+    $(document).on("click", '#dataConfirmOK', function(e) {
+        e.preventDefault();
+        $("#dynamic-content").load($(this).attr("href"), function(response, status, xhr) {
+            if (status == "error") {
+                var msg = "Sorry but there was an error: ";
+                $("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
+            }
+        });
+    });
+    
+    // Exclude #dataConfirmed from contentLink handler
+    $(document).on("click", 'a.contentLink:not(#dataConfirmed)', function(e) {
+        e.preventDefault();
+        $("#dynamic-content").load($(this).attr("href"), function(response, status, xhr) {
+            if (status == "error") {
+                var msg = "Sorry but there was an error: ";
+                $("#dynamic-content").html(msg + xhr.status + " " + xhr.statusText);
+            }
+        });
+    });
 });
 </script>

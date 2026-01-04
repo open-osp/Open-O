@@ -1,84 +1,98 @@
-<%@page import="java.io.StringWriter"%>
-<%@page import="org.codehaus.jackson.map.ObjectMapper"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="net.sf.json.JSONObject"%>
-<%@page import="org.oscarehr.common.model.PharmacyInfo"%>
-<%@ page import="oscar.oscarRx.data.*,oscar.oscarProvider.data.ProviderMyOscarIdData,oscar.oscarDemographic.data.DemographicData,oscar.OscarProperties,oscar.log.*"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%/*
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved. *
- * This software is published under the GPL GNU General Public License. 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU General Public License 
- * as published by the Free Software Foundation; either version 2 
- * of the License, or (at your option) any later version. * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU General Public License for more details. * * You should have received a copy of the GNU General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. * 
- * 
+ * This software is published under the GPL GNU General Public License.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version. *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details. * * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. *
+ *
  * <OSCAR TEAM>
- * 
- * This software was written for the 
- * Department of Family Medicine 
- * McMaster University 
- * Hamilton 
- * Ontario, Canada 
+ *
+ * This software was written for the
+ * Department of Family Medicine
+ * McMaster University
+ * Hamilton
+ * Ontario, Canada
  */%>
-<jsp:include page="../images/spinner.jsp" flush="true"/> 
-<script language="javascript" type="text/javascript">
 
+<%@ page import="java.io.StringWriter" %>
+<%@ page import="com.fasterxml.jackson.databind.ObjectMapper" %>
+<%@ page import="com.fasterxml.jackson.databind.SerializationFeature" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@ page import="ca.openosp.openo.prescript.data.*,
+    ca.openosp.openo.demographic.data.DemographicData,
+    ca.openosp.OscarProperties,
+    ca.openosp.openo.log.*" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<jsp:include page="/images/spinner.jsp" flush="true"/>
+
+<script type="text/javascript">
 function newWindow(url) {
-	newwindow=window.open(url,'name','height=700,width=1000');
-	if (window.focus) {newwindow.focus()}
-	return false;
+    var newwin = window.open(url, 'name', 'height=700,width=1000');
+    if (window.focus) { newwin.focus(); }
+    return false;
 }
-
-
 </script>
 
 <tr>
-	<td width="20%" height="37" bgcolor="#000000"><span class="ScreenTitle" >oscarRx</span></td>
-        <td width="100%" valign="bottom"  bgcolor="#000000" style="border-left: 2px solid #A9A9A9; padding-left: 5px" height="0%" colspan="2">
-            <table width="100%" border="0" height="100%">
-                <tr>
-                    <td valign="bottom" style="color:white;" >     
-								
-					<b><bean:message key="SearchDrug.nameText" /></b> <jsp:getProperty name="patient" property="firstName" /> <jsp:getProperty name="patient" property="surname" />
-		     		<b><bean:message key="SearchDrug.ageText" /></b> <jsp:getProperty name="patient" property="age" /><br>
-                    <b>Selected Pharmacy:</b>
-                    <select id="Calcs" name="pharmacyId" onchange="populatePharmacy(this.options[this.selectedIndex].value);showpic('Layer1');"> 
-                    <%
-                    	if( pharmacyList != null ) {
-                    	    ObjectMapper mapper = new ObjectMapper();
-                    	    StringWriter jsonObject;
-	        				for( PharmacyInfo pharmacyInfo : pharmacyList ) {
-	        					
-	        				    jsonObject = new StringWriter();
-	        					mapper.writeValue(jsonObject, pharmacyInfo);
+  <td width="20%" height="37" bgcolor="#000000">
+    <span class="ScreenTitle">oscarRx</span>
+  </td>
+  <td width="100%" valign="bottom" bgcolor="#000000"
+      style="border-left: 2px solid #A9A9A9; padding-left: 5px" height="0%" colspan="2">
+    <table width="100%" border="0" height="100%">
+      <tr>
+        <td valign="bottom" style="color:white;">
+          <%
+            RxPatientData.Patient patient2 =
+              (RxPatientData.Patient) request.getSession().getAttribute("Patient");
+          %>
+          <b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/></b>
+          <%= patient2.getFirstName() %> <%= patient2.getSurname() %>
+          <b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.ageText"/></b>
+          <%= patient2.getAge() %><br>
 
-					%>
-								<option value='<%=jsonObject.toString().replaceAll("'", "")%>'><%=pharmacyInfo.getName() + " " + "(" + pharmacyInfo.getAddress() + ", " + pharmacyInfo.getCity() + ", Fax: " + pharmacyInfo.getFax() + ")"%></option>
-					<%
-	        				}
-	       		 		}
-					%>
-                    </select>        
-					<b><a style="color:white;" href="SelectPharmacy2.jsp"><span onclick="ShowSpin(true);">(Edit List)</span></a></b>
-                    </td>
-                    <td valign="top" align="right">
-<%--                        <span class="HelpAboutLogout" style="color:white;">--%>
-<%--							<a style="color:white;" href="javascript: popupFocusPage(200,700,'./drugrefInfo.jsp','Drugref Info');" >Drugref Info</a> |--%>
-<%--							<oscar:help keywords="&Title=Writing+Prescriptions&portal_type%3Alist=Document" key="app.top1" style="color:white;"/> |--%>
-<%--                            <a style="color:white;" href="<%=request.getContextPath()%>/oscarEncounter/About.jsp" target="_new"><bean:message key="global.about" /></a>--%>
-<%--                            <!-- is this needed? --%>
-<%--                            <a style="color:white;" href="Disclaimer.htm">Disclaimer</a> --%>
-<%--                            -->--%>
-<%--                        </span>--%>
-                    </td>
-                </tr>
-            </table>
-	</td>
-</tr>                            
+          <b>Selected Pharmacy:</b>
+          <select id="Calcs" name="pharmacyId"
+                  onchange="populatePharmacy(this.value); showpic('Layer1');">
+            <%
+              if (pharmacyList != null) {
+                  ObjectMapper mapper = new ObjectMapper();
+                  // if you need dates or other features, you can configure here:
+                  // mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+                  for (PharmacyInfo pi : pharmacyList) {
+                      StringWriter sw = new StringWriter();
+                      mapper.writeValue(sw, pi);
+                      // escape single-quotes for safe attribute usage
+                      String json = sw.toString().replace("'", "");
+            %>
+              <option value='<%= json %>'>
+                <%= pi.getName() %> (<%= pi.getAddress() %>, <%= pi.getCity() %>, Fax: <%= pi.getFax() %>)
+              </option>
+            <%
+                  }
+              }
+            %>
+          </select>
+          &nbsp;<b>
+            <a style="color:white;" href="oscarRx/SelectPharmacy2.jsp"
+               onclick="ShowSpin(true); return true;">
+              (Edit List)
+            </a>
+          </b>
+        </td>
+        <td valign="top" align="right">
+        </td>
+      </tr>
+    </table>
+  </td>
+</tr>

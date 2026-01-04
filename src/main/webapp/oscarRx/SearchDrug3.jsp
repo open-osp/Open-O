@@ -23,37 +23,34 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.myoscar.utils.MyOscarLoggedInInfo"%>
-<%@ page import="org.oscarehr.common.model.PharmacyInfo"%>
-<%@page import="org.oscarehr.util.WebUtils"%>
-<%@page import="org.oscarehr.phr.util.MyOscarUtils"%>
-<%@page import="org.oscarehr.util.LocaleUtils"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/indivo-tag.tld" prefix="indivo" %>
-<%@ page import="oscar.oscarRx.data.*,oscar.OscarProperties"%>
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager"%>
+<%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean" %>
+<%@ taglib prefix="logic" uri="http://struts.apache.org/tags-logic" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@page import="ca.openosp.openo.utility.WebUtils" %>
+<%@page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@page import="ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
+<%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager" %>
 <%@page import="java.util.*" %>
-<%@page import="org.oscarehr.util.SpringUtils"%>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@page import="java.util.List"%>
-<%@page import="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorManager"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.common.model.ProviderPreference"%>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
-<bean:define id="patient" type="oscar.oscarRx.data.RxPatientData.Patient" name="Patient" />
-<%@page import="org.oscarehr.casemgmt.service.CaseManagementManager" %>
-<%@page import="org.oscarehr.casemgmt.model.CaseManagementNote" %>
-<%@page import="org.oscarehr.casemgmt.model.Issue" %>
-<%@ page import="org.oscarehr.study.StudyFactory" %>
-<%@ page import="org.oscarehr.study.Study" %>
-
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
+<%@page import="ca.openosp.openo.casemgmt.model.Issue" %>
+<%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<s:set var="patient" value="ca.openosp.openo.prescript.data.RxPatientData$Patient" />
 <%
+
 String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
 
 if (rx_enhance!=null && rx_enhance.equals("true")) {
@@ -65,13 +62,13 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 <%
 	} 
 }
-    com.quatro.service.security.SecurityManager securityManager = new com.quatro.service.security.SecurityManager();
+    SecurityManager securityManager = new SecurityManager();
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed=true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="r" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
 	if(!authed) {
@@ -92,7 +89,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 </logic:present>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 <%
-	oscar.oscarRx.pageUtil.RxSessionBean rxSessionBean = (oscar.oscarRx.pageUtil.RxSessionBean) pageContext.findAttribute("bean");
+	RxSessionBean rxSessionBean = (RxSessionBean) pageContext.findAttribute("bean");
 
 	String usefav = request.getParameter("usefav");
 	String favid = request.getParameter("favid");
@@ -102,8 +99,8 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 <security:oscarSec roleName="<%=roleName2$%>"
 	objectName='<%="_rx$"+demoNo%>' rights="o"
 	reverse="<%=false%>">
-<bean:message key="demographic.demographiceditdemographic.accessDenied"/>
-<% response.sendRedirect("../acctLocked.html"); %>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.accessDenied"/>
+    <% response.sendRedirect(request.getContextPath() + "/acctLocked.html"); %>
 </security:oscarSec>
 
 <%         
@@ -158,13 +155,14 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
             }
             String[] d_route = ("Oral," + drugref_route).split(",");
 
-            String annotation_display = org.oscarehr.casemgmt.model.CaseManagementNoteLink.DISP_PRESCRIP;
+            String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
 
-            oscar.oscarRx.data.RxPrescriptionData.Prescription[] prescribedDrugs;
-                        prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
+            RxPrescriptionData.Prescription[] prescribedDrugs;
+
+  prescribedDrugs = patient.getPrescribedDrugScripts(); //this function only returns drugs which have an entry in prescription and drugs table
                         String script_no = "";
                         
-            //This checks if the provider has the ExternalPresriber feature enabled, if so then a link appear for the provider to access the ExternalPrescriber
+    //This checks if the providers has the ExternalPresriber feature enabled, if so then a link appear for the providers to access the ExternalPrescriber
             ProviderPreference providerPreference=ProviderPreferencesUIBean.getProviderPreference(loggedInInfo.getLoggedInProviderNo());
             
             boolean eRxEnabled= false;
@@ -197,14 +195,11 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 %>
 
 <!DOCTYPE html>
-    <html:html lang="en">
+    <html lang="en">
     <head>
 
 
-        <title><bean:message key="SearchDrug.title" /></title>
-        <link rel="stylesheet" type="text/css" href="styles.css">
-
-        <html:base />
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         
         <script type="text/javascript" >
         	var ctx = '${ ctx }';
@@ -291,7 +286,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 			function onPrint(cfgPage) {
 				var docF = $('printFormDD');
 
-                docF.action = "../form/createpdf?__title=Rx&__cfgfile=" + cfgPage + "&__template=a6blank";
+                docF.action = "<%= request.getContextPath() %>/form/createpdf?__title=Rx&__cfgfile=" + cfgPage + "&__template=a6blank";
                 docF.target="_blank";
                 docF.submit();
                return true;
@@ -310,7 +305,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
                var top = winY+70;
                var left = winX+110;
-               var url = "searchDrug.do?rx2=true&searchString="+$('searchString').value;
+                var url = "oscarRx/searchDrug.do?rx2=true&searchString=" + $('searchString').value;
                popup2(600, 800, top, left, url, 'windowNameRxSearch<%=demoNo%>');
 
            }
@@ -322,7 +317,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
                var top = winY+70;
                var left = winX+110;
-               var url = "SelectReason.jsp?demographicNo="+demographic+"&drugId="+id;
+                var url = "oscarRx/SelectReason.jsp?demographicNo=" + demographic + "&drugId=" + id;
                popup2(575, 650, top, left, url, 'windowNameRxReason<%=demoNo%>');
 
            }
@@ -640,7 +635,7 @@ function renderRxStage() {
     }
 
 	function showPreviousPrints(scriptNo) {
-		popupWindow(720,700,'ShowPreviousPrints.jsp?scriptNo='+scriptNo,'ShowPreviousPrints')
+                popupWindow(720, 700, 'oscarRx/ShowPreviousPrints.jsp?scriptNo=' + scriptNo, 'ShowPreviousPrints')
 	}
 
     var Lst;
@@ -689,9 +684,9 @@ function renderRxStage() {
     		}
     	});
     	if(ids.length>0) {
-    		popupWindow(720,700,'PrintDrugProfile2.jsp?ids=' + ids.join(','),'PrintDrugProfile');
+                    popupWindow(720, 700, 'oscarRx/PrintDrugProfile2.jsp?ids=' + ids.join(','), 'PrintDrugProfile');
     	} else {
-    		popupWindow(720,700,'PrintDrugProfile2.jsp','PrintDrugProfile');
+                    popupWindow(720, 700, 'oscarRx/PrintDrugProfile2.jsp', 'PrintDrugProfile');
     	}
     }
     
@@ -721,11 +716,8 @@ function renderRxStage() {
         <table id="AutoNumber1">
             <%@ include file="TopLinks2.jspf" %><!-- Row One included here-->
             <tr>
-				<td id="medicationsColumnOneRowTwo">
-					<jsp:include page="SideLinksEditFavorites2.jsp"/>
-					<%-- Side Bar File --%>
-				</td>
-				<td id="medicationsColumnTwoRowTwo"><!--Column Two Row Two-->
+                <td height="100%" ><%@ include file="SideLinksEditFavorites2.jsp"%></td>
+                <td style="padding-right:15px;"><!--Column Two Row Two-->
 
                     <div class="floatingWindow" id="reRxConfirmBox">
                         <p style="margin-bottom: 12px; font-size: 11px; text-align: end">
@@ -744,10 +736,10 @@ function renderRxStage() {
                         <tr id="medicationManagementRow">
                             <td>
 							<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
-                                <html:form action="/oscarRx/searchDrug"  onsubmit="return checkEnterSendRx();" style="display: inline; margin-bottom:0;" styleId="drugForm">
+                                <form action="${pageContext.request.contextPath}/oscarRx/searchDrug"  onsubmit="return checkEnterSendRx();" style="display: inline; margin-bottom:0;" styleId="drugForm">
 
 
-                                    <html:hidden property="demographicNo" value="<%=Integer.toString(patient.getDemographicNo())%>" />
+                                    <input type="hidden" property="demographicNo" value="<%=Integer.toString(patient.getDemographicNo())%>" />
                                     <table>
                                         <tr id="prescriptionStageRow">
                                             <td colspan="2">
@@ -760,7 +752,7 @@ function renderRxStage() {
                                                         <%-- Prescriptions are staged here via the prescribe.jsp widget --%>
 
                                                     <input type="hidden" id="deleteOnCloseRxBox" value="false"/>
-                                                    <html:hidden property="demographicNo"
+                                                    <input type="hidden" property="demographicNo"
                                                                  value="<%=new Integer(patient.getDemographicNo()).toString()%>"/>
 
                                                 </div>
@@ -772,7 +764,7 @@ function renderRxStage() {
                                             <td>
                                                 <div id="searchDrugSet">
                                                     <div id="searchDrugAutocompleteSet">
-                                                        <label for="searchString" ><bean:message key="SearchDrug.drugSearchTextBox"  /></label>
+                                                        <label for="searchString" ><fmt:message key="SearchDrug.drugSearchTextBox"  /></label>
                                                         <html:text styleClass="ui-widget-content" styleId="searchString" property="searchString" />
                                                         <div id="autocomplete_choices"></div>
                                                     </div>
@@ -813,25 +805,25 @@ function renderRxStage() {
                                             </td>
                                             <td>
                                                 <div id="searchDrugsButtonSet">
-                                                    <input type="button" name="search" class="ControlPushButton"  value="<bean:message key="SearchDrug.msgSearch"/>" onclick="popupRxSearchWindow();" title="<bean:message key="SearchDrug.help.Search"/>">
-                                                    <input id="customDrug" type="button" class="ControlPushButton" onclick="customWarning2();" value="<bean:message key="SearchDrug.msgCustomDrugRx3"/>" title="<bean:message key="SearchDrug.help.CustomDrug"/>" />
-                                                    <input id="customNote" type="button" class="ControlPushButton"  onclick="customNoteWarning();" value="<bean:message key="SearchDrug.msgNoteRx3"/>" title="<bean:message key="SearchDrug.help.CustomNote"/>"/>
-                                                    <input id="reset" type="button" class="ControlPushButton" title="Clear pending prescriptions"   onclick="resetStash();" value="<bean:message key="SearchDrug.msgResetPrescriptionRx3"/>"/>
+                                                    <input type="button" name="search" class="ControlPushButton"  value="<fmt:message key="SearchDrug.msgSearch"/>" onclick="popupRxSearchWindow();" title="<fmt:message key="SearchDrug.help.Search"/>">
+                                                    <input id="customDrug" type="button" class="ControlPushButton" onclick="customWarning2();" value="<fmt:message key="SearchDrug.msgCustomDrugRx3"/>" title="<fmt:message key="SearchDrug.help.CustomDrug"/>" />
+                                                    <input id="customNote" type="button" class="ControlPushButton"  onclick="customNoteWarning();" value="<fmt:message key="SearchDrug.msgNoteRx3"/>" title="<fmt:message key="SearchDrug.help.CustomNote"/>"/>
+                                                    <input id="reset" type="button" class="ControlPushButton" title="Clear pending prescriptions"   onclick="resetStash();" value="<fmt:message key="SearchDrug.msgResetPrescriptionRx3"/>"/>
                                                     <% if(!OscarProperties.getInstance().getProperty("rx.drugofchoice.hide","false").equals("true")) { %>
 														<input type="button" class="ControlPushButton"
 														       style="width:92px"
 														       onclick="callTreatments('searchString','treatmentsMyD')"
-														       value="<bean:message key="SearchDrug.msgDrugOfChoiceRx3"/>"
-														       title="<bean:message key="SearchDrug.help.DrugOfChoice"/>"/>
+														       value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgDrugOfChoiceRx3"/>"
+														       title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.DrugOfChoice"/>"/>
                                                     <%} %>
                                                     <%if (OscarProperties.getInstance().hasProperty("ONTARIO_MD_INCOMINGREQUESTOR")) {%>
-                                                    <a href="javascript:goOMD();" title="<bean:message key="SearchDrug.help.OMD"/>"><bean:message key="SearchDrug.msgOMDLookup"/></a>
+                                                    <a href="javascript:goOMD();" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.OMD"/>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgOMDLookup"/></a>
                                                     <%}%>
                                                     <security:oscarSec roleName="<%=roleName2$%>" objectName="_rx" rights="x">
-                                                    <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrintCheckContinue();" value="<bean:message key="SearchDrug.msgSaveAndPrint"/>" title="<bean:message key="SearchDrug.help.SaveAndPrint"/>" />
+                                                    <input id="saveButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsPrintCheckContinue();" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgSaveAndPrint"/>" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.SaveAndPrint"/>" />
                                                     </security:oscarSec>
 
-                                                    <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsCheckContinue();" value="<bean:message key="SearchDrug.msgSaveOnly"/>" title="<bean:message key="SearchDrug.help.Save"/>"/>
+                                                    <input id="saveOnlyButton" type="button"  class="ControlPushButton" onclick="updateSaveAllDrugsCheckContinue();" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgSaveOnly"/>" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.help.Save"/>"/>
                                                     <%
                                                             if(OscarProperties.getInstance().getProperty("oscarrx.medrec","false").equals("true")) {
                                                     %>
@@ -839,7 +831,7 @@ function renderRxStage() {
                                                     <% } %>
 
                                                     <% if(eRxEnabled) { %>
-                                                        <a href="<%=eRx_SSO_URL%>User=<%=eRxUsername%>&Password=<%=eRxPassword%>&Clinic=<%=eRxFacility%>&PatientIdPMIS=<%=patient.getDemographicNo()%>&IsTraining=<%=eRxTrainingMode%>"><bean:message key="SearchDrug.eRx.msgExternalPrescriber"/></a>
+                                                        <a href="<%=eRx_SSO_URL%>User=<%=eRxUsername%>&Password=<%=eRxPassword%>&Clinic=<%=eRxFacility%>&PatientIdPMIS=<%=patient.getDemographicNo()%>&IsTraining=<%=eRxTrainingMode%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.eRx.msgExternalPrescriber"/></a>
                                                     <% } %>
                                                 </div>
                                             </td>
@@ -847,7 +839,7 @@ function renderRxStage() {
                                         </tr>
                                     </table>
 
-                                </html:form>
+                                </form>
                                 <div id="previewForm" style="display:none;"></div>
                                 <%} %>
                             </td>
@@ -858,43 +850,19 @@ function renderRxStage() {
                                         <tr>
                                             <td>
                                                 <div class="DivContentSectionHead">
-                                                    <bean:message key="SearchDrug.section2Title" />
+                                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.section2Title" />
                                                     &nbsp;
-                                                    <a href="javascript:void(0)" onClick="printDrugProfile();"><bean:message key="SearchDrug.Print"/></a>
+                                                    <a href="javascript:void(0)" onClick="printDrugProfile();"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Print"/></a>
                                                     &nbsp;
 													<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
-                                                    <a href="#" onclick="$('reprint').toggle();return false;"><bean:message key="SearchDrug.Reprint"/></a>
+                                                    <a href="#" onclick="$('reprint').toggle();return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Reprint"/></a>
                                                     &nbsp;
-                                                    <a href="javascript:void(0);" id="cmdRePrescribe" onclick="RePrescribeLongTerm();" style="width: 200px" ><bean:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
+                                                    <a href="javascript:void(0);" id="cmdRePrescribe" onclick="RePrescribeLongTerm();" style="width: 200px" ><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
                                                     &nbsp;
 													<% } %>
                                                     <a href="javascript:popupWindow(720,920,'chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline Drug Profile</a>
                                                     &nbsp;
-                                                    <a href="javascript: void(0);" onclick="callReplacementWebService('GetmyDrugrefInfo.do?method=view','interactionsRxMyD');" >DS run</a>
                                                     &nbsp;&nbsp;
-													<%
-									                  	  if (MyOscarUtils.isMyOscarEnabled((String) session.getAttribute("user")))
-									                  	  {
-																MyOscarLoggedInInfo myOscarLoggedInInfo=MyOscarLoggedInInfo.getLoggedInInfo(session);
-									                  		  	boolean enabledMyOscarButton=MyOscarUtils.isMyOscarSendButtonEnabled(myOscarLoggedInInfo, Integer.valueOf(demoNo));
-																if (enabledMyOscarButton)
-																{
-																	String sendDataPath = request.getContextPath() + "/phr/send_medicaldata_to_myoscar.jsp?"
-																			+ "demographicId=" + demoNo + "&"
-																			+ "medicalDataType=Prescriptions" + "&"
-																			+ "parentPage=" + request.getRequestURI();
-																	%>
-																		<a href="<%=sendDataPath%>"><%=LocaleUtils.getMessage(request, "SendToPHR")%></a>
-																	<%
-																}
-																else
-																{
-																	%>
-																		<span style="color:grey;text-decoration:underline"><%=LocaleUtils.getMessage(request, "SendToPHR")%></span>
-																	<%
-																}
-									                  	  }
-									             	%>
                                                 </div>
 
                                             </td>
@@ -904,7 +872,7 @@ function renderRxStage() {
 
 
                         <% for (int i = 0; prescribedDrugs.length > i; i++) {
-                            oscar.oscarRx.data.RxPrescriptionData.Prescription drug =  prescribedDrugs[i];
+                            RxPrescriptionData.Prescription drug =  prescribedDrugs[i];
                         %>
 
                                                     <%
@@ -958,9 +926,9 @@ function renderRxStage() {
                                                             <table class="legend">
                                                                     <tr>
                                                                         <td style="text-align: left; width:100px;">
-                                                                            <a href="#"  title="<bean:message key="provider.rxChangeProfileViewMessage"/>" 
+                                                                            <a href="#"  title="<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.rxChangeProfileViewMessage"/>"
                                                                             	onclick="popupPage(230,860,'../setProviderStaleDate.do?method=viewRxProfileView');" style="color:red;text-decoration:none" >
-                                                                            	<bean:message key="provider.rxChangeProfileView"/>
+                                                                            	<fmt:message key="provider.rxChangeProfileView"/>
                                                                             </a>
                                                                         </td>
 
@@ -972,29 +940,29 @@ function renderRxStage() {
 																				<td >
 		                                                                            <a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp','drugProfile');CngClass(this);" 
 		                                                                            	id="selected_default" style="color:#000000; text-decoration: none;"
-		                                                                            	TITLE="<bean:message key='SearchDrug.msgShowCurrentDesc'/>">
-		                                                                            	<bean:message key="SearchDrug.msgShowCurrent"/>
+		                                                                            	TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key='SearchDrug.msgShowCurrentDesc'/>">
+		                                                                            	<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowCurrent"/>
 		                                                                            </a>
 	                                                                            </td>
 																				<%}if(show_all){%>
 	                                                                            <td >
 																					<a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp?show=all','drugProfile');CngClass(this);" 
-																						Title="<bean:message key='SearchDrug.msgShowAllDesc'/>">
-																						<bean:message key="SearchDrug.msgShowAll"/>
+																						Title="<fmt:setBundle basename="oscarResources"/><fmt:message key='SearchDrug.msgShowAllDesc'/>">
+																						<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowAll"/>
 																					</a>
 	                                                                            </td>
 																				<%}if(active){%>
 																				<td >
 																					<a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp?status=active','drugProfile');CngClass(this);" 
-																						TITLE="<bean:message key='SearchDrug.msgActiveDesc'/>">
-																						<bean:message key="SearchDrug.msgActive"/>
+																						TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key='SearchDrug.msgActiveDesc'/>">
+																						<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgActive"/>
 																					</a>
 	                                                                            </td>
 																				<%}if(inactive){%>
 																				<td >
 																					<a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp?status=inactive','drugProfile');CngClass(this);" 
-																						TITLE="<bean:message key='SearchDrug.msgInactiveDesc'/>">
-																						<bean:message key="SearchDrug.msgInactive"/>
+																						TITLE="<fmt:setBundle basename="oscarResources"/><fmt:message key='SearchDrug.msgInactiveDesc'/>">
+																						<fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgInactive"/>
 																					</a>
 	                                                                            </td>
 																				<%} if(!OscarProperties.getInstance().getProperty("rx.profile_legend.hide","false").equals("true")) {
@@ -1002,15 +970,15 @@ function renderRxStage() {
 																				if(longterm_acute){%>
 																				<td >
 																					<a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp?longTermOnly=true&heading=Long Term Meds','drugProfile'); callAdditionWebService('ListDrugs.jsp?longTermOnly=acute&heading=Acute','drugProfile');CngClass(this);" 
-																						TITLE="<bean:message key='SearchDrug.msgLongTermAcuteDesc'/>">
-																						<bean:message key="SearchDrug.msgLongTermAcute"/>
+                                                                                   TITLE="<fmt:setBundle basename='oscarResources'/><fmt:message key='SearchDrug.msgLongTermAcuteDesc'/>">
+                                                                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgLongTermAcute"/>
 																					</a>
 	                                                                            </td>
 																				<%}if(longterm_acute_inactive_external){%>
 																				<td >
 																					<a href="javascript:void(0);" onclick="callReplacementWebService('ListDrugs.jsp?longTermOnly=true&heading=Long Term Meds','drugProfile'); callAdditionWebService('ListDrugs.jsp?longTermOnly=acute&heading=Acute&status=active','drugProfile');callAdditionWebService('ListDrugs.jsp?longTermOnly=acute&heading=Inactive&status=inactive','drugProfile');callAdditionWebService('ListDrugs.jsp?heading=External&drugLocation=external','drugProfile');CngClass(this);" 
-																						TITLE="<bean:message key='SearchDrug.msgLongTermAcuteInactiveExternalDesc'/>">
-																						<bean:message key="SearchDrug.msgLongTermAcuteInactiveExternal"/>
+                                                                                   TITLE="<fmt:setBundle basename='oscarResources'/><fmt:message key='SearchDrug.msgLongTermAcuteInactiveExternalDesc'/>">
+                                                                                    <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgLongTermAcuteInactiveExternal"/>
 																					</a>
 	                                                                            </td>
 																				<%}
@@ -1038,13 +1006,13 @@ function renderRxStage() {
                                                                 <a href="javascript:void(0);" class="external">Prescribed by an outside provider</a>
                                                             </div>
 
-                                                            <html:form action="/oscarRx/rePrescribe">
-                                                                <html:hidden property="drugList" />
+                                                            <form action="/oscarRx/rePrescribe">
+                                                                <input type="hidden" property="drugList" />
                                                                 <input type="hidden" name="method">
-                                                            </html:form>
-                                                            <html:form action="/oscarRx/deleteRx">
-                                                                <html:hidden property="drugList" />
-                                                            </html:form></td>
+                                                        </form> <br>
+                                                        <form action="${pageContext.request.contextPath}/oscarRx/deleteRx.do" method="post">
+                                                            <input type="hidden" name="drugList" id="drugList"/>
+                                                        </form></td>
 
                                                     </tr>
                                                 </table>
@@ -1075,7 +1043,8 @@ function renderRxStage() {
                             					%>
                             						<tr>
                             							<td><%=formatter.format(note.getCreate_date()) %></td>
-                            							<td><%=StringEscapeUtils.escapeHtml(str)%></td>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(str)%>
+                                                    </td>
                             						</tr>
                             					<% 
                             				}
@@ -1086,23 +1055,19 @@ function renderRxStage() {
                                         	</td>
                                         </tr>
                                     </table>
+
+                            </div>
                             </td>
                         </tr>
                     </table>
                     <%-- End List Drugs Prescribed --%>
 
-                </td><!--Column Two Row Two-->
+            </td>
                 <td width="300px" valign="top" >
-                    <div id="interactionsRxMyD" style="float:right;"></div>
                 </td>
             </tr>
         </table>
 
-
-
-<div id="treatmentsMyD" style="position: absolute; left: 1px; top: 1px; width: 800px; height: 600px; display:none; z-index: 1">
-       <a href="javascript: function myFunction() {return false; }" onclick="$('treatmentsMyD').toggle();" style="text-decoration: none;">X</a>
-</div>
 
 
 
@@ -1110,30 +1075,30 @@ function renderRxStage() {
     <div id="discontinueUI" style="position: absolute;display:none;width:500px;height:200px;background-color:white;padding:20px;border:1px solid grey">
         <h3>Discontinue :<span id="disDrug"></span></h3>
         <input type="hidden" name="disDrugId" id="disDrugId"/>
-        <bean:message key="oscarRx.discontinuedReason.msgReason"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.msgReason"/>
         <select name="disReason" id="disReason">
-            <option value="adverseReaction"><bean:message key="oscarRx.discontinuedReason.AdverseReaction"/></option>
-            <option value="allergy"><bean:message key="oscarRx.discontinuedReason.Allergy"/></option>
-            <option value="cost"><bean:message key="oscarRx.discontinuedReason.Cost"/></option>
-            <option value="discontinuedByAnotherPhysician"><bean:message key="oscarRx.discontinuedReason.DiscontinuedByAnotherPhysician"/></option>
-            <option value="doseChange"><bean:message key="oscarRx.discontinuedReason.DoseChange"/></option>
-            <option value="drugInteraction"><bean:message key="oscarRx.discontinuedReason.DrugInteraction"/></option>
-            <option value="increasedRiskBenefitRatio"><bean:message key="oscarRx.discontinuedReason.IncreasedRiskBenefitRatio"/></option>
-            <option value="ineffectiveTreatment"><bean:message key="oscarRx.discontinuedReason.IneffectiveTreatment"/></option>
-            <option value="newScientificEvidence"><bean:message key="oscarRx.discontinuedReason.NewScientificEvidence"/></option>
-            <option value="noLongerNecessary"><bean:message key="oscarRx.discontinuedReason.NoLongerNecessary"/></option>
-			<option value="enteredInError"><bean:message key="oscarRx.discontinuedReason.EnteredInError"/></option>
-            <option value="patientRequest"><bean:message key="oscarRx.discontinuedReason.PatientRequest"/></option>
-            <option value="prescribingError"><bean:message key="oscarRx.discontinuedReason.PrescribingError"/></option>
-            <option value="simplifyingTreatment"><bean:message key="oscarRx.discontinuedReason.SimplifyingTreatment"/></option>
-            <option value="unknown"><bean:message key="oscarRx.discontinuedReason.Unknown"/></option>
+            <option value="adverseReaction"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.AdverseReaction"/></option>
+            <option value="allergy"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.Allergy"/></option>
+            <option value="cost"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.Cost"/></option>
+            <option value="discontinuedByAnotherPhysician"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.DiscontinuedByAnotherPhysician"/></option>
+            <option value="doseChange"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.DoseChange"/></option>
+            <option value="drugInteraction"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.DrugInteraction"/></option>
+            <option value="increasedRiskBenefitRatio"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.IncreasedRiskBenefitRatio"/></option>
+            <option value="ineffectiveTreatment"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.IneffectiveTreatment"/></option>
+            <option value="newScientificEvidence"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.NewScientificEvidence"/></option>
+            <option value="noLongerNecessary"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.NoLongerNecessary"/></option>
+            <option value="enteredInError"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.EnteredInError"/></option>
+            <option value="patientRequest"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.PatientRequest"/></option>
+            <option value="prescribingError"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.PrescribingError"/></option>
+            <option value="simplifyingTreatment"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.SimplifyingTreatment"/></option>
+            <option value="unknown"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.Unknown"/></option>
 
-			<option value="other"><bean:message key="oscarRx.discontinuedReason.Other"/></option>
+            <option value="other"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.Other"/></option>
         </select>
 
 
         <br/>
-        <bean:message key="oscarRx.discontinuedReason.msgComment"/><br/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.discontinuedReason.msgComment"/><br/>
         <textarea id="disComment" rows="3" cols="45"></textarea><br/>
         <input type="button" onclick="$('discontinueUI').hide();" value="Cancel"/>
         <input type="button" onclick="Discontinue2($('disDrugId').value,$('disReason').value,$('disComment').value,$('disDrug').innerHTML);" value="Discontinue"/>
@@ -1186,45 +1151,45 @@ function renderRxStage() {
         </tr>
 
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgName"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgName"/></td>
             <td class="wcblayerContent" id="pharmacyName"></td>
         </tr>
 
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgAddress"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgAddress"/></td>
             <td class="wcblayerContent" id="pharmacyAddress"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgCity"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgCity"/></td>
             <td class="wcblayerContent" id="pharmacyCity"></td>
         </tr>
 
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgProvince"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgProvince"/></td>
             <td class="wcblayerContent" id="pharmacyProvince"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgPostalCode"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgPostalCode"/></td>
             <td class="wcblayerContent" id="pharmacyPostalCode"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgPhone1"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgPhone1"/></td>
             <td class="wcblayerContent"  id="pharmacyPhone1"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgPhone2"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgPhone2"/></td>
             <td class="wcblayerContent" id="pharmacyPhone2"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgFax"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgFax"/></td>
             <td class="wcblayerContent" id="pharmacyFax"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgEmail"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgEmail"/></td>
             <td class="wcblayerContent"  id="pharmacyEmail"></td>
         </tr>
         <tr>
-            <td class="wcblayerTitle"><bean:message key="SearchDrug.pharmacy.msgNotes"/></td>
+                <td class="wcblayerTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.pharmacy.msgNotes"/></td>
             <td class="wcblayerContent"  id="pharmacyNotes"></td>
         </tr>
     </table>
@@ -1235,8 +1200,8 @@ function renderRxStage() {
                         }
 %>
 <script type="text/javascript">
-    function changeLt(element, drugId) {
-        if (confirm('<bean:message key="oscarRx.Prescription.changeDrugLongTermConfirm" />') === true) {
+        function changeLt(drugId) {
+            if (confirm('<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.Prescription.changeDrugLongTermConfirm"/>') == true) {
             const data = "ltDrugId=" + drugId + "&isLongTerm=" + element.checked + "&rand=" + Math.floor(Math.random() * 10001);
             const url = "<c:out value='${ctx}'/>" + "/oscarRx/WriteScript.do?parameterValue=updateLongTermStatus";
             new Ajax.Request(url, {
@@ -1339,7 +1304,7 @@ function renderRxStage() {
 
     function displayInstructions(randomId){
     	var data="randomId="+randomId;
-    	mb.show(randomId,'displayInstructions', '600px');
+            mb.show(randomId, '<%= request.getContextPath() %>/oscarRx/displayInstructions', '600px');
 
 	}
 
@@ -1788,7 +1753,7 @@ function popForm2(scriptId){
                     width: 980,
                     height: h
                 });
-                var editRxMsg='<bean:message key="oscarRx.Preview.EditRx"/>';
+                        var editRxMsg = '<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.Preview.EditRx"/>';
                 $('lightwindow_title_bar_close_link').update(editRxMsg);
                 $('lightwindow_title_bar_close_link').onclick=updateDeleteOnCloseRxBox;
             }});
@@ -2649,14 +2614,14 @@ function updateQty(element){
         return "There " + statusMessage + ".\n" + SAVE_WARNING + "\n" + SAVE_PROMPT;
     }
 
-	<%
-		ArrayList<Object> args = new ArrayList<Object>();
-		args.add(String.valueOf(demoNo));
-		args.add(providerNo);
+<%--	<%--%>
+<%--		ArrayList<Object> args = new ArrayList<Object>();--%>
+<%--		args.add(String.valueOf(demoNo));--%>
+<%--		args.add(providerNo);--%>
 
-		Study myMeds = StudyFactory.getFactoryInstance().makeStudy(Study.MYMEDS, args);
-		out.write(myMeds.printInitcode());
-	%>
+<%--		Study myMeds = StudyFactory.getFactoryInstance().makeStudy(Study.MYMEDS, args);--%>
+<%--		out.write(myMeds.printInitcode());--%>
+<%--	%>--%>
 
 
     function updateSaveAllDrugsPrintContinue(){
@@ -2826,4 +2791,4 @@ function updateLongTerm(rand,repeatEl) {
 <script language="javascript" src="../commons/scripts/sort_table/standardista-table-sorting.js"></script>
         </div>
 </body>
-</html:html>
+</html>

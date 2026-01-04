@@ -22,42 +22,49 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 
 <div class="tabs" id="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Programs">Access</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Programs">Access</th>
+        </tr>
+    </table>
 </div>
 
-<html:form action="/PMmodule/Admin/DefaultRoleAccess">
-	<input type="hidden" name="method" value="save" />
-	<html:hidden property="form.id" />
+<form action="${pageContext.request.contextPath}/PMmodule/Admin/DefaultRoleAccess.do" method="post">
+    <input type="hidden" name="method" value="save"/>
+    <input type="hidden" name="id" id="id"/>
 
-	<table width="100%" border="1" cellspacing="2" cellpadding="3"
-		class="b">
-		<tr class="b">
-			<td width="20%">Role:</td>
-			<td><html:select property="form.roleId">
-				<html:options collection="roles" property="id" labelProperty="name" />
-			</html:select></td>
-		</tr>
+    <table width="100%" border="1" cellspacing="2" cellpadding="3"
+           class="b">
+        <tr class="b">
+            <td width="20%">Role:</td>
+            <td><select name="form.roleId" id="form.roleId">
+                <c:forEach var="role" items="${roles}">
+                    <option value="${role.id}">
+                            ${role.name}
+                    </option>
+                </c:forEach>
+            </select></td>
+        </tr>
 
-		<tr class="b">
-			<td width="20%">Access Type:</td>
-			<td><html:select property="form.accessTypeId">
-				<html:options collection="access_types" property="id"
-					labelProperty="name" />
-			</html:select></td>
-		</tr>
+        <tr class="b">
+            <td width="20%">Access Type:</td>
+            <td><select name="form.accessTypeId" id="form.accessTypeId">
+                <c:forEach var="access_type" items="${access_types}">
+                    <option value="${access_type.id}">
+                            ${access_type.name}
+                    </option>
+                </c:forEach>
+            </select></td>
+        </tr>
 
-		<tr>
-			<td colspan="2"><html:submit value="Save" /> <input
-				type="button" value="Cancel"
-				onclick="location.href='<html:rewrite action="/PMmodule/Admin/DefaultRoleAccess"/>'" />
-			</td>
-		</tr>
-	</table>
-</html:form>
+        <tr>
+            <td colspan="2"><input type="submit" value="Save" /> <input
+                    type="button" value="Cancel"
+                    onclick="location.href='<%=request.getContextPath() %>/PMmodule/Admin/DefaultRoleAccess'"/>
+            </td>
+        </tr>
+    </table>
+</form>

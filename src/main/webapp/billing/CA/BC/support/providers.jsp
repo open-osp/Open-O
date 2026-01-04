@@ -24,66 +24,70 @@
 --%>
 
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Provider" %>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%
-	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
 %>
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>OSCAR Providers</title>
-<link rel="stylesheet" href="../../../../share/css/oscar.css">
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>OSCAR Providers</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
 </head>
 <%
-	String form=request.getParameter("form"),field=request.getParameter("field");
+    String form = request.getParameter("form"), field = request.getParameter("field");
 %>
 <script language="JavaScript">
-function posttoText(index){
-   self.close();
-   opener.document.<%=form%>.<%=field%>.value = index;
-	opener.focus();		
-}
+    function posttoText(index) {
+        self.close();
+        opener.document
+    .<%=form%>.<%=field%>.
+        value = index;
+        opener.focus();
+    }
 </script>
 <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
 <table width="100%" border="0" cellspacing="0" cellpadding="0"
-	bgcolor="#D3D3D3">
-	<tr>
-		<td height="40" width="25"></td>
-		<td width="90%" align="left">
-		<p><font face="Verdana" color="#4D4D4D"><b><font
-			size="4">oscar<font size="3">Providers</font></font></b></font></p>
-		</td>
-	</tr>
+       bgcolor="#D3D3D3">
+    <tr>
+        <td height="40" width="25"></td>
+        <td width="90%" align="left">
+            <p><font face="Verdana" color="#4D4D4D"><b><font
+                    size="4">oscar<font size="3">Providers</font></font></b></font></p>
+        </td>
+    </tr>
 </table>
 <br>
 <table width="100%" border="0" cellspacing="5" cellpadding="0">
-	<tr bgcolor="#D4D4D4">
-		<td>Link</td>
-		<td>Provider</td>
-	</tr>
-	<%
-	boolean color = false;
-	for(Provider p:providerDao.getActiveProviders()) {
-		if(p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
-	
-%>
-	<tr <%=((color) ? "bgcolor=\"#F6F6F6\"" : "")%> align="left"
-		valign="top">
-		<td class="SmallerText"><a href=#
-			onClick="posttoText('<%=p.getOhipNo()%>');"><%=p.getOhipNo()%></a>
-		</td>
-		<td class="SmallerText">Dr. <%=p.getFirstName()%> <%=p.getLastName()%>
-		</td>
-	</tr>
-	<%
-		color = !(color);
-	} }
-%>
-	<tr bgcolor="#D4D4D4">
-		<td colspan="5">&nbsp</td>
-	</tr>
+    <tr bgcolor="#D4D4D4">
+        <td>Link</td>
+        <td>Provider</td>
+    </tr>
+    <%
+        boolean color = false;
+        for (Provider p : providerDao.getActiveProviders()) {
+            if (p.getOhipNo() != null && !p.getOhipNo().isEmpty()) {
+
+    %>
+    <tr <%=((color) ? "bgcolor=\"#F6F6F6\"" : "")%> align="left"
+                                                    valign="top">
+        <td class="SmallerText"><a href=#
+                                   onClick="posttoText('<%=p.getOhipNo()%>');"><%=p.getOhipNo()%>
+        </a>
+        </td>
+        <td class="SmallerText">Dr. <%=p.getFirstName()%> <%=p.getLastName()%>
+        </td>
+    </tr>
+    <%
+                color = !(color);
+            }
+        }
+    %>
+    <tr bgcolor="#D4D4D4">
+        <td colspan="5">&nbsp</td>
+    </tr>
 </table>
 </body>
 </html>

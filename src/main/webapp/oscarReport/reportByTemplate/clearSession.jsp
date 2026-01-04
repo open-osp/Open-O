@@ -24,5 +24,5 @@
 
 --%>
 <%
-session.removeAttribute("csv");
+    session.removeAttribute("csv");
 %>

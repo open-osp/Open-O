@@ -23,19 +23,22 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<fmt:setBundle basename="oscarResources"/>
 
 <html>
 <body>
-<p><bean:message key="mfa.registration.title"/></p>
+<p><fmt:message key="mfa.registration.title"/></p>
 <div class="row p-2">
 
     <!-- Left Section: Instructions -->
     <div class="col-12 col-md-7">
         <div class="mx-2">
-            <p class="h4 text-secondary mt-3"><bean:message key="mfa.registration.instruct.heading"/></p>
-            <p class="mb-4"><small><bean:message key="mfa.registration.instruct.1"/></small></p>
-            <p><small><bean:message key="mfa.registration.instruct.2"/></small></p>
+            <p class="h4 text-secondary mt-3"><fmt:message key="mfa.registration.instruct.heading"/></p>
+            <p class="mb-4"><small><fmt:message key="mfa.registration.instruct.1"/></small></p>
+            <p><small><fmt:message key="mfa.registration.instruct.2"/></small></p>
         </div>
     </div>
 

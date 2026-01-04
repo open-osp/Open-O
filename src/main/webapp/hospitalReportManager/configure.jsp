@@ -23,12 +23,12 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.managers.SecurityInfoManager" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.managers.SecurityInfoManager" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
@@ -42,7 +42,7 @@
 <!DOCTYPE html >
 <html>
     <head>
-        <html:base/>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>HRM Configuration - OSCAR EMR</title>
@@ -82,7 +82,7 @@
             function loadValues() {
                 $.ajax({
                     type: "GET",
-                    url: '../hospitalReportManager/hrm.do?method=getConfigurationDetails',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=getConfigurationDetails',
                     dataType: 'json',
                     async: true,
                     success: function (data) {
@@ -102,7 +102,7 @@
             function saveValues() {
                 $.ajax({
                     type: "POST",
-                    url: '../hospitalReportManager/hrm.do?method=saveConfigurationDetails',
+                    url: '<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=saveConfigurationDetails',
                     data: {
                         hostname: $("#hostname").val(),
                         port: $("#port").val(),
@@ -201,7 +201,7 @@
                                     <td>
                                         <label for="private_key">Private Key: </label>
                                         <input id="private_key" type="file" name="privateKeyFile"
-                                               data-url="../hospitalReportManager/hrm.do?method=uploadPrivateKey">
+                                               data-url="<%=request.getContextPath()%>/hospitalReportManager/hrm.do?method=uploadPrivateKey">
                                         <div id="private_key_info">
                                             <p><b>Current File:</b><span id="private_key_info_current_file"
                                                                          style="color:red">None</span>

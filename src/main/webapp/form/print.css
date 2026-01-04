@@ -21,83 +21,80 @@
  * Hamilton 
  * Ontario, Canada 
  */
-{
-font-size
-:
- 
-8
-pt
-;
 
 
-}
 BODY {
-	background-color: white;
-	color: black;
-	width: 300pt;
+    background-color: white;
+    color: black;
+    width: 300pt;
+}
+
+*{
+    font-size: 8pt;
+
 }
 
 BODY A {
-	color: black;
+    color: black;
 }
 
 .head {
-	display: none;
+    display: none;
 }
 
 .head INPUT {
-	display: none;
+    display: none;
 }
 
 .head A {
-	display: none;
+    display: none;
 }
 
 .header {
-	display: none;
+    display: none;
 }
 
 .header INPUT {
-	display: none;
+    display: none;
 }
 
 .header A {
-	display: none;
+    display: none;
 }
 
 .hidePrint {
-	display: none;
+    display: none;
 }
 
 .hidePrint INPUT {
-	display: none;
+    display: none;
 }
 
 .hidePrint A {
-	display: none;
+    display: none;
 }
 
 .LeftTable {
-	display: none;
+    display: none;
 }
 
 .row {
-	background-color: #FFFFFF;
-	color: #000000;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 
 .column {
-	background-color: #FFFFFF;
-	color: #000000;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 
 .titleBar {
-	background-color: #FFFFFF;
-	color: #000000;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 
 .outerTable {
-	padding: 0;
-	border-spacing: 0;
-	width: 650px;
+    padding: 0;
+    border-spacing: 0;
+    width: 650px;
 }

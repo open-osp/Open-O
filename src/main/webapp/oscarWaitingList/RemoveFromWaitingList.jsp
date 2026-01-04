@@ -25,12 +25,12 @@
 --%>
 
 <%
-  if(session.getValue("user") == null) response.sendRedirect("../../logout.jsp");
+    if (session.getValue("user") == null) response.sendRedirect(request.getContextPath() + "/logout.jsp");
 %>
-<%@ page import="java.sql.*, java.util.*, oscar.oscarWaitingList.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.openo.waitinglist.util.*" %>
+<%@ page import="ca.openosp.openo.waitinglist.util.WLWaitingListUtil" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 
 
 
@@ -40,29 +40,38 @@
     WLWaitingListUtil.removeFromWaitingList(waitingListId, request.getParameter("demographicNo"));
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title></title>
-<html:base />
-</head>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title></title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+    </head>
 
 
-<link rel="stylesheet" type="text/css" href="../styles.css">
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
-<html:errors />
-<table>
-	<tr>
-		<td>Update waiting list</td>
-		<script language="javascript">   
-            window.opener.location.reload();
-            self.close();
-        </script>
-	</tr>
-</table>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/styles.css">
+    <body topmargin="0" leftmargin="0" vlink="#0000FF">
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <table>
+        <tr>
+            <td>Update waiting list</td>
+            <script language="javascript">
+                window.opener.location.reload();
+                self.close();
+            </script>
+        </tr>
+    </table>
 
 
-
-
-</body>
-</html:html>
+    </body>
+</html>

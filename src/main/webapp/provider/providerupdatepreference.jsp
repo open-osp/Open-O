@@ -24,79 +24,81 @@
 
 --%>
 
-<%@page import="org.oscarehr.util.SessionConstants"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi"%>
-<%@ page import="java.sql.*, java.util.*, oscar.*" errorPage="/errorpage.jsp"%>
-<%@page import="org.oscarehr.common.model.ProviderPreference"%>
-<%@page import="org.oscarehr.web.admin.ProviderPreferencesUIBean"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
-<%@ page import="org.oscarehr.common.model.UserProperty" %>
-<%@ page import="org.oscarehr.provider.web.ProviderPropertyAction" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    //-->
-</script>
-</head>
+<%@ taglib uri="/WEB-INF/caisi-tag.tld" prefix="caisi" %>
+<%@ page import="java.sql.*, java.util.*, ca.openosp.*" errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
+<%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.provider.web.ProviderPropertyAction" %>
 
-<body>
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF"><bean:message	key="provider.providerupdatepreference.description" /></font></th>
-	</tr>
-</table>
-<%
-	String programId_forCME = request.getParameter("case_program_id");
-	request.getSession().setAttribute("case_program_id",programId_forCME);
-	
-	String selected_site = (String) request.getParameter("site") ;
-	if (selected_site != null) {
-		session.setAttribute("site_selected", (selected_site.equals("none") ? null : selected_site) );	    
-	}
-	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	String curUser_providerno = loggedInInfo.getLoggedInProviderNo();
-	String ticklerforproviderno = request.getParameter("ticklerforproviderno");
-	UserPropertyDAO propDao =(UserPropertyDAO)SpringUtils.getBean(UserPropertyDAO.class);
-	UserProperty prop = propDao.getProp(curUser_providerno, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
-	if (prop == null) {
-		prop = new UserProperty();
-		prop.setProviderNo(curUser_providerno);
-		prop.setName(UserProperty.PROVIDER_FOR_TICKLER_WARNING);
-	}
-	prop.setValue(ticklerforproviderno);
-	propDao.saveProp(prop);
-	
-	ProviderPreference providerPreference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
-	ProviderPropertyAction.updateOrCreateProviderProperties(request);
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <script LANGUAGE="JavaScript">
+            <!--
+            function start() {
+                this.focus();
+            }
 
-	//--- 
-	session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
-	session.setAttribute("default_servicetype", providerPreference.getDefaultServiceType());
-	session.setAttribute("newticklerwarningwindow", providerPreference.getNewTicklerWarningWindow());
-	session.setAttribute("default_pmm", providerPreference.getDefaultCaisiPmm());
-	session.setAttribute("caisiBillingPreferenceNotDelete",providerPreference.getDefaultDoNotDeleteBilling());
-	session.setAttribute("defaultDxCode",providerPreference.getDefaultDxCode());
-%>
-<script LANGUAGE="JavaScript">
-     self.opener.refresh1();
-     self.close();
-</script>
-<p></p>
-<hr width="90%"/>
-<form><input type="button"
-	value=<bean:message key="global.btnClose"/> onClick="self.close()">
-</form>
-</center>
-</body>
-</html:html>
+            //-->
+        </script>
+    </head>
+
+    <body>
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="90%">
+            <tr bgcolor="#486ebd">
+                <th align="CENTER"><font face="Helvetica" color="#FFFFFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="provider.providerupdatepreference.description"/></font></th>
+            </tr>
+        </table>
+        <%
+            String programId_forCME = request.getParameter("case_program_id");
+            request.getSession().setAttribute("case_program_id", programId_forCME);
+
+            String selected_site = (String) request.getParameter("site");
+            if (selected_site != null) {
+                session.setAttribute("site_selected", (selected_site.equals("none") ? null : selected_site));
+            }
+            LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+            String curUser_providerno = loggedInInfo.getLoggedInProviderNo();
+            String ticklerforproviderno = request.getParameter("ticklerforproviderno");
+            UserPropertyDAO propDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
+            UserProperty prop = propDao.getProp(curUser_providerno, UserProperty.PROVIDER_FOR_TICKLER_WARNING);
+            if (prop == null) {
+                prop = new UserProperty();
+                prop.setProviderNo(curUser_providerno);
+                prop.setName(UserProperty.PROVIDER_FOR_TICKLER_WARNING);
+            }
+            prop.setValue(ticklerforproviderno);
+            propDao.saveProp(prop);
+
+            ProviderPreference providerPreference = ProviderPreferencesUIBean.updateOrCreateProviderPreferences(request);
+            ProviderPropertyAction.updateOrCreateProviderProperties(request);
+
+            //---
+            session.setAttribute(SessionConstants.LOGGED_IN_PROVIDER_PREFERENCE, providerPreference);
+            session.setAttribute("default_servicetype", providerPreference.getDefaultServiceType());
+            session.setAttribute("newticklerwarningwindow", providerPreference.getNewTicklerWarningWindow());
+            session.setAttribute("default_pmm", providerPreference.getDefaultCaisiPmm());
+            session.setAttribute("caisiBillingPreferenceNotDelete", providerPreference.getDefaultDoNotDeleteBilling());
+            session.setAttribute("defaultDxCode", providerPreference.getDefaultDxCode());
+        %>
+        <script LANGUAGE="JavaScript">
+            self.opener.refresh1();
+            self.close();
+        </script>
+        <p></p>
+        <hr width="90%"/>
+        <form><input type="button"
+                     value=
+                         <fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnClose"/> onClick="self.close()">
+        </form>
+    </center>
+    </body>
+</html>

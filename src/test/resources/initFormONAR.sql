@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.41, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: oscar_eyeform
+-- Host: localhost    Database: oscar
 -- ------------------------------------------------------
 -- Server version	5.1.41-3ubuntu12.10
 

@@ -23,122 +23,115 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
-String newticklerwarningwindow=null;
-String ocanWarningWindow=null;
-String cbiReminderWindow=null;
+    String newticklerwarningwindow = null;
+    String cbiReminderWindow = null;
 
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()){
-	newticklerwarningwindow = (String) session.getAttribute("newticklerwarningwindow");
-}
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("OCAN_warning_window") ) {
-    ocanWarningWindow = (String)session.getAttribute("ocanWarningWindow");
-}
-
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW") ) {
-    cbiReminderWindow = (String)session.getAttribute("cbiReminderWindow");
-}
+    if (ca.openosp.openo.commn.IsPropertiesOn.isCaisiEnable() && ca.openosp.openo.commn.IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW")) {
+        cbiReminderWindow = (String) session.getAttribute("cbiReminderWindow");
+    }
 
 %>
 function storeApptNo(apptNo) {
-	var url = "storeApptInSession.jsp?appointment_no="+apptNo;
-	new Ajax.Request(url, {method:'get'});
+var url = "storeApptInSession.jsp?appointment_no="+apptNo;
+new Ajax.Request(url, {method:'get'});
 }
 
 function getElementsByClass(searchClass,node,tag) {
-        var classElements = new Array();
-        if ( node == null )
-                node = document;
-        if ( tag == null )
-                tag = '*';
-        var els = document.getElementsByTagName(tag);
-        var elsLen = els.length;
-        var pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
-        for (i = 0, j = 0; i < elsLen; i++) {
-                if ( pattern.test(els[i].className) ) {
-                        classElements[j] = els[i];
-                        j++;
-                }
-        }
-        return classElements;
+var classElements = new Array();
+if ( node == null )
+node = document;
+if ( tag == null )
+tag = '*';
+var els = document.getElementsByTagName(tag);
+var elsLen = els.length;
+var pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)");
+for (i = 0, j = 0; i < elsLen; i++) {
+if ( pattern.test(els[i].className) ) {
+classElements[j] = els[i];
+j++;
+}
+}
+return classElements;
 }
 
 jQuery("document").ready(function(){
-    setDefaultReasonView();
+setDefaultReasonView();
 })
 
 function setDefaultReasonView() {
-    console.log(localStorage);
-    let currentDefault = jQuery("#hideReason").val();
-    console.log("Show all reasons: " + currentDefault);
+console.log(localStorage);
+let currentDefault = jQuery("#hideReason").val();
+console.log("Show all reasons: " + currentDefault);
 
-    // True to show the reason. Default is to hide.
-    if(currentDefault === "true") {
-        jQuery("span").removeClass("hideReason");
-    }
-
-    // toggle reason views for each of the provider preferences.
-    for( var i = 0; i < localStorage.length; i++ ) {
-        var key = localStorage.key(i);
-        var value = localStorage.getItem(key);
-
-        // If true show the reason. If false hide the reason
-        if(value === "false") {
-            jQuery(key).addClass("hideReason");
-        }
-        if (value === "true"){
-            jQuery(key).removeClass("hideReason");
-        }
-    }
-
-    jQuery(".hideReason").hide();
+// True to show the reason. Default is to hide.
+if(currentDefault === "true") {
+jQuery("span").removeClass("hideReason");
 }
 
-function toggleReason( providerNo ) { 
-	var id = ".reason_" + providerNo;
-    jQuery( id ).toggle();
-    var isVisible = jQuery( id ).is( ":visible" );
-    console.log("ID: " + id + " Is Visible: " + isVisible);
-    localStorage.setItem( id, isVisible);
+// toggle reason views for each of the provider preferences.
+for( var i = 0; i < localStorage.length; i++ ) {
+var key = localStorage.key(i);
+var value = localStorage.getItem(key);
+
+// If true show the reason. If false hide the reason
+if(value === "false") {
+jQuery(key).addClass("hideReason");
 }
-    
+if (value === "true"){
+jQuery(key).removeClass("hideReason");
+}
+}
+
+jQuery(".hideReason").hide();
+}
+
+function toggleReason(event, providerNo) {
+    event.preventDefault();
+    var id = ".reason_" + providerNo;
+    jQuery(id).toggle();
+    var isVisible = jQuery(id).is(":visible");
+    var storageKey = "reason_" + providerNo;
+    localStorage.setItem(storageKey, isVisible);
+}
+
 
 function confirmPopupPage(height, width, queryString, doConfirm, allowDay, allowWeek){
-        if (doConfirm == "Yes") {
-                if (confirm("<bean:message key="provider.appointmentProviderAdminDay.confirmBooking"/>")){
-                 popupPage(height, width, queryString);
-                }
-        }
-        else if (doConfirm == "Day"){
-                if (allowDay == "No") {
-                        alert("<bean:message key="provider.appointmentProviderAdminDay.sameDay"/>");
-                }
-                else {
-                        popupPage(height, width, queryString);
-                }
-        }
-        else if (doConfirm == "Wk"){
-                if (allowWeek == "No") {
-                        alert("<bean:message key="provider.appointmentProviderAdminDay.sameWeek"/>");
-                }
-                else {
-                        popupPage2(queryString, 'appointment', height, width);
-                }
-        }
-        else if( doConfirm == "Onc" ) {
-        	if( allowDay == "No" ) {
-        		if( confirm("This is an On Call Urgent appointment.  Are you sure you want to book?") ) {
-        			popupPage(height, width, queryString);
-        		}
-        	}
-        	else {
-        		popupPage2(queryString, 'appointment', height, width);
-        	}
-        }
-        else {
-                popupPage2(queryString, 'appointment', height, width);
-        }
+if (doConfirm == "Yes") {
+if (confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.confirmBooking"/>")){
+popupPage(height, width, queryString);
+}
+}
+else if (doConfirm == "Day"){
+if (allowDay == "No") {
+alert("<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.sameDay"/>");
+}
+else {
+popupPage(height, width, queryString);
+}
+}
+else if (doConfirm == "Wk"){
+if (allowWeek == "No") {
+alert("<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.sameWeek"/>");
+}
+else {
+popupPage2(queryString, 'appointment', height, width);
+}
+}
+else if( doConfirm == "Onc" ) {
+if( allowDay == "No" ) {
+if( confirm("This is an On Call Urgent appointment. Are you sure you want to book?") ) {
+popupPage(height, width, queryString);
+}
+}
+else {
+popupPage2(queryString, 'appointment', height, width);
+}
+}
+else {
+popupPage2(queryString, 'appointment', height, width);
+}
 }
 
 function setfocus() {
@@ -148,7 +141,7 @@ this.focus();
 function popupPage(vheight,vwidth,varpage) {
 var page = "" + varpage;
 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
-var popup=window.open(page, "<bean:message key="provider.appointmentProviderAdminDay.apptProvider"/>", windowprops);
+var popup=window.open(page, "<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.apptProvider"/>", windowprops);
 if (popup != null) {
 if (popup.opener == null) {
 popup.opener = self;
@@ -158,43 +151,45 @@ popup.focus();
 }
 
 function popUpEncounter(vheight,vwidth,varpage) {
-   var page = "" + varpage;
-    windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
-    var popup=window.open(page, "Encounter", windowprops);
+var page = "" + varpage;
+windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
+var popup=window.open(page, "Encounter", windowprops);
 
-    if (popup != null) {
-    if (popup.opener == null) {
-        popup.opener = self;
-    }
-        popup.focus();
-    }
+if (popup != null) {
+if (popup.opener == null) {
+popup.opener = self;
+}
+popup.focus();
+}
 }
 
 function popupPageOfChangePassword(){
-<%Integer ed;
-	String expired_days="";
-	if(session.getAttribute("expired_days")!=null){
-		expired_days = (String)session.getAttribute("expired_days");
-	}
-	if(!(expired_days.equals(" ")||expired_days.equals("")||expired_days==null)) {
-		//javascript%>
+<%
+    Integer ed;
+    String expired_days = "";
+    if (session.getAttribute("expired_days") != null) {
+        expired_days = (String) session.getAttribute("expired_days");
+    }
+    if (!(expired_days.equals(" ") || expired_days.equals("") || expired_days == null)) {
+        //javascript
+%>
 
 window.open("changePassword.jsp","changePassword","resizable=yes,scrollbars=yes,width=400,height=300");
 changePassword.moveTo(0,0);
 <%}%>
 }
 function popupInboxManager(varpage, height = 700, width = 1215) {
-    var page = "" + varpage;
-    var windowname="apptProviderInbox";
+var page = "" + varpage;
+var windowname="apptProviderInbox";
     windowprops = "height=" + height + ",width=" + width + ",location=no,"
-        + "scrollbars=yes,menubars=no,toolbars=no,resizable=yes,top=10,left=0";
-    var popup = window.open(page, windowname, windowprops);
-    if (popup != null) {
-        if (popup.opener == null) {
-            popup.opener = self;
-        }
-        popup.focus();
-    }
++ "scrollbars=yes,menubars=no,toolbars=no,resizable=yes,top=10,left=0";
+var popup = window.open(page, windowname, windowprops);
+if (popup != null) {
+if (popup.opener == null) {
+popup.opener = self;
+}
+popup.focus();
+}
 }
 
 function popupPage2(varpage) {
@@ -208,25 +203,25 @@ popupPage2(varpage, windowname, 700, 1024);
 function popupPage2(varpage, windowname, vheight, vwidth) {
 // Provide default values for windowname, vheight, and vwidth incase popupPage2
 // is called with only 1 or 2 arguments (must always specify varpage)
-windowname  = typeof(windowname)!= 'undefined' ? windowname : 'apptProviderSearch';
-vheight     = typeof(vheight)   != 'undefined' ? vheight : '700px';
-vwidth      = typeof(vwidth)    != 'undefined' ? vwidth : '1024px';
+windowname = typeof(windowname)!= 'undefined' ? windowname : 'apptProviderSearch';
+vheight = typeof(vheight) != 'undefined' ? vheight : '700px';
+vwidth = typeof(vwidth) != 'undefined' ? vwidth : '1024px';
 var page = "" + varpage;
 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=50,screenY=50,top=0,left=0";
 var popup = window.open(page, windowname, windowprops);
 if (popup != null) {
-	if (popup.opener == null) {
-  		popup.opener = self;
-	}
-	popup.focus();
-	}
+if (popup.opener == null) {
+popup.opener = self;
+}
+popup.focus();
+}
 }
 
-<!--oscarMessenger code block-->
+<!--messenger code block-->
 function popupOscarRx(vheight,vwidth,varpage) {
 var page = varpage;
 windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
-var popup=window.open(varpage, "<bean:message key="global.oscarRx"/>_appt", windowprops);
+var popup=window.open(varpage, "<fmt:setBundle basename="oscarResources"/><fmt:message key="global.oscarRx"/>_appt", windowprops);
 if (popup != null) {
 if (popup.opener == null) {
 popup.opener = self;
@@ -236,13 +231,13 @@ popup.focus();
 }
 
 function popupWithApptNo(vheight,vwidth,varpage,name,apptNo) {
-	if (apptNo) storeApptNo(apptNo);
-	if (name=='master')
-		popup(vheight,vwidth,varpage,name);
-	else if (name=='encounter')
-		popup(vheight, vwidth, varpage, name);
-	else
-		popupOscarRx(vheight,vwidth,varpage);
+if (apptNo) storeApptNo(apptNo);
+if (name=='master')
+popup(vheight,vwidth,varpage,name);
+else if (name=='encounter')
+popup(vheight, vwidth, varpage, name);
+else
+popupOscarRx(vheight,vwidth,varpage);
 }
 
 
@@ -260,48 +255,44 @@ document.location.reload();
 }
 
 function onUnbilled(url) {
-if(confirm("<bean:message key="provider.appointmentProviderAdminDay.onUnbilled"/>")) {
+if(confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="provider.appointmentProviderAdminDay.onUnbilled"/>")) {
 popupPage(700,720, url);
 }
 }
 
 function onUpdatebill(url) {
-    popupPage(700,720, url);
+popupPage(700,720, url);
 }
 
 //popup a new tickler warning window
 function load() {
-	var ocan = "<%=ocanWarningWindow%>";
-	if(ocan!="null" && cbi!="") {
-		alert(ocan);
-	}
-	var cbi = "<%=cbiReminderWindow%>";
-	if(cbi!="null" && cbi!="") {
-		alert(cbi);
-		<%request.getSession().setAttribute("cbiReminderWindow", "null");%>
-	}
-	
-	if ("<%=newticklerwarningwindow%>"=="enabled") {
-		if (IsPopupBlocker()) {
-		    alert("You have a popup blocker, so you can not see the new tickler warning window. Please disable the pop blocker in your google bar, yahoo bar or IE ...");
-		} else{
-				var pu=window.open("../UnreadTickler.do",'viewUnreadTickler',"height=120,width=250,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=500,left=700");
-				if(window.focus)
-					pu.focus();
-			}
-	}
+var cbi = "<%=cbiReminderWindow%>";
+if(cbi!="null" && cbi!="") {
+alert(cbi);
+<%request.getSession().setAttribute("cbiReminderWindow", "null");%>
+}
 
-	popupPageOfChangePassword();
-	refreshAllTabAlerts();
+if ("<%=newticklerwarningwindow%>"=="enabled") {
+if (IsPopupBlocker()) {
+alert("You have a popup blocker, so you can not see the new tickler warning window. Please disable the pop blocker in your google bar, yahoo bar or IE ...");
+} else{
+var pu=window.open("<%=request.getContextPath()%>/UnreadTickler.do",'viewUnreadTickler',"height=120,width=250,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=500,left=700");
+if(window.focus)
+pu.focus();
+}
+}
+
+popupPageOfChangePassword();
+refreshAllTabAlerts();
 }
 
 function IsPopupBlocker() {
 var oWin = window.open("","testpopupblocker","width=100,height=50,top=5000,left=5000");
 if (oWin==null || typeof(oWin)=="undefined") {
-	return true;
+return true;
 } else {
-	oWin.close();
-	return false;
+oWin.close();
+return false;
 }
 }
 
@@ -319,46 +310,46 @@ setTimeout("refreshTabAlerts('"+id+"')", 10);
 }
 
 function refreshTabAlerts(id) {
-    var url = "../provider/tabAlertsRefresh.jsp";
-    var pars = "id=" + id;
-    jQuery.ajax({
-        url: url,
-        type: "get",
-        dataType: "html",
-        data: pars,
-        success: function(returnData){
-            jQuery("#" + id).html(returnData);
-        },
-        error: function(e){
-            console.log(e);
-        }
-    });
+var url = "<%= request.getContextPath() %>/provider/tabAlertsRefresh.jsp";
+var pars = "id=" + id;
+jQuery.ajax({
+url: url,
+type: "get",
+dataType: "html",
+data: pars,
+success: function(returnData){
+jQuery("#" + id).html(returnData);
+},
+error: function(e){
+console.log(e);
+}
+});
 }
 
 function refreshSameLoc(mypage) {
- var X =  (window.pageXOffset?window.pageXOffset:window.document.body.scrollLeft);
- var Y =  (window.pageYOffset?window.pageYOffset:window.document.body.scrollTop);
- window.location.href = mypage + "&x=" + X + "&y=" + Y;
+var X = (window.pageXOffset?window.pageXOffset:window.document.body.scrollLeft);
+var Y = (window.pageYOffset?window.pageYOffset:window.document.body.scrollTop);
+window.location.href = mypage + "&x=" + X + "&y=" + Y;
 }
 
 function scrollOnLoad() {
-  var X = getParameter("x");
-  var Y = getParameter("y");
-  if(X!=null && Y!=null) {
-    window.scrollTo(parseInt(X),parseInt(Y));
-  }
+var X = getParameter("x");
+var Y = getParameter("y");
+if(X!=null && Y!=null) {
+window.scrollTo(parseInt(X),parseInt(Y));
+}
 }
 
 function getParameter(paramName) {
-  var searchString = window.location.search.substring(1);
-  var i,val;
-  var params = searchString.split("&");
+var searchString = window.location.search.substring(1);
+var i,val;
+var params = searchString.split("&");
 
-  for (i=0;i<params.length;i++) {
-    val = params[i].split("=");
-    if (val[0] == paramName) {
-      return val[1];
-    }
-  }
-  return null;
+for (i=0;i<params.length;i++) {
+val = params[i].split("=");
+if (val[0] == paramName) {
+return val[1];
+}
+}
+return null;
 }

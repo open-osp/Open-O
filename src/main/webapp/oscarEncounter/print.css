@@ -22,17 +22,17 @@
  * Ontario, Canada 
  */
 .header {
-	display: none;
+    display: none;
 }
 
 .header INPUT {
-	display: none;
+    display: none;
 }
 
 .header A {
-	display: none;
+    display: none;
 }
 
 a.hideShow {
-	display: none;
+    display: none;
 }

@@ -24,148 +24,149 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title></title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title></title>
 </head>
 <body>
-<%@ page import="oscar.*,java.text.*, java.util.*"%>
-<jsp:useBean id="billingItem" scope="page" class="oscar.BillingItemBean" />
-<jsp:useBean id="billingBean" scope="session" class="oscar.BillingBean" />
-<jsp:useBean id="billingDataBean" class="oscar.BillingDataBean" scope="session" />
-<jsp:useBean id="billingPatientDataBean" class="oscar.BillingPatientDataBean" scope="session" />
+<%@ page import="ca.openosp.*,java.text.*, java.util.*" %>
+<jsp:useBean id="billingItem" scope="page" class="ca.openosp.BillingItemBean"/>
+<jsp:useBean id="billingBean" scope="session" class="ca.openosp.BillingBean"/>
+<jsp:useBean id="billingDataBean" class="ca.openosp.BillingDataBean" scope="session"/>
+<jsp:useBean id="billingPatientDataBean" class="ca.openosp.BillingPatientDataBean" scope="session"/>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.billing.CA.model.BillingDetail"%>
-<%@ page import="org.oscarehr.billing.CA.dao.BillingDetailDao"%>
-<%@ page import="org.oscarehr.common.model.RecycleBin" %>
-<%@ page import="org.oscarehr.common.dao.RecycleBinDao" %>
-<%@ page import="org.oscarehr.common.model.Billing" %>
-<%@ page import="org.oscarehr.common.dao.BillingDao" %>
-<%@ page import="oscar.util.ConversionUtils" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.billing.CA.model.BillingDetail" %>
+<%@ page import="ca.openosp.openo.billing.CA.dao.BillingDetailDao" %>
+<%@ page import="ca.openosp.openo.commn.model.RecycleBin" %>
+<%@ page import="ca.openosp.openo.commn.dao.RecycleBinDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Billing" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@ page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@ page import="ca.openosp.BillingItemBean" %>
+<%@ page import="ca.openosp.MyDateFormat" %>
 <%
-	BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
-	RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    BillingDetailDao billingDetailDao = SpringUtils.getBean(BillingDetailDao.class);
+    RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
 %>
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">Billing
-		Correction Successfully Done</font></th>
-	</tr>
+    <tr bgcolor="#486ebd">
+        <th align=CENTER NOWRAP><font face="Helvetica" color="#FFFFFF">Billing
+            Correction Successfully Done</font></th>
+    </tr>
 </table>
 <%
 
- try {
+    try {
 
- // BillingDataBean billingDataBean = new BillingDataBean();
- java.lang.String _p0_0 = billingDataBean.getUpdate_date(); //throws an exception if empty
- java.lang.String _p0_1 = billingDataBean.getBilling_no(); //throws an exception if empty
- java.lang.String _p0_2 = billingDataBean.getHin(); //throws an exception if empty
- java.lang.String _p0_3 = billingDataBean.getVisittype(); //throws an exception if empty
- java.lang.String _p0_4 = billingDataBean.getVisitdate(); //throws an exception if empty
- java.lang.String _p0_5 = billingDataBean.getStatus(); //throws an exception if empty
- java.lang.String _p0_6 = billingDataBean.getDob(); //throws an exception if empty
- java.lang.String _p0_7 = billingDataBean.getProviderNo(); //throws an exception if empty
- java.lang.String _p0_8 = billingDataBean.getClinic_ref_code(); //throws an exception if empty
- java.lang.String _p0_9 = billingDataBean.getBilling_date(); //throws an exception if empty
- java.lang.String _p0_10 = billingPatientDataBean.getDemoname(); //throws an exception if empty
- java.lang.String _p0_11 = billingPatientDataBean.getAddress(); //throws an exception if empty
- java.lang.String _p0_12 = billingPatientDataBean.getProvince(); //throws an exception if empty
- java.lang.String _p0_13 = billingPatientDataBean.getCity(); //throws an exception if empty
- java.lang.String _p0_14 = billingPatientDataBean.getPostal(); //throws an exception if empty
- java.lang.String _p0_15 = billingPatientDataBean.getSex(); //throws an exception if empty
-  java.lang.String _p0_16 = billingDataBean.getContent(); //throws an exception if empty
-  java.lang.String _p0_17 = "";
-   java.lang.String _p0_18 = billingDataBean.getTotal(); //throws an exception if empty
-   java.lang.String _p0_19 = "";
+        // BillingDataBean billingDataBean = new BillingDataBean();
+        java.lang.String _p0_0 = billingDataBean.getUpdate_date(); //throws an exception if empty
+        java.lang.String _p0_1 = billingDataBean.getBilling_no(); //throws an exception if empty
+        java.lang.String _p0_2 = billingDataBean.getHin(); //throws an exception if empty
+        java.lang.String _p0_3 = billingDataBean.getVisittype(); //throws an exception if empty
+        java.lang.String _p0_4 = billingDataBean.getVisitdate(); //throws an exception if empty
+        java.lang.String _p0_5 = billingDataBean.getStatus(); //throws an exception if empty
+        java.lang.String _p0_6 = billingDataBean.getDob(); //throws an exception if empty
+        java.lang.String _p0_7 = billingDataBean.getProviderNo(); //throws an exception if empty
+        java.lang.String _p0_8 = billingDataBean.getClinic_ref_code(); //throws an exception if empty
+        java.lang.String _p0_9 = billingDataBean.getBilling_date(); //throws an exception if empty
+        java.lang.String _p0_10 = billingPatientDataBean.getDemoname(); //throws an exception if empty
+        java.lang.String _p0_11 = billingPatientDataBean.getAddress(); //throws an exception if empty
+        java.lang.String _p0_12 = billingPatientDataBean.getProvince(); //throws an exception if empty
+        java.lang.String _p0_13 = billingPatientDataBean.getCity(); //throws an exception if empty
+        java.lang.String _p0_14 = billingPatientDataBean.getPostal(); //throws an exception if empty
+        java.lang.String _p0_15 = billingPatientDataBean.getSex(); //throws an exception if empty
+        java.lang.String _p0_16 = billingDataBean.getContent(); //throws an exception if empty
+        java.lang.String _p0_17 = "";
+        java.lang.String _p0_18 = billingDataBean.getTotal(); //throws an exception if empty
+        java.lang.String _p0_19 = "";
 
-  GregorianCalendar now=new GregorianCalendar();
-	RecycleBin recycleBin = new RecycleBin();
-	recycleBin.setProviderNo((String) session.getAttribute("user"));
-	recycleBin.setTableName("billing");
-	recycleBin.setTableContent(_p0_16);
-	recycleBin.setUpdateDateTime(new java.util.Date());
-	recycleBinDao.persist(recycleBin);
+        GregorianCalendar now = new GregorianCalendar();
+        RecycleBin recycleBin = new RecycleBin();
+        recycleBin.setProviderNo((String) session.getAttribute("user"));
+        recycleBin.setTableName("billing");
+        recycleBin.setTableContent(_p0_16);
+        recycleBin.setUpdateDateTime(new java.util.Date());
+        recycleBinDao.persist(recycleBin);
 
-	int rowsAffected2 = 0;
-	for(BillingDetail b:billingDetailDao.findByBillingNo(Integer.parseInt(_p0_1))) {
-		b.setStatus("D");
-		billingDetailDao.merge(b);
-		rowsAffected2++;
-	}
-	  
-	  Billing b = billingDao.find(Integer.parseInt(_p0_1));
-	  if(b != null) {
-		 b.setHin(_p0_2);
-		 b.setDob(_p0_6);
-		 b.setVisitType(_p0_3);
-		 b.setVisitDate(ConversionUtils.fromDateString(_p0_4));
-		 b.setClinicRefCode(_p0_8);
-		 b.setProviderNo(_p0_7);
-		 b.setStatus(_p0_5);
-		 b.setUpdateDate(ConversionUtils.fromDateString(now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH)));
-		 b.setTotal(_p0_18);
-		 b.setContent(_p0_16);
-		  billingDao.merge(b);
-	  }
+        int rowsAffected2 = 0;
+        for (BillingDetail b : billingDetailDao.findByBillingNo(Integer.parseInt(_p0_1))) {
+            b.setStatus("D");
+            billingDetailDao.merge(b);
+            rowsAffected2++;
+        }
 
- %>
+        Billing b = billingDao.find(Integer.parseInt(_p0_1));
+        if (b != null) {
+            b.setHin(_p0_2);
+            b.setDob(_p0_6);
+            b.setVisitType(_p0_3);
+            b.setVisitDate(ConversionUtils.fromDateString(_p0_4));
+            b.setClinicRefCode(_p0_8);
+            b.setProviderNo(_p0_7);
+            b.setStatus(_p0_5);
+            b.setUpdateDate(ConversionUtils.fromDateString(now.get(Calendar.YEAR) + "-" + (now.get(Calendar.MONTH) + 1) + "-" + now.get(Calendar.DAY_OF_MONTH)));
+            b.setTotal(_p0_18);
+            b.setContent(_p0_16);
+            billingDao.merge(b);
+        }
+
+%>
 
 <%
     int recordAffected = 0;
-    ListIterator it	=	billingBean.getBillingItems().listIterator();
+    ListIterator it = billingBean.getBillingItems().listIterator();
 
-	while (it.hasNext()) {
-    billingItem = (BillingItemBean)it.next();
+    while (it.hasNext()) {
+        billingItem = (BillingItemBean) it.next();
 
-	   BillingDetail bd = new BillingDetail();
-	   bd.setBillingNo(Integer.parseInt(_p0_1));
-	   bd.setServiceCode(billingItem.getService_code());
-	   bd.setServiceDesc(billingItem.getDesc());
-	   bd.setBillingAmount(billingItem.getService_value());
-	   bd.setDiagnosticCode(billingItem.getDiag_code());
-	   bd.setAppointmentDate(MyDateFormat.getSysDate(request.getParameter("_p0_9")));
-	   bd.setStatus(request.getParameter("_p0_5"));
-	   bd.setBillingUnit(billingItem.getQuantity());
-	   billingDetailDao.persist(bd);
+        BillingDetail bd = new BillingDetail();
+        bd.setBillingNo(Integer.parseInt(_p0_1));
+        bd.setServiceCode(billingItem.getService_code());
+        bd.setServiceDesc(billingItem.getDesc());
+        bd.setBillingAmount(billingItem.getService_value());
+        bd.setDiagnosticCode(billingItem.getDiag_code());
+        bd.setAppointmentDate(MyDateFormat.getSysDate(request.getParameter("_p0_9")));
+        bd.setStatus(request.getParameter("_p0_5"));
+        bd.setBillingUnit(billingItem.getQuantity());
+        billingDetailDao.persist(bd);
 
-   %>
-
-
+%>
 
 
 <%
-  }
-  %>
+    }
+%>
 
 <%
-  }
-   catch (java.lang.ArrayIndexOutOfBoundsException _e0) {
- }%>
+    } catch (java.lang.ArrayIndexOutOfBoundsException _e0) {
+    }%>
 
 <form action="billingCorrection.jsp"><input type="hidden"
-	name="billing_no" value=""> <input type="submit"
-	value="Correct Another One" name="submit"> <input type="button"
-	value="Successful - Close this window" onClick="window.close()">
+                                            name="billing_no" value=""> <input type="submit"
+                                                                               value="Correct Another One"
+                                                                               name="submit"> <input type="button"
+                                                                                                     value="Successful - Close this window"
+                                                                                                     onClick="window.close()">
 </form>
 </body>
 </html>

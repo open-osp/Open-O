@@ -24,16 +24,13 @@
 
 --%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="oscar.oscarRx.data.RxDrugData,java.util.*" %>
-<%@page import="java.text.SimpleDateFormat" %>
-<%@page import="java.util.Calendar" %>
-<%@page import="oscar.oscarRx.data.*" %>
-<%@page import="oscar.oscarRx.util.*" %>
-<%@page import="oscar.OscarProperties"%>
-<%@ page import="org.oscarehr.managers.CodingSystemManager" %>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
+<%@page import="java.util.*" %>
+<%@page import="ca.openosp.openo.rx.util.*" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -43,7 +40,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
 	if(!authed) {

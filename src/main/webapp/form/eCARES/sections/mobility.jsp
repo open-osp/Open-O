@@ -26,8 +26,9 @@
 <div class="flex">
     <div class="mw-9">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_mobility" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_mobility" data-score="1">
         <strong>Mobility</strong>
     </div>
 
@@ -35,63 +36,73 @@
         <div class="flex-1">
             <div class="flex">
                 <span class="mandatory tt font-bold inline-block pl-1 w-10" data-names="ind,asst,cant"
-                    data-toggle="tooltip" title="Walk Outside">
+                      data-toggle="tooltip" title="Walk Outside">
                     <span class="highlight" data-field-name="walk_outside">Walk Outside</span>
                 </span>
 
                 <label class="flex items-center font-normal"><input type="radio" name="walk_outside" class="m-0"
-                        autocomplete="off" value="ind" data-score="0">
+                                                                    autocomplete="off" value="ind" data-score="0">
                     <span class="pl-1">IND</span></label>
 
                 <label class="font-normal pl-4 flex items-center"><input type="radio" name="walk_outside" class="m-0"
-                        value="asst" autocomplete="off" data-score="0.5">
+                                                                         value="asst" autocomplete="off"
+                                                                         data-score="0.5">
                     <span class="pl-1">ASST</span></label>
 
                 <label class="font-normal pl-4 flex items-center"><input type="radio" name="walk_outside" class="m-0"
-                        value="can't" autocomplete="off" data-score="1">
+                                                                         value="can't" autocomplete="off"
+                                                                         data-score="1">
                     <span class="pl-1">Can't</span></label>
             </div>
             <div class="flex"><span class="mandatory tt font-bold pl-1 w-10" data-names="ind,stand_by,asst,dep"
-                    data-toggle="tooltip" title="Transfers">
+                                    data-toggle="tooltip" title="Transfers">
                     <span class="highlight" data-field-name="transfers">Transfers</span>
                 </span>
 
-                <label class="font-normal flex items-center"><input type="radio" name="transfers" class="m-0" autocomplete="off"
-                        value="ind" data-score="0">
+                <label class="font-normal flex items-center"><input type="radio" name="transfers" class="m-0"
+                                                                    autocomplete="off"
+                                                                    value="ind" data-score="0">
                     <span class="pl-1">IND</span></label>
 
-                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0" value="stand by"
-                        autocomplete="off" data-score="0.33">
+                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0"
+                                                                         value="stand by"
+                                                                         autocomplete="off" data-score="0.33">
                     <span class="pl-1">Stand by</span></label>
 
-                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0" value="asst"
-                        autocomplete="off" data-score="0.66">
+                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0"
+                                                                         value="asst"
+                                                                         autocomplete="off" data-score="0.66">
                     <span class="pl-1">ASST</span></label>
 
-                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0" autocomplete="off"
-                        value="dep" data-score="1">
+                <label class="font-normal pl-2 flex items-center"><input type="radio" name="transfers" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="dep" data-score="1">
                     <span class="pl-1">DEP</span></label>
             </div>
             <div class="flex">
                 <span class="mandatory tt font-bold pl-1 w-10" data-names="none,case,walker,chair" data-toggle="tooltip"
-                    title="Walking Aid">
+                      title="Walking Aid">
                     <span class="highlight" data-field-name="aid">Aid</span>
                 </span>
 
-                <label class="font-normal flex items-center"><input type="radio" name="aid" class="m-0" autocomplete="off" value="none"
-                        data-score="0">
+                <label class="font-normal flex items-center"><input type="radio" name="aid" class="m-0"
+                                                                    autocomplete="off" value="none"
+                                                                    data-score="0">
                     <span class="pl-1">None</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0" autocomplete="off"
-                        value="cane" data-score="0.33">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="cane" data-score="0.33">
                     <span class="pl-1">Cane</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0" autocomplete="off"
-                        value="walker" data-score="0.66">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="walker" data-score="0.66">
                     <span class="pl-1">Walker</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0" autocomplete="off"
-                        value="chair" data-score="1">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="aid" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="chair" data-score="1">
                     <span class="pl-1">Chair</span></label>
             </div>
 
@@ -101,20 +112,24 @@
                     <span class="highlight" data-field-name="walking">Walking</span>
                 </span>
 
-                <label class="font-normal flex items-center"><input type="radio" name="walking" class="m-0" autocomplete="off"
-                        value="ind" data-score="0">
+                <label class="font-normal flex items-center"><input type="radio" name="walking" class="m-0"
+                                                                    autocomplete="off"
+                                                                    value="ind" data-score="0">
                     <span class="pl-1">IND</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0" autocomplete="off"
-                        value="slow" data-score="0.33">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="slow" data-score="0.33">
                     <span class="pl-1">SLOW</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0" autocomplete="off"
-                        value="asst" data-score="0.66">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="asst" data-score="0.66">
                     <span class="pl-1">ASST</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0" autocomplete="off"
-                        value="dep" data-score="1">
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="walking" class="m-0"
+                                                                         autocomplete="off"
+                                                                         value="dep" data-score="1">
                     <span class="pl-1">DEP</span></label>
             </div>
             <div class="flex">
@@ -122,33 +137,37 @@
                     <span class="highlight" data-field-name="bed">Bed</span>
                 </span>
 
-                <label class="font-normal flex items-center"><input type="radio" name="bed" class="m-0" autocomplete="off" value="ind"
-                        data-score="0">
+                <label class="font-normal flex items-center"><input type="radio" name="bed" class="m-0"
+                                                                    autocomplete="off" value="ind"
+                                                                    data-score="0">
                     <span class="pl-1">IND</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0" autocomplete="off" value="pull"
-                        data-score="0.33">
-                        <span class="pl-1">PULL</span></label>
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0"
+                                                                         autocomplete="off" value="pull"
+                                                                         data-score="0.33">
+                    <span class="pl-1">PULL</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0" autocomplete="off" value="asst"
-                        data-score="0.66">
-                        <span class="pl-1">ASST</span></label>
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0"
+                                                                         autocomplete="off" value="asst"
+                                                                         data-score="0.66">
+                    <span class="pl-1">ASST</span></label>
 
-                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0" autocomplete="off" value="dep"
-                        data-score="1">
-                        <span class="pl-1">DEP</span></label>
+                <label class="font-normal flex items-center pl-2"><input type="radio" name="bed" class="m-0"
+                                                                         autocomplete="off" value="dep"
+                                                                         data-score="1">
+                    <span class="pl-1">DEP</span></label>
             </div>
 
             <div class="flex">
                 <label for="five_times_sit_to_stand_time" class="tt font-normal" data-toggle="tooltip"
-                    title="Five Times Sit to Stand Score Time in Seconds">
+                       title="Five Times Sit to Stand Score Time in Seconds">
                     <span class="font-bold highlight" data-field-name="five_times_sit_to_stand_time">5TSTS Time:</span>
                 </label>
                 <input type="number" id="five_times_sit_to_stand_time" min="0" max="1000"
-                    name="five_times_sit_to_stand_time" class="h-si ecares-input" style="width:45px;">
+                       name="five_times_sit_to_stand_time" class="h-si ecares-input" style="width:45px;">
 
                 <label for="five_times_sit_to_stand_attempt" class="tt font-normal" data-toggle="tooltip"
-                    title="Five Times Sit to Stand Number Attempts">
+                       title="Five Times Sit to Stand Number Attempts">
                     <span class="highlight" data-field-name="five_times_sit_to_stand_attempt">5TSTS ATPT:</span>
                 </label>
 
@@ -163,18 +182,18 @@
                 </select>
 
                 <div class="tt control-label inline-block pl-1" data-toggle="tooltip"
-                    title="Able to cross arms in front">
+                     title="Able to cross arms in front">
                     CRS Arms
                 </div>
 
                 <div class=" ml-1 flex items-center">
                     <label class="font-normal flex items-center">
                         <input type="radio" name="five_times_sit_to_stand_crossed_arms" class="m-0" value="1"
-                            autocomplete="off">
+                               autocomplete="off">
                         <span class="pl-1">Y</span></label>
                     <label class="font-normal ml-1 flex items-center">
                         <input type="radio" name="five_times_sit_to_stand_crossed_arms" class="m-0" value="0"
-                            autocomplete="off">
+                               autocomplete="off">
                         <span class="pl-1">N</span></label>
                 </div>
             </div>

@@ -24,67 +24,76 @@
 
 --%>
 
-<%@page contentType="text/html"%>
-<%@ include file="/casemgmt/taglibs.jsp"%>
+<%@page contentType="text/html" %>
+<%@ include file="/casemgmt/taglibs.jsp" %>
 <%@page import="java.util.*" %>
+<%@ page import="java.util.ResourceBundle"%>
 <%
-if(session.getValue("user") == null)
-    response.sendRedirect("../logout.htm");
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.htm");
+
+    ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
+
+    String providertitle = (String) request.getAttribute("providertitle");
+    String providermsgPrefs = (String) request.getAttribute("providermsgPrefs");
+    String providermsgProvider = (String) request.getAttribute("providermsgProvider");
+    String providermsgEdit = (String) request.getAttribute("providermsgEdit");
+    String providermsgSuccess = (String) request.getAttribute("providermsgSuccess");
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
-<c:set var="ctx" value="${pageContext.request.contextPath}"	scope="request" />
-<html:html>
-	<head>
-		<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-		<html:base />
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<title><bean-el:message key="${providertitle}" /></title>
+"http://www.w3.org/TR/html4/loose.dtd">
+<c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title><%=bundle.getString(providertitle)%></title>
 
-		<link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
-		<script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"	type="text/javascript"></script>
-		<script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"	type="text/javascript"></script>
-	</head>
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+        <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
+        <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js" type="text/javascript"></script>
+    </head>
 
-<body class="BodyStyle" vlink="#0000FF">
+    <body class="BodyStyle" vlink="#0000FF">
 
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">
-			<bean-el:message key="${providermsgPrefs}" />
-		</td>
-		<td style="color: white" class="MainTableTopRowRightColumn">
-			<bean-el:message key="${providermsgProvider}" />
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn">&nbsp;</td>
-		<td class="MainTableRightColumn">
-		<%if( request.getAttribute("status") == null ){%>
-			<bean-el:message key="${providermsgEdit}" />
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn">
+                <%=bundle.getString(providermsgPrefs)%>
+            </td>
+            <td style="color: white" class="MainTableTopRowRightColumn">
+                <%=bundle.getString(providermsgProvider)%>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn">&nbsp;</td>
+            <td class="MainTableRightColumn">
+                <%if (request.getAttribute("status") == null) {%>
+                <%=bundle.getString(providermsgEdit)%>
 
-            <html:form action="/setProviderStaleDate.do">
-				<input type="hidden" name="method" value="<c:out value="${method}"/>">
-				<br/>
-				Name: <html:text property="appointmentCardName.value" size="50"/>
-				<br/>
-				Phone: <html:text property="appointmentCardPhone.value" size="50"/>
-				<br/>
-                Fax: <html:text property="appointmentCardFax.value" size="50"/>
-                <br/>
-                <html:submit property="btnApply"/>
-			</html:form>
+                <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
+                    <input type="hidden" name="method" value="<c:out value="${method}"/>">
+                    <br/>
+                    Name: <input type="text" name="appointmentCardName.value" value="<c:out value='${name.value}'/>" size="50" />
+                    <br/>
+                    Phone: <input type="text" name="appointmentCardPhone.value" value="<c:out value='${phone.value}'/>" size="50" />
+                    <br/>
+                    Fax: <input type="text" name="appointmentCardFax.value" value="<c:out value='${fax.value}'/>" size="50" />
+                    <br/>
+                    <input type="submit" name="btnApply" value="Apply" />
+                </form>
 
-		<%}else {%>
-			<bean-el:message key="${providermsgSuccess}" /> <br>
-		<%}%>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+                <%} else {%>
+                <%=bundle.getString(providermsgSuccess)%> <br>
+                <%}%>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

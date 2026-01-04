@@ -12,16 +12,6 @@
   </properties>
 
 
-<distributionManagement>
-  <repository>
-    <id>local_repo</id>
-    <name>Repository Name</name>
-    <url>file:///home/marc/workspaces/born/oscar/local_repo</url>
-  </repository>
-</distributionManagement>
-
-
-
   <dependencies>
                 <dependency>
                         <groupId>org.apache.xmlbeans</groupId>

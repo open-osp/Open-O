@@ -24,50 +24,48 @@
 
 --%>
 
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,org.oscarehr.util.OntarioMD,java.util.*"%>
-<%@page import="org.springframework.web.context.WebApplicationContext,org.oscarehr.common.dao.*,org.oscarehr.common.model.*"%>
+<%@page import="org.springframework.web.context.support.WebApplicationContextUtils,ca.openosp.openo.utility.OntarioMD,java.util.*" %>
+<%@page import="org.springframework.web.context.WebApplicationContext,ca.openosp.openo.commn.dao.*,ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
 
 <%
 
     WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
     UserPropertyDAO userPropertyDAO = (UserPropertyDAO) ctx.getBean(UserPropertyDAO.class);
 
-    UserProperty prop = userPropertyDAO.getProp((String) session.getAttribute("user"),  UserProperty.MYDRUGREF_ID);
-    String mydrugrefid = prop == null ? null : prop.getValue();
-    if (mydrugrefid == null){mydrugrefid = "";}
 
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
-    <head>
-        <title>myDrugref login details</title>
+<head>
+    <title>Form Submit</title>
 
-    </head>
-    <body>
+</head>
+<body>
 
-<%@ include file="efmTopNav.jspf"%>
+<%@ include file="efmTopNav.jspf" %>
 
-         <div id="importDiv" class="well" >
+<div id="importDiv" class="well">
 
-<h3>Send to eForm Emporium</h3>
-            <center>
-            <form action="<%= request.getContextPath() %>/eform/manageEForm.do" method="POST" id="eformSendForm" >
-            <table style="text-align: center; border-collapse: collapse; border: 0px;">        
+    <h3>Send to eForm Emporium</h3>
+    <center>
+        <form action="<%= request.getContextPath() %>/eform/manageEForm.do" method="POST" id="eformSendForm">
+            <table style="text-align: center; border-collapse: collapse; border: 0px;">
                 <tr>
                     <td class="fieldLabel">Username:</td>
                     <td>
-                        <input name="username" type="text" value="<%=mydrugrefid%>"/>
+                        <input name="username" type="text" value=""/>
                         <input type="hidden" name="method" value="exportEFormSend"/>
-                        <input type="hidden" name="fid"    value="<%=request.getParameter("fid")%>"/>
+                        <input type="hidden" name="fid" value="<%=request.getParameter("fid")%>"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="fieldLabel">Password:</td>
                     <td><input name="password" type="password"/></td>
                 </tr>
-                 <tr>
+                <tr>
                     <td class="fieldLabel">Category:</td>
                     <td>
                         <select name="category">
@@ -88,21 +86,28 @@
                     </td>
                 </tr>
 
-                <tr><td colspan="2" style="text-align: left;"><input type="submit" name="subm" class="btn btn-primary" value="Send" onclick="this.value = 'Sending...'; this.disabled = true;"></td></tr>
-                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2" style="text-align: left;"><input type="submit" name="subm" class="btn btn-primary"
+                                                                     value="Send"
+                                                                     onclick="this.value = 'Sending...'; this.disabled = true;">
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
             </table>
-            </form>
-            </center>
-        </div>
-
-        <form action="<%= request.getContextPath() %>/eform/manageEForm.do" method="POST" >
-            <input type="hidden" name="method" value="exportEFormSend"/>
         </form>
+    </center>
+</div>
 
-<%@ include file="efmFooter.jspf"%>
+<form action="<%= request.getContextPath() %>/eform/manageEForm.do" method="POST">
+    <input type="hidden" name="method" value="exportEFormSend"/>
+</form>
+
+<%@ include file="efmFooter.jspf" %>
 
 <script>
-registerFormSubmit('eformSendForm', 'dynamic-content');
+    registerFormSubmit('eformSendForm', 'dynamic-content');
 </script>
-    </body>
+</body>
 </html>

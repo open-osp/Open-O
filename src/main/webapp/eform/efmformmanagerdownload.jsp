@@ -23,119 +23,132 @@
     Ontario, Canada
 
 --%>
-<%  
-  String deepColor = "#CCCCFF" , weakColor = "#EEEEFF" ;
-  Vector<Hashtable> eforms = getEforms();
-  boolean gridlayout = false;
-  if(request.getParameter("grid") != null && request.getParameter("grid").equals("true")){
-     gridlayout = true;
-  }
+<%
+    String deepColor = "#CCCCFF", weakColor = "#EEEEFF";
+    Vector<Hashtable> eforms = getEforms();
+    boolean gridlayout = false;
+    if (request.getParameter("grid") != null && request.getParameter("grid").equals("true")) {
+        gridlayout = true;
+    }
 %>
-<%@ page import="oscar.eform.data.*, oscar.eform.*, java.util.*, oscar.util.*"%>
-<%@ page import="java.util.*,oscar.oscarRx.data.*,oscar.oscarRx.pageUtil.*,java.io.*,org.apache.xmlrpc.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@page import="org.oscarehr.util.MiscUtils"%><html:html lang="en">
-<head>
-    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-    <title><bean:message key="eform.download.msgDownloadEform" /></title>
-    <link rel="stylesheet" href="../share/css/OscarStandardLayout.css">
-    <link rel="stylesheet" href="../share/css/eformStyle.css">
-    <link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-    <style type="text/css">
-        table.listing td {border: 1px solid white;}
-    </style>
-</head>
-<body>
-    <div style="background: #CCCCFF; width: 100%; text-align:center; font-family:Helvetica,sans-serif; "><bean:message key="eform.download.msgDownloadEform" /> <a href="efmformmanagerdownload.jsp?grid=<%=!gridlayout%>">grid</a></div>
+<%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.openo.eform.*, java.util.*, ca.openosp.openo.util.*" %>
+<%@ page import="java.util.*,ca.openosp.openo.rx.data.*,ca.openosp.openo.rx.pageUtil.*,java.io.*,org.apache.xmlrpc.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-    <% if(gridlayout){%>
-        <table class="listing" style="width:100%; background-color:#EEEEFF">
-            <tr >
-                <th><bean:message key="eform.download.msgName" /></th>
-                <th><bean:message key="eform.download.msgCreator" /></th>
-                <th><bean:message key="eform.download.msgCategory" /></th>
-                <th><bean:message key="eform.download.msgCreated" /></th>
-            </tr>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgDownloadEform"/></title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css">
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/eformStyle.css">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+        <style type="text/css">
+            table.listing td {
+                border: 1px solid white;
+            }
+        </style>
+    </head>
+    <body>
+    <div style="background: #CCCCFF; width: 100%; text-align:center; font-family:Helvetica,sans-serif; "><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgDownloadEform"/> <a href="efmformmanagerdownload.jsp?grid=<%=!gridlayout%>">grid</a>
+    </div>
 
-            <%
-            for (Hashtable ht: eforms){
-            %>
+    <% if (gridlayout) {%>
+    <table class="listing" style="width:100%; background-color:#EEEEFF">
+        <tr>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgName"/></th>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCreator"/></th>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCategory"/></th>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCreated"/></th>
+        </tr>
 
-            <tr>
-                <td><%=ht.get("name")%></td>
-                <td><%=ht.get("creator")%></td>
-                <td><%=ht.get("category")%></td>
-                <td><%=ht.get("created_at")%></td>
-                <td valign="middle">
-                    <form action="../eform/manageEForm.do" method="POST" >
-                           <input type="hidden" name="method" value="importEFormFromRemote"/>   <%--Look at just sending the filename from mydrugref  --%>
-                           <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
-                           <input type="submit"  value="<bean:message key="eform.download.btnLoadEform" />"/>
-                    </form>
-                </td>
-            </tr>
-            <%}%>
-        </table>
-    <%}else{   /*Because i can't decide which looks better */%>
+        <%
+            for (Hashtable ht : eforms) {
+        %>
+
+        <tr>
+            <td><%=ht.get("name")%>
+            </td>
+            <td><%=ht.get("creator")%>
+            </td>
+            <td><%=ht.get("category")%>
+            </td>
+            <td><%=ht.get("created_at")%>
+            </td>
+            <td valign="middle">
+                <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST">
+                    <input type="hidden" name="method"
+                           value="importEFormFromRemote"/>
+                    <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
+                    <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.btnLoadEform"/>"/>
+                </form>
+            </td>
+        </tr>
+        <%}%>
+    </table>
+    <%} else {   /*Because i can't decide which looks better */%>
 
     <%
 
-        for (Hashtable ht: eforms){
+        for (Hashtable ht : eforms) {
     %>
 
     <div style="background-color:#EEEEFF;margin-right:100px;margin-left:20px;margin-top:10px;padding-left:10px;padding-top:10px;padding-bottom:5px;border-bottom: 2px solid gray;border-right: 2px solid #999;border-top: 1px solid #CCC;border-left: 1px solid #CCC;">
         <table class="listing">
-            <tr >
-                <td><bean:message key="eform.download.msgName" />:</td>
-                <td><%=ht.get("name")%></td>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgName"/>:</td>
+                <td><%=ht.get("name")%>
+                </td>
             </tr>
             <tr>
-                <td><bean:message key="eform.download.msgCreator" />:</td>
-                <td> <%=ht.get("creator")%></td>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCreator"/>:</td>
+                <td><%=ht.get("creator")%>
+                </td>
             </tr>
             <tr>
-                <td><bean:message key="eform.download.msgCategory" />:</td>
-                <td> <%=ht.get("category")%></td>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCategory"/>:</td>
+                <td><%=ht.get("category")%>
+                </td>
             </tr>
             <tr>
-                <td><bean:message key="eform.download.msgCreated" />:</td>
-                <td> <%=ht.get("created_at")%></td>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.msgCreated"/>:</td>
+                <td><%=ht.get("created_at")%>
+                </td>
             </tr>
         </table>
 
-        <form action="../eform/manageEForm.do" method="POST" >
-               <input type="hidden" name="method" value="importEFormFromRemote"/>
-               <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
-               <input type="submit"  value="<bean:message key="eform.download.btnLoadEform" />"/>
+        <form action="<%=request.getContextPath()%>/eform/manageEForm.do" method="POST">
+            <input type="hidden" name="method" value="importEFormFromRemote"/>
+            <input type="hidden" name="url" value="<%=stripDrugref(ht.get("url"))%>"/>
+            <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.download.btnLoadEform"/>"/>
         </form>
 
     </div>
 
-        <%}%>
+    <%}%>
 
     <%}%>
-</body>
-</html:html>
+    </body>
+</html>
 <%!
 
-    String stripDrugref(Object obj){
+    String stripDrugref(Object obj) {
         String s = "";
-        if (obj !=null){
-           s = (String) obj;
+        if (obj != null) {
+            s = (String) obj;
 
-           return s.substring(26);
+            return s.substring(26);
         }
 
         return "";
     }
 
 
-   private Object callWebserviceLite(String procedureName,Vector params) throws Exception{
+    private Object callWebserviceLite(String procedureName, Vector params) throws Exception {
         Object object = null;
-        String server_url = "http://know2act.org/backend/api";
-        try{
-            if (!System.getProperty("http.proxyHost","").isEmpty()) {
+        String server_url = "";
+        try {
+            if (!System.getProperty("http.proxyHost", "").isEmpty()) {
                 //The Lite client won't recgonize JAVA_OPTS as it uses a customized http
                 XmlRpcClient server = new XmlRpcClient(server_url);
                 object = (Object) server.execute(procedureName, params);
@@ -143,31 +156,31 @@
                 XmlRpcClientLite server = new XmlRpcClientLite(server_url);
                 object = (Object) server.execute(procedureName, params);
             }
-        }catch (XmlRpcException exception) {
+        } catch (XmlRpcException exception) {
 
-            MiscUtils.getLogger().error("JavaClient: XML-RPC Fault #" +exception.code, exception);
+            MiscUtils.getLogger().error("JavaClient: XML-RPC Fault #" + exception.code, exception);
 
             throw new Exception("JavaClient: XML-RPC Fault #" +
                     Integer.toString(exception.code) + ": " +
                     exception.toString());
 
         } catch (Exception exception) {
-        	MiscUtils.getLogger().error("JavaClient: ", exception);
+            MiscUtils.getLogger().error("JavaClient: ", exception);
             throw new Exception("JavaClient: " + exception.toString());
         }
         return object;
     }
 
 
-     public Vector getEforms()throws Exception{
+    public Vector getEforms() throws Exception {
         Vector params = new Vector();
         Vector vec = new Vector();
-        Object obj =  callWebserviceLite("GetEForms",params);
-        if (obj instanceof Vector){
+        Object obj = callWebserviceLite("GetEForms", params);
+        if (obj instanceof Vector) {
             vec = (Vector) obj;
-        }else if(obj instanceof Hashtable){
+        } else if (obj instanceof Hashtable) {
             Object holbrook = ((Hashtable) obj).get("Holbrook Drug Interactions");
-            if (holbrook instanceof Vector){
+            if (holbrook instanceof Vector) {
                 vec = (Vector) holbrook;
             }
         }
@@ -175,10 +188,10 @@
         return vec;
     }
 
-    public List getCategories(List<Hashtable> eforms){
-        List catList=new ArrayList();
-        for(Hashtable eform:eforms){
-            if (!catList.contains(eform.get("category"))){
+    public List getCategories(List<Hashtable> eforms) {
+        List catList = new ArrayList();
+        for (Hashtable eform : eforms) {
+            if (!catList.contains(eform.get("category"))) {
                 catList.add(eform.get("category"));
             }
         }
@@ -186,8 +199,8 @@
     }
 
 
-    public static void removeNullFromVector(Vector v){
-        while(v != null && v.contains(null)){
+    public static void removeNullFromVector(Vector v) {
+        while (v != null && v.contains(null)) {
             v.remove(null);
         }
     }

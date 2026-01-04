@@ -9,7 +9,7 @@
 
 --%>
 <script>
-opener.location.reload();
+    opener.location.reload();
 
-self.close();
+    self.close();
 </script>

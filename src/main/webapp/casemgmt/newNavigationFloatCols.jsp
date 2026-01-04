@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,20 +24,19 @@
 --%>
 
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<script type="text/javascript">
 
-<script type="text/javascript">            
-       
     //This object stores the key -> cmd value passed to action class and the id of the created div
     // and the value -> URL of the action class
     <c:set var="ctx" value="${pageContext.request.contextPath}" scope="request"/>
-        
+
 </script>
 <div class="leftBox">
-<h3>Left Menu</h3>
+    <h3>Left Menu</h3>
 </div>
 <div id="leftNavBar"></div>
 <form style="display: none;" name="dummyForm" action=""><input
-	type="hidden" id="reloadDiv" name="reloadDiv" value="none"
-	onchange="updateDiv();"></form>
+        type="hidden" id="reloadDiv" name="reloadDiv" value="none"
+        onchange="updateDiv();"></form>

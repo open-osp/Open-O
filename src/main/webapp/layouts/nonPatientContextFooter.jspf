@@ -24,6 +24,8 @@
 
 --%>
 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!-- jquery-1.9.1.js - in nonPatientContextHeader.jspf -->
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath() %>/js/bootstrap-datepicker.js"></script>
@@ -52,7 +54,7 @@ $(document).ready(function(){
 	}
 
 	function refreshTabAlerts(id) {
-	var url = "../provider/tabAlertsRefresh.jsp";
+	var url = "<%= request.getContextPath() %>/provider/tabAlertsRefresh.jsp";
 	var parameters = {"id":id};
 
 	$id = $("#"+id);
@@ -207,7 +209,7 @@ $(document).ready(function() {
 function popupOscarRx(vheight,vwidth,varpage) {
 	var page = varpage;
 	windowprops = "height="+vheight+",width="+vwidth+",location=no,scrollbars=yes,menubars=no,toolbars=no,resizable=yes,screenX=0,screenY=0,top=0,left=0";
-	var popup=window.open(varpage, "<bean:message key='global.oscarRx'/>_appt", windowprops);
+	var popup=window.open(varpage, "<fmt:setBundle basename='oscarResources'/><fmt:message key='global.oscarRx'/>_appt", windowprops);
 	if (popup != null) {
 	if (popup.opener == null) {
 	popup.opener = self;

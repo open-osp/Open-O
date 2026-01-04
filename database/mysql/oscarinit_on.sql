@@ -3125,3 +3125,9 @@ create table frm_labreq_preset (
 	prop_value varchar(255) NOT NULL,
 	status int (1) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS specialty (
+  region varchar(5) default '',
+  specialty char(2) default '',
+  specialtydesc varchar(100) default ''
+) ;

@@ -22,34 +22,33 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.common.dao.FacilityDao"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.common.model.Facility"%>
-<%@page import="java.util.List"%>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
-<%@page import="org.oscarehr.common.model.Provider"%>
-
-<%@include file="/layouts/caisi_html_top.jspf"%>
-
-
-<%@page import="oscar.login.LoginAction"%><h2>Please select which facility you would like to currently work in</h2> 
+<%@page import="ca.openosp.openo.commn.dao.FacilityDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Facility" %>
+<%@page import="java.util.List" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@include file="/layouts/caisi_html_top.jspf" %>
+<%@ page import="ca.openosp.openo.login.Login2Action" %>
+<h2>Please select which facility you would like to currently work in</h2>
 <%
-	FacilityDao facilityDao=(FacilityDao)SpringUtils.getBean(FacilityDao.class);
-	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-    		
-	Provider provider=(Provider)session.getAttribute("provider");
-	List<Integer> facilityIds=providerDao.getFacilityIds(provider.getProviderNo());
+    FacilityDao facilityDao = (FacilityDao) SpringUtils.getBean(FacilityDao.class);
+    ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
+
+    Provider provider = (Provider) session.getAttribute("provider");
+    List<Integer> facilityIds = providerDao.getFacilityIds(provider.getProviderNo());
 %>
 <ul>
-	<%
-		for (Integer facilityId : facilityIds)
-		{
-			Facility facility=facilityDao.find(facilityId);
-			%>
-				<li><a href='?nextPage=<%=request.getParameter("nextPage")%>&<%=LoginAction.SELECTED_FACILITY_ID%>=<%=facility.getId()%>'><%=facility.getName()%></a></li>
-			<%
-		}
-	%>
+    <%
+        for (Integer facilityId : facilityIds) {
+            Facility facility = facilityDao.find(facilityId);
+    %>
+    <li>
+        <a href='?nextPage=<%=request.getParameter("nextPage")%>&<%=Login2Action.SELECTED_FACILITY_ID%>=<%=facility.getId()%>'><%=facility.getName()%>
+        </a></li>
+    <%
+        }
+    %>
 </ul>
 
-<%@include file="/layouts/caisi_html_bottom.jspf"%>
+<%@include file="/layouts/caisi_html_bottom.jspf" %>

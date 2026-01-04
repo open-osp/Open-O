@@ -24,26 +24,26 @@
 
 --%>
 <%
-	String error = "Your note was not saved as you did not have the exclusive note lock";
+    String error = "Your note was not saved as you did not have the exclusive note lock";
 
-	if(request.getAttribute("DateError") != null) {
-		error = (String)request.getAttribute("DateError");
-	}
+    if (request.getAttribute("DateError") != null) {
+        error = (String) request.getAttribute("DateError");
+    }
 %>
 <html>
 <head>
-<title>OSCAR</title>
-<script type="text/javascript">
+    <title>OSCAR</title>
+    <script type="text/javascript">
 
-	window.innerHeight = 400;
-	window.innerWidth = 400;
-</script>
-	
+        window.innerHeight = 400;
+        window.innerWidth = 400;
+    </script>
+
 </head>
 <body>
 
 <h3 style="text-align:center;">
-	<%=error %>
+    <%=error %>
 </h3>
 </body>
 </html>

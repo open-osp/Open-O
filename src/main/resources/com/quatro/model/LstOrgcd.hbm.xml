@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 	<!-- 
     author JZhang
 -->
 <hibernate-mapping>
-	<class name="com.quatro.model.LstOrgcd" table="lst_orgcd">
+	<class name="ca.openosp.openo.model.LstOrgcd" table="lst_orgcd">
 		<id name="code" type="java.lang.String">
 			<column name="code" length="8" />
 			<generator class="native" />

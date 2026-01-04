@@ -26,7 +26,7 @@
 <div class="flex items-center">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
         </svg>
         <input type="checkbox" class="action-required" name="action_required_motivation" data-score="1">
         <strong class="highlight" data-field-name="motivation">Motivation</strong>
@@ -51,9 +51,9 @@
 
 
     <span class="tt mandatory font-bold ml-4 highlight" data-toggle="tooltip"
-        data-field-name="health_attitude"
-        title="Engaged attitude and desire to participate in efforts to enhance their health" rel="health_attitude"
-        data-names="excellent,good,fair,poor,couldnt_say">
+          data-field-name="health_attitude"
+          title="Engaged attitude and desire to participate in efforts to enhance their health" rel="health_attitude"
+          data-names="excellent,good,fair,poor,couldnt_say">
         Health Attitude
     </span>
 

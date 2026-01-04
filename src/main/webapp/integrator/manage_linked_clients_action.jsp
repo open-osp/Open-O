@@ -22,40 +22,39 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.util.MiscUtils"%><%@page import="org.oscarehr.common.model.Facility"%>
-<%@page import="org.oscarehr.PMmodule.web.ManageLinkedClientsAction"%><%@page import="org.oscarehr.common.model.Provider"%>
-<%@page import="java.util.Arrays"%>
-<%@page import="org.oscarehr.common.model.FacilityDemographicPrimaryKey"%>
-<%@page import="java.util.HashSet"%>
-<%@page import="java.util.Enumeration"%>
-<%@page import="org.oscarehr.PMmodule.web.ManageLinkedClients"%>
-<%@page import="org.oscarehr.util.SessionConstants"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.MiscUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Facility" %>
+<%@page import="ca.openosp.openo.PMmodule.web.ManageLinkedClientsAction" %>
+<%@page import="ca.openosp.openo.commn.model.Provider" %>
+<%@page import="java.util.Arrays" %>
+<%@page import="ca.openosp.openo.commn.model.FacilityDemographicPrimaryKey" %>
+<%@page import="java.util.HashSet" %>
+<%@page import="java.util.Enumeration" %>
+<%@page import="ca.openosp.openo.PMmodule.web.ManageLinkedClients" %>
+<%@page import="ca.openosp.openo.utility.SessionConstants" %>
 
 <%
-	int currentDemographicId=Integer.parseInt(request.getParameter("demographicId"));
-   	LoggedInInfo loggedInInfo=LoggedInInfo.getLoggedInInfoFromSession(request);
-	Facility currentFacility=(Facility)request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
-	ManageLinkedClientsAction manageLinkedClientsAction=new ManageLinkedClientsAction();
+    int currentDemographicId = Integer.parseInt(request.getParameter("demographicId"));
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    Facility currentFacility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
+    ManageLinkedClientsAction manageLinkedClientsAction = new ManageLinkedClientsAction();
 
-	@SuppressWarnings("unchecked")
-	Enumeration<String> e=request.getParameterNames();
-	while (e.hasMoreElements())
-	{
-		try
-		{
-			String key=e.nextElement();
-			// must check for "on" because some versions of IE submit "off" or ""
-			if (key.startsWith("linked.") && "on".equals(request.getParameter(key))) manageLinkedClientsAction.addLinkedId(key);
-		}
-		catch (Exception ex)
-		{
-			MiscUtils.getLogger().error("Error", ex);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    Enumeration<String> e = request.getParameterNames();
+    while (e.hasMoreElements()) {
+        try {
+            String key = e.nextElement();
+            // must check for "on" because some versions of IE submit "off" or ""
+            if (key.startsWith("linked.") && "on".equals(request.getParameter(key)))
+                manageLinkedClientsAction.addLinkedId(key);
+        } catch (Exception ex) {
+            MiscUtils.getLogger().error("Error", ex);
+        }
+    }
 
-	Provider provider=(Provider)session.getAttribute(SessionConstants.LOGGED_IN_PROVIDER);
-	manageLinkedClientsAction.saveLinkedIds(loggedInInfo, currentFacility, provider, currentDemographicId);
+    Provider provider = (Provider) session.getAttribute(SessionConstants.LOGGED_IN_PROVIDER);
+    manageLinkedClientsAction.saveLinkedIds(loggedInInfo, currentFacility, provider, currentDemographicId);
 
-	response.sendRedirect("../close.html");
+    response.sendRedirect(request.getContextPath() + "/close.html");
 %>

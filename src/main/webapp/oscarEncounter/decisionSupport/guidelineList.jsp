@@ -30,84 +30,101 @@
     Author     : apavel
 --%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+"http://www.w3.org/TR/html4/loose.dtd">
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_eChart" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../securityError.jsp?type=_eChart");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_eChart");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar"%>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ page import="org.oscarehr.decisionSupport.model.DSGuideline"%>
+<%@ page import="ca.openosp.openo.decisionSupport.model.DSGuideline" %>
 
-<%pageContext.setAttribute("demographic_no", request.getParameter("demographic_no"));
-pageContext.setAttribute("provider_no", request.getParameter("provider_no"));
-LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+<%
+    pageContext.setAttribute("demographic_no", request.getParameter("demographic_no"));
+    pageContext.setAttribute("provider_no", request.getParameter("provider_no"));
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 %>
 
 <html>
-    <head>
-        <title>GuidelineList</title>
-        <link rel="stylesheet" href="decisionSupport.css" type="text/css"></link>
-    </head>
-    <body>
-        <div style="font-size: 16px; font-weight: bold;"><bean:message key="oscarencounter.guidelinelist.youcurrently" /></div>
-        <logic:present name="demographic_no"><div style="font-size: 10px;"><bean:message key="oscarencounter.guidelinelist.demographicno" /> <bean:write name="demographic_no"/></div></logic:present>
-        <br>
-        <table class="dsTable">
-            <tr>
-                <th>Version</th>
-                <th><bean:message key="oscarencounter.guidelinelist.title" /></th>
-                <th><bean:message key="oscarencounter.guidelinelist.author" /></th>
-                <th><bean:message key="oscarencounter.guidelinelist.dateimported" /></th>
-                <th><bean:message key="oscarrx.showallergies.status" /></th>
-                <logic:present name="demographic_no">
-                    <th><bean:message key="oscarencounter.guidelinelist.evaluated" /></th>
-                </logic:present>
+<head>
+    <title>GuidelineList</title>
+    <link rel="stylesheet" href="decisionSupport.css" type="text/css"></link>
+</head>
+<body>
+<div style="font-size: 16px; font-weight: bold;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.youcurrently"/></div>
+<c:if test="${not empty demographic_no}">
+    <div style="font-size: 10px;"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.demographicno"/> <c:out value="${demographic_no}"/></div>
+</c:if>
+<br>
+<table class="dsTable">
+    <tr>
+        <th>Version</th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.title"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.author"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.dateimported"/></th>
+        <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarrx.showallergies.status"/></th>
+        <c:if test="${not empty demographic_no}">
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarencounter.guidelinelist.evaluated"/></th>
+        </c:if>
 
-            </tr>
-            <logic:iterate name="guidelines" id="guideline" type="org.oscarehr.decisionSupport.model.DSGuideline" indexId="index">
-            <%
-            String cssClass = "even";
-            if (index%2 == 1)  cssClass = "odd";%>
-            <tr class="<%=cssClass%>">
-                <td><bean:write name="guideline" property="version"/></td>
-                <td><bean:write name="guideline" property="title"/></td>
-                <td><bean:write name="guideline" property="author"/></td>
-                <td><bean:write name="guideline" property="dateStart" format="MMM d, yyyy"/></td>
-                <td><logic:equal name="guideline" property="status" value="A"><span class="good"><bean:message key="oscarencounter.guidelinelist.active" /> </span></logic:equal>
-                <logic:equal name="guideline" property="status" value="F"><span class="bad"><bean:message key="oscarencounter.guidelinelist.failedon" /> <bean:write name="guideline" property="dateDecomissioned" format="MMM d, yyyy"/> <bean:message key="oscarencounter.guidelinelist.invalid" /></span></logic:equal>
-                </td>
-                <%
-                if (request.getParameter("demographic_no") != null) {
-                    DSGuideline dsGuideline = (DSGuideline) pageContext.getAttribute("guideline");
-                    boolean passed = dsGuideline.evaluate(loggedInInfo, request.getParameter("demographic_no")) != null;
-                    pageContext.setAttribute("passed", passed);
-                %>
+    </tr>
+    <c:forEach var="guideline" items="${guidelines}" varStatus="index" >
+        <c:set var="cssClass" value="${index.index % 2 == 0 ? 'even' : 'odd'}"/>
+        <tr class="${cssClass}">
+            <td>${guideline.version}</td>
+            <td>${guideline.title}</td>
+            <td>${guideline.author}</td>
+            <td><fmt:formatDate value="${guideline.dateStart}" pattern="MMM d, yyyy"/></td>
+            <td>
+                <c:choose>
+                    <c:when test="${guideline.status == 'A'}">
+                        <span class="good"><fmt:message key="oscarencounter.guidelinelist.active"/></span>
+                    </c:when>
+                    <c:when test="${guideline.status == 'F'}">
+                    <span class="bad">
+                        <fmt:message key="oscarencounter.guidelinelist.failedon"/>
+                        <fmt:formatDate value="${guideline.dateDecomissioned}" pattern="MMM d, yyyy"/>
+                        <fmt:message key="oscarencounter.guidelinelist.invalid"/>
+                    </span>
+                    </c:when>
+                </c:choose>
+            </td>
+
+            <c:if test="${not empty param.demographic_no}">
+                <c:set var="dsGuideline" value="${guideline}"/>
+                <c:set var="passed" value="${dsGuideline.evaluate(loggedInInfo, param.demographic_no) != null}"/>
                 <td>
-                    <logic:equal name="passed" value="true"><span class="good"><bean:message key="oscarencounter.guidelinelist.passed" /></span></logic:equal>
-                    <logic:equal name="passed" value="false"><span class="bad"><bean:message key="oscarencounter.guidelinelist.failed" /></span></logic:equal>
-                    - <a href="<%=request.getContextPath()%>/oscarEncounter/decisionSupport/guidelineAction.do?method=detail&guidelineId=<bean:write name="guideline" property="id"/>&provider_no=<bean:write name="provider_no"/>&demographic_no=<bean:write name="demographic_no"/>"><bean:message key="oscarencounter.guidelinelist.moreinfo" /></a>
+                    <c:choose>
+                        <c:when test="${passed}">
+                            <span class="good"><fmt:message key="oscarencounter.guidelinelist.passed"/></span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="bad"><fmt:message key="oscarencounter.guidelinelist.failed"/></span>
+                        </c:otherwise>
+                    </c:choose>
+                    - <a href="${pageContext.request.contextPath}/oscarEncounter/decisionSupport/guidelineAction.do?method=detail&guidelineId=${guideline.id}&provider_no=${provider_no}&demographic_no=${demographic_no}">
+                    <fmt:message key="oscarencounter.guidelinelist.moreinfo"/>
+                </a>
                 </td>
-                <%}%>
-            </tr>
-            </logic:iterate>
-        </table>
-    </body>
+            </c:if>
+        </tr>
+    </c:forEach>
+</table>
+</body>
 </html>

@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,60 +24,56 @@
 --%>
 
 
-
-
-<%@ include file="/taglibs.jsp"%>
-<%@ page import="org.oscarehr.PMmodule.model.*"%>
-<%@ page import="org.oscarehr.common.model.*"%>
-<%@ page import="org.oscarehr.PMmodule.web.formbean.*"%>
-<%@ page import="java.util.*"%>
+<%@ include file="/taglibs.jsp" %>
+<%@ page import="ca.openosp.openo.PMmodule.model.*" %>
+<%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.PMmodule.web.formbean.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.commn.model.Facility" %>
 
 <script>
-	function facility_change(facility_id) {
-	
-		if (document.getElementById("check_box_"+facility_id).checked)
-		{
-			<%--alert('add_to_facility:' + facility_id);--%>
-			document.staffManagerForm.method.value='add_to_facility';
-		}
-		else
-		{
-			<%--alert('remove_from_facility:' + facility_id);--%>		
-			document.staffManagerForm.method.value='remove_from_facility';
-		}
-		
-		document.staffManagerForm.elements['facility_id'].value=facility_id;
-		document.staffManagerForm.submit();
-	}
+    function facility_change(facility_id) {
+
+        if (document.getElementById("check_box_" + facility_id).checked) {
+            <%--alert('add_to_facility:' + facility_id);--%>
+            document.staffManagerForm.method.value = 'add_to_facility';
+        } else {
+            <%--alert('remove_from_facility:' + facility_id);--%>
+            document.staffManagerForm.method.value = 'remove_from_facility';
+        }
+
+        document.staffManagerForm.elements['facility_id'].value = facility_id;
+        document.staffManagerForm.submit();
+    }
 </script>
 
-<input type="hidden" name="facility_id" />
+<input type="hidden" name="facility_id"/>
 <div class="tabs" id="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Facilities">Facilities</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Facilities">Facilities</th>
+        </tr>
+    </table>
 </div>
 
 <table class="simple" cellspacing="2" cellpadding="3">
-	<tr>
-		<th style="color: black">Assigned To</th>
-		<th style="color: black">Facility Name</th>
-	</tr>
-	<%
-		List<Integer> providerFacilityIds=(List)request.getAttribute("providerFacilities");
-	%>
-	<c:forEach var="facility" items="${all_facilities}">
-		<%
-			String checked="";
-			Facility facility=(Facility)pageContext.getAttribute("facility");
-			if (providerFacilityIds.contains(facility.getId())) checked="checked=\"checked\"";			
-		%>
-		<tr>
-			<td><input id="check_box_<c:out value='${facility.id}'/>"
-				type="checkbox" <%=checked%>
-				onchange="facility_change(<c:out value='${facility.id}'/>)" /></td>
-			<td><c:out value="${facility.name}" /></td>
-	</c:forEach>
+    <tr>
+        <th style="color: black">Assigned To</th>
+        <th style="color: black">Facility Name</th>
+    </tr>
+    <%
+        List<Integer> providerFacilityIds = (List) request.getAttribute("providerFacilities");
+    %>
+    <c:forEach var="facility" items="${all_facilities}">
+    <%
+        String checked = "";
+        Facility facility = (Facility) pageContext.getAttribute("facility");
+        if (providerFacilityIds.contains(facility.getId())) checked = "checked=\"checked\"";
+    %>
+    <tr>
+        <td><input id="check_box_<c:out value='${facility.id}'/>"
+                   type="checkbox" <%=checked%>
+                   onchange="facility_change(<c:out value='${facility.id}'/>)"/></td>
+        <td><c:out value="${facility.name}"/></td>
+        </c:forEach>
 </table>

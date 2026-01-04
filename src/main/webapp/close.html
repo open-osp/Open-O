@@ -26,15 +26,15 @@
 
 <html>
 <head>
-<script type="text/javascript">
-    window.close();
+    <script type="text/javascript">
+        window.close();
 
-    window.onunload = function() {
-        if (window.opener && !window.opener.closed) {
-            window.opener.popUpClosed();
-        }
-    };
-</script>
+        window.onunload = function () {
+            if (window.opener && !window.opener.closed) {
+                window.opener.popUpClosed();
+            }
+        };
+    </script>
 
 </head>
 <body>

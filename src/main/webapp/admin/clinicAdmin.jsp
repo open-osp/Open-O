@@ -25,112 +25,109 @@
 --%>
 <!DOCTYPE HTML>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-	objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+                   objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.misc");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.util.*"%>
-<%@ page import="oscar.oscarReport.reportByTemplate.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<html:html lang="en">
-<head>
-<title>Clinic</title>
+<%@ page import="java.util.*" %>
+<%@ page import="ca.openosp.openo.report.reportByTemplate.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<script src="${pageContext.request.contextPath}/js/global.js"></script>
-<script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
-<link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css"> <!-- Bootstrap 2.3.1 -->
 
-</head>
-<body class="BodyStyle">
-<h4><bean:message key="admin.admin.clinicAdmin" /></h4></h4>
-<div class="well">
+<html>
+    <head>
+        <title>Clinic</title>
 
-<html:form	action="/admin/ManageClinic" styleClass="form-horizontal">
-<html:hidden property="clinic.id" />
-<html:hidden property="clinic.status" value="A" />
-<html:hidden property="method" value="update" />
+        <script src="${pageContext.request.contextPath}/js/global.js"></script>
+        <script src="${pageContext.request.contextPath}/share/javascript/Oscar.js"></script>
+        <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet" type="text/css">
+        <!-- Bootstrap 2.3.1 -->
 
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicName"><bean:message key="admin.k2a.clinicName" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicName" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicAddress"><bean:message key="admin.provider.formAddress" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicAddress" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicCity"><bean:message key="oscarReport.oscarReportCatchment.msgCity" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicCity" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicPostal"><bean:message key="oscarReport.oscarReportCatchment.msgPostal" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicPostal" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicPhone"><bean:message key="appointment.addappointment.msgPhone" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicPhone" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicFax"><bean:message key="admin.provider.formFax" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicFax" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicLocationCode" ><bean:message key="location" />&nbsp;  <bean:message key="billing.billingDigSearch.formCode" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicLocationCode" />
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="clinic.clinicProvince"><bean:message key="demographic.demographicaddrecordhtm.formprovince" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicProvince" />
-    </div>
-  </div>
-  <div class="control-group" title="Multi phone delimited by |">
-    <label class="control-label" for="clinic.clinicDelimPhone" ><bean:message key="appointment.addappointment.msgPhone" />|<bean:message key="appointment.addappointment.msgPhone" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicDelimPhone" />
-    </div>
-  </div>
-  <div class="control-group" title="Multi fax delimited by |">
-    <label class="control-label" for="clinic.clinicDelimFax" ><bean:message key="admin.provider.formFax" />|<bean:message key="admin.provider.formFax" /></label>
-    <div class="controls">
-      <html:text property="clinic.clinicDelimFax" />
-    </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-      <input type="submit" value="<bean:message key="global.btnSubmit" />" class="btn btn-primary">
-    </div>
-  </div>
+    </head>
+    <body class="BodyStyle">
+    <h4><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.clinicAdmin"/></h4></h4>
+    <div class="well">
 
-</html:form>
+        <form action="<%=request.getContextPath() %>/admin/ManageClinic.do" class="form-horizontal">
+            <input type="hidden" name="id" id="id"/>
+            <input type="hidden" name="status" id="status" value="A"/>
+            <input type="hidden" name="method" id="method" value="update"/>
 
-</div>
-</html:html>
+            <!-- K2A clinic name field removed -->
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicAddress"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formAddress"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicAddress" id="clinic.clinicAddress" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicCity"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgCity"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicCity" id="clinic.clinicCity" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicPostal"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarReport.oscarReportCatchment.msgPostal"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicPostal" id="clinic.clinicPostal" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicPhone"><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.addappointment.msgPhone"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicPhone" id="clinic.clinicPhone" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicFax"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formFax"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicFax" id="clinic.clinicFax" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicLocationCode"><fmt:setBundle basename="oscarResources"/><fmt:message key="location"/>&nbsp;
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="billing.billingDigSearch.formCode"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicLocationCode" id="clinic.clinicLocationCode" />
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="clinic.clinicProvince"><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddrecordhtm.formprovince"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicProvince" id="clinic.clinicProvince" />
+                </div>
+            </div>
+            <div class="control-group" title="Multi phone delimited by |">
+                <label class="control-label" for="clinic.clinicDelimPhone"><fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.addappointment.msgPhone"/>|<fmt:setBundle basename="oscarResources"/><fmt:message key="appointment.addappointment.msgPhone"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicDelimPhone" id="clinic.clinicDelimPhone" />
+                </div>
+            </div>
+            <div class="control-group" title="Multi fax delimited by |">
+                <label class="control-label" for="clinic.clinicDelimFax"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formFax"/>|<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formFax"/></label>
+                <div class="controls">
+                    <input type="text" name="clinic.clinicDelimFax" id="clinic.clinicDelimFax" />
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input type="submit" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnSubmit"/>" class="btn btn-primary">
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</html>

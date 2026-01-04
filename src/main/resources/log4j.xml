@@ -11,7 +11,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="${catalina.base}/logs/oscar.log" />
+		<param name="File" value="${catalina.base}/logs/openo.log" />
 		<param name="Append" value="true" />
 		<param name="DatePattern" value="'.'yyyy-MM" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -30,26 +30,30 @@
 
 	<!-- ############################# -->
 
-	<category name="org.oscarehr">
-		<priority value="INFO" />
+	<category name="ca.openosp.openo">
+		<priority value="DEBUG" />
+	</category>
+	
+	<category name="org.apache.cxf">
+		<priority value="DEBUG"/>
 	</category>
 
-	<category name="org.oscarehr.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
+	<category name="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorUpdateTask" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="INTEGRATOR_FILE" />
 	</category>
 
 <!--
-	<category name="org.oscarehr.PMmodule.caisi_integrator">
+	<category name="ca.openosp.openo.PMmodule.caisi_integrator">
 		<priority value="DEBUG" />
 	</category>
 -->
 	
-	<!-- //debugging soap messages 
+	<!-- //debugging soap messages  -->
 	<category name="httpclient.wire">
 		<priority value="DEBUG" />
 	</category>
-	-->
+	
 
 	<category name="org.apache.cxf.transport.https.HttpsURLConnectionFactory">
 		<priority value="WARN" />
@@ -78,11 +82,11 @@
 		<priority value="WARN" />
 	</category>
 
-	<category name="org.oscarehr.integration.born">
+	<category name="ca.openosp.openo.integration.born">
 		<priority value="INFO" />
 	</category>
-<!--	
-	<category name="oscar.oscarEncounter.oscarMeasurements">
+<!--
+	<category name="ca.openosp.openo.encounter.oscarMeasurements">
 		<priority value="DEBUG" />
 	</category>
 -->
@@ -104,11 +108,7 @@
 	</category>
 	
 	<!-- control if you want the possible excessive memory usage warnings. WARN and below will show them -->
-	<category name="org.oscarehr.util.ProblemCheckFilter">
-		<priority value="ERROR" />
-	</category>
-	
-	<category name="org.apache.struts.tiles.TilesRequestProcessor">
+	<category name="ca.openosp.openo.utility.ProblemCheckFilter">
 		<priority value="ERROR" />
 	</category>
 	
@@ -120,10 +120,10 @@
 		<priority value="WARN" />
 	</category>
 	
-	<category name="oscar.oscarReport.ClinicalReports">
+	<category name="ca.openosp.openo.oscarReport.ClinicalReports">
 		<priority value="DEBUG" />
 	</category>
-	<category name="org.oscarehr.hospitalReportManager">
+	<category name="ca.openosp.openo.hospitalReportManager">
 		<priority value="INFO" />
 	</category>
 	

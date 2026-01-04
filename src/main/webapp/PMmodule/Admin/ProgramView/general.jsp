@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,122 +24,120 @@
 --%>
 
 
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <div class="tabs" id="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Programs">General Information</th>
-		<th title="Templates" class="nofocus">
-			<a onclick="javascript:clickTab2('General','Vacancy Templates');return false;" href="javascript:void(0)">Vacancy Templates</a>
-		</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Programs">General Information</th>
+            <th title="Templates" class="nofocus">
+                <a onclick="javascript:clickTab2('General','Vacancy Templates');return false;"
+                   href="javascript:void(0)">Vacancy Templates</a>
+            </th>
+        </tr>
+    </table>
 </div>
 <table width="100%" border="1" cellspacing="2" cellpadding="3">
-	<tr class="b">
-		<td width="20%">Name:</td>
-		<td><c:out value="${program.name}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Facility:</td>
-		<td><c:out value="${facilityName}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Description:</td>
-		<td><c:out value="${program.description}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">HIC:</td>
-		<td><c:out value="${program.hic}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Type:</td>
-		<td><c:out value="${program.type}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Location:</td>
-		<td><c:out value="${program.location}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Client Participation:</td>
-		<td><c:out value="${program.numOfMembers}" />/<c:out
-			value="${program.maxAllowed}" />&nbsp;(<c:out
-			value="${program.queueSize}" /> waiting)</td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Holding Tank:</td>
-		<td><c:out value="${program.holdingTank}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Allow Batch Admissions:</td>
-		<td><c:out value="${program.allowBatchAdmission}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Allow Batch Discharges:</td>
-		<td><c:out value="${program.allowBatchDischarge}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Man Or Woman:</td>
-		<td><c:out value="${program.manOrWoman}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Transgender:</td>
-		<td><c:out value="${program.transgender}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">First Nation:</td>
-		<td><c:out value="${program.firstNation}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Bed Program Affiliated:</td>
-		<td><c:out value="${program.bedProgramAffiliated}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Alcohol:</td>
-		<td><c:out value="${program.alcohol}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Abstinence Support?</td>
-		<td><c:out value="${program.abstinenceSupport}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Physical Health:</td>
-		<td><c:out value="${program.physicalHealth}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Mental Health:</td>
-		<td><c:out value="${program.mentalHealth}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Housing:</td>
-		<td><c:out value="${program.housing}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Exclusive View:</td>
-		<td><c:out value="${program.exclusiveView}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Minimum Age:</td>
-		<td><c:out value="${program.ageMin}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Maximum Age:</td>
-		<td><c:out value="${program.ageMax}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Enable Mandatory Encounter Time:</td>
-		<td><c:out value="${program.enableEncounterTime}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Enable Mandatory Transportation Time:</td>
-		<td><c:out value="${program.enableEncounterTransportationTime}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Email Notification Addresses (csv):</td>
-		<td><c:out value="${program.emailNotificationAddressesCsv}" /></td>
-	</tr>
-	<tr class="b">
-		<td width="20%">Last referral notificaiton time:</td>
-		<td><c:out value="${program.lastReferralNotification}" /></td>
-	</tr>
+    <tr class="b">
+        <td width="20%">Name:</td>
+        <td><c:out value="${program.name}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Facility:</td>
+        <td><c:out value="${facilityName}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Description:</td>
+        <td><c:out value="${program.description}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">HIC:</td>
+        <td><c:out value="${program.hic}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Type:</td>
+        <td><c:out value="${program.type}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Location:</td>
+        <td><c:out value="${program.location}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Client Participation:</td>
+        <td><c:out value="${program.numOfMembers}"/>/<c:out
+                value="${program.maxAllowed}"/>&nbsp;(<c:out
+                value="${program.queueSize}"/> waiting)
+        </td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Holding Tank:</td>
+        <td><c:out value="${program.holdingTank}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Allow Batch Admissions:</td>
+        <td><c:out value="${program.allowBatchAdmission}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Allow Batch Discharges:</td>
+        <td><c:out value="${program.allowBatchDischarge}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Man Or Woman:</td>
+        <td><c:out value="${program.manOrWoman}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Transgender:</td>
+        <td><c:out value="${program.transgender}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">First Nation:</td>
+        <td><c:out value="${program.firstNation}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Alcohol:</td>
+        <td><c:out value="${program.alcohol}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Abstinence Support?</td>
+        <td><c:out value="${program.abstinenceSupport}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Physical Health:</td>
+        <td><c:out value="${program.physicalHealth}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Mental Health:</td>
+        <td><c:out value="${program.mentalHealth}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Housing:</td>
+        <td><c:out value="${program.housing}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Exclusive View:</td>
+        <td><c:out value="${program.exclusiveView}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Minimum Age:</td>
+        <td><c:out value="${program.ageMin}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Maximum Age:</td>
+        <td><c:out value="${program.ageMax}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Enable Mandatory Encounter Time:</td>
+        <td><c:out value="${program.enableEncounterTime}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Enable Mandatory Transportation Time:</td>
+        <td><c:out value="${program.enableEncounterTransportationTime}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Email Notification Addresses (csv):</td>
+        <td><c:out value="${program.emailNotificationAddressesCsv}"/></td>
+    </tr>
+    <tr class="b">
+        <td width="20%">Last referral notificaiton time:</td>
+        <td><c:out value="${program.lastReferralNotification}"/></td>
+    </tr>
 </table>

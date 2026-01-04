@@ -23,79 +23,85 @@
     Ontario, Canada
 
 --%>
-<%@page import="java.net.URLEncoder"%>
-<%@ page import="oscar.eform.data.*, oscar.OscarProperties, oscar.eform.*, java.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@page import="java.net.URLEncoder" %>
+<%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.OscarProperties, ca.openosp.openo.eform.*, java.util.*" %>
+<%@ page import="ca.openosp.openo.eform.EFormUtil" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <!DOCTYPE html>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script type="text/javascript" language="javascript"> 
-  function showImage(url, id) {
-        Popup = window.open(url,id,'toolbar=no,location=no,status=yes,menubar=no, scrollbars=yes,resizable=yes,width=700,height=600,left=200,top=0');
-  }
-  function deleteImg(image) {
-    if (confirm("<bean:message key="eform.uploadimages.imgDelete"/>")) {
-        document.location = "../eform/deleteImage.do?filename=" + image;
-    }
-  }
-</script>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <script type="text/javascript" language="javascript">
+            function showImage(url, id) {
+                Popup = window.open(url, id, 'toolbar=no,location=no,status=yes,menubar=no, scrollbars=yes,resizable=yes,width=700,height=600,left=200,top=0');
+            }
 
-</head>
+            function deleteImg(image) {
+                if (confirm("<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.imgDelete"/>")) {
+                    document.location = "<%=request.getContextPath()%>/eform/deleteImage.do?filename=" + image;
+                }
+            }
+        </script>
 
-<body topmargin="0" leftmargin="0" rightmargin="0">
+    </head>
 
-<%@ include file="efmTopNav.jspf"%>
+    <body topmargin="0" leftmargin="0" rightmargin="0">
 
-<h3>Image Library</h3>
+    <%@ include file="efmTopNav.jspf" %>
 
-
-		<iframe id="uploadFrame" name="uploadFrame" frameborder="0" width="100%" height="auto" scrolling="no" src="<%=request.getContextPath()%>/eform/partials/upload_image.jsp"></iframe>		
-		
-		<table class="table table-condensed table-striped table-hover" id="tblImage">
-		<thead>
-			<tr>
-				<th><bean:message key="eform.uploadimages.msgimgName" /></th>
-				<th><bean:message key="eform.uploadimages.msgImgAction" /></th>
-			</tr>
-		</thead>
-		
-		 <tbody>
-			<%
-          //OscarProperties op = OscarProperties.getInstance();
-          //String project_home = op.getProperty("project_home");
-          ArrayList images = EFormUtil.listImages();
-          request.setAttribute("images", images);
-          for (int i=0; i<images.size(); i++) {
-              String fileURL="../eform/displayImage.do?imagefile="+images.get(i);
-              //String fileURL="/OscarDocument/" + project_home + "/eform/images/"+images.get(i);
-              String curimage = (String) images.get(i);
-        	%>
-       
-			<tr>
-				<td title="<%=curimage%>">
-					<a href="#"	class="viewImage" onclick="showImage('<%=fileURL%>', '<%="image" + i%>'); return false;"><%=curimage%></a>
-				</td>
-					
-				<td>
-					<a href="<%= request.getContextPath() %>/eform/deleteImage.do?filename=<%=URLEncoder.encode(curimage, "UTF-8")%>" class="contentLink"><bean:message key="eform.uploadimages.btnDelete" /></a>
-				</td>
-			</tr>
-			<% } %>
-			</tbody>
-		</table>
+    <h3>Image Library</h3>
 
 
-<%@ include file="efmFooter.jspf"%>
+    <iframe id="uploadFrame" name="uploadFrame" frameborder="0" width="100%" height="auto" scrolling="no"
+            src="<%=request.getContextPath()%>/eform/partials/upload_image.jsp"></iframe>
 
-<script>
-$('#tblImage').dataTable({
-	"aaSorting" : [ [ 0, "asc" ] ],
-	"bPaginate": false
-});
+    <table class="table table-condensed table-striped table-hover" id="tblImage">
+        <thead>
+        <tr>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.msgimgName"/></th>
+            <th><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.msgImgAction"/></th>
+        </tr>
+        </thead>
 
-</script>
-</body>
-</html:html>
+        <tbody>
+        <%
+            //OscarProperties op = OscarProperties.getInstance();
+            //String project_home = op.getProperty("project_home");
+            ArrayList images = EFormUtil.listImages();
+            request.setAttribute("images", images);
+            for (int i = 0; i < images.size(); i++) {
+                String fileURL = request.getContextPath() + "/eform/displayImage.do?imagefile=" + images.get(i);
+                //String fileURL="/OscarDocument/" + project_home + "/eform/images/"+images.get(i);
+                String curimage = (String) images.get(i);
+        %>
+
+        <tr>
+            <td title="<%=curimage%>">
+                <a href="#" class="viewImage"
+                   onclick="showImage('<%=fileURL%>', '<%="image" + i%>'); return false;"><%=curimage%>
+                </a>
+            </td>
+
+            <td>
+                <a href="<%= request.getContextPath() %>/eform/deleteImage.do?filename=<%=URLEncoder.encode(curimage, "UTF-8")%>"
+                   class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.btnDelete"/></a>
+            </td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+
+    <%@ include file="efmFooter.jspf" %>
+
+    <script>
+        $('#tblImage').dataTable({
+            "aaSorting": [[0, "asc"]],
+            "bPaginate": false
+        });
+
+    </script>
+    </body>
+</html>

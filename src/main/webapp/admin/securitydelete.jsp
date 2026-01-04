@@ -24,71 +24,72 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-     String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-        objectName="_admin,_admin.userAdmin" rights="r"
-        reverse="<%=true%>">
-        <%authed=false; %>
-        <%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.userAdmin");%>
+                   objectName="_admin,_admin.userAdmin" rights="r"
+                   reverse="<%=true%>">
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.userAdmin");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="java.sql.*, java.util.*" errorPage="/errorpage.jsp"%>
-<%@ page import="oscar.log.LogAction,oscar.log.LogConst"%>
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.Security" %>
-<%@ page import="org.oscarehr.common.dao.SecurityDao" %>
+<%@ page import="java.sql.*, java.util.*" errorPage="/errorpage.jsp" %>
+<%@ page import="ca.openosp.openo.log.LogAction,ca.openosp.openo.log.LogConst" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.Security" %>
+<%@ page import="ca.openosp.openo.commn.dao.SecurityDao" %>
 <%
-	SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
+    SecurityDao securityDao = SpringUtils.getBean(SecurityDao.class);
 %>
-<html:html lang="en">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
-<head>
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script></head>
-<link rel="stylesheet" href="../web.css" />
-<body topmargin="0" leftmargin="0" rightmargin="0">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		<bean:message key="admin.securitydelete.description" /></font></th>
-	</tr>
-</table>
-<%
-	int rowsAffected=0;
-	Security s = securityDao.find(Integer.parseInt(request.getParameter("keyword")));
-	if(s != null) {
-		securityDao.remove(s.getId());
-		rowsAffected=1;
-		LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.DELETE, LogConst.CON_SECURITY,
-        		request.getParameter("keyword"), request.getRemoteAddr());
-	}
+<html>
+    <script src="${pageContext.request.contextPath}/csrfguard"></script>
+    <head>
+        <script type="text/javascript" src="<%=request.getContextPath()%>/js/global.js"></script>
+    </head>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css"/>
+    <body topmargin="0" leftmargin="0" rightmargin="0">
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr bgcolor="#486ebd">
+                <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitydelete.description"/></font></th>
+            </tr>
+        </table>
+        <%
+            int rowsAffected = 0;
+            Security s = securityDao.find(Integer.parseInt(request.getParameter("keyword")));
+            if (s != null) {
+                securityDao.remove(s.getId());
+                rowsAffected = 1;
+                LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.DELETE, LogConst.CON_SECURITY,
+                        request.getParameter("keyword"), request.getRemoteAddr());
+            }
 
-	if (rowsAffected ==1) {
-%>
-<p>
-<h2><bean:message key="admin.securitydelete.msgDeletionSuccess" />:
-<%= request.getParameter("keyword") %>.</h2>
-<%
-  } else {
-%>
-<h1><bean:message key="admin.securitydelete.msgDeletionFailure" />:
-<%= request.getParameter("keyword") %>.</h1>
-<%
-  }
-%>
-<p></p>
+            if (rowsAffected == 1) {
+        %>
+        <p>
+        <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitydelete.msgDeletionSuccess"/>:
+            <%= request.getParameter("keyword") %>.</h2>
+        <%
+        } else {
+        %>
+        <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitydelete.msgDeletionFailure"/>:
+            <%= request.getParameter("keyword") %>.</h1>
+        <%
+            }
+        %>
+        <p></p>
 
-</center>
-</body>
-</html:html>
+    </center>
+    </body>
+</html>

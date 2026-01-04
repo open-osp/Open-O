@@ -24,140 +24,147 @@
 
 --%>
 
-<%@ page import="java.util.ResourceBundle"%>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar" %>
+<%@ page import="ca.openosp.OscarProperties" %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.consult" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_admin&type=_admin.consult");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.consult");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
+<html>
 
-<%@page import="oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConAddDepartmentForm"%>
+    <%
+        ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources", request.getLocale());
 
-<html:html lang="en">
+        String transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddDepartment.addOperation"));
+        String id = null;
+        int whichType = 1;
+        if (request.getAttribute("upd") != null) {
+            transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddDepartment.updateOperation"));
+            whichType = 2;
+            id = (String) request.getAttribute("id");
+        }
+    %>
 
-<%
-  ResourceBundle oscarR = ResourceBundle.getBundle("oscarResources",request.getLocale());
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><%=transactionType%>
+        </title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
+    <script language="javascript">
+        function BackToOscar() {
+            window.close();
+        }
+    </script>
 
-  String transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddDepartment.addOperation"));
-  int whichType = 1;
-  if ( request.getAttribute("upd") != null){
-      transactionType = new String(oscarR.getString("oscarEncounter.oscarConsultationRequest.config.AddDepartment.updateOperation"));
-      whichType=2;
-  }
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/css/encounterStyles.css">
+    <body class="BodyStyle" vlink="#0000FF">
+
+    <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
 %>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn">Consultation</td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td class="Header"><%=transactionType%>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr style="vertical-align: top">
+            <td class="MainTableLeftColumn">
+                <%
+                    EctConTitlebar titlebar = new EctConTitlebar(request);
+                    out.print(titlebar.estBar(request));
+                %>
+            </td>
+            <td class="MainTableRightColumn">
+                <table cellpadding="0" cellspacing="2"
+                       style="border-collapse: collapse" bordercolor="#111111" width="100%"
+                       height="100%">
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><%=transactionType%></title>
-<html:base />
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<script language="javascript">
-function BackToOscar() {
-       window.close();
-}
-</script>
+                    <!----Start new rows here-->
+                    <%
+                        String added = (String) request.getAttribute("Added");
+                        if (added != null) { %>
+                    <tr>
+                        <td style="color: red;">
+                            <fmt:setBundle basename="oscarResources"/>
+                            <fmt:message  key="oscarEncounter.oscarConsultationRequest.config.AddDepartment.msgDepartmentAdded">
+                                <fmt:param value="<%=added%>" />
+                            </fmt:message>
+                        </td>
+                    </tr>
+                    <%}%>
+                    <tr>
+                        <td>
 
-<link rel="stylesheet" type="text/css" href="../../encounterStyles.css">
-<body class="BodyStyle" vlink="#0000FF">
+                            <form action="${pageContext.request.contextPath}/oscarEncounter/AddDepartment.do" method="post">
+                            <table>
+                                    <input type="hidden" name="id" id="id" value="<%=id%>"/>
+                                <tr>
+                                    <td>Name</td>
+                                    <td><input type="text" name="name"/></td>
+                                </tr>
 
-<html:errors />
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn">Consultation</td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td class="Header"><%=transactionType%></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr style="vertical-align: top">
-		<td class="MainTableLeftColumn">
-		<%oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar titlebar = new oscar.oscarEncounter.oscarConsultationRequest.config.pageUtil.EctConTitlebar(request);
-                  out.print(titlebar.estBar(request));
-                  %>
-		</td>
-		<td class="MainTableRightColumn">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
+                                <td>Annotation
+                                </td>
+                                <td colspan="4"><textarea name="annotation" cols="30" rows="3"></textarea>
+                                </td>
+                    </tr>
 
-			<!----Start new rows here-->
-			<%
-                   String added = (String) request.getAttribute("Added");
-                   if (added != null){  %>
-			<tr>
-				<td><font color="red"> <bean:message
-					key="oscarEncounter.oscarConsultationRequest.config.AddDepartment.msgDepartmentAdded"
-					arg0="<%=added%>" /> </font></td>
-			</tr>
-			<%}%>
-			<tr>
-				<td>
+                    <tr>
+                        <td colspan="6">
+                            <input type="hidden" name="whichType" value="<%=whichType%>"/>
+                            <input type="submit" name="transType" value="<%=transactionType%>"/>
+                        </td>
+                    </tr>
+                </table>
+                </form>
+            </td>
+        </tr>
+        <!----End new rows here-->
 
-				<html:form action="/oscarEncounter/AddDepartment">
-					<table>
-						<%
-                           if (request.getAttribute("id") != null ){
-                           EctConAddDepartmentForm thisForm;
-                           thisForm = (EctConAddDepartmentForm) request.getAttribute("EctConAddDepartmentForm");
-                           thisForm.setId((String) request.getAttribute("id"));
-                           thisForm.setName( (String) request.getAttribute("name"));
-                     
-                           thisForm.setAnnotation( (String) request.getAttribute("annotation"));
-                           }
-                        %>
-						<html:hidden name="EctConAddDepartmentForm" property="id" />
-						<tr>
-							<td>Name</td>
-							<td><html:text name="EctConAddDepartmentForm" property="name" /></td>
-							
-						</tr>
-						
-						 <td>Annotation
-							</td>
-							<td colspan="4"><html:textarea name="EctConAddDepartmentForm" property="annotation" cols="30" rows="3" />
-							</td>
-						</tr>
-						
-						<tr>
-							<td colspan="6">
-								<input type="hidden" name="whichType" value="<%=whichType%>" />
-								<input type="submit" name="transType" value="<%=transactionType%>" />
-							</td>
-						</tr>
-					</table>
-				</html:form>
-				</td>
-			</tr>
-			<!----End new rows here-->
-
-			<tr height="100%">
-				<td></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+        <tr height="100%">
+            <td></td>
+        </tr>
+    </table>
+    </td>
+    </tr>
+    <tr>
+        <td class="MainTableBottomRowLeftColumn"></td>
+        <td class="MainTableBottomRowRightColumn"></td>
+    </tr>
+    </table>
+    </body>
+</html>

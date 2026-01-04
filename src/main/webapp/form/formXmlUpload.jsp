@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -23,73 +23,87 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
-<%   
-  if(session.getValue("user") == null)
-    response.sendRedirect("../../logout.jsp");
-  String user_no;
-  user_no = (String) session.getAttribute("user");
-           String docdownload = oscarVariables.getProperty("project_home") ;;
-           session.setAttribute("homepath", docdownload);      
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>
+<%
+    if (session.getValue("user") == null)
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
+    String user_no;
+    user_no = (String) session.getAttribute("user");
+    String docdownload = oscarVariables.getProperty("project_home");
+    ;
+    session.setAttribute("homepath", docdownload);
 
 %>
-<html:html>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="admin.admin.btnImportFormData" /></title>
-<link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
-<script>
-$(function() {
-    $( document ).tooltip();
-  });
-</script>
-</head>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnImportFormData"/></title>
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/js/jquery_css/smoothness/jquery-ui-1.10.2.custom.min.css"/>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/jquery-ui-1.10.2.custom.min.js"></script>
+        <script>
+            $(function () {
+                $(document).tooltip();
+            });
+        </script>
+    </head>
 
-<body>
-
-
-
-<div class="well">
-
-<h3><bean:message key="admin.admin.btnImportFormData" /></h3>
-
-<html:form action="/form/xmlUpload.do" method="POST" enctype="multipart/form-data">
-
-	<html:errors />
+    <body>
 
 
+    <div class="well">
 
-Select data in zip format:<br /> 
+        <h3><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnImportFormData"/></h3>
 
-<input type="file" name="file1" value="">
-<span title="<bean:message key="global.uploadWarningBody"/>" style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img border="0" src="../images/icon_alertsml.gif"/></span></span>
-        
- <input type="submit" name="Submit" class="btn btn-primary" value="Import">
+        <form action="${pageContext.request.contextPath}/form/xmlUpload.do" method="POST" enctype="multipart/form-data">
 
-<p><i class="icon-info-sign"></i> Use this function to import data for a specific form into the OSCAR database</p>
-		
-</html:form>
+            <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
 
-</div>
-</body>
-</html:html>
+
+            Select data in zip format:<br />
+
+            <input type="file" name="file1" value="">
+            <span title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"
+                  style="vertical-align:middle;font-family:arial;font-size:20px;font-weight:bold;color:#ABABAB;cursor:pointer"><img
+                    border="0" src="<%= request.getContextPath() %>/images/icon_alertsml.gif"/></span></span>
+
+            <input type="submit" name="Submit" class="btn btn-primary" value="Import">
+
+            <p><i class="icon-info-sign"></i> Use this function to import data for a specific form into the OSCAR
+                database</p>
+
+        </form>
+
+    </div>
+    </body>
+</html>

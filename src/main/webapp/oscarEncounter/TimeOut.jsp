@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.encounter.pageUtil.EctSessionBean" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -25,51 +25,50 @@
 --%>
 
 <!-- Jan 20, 2003,-->
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <%
-    oscar.oscarEncounter.pageUtil.EctSessionBean sessionbean = null;
-    if((sessionbean=(oscar.oscarEncounter.pageUtil.EctSessionBean)request.getSession().getAttribute("EctSessionBean"))==null) {
+    EctSessionBean sessionbean = null;
+    if ((sessionbean = (EctSessionBean) request.getSession().getAttribute("EctSessionBean")) == null) {
         response.sendRedirect("error.jsp");
         return;
     }
 %>
 <link rel="stylesheet" type="text/css" href="encounterStyles.css">
-<html:html lang="en">
-<script type="text/javascript" language=javascript>
-    function loadUp(){
-        window.resizeTo(900,50);
-        setTimeout("window.close()",1000);
-<%
-    if (sessionbean.status != null && !sessionbean.status.equals("")) {
-        out.print("opener.refresh();");
-    }
-%>
-    }
-</script>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="oscarEncounter.timeOut.title" /></title>
-</head>
-<body onload="javascript:loadUp()">
+<html>
+    <script type="text/javascript" language=javascript>
+        function loadUp() {
+            window.resizeTo(900, 50);
+            setTimeout("window.close()", 1000);
+            <%
+                if (sessionbean.status != null && !sessionbean.status.equals("")) {
+                    out.print("opener.refresh();");
+                }
+            %>
+        }
+    </script>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.timeOut.title"/></title>
+    </head>
+    <body onload="javascript:loadUp()">
 
-<!--  -->
-<table class="MainTable" id="scrollNumber1"
-	name="<bean:message key="oscarEncounter.timeOut.msgEncounter"/>">
-	<tr class="MainTableTopRow">
-		<td class="MainTableTopRowLeftColumn"></td>
-		<td class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td style="color: white"><bean:message
-					key="oscarEncounter.timeOut.msgSaveExit" /></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-</table>
-</body>
-</html:html>
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1"
+           name="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.timeOut.msgEncounter"/>">
+        <tr class="MainTableTopRow">
+            <td class="MainTableTopRowLeftColumn"></td>
+            <td class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td style="color: white"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.timeOut.msgSaveExit"/></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    </body>
+</html>
