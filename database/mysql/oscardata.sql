@@ -1522,6 +1522,7 @@ insert into `secObjectName` (`objectName`) values ('_admin.messenger');
 insert into `secObjectName` (`objectName`) values ('_admin.eform');
 insert into `secObjectName` (`objectName`) values ('_admin.encounter');
 insert into `secObjectName` (`objectName`) values ('_admin.misc');
+insert into `secObjectName` (`objectName`,`description`,`orgapplicable`) values('_admin.flowsheet','Manage Flowsheets',0);
 insert into `secObjectName` (`objectName`,`description`,`orgapplicable`) values('_masterlink', 'Client Master Record',0);
 insert into `secObjectName` (`objectName`) values ('_rx');
 insert into `secObjectName` (`objectName`) values ('_merge');
@@ -1644,6 +1645,7 @@ insert into `secObjPrivilege` values('doctor','_admin.lookupFieldEditor','o',0,9
 insert into `secObjPrivilege` values('doctor','_admin.issueEditor','o',0,999998);
 insert into `secObjPrivilege` values('doctor','_admin.caisiRoles','o',0,999998);
 insert into `secObjPrivilege` values('doctor','_admin.userCreatedForms','o',0,999998);
+insert into `secObjPrivilege` values('doctor','_admin.flowsheet','r',1,'999998');
 
 insert into `secObjPrivilege` values('doctor','_pmm.clientSearch','x',0,999998);
 insert into `secObjPrivilege` values('doctor','_pmm.newClient','x',0,999998);
@@ -1746,6 +1748,7 @@ insert into `secObjPrivilege` values('admin','_admin.email','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.fax.restart','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.userCreatedForms','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_admin.measurements','x',0,'999998');
+insert into `secObjPrivilege` values('admin','_admin.flowsheet','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_appointment','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_appointment.doctorLink','x',0,'999998');
 insert into `secObjPrivilege` values('admin','_pmm.addProgram','x',0,'999998');
