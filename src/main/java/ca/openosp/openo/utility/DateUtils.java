@@ -64,7 +64,8 @@ public final class DateUtils {
     public static final String JS_ISO_DATE_FORMAT = "yy-mm-dd";
 
     /**
-     * Private constructor to prevent instantiation of utility class.
+     * Constructs a new DateUtils instance.
+     * Note: This is a utility class with static methods; instantiation is not typically needed.
      */
     public DateUtils() {
     }
