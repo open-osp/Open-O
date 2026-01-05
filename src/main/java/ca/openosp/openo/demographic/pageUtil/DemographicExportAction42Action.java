@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
@@ -2592,23 +2593,28 @@ public class DemographicExportAction42Action extends ActionSupport {
                         PGPEncrypt pgp = new PGPEncrypt();
                         if (pgp.encrypt(zipName, tmpDir)) {
 
-                            // Sharing Center removed - always download file
+                            // Set success cookie before download so JS knows export completed
+                            setExportStatusCookie(response, "success");
                             Util.downloadFile(zipName + ".pgp", tmpDir, response);
                             Util.cleanFile(zipName + ".pgp", tmpDir);
                             ffwd = "success";
 
                         } else {
+                            setExportStatusCookie(response, "error");
                             request.getSession().setAttribute("pgp_ready", "No");
+                            ffwd = "fail";
                         }
                     } else {
 
                         if (!"true".equals(OscarProperties.getInstance().getProperty("demographic.export.encryptedOnly", "false"))) {
                             logger.info("Warning: PGP Encryption NOT available - unencrypted file exported!");
 
-                            // Sharing Center removed - always download file
+                            // Set success cookie before download so JS knows export completed
+                            setExportStatusCookie(response, "success");
                             Util.downloadFile(zipName, tmpDir, response);
                             ffwd = "success";
                         } else {
+                            setExportStatusCookie(response, "error");
                             request.getSession().setAttribute("pgp_ready", "No");
                             ffwd = "fail";
                         }
@@ -3794,6 +3800,24 @@ public class DemographicExportAction42Action extends ActionSupport {
 
     public void setProviderNo(String providerNo) {
         this.providerNo = providerNo;
+    }
+
+    /**
+     * Sets a cookie to signal export status to the client-side JavaScript.
+     * This allows the UI to know when the export has completed or failed.
+     *
+     * <p>The Secure flag is set based on the request protocol - only set for HTTPS
+     * to ensure the cookie works in both development (HTTP) and production (HTTPS).</p>
+     *
+     * @param response the HTTP response to add the cookie to
+     * @param status the export status ("success" or "error")
+     */
+    private void setExportStatusCookie(HttpServletResponse response, String status) {
+        Cookie cookie = new Cookie("exportStatus", status);
+        cookie.setPath("/");
+        cookie.setMaxAge(60);
+        cookie.setSecure(request.isSecure());
+        response.addCookie(cookie);
     }
 }
 

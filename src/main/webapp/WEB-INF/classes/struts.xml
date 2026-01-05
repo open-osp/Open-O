@@ -1449,6 +1449,7 @@
         <action name="oscarBilling/DocumentErrorReportUpload" class="ca.openosp.openo.billings.ca.on.pageUtil.BillingDocumentErrorReportUpload2Action">
             <result name="success">/billing/CA/ON/billingEAreport.jsp</result>
             <result name="outside">/billing/CA/ON/billingLreport.jsp</result>
+            <result name="error">/billing/CA/ON/billingOBECEA.jsp</result>
         </action>
         <!--action name="PMmodule/remoteReferal" class="oscar.remotereferal.OscarRemoteReferal2Action">
             <result name="success">/eform/efmshowform_data.jsp</result>
