@@ -72,11 +72,11 @@
                 dateFormat: "yy-mm-dd",
                 buttonImage: "images/datepicker.gif",
                 beforeShow: function (input, inst) {
-                    if ($("#providers :selected").val() == "empty") {
+                    if ($("#billingProviderNo :selected").val() == "empty") {
 
                         //$(this).datepicker( "hide" )
                         alert("Select Billing Physician");
-                        $("#providers").focus();
+                        $("#billingProviderNo").focus();
 
                     } else if ($("#visitLocation :selected").val() == "empty") {
 

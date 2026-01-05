@@ -276,7 +276,7 @@
             <li>
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="billing.provider.billProvider"/>
 
-                <select id="provider" name="provider">
+                <select id="providers" name="provider">
                     <option value="empty">- Select Provider -</option>
                     <c:forEach var="provider" items="${ quickBillingBC.providerList }">
 
