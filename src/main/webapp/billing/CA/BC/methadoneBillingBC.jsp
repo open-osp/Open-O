@@ -72,17 +72,11 @@
                 dateFormat: "yy-mm-dd",
                 buttonImage: "images/datepicker.gif",
                 beforeShow: function (input, inst) {
+                    // Note: Unlike quickBillingBC.jsp, this form does not have a visitLocation
+                    // dropdown, so we only validate the billing provider selection here.
                     if ($("#billingProviderNo :selected").val() == "empty") {
-
-                        //$(this).datepicker( "hide" )
                         alert("Select Billing Physician");
                         $("#billingProviderNo").focus();
-
-                    } else if ($("#visitLocation :selected").val() == "empty") {
-
-                        //$(this).datepicker( "hide" )
-                        alert("Select Service Location");
-                        $("#visitLocation").focus();
                     }
                 },
                 onClose: function (input, inst) {
