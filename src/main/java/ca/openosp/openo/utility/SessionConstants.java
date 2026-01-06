@@ -38,7 +38,7 @@ package ca.openosp.openo.utility;
  * </ul>
  * 
  * @deprecated Use the LoggedInInfo class for accessing session-related information
- * @see ca.openosp.openo.commn.model.security.LoggedInInfo
+ * @see ca.openosp.openo.utility.LoggedInInfo
  */
 @Deprecated
 public class SessionConstants {
