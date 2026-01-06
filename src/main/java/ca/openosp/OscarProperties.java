@@ -36,7 +36,35 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * This class will hold OpenO and CAISI properties. It is a singleton class. Do not instantiate it, use the method getInstance(). Every time the properties file changes, tomcat must be restarted.
+ * Singleton class for managing OpenO EMR system properties and configuration.
+ * 
+ * <p>This class extends {@link Properties} to provide centralized access to
+ * system-wide configuration settings including:</p>
+ * <ul>
+ *   <li>Database connection parameters</li>
+ *   <li>File storage paths (documents, images, backups)</li>
+ *   <li>Security and authentication settings</li>
+ *   <li>Provincial billing configurations</li>
+ *   <li>Integration settings (HL7, FHIR, etc.)</li>
+ *   <li>UI customization options</li>
+ * </ul>
+ * 
+ * <p><strong>Important:</strong> This is a singleton class. Do not instantiate directly.
+ * Use {@link #getInstance()} to obtain the instance.</p>
+ * 
+ * <p><strong>Configuration File:</strong> Properties are loaded from the OpenO properties
+ * file. Any changes to the properties file require a Tomcat restart to take effect.</p>
+ * 
+ * <p><strong>Namespace Migration:</strong> This class includes validation to detect and
+ * ignore deprecated namespace values (org.oscarehr.*, oscar.*) that should be migrated
+ * to the new ca.openosp.openo.* namespace.</p>
+ * 
+ * <p>Example usage:</p>
+ * <pre>
+ * OscarProperties props = OscarProperties.getInstance();
+ * String docDir = props.getProperty("DOCUMENT_DIR");
+ * boolean isCaisiEnabled = props.isPropertyActive("caisi_enabled");
+ * </pre>
  */
 public class OscarProperties extends Properties {
     private static final long serialVersionUID = -5965807410049845132L;
@@ -63,18 +91,22 @@ public class OscarProperties extends Properties {
     );
 
     /**
-     * @return OscarProperties the instance of OscarProperties
+     * Gets the singleton instance of OscarProperties.
+     * 
+     * @return the OscarProperties instance
      */
     public static OscarProperties getInstance() {
         return oscarProperties;
     }
 
     /**
-     * Override for filtering properties.
-     * Applies validation to detect and ignore deprecated namespace values.
+     * Gets a property value with validation to filter deprecated namespaces.
+     * 
+     * <p>This method applies validation to detect and ignore deprecated namespace
+     * values (org.oscarehr.*, oscar.*), returning configured defaults when applicable.</p>
      *
      * @param key the property key
-     * @return String the validated property value
+     * @return the validated property value, or null if not found
      */
     public String getProperty(String key) {
         if (key.equals("FORMS_PROMOTEXT")) {
