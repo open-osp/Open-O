@@ -52,6 +52,7 @@ import ca.openosp.openo.db.DBPreparedHandler;
  * @see BillingServiceDao
  * @deprecated Consider using BillingServiceDao directly for new code
  */
+@Deprecated
 public class dbBillingData {
     private Logger logger = MiscUtils.getLogger();
     private BillingServiceDao billingServiceDao = SpringUtils.getBean(BillingServiceDao.class);
