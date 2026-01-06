@@ -676,7 +676,7 @@ public class ProgramManager2Action extends ActionSupport {
         ProgramProvider pp = programManager.getProgramProvider(String.valueOf(provider.getId()));
 
         if (pp == null) {
-            addActionMessage(getText("program_provider.missing"));
+            addActionMessage(getText("error.provider.missing"));
             setEditAttributes(request, String.valueOf(program.getId()));
             return edit();
         }

@@ -134,6 +134,8 @@ public class Contact2Action extends ActionSupport {
         } else if ("savePharmacyInfo".equals(method)) {
             return savePharmacyInfo();
         } 
+
+        // Return the manage method by default
         return manage();
     }
 
@@ -554,10 +556,20 @@ public class Contact2Action extends ActionSupport {
     public String editProContact() {
         String id = request.getParameter("pcontact.id");
         ProfessionalContact contact = null;
+
         if (StringUtils.isNotBlank(id)) {
             id = id.trim();
             contact = proContactDao.find(Integer.parseInt(id));
             request.setAttribute("pcontact", contact);
+
+            // Set specialties list for dropdown
+            List<ContactSpecialty> specialties = contactSpecialtyDao.findAll();
+            request.setAttribute("specialties", specialties);
+
+            // Set contactRole from the contact's specialty for proper selection
+            if (contact != null && StringUtils.isNotBlank(contact.getSpecialty())) {
+                request.setAttribute("contactRole", contact.getSpecialty());
+            }
         }
         return "pForm";
     }
@@ -757,6 +769,14 @@ public class Contact2Action extends ActionSupport {
             request.setAttribute("id", demographicContactId);
         }
 
+        // Set up attributes for form re-render and parent window communication
+        request.setAttribute("specialties", contactSpecialtyDao.findAll());
+        request.setAttribute("contactRole", contactRole);
+        request.setAttribute("contactId", contactId);
+        request.setAttribute("contactName", contact.getFormattedName());
+        request.setAttribute("demographicContactId", demographicContactId);
+        request.setAttribute("contactType", contactType);
+
         return "pForm";
     }
 
@@ -841,66 +861,6 @@ public class Contact2Action extends ActionSupport {
         demographicContactDao.merge(demographicContactMRP);
         request.setAttribute("demographic_no", demographicContactMRP.getDemographicNo());
         return null; //mapping.findForward("ajax");
-    }
-
-    /**
-     * Action method for calling the Health Care Team and Personal Emergency
-     * contact manager pages. (add/edit/view contacts)
-     */
-    @SuppressWarnings("unused")
-    public void manageContactList() throws ServletException, IOException {
-
-        String demographic_no = request.getParameter("demographic_no");
-        int demographicNoInt = Integer.parseInt(demographic_no);
-        String contactList = request.getParameter("contactList");
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        /*String forward = null;
-
-        if ("PEC".equalsIgnoreCase(contactList)) { // Personal Emergency Contacts
-            setPersonalEmergencyContacts(loggedInInfo, request, demographicNoInt);
-            forward = "managePEC";
-        }
-
-        if ("HCT".equalsIgnoreCase(contactList)) { // Health Care Team
-            setHealthCareTeam(loggedInInfo, request, demographicNoInt);
-            request.setAttribute("providerList", providerDao.getActiveProviders());
-            forward = "manageHCT";
-        }
-
-        if (forward != null) {
-            forward = mapping.findForward(forward).getPath();
-            request.getRequestDispatcher(forward).include(request, response);
-        }*/
-    }
-
-
-    /**
-     * Action method for calling the Health Care Team and Personal Emergency
-     * contact display pages. (contact view only)
-     */
-    @SuppressWarnings("unused")
-    public void displayContactList() throws ServletException, IOException {
-
-        String demographic_no = request.getParameter("demographic_no");
-        int demographicNoInt = Integer.parseInt(demographic_no);
-        String contactList = request.getParameter("contactList");
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        String forward = null;
-/*
-        if ("PEC".equalsIgnoreCase(contactList)) { // Personal Emergency Contacts
-            setPersonalEmergencyContacts(loggedInInfo, request, demographicNoInt);
-            forward = "displayPEC";
-        }
-
-        if ("HCT".equalsIgnoreCase(contactList)) { // Health Care Team
-            setHealthCareTeam(loggedInInfo, request, demographicNoInt);
-            forward = "displayHCT";
-        }
-
-        if (forward != null) {
-            forward = mapping.findForward(forward).getPath();
-            request.getRequestDispatcher(forward).include(request, response);
-        }*/
     }
 
     /**

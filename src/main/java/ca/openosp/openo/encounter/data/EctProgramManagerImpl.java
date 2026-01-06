@@ -85,7 +85,7 @@ public class EctProgramManagerImpl implements EctProgramManager {
         while (iter.hasNext()) {
             ProgramProvider p = iter.next();
             if (p != null && p.getProgramId() != null && p.getProgramId().longValue() > 0) {
-                Program program = programDao.getProgram(new Integer(p.getProgramId().intValue()));
+                Program program = programDao.getProgram(Integer.valueOf(p.getProgramId().intValue()));
 
                 // Check if program is null before accessing its methods
                 if (program == null) continue;
@@ -119,7 +119,7 @@ public class EctProgramManagerImpl implements EctProgramManager {
         while (iter.hasNext()) {
             ProgramProvider p = iter.next();
             if (p != null && p.getProgramId() != null && p.getProgramId().longValue() > 0) {
-                Program program = programDao.getProgramForApptView(new Integer(p.getProgramId().intValue()));
+                Program program = programDao.getProgramForApptView(Integer.valueOf(p.getProgramId().intValue()));
                 if (program == null) continue;
                 if (facilityId != null && program.getFacilityId() != facilityId.intValue()) continue;
 
@@ -179,14 +179,14 @@ public class EctProgramManagerImpl implements EctProgramManager {
         List<ProviderDefaultProgram> list = providerDefaultProgramDao.getProgramByProviderNo(providerNo);
         if (list.isEmpty()) {
             ProviderDefaultProgram pdp = new ProviderDefaultProgram();
-            pdp.setProgramId(new Integer(0));
+            pdp.setProgramId(Integer.valueOf(0));
             pdp.setProviderNo(providerNo);
             pdp.setSign(false);
             providerDefaultProgramDao.saveProviderDefaultProgram(pdp);
-            return (new Boolean(false));
+            return Boolean.FALSE;
         }
         ProviderDefaultProgram pro = list.get(0);
-        return new Boolean(pro.isSign());
+        return Boolean.valueOf(pro.isSign());
 
     }
 

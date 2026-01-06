@@ -369,6 +369,7 @@ public class RptDemographicQueryBuilder {
             whereClause();
             firstClause();
             stringBuffer.append(" ( d.provider_no = p.provider_no )");
+            theFirstFlag = 1;
         }
 
         List<Integer> demoIds = frm.getDemographicIds();

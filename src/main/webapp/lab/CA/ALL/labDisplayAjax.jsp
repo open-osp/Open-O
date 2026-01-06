@@ -347,16 +347,23 @@
     }
 
     createTdisLabel = function (tdisformid, ackformid, labelspanid, labelid) {
-        document.forms[tdisformid].label.value = document.forms[ackformid].label.value;
+        var tdisForm = document.forms[tdisformid];
+        var ackForm = document.forms[ackformid];
+        if (tdisForm && ackForm && tdisForm.label && ackForm.label) {
+            tdisForm.label.value = ackForm.label.value;
+        }
         var url = '<%=request.getContextPath()%>' + "/lab/CA/ALL/createLabelTDIS.do";
         var data = $(tdisformid).serialize(true);
         new Ajax.Request(url, {
             method: 'post', parameters: data
 
         });
-        document.getElementById(labelspanid).innerHTML = "<i> Label: " + document.getElementById(labelid).value + "</i>";
-        document.getElementById(labelid).value = "";
-
+        var labelSpanEl = document.getElementById(labelspanid);
+        var labelEl = document.getElementById(labelid);
+        if (labelSpanEl && labelEl) {
+            labelSpanEl.innerHTML = "<i> Label: " + labelEl.value + "</i>";
+            labelEl.value = "";
+        }
     };
 </script>
 <div id="labdoc_<%=segmentID%>">

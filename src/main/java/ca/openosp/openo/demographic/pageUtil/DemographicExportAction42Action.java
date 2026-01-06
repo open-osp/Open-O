@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
@@ -1284,7 +1285,7 @@ public class DemographicExportAction42Action extends ActionSupport {
 
                                     AbstractCodeSystemDao dao = null;
                                     try {
-                                        dao = (AbstractCodeSystemDao) SpringUtils.getBean(Class.forName("org.oscarehr.common.dao." + org.apache.commons.lang3.StringUtils.capitalize(dx.getCodingSystem()) + "Dao"));
+                                        dao = (AbstractCodeSystemDao) SpringUtils.getBean(Class.forName("ca.openosp.openo.commn.dao." + org.apache.commons.lang3.StringUtils.capitalize(dx.getCodingSystem()) + "Dao"));
                                     } catch (ClassNotFoundException e) {
                                         logger.warn("DAO class not found for coding system: " + dx.getCodingSystem(), e);
                                     }
@@ -1715,8 +1716,9 @@ public class DemographicExportAction42Action extends ActionSupport {
                                 if (StringUtils.filled(duration)) {
                                     String durunit = StringUtils.noNull(arr[p].getDurationUnit());
                                     Integer fctr = 1;
-                                    if (durunit.equals("W")) fctr = 7;
-                                    else if (durunit.equals("M")) fctr = 30;
+                                    if (durunit.equalsIgnoreCase("W")) fctr = 7;
+                                    else if (durunit.equalsIgnoreCase("M")) fctr = 30;
+                                    else if (durunit.equalsIgnoreCase("Y")) fctr = 365;
 
                                     if (NumberUtils.isDigits(duration)) {
                                         duration = String.valueOf(Integer.parseInt(duration) * fctr);
@@ -2017,6 +2019,12 @@ public class DemographicExportAction42Action extends ActionSupport {
                                     exportError.add("Error! Document \"" + f.getName() + "\" too big to be exported. Not enough memory!");
                                 } else {
                                     Reports rpr = patientRec.addNewReports();
+                                    if (edoc.getType() != null) {
+                                        cdsDt.ReportMedia.Enum mediaEnum = cdsDt.ReportMedia.Enum.forString(formatHrmEnum(edoc.getType()));
+                                        if (mediaEnum != null) {
+                                            rpr.setMedia(mediaEnum);
+                                        }
+                                    }
                                     rpr.setFormat(cdsDt.ReportFormat.TEXT);
 
                                     cdsDt.ReportContent rpc = rpr.addNewContent();
@@ -2481,7 +2489,13 @@ public class DemographicExportAction42Action extends ActionSupport {
                                         exportError.add("Error! No Date for Diabetes Self-management Collaborative Goal Setting (id=" + meas.getId() + ") for Patient " + demoNo);
                                     }
                                     dsco.setCodeValue(cdsDt.DiabetesSelfManagementCollaborative.CodeValue.X_44943_9);
-                                    dsco.setDocumentedGoals(meas.getDataField());
+                                    String documentedGoals = meas.getDataField();
+                                    if (!StringUtils.empty(meas.getComments())) {
+                                        documentedGoals = StringUtils.empty(documentedGoals)
+                                            ? meas.getComments()
+                                            : documentedGoals + " - " + meas.getComments();
+                                    }
+                                    dsco.setDocumentedGoals(documentedGoals);
                                     addOneEntry(CAREELEMENTS);
                                 } else if (meas.getType().equals("HYPE")) { //Hypoglycemic Episodes
                                     if (StringUtils.isInteger(meas.getDataField().trim())) {
@@ -2568,6 +2582,8 @@ public class DemographicExportAction42Action extends ActionSupport {
                     }
 //
 //	if (setName!=null) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".pgp";
+                    // Sanitize zipName to prevent path traversal
+                    zipName = MiscUtils.sanitizeFileName(zipName);
                     if (!Util.zipFiles(files, dirs, zipName, tmpDir)) {
                         logger.debug("Error! Failed to zip export files");
                     }
@@ -2577,23 +2593,28 @@ public class DemographicExportAction42Action extends ActionSupport {
                         PGPEncrypt pgp = new PGPEncrypt();
                         if (pgp.encrypt(zipName, tmpDir)) {
 
-                            // Sharing Center removed - always download file
+                            // Set success cookie before download so JS knows export completed
+                            setExportStatusCookie(response, "success");
                             Util.downloadFile(zipName + ".pgp", tmpDir, response);
                             Util.cleanFile(zipName + ".pgp", tmpDir);
                             ffwd = "success";
 
                         } else {
+                            setExportStatusCookie(response, "error");
                             request.getSession().setAttribute("pgp_ready", "No");
+                            ffwd = "fail";
                         }
                     } else {
 
                         if (!"true".equals(OscarProperties.getInstance().getProperty("demographic.export.encryptedOnly", "false"))) {
                             logger.info("Warning: PGP Encryption NOT available - unencrypted file exported!");
 
-                            // Sharing Center removed - always download file
+                            // Set success cookie before download so JS knows export completed
+                            setExportStatusCookie(response, "success");
                             Util.downloadFile(zipName, tmpDir, response);
                             ffwd = "success";
                         } else {
+                            setExportStatusCookie(response, "error");
                             request.getSession().setAttribute("pgp_ready", "No");
                             ffwd = "fail";
                         }
@@ -3779,6 +3800,24 @@ public class DemographicExportAction42Action extends ActionSupport {
 
     public void setProviderNo(String providerNo) {
         this.providerNo = providerNo;
+    }
+
+    /**
+     * Sets a cookie to signal export status to the client-side JavaScript.
+     * This allows the UI to know when the export has completed or failed.
+     *
+     * <p>The Secure flag is set based on the request protocol - only set for HTTPS
+     * to ensure the cookie works in both development (HTTP) and production (HTTPS).</p>
+     *
+     * @param response the HTTP response to add the cookie to
+     * @param status the export status ("success" or "error")
+     */
+    private void setExportStatusCookie(HttpServletResponse response, String status) {
+        Cookie cookie = new Cookie("exportStatus", status);
+        cookie.setPath("/");
+        cookie.setMaxAge(60);
+        cookie.setSecure(request.isSecure());
+        response.addCookie(cookie);
     }
 }
 

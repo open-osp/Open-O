@@ -79,7 +79,7 @@
             Swipe card
         </p>
         <p class="span">
-            <input type="checkbox" name="magneticStripe" size="79" />
+            <input type="text" name="magneticStripe" size="79" />
         </p>
         </p>
 

@@ -89,19 +89,6 @@ if(scope != null && "clinic".equals(scope)) {
     }
 }
 
-    String module = "";
-    String htQueryString = "";
-    if (request.getParameter("htracker") != null) {
-        module = "htracker";
-        htQueryString = "&" + module;
-    }
-
-    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
-        module = "slim";
-        htQueryString = htQueryString + "=slim";
-    }
-
-
     MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet, custList);
     long end = System.currentTimeMillis();
     long diff = end - start;
@@ -149,9 +136,7 @@ display:inline-block;
     <body id="updateFlowsheetBody">
 
     <%
-        if (request.getParameter("htracker") == null || (request.getParameter("htracker") != null && !request.getParameter("htracker").equals("slim"))) {
-
-            if (request.getParameter("demographic") == null) { %>
+        if (request.getParameter("demographic") == null) { %>
 <div class="navbar" id="demoHeader"><div class="navbar-inner">
     <a class="brand" href="javascript:void(0)">Update Flowsheet Measurement</a>
     <em>for <strong><%=flowsheet%></strong> flowsheet </em>
@@ -160,7 +145,6 @@ display:inline-block;
     <%@ include file="/share/templates/patient.jspf" %>
     <div style="height:60px;"></div>
     <%
-            }
         }
     %>
 
@@ -168,11 +152,6 @@ display:inline-block;
 
         <div class="span8">
 <form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
-
-                <%if (request.getParameter("htracker") != null) { %>
-                <input type="hidden" name="htracker" value="<%=module%>">
-                <%}%>
-
                 <input type="hidden" name="method" value="update"/>
                 <input type="hidden" name="flowsheet" value="<%=flowsheet%>"/>
                 <input type="hidden" name="measurement" value="<%=measurement%>"/>
@@ -491,7 +470,7 @@ display:inline-block;
                         <%if (request.getParameter("demographic") == null) { %>
                         <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>" class="btn">Cancel</a>
                         <%} else { %>
-                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%>"
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%>"
                            class="btn">Cancel</a>
                         <%} %>
                         <input type="submit" class="btn btn-primary" value="Update"/>

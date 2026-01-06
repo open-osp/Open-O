@@ -25,7 +25,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Log4j Version -->
-        <log4j2.version>2.25.1</log4j2.version>
+        <log4j2.version>2.25.3</log4j2.version>
         <!-- Slf4j Version -->
         <slf4j.version>2.0.17</slf4j.version>
         <!-- Hapi Fhir Version -->
@@ -1145,13 +1145,6 @@
             <groupId>com.github.scribejava</groupId>
             <artifactId>scribejava-core</artifactId>
             <version>8.3.3</version>
-        </dependency>
-
-        <!-- Apache Tika - MimeType handling for downloaded files (ie. XDS) -->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>1.28.5</version>
         </dependency>
 
         <dependency>

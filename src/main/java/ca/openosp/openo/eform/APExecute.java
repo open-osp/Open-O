@@ -52,6 +52,12 @@ public class APExecute {
     public String execute(String ap, String demographicNo) {
         EFormLoader.getInstance();
         DatabaseAP dap = EFormLoader.getAP(ap);
+        
+        if (dap == null) {
+            MiscUtils.getLogger().error("DatabaseAP not found for ap: " + ap);
+            return "";
+        }
+        
         String sql = DatabaseAP.parserReplace("demographic", demographicNo, dap.getApSQL());
         String output = dap.getApOutput();
         MiscUtils.getLogger().debug("SQL----" + sql);
@@ -77,6 +83,12 @@ public class APExecute {
     public String execute(String ap, String demographicNo, Integer invoiceNo) {
         EFormLoader.getInstance();
         DatabaseAP dap = EFormLoader.getAP(ap);
+        
+        if (dap == null) {
+            MiscUtils.getLogger().error("DatabaseAP not found for ap: " + ap);
+            return "";
+        }
+        
         MiscUtils.getLogger().debug("AP:" + ap);
         String sql = DatabaseAP.parserReplace("invoiceNo", String.valueOf(invoiceNo), dap.getApSQL());
         sql = DatabaseAP.parserReplace("demographic", demographicNo, sql);

@@ -67,7 +67,7 @@
 
 
 %>
-<% //String providerview=request.getParameter("providers")==null?"":request.getParameter("providers");
+<% 
     String xml_vdate = request.getParameter("xml_vdate") == null ? "" : request.getParameter("xml_vdate");
     String xml_appointment_date = request.getParameter("xml_appointment_date") == null ? "" : request.getParameter("xml_appointment_date");
 %>

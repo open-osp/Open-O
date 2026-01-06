@@ -31,7 +31,7 @@
 
 <%
     ArrayList<String> doctypesD = EDocUtil.getDoctypes("demographic");
-    ArrayList<String> doctypesP = EDocUtil.getDoctypes("providers");
+    ArrayList<String> doctypesP = EDocUtil.getDoctypes("provider");
 
     HashMap<String, String> doctypeerrors = new HashMap<String, String>();
     if (request.getAttribute("doctypeerrors") != null) {
@@ -69,7 +69,7 @@
     </tr>
 
     <form action="${pageContext.request.contextPath}/documentManager/changeDocStatus.do" method="POST"
-               enctype="multipart/form-data" styleClass="forms"
+               enctype="multipart/form-data" class="forms"
                onsubmit="return submitUpload(this)">
 
         <table>

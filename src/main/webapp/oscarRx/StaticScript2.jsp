@@ -315,7 +315,7 @@
                                 <%--  <form action="">
       <input type="hidden" name="drugList" value="<%=drug.localDrugId.toString()%>" />
       <input type="hidden" name="method" value="represcribe">
-                                                  <input type="submit" name="submit" style="width:100px" styleClass="ControlPushButton"  onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');" value="Re-prescribe" />
+                                                  <input type="submit" name="submit" style="width:100px" class="ControlPushButton"  onclick="javascript:reRxDrugSearch3('<%=drug.localDrugId%>');" value="Re-prescribe" />
   </form> --%>
                             <input type="button" align="top" value="Represcribe" style="width: 100px"
                                    class="ControlPushButton"

@@ -273,7 +273,7 @@ public class RxPrescriptionData {
         p.setTakeMax(drug.getTakeMax());
         p.setFrequencyCode(drug.getFreqCode());
         p.setDuration(drug.getDuration());
-        p.setDurationUnit(drug.getDuration());
+        p.setDurationUnit(drug.getDurUnit());
         p.setQuantity(drug.getQuantity());
         p.setRepeat(drug.getRepeat());
         p.setLastRefillDate(drug.getLastRefillDate());

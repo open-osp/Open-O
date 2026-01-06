@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
+
 import ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import ca.openosp.openo.PMmodule.dao.SecUserRoleDao;
@@ -131,10 +132,20 @@ public class CaseManagementView2Action extends ActionSupport {
 
         String method = request.getParameter("method") != null ? request.getParameter("method") : (String) request.getAttribute("method");
 
-        if ("saveAndExit".equals(method)) {
+        if ("setViewType".equals(method)) {
+            return setViewType();
+        } else if ("setPrescriptViewType".equals(method)) {
+            return setPrescriptViewType();
+        } else if ("setHideActiveIssues".equals(method)) {
+            return setHideActiveIssues();
+        } else if ("saveAndExit".equals(method)) {
             return saveAndExit();
         } else if ("save".equals(method)) {
             return save();
+        } else if ("patientCPPSave".equals(method)) {
+            return patientCPPSave();
+        } else if ("patientCppPrintPreview".equals(method)) {
+            return patientCppPrintPreview();
         } else if ("viewNotes".equals(method)) {
             return viewNotes();
         } else if ("viewNote".equals(method)) {
@@ -147,9 +158,13 @@ public class CaseManagementView2Action extends ActionSupport {
             return unlock();
         } else if ("do_unlock".equals(method)) {
             return do_unlock();
+        } else if ("addToDx".equals(method)) {
+            return addToDx();
         } else if ("viewNotesOpt".equals(method)) {
             return viewNotesOpt();
         } 
+
+        // Default method
         return view();
     }
 
