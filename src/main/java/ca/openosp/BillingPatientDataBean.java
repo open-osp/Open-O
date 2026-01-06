@@ -58,7 +58,9 @@ public class BillingPatientDataBean extends java.lang.Object implements java.io.
     protected String sex = "";
     /** Health insurance number */
     protected String hin = "";
+    /** Patient date of birth */
     protected String dob = "";
+    /** Billing status */
     protected String status = "";
 
 
