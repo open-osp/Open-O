@@ -131,15 +131,6 @@ public class BillingItemBean extends Object implements Serializable {
     }
 
     /**
-     * Gets the diagnosis code for this billing item.
-     * 
-     * @return the diagnosis code
-     */
-    public String getDiag_code() {
-        return diag_code;
-    }
-
-    /**
      * Sets the diagnosis code for this billing item.
      * This method is synchronized to ensure thread safety.
      * 
@@ -147,6 +138,15 @@ public class BillingItemBean extends Object implements Serializable {
      */
     public synchronized void setDiag_code(String value) {
         diag_code = value;
+    }
+
+    /**
+     * Gets the diagnosis code for this billing item.
+     * 
+     * @return the diagnosis code
+     */
+    public String getDiag_code() {
+        return diag_code;
     }
 
     /**
