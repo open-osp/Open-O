@@ -44,10 +44,46 @@ import org.apache.commons.io.FilenameUtils;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.PathValidationUtils;
 
+/**
+ * Servlet for handling document file uploads with path validation and security.
+ * 
+ * <p>This servlet processes multipart/form-data file uploads and stores documents
+ * in configured directories. Key features:</p>
+ * <ul>
+ *   <li>File upload processing using Apache Commons FileUpload</li>
+ *   <li>Path traversal attack prevention via {@link PathValidationUtils}</li>
+ *   <li>Configurable upload directories (documents, inbox, archive)</li>
+ *   <li>Request forwarding to configured success pages</li>
+ * </ul>
+ * 
+ * <p>Configuration properties:</p>
+ * <ul>
+ *   <li><code>DOCUMENT_DIR</code> - Main document storage directory</li>
+ *   <li><code>ONEDT_INBOX</code> - Inbox folder for incoming documents</li>
+ *   <li><code>ONEDT_ARCHIVE</code> - Archive folder for processed documents</li>
+ *   <li><code>RA_FORWORD</code> - Forward destination after upload</li>
+ * </ul>
+ * 
+ * <p><strong>Security:</strong> Uses PathValidationUtils to prevent directory
+ * traversal attacks. All uploaded files are validated before storage.</p>
+ * 
+ * @see PathValidationUtils
+ * @see OscarProperties
+ */
 public class DocumentUploadServlet extends HttpServlet {
 
+    /** Buffer size for file operations */
     final static int BUFFER = 4096;
 
+    /**
+     * Handles HTTP requests for document uploads.
+     * Processes multipart form data and stores uploaded files securely.
+     * 
+     * @param request the HTTP servlet request containing the uploaded file
+     * @param response the HTTP servlet response
+     * @throws IOException if an I/O error occurs
+     * @throws ServletException if a servlet error occurs
+     */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String foldername = "", fileheader = "", forwardTo = "";
         forwardTo = OscarProperties.getInstance().getProperty("RA_FORWORD");
