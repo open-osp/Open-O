@@ -39,7 +39,7 @@ public class ScratchPadDao extends AbstractDao<ScratchPad> {
 	}
 
 	public boolean isScratchFilled(String providerNo) {
-		String sSQL = "SELECT s FROM ScratchPad s WHERE s.providerNo = ? AND status=1 order by s.id";
+        String sSQL = "SELECT s FROM ScratchPad s WHERE s.providerNo = ? AND status=true order by s.id";
 		Query query = entityManager.createQuery(sSQL);
 		query.setParameter(1, providerNo);
 
@@ -66,8 +66,29 @@ public class ScratchPadDao extends AbstractDao<ScratchPad> {
 	}
 	
 	@SuppressWarnings("unchecked")
-    public List<Object[]> findAllDatesByProviderNo(String providerNo) {
-		String sql = "Select sp.dateTime, sp.id from ScratchPad sp where sp.providerNo = :providerNo AND sp.status=1 order by sp.dateTime DESC";
+    public List<ScratchPad> findAllDatesByProviderNo(String providerNo) {
+        String sql = "SELECT sp FROM ScratchPad sp " +
+                "WHERE sp.providerNo = :providerNo " +
+                "  AND sp.status = true " +
+                "  AND ( " +
+                "    DATE(sp.dateTime) = CURDATE() " +
+                "    OR ( " +
+                "      DATE(sp.dateTime) < CURDATE() " +
+                "      AND NOT EXISTS ( " +
+                "        SELECT 1 " +
+                "        FROM ScratchPad sp2 " +
+                "        WHERE sp2.providerNo = sp.providerNo " +
+                "          AND sp2.status = true " +
+                "          AND DATE(sp2.dateTime) = DATE(sp.dateTime) " +
+                "          AND DATE(sp2.dateTime) < CURDATE() " +
+                "          AND ( " +
+                "            sp2.dateTime > sp.dateTime " +
+                "            OR (sp2.dateTime = sp.dateTime AND sp2.id > sp.id) " +
+                "          ) " +
+                "      ) " +
+                "    ) " +
+                "  ) " +
+                "ORDER BY sp.dateTime DESC";
 		Query query = entityManager.createQuery(sql);
 		query.setParameter("providerNo", providerNo);
 		return query.getResultList();

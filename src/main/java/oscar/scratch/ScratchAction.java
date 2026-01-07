@@ -25,32 +25,32 @@
 
 package oscar.scratch;
 
-import java.net.URLEncoder;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import net.sf.json.JSONObject;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.actions.DispatchAction;
 import org.oscarehr.common.dao.ScratchPadDao;
 import org.oscarehr.common.model.ScratchPad;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import org.owasp.encoder.Encode;
+import oscar.form.JSONAction;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  *
  * @author jay
  */
-public class ScratchAction extends DispatchAction {
+public class ScratchAction extends JSONAction {
     
     public ActionForward showVersion(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
     	String id = request.getParameter("id");
     	ScratchPadDao dao = SpringUtils.getBean(ScratchPadDao.class);
     	ScratchPad scratchPad = dao.find(Integer.parseInt(id));
-    	
+
     	request.setAttribute("ScratchPad", scratchPad);
     	return mapping.findForward("scratchPadVersion");
     }
@@ -62,45 +62,41 @@ public class ScratchAction extends DispatchAction {
                 
         if(providerNo.equals(pNo)){
         String id = request.getParameter("id");
-        String dirty = request.getParameter("dirty");
         String scratchPad = request.getParameter("scratchpad");
         String windowId = request.getParameter("windowId");
-        String returnId = "";
-        String returnText = scratchPad;
-        MiscUtils.getLogger().debug("pro "+providerNo+" id "+id+" dirty "+dirty+" scatchPad "+scratchPad);
+        String returnId;
+        String returnText;
         ScratchData scratch = new ScratchData();
         Map<String, String> h = scratch.getLatest(providerNo);
-        
-        
+
         if (h == null){  //FIRST TIME USE
-           if(dirty != null && dirty.equals("1")){
-               returnId = scratch.insert(providerNo,scratchPad); 
-               returnText = scratchPad;
-           }               
+           returnId = scratch.insert(providerNo,scratchPad);
+           returnText = scratchPad;
+
         }else{
-           returnText = h.get("text");  
-        //Get current Id in scratch table
+
+           returnText = h.get("text").trim();
+            //Get current Id in scratch table
            int databaseId = Integer.parseInt(h.get("id"));
            returnId = ""+databaseId;
            MiscUtils.getLogger().debug( "database Id = "+databaseId+" request id "+id);
-           if (databaseId > Integer.parseInt(id)){           //check to see if the id in database is higher than in the request
-              MiscUtils.getLogger().debug(" DAtabase greater than id");
-              if (dirty.equals("1")){//Is dirty field set?
-                 //BIG PROBS,return warning that there is was concurrent editing, would you like to update to the latest.
-              }else{//No Dirty flag?  return latest Text
-                  
-              }
-           }else{
-               if (dirty.equals("1")){               //if its the same, is the dirty field set
-                 returnId = scratch.insert(providerNo,scratchPad);   //save new record and return new id.
-                  returnText = scratchPad;
-                  MiscUtils.getLogger().debug("dirty field set");
-               }
-           }    
-           
+
+		   if (databaseId > Integer.parseInt(id)){
+			   //check to see if the id in database is higher than in the request
+              MiscUtils.getLogger().debug(" Database id greater than id");
+
+		   }else if (isTextDifferent(scratchPad, returnText)){
+	           returnId = scratch.insert(providerNo,scratchPad);   //save new record and return new id.
+               returnText = scratchPad;
+               MiscUtils.getLogger().debug("dirty field set");
+           }
         }
-        response.getWriter().print("id="+URLEncoder.encode(returnId,"utf-8")+"&text="+URLEncoder.encode(returnText,"utf-8")+"&windowId="+URLEncoder.encode(windowId,"utf-8"));
-        
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("id", Encode.forHtmlContent(returnId));
+			jsonObject.put("text", Encode.forHtmlContent(returnText));
+			jsonObject.put("windowId", Encode.forHtmlContent(windowId));
+			jsonResponse(response,jsonObject);
+
         }else{
         	MiscUtils.getLogger().error("Scratch pad trying to save data for user " + pNo + " but session user is " + providerNo);
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -111,15 +107,32 @@ public class ScratchAction extends DispatchAction {
     
     public ActionForward delete(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	String id = request.getParameter("id");
-    	
-    	ScratchPadDao scratchDao = SpringUtils.getBean(ScratchPadDao.class);
-    	ScratchPad scratch = scratchDao.find(Integer.parseInt(id));
-    	scratch.setStatus(false);
-        scratchDao.merge(scratch);
-  	    	
-    	request.setAttribute("actionDeleted", "version " + id + " was deleted!");
-    	return mapping.findForward("scratchPadVersion");
+	    JSONObject jsonObject = new JSONObject();
+
+		if (id != null && ! id.isEmpty()) {
+			ScratchPadDao scratchDao = SpringUtils.getBean(ScratchPadDao.class);
+			ScratchPad scratch = scratchDao.find(Integer.parseInt(id));
+			scratch.setStatus(false);
+			scratchDao.merge(scratch);
+			jsonObject.put("id", Encode.forHtmlContent(id));
+			jsonObject.put("version", scratch.getDateTime() != null
+					? scratch.getDateTime().toInstant().toString()
+					: null);
+			jsonObject.put("success", true);
+		} else {
+			jsonObject.put("success", false);
+		}
+
+	    jsonResponse(response,jsonObject);
+    	return null;
     }
+
+
+	private boolean isTextDifferent(String scratchPad, String returnText) {
+		String s1 = scratchPad == null ? "" : scratchPad.trim();
+		String s2 = returnText == null ? "" : returnText.trim();
+		return !s1.equals(s2);
+	}
     
     
 }
