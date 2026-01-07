@@ -120,9 +120,10 @@
 
             boolean isCurrentScopeMatch = false;
             if (demographic != null && !demographic.isEmpty()) {
-                // Patient scope: providerNo="" AND demographicNo=demographic
-                isCurrentScopeMatch = "".equals(cust.getProviderNo()) &&
-                                      demographic.equals(cust.getDemographicNo());
+                // Patient scope: demographicNo=demographic AND (providerNo="" OR providerNo=currentProvider)
+                // Note: Older records have providerNo=currentProvider, new records have providerNo=""
+                isCurrentScopeMatch = demographic.equals(cust.getDemographicNo()) &&
+                                      ("".equals(cust.getProviderNo()) || currentProvider.equals(cust.getProviderNo()));
             } else if ("clinic".equals(scope)) {
                 // Clinic scope: providerNo="" AND demographicNo="0"
                 isCurrentScopeMatch = "".equals(cust.getProviderNo()) &&

@@ -52,13 +52,20 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
         // - Provider level: providerNo=<provider> AND demographicNo='0'
         // - Patient level (new): providerNo='' AND demographicNo=<demographic>
         // - Patient level (old/legacy): providerNo=<provider> AND demographicNo=<demographic>
+        //
+        // Ordering is critical: customizations are applied in order, LAST one is chosen for the same measurement.
+        // ORDER BY demographicNo ASC, providerNo DESC ensures:
+        // 1. Clinic/Provider (demographicNo='0') applied before Patient (demographicNo!=0)
+        // 2. Within same demographicNo, providerNo DESC means:
+        //    - For '0': provider (999) before clinic ('') → clinic wins
+        //    - For patient: legacy (999) before new ('') → new wins
         Query query = entityManager.createQuery(
             "SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 AND fd.archived=0 " +
             "AND ((fd.providerNo='' AND fd.demographicNo='0') " +
             "OR (fd.providerNo=?2 AND fd.demographicNo='0') " +
             "OR (fd.providerNo='' AND fd.demographicNo=?3) " +
             "OR (fd.providerNo=?2 AND fd.demographicNo=?3)) " +
-            "ORDER BY fd.providerNo, fd.demographicNo");
+            "ORDER BY fd.demographicNo, fd.providerNo DESC");
         query.setParameter(1, flowsheet);
         query.setParameter(2, provider);
         query.setParameter(3, String.valueOf(demographic));
@@ -121,11 +128,13 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
 
     @Override
     public List<FlowSheetCustomization> getPatientLevelCustomizations(String flowsheet, String demographicNo) {
-        // Patient level: providerNo='' AND specific demographicNo
+        // Patient level: specific demographicNo (not "0")
+        // Note: Legacy records have providerNo=<provider>, new records have providerNo=""
+        // Both formats are valid patient-level customizations
         Query query = entityManager.createQuery(
             "SELECT fd FROM FlowSheetCustomization fd " +
             "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
-            "AND fd.providerNo='' AND fd.demographicNo=?2");
+            "AND fd.demographicNo=?2");
         query.setParameter(1, flowsheet);
         query.setParameter(2, demographicNo);
 

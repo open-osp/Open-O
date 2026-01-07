@@ -62,11 +62,18 @@ public interface FlowSheetCustomizationDao extends AbstractDao<FlowSheetCustomiz
     List<FlowSheetCustomization> getProviderLevelCustomizations(String flowsheet, String providerNo);
 
     /**
-     * Gets customizations created at a specific patient level only (providerNo="").
+     * Gets customizations created at a specific patient level.
      * Does not include clinic-level or provider-level customizations.
      *
+     * <p>Note: Patient-level records may have different formats due to migration:
+     * <ul>
+     *   <li>New format: providerNo="" AND demographicNo=&lt;demographic&gt;</li>
+     *   <li>Legacy format: providerNo=&lt;provider&gt; AND demographicNo=&lt;demographic&gt;</li>
+     * </ul>
+     * This method returns both formats.</p>
+     *
      * @param flowsheet the flowsheet name
-     * @param demographicNo the demographic number
+     * @param demographicNo the demographic number (must not be "0")
      * @return list of patient-level customizations
      * @since 2025-12-29
      */
