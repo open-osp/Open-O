@@ -105,39 +105,32 @@ public final class RxWriteScript2Action extends ActionSupport {
 
     public String execute() throws IOException, ServletException, Exception {
         String method = request.getParameter("parameterValue");
-        
-        if ("updateReRxDrug".equals(method)) {
-            return updateReRxDrug();
-        } else if ("saveCustomName".equals(method)) {
-            return saveCustomName();
-        } else if ("newCustomNote".equals(method)) {
-            return newCustomNote();
-        } else if ("listPreviousInstructions".equals(method)) {
-            return listPreviousInstructions();
-        } else if ("newCustomDrug".equals(method)) {
-            return newCustomDrug();
-        } else if ("normalDrugSetCustom".equals(method)) {
-            return normalDrugSetCustom();
-        } else if ("createNewRx".equals(method)) {
-            return createNewRx();
-        } else if ("updateDrug".equals(method)) {
-            return updateDrug();
-        } else if ("iterateStash".equals(method)) {
-            return iterateStash();
-        } else if ("updateSpecialInstruction".equals(method)) {
-            return updateSpecialInstruction();
-        } else if ("updateProperty".equals(method)) {
-            return updateProperty();
-        } else if ("updateSaveAllDrugs".equals(method)) {
-            return updateSaveAllDrugs();
-        } else if ("getDemoNameAndHIN".equals(method)) {
-            return getDemoNameAndHIN();
-        } else if ("updateToLongTerm".equals(method)) {
-            return updateToLongTerm();
-        } else if ("checkNoStashItem".equals(method)) {
-            return checkNoStashItem();
-        } else if ("searchSpecialInstructions".equals(method)) {
-            searchSpecialInstructions();
+
+        String dispatchResult = switch (method != null ? method : "") {
+            case "updateReRxDrug" -> updateReRxDrug();
+            case "saveCustomName" -> saveCustomName();
+            case "newCustomNote" -> newCustomNote();
+            case "listPreviousInstructions" -> listPreviousInstructions();
+            case "newCustomDrug" -> newCustomDrug();
+            case "normalDrugSetCustom" -> normalDrugSetCustom();
+            case "createNewRx" -> createNewRx();
+            case "updateDrug" -> updateDrug();
+            case "iterateStash" -> iterateStash();
+            case "updateSpecialInstruction" -> updateSpecialInstruction();
+            case "updateProperty" -> updateProperty();
+            case "updateSaveAllDrugs" -> updateSaveAllDrugs();
+            case "getDemoNameAndHIN" -> getDemoNameAndHIN();
+            case "updateToLongTerm" -> updateToLongTerm();
+            case "checkNoStashItem" -> checkNoStashItem();
+            case "searchSpecialInstructions" -> {
+                searchSpecialInstructions();
+                yield null; // or whatever the intended return is for this void-like call
+            }
+            default -> null;
+        };
+
+        if (dispatchResult != null || (method != null && !method.isEmpty())) {
+            return dispatchResult;
         }
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);

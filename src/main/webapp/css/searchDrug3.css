@@ -93,6 +93,7 @@ table#AutoNumber1 table.legend td {
 
 table td,table th {
 	text-align: left !important;
+  vertical-align: top !important;
 }
 
 

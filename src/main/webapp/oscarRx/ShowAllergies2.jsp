@@ -336,7 +336,7 @@
 
             //--> Check if search field is empty.
             function isEmpty() {
-                if (document.forms.searchAllergy2.searchString.value.length == 0) {
+                if (document.forms.searchAllergy2.searchString.value.length === 0) {
                     alert("Search Field is Empty");
                     document.forms.searchAllergy2.searchString.focus();
                     return false;
@@ -347,7 +347,7 @@
             function show_Search_Criteria() {
                 var tbl_as = document.getElementById("advancedSearch");
 
-                if (tbl_as.style.display == '') {
+                if (tbl_as.style.display === '') {
                     tbl_as.style.display = 'none';
                 } else {
                     tbl_as.style.display = '';
@@ -424,11 +424,12 @@
             <td colspan="2">
                 <jsp:include page="TopLinks.jsp">
                     <jsp:param value="Allergies" name="title"/>
-                    <jsp:param value="${ patient.getSurname() }, ${ patient.getFirstName() }" name="patientName"/>
-                    <jsp:param value="${ patient.getSex() }" name="sex"/>
-                    <jsp:param value="${ patient.getAge() }" name="age"/>
-                    <jsp:param value="${ patient.getDemographicNo() }" name="demographicNo"/>
+                    <jsp:param value="${ patient.surname }, ${ patient.firstName }" name="patientName" />
+                    <jsp:param value="${ patient.sex }" name="sex" />
+                    <jsp:param value="${ patient.age }" name="age" />
+                    <jsp:param value="${ patient.demographicNo }" name="demographicNo" />
                     <jsp:param value="<%= roleName2$ %>" name="security"/>
+			              <jsp:param value='<%= (String)session.getAttribute("demographicNo") %>' name="demographicNo" />
                 </jsp:include>
             </td>
         </tr>
@@ -458,11 +459,11 @@
                                 <tr>
                                     <td>
                                         <b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/></b>
-                                        ${patient.getSurname() }, ${patient.getFirstName() }<br/>
+                                        ${patient.surname() }, ${patient.firstName() }<br/>
                                     </td>
                                     <td>&nbsp;</td>
                                     <td><b>Age:</b>
-                                        ${patient.getAge() }<br/>
+                                        ${patient.age() }<br/>
                                     </td>
                                 </tr>
                             </table>
@@ -487,7 +488,7 @@
     }
 
     String strView = request.getParameter("view");
-    if (strView == null) strView = "Active";
+    if (strView == null) {strView = "Active";}
 
     String[] navArray = {"Active", "All", "Inactive"};
 
@@ -499,26 +500,26 @@
             out.print("<span class='view_menu'><a href='ShowAllergies2.jsp?demographicNo=" + demoNo + "&view=" + navArray[i] + "'>");
             out.print(navArray[i]);
             out.print("</a></span>");
-        }
-    }
-//1 mild 2 moderate 3 severe 4 unknown
-
-    String[] ColourCodesArray = new String[6];
-    ColourCodesArray[1] = "#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
-    ColourCodesArray[2] = "#FF6600"; // Moderate
-    ColourCodesArray[3] = "#CC0000"; // Severe
-    ColourCodesArray[4] = "#E0E0E0"; // unknown
-    ColourCodesArray[5] = "#FFFFFF"; // no reaction
-
-
-							out.print("<span class='view_selected'>" + navArray[i] + "</span>");
-
-
-						}else{
-							out.print("<span class='view_menu'><a href='" + request.getContextPath() + "/oscarRx/showAllergy.do?demographicNo="+demoNo+"&view="+navArray[i]+"'>");
-								out.print(navArray[i]);
-							out.print("</a></span>");
-						}
+         }
+//
+////1 mild 2 moderate 3 severe 4 unknown
+//
+//    String[] ColourCodesArray = new String[6];
+//    ColourCodesArray[1] = "#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
+//    ColourCodesArray[2] = "#FF6600"; // Moderate
+//    ColourCodesArray[3] = "#CC0000"; // Severe
+//    ColourCodesArray[4] = "#E0E0E0"; // unknown
+//    ColourCodesArray[5] = "#FFFFFF"; // no reaction
+//
+//
+//							out.print("<span class='view_selected'>" + navArray[i] + "</span>");
+//
+//
+//						}else{
+//							out.print("<span class='view_menu'><a href='" + request.getContextPath() + "/oscarRx/showAllergy.do?demographicNo="+demoNo+"&view="+navArray[i]+"'>");
+//								out.print(navArray[i]);
+//							out.print("</a></span>");
+//						}
 					 }
 					 //1 mild 2 moderate 3 severe 4 unknown
 
@@ -535,7 +536,7 @@
 
 			</td>
 		</tr>
-		</table>
+
 		<tr>
 			<td>
 				<table border="0">
@@ -584,7 +585,138 @@
                           alt="Annotation"></b></td>
 							<td><b>Action</b></td>
 						</tr>
+                                            <%
+                                                String strArchived;
+                                                int intArchived = 0;
+                                                String labelStatus;
+                                                String labelAction;
+                                                String actionPath;
+                                                String trColour;
+                                                String strSOR;
+                                                int intSOR;
+                                                boolean hasDrugAllergy = false;
+                                                int iNKDA = 0;
 
+                                                for (Allergy allergy : patient.getAllergies(LoggedInInfo.getLoggedInInfoFromSession(request))) {
+                                                    if (!allergy.getArchived()) {
+                                                        if (allergy.getTypeCode() > 0) hasDrugAllergy = true;
+                                                        if (allergy.getDescription().equals("No Known Drug Allergies"))
+                                                            iNKDA = allergy.getId();
+                                                    }
+
+                                                    String title = "";
+                                                    if (allergy.getRegionalIdentifier() != null && !allergy.getRegionalIdentifier().trim().equalsIgnoreCase("null") && !allergy.getRegionalIdentifier().trim().equals("")) {
+                                                        title = " title=\"Din: " + allergy.getRegionalIdentifier() + "\" ";
+                                                    }
+
+                                                    boolean filterOut = false;
+                                                    strArchived = allergy.getArchived() ? "1" : "0";
+
+                                                    try {
+                                                        intArchived = Integer.parseInt(strArchived);
+
+                                                        if (strView.equals("Active") && intArchived == 1) {
+                                                            filterOut = true;
+                                                        }
+
+                                                        if (strView.equals("Inactive") && intArchived == 0) {
+                                                            filterOut = true;
+                                                        }
+                                                    } catch (Exception e) {
+                                                        // that's okay , most likely the value is not set so we don't know, leave blank
+                                                    }
+
+                                                    strSOR = allergy.getSeverityOfReaction();
+                                                    intSOR = Integer.parseInt(strSOR);
+                                                    String sevColour;
+
+                                                    if (intArchived == 1) {
+                                                        //if allergy is set as archived
+                                                        labelStatus = "Inactive";
+                                                        labelAction = "Reactivate";
+                                                        actionPath = "activate";
+                                                        trColour = "#C0C0C0";
+
+                                                        sevColour = "#C0C0C0"; //clearing severity bgcolor
+                                                    } else {
+                                                        labelStatus = "Active";
+                                                        labelAction = "Inactivate";
+                                                        actionPath = "delete";
+
+                                                        trColour = "#E0E0E0";
+                                                        sevColour = ColourCodesArray[intSOR];
+                                                    }
+
+
+                                                    if (!filterOut) {
+                                                        String entryDate = partialDateDao.getDatePartial(allergy.getEntryDate(), PartialDate.ALLERGIES, allergy.getAllergyId(), PartialDate.ALLERGIES_ENTRYDATE);
+                                                        String startDate = partialDateDao.getDatePartial(allergy.getStartDate(), PartialDate.ALLERGIES, allergy.getAllergyId(), PartialDate.ALLERGIES_STARTDATE);
+                                            %>
+                                            <tr bgcolor="<%=trColour%>" id="allergy_<%= allergy.getAllergyId() %>">
+                                                <td><%=labelStatus%>
+                                                </td>
+                                                <td><%=entryDate == null ? "" : entryDate %>
+                                                </td>
+                                                <td <%=title%> ><%=allergy.getDescription() %>
+                                                </td>
+                                                <td><%=allergy.getTypeDesc() %>
+                                                </td>
+
+                                                <td><%=allergy.getTypeCode() == 0 && allergy.isNonDrug() == null ? "<i>&lt;Not Set&gt;</i>" : ""%><%=allergy.getTypeCode() == 0 && allergy.isNonDrug() != null && allergy.isNonDrug() ? "*" : "" %>
+                                                </td>
+                                                <td bgcolor="<%=sevColour%>"><%=allergy.getSeverityOfReactionDesc() %>
+                                                </td>
+                                                <td><%=allergy.getOnSetOfReactionDesc() %>
+                                                </td>
+                                                <td><%=allergy.getReaction() != null ? allergy.getReaction() : "" %>
+                                                </td>
+                                                <td><%=startDate == null ? "" : startDate %>
+                                                </td>
+                                                <td><%=allergy.getLifeStageDesc() %>
+                                                </td>
+                                                <td><%=allergy.getAgeOfOnset() == null ? "" : allergy.getAgeOfOnset()%>
+                                                </td>
+                                                <%
+                                                    CaseManagementManager cmm = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
+                                                    @SuppressWarnings("unchecked")
+                                                    List<CaseManagementNoteLink> existingAnnots = cmm.getLinkByTableId(CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergy.getAllergyId()));
+                                                %>
+                                                <td>
+                                                    <%
+                                                        if (!allergy.isIntegratorResult()) {
+                                                    %>
+                                                    <a href="#" title="Annotation"
+                                                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=
+                                                           ${patient.getDemographicNo() }','anwin','width=400,height=500');">
+                                                        <% if (existingAnnots.size() > 0) {%>
+                                                        <img src="<%= request.getContextPath() %>/images/filledNotes.gif" border="0"/>
+                                                        <% } else { %>
+                                                        <img src="<%= request.getContextPath() %>/images/notes.gif" border="0">
+                                                        <% } %>
+                                                    </a>
+                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <%
+                                                        if (!allergy.isIntegratorResult() && securityManager.hasDeleteAccess("_allergies", roleName$)) {
+                                                            if (intArchived == 0) {
+                                                    %>
+                                                    <a href="#" class="deleteAllergyLink"
+                                                       id="deleteAllergy:<%= labelAction %>_ID=<%=allergy.getAllergyId() %>&demographicNo=<%=demoNo %>&action=<%=actionPath %>">
+                                                        <%=labelAction%>
+                                                    </a> |
+                                                    <% } %>
+                                                    <a href="#" class="modifyAllergyLink"
+                                                       id="modifyAllergy:<%= labelAction %>_ID=<%=allergy.getDrugrefId() %>&name=<%=allergy.getDescription() %>&type=<%=allergy.getTypeCode() %>&allergyToArchive=<%=allergy.getId() %>">
+                                                        <%=intArchived == 0 ? "Modify" : labelAction%>
+                                                    </a>
+                                                    <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }
+                                            } //end of iterate
+                                                if (hasDrugAllergy) {iNKDA = 0};
+                                            %>
 					</table>
 					</form>
 				</td>
@@ -593,6 +725,11 @@
 			<tr>
 				<td id="searchResultsContainer" ></td>
 			</tr>
+
+                    <tr id="addAllergyInterface">
+                        <td>
+                            <form action="<%=request.getContextPath()%>/oscarRx/searchAllergy2.do" focus="searchString" id="searchAllergy2"
+                                  onSubmit="return submitSearchForm()">
 
                                 <input type="hidden" name="iNKDA" value="<%=iNKDA%>"/>
                                 <input type="hidden" name="hasDrugAllergy" value="<%=hasDrugAllergy%>"/>

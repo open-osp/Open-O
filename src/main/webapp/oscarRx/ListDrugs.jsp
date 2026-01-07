@@ -33,33 +33,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
-<%@ page
-        import="ca.openosp.openo.rx.data.*,ca.openosp.openo.demographic.data.DemographicData,ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
+<%@ page import="ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
 <%@page import="ca.openosp.openo.casemgmt.service.CaseManagementManager,
-                org.springframework.web.context.WebApplicationContext,
-                org.springframework.web.context.support.WebApplicationContextUtils,
                 ca.openosp.openo.casemgmt.model.CaseManagementNoteLink,
                 ca.openosp.openo.casemgmt.model.CaseManagementNote" %>
-<%@page import="java.text.SimpleDateFormat" %>
-<%@page import="java.util.Calendar" %>
-<%@page import="java.util.Enumeration" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@page import="ca.openosp.openo.utility.SessionConstants" %>
-<%@page import="java.util.List,ca.openosp.openo.util.StringUtils" %>
-<%@page import="ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager" %>
 <%@page import="ca.openosp.openo.utility.LoggedInInfo,ca.openosp.openo.commn.dao.DrugReasonDao,ca.openosp.openo.commn.model.DrugReason" %>
-<%@page import="java.util.ArrayList,ca.openosp.openo.util.*,java.util.*,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.commn.dao.*" %>
+<%@page import="ca.openosp.openo.util.*,java.util.*,ca.openosp.openo.commn.model.Drug,ca.openosp.openo.commn.dao.*" %>
 <%@page import="ca.openosp.openo.managers.DrugDispensingManager" %>
 <%@page import="ca.openosp.openo.managers.CodingSystemManager" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%@ page import="ca.openosp.openo.services.security.SecurityManager" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
-<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
-<%@ page import="ca.openosp.openo.util.UtilDateUtilities" %>
 <%@ page import="ca.openosp.openo.commn.dao.PartialDateDao" %>
 <%@ page import="static ca.openosp.openo.prescript.util.RxUtil.DateToString" %>
-
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<fmt:setBundle basename="oscarResources"/>
 <%
     RxPatientData.Patient patient = null;
     RxSessionBean bean = null;
@@ -205,27 +195,27 @@
         <tr>
 
         	<th ><b>Entered Date</b></th>
-            <th ><b><bean:message key="SearchDrug.msgRxDate"/></b></th>
+            <th ><b><fmt:message key="SearchDrug.msgRxDate"/></b></th>
             <th ><b>Days to Exp</b></th>
             <th ><b>LT Med</b></th>
-            <th ><b><bean:message key="SearchDrug.msgPrescription"/></b></th>
+            <th ><b><fmt:message key="SearchDrug.msgPrescription"/></b></th>
 			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <th ><b><bean:message key="SearchDrug.msgReprescribe"/></b></th>
+            <th ><b><fmt:message key="SearchDrug.msgReprescribe"/></b></th>
             	<%if(!OscarProperties.getInstance().getProperty("rx.delete_drug.hide","false").equals("true")) {%>
-            	<th ><b><bean:message key="SearchDrug.msgDelete"/></b></th>
+            	<th ><b><fmt:message key="SearchDrug.msgDelete"/></b></th>
             <% 	}	 
 			}            
             %>
-            <th ><b><bean:message key="SearchDrug.msgDiscontinue"/></b></th>		
-			<th  title="<bean:message key="SearchDrug.msgReason_help"/>"><b><bean:message key="SearchDrug.msgReason"/></b></th>    
-            <th ><b><bean:message key="SearchDrug.msgPastMed"/></b></th>
+            <th ><b><fmt:message key="SearchDrug.msgDiscontinue"/></b></th>		
+			<th  title="<fmt:message key="SearchDrug.msgReason_help"/>"><b><fmt:message key="SearchDrug.msgReason"/></b></th>    
+            <th ><b><fmt:message key="SearchDrug.msgPastMed"/></b></th>
             <%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
             	<th>&nbsp;</th>
             <% } %>
-            <th ><bean:message key="SearchDrug.msgLocationPrescribed"/></th>
-            <th title="<bean:message key="SearchDrug.msgHideCPP_help"/>"><bean:message key="SearchDrug.msgHideCPP"/></th>
+            <th ><fmt:message key="SearchDrug.msgLocationPrescribed"/></th>
+            <th title="<fmt:message key="SearchDrug.msgHideCPP_help"/>"><fmt:message key="SearchDrug.msgHideCPP"/></th>
             <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>
-             <th ><bean:message key="SearchDrug.msgDispense"/></th>
+             <th ><fmt:message key="SearchDrug.msgDispense"/></th>
              <%} %>
              <th ></th>
 
@@ -305,27 +295,10 @@
         %>
         <tr>
 
-        <td><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=DateToString(prescriptDrug.getCreateDate())%></a></td>
+        <td><a id="createDate_<%=prescriptIdInt%>"   <%=styleColor%> href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"><%=DateToString(prescriptDrug.getCreateDate())%></a></td>
             <td>
             	<% if(startDateUnknown) { %>
             		
-            	<% } else { 
-            		String startDate = DateToString(prescriptDrug.getRxDate());
-            		startDate = partialDateDao.getDatePartial(startDate, PartialDate.DRUGS,  prescriptDrug.getId(), PartialDate.DRUGS_STARTDATE);
-            	%>
-            		<a id="rxDate_<%=prescriptIdInt%>"   <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>"><%=startDate%></a>
-            	<% } %>
-            </td>
-            <td >
-            	<% if(startDateUnknown) { %>
-            		
-            	<% } else { %>
-            		<%=prescriptDrug.daysToExpire()%>
-            	<% } %>
-            </td>
-            <td >
-
-
                 <% } else {
                     String startDate = UtilDateUtilities.DateToString(prescriptDrug.getRxDate());
                     startDate = partialDateDao.getDatePartial(startDate, PartialDate.DRUGS, prescriptDrug.getId(), PartialDate.DRUGS_STARTDATE);
@@ -335,14 +308,14 @@
                 </a>
                 <% } %>
             </td>
-            <td valign="top">
+            <td>
                 <% if (startDateUnknown) { %>
 
                 <% } else { %>
                 <%=prescriptDrug.daysToExpire()%>
                 <% } %>
             </td>
-            <td valign="top">
+            <td>
                 <%
                     if (prescriptDrug.isLongTerm()) {
                 %>
@@ -387,7 +360,7 @@
 			}
 			
 			%>
-            <td ><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%> href="StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%></a></td>
+            <td ><a id="prescrip_<%=prescriptIdInt%>" <%=styleColor%> href="oscarRx/StaticScript2.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&amp;cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&amp;bn=<%=response.encodeURL(bn)%>&amp;atc=<%=prescriptDrug.getAtc()%>"   <%=tComment%>   ><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%></a></td>
 			<%            			
 	           	if(securityManager.hasWriteAccess("_rx",roleName$,true)) {            		
            	%>
@@ -477,21 +450,7 @@
             </td>
 
 			<%if(securityManager.hasWriteAccess("_rx",roleName$,true)) {%>
-            <td>
-            	<% 	
-            		if (prescriptDrug.getRemoteFacilityId()==null)
-            		{
-            			%>
-		                <a href="javascript:void(0);" title="Annotation" onclick="window.open('../annotation/annotation.jsp?display=<%=annotation_display%>&amp;table_id=<%=prescriptIdInt%>&amp;demo=<%=bean.getDemographicNo()%>&amp;drugSpecial=<%=StringEscapeUtils.escapeJavaScript(specialText)%>','anwin','width=400,height=500');">
-		                    <%if(!isPrevAnnotation){%> <img src="../images/notes.gif" alt="rxAnnotation" height="16" width="13" border="0"><%} else{%><img src="../images/filledNotes.gif" height="16" width="13" alt="rxFilledNotes" border="0"> <%}%></a>
-            			<%
-            		}
-            	%>
-            </td>
-            <% } %>
-            
-            <td>
-
+            <td width="10px" align="center">
                 <%
                     if (prescriptDrug.getRemoteFacilityId() == null) {
                 %>
@@ -506,7 +465,7 @@
             </td>
             <% } %>
 
-            <td width="10px" align="center" valign="top">
+            <td width="10px" align="center">
                 <%
                     if (prescriptDrug.getRemoteFacilityName() != null) { %>
                 <span class="external"><%=prescriptDrug.getRemoteFacilityName()%></span>
@@ -538,7 +497,7 @@
 							String dispensingStatus = drugDispensingManager.getStatus(prescriptDrug.getId());
 				               
 				%>
-					<a href="javascript:void(0)" onclick="javascript:popupWindow(720,700,'<%=request.getContextPath()%>/oscarRx/Dispense.do?method=view&id=<%=prescriptDrug.getId()%>','Dispense<%=prescriptIdInt %>'); return false;">Dispense (<%=dispensingStatus%>)</a>
+					<a href="javascript:void(0)" onclick="popupWindow(720,700,'<%=request.getContextPath()%>/oscarRx/Dispense.do?method=view&id=<%=prescriptDrug.getId()%>','Dispense<%=prescriptIdInt %>'); return false;">Dispense (<%=dispensingStatus%>)</a>
 				<% 
 					} }
 				%>
@@ -642,9 +601,7 @@
         return retval.substring(0, retval.length()) + "\"";
 
     }
-
-%><%!
-
+    
     String displayDrugReason(CodingSystemManager codingSystemManager, List<DrugReason> drugReasons, boolean title) {
         StringBuilder sb = new StringBuilder();
         boolean multiLoop = false;
