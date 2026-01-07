@@ -36,18 +36,55 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.PathValidationUtils;
 
+/**
+ * Servlet for handling document file uploads with path validation and security.
+ * 
+ * <p>This servlet processes multipart/form-data file uploads and stores documents
+ * in configured directories. Key features:</p>
+ * <ul>
+ *   <li>File upload processing using Apache Commons FileUpload</li>
+ *   <li>Path traversal attack prevention via {@link PathValidationUtils}</li>
+ *   <li>Configurable upload directories (documents, inbox, archive)</li>
+ *   <li>Request forwarding to configured success pages</li>
+ * </ul>
+ * 
+ * <p>Configuration properties:</p>
+ * <ul>
+ *   <li><code>DOCUMENT_DIR</code> - Main document storage directory</li>
+ *   <li><code>ONEDT_INBOX</code> - Inbox folder for incoming documents</li>
+ *   <li><code>ONEDT_ARCHIVE</code> - Archive folder for processed documents</li>
+ *   <li><code>RA_FORWORD</code> - Forward destination after upload</li>
+ * </ul>
+ * 
+ * <p><strong>Security:</strong> Uses PathValidationUtils to prevent directory
+ * traversal attacks. All uploaded files are validated before storage.</p>
+ * 
+ * @see PathValidationUtils
+ * @see OscarProperties
+ */
 public class DocumentUploadServlet extends HttpServlet {
 
+    /** Buffer size for file operations */
     final static int BUFFER = 4096;
 
+    /**
+     * Handles HTTP requests for document uploads.
+     * Processes multipart form data and stores uploaded files securely.
+     * 
+     * @param request the HTTP servlet request containing the uploaded file
+     * @param response the HTTP servlet response
+     * @throws IOException if an I/O error occurs
+     * @throws ServletException if a servlet error occurs
+     */
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String foldername = "", fileheader = "", forwardTo = "";
         forwardTo = OscarProperties.getInstance().getProperty("RA_FORWORD");
@@ -105,7 +142,40 @@ public class DocumentUploadServlet extends HttpServlet {
             }
         } else {
 
-            DiskFileUpload upload = new DiskFileUpload();
+            // Create a factory for disk-based file items
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+
+            // Configure size threshold: small files (<1MB) stay in memory, larger ones go to disk
+            factory.setSizeThreshold(1024 * 1024); // 1 MB threshold
+
+            // Configure a controlled temporary directory for larger file items
+            String systemTempDir = System.getProperty("java.io.tmpdir");
+            File uploadTempDir = new File(systemTempDir, "openoemr-uploads");
+
+            try {
+                // Create the temp directory if it doesn't exist
+                if (!uploadTempDir.exists()) {
+                    if (!uploadTempDir.mkdirs()) {
+                        throw new ServletException("Failed to create upload temp directory: " + uploadTempDir.getAbsolutePath());
+                    }
+                }
+
+                // Validate the temp directory is within allowed system temp path
+                PathValidationUtils.validateExistingPath(uploadTempDir, new File(systemTempDir));
+                factory.setRepository(uploadTempDir);
+
+            } catch (SecurityException e) {
+                MiscUtils.getLogger().error("Security validation failed for upload temp directory", e);
+                throw new ServletException("Upload configuration error: invalid temp directory path", e);
+            }
+
+            // Create a new file upload handler
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+
+            // Set file size limits to prevent DoS attacks (50 MB limit for MOH billing files)
+            upload.setFileSizeMax(52428800); // 50 MB per file
+            upload.setSizeMax(52428800);     // 50 MB total request size
 
             try {
                 // Parse the request

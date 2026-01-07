@@ -27,6 +27,8 @@
 package ca.openosp.openo.billings.ca.on.pageUtil;
 
 import com.opensymphony.xwork2.ActionSupport;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.commn.dao.BatchEligibilityDao;
 import ca.openosp.openo.commn.dao.DemographicCustDao;
@@ -66,14 +68,12 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
     public String execute() throws ServletException, IOException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-        String filename = request.getParameter("filename") == null ? "null" : request.getParameter("filename");
+        String filename = request.getParameter("filename");
 
-        if (filename == "null") {
+        if (StringUtils.isBlank(filename)) {
             if (!saveFile(file1, file1FileName)) {
                 addActionError(getText("errors.fileNotAdded"));
-
-                response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
-                return NONE;
+                return ERROR;
             } else {
                 if (getData(loggedInInfo, file1FileName, "DOCUMENT_DIR", request)) {
                     // Use FilenameUtils to safely extract just the filename for report type check
@@ -82,9 +82,7 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
                 }
                 else {
                     addActionError(getText("errors.incorrectFileFormat"));
-
-                    response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
-                    return NONE;
+                    return ERROR;
                 }
             }
         } else {
@@ -96,9 +94,7 @@ public class BillingDocumentErrorReportUpload2Action extends ActionSupport {
                 return (baseName != null && baseName.startsWith("L")) ? "outside" : SUCCESS;
             } else {
                 addActionError(getText("errors.incorrectFileFormat"));
-
-                response.sendRedirect(request.getContextPath() + "/billing/CA/ON/billingOBECEA.jsp");
-                return NONE;
+                return ERROR;
             }
         }
     }

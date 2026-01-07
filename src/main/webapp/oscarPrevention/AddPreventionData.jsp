@@ -358,13 +358,13 @@
                 document.getElementById(id).style.display = 'none';
             }
 
-            function showHideNextDate(id, nextDate, nexerWarn) {
+            function showHideNextDate(id, nextDate, neverWarn) {
                 if (document.getElementById(id).style.display == 'none') {
                     showItem(id);
                 } else {
                     hideItem(id);
                     document.getElementById(nextDate).value = "";
-                    document.getElementById(nexerWarn).checked = false;
+                    document.getElementById(neverWarn).checked = false;
 
                 }
             }
@@ -1411,7 +1411,7 @@
 
                     <div class="prevention">
                         <fieldset>
-                            <legend><a onclick="showHideNextDate('nextDateDiv','nextDate','nexerWarn')"
+                            <legend><a onclick="showHideNextDate('nextDateDiv','nextDate','neverWarn')"
                                        href="javascript: function myFunction() {return false; }">Set Next Date</a>
                             </legend>
                             <div id="nextDateDiv" style="display:none;">

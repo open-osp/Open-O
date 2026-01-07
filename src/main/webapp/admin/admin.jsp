@@ -31,7 +31,7 @@
     boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>"
-                   objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.invoices,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.torontoRfq"
+                   objectName="_admin,_admin.userAdmin,_admin.schedule,_admin.billing,_admin.invoices,_admin.resource,_admin.reporting,_admin.backup,_admin.messenger,_admin.eform,_admin.encounter,_admin.misc,_admin.torontoRfq,_admin.flowsheet"
                    rights="r" reverse="<%=true%>">
     <%authed = false; %>
     <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.*");%>
@@ -353,7 +353,7 @@
                     <li><a href="#" onclick='popupPage(600,900, "${pageContext.request.contextPath}/billing/CA/ON/viewMOHFiles.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.viewMOHFiles"/></a></li>
                     <% } %>
                     <li><a href="#"
-                           onclick='popupPage(600,900, "${pageContext.request.contextPath}/billing/CA/ON/billingRA.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingReconciliation"/></a></li>
+                           onclick='popupPage(600,900, "${pageContext.request.contextPath}<%= oscarVariables.getProperty("RA_FORWORD", "/billing/CA/ON/genRA.jsp") %>");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnBillingReconciliation"/></a></li>
                     <!-- li><a href="#" onclick ='popupPage(600,1000,"${pageContext.request.contextPath}/billing/CA/ON/billingOBECEA.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.btnEDTBillingReportGenerator"/></a></li-->
                     <li>
                         <a href="#" onclick='popupPage(800,1000,"${pageContext.request.contextPath}/mcedt/mcedt.do");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.mcedt"/></a>
@@ -654,18 +654,27 @@
         </security:oscarSec>
         <!-- #Schedule Management END-->
 
-        <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.document" rights="r"
+        <!-- #FLOWSHEET & DOCUMENT MANAGEMENT -->
+        <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.document,_admin.flowsheet" rights="r"
                            reverse="<%=false%>">
             <div class="adminBox">
-                <h3>&nbsp;Document Management</h3>
+                <h3>&nbsp;<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.flowsheetManagement"/></h3>
                 <ul>
-                    <li><a href="#"
-                           onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/displayDocumentCategories.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentCategories"/></a></li>
-                    <li><a href="#"
-                           onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/displayDocumentDescriptionTemplate.jsp?setDefault=true");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentDescriptionTemplate"/></a></li>
+                    <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.flowsheet" rights="r"
+                                       reverse="<%=false%>">
+                        <li><a href="#" onclick='popupPage(800, 1000, "${pageContext.request.contextPath}/admin/manageFlowsheets.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.flowsheetManager"/></a></li>
+                    </security:oscarSec>
+                    <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.document" rights="r"
+                                       reverse="<%=false%>">
+                        <li><a href="#"
+                               onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/displayDocumentCategories.jsp");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentCategories"/></a></li>
+                        <li><a href="#"
+                               onclick='popupPage(550,800, "${pageContext.request.contextPath}/admin/displayDocumentDescriptionTemplate.jsp?setDefault=true");return false;'><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentDescriptionTemplate"/></a></li>
+                    </security:oscarSec>
                 </ul>
             </div>
         </security:oscarSec>
+        <!-- #FLOWSHEET & DOCUMENT MANAGEMENT END -->
 
 
         <!-- #SYSTEM Management-->

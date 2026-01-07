@@ -8,7 +8,7 @@
     <constant name="struts.enable.SlashesInActionNames" value="true" />
     <constant name="struts.serve.static" value="true" />
     <constant name="struts.serve.static.browserCache" value="true" />
-    <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*" />
+    <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*|^/servlet/(ca\.openosp\.DocumentUploadServlet|oscar\.DocumentTeleplanReportUploadServlet)$" />
     <constant name="struts.custom.i18n.resources" value="oscarResources"/>
     <constant name="struts.custom.i18n.resources" value="oscarResources,MessageResources_mcedt"/>
     <constant name="struts.multipart.maxSize" value="524288000" />
@@ -1449,6 +1449,7 @@
         <action name="oscarBilling/DocumentErrorReportUpload" class="ca.openosp.openo.billings.ca.on.pageUtil.BillingDocumentErrorReportUpload2Action">
             <result name="success">/billing/CA/ON/billingEAreport.jsp</result>
             <result name="outside">/billing/CA/ON/billingLreport.jsp</result>
+            <result name="error">/billing/CA/ON/billingOBECEA.jsp</result>
         </action>
         <!--action name="PMmodule/remoteReferal" class="oscar.remotereferal.OscarRemoteReferal2Action">
             <result name="success">/eform/efmshowform_data.jsp</result>

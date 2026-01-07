@@ -55,11 +55,9 @@
     if (actionErrors != null && !actionErrors.isEmpty()) {
 %>
     <div class="action-errors">
-        <ul>
-            <% for (String error : actionErrors) { %>
-                <li><%= error %></li>
-            <% } %>
-        </ul>
+        <% for (String error : actionErrors) { %>
+            <p><%= error %></p>
+        <% } %>
     </div>
 <% } %>
         </div>
