@@ -228,12 +228,16 @@
     <a tabindex="-1" href="javascript:void(0);" onclick="showHideSpecInst('siAutoComplete_<%=rand%>')"
        style="float:left;width:80px;">Instructions:</a>
     <input type="text" id="instructions_<%=Encode.forHtmlAttribute(rand)%>" name="instructions_<%=Encode.forHtmlAttribute(rand)%>" onkeypress="handleEnter(this,event);"
-           value="<%=Encode.forHtmlAttribute(instructions)%>" size="60" onchange="parseIntr(this);"/><a href="javascript:void(0);" tabindex="-1"
+           value="<%=Encode.forHtmlAttribute(instructions)%>" size="60" onchange="parseIntr(this);"
+           onfocus="startShowingSampleInstructions(this, <%=Encode.forHtmlAttribute(rand)%>);"
+           onblur="stopShowingSampleInstructions(this, <%=Encode.forHtmlAttribute(rand)%>)"/><a href="javascript:void(0);" tabindex="-1"
                                                                                onclick="displayMedHistory('<%=Encode.forJavaScriptAttribute(rand)%>');"
                                                                                style="color:red;font-size:13pt;vertical-align:super;text-decoration:none"
                                                                                TITLE="Instruction Examples"><b>*</b></a>
-    <a href="javascript:void(0);" tabindex="-1" onclick="displayInstructions('<%=Encode.forJavaScriptAttribute(rand)%>');"><img
-            src="<%= request.getContextPath() %>/images/icon_help_sml.gif" border="0" TITLE="Instructions Field Reference" /></a>
+    <a href="javascript:void(0);" id="disp_instruct_link_<%=Encode.forHtmlAttribute(rand)%>" class="disp-instruct-link" tabindex="-1"
+       onclick="displayInstructions('<%=Encode.forJavaScriptAttribute(rand)%>');"><img
+            src="<%= request.getContextPath() %>/images/icon_help_sml.gif" id="disp_instruct_img_<%=Encode.forJavaScriptAttribute(rand)%>"
+            border="0" TITLE="Instructions Field Reference" /></a>
     <span id="major_<%=Encode.forHtmlAttribute(rand)%>" style="display:none;background-color:red"></span>&nbsp;<span id="moderate_<%=Encode.forHtmlAttribute(rand)%>"
                                                                                             style="display:none;background-color:orange"></span>&nbsp;<span
         id='minor_<%=Encode.forHtmlAttribute(rand)%>' style="display:none;background-color:yellow;"></span>&nbsp;<span id='unknown_<%=Encode.forHtmlAttribute(rand)%>'
@@ -530,6 +534,64 @@
 </fieldset>
 
 <style type="text/css">
+    .disp-instruct-link {
+        display: inline-flex;
+        height: 16px;
+        width: 16px;
+        vertical-align: middle;
+    }
+    .ripple-wrap {
+        position: relative;
+    }
+
+    .disp-instruct-img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .ripple-icon {
+        position: relative;
+        z-index: 2;
+    }
+
+    .ripple-wrap::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.8);
+        transform: translate(-50%, -50%) scale(0.8);
+        z-index: 1;
+        animation: ripple 1.5s infinite ease-out;
+    }
+
+    @keyframes ripple {
+        0% {
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0.6;
+        }
+        80% {
+            transform: translate(-50%, -50%) scale(2.5);
+            opacity: 0;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    .pulse-icon {
+        display: inline-block;
+        animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+        0%   { transform: scale(1); }
+        50%  { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
 
 
     /*
