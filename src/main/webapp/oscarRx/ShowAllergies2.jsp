@@ -134,46 +134,6 @@
                         allergyId = allergyId.split("=")[1].trim()
                         $("#allergy_" + allergyId).addClass("highLightRow");
 
-  //
-  //                   //--> Toggle search results listing.
-  //                     $.fn.toggleSection = function(typecode) {
-  //                       let imgsrc = document.getElementById(typecode+"_img").src;
-  //                       if(imgsrc.indexOf('expander') !== -1) {
-  //                         document.getElementById(typecode+"_img").src='../images/collapser.png';
-  //                         Effect.BlindDown(document.getElementById(typecode+"_content"), {duration: 0.1 });
-  //                       } else {
-  //                         document.getElementById(typecode+"_img").src='../images/expander.png';
-  //                         Effect.BlindUp(document.getElementById(typecode+"_content"), {duration: 0.1 });
-  //                       }
-  //
-  //                     }
-  //
-  //                   //--> Toggle search results listing.
-  //                   $(".DivContentSectionHead a img").bind("click", function(event){
-  //                     event.preventDefault();
-  //                     var typecode = this.id.split("_")[0];
-  //                     var imgsrc = document.getElementById(typecode+"_img").src;
-  //
-  //                       if(imgsrc.indexOf('expander') !== -1) {
-  //                         document.getElementById(typecode+"_img").src='../images/collapser.png';
-  //                         $("#"+typecode+"_content").show();
-  //                       } else {
-  //                         document.getElementById(typecode+"_img").src='../images/expander.png';
-  //                         $("#"+typecode+"_content").hide();
-  //                       }
-  //                   })
-	//
-	// }) //--> end bind events function.
-  //
-	// //--> set default checkboxes on load
-	// // $.fn.setDefaults = function() {
-	// // 	// default set Drug Classes checked.
-	// // 	document.forms.searchAllergy2.type4.checked = true;
-	// // }
-	//
-	// //--> Send allergy search to server
-	// $("#searchStringButton").click( function(){
-
                         var path = "${ pageContext.servletContext.contextPath }/oscarRx/deleteAllergy2.do";
 
                         if (confirm(action + " this Allergy?")) {
@@ -277,14 +237,6 @@
                     }
                 });
 
-	//--> focus Enter key on search button
-	$("#searchString").keypress(function(e) {
-		if(e.which === 13) {
-			$("#searchStringButton").trigger('click');
-			return false;
-		}
-	});
-
 
                 //--> Toggle checkboxes all or none
                 $("#typeSelectAll").change(function () {
@@ -313,8 +265,7 @@
 
 
                 $().bindActionEvents();
-                // $().setDefaults();
-
+                $().setDefaults();
 
             }); //--> end document ready
 
@@ -455,12 +406,11 @@
             <td colspan="2">
                 <jsp:include page="TopLinks.jsp">
                     <jsp:param value="Allergies" name="title"/>
-                    <jsp:param value="${ patient.surname }, ${ patient.firstName }" name="patientName" />
-                    <jsp:param value="${ patient.sex }" name="sex" />
-                    <jsp:param value="${ patient.age }" name="age" />
-                    <jsp:param value="${ patient.demographicNo }" name="demographicNo" />
+                    <jsp:param value="${ patient.getSurname() }, ${ patient.getFirstName() }" name="patientName"/>
+                    <jsp:param value="${ patient.getSex() }" name="sex"/>
+                    <jsp:param value="${ patient.getAge() }" name="age"/>
+                    <jsp:param value="${ patient.getDemographicNo() }" name="demographicNo"/>
                     <jsp:param value="<%= roleName2$ %>" name="security"/>
-			              <jsp:param value='<%= (String)session.getAttribute("demographicNo") %>' name="demographicNo" />
                 </jsp:include>
             </td>
         </tr>
@@ -490,11 +440,11 @@
                                 <tr>
                                     <td>
                                         <b><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.nameText"/></b>
-                                        ${patient.surname() }, ${patient.firstName() }<br/>
+                                        ${patient.getSurname() }, ${patient.getFirstName() }<br/>
                                     </td>
                                     <td>&nbsp;</td>
                                     <td><b>Age:</b>
-                                        ${patient.age() }<br/>
+                                        ${patient.getAge() }<br/>
                                     </td>
                                 </tr>
                             </table>
@@ -532,33 +482,15 @@
             out.print(navArray[i]);
             out.print("</a></span>");
          }
-//
-////1 mild 2 moderate 3 severe 4 unknown
-//
-//    String[] ColourCodesArray = new String[6];
-//    ColourCodesArray[1] = "#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
-//    ColourCodesArray[2] = "#FF6600"; // Moderate
-//    ColourCodesArray[3] = "#CC0000"; // Severe
-//    ColourCodesArray[4] = "#E0E0E0"; // unknown
-//    ColourCodesArray[5] = "#FFFFFF"; // no reaction
-//
-//
-//							out.print("<span class='view_selected'>" + navArray[i] + "</span>");
-//
-//
-//						}else{
-//							out.print("<span class='view_menu'><a href='" + request.getContextPath() + "/oscarRx/showAllergy.do?demographicNo="+demoNo+"&view="+navArray[i]+"'>");
-//								out.print(navArray[i]);
-//							out.print("</a></span>");
-//						}
 					 }
 					 //1 mild 2 moderate 3 severe 4 unknown
 
-					 String[] ColourCodesArray=new String[5];
+    String[] ColourCodesArray = new String[6];
 					 ColourCodesArray[1]="#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
 					 ColourCodesArray[2]="#FF6600"; // Moderate
 					 ColourCodesArray[3]="#CC0000"; // Severe
 					 ColourCodesArray[4]="#E0E0E0"; // unknown
+    ColourCodesArray[5] = "#FFFFFF"; // no reaction
 
 					 String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[1]+"'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[2]+"'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='"+ColourCodesArray[3]+"'><td> </td></table></td> <td >Severe</td> </tr></table>";
 				%>
@@ -574,34 +506,12 @@
 				<tr>
 					<td class="Step1Text">
 						<%=allergy_colour_codes%>
-					</td>
-					</tr>
-				</table>
-				</td>
-			</tr>
 			
-			<tr id="addAllergyInterface" >
-			
-				<td>
-					<form action="<%=request.getContextPath()%>/oscarRx/searchAllergy2.do" id="searchAllergy2"  >
-					<table>
-					<tr><th>Add an Allergy</th></tr>
-						<tr id="allergyQuickButtonRow" >
-                            <td>                           	
-                        		<input type=button class="ControlPushButton" onclick="addCustomNKDA();" value="NKDA" />
-                               <input type=button class="ControlPushButton" onclick="addPenicillinAllergy();" value="Penicillin" />
-                               <input type=button class="ControlPushButton" onclick="addSulfonamideAllergy();" value="Sulfa" />
-	                            <input type="text" name="searchString" value="${ searchString }" size="16" id="searchString" maxlength="16" autofocus="autofocus" />
-	                            <input type="button" value="Search Drugs" id="searchStringButton" class="ControlPushButton" />
-	                            OR
-	                            <input type=button class="ControlPushButton" onclick="addCustomAllergy();" value="Custom Allergy" />
-
-                            </td>
-						</tr>
-
+                                        <table class="allergy_table">
 						<tr>
 							<td><b>Status</b></td>
 							<td><b>Entry Date</b></td>
+                                                <td><b>Last Updated Date</b></td>
 							<td><b>Description</b></td>
 							<td><b>Allergy Type</b></td>
 							
@@ -746,15 +656,15 @@
                                             </tr>
                                             <% }
                                             } //end of iterate
-                                                if (hasDrugAllergy) {iNKDA = 0};
+                                                if (hasDrugAllergy) iNKDA = 0;
                                             %>
 					</table>
-					</form>
+
+                                        <%=allergy_colour_codes%>
 				</td>
 			</tr>
-			
-			<tr>
-				<td id="searchResultsContainer" ></td>
+                            </table>
+                        </td>
 			</tr>
 
                     <tr id="addAllergyInterface">
