@@ -36,9 +36,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import ca.openosp.openo.utility.MiscUtils;
@@ -141,7 +142,40 @@ public class DocumentUploadServlet extends HttpServlet {
             }
         } else {
 
-            DiskFileUpload upload = new DiskFileUpload();
+            // Create a factory for disk-based file items
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+
+            // Configure size threshold: small files (<1MB) stay in memory, larger ones go to disk
+            factory.setSizeThreshold(1024 * 1024); // 1 MB threshold
+
+            // Configure a controlled temporary directory for larger file items
+            String systemTempDir = System.getProperty("java.io.tmpdir");
+            File uploadTempDir = new File(systemTempDir, "openoemr-uploads");
+
+            try {
+                // Create the temp directory if it doesn't exist
+                if (!uploadTempDir.exists()) {
+                    if (!uploadTempDir.mkdirs()) {
+                        throw new ServletException("Failed to create upload temp directory: " + uploadTempDir.getAbsolutePath());
+                    }
+                }
+
+                // Validate the temp directory is within allowed system temp path
+                PathValidationUtils.validateExistingPath(uploadTempDir, new File(systemTempDir));
+                factory.setRepository(uploadTempDir);
+
+            } catch (SecurityException e) {
+                MiscUtils.getLogger().error("Security validation failed for upload temp directory", e);
+                throw new ServletException("Upload configuration error: invalid temp directory path", e);
+            }
+
+            // Create a new file upload handler
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
+
+            // Set file size limits to prevent DoS attacks (50 MB limit for MOH billing files)
+            upload.setFileSizeMax(52428800); // 50 MB per file
+            upload.setSizeMax(52428800);     // 50 MB total request size
 
             try {
                 // Parse the request
