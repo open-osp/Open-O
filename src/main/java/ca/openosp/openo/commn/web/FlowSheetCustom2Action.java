@@ -108,7 +108,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
             providerNo = "";
         } else if (isPatientScope) {
             demographicNo = demographicNoParam;
-            providerNo = "";
+            providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
         } else {
             demographicNo = "0";
             providerNo = LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo();
@@ -176,6 +176,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
         // Validate scope permission - clinic level requires admin
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
 
+        // Validate patient-level edit permission - only registered providers can edit
+        boolean isPatientScopeCheck = demographicNo != null && !"0".equals(demographicNo);
+        if (isPatientScopeCheck) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
+
         MeasurementTemplateFlowSheetConfig templateConfig = MeasurementTemplateFlowSheetConfig.getInstance();
         MeasurementFlowSheet mFlowsheet = templateConfig.getFlowSheet(flowsheet);
 
@@ -221,7 +229,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
             if (h.get("measurement_type") != null) {
                 String measurementType = h.get("measurement_type");
                 boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
-                String providerNo = ("clinic".equals(scope) || isPatientScope) ? "" : loggedInInfo.getLoggedInProviderNo();
+                String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
                 // For cascade checking, use logged-in provider's ID to check for provider-level blocking
                 String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
@@ -286,6 +294,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
         // Validate scope permission - clinic level requires admin
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
 
+        // Validate patient-level edit permission - only registered providers can edit
+        boolean isPatientScopeCheck = demographicNo != null && !"0".equals(demographicNo);
+        if (isPatientScopeCheck) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
+
         logger.debug("UPDATING FOR demographic " + demographicNo);
 
         if (request.getParameter("updater") != null) {
@@ -298,7 +314,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
             String measurementType = h.get("measurement_type");
             boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
-            String providerNo = ("clinic".equals(scope) || isPatientScope) ? "" : loggedInInfo.getLoggedInProviderNo();
+            String providerNo = "clinic".equals(scope) ? "" : loggedInInfo.getLoggedInProviderNo();
 
             // UPDATE customizations are allowed at any level - no cascade blocking
             // Users can revert to higher-scope settings using the Revert button
@@ -415,6 +431,13 @@ public class FlowSheetCustom2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
+        // Validate patient-level edit permission - only registered providers can edit
+        if (ctx.isPatientScope) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, ctx.demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
+
         // For cascade checking, use logged-in provider's ID to check for provider-level blocking
         String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
 
@@ -453,6 +476,13 @@ public class FlowSheetCustom2Action extends ActionSupport {
         // Validate scope permission - clinic level requires admin
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
+
+        // Validate patient-level edit permission - only registered providers can edit
+        if (ctx.isPatientScope) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, ctx.demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
 
         // For cascade checking, use logged-in provider's ID to check for provider-level blocking
         String cascadeCheckProviderNo = loggedInInfo.getLoggedInProviderNo();
@@ -507,6 +537,13 @@ public class FlowSheetCustom2Action extends ActionSupport {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, ctx.scope);
 
+        // Validate patient-level edit permission - only registered providers can edit
+        if (ctx.isPatientScope) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, ctx.demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
+
         // Get customizations at CURRENT scope level only
         List<FlowSheetCustomization> customizations;
         if (ctx.isClinicScope) {
@@ -551,6 +588,14 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
         // Validate scope permission - clinic level requires admin
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
+
+        // Validate patient-level edit permission - only registered providers can edit
+        boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
+        if (isPatientScope) {
+            if (!flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographicNo)) {
+                throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
+            }
+        }
 
         FlowSheetCustomization cust = flowSheetCustomizationDao.getFlowSheetCustomization(Integer.parseInt(id));
         if (cust != null) {
