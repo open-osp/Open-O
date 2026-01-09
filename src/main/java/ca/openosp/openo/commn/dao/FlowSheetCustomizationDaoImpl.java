@@ -28,6 +28,7 @@
 package ca.openosp.openo.commn.dao;
 
 import java.util.List;
+import java.util.function.Consumer;
 import javax.persistence.Query;
 
 import ca.openosp.openo.commn.model.FlowSheetCustomization;
@@ -36,8 +37,38 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCustomization> implements FlowSheetCustomizationDao {
 
+    // Static JPQL for findHigherLevelCustomization
+    private static final String FIND_HIGHER_LEVEL_FOR_PATIENT =
+        "SELECT fd FROM FlowSheetCustomization fd " +
+        "WHERE fd.flowsheet=?1 AND fd.measurement=?2 AND fd.action=?3 AND fd.archived=0 " +
+        "AND ((fd.providerNo='' AND fd.demographicNo='0') " +
+        "OR (fd.providerNo=?4 AND fd.demographicNo='0')) " +
+        "ORDER BY fd.providerNo ASC";
+
+    private static final String FIND_HIGHER_LEVEL_FOR_PROVIDER =
+        "SELECT fd FROM FlowSheetCustomization fd " +
+        "WHERE fd.flowsheet=?1 AND fd.measurement=?2 AND fd.action=?3 AND fd.archived=0 " +
+        "AND (fd.providerNo='' AND fd.demographicNo='0') " +
+        "ORDER BY fd.providerNo ASC";
+
     public FlowSheetCustomizationDaoImpl() {
         super(FlowSheetCustomization.class);
+    }
+
+    /**
+     * Helper to execute scope-specific queries with consistent structure.
+     */
+    private List<FlowSheetCustomization> getCustomizationsByScope(
+            String flowsheet, String whereClause, Consumer<Query> paramBinder) {
+        String jpql = "SELECT fd FROM FlowSheetCustomization fd " +
+                      "WHERE fd.flowsheet=?1 AND fd.archived=0 " + whereClause;
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter(1, flowsheet);
+        paramBinder.accept(query);
+
+        @SuppressWarnings("unchecked")
+        List<FlowSheetCustomization> list = query.getResultList();
+        return list;
     }
 
     @Override
@@ -47,12 +78,7 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
 
     @Override
     public List<FlowSheetCustomization> getFlowSheetCustomizations(String flowsheet, String provider, Integer demographic) {
-        // Returns customizations for flowsheet levels:
-        // - Clinic level: providerNo='' AND demographicNo='0'
-        // - Provider level: providerNo=<provider> AND demographicNo='0'
-        // - Patient level: demographicNo=<demographic> (any providerNo)
-        //
-        // Uses the customization from the smallest possible scope per measurement: patient > provider > clinic.
+        // Returns customizations across all scope levels for this flowsheet.
         Query query = entityManager.createQuery(
             "SELECT fd FROM FlowSheetCustomization fd WHERE fd.flowsheet=?1 AND fd.archived=0 " +
             "AND ((fd.providerNo='' AND fd.demographicNo='0') " +
@@ -93,45 +119,25 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
     @Override
     public List<FlowSheetCustomization> getClinicLevelCustomizations(String flowsheet) {
         // Clinic level: providerNo='' AND demographicNo='0'
-        Query query = entityManager.createQuery(
-            "SELECT fd FROM FlowSheetCustomization fd " +
-            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
-            "AND fd.providerNo='' AND fd.demographicNo='0'");
-        query.setParameter(1, flowsheet);
-
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
+        return getCustomizationsByScope(flowsheet,
+            "AND fd.providerNo='' AND fd.demographicNo='0'",
+            q -> { });
     }
 
     @Override
     public List<FlowSheetCustomization> getProviderLevelCustomizations(String flowsheet, String providerNo) {
         // Provider level: specific providerNo AND demographicNo='0'
-        Query query = entityManager.createQuery(
-            "SELECT fd FROM FlowSheetCustomization fd " +
-            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
-            "AND fd.providerNo=?2 AND fd.demographicNo='0'");
-        query.setParameter(1, flowsheet);
-        query.setParameter(2, providerNo);
-
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
+        return getCustomizationsByScope(flowsheet,
+            "AND fd.providerNo=?2 AND fd.demographicNo='0'",
+            q -> q.setParameter(2, providerNo));
     }
 
     @Override
     public List<FlowSheetCustomization> getPatientLevelCustomizations(String flowsheet, String demographicNo) {
         // Patient level: specific demographicNo (not "0")
-        Query query = entityManager.createQuery(
-            "SELECT fd FROM FlowSheetCustomization fd " +
-            "WHERE fd.flowsheet=?1 AND fd.archived=0 " +
-            "AND fd.demographicNo=?2");
-        query.setParameter(1, flowsheet);
-        query.setParameter(2, demographicNo);
-
-        @SuppressWarnings("unchecked")
-        List<FlowSheetCustomization> list = query.getResultList();
-        return list;
+        return getCustomizationsByScope(flowsheet,
+            "AND fd.demographicNo=?2",
+            q -> q.setParameter(2, demographicNo));
     }
 
     @Override
@@ -147,24 +153,9 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
             return null;
         }
 
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT fd FROM FlowSheetCustomization fd ");
-        queryBuilder.append("WHERE fd.flowsheet=?1 AND fd.measurement=?2 AND fd.action=?3 AND fd.archived=0 ");
+        String jpql = isPatientScope ? FIND_HIGHER_LEVEL_FOR_PATIENT : FIND_HIGHER_LEVEL_FOR_PROVIDER;
 
-        if (isPatientScope) {
-            // Patient scope: check clinic level (providerNo='', demographicNo='0')
-            // and provider level (providerNo=current, demographicNo='0')
-            queryBuilder.append("AND ((fd.providerNo='' AND fd.demographicNo='0') ");
-            queryBuilder.append("OR (fd.providerNo=?4 AND fd.demographicNo='0')) ");
-        } else {
-            // Provider scope: check clinic level only
-            queryBuilder.append("AND (fd.providerNo='' AND fd.demographicNo='0') ");
-        }
-
-        // Order by providerNo ASC so clinic (empty string) comes first
-        queryBuilder.append("ORDER BY fd.providerNo ASC");
-
-        Query query = entityManager.createQuery(queryBuilder.toString());
+        Query query = entityManager.createQuery(jpql);
         query.setParameter(1, flowsheet);
         query.setParameter(2, measurement);
         query.setParameter(3, action);

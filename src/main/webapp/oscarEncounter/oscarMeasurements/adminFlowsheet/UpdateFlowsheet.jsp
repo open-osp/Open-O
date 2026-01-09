@@ -499,7 +499,7 @@ display:inline-block;
 
                     <div style="width:100%;text-align:right">
                         <%if (request.getParameter("demographic") == null) { %>
-                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=scope != null ? "&scope=" + scope : ""%>" class="btn">Cancel</a>
+                        <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%><%=htQueryString%><%=scope != null ? "&scope=" + scope : ""%>" class="btn">Cancel</a>
                         <%} else { %>
                         <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%><%=scope != null ? "&scope=" + scope : ""%>"
                            class="btn">Cancel</a>
