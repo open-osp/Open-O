@@ -1536,8 +1536,10 @@ function renderRxStage() {
 
    function checkAllergy(id,atcCode){
          var url=ctx + "/oscarRx/getAllergyData.jsp"  ;
-         var data="atcCode="+atcCode+"&id="+id +"&rand="+ Math.floor(Math.random()*10001);
-         new Ajax.Request(url,{method: 'post',postBody:data,onSuccess:function(transport){
+         var data="atcCode="+encodeURIComponent(atcCode)+"&id="+ encodeURIComponent(id) +"&rand="+ Math.floor(Math.random()*10001);
+         new Ajax.Request(url,{method: 'post',postBody:data,
+           requestHeaders: { 'Accept': 'application/json' },
+           onSuccess:function(transport){
 
 						var json = transport.responseText.evalJSON();
 						if (json != null && json.DESCRIPTION != null && json.reaction != null) {
@@ -1830,6 +1832,7 @@ function popForm2(scriptId){
 
 				new Ajax.Updater('rxText', url, {
 					method: 'POST', parameters: params, evalScripts: true,
+          requestHeaders: { 'Accept': 'application/json' },
 					insertion: Insertion.Top, onSuccess: function (transport) {
 						renderRxStage();
 					}
@@ -2100,6 +2103,7 @@ function addFav(randomId,brandName){
 					parameters: params,
 					asynchronous: true,
 					evalScripts: true,
+          requestHeaders: { 'Accept': 'application/json' },
 					insertion: Insertion.Bottom,
 					onSuccess: function (transport) {
 						renderRxStage();
@@ -2336,8 +2340,8 @@ function updateQty(element){
         var elemId=element.id;
         var ar=elemId.split("_");
         var rand=ar[1];
-        var data="randomId="+rand+"&action=updateQty&quantity="+element.value;
-        var url= ctx + "/oscarRx/WriteScript.do?parameterValue=updateDrug";
+        var data="parameterValue=updateDrug&randomId="+rand+"&action=updateQty&quantity="+element.value;
+        var url= ctx + "/oscarRx/WriteScript.do";
 
         var rxMethod="rxMethod_"+rand;
         var rxRoute="rxRoute_"+rand;
@@ -2359,7 +2363,9 @@ function updateQty(element){
        var unitNameStr="unitName_"+rand;
        var prnStr="prn_"+rand;
        var prnVal="prnVal_"+rand;
-        new Ajax.Request(url, {method: 'get',parameters:data, onSuccess:function(transport){
+        new Ajax.Request(url, {method: 'get',parameters:data,
+          requestHeaders: { 'Accept': 'application/json' },
+          onSuccess:function(transport){
                 var json=transport.responseText.evalJSON();
                 $(methodStr).innerHTML=json.method;
                 $(routeStr).innerHTML=json.route;
@@ -2392,8 +2398,8 @@ function updateQty(element){
         var elemId=element.id;
         var ar=elemId.split("_");
         var rand=ar[1];
-        var instruction="instruction="+element.value+"&action=parseInstructions&randomId="+rand;
-        var url= ctx + "/oscarRx/UpdateScript.do?parameterValue=updateDrug";
+        var instruction="parameterValue=updateDrug&instruction="+element.value+"&action=parseInstructions&randomId="+rand;
+        var url= ctx + "/oscarRx/UpdateScript.do";
         var quantity="quantity_"+rand;
         var str;
        var methodStr="method_"+rand;
@@ -2407,7 +2413,9 @@ function updateQty(element){
        var unitNameStr="unitName_"+rand;
        var prnStr="prn_"+rand;
        var prnVal="prnVal_"+rand;
-        new Ajax.Request(url, {method: 'get',parameters:instruction,asynchronous:false, onSuccess:function(transport){
+        new Ajax.Request(url, {method: 'POST',parameters:instruction,asynchronous:false,
+          requestHeaders: { 'Accept': 'application/json' },
+          onSuccess:function(transport){
                 var json=transport.responseText.evalJSON();
                 if(json.policyViolations != null && json.policyViolations.length>0) {
                        for(var x=0;x<json.policyViolations.length;x++) {
@@ -2462,7 +2470,7 @@ function updateQty(element){
     }
 
          function getRenalDosingInformation(divId,atcCode){
-               var url = "RenalDosing.jsp";
+               var url = "<%= request.getContextPath() %>/oscarRx/RenalDosing.jsp";
                var ran_number=Math.round(Math.random()*1000000);
                var params = "demographicNo=<%=demoNo%>&atcCode="+atcCode+"&divId="+divId+"&rand="+ran_number;
                new Ajax.Updater(divId,url, {method:'get',parameters:params,insertion: Insertion.Bottom,asynchronous:true});
@@ -2643,6 +2651,7 @@ function updateQty(element){
         var url= ctx + "/oscarRx/WriteScript.do?parameterValue=updateSaveAllDrugs&rand="+ Math.floor(Math.random()*10001);
         new Ajax.Request(url,
         {method: 'post',postBody:data,asynchronous:false,
+          requestHeaders: { 'Accept': 'application/json' },
             onSuccess:function(transport){
             	
                 callReplacementWebService("ListDrugs.jsp",'drugProfile');

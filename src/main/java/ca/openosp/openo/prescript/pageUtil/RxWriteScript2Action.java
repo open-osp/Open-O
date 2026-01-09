@@ -561,7 +561,7 @@ public final class RxWriteScript2Action extends ActionSupport {
         logger.debug("=============Start createNewRx RxWriteScript2Action.java===============");
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
-
+        response.setContentType("application/json");
         String success = "newRx";
         // set default quantity
         setDefaultQuantity(request);
@@ -764,6 +764,7 @@ public final class RxWriteScript2Action extends ActionSupport {
         }
 
         String action = request.getParameter("action");
+        response.setContentType("application/json");
 
         if ("parseInstructions".equals(action)) {
 
@@ -883,6 +884,7 @@ public final class RxWriteScript2Action extends ActionSupport {
                 hm.put("calQuantity", rx.getQuantity());
                 hm.put("unitName", rx.getUnitName());
                 ObjectNode jsonObject = objectMapper.valueToTree(hm);
+
                 response.getOutputStream().write(jsonObject.toString().getBytes());
             } catch (Exception e) {
                 logger.error("Error", e);

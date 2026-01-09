@@ -1605,7 +1605,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
 
                 function getRenalDosingInformation(origRequest) {
                     var dummie = "";
-                    var url = "RenalDosing.jsp";
+                    var url = "<%= request.getContextPath() %>/oscarRx/RenalDosing.jsp";
                     var ran_number = Math.round(Math.random() * 1000000);
                     var params = "demographicNo=<%=bean.getDemographicNo()%>&atcCode=<%=atcCode%>&rand=" + ran_number;  //hack to get around ie caching the page
                     //alert(params);
