@@ -200,7 +200,7 @@
 
                                             for (i = 0; i < favorites.length; i++) {
                                                 f = favorites[i];
-                                                boolean isCustom = f.getGCN_SEQNO() == 0;
+                                                boolean isCustom = f.getGCN_SEQNO().equals("0");
 
                                                 style = "style='background-color:#F5F5F5'";
                                         %>
