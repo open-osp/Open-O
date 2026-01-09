@@ -501,7 +501,7 @@ public class ConsultationManagerImpl implements ConsultationManager {
      *
      * @param loggedInInfo  The current user's logged in info
      * @param request       The HttpRequest for printing any forms
-     * @param request       The HttpResponse for printing any forms
+     * @param response      The HttpResponse for printing any forms
      * @param demographicNo The demographic number to get the attachments for
      * @return List of ConsultationAttachments containing the file name and data and the attachment id and type,
      * @throws PDFGenerationException Thrown if an error occurs while generating pdf

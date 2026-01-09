@@ -703,10 +703,9 @@ public class CaisiIntegratorManager {
      * Get Oscar Messenger messages from the integrator.
      * Unlike other Integrated objects - Provider communication will be saved into the local facility
      *
-     * @param loggedInInfo
-     * @param searchRequest
-     * @return
-     * @throws MalformedURLException
+     * @param loggedInInfo the logged in user information
+     * @return list of provider communication transfers
+     * @throws MalformedURLException if URL is malformed
      */
     public static List<ProviderCommunicationTransfer> getProviderCommunication(LoggedInInfo loggedInInfo) throws MalformedURLException {
 

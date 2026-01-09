@@ -56,7 +56,7 @@ import com.itextpdf.text.pdf.*;
 import com.lowagie.text.rtf.RtfWriter2;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.io.IOUtils;
+import org.apache.commons.io.IOUtils;
 import ca.openosp.openo.commn.dao.Hl7TextMessageDao;
 import ca.openosp.openo.commn.model.Hl7TextMessage;
 import ca.openosp.openo.commn.printing.FontSettings;
@@ -68,7 +68,6 @@ import ca.openosp.openo.lab.ca.all.Hl7textResultsData;
 import ca.openosp.openo.lab.ca.all.parsers.CLSHandler;
 import ca.openosp.openo.lab.ca.all.parsers.ExcellerisOntarioHandler;
 import ca.openosp.openo.lab.ca.all.parsers.Factory;
-import ca.openosp.openo.lab.ca.all.parsers.GDMLHandler;
 import ca.openosp.openo.lab.ca.all.parsers.MEDITECHHandler;
 import ca.openosp.openo.lab.ca.all.parsers.MessageHandler;
 import ca.openosp.openo.lab.ca.all.parsers.PATHL7Handler;
@@ -791,7 +790,7 @@ public class LabPDFCreator extends PdfPageEventHelper {
                                 table.addCell(cell);
 
                                 String status = handler.getOBXResultStatus(j, k);
-                                if ("GDML".equals(handler.getMsgType()) && ((GDMLHandler) handler).isTestResultBlocked(j, k)) {
+                                if (handler.isTestResultBlocked(j, k)) {
                                     if (!StringUtils.isEmpty(status)) {
                                         status += "/";
                                     }

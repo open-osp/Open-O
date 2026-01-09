@@ -325,8 +325,6 @@
 
                 return result
             }
-
-
         </script>
     </body>
 </html>

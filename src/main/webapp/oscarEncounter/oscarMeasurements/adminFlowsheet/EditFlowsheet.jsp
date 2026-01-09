@@ -48,6 +48,32 @@
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%!
+    /**
+     * Check if a measurement is hidden at a higher level than current scope.
+     * For patient scope: checks clinic and provider level hides.
+     * For provider scope: checks clinic level hides.
+     */
+    private boolean isHiddenAtHigherLevel(List<FlowSheetCustomization> custList, String measurement, String scope, String demographic, String currentProvider) {
+        if (custList == null) return false;
+        for (FlowSheetCustomization cust : custList) {
+            if (!"delete".equals(cust.getAction()) || !measurement.equals(cust.getMeasurement())) continue;
+
+            // If viewing patient scope, check for clinic or provider level hides
+            if (demographic != null && !demographic.isEmpty()) {
+                // Clinic level
+                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+                // Provider level
+                if (currentProvider.equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+            }
+            // If viewing provider scope, check for clinic level hides
+            else if (!"clinic".equals(scope)) {
+                if ("".equals(cust.getProviderNo()) && "0".equals(cust.getDemographicNo())) return true;
+            }
+        }
+        return false;
+    }
+%>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed2 = true;
@@ -65,26 +91,12 @@
 <%
     long startTimeToGetP = System.currentTimeMillis();
 
-    String module = "";
-    String htQueryString = "";
-    if (request.getParameter("htracker") != null) {
-        module = "htracker";
-        htQueryString = "&" + module;
-    }
-
-    if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
-        module = "slim";
-        htQueryString = htQueryString + "=slim";
-    }
-
     String temp = "";
     if (request.getParameter("flowsheet") != null) {
         temp = request.getParameter("flowsheet");
     }else if(request.getAttribute("flowsheet") != null)
 	{
 		temp = (String) request.getAttribute("flowsheet");
-    } else {
-        temp = "tracker";
     }
 
     String flowsheet = temp;
@@ -102,7 +114,7 @@
         if (demographic == null || demographic.isEmpty()) {
             custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"));
         } else {
-            custList = flowSheetCustomizationDao.getFlowSheetCustomizationsForPatient(flowsheet, demographic);
+            custList = flowSheetCustomizationDao.getFlowSheetCustomizations(flowsheet, (String) session.getAttribute("user"), Integer.parseInt(demographic));
         }
     }
     Enumeration en = flowsheetNames.keys();
@@ -145,16 +157,6 @@
     <link rel="shortcut icon" href="ico/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/DT_bootstrap.css">
-
-    <%
-        if (request.getParameter("htracker") != null && request.getParameter("htracker").equals("slim")) {
-    %>
-<style>
-        #container-main {
-            width: 720px !important;
-        }
-    </style>
-    <%}%>
 
 <style>
 
@@ -252,14 +254,7 @@
                         tracker = "&tracker=slim";
                     }
 
-                    String flowsheetPath = "";
-                    String folderPath = "oscarEncounter/oscarMeasurements/";
-
-                    if (request.getParameter("htracker") != null) {
-                        flowsheetPath = folderPath + "HealthTrackerPage.jspf";
-                    } else {
-                        flowsheetPath = folderPath + "TemplateFlowSheet.jsp";
-                    }
+                    String flowsheetPath = "oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp";
             %>
 
             <a href="<%= request.getContextPath() %>/<%=flowsheetPath%>?demographic_no=<%=demographic%>&template=<%=flowsheet%><%=tracker%>"
@@ -364,17 +359,26 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		         		<%if(mFlowsheet.getFlowSheetItem(mstring).getPreventionType()!=null){ %>
 		         		<i class="icon-pencil action-icon"  rel="popover" data-container="body"  data-toggle="popover" data-placement="right" data-content="unable to edit a prevention item" data-trigger="hover" title=""></i>
 		                <%}else{%>
-		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
+		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
-		                <%--
-		                    Commenting out the 'Delete' button for now because it is breaking flowsheets
-		                    and seems to be incorrectly removing measurements. This code is commented
-		                    out until a correct solution is found.
-		                --%>
 		               <%
-		                if(mFlowsheet.getFlowSheetItem(mstring).isHide()){
+		                boolean isHidden = mFlowsheet.getFlowSheetItem(mstring).isHide();
+		                boolean isInherited = isHiddenAtHigherLevel(custList, mstring, scope, demographic, (String) session.getAttribute("user"));
+
+		                if (isHidden && isInherited) {
+		                    // Read-only closed eye for inherited hides (from clinic or provider level)
 		               %>
-		               	<a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>">RESTORE</a>
+		                   <i class="icon-eye-close action-icon" style="opacity:0.4;" title="Hidden at clinic or provider level"></i>
+		               <%
+		                } else if (isHidden) {
+		                    // Clickable restore for same-level hides
+		               %>
+		                   <a href="FlowSheetCustomAction.do?method=restore&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=scope==null?"":"&scope="+scope%>" title="Show this measurement" class="action-icon"><i class="icon-eye-close"></i></a>
+		               <%
+		                } else {
+		                    // Clickable hide
+		               %>
+		                   <a href="FlowSheetCustomAction.do?method=hide&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=scope==null?"":"&scope="+scope%>" title="Hide this measurement" class="action-icon"><i class="icon-eye-open"></i></a>
 		               <% } %>
 
 
@@ -440,7 +444,7 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                                 %>
                                 <tr>
                                     <td>
-                                        <a href="FlowSheetCustomAction.do?method=archiveMod&id=<%=cust.getId()%>&flowsheet=<%=flowsheet%><%=demographicStr%><%=htQueryString%>"
+                                        <a href="FlowSheetCustomAction.do?method=archiveMod&id=<%=cust.getId()%>&flowsheet=<%=flowsheet%><%=demographicStr%>"
                                            class="action-icon"><i class="icon-trash"></i></a></td>
 
                                     <td><%=cust.getAction()%>
@@ -497,9 +501,6 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 
                     <form name="FlowSheetCustomActionForm" id="FlowSheetCustomActionForm" class="well"
                           action="FlowSheetCustomAction.do" method="post">
-                        <%if (request.getParameter("htracker") != null) { %>
-                        <input type="hidden" name="htracker" value="<%=module%>">
-                        <%}%>
                         <input type="hidden" name="flowsheet" value="<%=temp%>"/>
                         <input type="hidden" name="method" value="save"/>
                         <%if (demographic != null) {%>

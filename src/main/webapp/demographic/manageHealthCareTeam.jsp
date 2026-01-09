@@ -252,7 +252,7 @@
             var windowspecs = "width=500,height=600,left=100,top=100, scrollbars=yes, resizable=yes";
 
             popupWindow = window.open(
-                'procontactSearch.jsp?form=updatedelete' +
+                '<%= request.getContextPath() %>/demographic/procontactSearch.jsp?form=updatedelete' +
                 '&elementName=contactName' +
                 '&elementId=contactId' +
                 '&keyword=' + searchfield +

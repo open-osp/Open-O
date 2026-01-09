@@ -35,6 +35,7 @@ import ca.openosp.openo.commn.printing.FontSettings;
 import ca.openosp.openo.commn.printing.PdfWriterFactory;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.form.FrmRecord;
@@ -842,23 +843,20 @@ public class FrmPDFServlet extends HttpServlet {
     
     private Properties loadFromFileSystem(String baseDir, String safeFilename) {
         try {
-            // Build and validate the full path
-            java.nio.file.Path basePath = java.nio.file.Paths.get(baseDir).normalize().toAbsolutePath();
-            java.nio.file.Path filePath = basePath.resolve(safeFilename).normalize();
-            
-            // Security check: ensure resolved path is within base directory
-            if (!filePath.startsWith(basePath)) {
-                log.warn("Path validation failed for file: " + safeFilename);
-                return null;
-            }
-            
+            // Build and validate the full path using PathValidationUtils
+            File baseDirFile = new File(baseDir);
+            File validatedFile = PathValidationUtils.validatePath(safeFilename, baseDirFile);
+
             // Load the properties file
-            try (InputStream is = new FileInputStream(filePath.toFile())) {
+            try (InputStream is = new FileInputStream(validatedFile)) {
                 Properties props = new Properties();
                 props.load(is);
                 log.debug("Loaded config from filesystem: " + safeFilename);
                 return props;
             }
+        } catch (SecurityException e) {
+            log.warn("Path validation failed for file: " + safeFilename);
+            return null;
         } catch (Exception e) {
             log.debug("Failed to load from filesystem: " + safeFilename);
             return null;

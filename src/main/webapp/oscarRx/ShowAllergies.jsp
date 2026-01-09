@@ -295,6 +295,7 @@
                                                 <td>&nbsp;</td>
                                                 <td><b>Status</b></td>
                                                 <td><b>Entry Date</b></td>
+                                                <td><b>Last Updated Date</b></td>
                                                 <td><b>Description</b></td>
                                                 <td><b>Allergy Type</b></td>
                                                 <td><b>Severity</b></td>
@@ -375,6 +376,8 @@
                                                     <td><%=labelStatus%>
                                                     </td>
                                                     <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getEntryDate())%>
+                                                    </td>
+                                                    <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getLastUpdateDate() != null ? displayAllergy.getLastUpdateDate() : "")%>
                                                     </td>
                                                     <td><%=StringEscapeUtils.escapeHtml4(displayAllergy.getDescription())%>
                                                     </td>

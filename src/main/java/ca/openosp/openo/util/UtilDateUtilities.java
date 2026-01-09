@@ -131,6 +131,11 @@ public class UtilDateUtilities {
     public static String calcAgeAtDate(Date DOB, Date pointInTime) {
         if (DOB == null) return (null);
 
+        // If as of date is before birth, return "Not born"
+        if (pointInTime.before(DOB)) {
+            return ResourceBundle.getBundle("oscarResources").getString("global.notBorn");
+        }
+
         GregorianCalendar now = new GregorianCalendar();
         now.setTime(pointInTime);
         int curYear = now.get(Calendar.YEAR);

@@ -2293,27 +2293,27 @@
   }, {
     "groupId" : "org.apache.logging.log4j",
     "artifactId" : "log4j-1.2-api",
-    "version" : "2.25.1",
+    "version" : "2.25.3",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:9gIDIIkxLfapzAG0Zrxumud03wE83uMLhlmN3NnB+e6WTR6L0o5/XSlIyBx+f9Afw9rlawUaQYzFyZ0/88W3IQ=="
+    "integrity" : "sha512:6XW4Fau8O/cuUR+Z4dHK5/vLjbOHE+Lx90kOkzQe70nkXV4ZTWO/axvz+20YdANpY4uXZjDiALQJ/gZKp3RgFA=="
   }, {
     "groupId" : "org.apache.logging.log4j",
     "artifactId" : "log4j-api",
-    "version" : "2.25.1",
+    "version" : "2.25.3",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:BCJQDkUirSdS82N1j/Cr6lW3MZXPOHhDKLntF/SzNWVGkj1rfGfeSmu7jVTkIGPm3y9FSOthNtqZoEUkN7IKrg=="
+    "integrity" : "sha512:zpqvW+7A+4y+2MSuipGljT9pNccxIgspTXDxVpEotf82fhv5TWlXLderBb/ypjveX/dInrl0Powwe2ROrq28UA=="
   }, {
     "groupId" : "org.apache.logging.log4j",
     "artifactId" : "log4j-core",
-    "version" : "2.25.1",
+    "version" : "2.25.3",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:+YBXlHegB1mILkPsYIQqP3kmTRbLSCPeJxREopGeLocz/ttGzrsw6AmCS6Ex3cEL7zIQbMGvowV2WaKaJJN0eQ=="
+    "integrity" : "sha512:ZKB3at/QsIL4Dkn0r7iZjBXTDFFaNEGgdDZNN0eaL8BZvddGlMP2CbH64dLsoMuINH4a/Yh3SsaYpCuHRL8lnw=="
   }, {
     "groupId" : "org.apache.neethi",
     "artifactId" : "neethi",
@@ -2378,14 +2378,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:6t+uUpMgr3cUbXNb/dD4h69D25eM3TIoH9yl0bBYFOaOj2N0JIz2hdiolkRxz2U1zknw+VU+/JjPSlH4ChlGlw=="
-  }, {
-    "groupId" : "org.apache.tika",
-    "artifactId" : "tika-core",
-    "version" : "1.28.5",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:XOr3rZ5itO/1EsAFQcd/gH13oHN6EdUlAdCyUCS4xXjnt+ivekad5vblSr8c4Co10zVozzXUhSwALBBXYve7nQ=="
   }, {
     "groupId" : "org.apache.velocity.tools",
     "artifactId" : "velocity-tools-generic",

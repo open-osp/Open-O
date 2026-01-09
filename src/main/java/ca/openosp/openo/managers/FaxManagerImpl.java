@@ -45,6 +45,7 @@ import ca.openosp.openo.fax.core.FaxRecipient;
 import ca.openosp.openo.fax.core.FaxSchedulerJob;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.openosp.openo.form.util.FormTransportContainer;
@@ -52,12 +53,14 @@ import ca.openosp.openo.log.LogAction;
 import ca.openosp.openo.util.ConcatPDF;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import ca.openosp.OscarProperties;
 
 @Service
 public class FaxManagerImpl implements FaxManager {
@@ -295,15 +298,12 @@ public class FaxManagerImpl implements FaxManager {
         recipientFaxNumber = recipientFaxNumber.replaceAll("\\D", "");
 
         FaxJob faxJob = new FaxJob();
-        Path faxDocument = Paths.get(faxFilePath);
 
         //TODO Possible that this could be multiple accounts using the same return fax line.
         FaxConfig faxConfig = faxConfigDao.getActiveConfigByNumber(senderFaxNumber);
         /*
          * Build the foundation of a faxJob
          */
-        faxJob.setFile_name(faxDocument.getFileName().toString());
-        faxJob.setNumPages(EDocUtil.getPDFPageCount(faxDocument.toString()));
         faxJob.setStamp(new Date());
         faxJob.setOscarUser(loggedInInfo.getLoggedInProviderNo());
         faxJob.setDemographicNo(demographicNo);
@@ -338,12 +338,20 @@ public class FaxManagerImpl implements FaxManager {
 
         /*
          * No document - No Fax. Return an error.
+         * Validate and resolve the file path to prevent path traversal attacks
          */
-        if (!Files.exists(faxDocument)) {
+        Path faxDocument;
+        try {
+            faxDocument = resolveAndValidateFilePath(faxFilePath);
+        } catch (SecurityException | IOException e) {
+            logger.error("Invalid or inaccessible fax file path: " + faxFilePath, e);
             faxJob.setStatus(STATUS.ERROR);
-            faxJob.setStatusString("File missing on local storage.");
+            faxJob.setStatusString("File missing on local storage or invalid file path.");
             return faxJob;
         }
+
+        faxJob.setFile_name(faxDocument.getFileName().toString());
+        faxJob.setNumPages(EDocUtil.getPDFPageCount(faxDocument.toString()));
 
         return faxJob;
 
@@ -476,6 +484,8 @@ public class FaxManagerImpl implements FaxManager {
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_fax", SecurityInfoManager.WRITE, null)) {
             throw new RuntimeException("missing required sec object (_fax)");
         }
+        // Resolve to full path before getting page count to avoid security validation errors
+        currentDocument = nioFileManager.getOscarDocument(currentDocument);
         int numberpages = EDocUtil.getPDFPageCount(currentDocument.toString());
         byte[] coverPage = faxDocumentManager.createCoverPage(loggedInInfo, note, recipient, sender, numberpages);
         return addCoverPage(coverPage, currentDocument);
@@ -745,6 +755,106 @@ public class FaxManagerImpl implements FaxManager {
         jsonObject.put("faxSchedularStatus", status);
         jsonObject.put("isRunning", FaxSchedulerJob.isRunning());
         return jsonObject;
+    }
+
+    /**
+     * Validates that a file path is safe and within allowed directories.
+     * Prevents path traversal attacks by checking for malicious patterns and
+     * validating the path is within whitelisted directories.
+     *
+     * @param filePath the file path to validate
+     * @throws SecurityException if the path is invalid or outside allowed directories
+     */
+    @Override
+    public void validateFilePath(String filePath) {
+        if (filePath == null || filePath.trim().isEmpty()) {
+            return;
+        }
+
+        // Check for path traversal patterns
+        if (filePath.contains("..") || filePath.contains("~")) {
+            logger.error("Path traversal attempt detected: " + filePath);
+            throw new SecurityException("Invalid file path detected: path traversal patterns not allowed");
+        }
+
+        // Use PathValidationUtils for validation
+        File file = new File(filePath);
+        File documentDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"));
+
+        try {
+            PathValidationUtils.validateExistingPath(file, documentDir);
+        } catch (SecurityException e) {
+            // File not in document dir, check if it's in allowed temp directories
+            if (!PathValidationUtils.isInAllowedTempDirectory(file)) {
+                logger.error("File path outside allowed directories: " + filePath);
+                throw new SecurityException("File path must be within allowed directories");
+            }
+        }
+    }
+
+    /**
+     * Resolves and validates a file path with robust path containment checking.
+     * This method performs comprehensive security validation including:
+     * - Path traversal pattern detection
+     * - Path normalization
+     * - Containment verification within allowed base directories
+     * - File existence and type validation
+     *
+     * @param filePath the file path to resolve and validate
+     * @return the resolved and validated Path object
+     * @throws SecurityException if the path is invalid, outside allowed directories, or fails security checks
+     * @throws IOException if the file does not exist or is not a regular file
+     */
+    @Override
+    public Path resolveAndValidateFilePath(String filePath) throws IOException {
+        // First validate with existing security checks
+        validateFilePath(filePath);
+
+        // Use PathValidationUtils for robust path containment validation
+        File file = new File(filePath);
+        File documentDir = new File(OscarProperties.getInstance().getProperty("DOCUMENT_DIR", "/var/lib/OscarDocument/"));
+
+        try {
+            PathValidationUtils.validateExistingPath(file, documentDir);
+        } catch (SecurityException e) {
+            // File not in document dir, check if it's in allowed temp directories
+            if (!PathValidationUtils.isInAllowedTempDirectory(file)) {
+                logger.error("Path containment check failed - file path outside allowed directories: " + filePath);
+                throw new SecurityException("File path must be within allowed directories");
+            }
+        }
+
+        Path resolvedPath = file.toPath().normalize();
+
+        // Ensure the file exists and is a regular file
+        if (!Files.exists(resolvedPath) || !Files.isRegularFile(resolvedPath)) {
+            logger.error("File not found or is not a regular file: " + filePath);
+            throw new IOException("File not found or is not a regular file");
+        }
+
+        return resolvedPath;
+    }
+
+    /**
+     * Validates a fax number format.
+     * Ensures the fax number contains only valid characters: digits, spaces, hyphens, plus sign, and parentheses.
+     *
+     * @param faxNumber the fax number to validate
+     * @param fieldName the name of the field being validated (for error messages)
+     * @throws SecurityException if the fax number format is invalid
+     */
+    @Override
+    public void validateFaxNumber(String faxNumber, String fieldName) {
+        // Regex pattern for fax number validation: allows digits, spaces, hyphens, plus sign, and parentheses
+        final String FAX_NUMBER_PATTERN = "^[0-9\\-\\+\\(\\)\\s]+$";
+
+        if (faxNumber != null && !faxNumber.trim().isEmpty()) {
+            if (!faxNumber.matches(FAX_NUMBER_PATTERN)) {
+                String errorMsg = "Invalid " + fieldName + " format: contains illegal characters";
+                logger.error(errorMsg + " - " + faxNumber);
+                throw new SecurityException(errorMsg);
+            }
+        }
     }
 
 

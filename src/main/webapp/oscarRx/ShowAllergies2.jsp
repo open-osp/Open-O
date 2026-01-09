@@ -44,6 +44,7 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -230,11 +231,41 @@
                         $(".highLightButton").removeClass("highLightButton");
                         var form = $("#searchAllergy2");
                         var url = form.attr('action');
-                        var params = form.serializeArray();
                         var json = {};
-                        $.each(params, function () {
-                            json[this.name] = this.value || '';
-                        });
+
+                        // Build JSON with boolean values for checkboxes (Jackson expects boolean, not "on"/"off")
+                        form.find('input:enabled[name]:not([type=submit]):not([type=button]), select:enabled[name], textarea:enabled[name]')
+                            .each(function () {
+                                const $elem = $(this);
+                                const name = $elem.attr('name');
+                                const rawType = ($elem.attr('type') || '').toLowerCase();
+                                const isCheckbox = rawType === 'checkbox' || $elem.is(':checkbox');
+                                const isRadio = rawType === 'radio' || $elem.is(':radio');
+
+                                // Skip unchecked radios/checkboxes (serializeArray behavior)
+                                if ((isCheckbox || isRadio) && !$elem.is(':checked')) {
+                                    return;
+                                }
+
+                                // Checkbox → boolean true
+                                if (isCheckbox) {
+                                    // Skip typeSelectAll - UI-only field
+                                    if (name !== 'typeSelectAll') {
+                                        json[name] = true;
+                                    }
+                                    return;
+                                }
+
+                                // Radio → actual value
+                                if (isRadio) {
+                                    json[name] = $elem.val() || '';
+                                    return;
+                                }
+
+                                // Other input/select/textarea → value
+                                json[name] = $elem.val() || '';
+                            });
+
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
                         param = "jsonData=" + JSON.stringify(json);
@@ -657,6 +688,8 @@
                                                 </td>
                                                 <td><%=entryDate == null ? "" : entryDate %>
                                                 </td>
+                                                <td><%=allergy.getLastUpdateDate() != null ? DateUtils.formatDate(allergy.getLastUpdateDate(), request.getLocale()) : "" %>
+                                                </td>
                                                 <td <%=title%> ><%=allergy.getDescription() %>
                                                 </td>
                                                 <td><%=allergy.getTypeDesc() %>
@@ -685,9 +718,7 @@
                                                     <%
                                                         if (!allergy.isIntegratorResult()) {
                                                     %>
-                                                    <a href="#" title="Annotation"
-                                                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=
-                                                           ${patient.getDemographicNo() }','anwin','width=400,height=500');">
+                                                    <a href="#" title="Annotation" onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=${patient.getDemographicNo()}','anwin','width=400,height=500');">
                                                         <% if (existingAnnots.size() > 0) {%>
                                                         <img src="<%= request.getContextPath() %>/images/filledNotes.gif" border="0"/>
                                                         <% } else { %>

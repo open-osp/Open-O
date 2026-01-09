@@ -72,7 +72,7 @@ public class EConsult2Action extends ActionSupport {
     /**
      * Builds a proper eConsult frontend redirect link
      * <p>
-     * ie: /?{oneIdEmail}&{delegateOneIdEmail}#!/{task}?{parameter}
+     * ie: /?{oneIdEmail}&amp;{delegateOneIdEmail}#!/{task}?{parameter}
      */
     public String frontend() {
 
