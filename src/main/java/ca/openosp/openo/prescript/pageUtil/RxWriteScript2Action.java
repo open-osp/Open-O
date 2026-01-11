@@ -565,9 +565,6 @@ public final class RxWriteScript2Action extends ActionSupport {
         String success = "newRx";
         // set default quantity
         setDefaultQuantity(request);
-        userPropertyDAO = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
-        UserProperty propUseRx3 = userPropertyDAO.getProp((String) request.getSession().getAttribute("user"), UserProperty.RX_USE_RX3);
-
         RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
         if (bean == null) {
             response.sendRedirect("error.html");
