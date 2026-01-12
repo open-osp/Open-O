@@ -46,6 +46,7 @@ import ca.openosp.openo.lab.FileUploadCheck;
 import ca.openosp.openo.lab.ca.all.upload.HandlerClassFactory;
 import ca.openosp.openo.lab.ca.all.upload.handlers.MessageHandler;
 import ca.openosp.openo.lab.ca.all.util.CMLLabHL7Generator;
+import ca.openosp.openo.lab.ca.all.util.MDSLabHL7Generator;
 import ca.openosp.openo.lab.ca.all.util.Utilities;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -197,13 +198,18 @@ public class SubmitLabByForm2Action extends ActionSupport {
     }
 
 	private String generateHL7(Lab lab) {
-		// Generate CML format HL7 message
+		// Generate appropriate HL7 format based on lab type
 		String labType = lab.getLabName();
 		if (labType != null) {
 			labType = labType.trim().toUpperCase();
 		}
 		logger.info("Generating HL7 for lab type: [" + labType + "]");
 
-		return CMLLabHL7Generator.generate(lab);
+		if ("MDS".equals(labType)) {
+			return MDSLabHL7Generator.generate(lab);
+		} else {
+			// Default to CML for null, empty, or "CML"
+			return CMLLabHL7Generator.generate(lab);
+		}
 	}
 }

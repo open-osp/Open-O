@@ -1,5 +1,6 @@
 //CHECKSTYLE:OFF
 /**
+ * Copyright (c) 2026. Magenta Health. All Rights Reserved.
  * Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
@@ -21,6 +22,7 @@
  * McMaster University
  * Hamilton
  * Ontario, Canada
+ * Modifications made by Magenta Health in 2026.
  */
 
 package ca.openosp.openo.lab.ca.all.util;
@@ -34,7 +36,7 @@ import ca.openosp.openo.commn.model.LabTest;
 /**
  * Utility class for generating CML (Calgary Medical Laboratory) format HL7 messages.
  *
- * @since 2025-01-12
+ * @since 2026-01-12
  */
 public class CMLLabHL7Generator {
 
