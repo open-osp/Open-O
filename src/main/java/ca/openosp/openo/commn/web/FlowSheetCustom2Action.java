@@ -138,7 +138,7 @@ public class FlowSheetCustom2Action extends ActionSupport {
 
     /**
      * Validates all customization permissions for the given scope and demographic.
-     * Checks: demographic access, scope permission (admin for clinic), and patient-level edit permission.
+     * Checks: demographic access and scope permission (admin for clinic).
      *
      * @param scope the scope ("clinic", or null for provider/patient)
      * @param demographicNo the demographic number ("0" for clinic/provider, patient ID otherwise)
@@ -153,12 +153,6 @@ public class FlowSheetCustom2Action extends ActionSupport {
         }
 
         flowSheetCustomizationService.validateScopePermission(loggedInInfo, scope);
-
-        boolean isPatientScope = demographicNo != null && !"0".equals(demographicNo);
-        if (isPatientScope &&
-            !flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographicNo)) {
-            throw new SecurityException("Only providers registered to this patient can edit patient-level customizations");
-        }
 
         return loggedInInfo;
     }

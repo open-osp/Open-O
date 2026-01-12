@@ -35,7 +35,6 @@
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.FlowSheetItem" %>
 
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%@page import="org.owasp.encoder.Encode" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.MeasurementFlowSheet" %>
@@ -43,7 +42,6 @@
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementTypesBean" %>
 <%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
 <%@ page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao" %>
-<%@ page import="ca.openosp.openo.commn.service.FlowSheetCustomizationService" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -247,16 +245,6 @@
 		%> <script> alert("Invalid demographic number. Please enter a valid number."); </script> <%
 		return;
 	}
-
-    // Check if current user can edit patient-level customizations
-    // Only providers registered to the patient (primary + extended team) can edit
-    boolean canEditPatientLevel = true; // Default to true for non-patient scopes
-    boolean isPatientScope = demographic != null && !demographic.isEmpty();
-    if (isPatientScope) {
-        FlowSheetCustomizationService flowSheetCustomizationService = SpringUtils.getBean(FlowSheetCustomizationService.class);
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        canEditPatientLevel = flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographic);
-    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -431,20 +419,13 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
             <%
                 if (scope == null) {
                     if (demographic != null) {
-                        if (canEditPatientLevel) {
             %>
             <div class="alert alert-info">
                 Any changes made to this flowsheet will be applied to this patient <strong><%=demo.getLastName()%>
                 , <%=demo.getFirstName()%>
             </strong> for you only.
             </div>
-            <%      } else { %>
-            <div class="alert alert-warning">
-                <strong>View Only:</strong> You are not registered as a provider for this patient
-                (<strong><%=demo.getLastName()%>, <%=demo.getFirstName()%></strong>).
-                Only the patient's registered providers can edit patient-level flowsheets.
-            </div>
-            <%      }
+            <%
                     } else {%>
             <div class="alert">
                 Any changes made to this flowsheet will be applied to all <u>your</u> patients.
@@ -493,8 +474,6 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                             // They are managed in the Preventions module.
 		         		    if(mFlowsheet.getFlowSheetItem(mstring).getPreventionType()!=null){ %>
 		         		<i class="icon-lock action-icon" style="opacity:0.6;" title="Prevention item - managed in Prevention module"></i>
-		                <%} else if (isPatientScope && !canEditPatientLevel) { %>
-		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="View (read-only)" class="action-icon"><i class="icon-search"></i></a>
 		                <%} else {%>
 		                <a href="UpdateFlowsheet.jsp?flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>" title="Edit" class="action-icon"><i class="icon-pencil"></i></a>
 		                <%}%>
@@ -507,14 +486,6 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		               %>
 		                   <i class="icon-eye-close action-icon" style="opacity:0.4;" title="Hidden at clinic or provider level"></i>
 		               <%
-		                } else if (isPatientScope && !canEditPatientLevel) {
-		                    // Read-only for non-registered providers viewing patient scope
-		                    if (isHidden) {
-		               %>
-		                   <i class="icon-eye-close action-icon" style="opacity:0.4;" title="Only registered providers can edit"></i>
-		               <%  } else { %>
-		                   <i class="icon-eye-open action-icon" style="opacity:0.4;" title="Only registered providers can edit"></i>
-		               <%  }
 		                } else if (isHidden) {
 		                    // Clickable restore for same-level hides
 		               %>
@@ -528,13 +499,11 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
 		               <%
 		                // Show Revert button if current scope has an UPDATE customization
 		                boolean hasUpdate = hasUpdateCustomization(custList, mstring, scope, demographic, (String) session.getAttribute("user"));
-		                if (hasUpdate && (!isPatientScope || canEditPatientLevel)) {
+		                if (hasUpdate) {
 		               %>
 		                   <a href="FlowSheetCustomAction.do?method=revertUpdate&flowsheet=<%=temp%>&measurement=<%=mstring%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>"
 		                      title="Revert to settings from higher scope" class="action-icon"
 		                      onclick="return confirm('Revert this measurement to settings from higher scope?');"><i class="icon-refresh"></i></a>
-		               <% } else if (hasUpdate && isPatientScope && !canEditPatientLevel) { %>
-		                   <i class="icon-refresh action-icon" style="opacity:0.4;" title="Customized at patient level"></i>
 		               <% } %>
 
 		                </td>
@@ -605,8 +574,6 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                                     <td>
                                         <% if (isHigherScope) { %>
                                         <i class="icon-lock action-icon" style="opacity:0.4;" title="Cannot remove - created at <%=custLevel%> level"></i>
-                                        <% } else if (isPatientScope && !canEditPatientLevel) { %>
-                                        <i class="icon-trash action-icon" style="opacity:0.4;" title="Only registered providers can edit patient-level customizations"></i>
                                         <% } else { %>
                                         <a href="FlowSheetCustomAction.do?method=archiveMod&id=<%=cust.getId()%>&flowsheet=<%=flowsheet%><%=demographicStr%><%=htQueryString%><%=scope==null?"":"&scope="+scope%>"
                                            class="action-icon"><i class="icon-trash"></i></a>
@@ -667,14 +634,8 @@ Flowsheet: <span style="font-weight:normal"><c:out value="${requestScope.display
                 <!-- ADD NEW MEAS -->
                 <div class="tab-pane" id="add">
 
-                    <% if (isPatientScope && !canEditPatientLevel) { %>
-                    <div class="alert alert-warning">
-                        <strong>View Only:</strong> Only providers registered to this patient can add measurements at the patient level.
-                    </div>
-                    <% } %>
-
                     <form name="FlowSheetCustomActionForm" id="FlowSheetCustomActionForm" class="well"
-                          action="FlowSheetCustomAction.do" method="post" <%= (isPatientScope && !canEditPatientLevel) ? "onsubmit=\"alert('Only registered providers can edit patient-level customizations'); return false;\"" : "" %>>
+                          action="FlowSheetCustomAction.do" method="post">
                         <input type="hidden" name="flowsheet" value="<%=temp%>"/>
                         <input type="hidden" name="method" value="save"/>
                         <%if (demographic != null) {%>

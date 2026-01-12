@@ -27,11 +27,7 @@
  */
 package ca.openosp.openo.commn.service;
 
-import ca.openosp.openo.commn.dao.DemographicDao;
-import ca.openosp.openo.commn.dao.DemographicExtDao;
 import ca.openosp.openo.commn.dao.FlowSheetCustomizationDao;
-import ca.openosp.openo.commn.model.Demographic;
-import ca.openosp.openo.commn.model.DemographicExt;
 import ca.openosp.openo.commn.model.FlowSheetCustomization;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -52,27 +48,19 @@ public class FlowSheetCustomizationService {
 
     private final FlowSheetCustomizationDao flowSheetCustomizationDao;
     private final SecurityInfoManager securityInfoManager;
-    private final DemographicDao demographicDao;
-    private final DemographicExtDao demographicExtDao;
 
     /**
      * Constructs the service with required dependencies.
      *
      * @param flowSheetCustomizationDao DAO for flowsheet customization operations
      * @param securityInfoManager manager for security privilege checks
-     * @param demographicDao DAO for demographic operations
-     * @param demographicExtDao DAO for demographic extended data operations
      */
     @Autowired
     public FlowSheetCustomizationService(
             FlowSheetCustomizationDao flowSheetCustomizationDao,
-            SecurityInfoManager securityInfoManager,
-            DemographicDao demographicDao,
-            DemographicExtDao demographicExtDao) {
+            SecurityInfoManager securityInfoManager) {
         this.flowSheetCustomizationDao = flowSheetCustomizationDao;
         this.securityInfoManager = securityInfoManager;
-        this.demographicDao = demographicDao;
-        this.demographicExtDao = demographicExtDao;
     }
 
     /**
@@ -296,62 +284,5 @@ public class FlowSheetCustomizationService {
         }
 
         return CascadeCheckResult.allowed();
-    }
-
-    /**
-     * Checks if a provider is registered to a demographic and can edit patient-level customizations.
-     *
-     * <p>A provider is considered registered if they are:</p>
-     * <ul>
-     *   <li>The primary provider (demographic.provider_no)</li>
-     *   <li>An extended role: resident, nurse, or midwife (via DemographicExt)</li>
-     * </ul>
-     *
-     * <p>Note: Admin privileges do NOT grant edit access to patient-level customizations.</p>
-     *
-     * @param loggedInInfo the logged-in user information
-     * @param demographicNo the demographic number (patient ID)
-     * @return true if the provider can edit patient-level customizations for this demographic
-     */
-    public boolean canEditPatientLevelCustomization(LoggedInInfo loggedInInfo, String demographicNo) {
-        if (loggedInInfo == null || demographicNo == null || demographicNo.isEmpty()) {
-            return false;
-        }
-
-        String providerNo = loggedInInfo.getLoggedInProviderNo();
-        if (providerNo == null || providerNo.isEmpty()) {
-            return false;
-        }
-
-        // 1. Check if primary provider
-        Demographic demo = demographicDao.getDemographic(demographicNo);
-        if (demo != null && providerNo.equals(demo.getProviderNo())) {
-            return true;
-        }
-
-        // 2. Check extended roles (resident, nurse, midwife)
-        try {
-            Integer demoNo = Integer.parseInt(demographicNo);
-
-            DemographicExt residentExt = demographicExtDao.getDemographicExt(demoNo, "resident");
-            if (residentExt != null && providerNo.equals(residentExt.getValue())) {
-                return true;
-            }
-
-            DemographicExt nurseExt = demographicExtDao.getDemographicExt(demoNo, "nurse");
-            if (nurseExt != null && providerNo.equals(nurseExt.getValue())) {
-                return true;
-            }
-
-            DemographicExt midwifeExt = demographicExtDao.getDemographicExt(demoNo, "midwife");
-            if (midwifeExt != null && providerNo.equals(midwifeExt.getValue())) {
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            // Invalid demographic number format
-            return false;
-        }
-
-        return false;
     }
 }
