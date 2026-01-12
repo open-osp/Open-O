@@ -716,7 +716,7 @@ public final class RxWriteScript2Action extends ActionSupport {
             }
             rx.setDosage(removeExtraChars(dosage));
             rx.setUnit(removeExtraChars(unit));
-			rx.setGCN_SEQNO(dmono.gcnCode);
+            rx.setGCN_SEQNO(drugId+"");
             rx.setRegionalIdentifier(dmono.regionalIdentifier);
             String atcCode = dmono.atc;
             rx.setAtcCode(atcCode);
