@@ -598,9 +598,11 @@ function renderRxStage() {
 
      //not used , represcribe a drug
     function represcribeOnLoad(drugId){
-        var data="drugId="+drugId + "&rand=" + Math.floor(Math.random()*10001);
-        var url= ctx + "/oscarRx/rePrescribe2.do?method=saveReRxDrugIdToStash";
-        new Ajax.Updater('rxText',url, {method:'get',parameters:data,evalScripts:true,insertion: Insertion.Bottom,
+        var data="method=saveReRxDrugIdToStash&drugId="+drugId + "&rand=" + Math.floor(Math.random()*10001);
+        var url= ctx + "/oscarRx/rePrescribe2.do";
+        new Ajax.Updater('rxText',url, {method:'POST',parameters:data,
+          requestHeaders: { 'Accept': 'application/json' },
+          evalScripts:true,insertion: Insertion.Bottom,
             onSuccess:function(transport){
 	            renderRxStage();
 					}
@@ -1412,7 +1414,9 @@ function renderRxStage() {
     function iterateStash(){
         var url=ctx + "/oscarRx/WriteScript.do";
         var data="parameterValue=iterateStash&rand="+ Math.floor(Math.random()*10001);
-        new Ajax.Updater('rxText',url, {method:'POST',parameters:data,asynchronous:true,evalScripts:true,
+        new Ajax.Updater('rxText',url, {method:'POST',parameters:data,asynchronous:true,
+          requestHeaders: { 'Accept': 'application/json' },
+          evalScripts:true,
 					insertion: Insertion.Bottom, onSuccess: function (data) {
                 // updateCurrentInteractions();
 
@@ -1535,20 +1539,23 @@ function renderRxStage() {
     }
 
    function checkAllergy(id,atcCode){
-         var url=ctx + "/oscarRx/getAllergyData.jsp"  ;
-         var data="atcCode="+encodeURIComponent(atcCode)+"&id="+ encodeURIComponent(id) +"&rand="+ Math.floor(Math.random()*10001);
-         new Ajax.Request(url,{method: 'post',postBody:data,
-           requestHeaders: { 'Accept': 'application/json' },
-           onSuccess:function(transport){
-
-						var json = transport.responseText.evalJSON();
-						if (json != null && json.DESCRIPTION != null && json.reaction != null) {
-							var str = "<font color='red'>Allergy:</font> " + json.DESCRIPTION + " <font color='red'>Reaction:</font> " + json.reaction;
-							$('alleg_' + json.id).innerHTML = str;
-							document.getElementById('alleg_tbl_' + json.id).style.display = 'block';
-                     }
-                 }
-				});
+        const url = ctx + "/oscarRx/showAllergy.do"
+        const data="method=allergyData&atcCode="+encodeURIComponent(atcCode)+"&id="+ encodeURIComponent(id) +"&rand="+ Math.floor(Math.random()*10001);
+     console.log(url + data);
+     new Ajax.Request(url,{method: 'post',postBody:data,
+       requestHeaders: { 'Accept': 'application/json' },
+       onSuccess:function(transport){
+         console.log(transport.responseText);
+         var json = transport.responseText.evalJSON();
+         if (json != null && json.results && json.results.length > 0) {
+           // Pick the first allergy warning found
+           var allergy = json.results[0];
+           var str = "<label style=\"color:red;\"> Allergy:</label> " + allergy.DESCRIPTION + " <label style=\"color:red;\">Reaction:</label> " + allergy.reaction;
+           $('alleg_' + json.id).innerHTML = str;
+           document.getElementById('alleg_tbl_' + json.id).style.display = 'block';
+         }
+       }
+     });
    }
    function checkIfInactive(id,dinNumber){
         var url=ctx + "/oscarRx/getInactiveDate.jsp"  ;
@@ -2363,7 +2370,7 @@ function updateQty(element){
        var unitNameStr="unitName_"+rand;
        var prnStr="prn_"+rand;
        var prnVal="prnVal_"+rand;
-        new Ajax.Request(url, {method: 'get',parameters:data,
+        new Ajax.Request(url, {method: 'POST',parameters:data,
           requestHeaders: { 'Accept': 'application/json' },
           onSuccess:function(transport){
                 var json=transport.responseText.evalJSON();

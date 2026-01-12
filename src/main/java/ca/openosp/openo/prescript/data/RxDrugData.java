@@ -618,7 +618,7 @@ public class RxDrugData {
      */
     public DrugMonograph getDrug(String pKey) throws Exception {
         RxDrugRef d = new RxDrugRef();
-        return new DrugMonograph(d.getDrug(pKey, Boolean.valueOf(true)));
+        return new DrugMonograph(d.getDrug(pKey, Boolean.TRUE));
     }
 
 
@@ -631,7 +631,7 @@ public class RxDrugData {
      */
     public DrugMonograph getDrug2(String pKey) throws Exception {
         RxDrugRef d = new RxDrugRef();
-		return new DrugMonograph(d.getDrug2(pKey,true));
+		return new DrugMonograph(d.getDrug2(pKey,Boolean.TRUE));
     }
 
     /**
@@ -845,17 +845,17 @@ public class RxDrugData {
     public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allerg, List<Allergy> missing) throws Exception {
         Vector vec = new Vector();
         for (int i = 0; i < allerg.length; i++) {
-            Hashtable h = new Hashtable();
+            Hashtable<String, String> h = new Hashtable<>();
             h.put("id", "" + i);
             h.put("description", allerg[i].getDescription());
             h.put("type", "" + allerg[i].getTypeCode());
             if (allerg[i].getRegionalIdentifier() != null) {
-                h.put("din", allerg[i].getRegionalIdentifier());
+                h.put("uuid", allerg[i].getRegionalIdentifier());
             }
             if (allerg[i].getAtc() != null) {
-                h.put("atc", allerg[i].getAtc());
+                h.put("ATC", allerg[i].getAtc());
             } else if (allerg[i].getTypeCode() == 8) {
-                h.put("atc", allerg[i].getDrugrefId());
+                h.put("ATC", allerg[i].getDrugrefId());
             }
             vec.add(h);
         }
