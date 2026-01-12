@@ -36,7 +36,7 @@ services:
     ports:
       - "8180:8080"
     volumes:
-      - ./drugref/drugref2.properties:/root/drugref2.properties:ro
+      - ./development/config/shared/volumes/drugref2.properties:/root/drugref2.properties:ro
     environment:
       TZ: America/Toronto
     networks:
