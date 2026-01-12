@@ -736,7 +736,7 @@ function renderRxStage() {
                         <tr id="medicationManagementRow">
                             <td>
 							<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
-                                <form action="${pageContext.request.contextPath}/oscarRx/searchDrug"  onsubmit="return checkEnterSendRx();" style="display: inline; margin-bottom:0;" styleId="drugForm">
+                                <form action="${pageContext.request.contextPath}/oscarRx/searchDrug.do"  onsubmit="return checkEnterSendRx();" style="display: inline; margin-bottom:0;" id="drugForm" name="drugForm" method="post">
 
 
                                     <input type="hidden" property="demographicNo" value="<%=Integer.toString(patient.getDemographicNo())%>" />
@@ -2595,11 +2595,11 @@ function updateQty(element){
 
 
     function updateSaveAllDrugsPrintCheckContinue() {
-        showUnstagedReRxConfirmation(updateSaveAllDrugsPrint);
+            updateSaveAllDrugsPrintContinue();
     }
 
     function updateSaveAllDrugsCheckContinue() {
-        showUnstagedReRxConfirmation(updateSaveAllDrugs);
+            updateSaveAllDrugsContinue();
     }
 
     const CONFIRMATION_MESSAGE = {
