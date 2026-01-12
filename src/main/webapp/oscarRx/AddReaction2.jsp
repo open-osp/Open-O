@@ -44,7 +44,7 @@
         return;
     }
 %>
-
+<!DOCTYPE HTML>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -206,19 +206,24 @@
 
                                   function doSubmit() {
 
-                                    if (document.forms.RxAddAllergyForm.nonDrug.value == '') {
-                                      alert("Please choose value for non-drug");
-                                      return false;
-                                    }
-                                    confirmRemoveNKDA();
+                                    var nonDrugSelect = document.forms.RxAddAllergyForm.nonDrug;
+                                    if (nonDrugSelect) {
+                                      var nonDrugValue = (nonDrugSelect.selectedIndex !== -1) ? nonDrugSelect.options[nonDrugSelect.selectedIndex].value : '';
 
-                                    return true;
+                                      if (nonDrugValue === '') {
+                                        alert("Please choose value for non-drug");
+                                        return false;
+                                      }
+                                      confirmRemoveNKDA();
+
+                                      return true;
+                                    }
                                 }
 
 
                                 function confirmRemoveNKDA() {
                                     <% if (nkdaId!=null && !nkdaId.isEmpty()) { %>
-                                    if (<%=nkdaId%> > 0)
+                                    if (parseInt("<%=nkdaId%>") > 0)
                                     {
                                         var yes = confirm("Remove \"No Known Drug Allergies\" from list?");
                                         if (!yes) document.forms.RxAddAllergyForm.allergyToArchive.value = "";
