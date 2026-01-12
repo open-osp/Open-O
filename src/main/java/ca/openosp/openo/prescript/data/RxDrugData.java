@@ -26,17 +26,16 @@
 
 package ca.openosp.openo.prescript.data;
 
+import ca.openosp.openo.commn.model.Allergy;
+import ca.openosp.openo.prescript.util.RxDrugRef;
+import ca.openosp.openo.utility.MiscUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import ca.openosp.openo.commn.model.Allergy;
-import ca.openosp.openo.utility.MiscUtils;
-
-import ca.openosp.openo.prescript.util.RxDrugRef;
 
 public class RxDrugData {
 
@@ -64,6 +63,7 @@ public class RxDrugData {
         public String name;        // : string. International nonproprietary name (INPN) of this drug (=generic)
         public String atc;         //: string. ATC code
         public String regionalIdentifier;
+		public String gcnCode;
         //     generics : struct. Lists all generic components (usually just one). Key (string) is the generic name, value (integer) is the repective primary key
         public boolean essential;  //: True if this drug is on the WHO essential drug list
         public String product;     //: string. If this drug is not a generic, the product brand name is listed under this key, else this key is not available
@@ -85,7 +85,7 @@ public class RxDrugData {
         public RenalImpairment renalImpairment;
         public HepaticImpairment hepaticImpairment;
 
-        public String drugCode;
+		public Integer drugId;
 
         public DrugMonograph() {
             //default
@@ -96,10 +96,10 @@ public class RxDrugData {
             name = (String) hash.get("name");
             atc = (String) hash.get("atc");
             product = (String) hash.get("product");
-            regionalIdentifier = StringUtils.isEmpty((String) hash.get("regional_identifier")) ? null : (String) hash.get("regional_identifier");
+			regionalIdentifier = (String) hash.get("regional_identifier");
             drugForm = (String) hash.get("drugForm");
-            if (hash.get("drugCode") != null) {
-                drugCode = (String) hash.get("drugCode");
+			if(StringUtils.isNumeric((String) hash.get("drugId"))) {
+				drugId = Integer.parseInt((String) hash.get("drugId"));
             }
 
             Vector drugRoute = (Vector) hash.get("drugRoute");
@@ -119,7 +119,8 @@ public class RxDrugData {
                 components.add(comp);
                 drugComponentList.add(comp);
             }
-            //{name=WARFARIN SODIUM, regional_identifier=02007959, product=COUMADIN TAB 4MG, atc=808774}
+
+			gcnCode = (String) hash.get("gcnCode");
 
         }
 
@@ -185,7 +186,7 @@ public class RxDrugData {
 
             public DrugComponent(Hashtable h) {
                 name = (String) h.get("name");
-                strength = ((Double) h.get("strength")).toString();
+				strength = h.get("strength").toString();
                 unit = (String) h.get("unit");
             }
 
@@ -314,10 +315,11 @@ public class RxDrugData {
         }
 
         MinDrug(Hashtable h) {
-            this.pKey = String.valueOf(h.get("id"));
+			//this.pKey = (String) h.get("id"); //pKey
+			this.pKey = (String) h.get("id");
             this.name = (String) h.get("name");
             //this.type = (String) h.get("category");//type
-            this.type = ((Integer) h.get("category")).toString();
+			this.type = (String) h.get("category");
             MiscUtils.getLogger().debug("pkey " + pKey + " name " + name + " type " + type);
             //d.tag  = (Tag)    h.get("tag");
         }
@@ -616,7 +618,7 @@ public class RxDrugData {
      */
     public DrugMonograph getDrug(String pKey) throws Exception {
         RxDrugRef d = new RxDrugRef();
-        return new DrugMonograph(d.getDrug(pKey, Boolean.valueOf(true)));
+        return new DrugMonograph(d.getDrug(pKey, Boolean.TRUE));
     }
 
 
@@ -629,7 +631,7 @@ public class RxDrugData {
      */
     public DrugMonograph getDrug2(String pKey) throws Exception {
         RxDrugRef d = new RxDrugRef();
-        return new DrugMonograph(d.getDrug2(pKey, Boolean.valueOf(true)));
+		return new DrugMonograph(d.getDrug2(pKey,Boolean.TRUE));
     }
 
     /**
@@ -642,9 +644,6 @@ public class RxDrugData {
     public DrugMonograph getDrugByDIN(String DIN) throws Exception {
         RxDrugRef drugRef = new RxDrugRef();
         Hashtable<String, Object> returnVal = drugRef.getDrugByDIN(DIN, Boolean.TRUE);
-        if (returnVal == null) {
-            return null;
-        }
         return new DrugMonograph(returnVal);
     }
 
@@ -674,7 +673,7 @@ public class RxDrugData {
     public String getGenericName(String pKey) throws Exception {
         RxDrugRef d = new RxDrugRef();
         Hashtable h = d.getGenericName(pKey);
-        return (String) h.getOrDefault("name", "");
+		return (String) h.get("name");
     }
 
 
@@ -846,17 +845,17 @@ public class RxDrugData {
     public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allerg, List<Allergy> missing) throws Exception {
         Vector vec = new Vector();
         for (int i = 0; i < allerg.length; i++) {
-            Hashtable h = new Hashtable();
+            Hashtable<String, String> h = new Hashtable<>();
             h.put("id", "" + i);
             h.put("description", allerg[i].getDescription());
             h.put("type", "" + allerg[i].getTypeCode());
             if (allerg[i].getRegionalIdentifier() != null) {
-                h.put("din", allerg[i].getRegionalIdentifier());
+                h.put("uuid", allerg[i].getRegionalIdentifier());
             }
             if (allerg[i].getAtc() != null) {
-                h.put("atc", allerg[i].getAtc());
+                h.put("ATC", allerg[i].getAtc());
             } else if (allerg[i].getTypeCode() == 8) {
-                h.put("atc", allerg[i].getDrugrefId());
+                h.put("ATC", allerg[i].getDrugrefId());
             }
             vec.add(h);
         }

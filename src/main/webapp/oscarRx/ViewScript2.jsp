@@ -24,7 +24,7 @@
 
 --%>
 <%@ page
-        import="ca.openosp.openo.providers.data.*, ca.openosp.openo.rx.data.*,ca.openosp.OscarProperties, ca.openosp.openo.clinic.ClinicData, java.util.*" %>
+        import="ca.openosp.openo.providers.data.*,ca.openosp.OscarProperties, ca.openosp.openo.clinic.ClinicData, java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
@@ -294,8 +294,8 @@
             }
 
 
-            function addNotes() {
 
+            function addNotes() {
 
                 var url = "oscarRx/AddRxComment.jsp";
                 var ran_number = Math.round(Math.random() * 1000000);

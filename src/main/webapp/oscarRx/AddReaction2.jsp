@@ -44,7 +44,7 @@
         return;
     }
 %>
-
+<!DOCTYPE HTML>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -160,23 +160,70 @@
                                     }
                                 }
 
-                                function doSubmit() {
 
-                                    if (document.forms.RxAddAllergyForm.nonDrug.value == '') {
+
+<%--						<tr>--%>
+<%--							<td ><html:submit property="submit"--%>
+<%--								value="Add Allergy" styleClass="ControlPushButton" /> <input--%>
+<%--								type=button class="ControlPushButton" id="cancelAddReactionButton"--%>
+<%--								onclick="javascript:document.forms.RxAddAllergyForm.reactionDescription.value='';document.forms.RxAddAllergyForm.startDate.value='';document.forms.RxAddAllergyForm.ageOfOnset.value='';document.forms.RxAddAllergyForm.reactionDescription.focus();"--%>
+<%--								value="Reset" /></td>--%>
+<%--						</tr>--%>
+<%--					</table>--%>
+<%--        --%>
+<%--                      </html:form></td>--%>
+<%--			</tr>--%>
+
+<%--			<tr>--%>
+<%--				<td>--%>
+<%--				<%--%>
+<%--                        String sBack="ShowAllergies2.jsp";--%>
+<%--                      %> <input type=button class="ControlPushButton"--%>
+<%--					onclick="javascript:window.location.href='<%=sBack%>';"--%>
+<%--					value="Back to View Allergies" /></td>--%>
+<%--			</tr>--%>
+<%--			<!----End new rows here-->--%>
+<%--			<tr height="100%">--%>
+<%--				<td></td>--%>
+<%--			</tr>--%>
+<%--		</table>--%>
+<%--		</td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td height="0%"--%>
+<%--			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>--%>
+<%--		<td height="0%"--%>
+<%--			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td width="100%" height="0%" colspan="2">&nbsp;</td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"--%>
+<%--			colspan="2"></td>--%>
+<%--	</tr>--%>
+<%--</table>--%>
+
+                                  function doSubmit() {
+
+                                    var nonDrugSelect = document.forms.RxAddAllergyForm.nonDrug;
+                                    if (nonDrugSelect) {
+                                      var nonDrugValue = (nonDrugSelect.selectedIndex !== -1) ? nonDrugSelect.options[nonDrugSelect.selectedIndex].value : '';
+
+                                      if (nonDrugValue === '') {
                                         alert("Please choose value for non-drug");
                                         return false;
+                                      }
+                                      confirmRemoveNKDA();
+
+                                      return true;
                                     }
-
-                                    confirmRemoveNKDA();
-
-                                    return true;
                                 }
+
 
                                 function confirmRemoveNKDA() {
                                     <% if (nkdaId!=null && !nkdaId.isEmpty()) { %>
-                                    if (<%=nkdaId%>>
-                                    0
-                                )
+                                    if (parseInt("<%=nkdaId%>") > 0)
                                     {
                                         var yes = confirm("Remove \"No Known Drug Allergies\" from list?");
                                         if (!yes) document.forms.RxAddAllergyForm.allergyToArchive.value = "";
@@ -338,7 +385,7 @@
             <td width="100%" height="0%" colspan="2">&nbsp;</td>
         </tr>
         <tr>
-            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+            <td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"
                 colspan="2"></td>
         </tr>
     </table>
