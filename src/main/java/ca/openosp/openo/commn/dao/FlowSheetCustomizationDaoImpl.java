@@ -84,7 +84,7 @@ public class FlowSheetCustomizationDaoImpl extends AbstractDaoImpl<FlowSheetCust
             "AND ((fd.providerNo='' AND fd.demographicNo='0') " +
             "OR (fd.providerNo=?2 AND fd.demographicNo='0') " +
             "OR (fd.demographicNo=?3)) " +
-            "ORDER BY fd.demographicNo, fd.providerNo DESC");
+            "ORDER BY fd.demographicNo ASC, fd.providerNo ASC");
         query.setParameter(1, flowsheet);
         query.setParameter(2, provider);
         query.setParameter(3, String.valueOf(demographic));
