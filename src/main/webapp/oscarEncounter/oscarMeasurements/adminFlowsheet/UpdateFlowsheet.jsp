@@ -54,9 +54,6 @@
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetCondition" %>
 <%@ page import="ca.openosp.openo.encounter.oscarMeasurements.util.TargetColour" %>
 <%@ page import="ca.openosp.openo.commn.dao.FlowSheetCustomizationDao" %>
-<%@ page import="ca.openosp.openo.commn.service.FlowSheetCustomizationService" %>
-<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
-<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
@@ -112,15 +109,6 @@ if(scope != null && "clinic".equals(scope)) {
     List<Recommendation> dsR = mFlowsheet.getDSElements((String) h2.get("measurement_type"));
     FlowSheetItem fsi = mFlowsheet.getFlowSheetItem(measurement);
 
-    // Check if current user can edit patient-level customizations
-    // Only providers registered to the patient (primary + extended team) can edit
-    boolean canEditPatientLevel = true; // Default to true for non-patient scopes
-    boolean isPatientScope = demographic != null && !demographic.isEmpty();
-    if (isPatientScope) {
-        FlowSheetCustomizationService flowSheetCustomizationService = SpringUtils.getBean(FlowSheetCustomizationService.class);
-        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        canEditPatientLevel = flowSheetCustomizationService.canEditPatientLevelCustomization(loggedInInfo, demographic);
-    }
 //EctMeasurementTypeBeanHandler mType = new EctMeasurementTypeBeanHandler();
 %>
 
@@ -175,14 +163,8 @@ display:inline-block;
 
 <div class="container-fluid" id="container-main">
 
-        <% if (isPatientScope && !canEditPatientLevel) { %>
-        <div class="alert alert-warning">
-            <strong>View Only:</strong> Only providers registered to this patient can update measurements at the patient level.
-        </div>
-        <% } %>
-
         <div class="span8">
-<form action="FlowSheetCustomAction.do" onsubmit="<%= (isPatientScope && !canEditPatientLevel) ? "alert('Only registered providers can edit patient-level customizations'); return false;" : "return validateRuleValue();" %>">
+<form action="FlowSheetCustomAction.do" onsubmit="return validateRuleValue();">
                 <input type="hidden" name="method" value="update"/>
                 <input type="hidden" name="flowsheet" value="<%=flowsheet%>"/>
                 <input type="hidden" name="measurement" value="<%=measurement%>"/>
@@ -504,7 +486,7 @@ display:inline-block;
                         <a href="EditFlowsheet.jsp?flowsheet=<%=flowsheet%>&demographic=<%=demographic%><%=htQueryString%><%=scope != null ? "&scope=" + scope : ""%>"
                            class="btn">Cancel</a>
                         <%} %>
-                        <input type="submit" class="btn btn-primary" value="Update" <%= (isPatientScope && !canEditPatientLevel) ? "disabled" : "" %>/>
+                        <input type="submit" class="btn btn-primary" value="Update"/>
                     </div>
 
                 </fieldset>
