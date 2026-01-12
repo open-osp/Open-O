@@ -302,7 +302,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
                var top = winY+70;
                var left = winX+110;
-                var url = "oscarRx/searchDrug.do?rx2=true&searchString=" + $('searchString').value;
+                var url = ctx + "/oscarRx/searchDrug.do?rx2=true&searchString=" + $('searchString').value;
                popup2(600, 800, top, left, url, 'windowNameRxSearch<%=demoNo%>');
 
            }
@@ -314,7 +314,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
 
                var top = winY+70;
                var left = winX+110;
-                var url = "oscarRx/SelectReason.jsp?demographicNo=" + demographic + "&drugId=" + id;
+                var url = ctx + "/oscarRx/SelectReason.jsp?demographicNo=" + demographic + "&drugId=" + id;
                popup2(575, 650, top, left, url, 'windowNameRxReason<%=demoNo%>');
 
            }
@@ -634,7 +634,7 @@ function renderRxStage() {
     }
 
 	function showPreviousPrints(scriptNo) {
-                popupWindow(720, 700, 'oscarRx/ShowPreviousPrints.jsp?scriptNo=' + scriptNo, 'ShowPreviousPrints')
+                popupWindow(720, 700, ctx + '/oscarRx/ShowPreviousPrints.jsp?scriptNo=' + scriptNo, 'ShowPreviousPrints')
 	}
 
     var Lst;
@@ -683,9 +683,9 @@ function renderRxStage() {
     		}
     	});
     	if(ids.length>0) {
-                    popupWindow(720, 700, 'oscarRx/PrintDrugProfile2.jsp?ids=' + ids.join(','), 'PrintDrugProfile');
+                    popupWindow(720, 700, ctx + '/oscarRx/PrintDrugProfile2.jsp?ids=' + ids.join(','), 'PrintDrugProfile');
     	} else {
-                    popupWindow(720, 700, 'oscarRx/PrintDrugProfile2.jsp', 'PrintDrugProfile');
+                    popupWindow(720, 700, ctx + '/oscarRx/PrintDrugProfile2.jsp', 'PrintDrugProfile');
     	}
     }
     
@@ -859,7 +859,7 @@ function renderRxStage() {
                                                     <a href="javascript:void(0);" id="cmdRePrescribe" onclick="RePrescribeLongTerm();" style="width: 200px" ><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgReprescribeLongTermMed"/></a>
                                                     &nbsp;
 													<% } %>
-                                                    <a href="javascript:popupWindow(720,920,'chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline Drug Profile</a>
+                                                    <a href="javascript:popupWindow(720,920, ctx + '/oscarRx/chartDrugProfile.jsp?demographic_no=<%=demoNo%>','PrintDrugProfile2')">Timeline Drug Profile</a>
                                                     &nbsp;
                                                     &nbsp;&nbsp;
                                                 </div>
@@ -1631,8 +1631,8 @@ function renderRxStage() {
 			 * @Deprecated avoid future use of prototype.
 	 */
     function updateCurrentInteractions(){
-        new Ajax.Request("GetmyDrugrefInfo.do?method=findInteractingDrugList&rand="+ Math.floor(Math.random()*10001), {method:'get',onSuccess:function(transport){
-                            new Ajax.Request("UpdateInteractingDrugs.jsp?rand="+ Math.floor(Math.random()*10001), {method:'get',onSuccess:function(transport){
+        new Ajax.Request(ctx + "/oscarRx/GetmyDrugrefInfo.do?method=findInteractingDrugList&rand="+ Math.floor(Math.random()*10001), {method:'get',onSuccess:function(transport){
+                            new Ajax.Request(ctx + "/oscarRx/UpdateInteractingDrugs.jsp?rand="+ Math.floor(Math.random()*10001), {method:'get',onSuccess:function(transport){
                                             var str=transport.responseText;
                                             str=str.replace('<script type="text/javascript">','');
                                             str=str.replace(/<\/script>/,'');
@@ -1773,7 +1773,7 @@ function popForm2(scriptId){
 
      function callTreatments(textId,id){
          var ele = $(textId);
-         var url = "TreatmentMyD.jsp"
+         var url = ctx + "/oscarRx/TreatmentMyD.jsp"
          var ran_number=Math.round(Math.random()*1000000);
          var params = "demographicNo=<%=demoNo%>&cond="+ele.value+"&rand="+ran_number;  //hack to get around ie caching the page
          new Ajax.Updater(id,url, {method:'get',parameters:params,asynchronous:true});
@@ -1973,7 +1973,7 @@ function addFav(randomId,brandName){
         var url= ctx + "/oscarRx/addFavorite2.do?parameterValue=addFav2";
         var data="randomId="+randomId+"&favoriteName="+favoriteName;
         new Ajax.Request(url, {method: 'get',parameters:data, onSuccess:function(transport){
-              window.location.href="SearchDrug3.jsp";
+              window.location.href = ctx + "/oscarRx/SearchDrug3.jsp";
    }
 					})
 }
@@ -1986,7 +1986,7 @@ function addFav(randomId,brandName){
           list.invoke('show');
           resHidden2 = 1;
           $('showHiddenResWord').update('hide');
-          var url = "updateHiddenResources.jsp";
+          var url = ctx + "/oscarRx/updateHiddenResources.jsp";
           var params="hiddenResources=&rand="+ Math.floor(Math.random()*10001);
           new Ajax.Request(url, {method: 'post',parameters:params});
         }else{
@@ -2060,7 +2060,7 @@ function addFav(randomId,brandName){
     function ShowW(id,resourceId,updated){
 
 				var params = "resId=" + resourceId + "&updatedat=" + updated
-				var url = 'GetmyDrugrefInfo.do?method=setWarningToShow&rand=' + Math.floor(Math.random() * 10001);
+				var url = ctx + '/oscarRx/GetmyDrugrefInfo.do?method=setWarningToShow&rand=' + Math.floor(Math.random() * 10001);
 				new Ajax.Updater('showHideTotal', url, {
 					method: 'get',
 					parameters: params,
@@ -2076,7 +2076,7 @@ function addFav(randomId,brandName){
 			}
 
 			function HideW(id, resourceId, updated) {
-				var url = 'GetmyDrugrefInfo.do?method=setWarningToHide';
+				var url = ctx + '/oscarRx/GetmyDrugrefInfo.do?method=setWarningToHide';
 				var ran_number = Math.round(Math.random() * 1000000);
 				var params = "resId=" + resourceId + "&updatedat=" + updated + "&rand=" + ran_number;  //hack to get around ie caching the page
 				//totalHiddenResources++;
@@ -2483,7 +2483,7 @@ function updateQty(element){
                new Ajax.Updater(divId,url, {method:'get',parameters:params,insertion: Insertion.Bottom,asynchronous:true});
          }
          function getLUC(divId,randomId,din){
-             var url="LimitedUseCode.jsp";
+             var url = ctx + "/oscarRx/LimitedUseCode.jsp";
              var params="randomId="+randomId+"&din="+din;
              new Ajax.Updater(divId,url,{method:'get',parameters:params,insertion:Insertion.Bottom,asynchronous:true});
          }

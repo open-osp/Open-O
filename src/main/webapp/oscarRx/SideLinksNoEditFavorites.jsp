@@ -83,7 +83,7 @@
 <script type="text/javascript">
 
     function goSD3(favoriteId) {
-        location.href = "oscarRx/SearchDrug3.jsp?usefav=true&favid=" + favoriteId;
+        location.href = "<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp?usefav=true&favid=" + favoriteId;
     }
 
 </script>
