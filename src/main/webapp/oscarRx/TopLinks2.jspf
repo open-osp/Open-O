@@ -84,7 +84,7 @@ function newWindow(url) {
             %>
           </select>
           &nbsp;<b>
-            <a style="color:white;" href="oscarRx/SelectPharmacy2.jsp"
+            <a style="color:white;" href="<%= request.getContextPath() %>/oscarRx/SelectPharmacy2.jsp"
                onclick="ShowSpin(true); return true;">
               (Edit List)
             </a>

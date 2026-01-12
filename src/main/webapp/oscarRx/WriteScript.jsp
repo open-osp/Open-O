@@ -1006,7 +1006,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                     <tr>
                         <td width="0%" valign="top">
                             <div class="DivCCBreadCrumbs">
-                                <a href="oscarRx/SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> >
+                                <a href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a> >
                                 <fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseDrug.title"/> >
                                 <b><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.title"/></b>
                             </div>

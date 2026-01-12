@@ -311,7 +311,7 @@
                     <tr>
                         <td>
                             <div class="DivContentSectionHead"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.section2Title"/> (<a
-                                    href="javascript:popupWindow(720,700,'oscarRx/PrintDrugProfile.jsp','PrintDrugProfile')"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Print"/></a>) &nbsp;&nbsp;(<a href="#"
+                                    href="javascript:popupWindow(720,700,'<%= request.getContextPath() %>/oscarRx/PrintDrugProfile.jsp','PrintDrugProfile')"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Print"/></a>) &nbsp;&nbsp;(<a href="#"
                                                                                   onclick="$('reprint').toggle();return false;"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.Reprint"/></a>)
                             </div>
                         </td>
@@ -407,10 +407,10 @@
                                                 %>
                                                 <tr>
                                                     <td valign="top"><a <%=styleColor%>
-                                                            href="oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
+                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
                                                     </a></td>
                                                     <td><a <%=styleColor%>
-                                                            href="oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
+                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
                                                     </a></td>
                                                     <td width="100px" align="center">
                                                         <%
@@ -479,15 +479,15 @@
                                                         <%
                                                             String show = "&show=all";
                                                             if (showall) {
-                                                        %> <a href="oscarRx/SearchDrug.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowCurrent"/></a> <%
+                                                        %> <a href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowCurrent"/></a> <%
                                                     } else {
                                                         show = "";
-                                                    %> <a href="oscarRx/SearchDrug.jsp?show=all"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowAll"/></a> <%
+                                                    %> <a href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp?show=all"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgShowAll"/></a> <%
                                                         }
                                                     %> &nbsp;&nbsp;&nbsp; <a
-                                                            href="oscarRx/SearchDrug.jsp?status=active<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgActive"/></a> - <a
-                                                            href="oscarRx/SearchDrug.jsp?status=inactive<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgInactive"/></a> - <a
-                                                            href="oscarRx/SearchDrug.jsp?status=all<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgAll"/></a></td>
+                                                            href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp?status=active<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgActive"/></a> - <a
+                                                            href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp?status=inactive<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgInactive"/></a> - <a
+                                                            href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp?status=all<%=show%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.msgAll"/></a></td>
                                                     <td align="right">
                                                                     <span style="width: 350px; align: right">
                                                                        <input type="button" name="cmdAllergies"
@@ -652,7 +652,7 @@
                             <td>
                                 <script language="javascript">
                                     function ShowDrugInfo(GN) {
-                                        window.open("drugInfo.do?GN=" + escape(GN), "_blank",
+                                        window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(GN), "_blank",
                                             "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
                                     }
                                 </script>

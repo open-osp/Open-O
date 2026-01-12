@@ -89,21 +89,21 @@
         %>
 
 
-        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
         <script language=javascript>
             function ShowDrugInfoBN(drug) {
-                window.open("oscarRx/drugInfo.do?BN=" + escape(drug), "_blank",
+                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?BN=" + escape(drug), "_blank",
                     "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
             }
 
             function ShowDrugInfo(drug) {
-                window.open("DrugInfoRedirect.jsp?drugId=" + escape(drug), "_blank",
+                window.open("<%= request.getContextPath() %>/oscarRx/DrugInfoRedirect.jsp?drugId=" + escape(drug), "_blank",
                     "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
             }
 
             function ShowDrugInfoGN(drug) {
-                window.open("oscarRx/drugInfo.do?GN=" + escape(drug), "_blank",
+                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(drug), "_blank",
                     "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
             }
 
@@ -180,7 +180,7 @@
                     <tr>
                         <td width="0%" valign="top">
                             <div class="DivCCBreadCrumbs">
-                                <a href="oscarRx/SearchDrug.jsp">
+                                <a href="<%= request.getContextPath() %>/oscarRx/SearchDrug.jsp">
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>
                                 <b><fmt:setBundle basename="oscarResources"/><fmt:message key="ChooseDrug.title"/></b>
                             </div>
@@ -278,7 +278,7 @@
                                                 %>
                                                 <tr>
                                                     <td bgcolor="<%=bgColor%>">
-                                                        <a href="oscarRx/searchDrug.do?genericSearch=<%= response.encodeURL( t.pKey ) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
+                                                        <a href="<%= request.getContextPath() %>/oscarRx/searchDrug.do?genericSearch=<%= response.encodeURL( t.pKey ) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
                                                            title="<%=t.name%>">
                                                             <%= getMaxVal(t.name)%>
                                                         </a>
@@ -307,7 +307,7 @@
                                                         <a href="javascript: void(0);"
                                                            onclick="setDrugRx2('<%=t.pKey%>','<%=brandName %>')">
                                                                     <%}else{%>
-                                                            <a href="oscarRx/chooseDrug.do?BN=<%=java.net.URLEncoder.encode(brandName , StandardCharsets.UTF_8)%>&drugId=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
+                                                            <a href="<%= request.getContextPath() %>/oscarRx/chooseDrug.do?BN=<%=java.net.URLEncoder.encode(brandName , StandardCharsets.UTF_8)%>&drugId=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>"
                                                                title="<%=brandName %>">
                                                                 <%}%>
                                                                 <%=brandName%>
@@ -363,7 +363,7 @@
                                     %>
                                     <tr>
                                         <td bgcolor="<%=bgColor%>">
-                                            <a href="oscarRx/searchDrug.do?genericSearch=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>">
+                                            <a href="<%= request.getContextPath() %>/oscarRx/searchDrug.do?genericSearch=<%= response.encodeURL(t.pKey) %>&demographicNo=<%= response.encodeURL(demoNo) %>">
                                                 <%= t.name%>
                                             </a>
                                             <span>&nbsp;&nbsp;(<a
