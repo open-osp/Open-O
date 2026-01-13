@@ -850,12 +850,12 @@ public class RxDrugData {
             h.put("description", allerg[i].getDescription());
             h.put("type", "" + allerg[i].getTypeCode());
             if (allerg[i].getRegionalIdentifier() != null) {
-                h.put("uuid", allerg[i].getRegionalIdentifier());
+                h.put("din", allerg[i].getRegionalIdentifier());
             }
             if (allerg[i].getAtc() != null) {
-                h.put("ATC", allerg[i].getAtc());
+                h.put("atc", allerg[i].getAtc());
             } else if (allerg[i].getTypeCode() == 8) {
-                h.put("ATC", allerg[i].getDrugrefId());
+                h.put("atc", allerg[i].getDrugrefId());
             }
             vec.add(h);
         }
