@@ -35,6 +35,10 @@ is hosted in an IFrame and that the IFrame's parent window implements signatureH
 </head>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    if (loggedInInfo == null || loggedInInfo.getLoggedInProviderNo() == null) {
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+        return;
+    }
     String requestIdKey = request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY);
     if (requestIdKey == null) {
         requestIdKey = DigitalSignatureUtils.generateSignatureRequestId(loggedInInfo.getLoggedInProviderNo());
