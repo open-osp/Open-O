@@ -278,11 +278,14 @@ function updateOpener(t1,t2) {
    	}
   } else if(request.getParameter("search_mode").equals("search_dob")) {      
     		String[] param =new String[3];
-	  		param[0]=""+MyDateFormat.getYearFromStandardDate(keyword)+"%";//(",");
-	  		param[1]=""+MyDateFormat.getMonthFromStandardDate(keyword)+"%";
-	  		param[2]=""+MyDateFormat.getDayFromStandardDate(keyword)+"%";  
-	  		if(param[1].length() == 2) {
-	  			param[1] = "0" + param[1];
+	  		param[0]= MyDateFormat.getYearFromStandardDate(keyword) + "%";
+	  		param[1]= String.format("%02d", MyDateFormat.getMonthFromStandardDate(keyword)) + '%';
+	  		param[2]= String.format("%02d", MyDateFormat.getDayFromStandardDate(keyword)) + '%';
+	  		if(param[1].equals("00%")) {
+	  			param[1] = "0%";
+	  		}
+	  		if(param[2].equals("00%")) {
+	  			param[2] = "0%";
 	  		}
     		rs = db.queryResults(sql, param);
   } else {      
