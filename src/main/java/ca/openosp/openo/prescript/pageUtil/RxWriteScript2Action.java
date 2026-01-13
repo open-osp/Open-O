@@ -1543,16 +1543,24 @@ public final class RxWriteScript2Action extends ActionSupport {
         return this.drugId;
     }
 
-    public void setDrugID(int RHS) {
-        this.drugId = RHS;
+    public void setDrugID(String RHS) {
+        try {
+            this.drugId = Integer.parseInt(RHS);
+        } catch (NumberFormatException e) {
+            this.drugId = 0;
+        }
     }
 
     public int getDemographicNo() {
         return this.demographicNo;
     }
 
-    public void setDemographicNo(int RHS) {
-        this.demographicNo = RHS;
+    public void setDemographicNo(String RHS) {
+        try {
+            this.demographicNo = Integer.parseInt(RHS);
+        } catch (NumberFormatException e) {
+            this.demographicNo = 0;
+        }
     }
 
     public String getRxDate() {
@@ -1681,8 +1689,12 @@ public final class RxWriteScript2Action extends ActionSupport {
         return this.repeat;
     }
 
-    public void setRepeat(int RHS) {
-        this.repeat = RHS;
+    public void setRepeat(String RHS) {
+        try {
+            this.repeat = Integer.parseInt(RHS);
+        } catch (NumberFormatException e) {
+            this.repeat = 0;
+        }
     }
 
     public String getLastRefillDate() {
@@ -1773,8 +1785,12 @@ public final class RxWriteScript2Action extends ActionSupport {
         this.patientCompliance = trueFalseNull;
     }
 
-    public void setDrugId(int drugId) {
-        this.drugId = drugId;
+    public void setDrugId(String drugId) {
+        try {
+            this.drugId = Integer.parseInt(drugId);
+        } catch (NumberFormatException e) {
+            this.drugId = 0;
+        }
     }
 
     public String getGN() {
