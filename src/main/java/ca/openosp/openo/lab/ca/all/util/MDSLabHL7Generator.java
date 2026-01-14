@@ -60,17 +60,21 @@ public class MDSLabHL7Generator {
 	public static String generate(Lab lab) {
 		StringBuilder sb = new StringBuilder();
 
+		LocalDateTime now = LocalDateTime.now();
+		String nowDateTime = now.format(DATE_TIME_FORMAT);
+		String nowYear = now.format(YEAR_FORMAT);
+
 		// Clean accession - remove any year prefix AND any internal dashes to prevent MSH-10-1 parsing issues
 		String accession = normalizeAccession(lab.getAccession());
 		String billingNo = safeWithDefault(lab.getBillingNo(), "00000");
 		String providerFullName = buildProviderFullName(lab);
 
-		buildMSH(sb, billingNo, accession);
+		buildMSH(sb, billingNo, accession, nowDateTime);
 		buildZLB(sb, accession);
 		buildZRG(sb, lab);
 		buildZMNSegments(sb, lab);
 		buildZCLSegments(sb, lab, billingNo, providerFullName);
-		buildPID(sb, lab, accession);
+		buildPID(sb, lab, accession, nowYear);
 		buildPV1(sb, lab, billingNo, providerFullName);
 		buildZFR(sb);
 		buildZCT(sb, accession);
@@ -81,8 +85,8 @@ public class MDSLabHL7Generator {
 	}
 
 	// MSH segment - billing-accession-1 format
-	private static void buildMSH(StringBuilder sb, String billingNo, String accession) {
-		sb.append("MSH|^~\\&|MDS||||").append(LocalDateTime.now().format(DATE_TIME_FORMAT)).append("||ORU|")
+	private static void buildMSH(StringBuilder sb, String billingNo, String accession, String nowDateTime) {
+		sb.append("MSH|^~\\&|MDS||||").append(nowDateTime).append("||ORU|")
 			.append(billingNo).append("-").append(accession).append("-1")
 			.append("|P^|2.3.0|||NE|ER\n");
 	}
@@ -151,8 +155,8 @@ public class MDSLabHL7Generator {
 	}
 
 	// PID segment - year-accession format
-	private static void buildPID(StringBuilder sb, Lab lab, String accession) {
-		sb.append("PID|||").append(LocalDate.now().format(YEAR_FORMAT)).append("-").append(accession)
+	private static void buildPID(StringBuilder sb, Lab lab, String accession, String nowYear) {
+		sb.append("PID|||").append(nowYear).append("-").append(accession)
 			.append("|-|").append(lab.getLastName().toUpperCase()).append("^")
 			.append(lab.getFirstName().toUpperCase()).append("^||")
 			.append(formatDob(lab.getDob())).append("|").append(lab.getSex())
