@@ -35,6 +35,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public class RxDrugData {
@@ -63,7 +64,6 @@ public class RxDrugData {
         public String name;        // : string. International nonproprietary name (INPN) of this drug (=generic)
         public String atc;         //: string. ATC code
         public String regionalIdentifier;
-		public String gcnCode;
         //     generics : struct. Lists all generic components (usually just one). Key (string) is the generic name, value (integer) is the repective primary key
         public boolean essential;  //: True if this drug is on the WHO essential drug list
         public String product;     //: string. If this drug is not a generic, the product brand name is listed under this key, else this key is not available
@@ -120,7 +120,7 @@ public class RxDrugData {
                 drugComponentList.add(comp);
             }
 
-			gcnCode = (String) hash.get("gcnCode");
+//			gcnCode = (String) hash.get("gcnCode");
 
         }
 
@@ -842,55 +842,57 @@ public class RxDrugData {
         return getAllergyWarnings(atcCode, allerg, null);
     }
 
-    public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allerg, List<Allergy> missing) throws Exception {
-        Vector vec = new Vector();
-        for (int i = 0; i < allerg.length; i++) {
-            Hashtable<String, String> h = new Hashtable<>();
-            h.put("id", "" + i);
-            h.put("description", allerg[i].getDescription());
-            h.put("type", "" + allerg[i].getTypeCode());
-            if (allerg[i].getRegionalIdentifier() != null) {
-                h.put("uuid", allerg[i].getRegionalIdentifier());
+    public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allergies, List<Allergy> missing) throws Exception {
+        List<Map<String, String>> allergyDataList = new ArrayList<>();
+        for (int i = 0; i < allergies.length; i++) {
+            Allergy allergy = allergies[i];
+            Map<String, String> allergyMap = new Hashtable<>();
+            allergyMap.put("id", String.valueOf(i));
+            allergyMap.put("description", allergy.getDescription());
+            allergyMap.put("type", String.valueOf(allergy.getTypeCode()));
+
+            if (allergy.getRegionalIdentifier() != null) {
+                allergyMap.put("uuid", allergy.getRegionalIdentifier());
             }
-            if (allerg[i].getAtc() != null) {
-                h.put("ATC", allerg[i].getAtc());
-            } else if (allerg[i].getTypeCode() == 8) {
-                h.put("ATC", allerg[i].getDrugrefId());
+
+            String atcValue = allergy.getAtc();
+            if (atcValue != null && !atcValue.isEmpty()) {
+                allergyMap.put("ATC", atcValue);
+            } else if (allergy.getTypeCode() != null && allergy.getTypeCode() == 8) {
+                allergyMap.put("ATC", allergy.getDrugrefId());
             }
-            vec.add(h);
+            allergyDataList.add(allergyMap);
         }
-        RxDrugRef d = new RxDrugRef();
-        Vector res = d.getAlergyWarnings(atcCode, vec);
+
+        RxDrugRef drugRef = new RxDrugRef();
+        Vector<Map<String, String>> allergyDataVector = new Vector<>(allergyDataList);
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> response = drugRef.getAlergyWarnings(atcCode, allergyDataVector);
 
         Allergy[] actualAllergies = {};
-        ArrayList li = new ArrayList();
-        if (res != null) {
-            Hashtable hashObject = (Hashtable) res.get(0);
-            if (hashObject != null) {
-                Vector alli = (Vector) hashObject.get("warnings");
-                if (alli != null) {
-                    for (int k = 0; k < alli.size(); k++) {
-                        String str = (String) alli.get(k);
-                        int id = Integer.parseInt(str);
-                        li.add(allerg[id]);
-                        MiscUtils.getLogger().debug(str);
+        List<Allergy> foundWarnings = new ArrayList<>();
+        if (response != null && !response.isEmpty()) {
+            Map<String, Object> warningData = response.getFirst();
+            if (warningData != null) {
+                List<String> warningIndices = (List<String>) warningData.get("warnings");
+                if (warningIndices != null) {
+                    for (String indexStr : warningIndices) {
+                        int index = Integer.parseInt(indexStr);
+                        foundWarnings.add(allergies[index]);
+                        MiscUtils.getLogger().debug(indexStr);
                     }
                 }
 
-                Vector allmissing = (Vector) hashObject.get("missing");
-                if (allmissing != null) {
-                    for (int k = 0; k < allmissing.size(); k++) {
-                        String str = (String) allmissing.get(k);
-                        int id = Integer.parseInt(str);
-                        if (missing != null) {
-                            missing.add(allerg[id]);
-                        }
-
+                List<String> missingIndices = (List<String>) warningData.get("missing");
+                if (missingIndices != null && missing != null) {
+                    for (String indexStr : missingIndices) {
+                        int index = Integer.parseInt(indexStr);
+                        missing.add(allergies[index]);
                     }
                 }
             }
         }
-        actualAllergies = (Allergy[]) li.toArray(actualAllergies);
+        actualAllergies  =  (Allergy[]) foundWarnings.toArray(actualAllergies);
 
         return actualAllergies;
     }
