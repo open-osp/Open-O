@@ -27,7 +27,9 @@
 
 package ca.openosp.openo.lab.ca.all.util;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import ca.openosp.openo.commn.model.Lab;
@@ -40,8 +42,9 @@ import ca.openosp.openo.commn.model.LabTest;
  */
 public class CMLLabHL7Generator {
 
-	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
+
 
 	private CMLLabHL7Generator() {
 		// Private constructor to prevent instantiation
@@ -66,7 +69,7 @@ public class CMLLabHL7Generator {
 	}
 
 	private static void buildMSH(StringBuilder sb) {
-		String timestamp = DATE_TIME_FORMAT.format(new Date());
+		String timestamp = currentDateTime();
 		sb.append("MSH|^~\\&|CML|CML|OSCAR|OSCAR|").append(timestamp)
 			.append("||ORU^R01|BAR").append(timestamp.substring(2, 14))
 			.append("|P|2.3|||ER|AL\n");
@@ -76,13 +79,13 @@ public class CMLLabHL7Generator {
 		String hin = safe(lab.getHin());
 		sb.append("PID||||").append(hin)
 			.append("|").append(lab.getLastName()).append("^").append(lab.getFirstName())
-			.append("||").append(DATE_FORMAT.format(lab.getDob())).append("|").append(lab.getSex())
+			.append("||").append(formatDate(lab.getDob())).append("|").append(lab.getSex())
 			.append("|||||").append(safe(lab.getPhone()))
 			.append("||||||X").append(hin).append("\n");
 	}
 
 	private static void buildORC(StringBuilder sb, Lab lab) {
-		String firstTestDate = DATE_TIME_FORMAT.format(lab.getTests().get(0).getDate());
+		String firstTestDate = formatDateTime(lab.getTests().get(0).getDate());
 		sb.append("ORC|RE|").append(safe(lab.getAccession()))
 			.append("|||F|||||||").append(safe(lab.getBillingNo()))
 			.append("^").append(safe(lab.getProviderLastName()))
@@ -91,8 +94,8 @@ public class CMLLabHL7Generator {
 	}
 
 	private static void buildOBR(StringBuilder sb, Lab lab) {
-		String labReqDate = DATE_TIME_FORMAT.format(lab.getLabReqDate());
-		String firstTestDate = DATE_TIME_FORMAT.format(lab.getTests().get(0).getDate());
+		String labReqDate = formatDateTime(lab.getLabReqDate());
+		String firstTestDate = formatDateTime(lab.getTests().get(0).getDate());
 
 		StringBuilder ccString = parseCCDoctors(lab.getCc());
 
@@ -124,7 +127,7 @@ public class CMLLabHL7Generator {
 				.append(safe(test.getFlag())).append("|||")
 				.append(safeWithDefault(test.getStat(), "F")).append("||")
 				.append(getBlockedStatus(test))
-				.append("|").append(DATE_TIME_FORMAT.format(test.getDate())).append("\n");
+				.append("|").append(formatDateTime(test.getDate())).append("\n");
 
 			if (test.getNotes() != null && !test.getNotes().isEmpty()) {
 				sb.append("NTE|1|L|NOTE: ").append(test.getNotes()).append("\n");
@@ -169,4 +172,24 @@ public class CMLLabHL7Generator {
 	private static String getBlockedStatus(LabTest test) {
 		return (test.getBlocked() != null && test.getBlocked().equals("BLOCKED")) ? "BLOCKED" : "";
 	}
+
+	private static String currentDateTime() {
+		return LocalDateTime.now().format(DATE_TIME_FORMAT);
+	}
+
+	private static String formatDate(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT);
+	}
+
+	private static String formatDateTime(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMAT);
+	}
+
+
 }

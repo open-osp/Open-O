@@ -27,7 +27,9 @@
 
 package ca.openosp.openo.lab.ca.all.util;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import ca.openosp.openo.commn.model.Lab;
@@ -40,9 +42,9 @@ import ca.openosp.openo.commn.model.LabTest;
  */
 public class GDMLLabHL7Generator {
 
-	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-	private static final SimpleDateFormat SHORT_DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmm");
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+	private static final DateTimeFormatter SHORT_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
 	private GDMLLabHL7Generator() {
 		// Private constructor to prevent instantiation
@@ -74,7 +76,7 @@ public class GDMLLabHL7Generator {
 
 	// MSH segment - EXACT format from sample
 	private static void buildMSH(StringBuilder sb) {
-		sb.append("MSH|^~\\&|GDML|GDML|||").append(DATE_TIME_FORMAT.format(new Date()))
+		sb.append("MSH|^~\\&|GDML|GDML|||").append(currentDateTime())
 			.append("||ORU^R01|MAGENTA .").append(System.currentTimeMillis()).append("|P|2.3\n");
 	}
 
@@ -103,7 +105,7 @@ public class GDMLLabHL7Generator {
 			.append("||").append(safeUpper(lab.getLastName()))  // PID-4 empty, PID-5 starts with name
 			.append("^").append(safeUpper(lab.getFirstName()))
 			.append("^")  // Middle name placeholder (empty) - PID-5-3
-			.append("||").append(DATE_FORMAT.format(lab.getDob())).append("|").append(lab.getSex())  // PID-7, PID-8
+			.append("||").append(formatDate(lab.getDob())).append("|").append(lab.getSex())  // PID-7, PID-8
 			.append("|||123 MAIN RD^NORTH YORK^ONTARIO^ON^M6B3Y5||")  // PID-9, PID-10, PID-11, PID-12
 			.append(safe(lab.getPhone()))  // PID-13 = HOME phone
 			.append("\n");
@@ -137,7 +139,7 @@ public class GDMLLabHL7Generator {
 	// Example: 045717^NAMINI^P.^^^^^  would display as "P. NAMINI"
 	private static void buildOBR(StringBuilder sb, Lab lab) {
 		LabTest firstTest = lab.getTests().get(0);
-		String testDateTime = SHORT_DATE_TIME_FORMAT.format(firstTest.getDate());
+		String testDateTime = formatShortDateTime(firstTest.getDate());
 		String testCode = safeWithDefault(firstTest.getCode(), "253");
 		String testName = safeWithDefault(firstTest.getName(), "LABORATORY");
 
@@ -154,7 +156,7 @@ public class GDMLLabHL7Generator {
 			.append("^")  // XCN-5: Suffix (empty)
 			.append("^")  // XCN-6: Prefix (empty - could be "DR." if needed)
 			.append("^")  // XCN-7: Degree (empty)
-			.append("||||||").append(DATE_TIME_FORMAT.format(new Date())).append("|||||\n");
+			.append("||||||").append(currentDateTime()).append("|||||\n");
 	}
 
 	// OBX segments - EXACT format from sample
@@ -267,6 +269,24 @@ public class GDMLLabHL7Generator {
 
 	private static String getBlockedStatus(LabTest test) {
 		return (test.getBlocked() != null && test.getBlocked().equals("BLOCKED")) ? "BLOCKED" : "";
+	}
+
+	private static String currentDateTime() {
+		return LocalDateTime.now().format(DATE_TIME_FORMAT);
+	}
+
+	private static String formatDate(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT);
+	}
+
+	private static String formatShortDateTime(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(SHORT_DATE_TIME_FORMAT);
 	}
 
 	private static class NameComponents {

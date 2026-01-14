@@ -27,7 +27,10 @@
 
 package ca.openosp.openo.lab.ca.all.util;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import ca.openosp.openo.commn.model.Lab;
@@ -40,9 +43,9 @@ import ca.openosp.openo.commn.model.LabTest;
  */
 public class MDSLabHL7Generator {
 
-	private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
-	private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
+	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
+	private static final DateTimeFormatter YEAR_FORMAT = DateTimeFormatter.ofPattern("yyyy");
 
 	private MDSLabHL7Generator() {
 		// Private constructor to prevent instantiation
@@ -79,7 +82,7 @@ public class MDSLabHL7Generator {
 
 	// MSH segment - billing-accession-1 format
 	private static void buildMSH(StringBuilder sb, String billingNo, String accession) {
-		sb.append("MSH|^~\\&|MDS||||").append(DATE_TIME_FORMAT.format(new Date())).append("||ORU|")
+		sb.append("MSH|^~\\&|MDS||||").append(LocalDateTime.now().format(DATE_TIME_FORMAT)).append("||ORU|")
 			.append(billingNo).append("-").append(accession).append("-1")
 			.append("|P^|2.3.0|||NE|ER\n");
 	}
@@ -149,10 +152,10 @@ public class MDSLabHL7Generator {
 
 	// PID segment - year-accession format
 	private static void buildPID(StringBuilder sb, Lab lab, String accession) {
-		sb.append("PID|||").append(YEAR_FORMAT.format(new Date())).append("-").append(accession)
+		sb.append("PID|||").append(LocalDate.now().format(YEAR_FORMAT)).append("-").append(accession)
 			.append("|-|").append(lab.getLastName().toUpperCase()).append("^")
 			.append(lab.getFirstName().toUpperCase()).append("^||")
-			.append(DATE_FORMAT.format(lab.getDob())).append("|").append(lab.getSex())
+			.append(formatDob(lab.getDob())).append("|").append(lab.getSex())
 			.append("|||||").append(safe(lab.getPhone()))
 			.append("||||||X").append(safe(lab.getHin())).append("\n");
 	}
@@ -174,7 +177,7 @@ public class MDSLabHL7Generator {
 
 		sb.append("||||||||-").append(billingNo).append("^")
 			.append(providerFullName).append("^^^^DR.^^^^^^^-0||||||||||||||||||||||||1|||")
-			.append(DATE_FORMAT.format(lab.getLabReqDate())).append("\n");
+			.append(formatDate(lab.getLabReqDate())).append("\n");
 	}
 
 	// ZFR segment
@@ -195,7 +198,7 @@ public class MDSLabHL7Generator {
 	private static void buildTestSegments(StringBuilder sb, Lab lab, String accession) {
 		int obrCounter = 1;
 		for (LabTest test : lab.getTests()) {
-			String testDate = DATE_TIME_FORMAT.format(test.getDate());
+			String testDate = formatDateTime(test.getDate());
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(obrCounter * 100));
 
 			// OBR segment
@@ -307,6 +310,31 @@ public class MDSLabHL7Generator {
 
 	private static String getBlockedStatus(LabTest test) {
 		return (test.getBlocked() != null && test.getBlocked().equals("BLOCKED")) ? "BLOCKED" : "";
+	}
+
+	private static String formatDob(Date dob) {
+		if (dob == null) {
+			return "";
+		}
+		return toLocalDate(dob).format(DATE_FORMAT);
+	}
+
+	private static LocalDate toLocalDate(Date date) {
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+
+	private static String formatDate(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT);
+	}
+
+	private static String formatDateTime(Date date) {
+		if (date == null) {
+			return "";
+		}
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMAT);
 	}
 
 	private static class CCDoctor {
