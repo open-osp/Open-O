@@ -204,7 +204,7 @@
                                 <input type="hidden" name="rx2" value="true"/>
                                 <%}%>
 
-                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=bean.getDemographicNo()%>"/>
+                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=demoNo%>"/>
                                 <table>
                                     <tr>
                                         <td>
