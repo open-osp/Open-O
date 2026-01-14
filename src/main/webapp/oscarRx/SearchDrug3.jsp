@@ -46,6 +46,8 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPharmacyData" %>
 <%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+
+
 <%
 String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
 RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
@@ -711,10 +713,11 @@ function renderRxStage() {
 
 
     <body onload="checkFav();iterateStash();rxPageSizeSelect();checkReRxLongTerm();load()" class="yui-skin-sam">
+
     <div id="searchDrug3Wrapper">
     <%=WebUtils.popErrorAndInfoMessagesAsHtml(session)%>
         <table id="AutoNumber1">
-            <%@ include file="TopLinks2.jspf" %><!-- Row One included here-->
+            <%@ include file="TopLinks2.jspf" %><!-- Row On included here-->
             <tr>
                 <td height="100%" ><%@ include file="SideLinksEditFavorites2.jsp"%></td>
                 <td style="padding-right:15px;"><!--Column Two Row Two-->
@@ -789,12 +792,12 @@ function renderRxStage() {
                                                         </fieldset>
                                                         <fieldset id="searchParamSet">
                                                             <input type="radio" id="wildCardBoth" name="wildcard"
-                                                                   value="false" />
+                                                                   value="false" checked="checked" />
                                                             <label title="Search exactly as typed (right to left)"
                                                                    for="wildCardBoth">Exact</label>
 
                                                             <input type="radio" id="wildCardRight" name="wildcard"
-                                                                   value="true" checked="checked" />
+                                                                   value="true" />
                                                             <label title="Search for all words in all phrases"
                                                                    for="wildCardRight">Any</label>
                                                         </fieldset>
@@ -1904,7 +1907,7 @@ function popForm2(scriptId){
 							+ jQuery('#searchParamSet').serialize()
 							+ "&query="
 							+ request.term.toUpperCase();
-
+console.log(param);
 						jQuery.ajax({
 							url: "${ctx}/oscarRx/searchDrug.do",
 							type: 'POST',
@@ -1935,6 +1938,7 @@ function popForm2(scriptId){
 						event.preventDefault();
 					},
 					select: function (event, ui) {
+            console.log(ui.item);
 						event.preventDefault();
 						searchResultsHandler(null, ui.item);
 						jQuery('#searchString').val("");
