@@ -855,12 +855,7 @@ public class RxDrugData {
                 allergyMap.put("uuid", allergy.getRegionalIdentifier());
             }
 
-            String atcValue = allergy.getAtc();
-            if (atcValue != null && !atcValue.isEmpty()) {
-                allergyMap.put("ATC", atcValue);
-            } else if (allergy.getTypeCode() != null && allergy.getTypeCode() == 8) {
-                allergyMap.put("ATC", allergy.getDrugrefId());
-            }
+            allergyMap.put("ATC", allergy.getAtc());
             allergyDataList.add(allergyMap);
         }
 

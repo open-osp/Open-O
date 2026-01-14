@@ -32,20 +32,20 @@ package ca.openosp.openo.prescript.util;
  */
 
 
+import ca.openosp.OscarProperties;
+import ca.openosp.openo.utility.MiscUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.xmlrpc.Base64;
+import org.apache.xmlrpc.XmlRpcClient;
+import org.apache.xmlrpc.XmlRpcClientLite;
+import org.apache.xmlrpc.XmlRpcException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.xmlrpc.Base64;
-import org.apache.xmlrpc.XmlRpcClient;
-import org.apache.xmlrpc.XmlRpcClientLite;
-import org.apache.xmlrpc.XmlRpcException;
-import ca.openosp.openo.utility.MiscUtils;
-import ca.openosp.OscarProperties;
 
 /**
  * @author Jay
@@ -63,7 +63,7 @@ public class RxDrugRef {
     public static int CAT_AI_COMPOSITE_GENERIC = 19;
     public static int CAT_AI_GENERIC = 18;
 
-    private static Logger logger = MiscUtils.getLogger();
+    private static final Logger logger = MiscUtils.getLogger();
 
     private String server_url = null;
     //"http://localhost:8080/drugref2/DrugrefService";
@@ -447,10 +447,9 @@ public class RxDrugRef {
             }
         } catch (XmlRpcException exception) {
             if (exception.code == 0) {
-                logger.warn("JavaClient: XML-RPC Fault #" + exception.code
-                        + ". NoResultException thrown for procedure: " + procedureName + " with parameters " + params);
+                logger.error("JavaClient: XML-RPC Fault #{}. NoResultException thrown for procedure: {} with parameters {}", exception.code, procedureName, params);
             } else {
-                logger.error("JavaClient: XML-RPC Fault #" + exception.code, exception);
+                logger.error("JavaClient: XML-RPC Fault #{}", exception.code, exception);
                 throw new Exception("JavaClient: XML-RPC Fault #" + exception.code + ": " + exception);
             }
 
