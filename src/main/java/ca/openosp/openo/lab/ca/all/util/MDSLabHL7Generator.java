@@ -205,42 +205,54 @@ public class MDSLabHL7Generator {
 			String testDate = formatDateTime(test.getDate());
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(obrCounter * 100));
 
-			// OBR segment
-			sb.append("OBR||").append(100 + obrCounter).append("||")
-				.append(testCode).append("|||")
-				.append(testDate).append("|||||||").append(testDate).append("||||||")
-				.append("MDS^MDS|||||||R\n");
-
 			// Build reference range
 			String refRange = buildMDSReferenceRange(test);
 
-			// OBX segment
-			sb.append("OBX|1|")
-				.append(safeWithDefault(test.getCodeType(), "ST")).append("|-")
-				.append(testCode).append("^")
-				.append(safeUpper(test.getName(), "TEST"))
-				.append("^L|")
-				// OBX-4 sub-ID: testCode-1-testCode
-				.append(testCode).append("-1-").append(testCode)
-				.append("|")
-				.append(safe(test.getCodeValue()))
-				.append("|").append(safe(test.getCodeUnit()))
-				.append("|").append(refRange)
-				.append("|").append(safe(test.getFlag()))
-				.append("|||").append(safeWithDefault(test.getStat(), "F"))
-				.append("||").append(getBlockedStatus(test))
-				.append("|||10^100 INTERNATIONAL BLVD TORONTO M9W 6J6 1(877)849-3637^L\n");
-
-			// Add NTE if notes exist
-			if (test.getNotes() != null && !test.getNotes().isEmpty()) {
-				sb.append("NTE||L|^").append(test.getNotes()).append("\n");
-			}
-
-			// Add ZCT segment after each test
-			sb.append("ZCT||").append(accession).append("||").append(accession).append("|||\n");
+			appendObr(sb, obrCounter, testCode, testDate);
+			appendObx(sb, test, testCode, refRange);
+			appendNotesNte(sb, test);
+			appendZctForAccession(sb, accession);
 
 			obrCounter++;
 		}
+	}
+
+	// OBR segment
+	private static void appendObr(StringBuilder sb, int obrCounter, String testCode, String testDate) {
+		sb.append("OBR||").append(100 + obrCounter).append("||")
+			.append(testCode).append("|||")
+			.append(testDate).append("|||||||").append(testDate)
+			.append("||||||MDS^MDS|||||||R\n");
+	}
+
+	// OBX segment
+	private static void appendObx(StringBuilder sb, LabTest test, String testCode, String refRange) {
+		sb.append("OBX|1|")
+			.append(safeWithDefault(test.getCodeType(), "ST")).append("|-")
+			.append(testCode).append("^")
+			.append(safeUpper(test.getName(), "TEST"))
+			.append("^L|")
+			.append(testCode).append("-1-").append(testCode)
+			.append("|")
+			.append(safe(test.getCodeValue()))
+			.append("|").append(safe(test.getCodeUnit()))
+			.append("|").append(refRange)
+			.append("|").append(safe(test.getFlag()))
+			.append("|||").append(safeWithDefault(test.getStat(), "F"))
+			.append("||").append(getBlockedStatus(test))
+			.append("|||10^100 INTERNATIONAL BLVD TORONTO M9W 6J6 1(877)849-3637^L\n");
+	}
+
+	// Add NTE if notes exist
+	private static void appendNotesNte(StringBuilder sb, LabTest test) {
+		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
+			sb.append("NTE||L|^").append(test.getNotes()).append("\n");
+		}
+	}
+
+	// Add ZCT segment after each test
+	private static void appendZctForAccession(StringBuilder sb, String accession) {
+		sb.append("ZCT||").append(accession).append("||").append(accession).append("|||\n");
 	}
 
 	// Add ZPD segment if any test is BLOCKED
