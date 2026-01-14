@@ -138,8 +138,7 @@ public class MDSLabHL7Generator {
 	// 1. "billingNo,LastName,FirstName" (proper format)
 	// 2. "Dr FullName" or just "FullName" (fallback - uses billing 00000)
 	private static void buildZCLSegments(StringBuilder sb, Lab lab, String billingNo, String providerFullName) {
-		sb.append("ZCL||-").append(billingNo).append("^").append(providerFullName)
-			.append("^^^^DR.^^^^^^^LP||||01|2|LP||||0\n");
+		appendZclForDoctor(sb, billingNo, providerFullName, /*ccFlag*/ "0");
 
 		if (lab.getCc() != null && !lab.getCc().isEmpty()) {
 			String[] ccDocs = lab.getCc().split(";");
@@ -147,8 +146,7 @@ public class MDSLabHL7Generator {
 				ccDoc = ccDoc.trim();
 				if (!ccDoc.isEmpty()) {
 					CCDoctor doctor = parseCCDoctor(ccDoc);
-					sb.append("ZCL||-").append(doctor.billing).append("^").append(doctor.name)
-						.append("^^^^DR.^^^^^^^LP||||01|2|LP||||1\n");
+					appendZclForDoctor(sb, doctor.billing, doctor.name, /*ccFlag*/ "1");
 				}
 			}
 		}
@@ -311,6 +309,13 @@ public class MDSLabHL7Generator {
 		}
 		return "";
 	}
+
+	private static void appendZclForDoctor(StringBuilder sb, String billing, String name, String ccFlag) {
+		sb.append("ZCL||-")
+			.append(billing).append("^").append(name)
+			.append("^^^^DR.^^^^^^^LP||||01|2|LP||||").append(ccFlag)
+      		.append("\n");
+}
 
 	private static String safe(String value) {
 		return value != null ? value : "";
