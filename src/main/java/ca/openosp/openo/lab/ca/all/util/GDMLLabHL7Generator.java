@@ -27,13 +27,10 @@
 
 package ca.openosp.openo.lab.ca.all.util;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
 import ca.openosp.openo.commn.model.Lab;
 import ca.openosp.openo.commn.model.LabTest;
+
+import static ca.openosp.openo.lab.ca.all.util.Hl7GeneratorUtil.*;
 
 /**
  * Utility class for generating GDML (Gamma-Dynacare Medical Laboratories) format HL7 messages.
@@ -41,10 +38,6 @@ import ca.openosp.openo.commn.model.LabTest;
  * @since 2026-01-12
  */
 public class GDMLLabHL7Generator {
-
-	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-	private static final DateTimeFormatter SHORT_DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
 
 	private GDMLLabHL7Generator() {
 		// Private constructor to prevent instantiation
@@ -244,70 +237,7 @@ public class GDMLLabHL7Generator {
 		return "";
 	}
 
-	private static NameComponents parseName(String fullName) {
-		String cleanName = fullName.replaceAll("(?i)^DR\\.?\\s*", "").trim();
-		String[] nameParts = cleanName.split("\\s+");
-
-		String givenName = "";
-		String familyName = "";
-
-		if (nameParts.length >= 2) {
-			givenName = nameParts[0].toUpperCase();
-			familyName = nameParts[nameParts.length - 1].toUpperCase();
-		} else if (nameParts.length == 1) {
-			// Single name - put in givenName so handler's while loop works
-			givenName = nameParts[0].toUpperCase();
-			familyName = "";  // Keep familyName empty for single names
-		}
-
-		return new NameComponents(givenName, familyName);
-	}
-
 	private static String normalizeValueType(String valueType) {
 		return "FT".equals(valueType) ? "ST" : safeWithDefault(valueType, "ST");
-	}
-
-	private static String safe(String value) {
-		return value != null ? value : "";
-	}
-
-	private static String safeUpper(String value) {
-		return value != null ? value.toUpperCase() : "";
-	}
-
-	private static String safeWithDefault(String value, String defaultValue) {
-		return (value != null && !value.isEmpty()) ? value : defaultValue;
-	}
-
-	private static String getBlockedStatus(LabTest test) {
-		return (test.getBlocked() != null && test.getBlocked().equals("BLOCKED")) ? "BLOCKED" : "";
-	}
-
-	private static String currentDateTime() {
-		return LocalDateTime.now().format(DATE_TIME_FORMAT);
-	}
-
-	private static String formatDate(Date date) {
-		if (date == null) {
-			return "";
-		}
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT);
-	}
-
-	private static String formatShortDateTime(Date date) {
-		if (date == null) {
-			return "";
-		}
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(SHORT_DATE_TIME_FORMAT);
-	}
-
-	private static class NameComponents {
-		final String givenName;
-		final String familyName;
-
-		NameComponents(String givenName, String familyName) {
-			this.givenName = givenName;
-			this.familyName = familyName;
-		}
 	}
 }

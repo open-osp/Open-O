@@ -27,14 +27,12 @@
 
 package ca.openosp.openo.lab.ca.all.util;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 import ca.openosp.openo.commn.model.Lab;
 import ca.openosp.openo.commn.model.LabTest;
+
+import static ca.openosp.openo.lab.ca.all.util.Hl7GeneratorUtil.*;
 
 /**
  * Utility class for generating MDS (Medical Data Systems) format HL7 messages.
@@ -42,10 +40,6 @@ import ca.openosp.openo.commn.model.LabTest;
  * @since 2026-01-12
  */
 public class MDSLabHL7Generator {
-
-	private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-	private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
-	private static final DateTimeFormatter YEAR_FORMAT = DateTimeFormatter.ofPattern("yyyy");
 
 	private MDSLabHL7Generator() {
 		// Private constructor to prevent instantiation
@@ -315,47 +309,6 @@ public class MDSLabHL7Generator {
 			.append(billing).append("^").append(name)
 			.append("^^^^DR.^^^^^^^LP||||01|2|LP||||").append(ccFlag)
       		.append("\n");
-}
-
-	private static String safe(String value) {
-		return value != null ? value : "";
-	}
-
-	private static String safeUpper(String value, String defaultValue) {
-		return value != null ? value.toUpperCase() : defaultValue;
-	}
-
-	private static String safeWithDefault(String value, String defaultValue) {
-		return (value != null && !value.isEmpty()) ? value : defaultValue;
-	}
-
-	private static String getBlockedStatus(LabTest test) {
-		return (test.getBlocked() != null && test.getBlocked().equals("BLOCKED")) ? "BLOCKED" : "";
-	}
-
-	private static String formatDob(Date dob) {
-		if (dob == null) {
-			return "";
-		}
-		return toLocalDate(dob).format(DATE_FORMAT);
-	}
-
-	private static LocalDate toLocalDate(Date date) {
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	}
-
-	private static String formatDate(Date date) {
-		if (date == null) {
-			return "";
-		}
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMAT);
-	}
-
-	private static String formatDateTime(Date date) {
-		if (date == null) {
-			return "";
-		}
-		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMAT);
 	}
 
 	private static class CCDoctor {
