@@ -160,7 +160,7 @@ public final class RxSearchAllergy2Action extends ActionSupport {
             if (!hash.get("name").equals("None found")) {
                 arr[i] = new Allergy();
 
-                arr[i].setTypeCode(((Integer) hash.get("category")).intValue());
+                arr[i].setTypeCode(Integer.parseInt(String.valueOf(hash.get("category"))));
                 arr[i].setDrugrefId(String.valueOf(hash.get("id")));
                 arr[i].setDescription(((String) hash.get("name")));
 
