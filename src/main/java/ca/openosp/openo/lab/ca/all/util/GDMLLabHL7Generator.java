@@ -178,30 +178,42 @@ public class GDMLLabHL7Generator {
 			// Use ST not FT - FT causes tests to not display (GDMLHandler line 221 filters FT types)
 			String valueType = normalizeValueType(test.getCodeType());
 
-			sb.append("OBX|").append(testCounter).append("|")  // OBX-1
-				.append(valueType).append("|")  // OBX-2
-				.append(safeWithDefault(test.getCode(), firstTestCode)).append("&").append(20 + testCounter)
-				.append("^").append(safeUpper(test.getName())).append("|")  // OBX-3
-				.append("1|")  // OBX-4
-				.append(safe(test.getCodeValue())).append("|")  // OBX-5
-				.append(safe(test.getCodeUnit())).append("|")  // OBX-6
-				.append(refRange).append("|")  // OBX-7
-				.append(safeWithDefault(test.getFlag(), "N")).append("|")  // OBX-8
-				.append("|")  // OBX-9 (empty)
-				.append("|")  // OBX-10 (empty)
-				.append(safeWithDefault(test.getStat(), "F")).append("|")  // OBX-11
-				.append("|")  // OBX-12 (empty)
-				.append(getBlockedStatus(test)).append("|")  // OBX-13
-				.append("|")  // OBX-14 (empty)
-				.append("|")  // OBX-15 (empty)
-				.append("|\n");  // OBX-16 (empty)
-
-			// NTE format from analysis: NTE|||comment
-			if (test.getNotes() != null && !test.getNotes().isEmpty()) {
-				sb.append("NTE|||").append(test.getNotes()).append("\n");
-			}
+			String identifier = buildObxIdentifier(test, firstTestCode, testCounter);
+			appendObx(sb, testCounter, valueType, identifier, test, refRange);
+        	appendNteIfPresent(sb, test);
 
 			testCounter++;
+		}
+	}
+
+	private static String buildObxIdentifier(LabTest test, String defaultCode, int testCounter) {
+		String code = safeWithDefault(test.getCode(), defaultCode);
+		return code + "&" + (20 + testCounter) + "^" + safeUpper(test.getName());
+	}
+
+	private static void appendObx(StringBuilder sb, int testCounter, String valueType, String identifier, LabTest test, String refRange) {
+		sb.append("OBX|").append(testCounter).append("|") // OBX-1
+			.append(valueType).append("|") // OBX-2
+			.append(identifier).append("|") // OBX-3
+			.append("1|") // OBX-4
+			.append(safe(test.getCodeValue())).append("|") // OBX-5
+			.append(safe(test.getCodeUnit())).append("|") // OBX-6
+			.append(refRange).append("|") // OBX-7
+			.append(safeWithDefault(test.getFlag(), "N")).append("|") // OBX-8
+			.append("|")  // OBX-9
+			.append("|")  // OBX-10
+			.append(safeWithDefault(test.getStat(), "F")).append("|") // OBX-11
+			.append("|")  // OBX-12
+			.append(getBlockedStatus(test)).append("|") // OBX-13
+			.append("|")  // OBX-14
+			.append("|")  // OBX-15
+			.append("|\n"); // OBX-16
+	}
+
+	// NTE format: NTE|||comment
+	private static void appendNteIfPresent(StringBuilder sb, LabTest test) {
+		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
+			sb.append("NTE|||").append(test.getNotes()).append("\n");
 		}
 	}
 
