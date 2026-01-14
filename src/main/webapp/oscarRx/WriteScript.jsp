@@ -988,7 +988,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
         <%}%>
     </script>
 
-    <input type="hidden" name="demographicNo" id="demographicNo"/>
+    <input type="hidden" name="demographicNo" id="demographicNo" value="<%=bean.getDemographicNo()%>"/>
     <input type="hidden" name="GCN_SEQNO" id="GCN_SEQNO"/>
     <input type="hidden" name="atcCode" id="atcCode"/>
     <input type="hidden" name="regionalIdentifier" id="regionalIdentifier"/>
