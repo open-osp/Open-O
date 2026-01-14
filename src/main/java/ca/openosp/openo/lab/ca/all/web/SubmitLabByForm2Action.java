@@ -46,6 +46,7 @@ import ca.openosp.openo.lab.FileUploadCheck;
 import ca.openosp.openo.lab.ca.all.upload.HandlerClassFactory;
 import ca.openosp.openo.lab.ca.all.upload.handlers.MessageHandler;
 import ca.openosp.openo.lab.ca.all.util.CMLLabHL7Generator;
+import ca.openosp.openo.lab.ca.all.util.GDMLLabHL7Generator;
 import ca.openosp.openo.lab.ca.all.util.MDSLabHL7Generator;
 import ca.openosp.openo.lab.ca.all.util.Utilities;
 
@@ -207,6 +208,8 @@ public class SubmitLabByForm2Action extends ActionSupport {
 
 		if ("MDS".equals(labType)) {
 			return MDSLabHL7Generator.generate(lab);
+		} else if ("GDML".equals(labType)) {
+			return GDMLLabHL7Generator.generate(lab);
 		} else {
 			// Default to CML for null, empty, or "CML"
 			return CMLLabHL7Generator.generate(lab);
