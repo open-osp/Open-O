@@ -113,27 +113,32 @@ public class CMLLabHL7Generator {
 	private static void buildOBXSegments(StringBuilder sb, Lab lab) {
 		int testNo = 1;
 		for (LabTest test : lab.getTests()) {
-			String refRange = buildReferenceRange(test);
-
-			sb.append("OBX|").append(testNo).append("|")
-				.append(safeWithDefault(test.getCodeType(), "FT")).append("|")
-				.append(safe(test.getCode())).append("^")
-				.append(safe(test.getName())).append("^")
-				.append(safe(test.getDescription()))
-				.append("|GENERAL|")
-				.append(safe(test.getCodeValue())).append("|")
-				.append(safe(test.getCodeUnit())).append("|")
-				.append(refRange).append("|")
-				.append(safe(test.getFlag())).append("|||")
-				.append(safeWithDefault(test.getStat(), "F")).append("||")
-				.append(getBlockedStatus(test))
-				.append("|").append(formatDateTime(test.getDate())).append("\n");
-
-			if (test.getNotes() != null && !test.getNotes().isEmpty()) {
-				sb.append("NTE|1|L|NOTE: ").append(test.getNotes()).append("\n");
-			}
-
+			appendObxSegment(sb, test, testNo);
+			appendNteIfPresent(sb, test);
 			testNo++;
+		}
+	}
+
+	private static void appendObxSegment(StringBuilder sb, LabTest test, int testNo) {
+		String refRange = buildReferenceRange(test);
+		sb.append("OBX|").append(testNo).append("|")
+		.append(safeWithDefault(test.getCodeType(), "FT")).append("|")
+		.append(safe(test.getCode())).append("^")
+		.append(safe(test.getName())).append("^")
+		.append(safe(test.getDescription()))
+		.append("|GENERAL|")
+		.append(safe(test.getCodeValue())).append("|")
+		.append(safe(test.getCodeUnit())).append("|")
+		.append(refRange).append("|")
+		.append(safe(test.getFlag())).append("|||")
+		.append(safeWithDefault(test.getStat(), "F")).append("||")
+		.append(getBlockedStatus(test))
+		.append("|").append(formatDateTime(test.getDate())).append("\n");
+	}
+
+	private static void appendNteIfPresent(StringBuilder sb, LabTest test) {
+		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
+			sb.append("NTE|1|L|NOTE: ").append(test.getNotes()).append("\n");
 		}
 	}
 
