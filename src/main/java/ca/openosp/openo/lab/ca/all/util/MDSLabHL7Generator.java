@@ -149,8 +149,8 @@ public class MDSLabHL7Generator {
 	// PID segment - year-accession format
 	private static void buildPID(StringBuilder sb, Lab lab, String accession, String nowYear) {
 		sb.append("PID|||").append(nowYear).append("-").append(accession)
-			.append("|-|").append(lab.getLastName().toUpperCase()).append("^")
-			.append(lab.getFirstName().toUpperCase()).append("^||")
+			.append("|-|").append(safeUpper(lab.getLastName())).append("^")
+			.append(safeUpper(lab.getFirstName())).append("^||")
 			.append(formatDob(lab.getDob())).append("|").append(lab.getSex())
 			.append("|||||").append(safe(lab.getPhone()))
 			.append("||||||X").append(safe(lab.getHin())).append("\n");
