@@ -9,6 +9,24 @@
 **Architecture**: Multi-layered healthcare web application with complex medical database schema
 **Regulatory**: HIPAA/PIPEDA compliance REQUIRED - PHI protection is CRITICAL
 
+## Essential Commands
+
+```bash
+# Development Workflow
+make clean                    # Clean project and remove deployed app
+make install                  # Build and deploy without tests
+make install --run-tests      # Build, test, and deploy (all tests)
+make install --run-modern-tests     # Build and run only modern tests (JUnit 5)
+make install --run-unit-tests       # Build and run only modern unit tests
+make install --run-integration-tests # Build and run only modern integration tests
+server start/stop/restart     # Tomcat management
+server log                    # Tail application logs
+
+# Database & Environment
+db-connect                   # Connect to MariaDB as root
+debug-on / debug-off         # Toggle DEBUG/INFO logging levels
+```
+
 ## CRITICAL SECURITY REQUIREMENTS
 
 ### Web Security - MANDATORY for ALL Code
@@ -56,38 +74,37 @@ query.setParameter("id", demographicNo);
 String sql = "SELECT * FROM demographic WHERE demographic_no = " + demographicNo; // WRONG!
 ```
 
-#### File Path Sanitization
+#### File Path Sanitization - PathValidationUtils
+
+**ALWAYS use PathValidationUtils** (`ca.openosp.openo.utility.PathValidationUtils`) for file operations involving user input. It prevents path traversal attacks consistently across the codebase.
+
+**Key Methods:**
 ```java
-// Use Apache Commons IO for path traversal prevention
-import org.apache.commons.io.FilenameUtils;
-import java.nio.file.Paths;
-import java.nio.file.Path;
+// For user-provided filenames (sanitizes and validates)
+File safeFile = PathValidationUtils.validatePath(userFilename, allowedDir);
 
-// Sanitize filename
-String cleanFilename = FilenameUtils.getName(userProvidedFilename);
-// Remove any path separators
-cleanFilename = cleanFilename.replaceAll("[\\\\/]", "");
+// For validating existing file paths
+PathValidationUtils.validateExistingPath(file, allowedDir);
 
-// Validate against whitelist pattern
-if (!cleanFilename.matches("^[a-zA-Z0-9._-]+$")) {
-    throw new SecurityException("Invalid filename");
+// For validating uploaded files from Struts2/Tomcat
+PathValidationUtils.validateUpload(uploadedFile);
+
+// For complete upload validation (source + destination)
+File dest = PathValidationUtils.validateUpload(sourceFile, filename, destDir);
+
+// For checking if file is in allowed temp directory
+if (PathValidationUtils.isInAllowedTempDirectory(file)) { ... }
+```
+
+**Migration from old patterns:**
+```java
+// OLD (inconsistent, error-prone)
+if (!file.getCanonicalPath().startsWith(baseDir.getCanonicalPath() + File.separator)) {
+    throw new SecurityException("Invalid path");
 }
 
-// Use Path API for safe path construction
-Path basePath = Paths.get("/secure/base/directory");
-Path userPath = basePath.resolve(cleanFilename).normalize();
-
-// Ensure resolved path is within base directory
-if (!userPath.startsWith(basePath)) {
-    throw new SecurityException("Path traversal attempt detected");
-}
-
-// For file uploads - additional validation
-String extension = FilenameUtils.getExtension(cleanFilename);
-List<String> allowedExtensions = Arrays.asList("pdf", "jpg", "png", "doc");
-if (!allowedExtensions.contains(extension.toLowerCase())) {
-    throw new SecurityException("File type not allowed");
-}
+// NEW (consistent, robust)
+PathValidationUtils.validateExistingPath(file, baseDir);
 ```
 
 #### Command Injection Prevention
@@ -269,6 +286,23 @@ if (!billingSecurityManager.canBillForService(
 }
 ```
 
+### Core Medical Modules
+- **PMmodule/**: Program management and case management
+- **billing/**: Province-specific billing (BC, ON) with diagnostic codes
+- **prescription/**: Drug management with ATC codes, interaction checking
+- **lab/**: HL7 lab results, OLIS integration (Ontario)
+- **prevention/**: Immunization tracking with provincial schedules
+- **demographic/**: Patient data with HIN (Health Insurance Number) management
+
+### Healthcare Integration Standards
+- **HL7 v2/v3**: Full message processing with MSH, PID, OBX, ORC, OBR segment handlers
+- **FHIR R4**: HAPI FHIR 5.4.0 with resource filters and healthcare provider context
+- **SNOMED CT**: Clinical terminology with core dataset loading
+- **ICD-9/ICD-10**: Diagnosis coding systems fully integrated
+- **ATC Codes**: Anatomical Therapeutic Chemical classification for medications
+- **OLIS**: Ontario Labs Information System integration
+- **Teleplan**: BC MSP billing system with specialized upload/download
+
 ## Database Security Patterns
 
 ### Audit Trail - REQUIRED for ALL Tables
@@ -301,7 +335,54 @@ demographic.setHin(encryptedSIN);
 String sin = EncryptionUtils.decrypt(demographic.getHin());
 ```
 
-## Testing Requirements
+## Modern Test Framework (JUnit 5)
+
+**CRITICAL**: When writing tests, ALWAYS:
+1. **Examine the actual code first** - Read the DAO/Manager interfaces to see what methods actually exist
+2. **Test real methods only** - Never make up methods that don't exist in the codebase
+3. **Use actual method signatures** - Match the exact parameters and return types
+4. **Extend OpenOTestBase** - Handles SpringUtils anti-pattern and Spring context
+5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager
+
+### BDD Test Naming Convention
+
+Modern tests use BDD (Behavior-Driven Development) naming for clarity:
+
+**Patterns**:
+1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
+2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
+3. `should<ExpectedBehavior>` - Simple assertions
+
+**Examples**:
+```java
+@Test
+@DisplayName("should return tickler when valid ID is provided")
+void shouldReturnTickler_whenValidIdProvided() {
+    // Given
+    Tickler saved = createAndSaveTickler();
+    
+    // When
+    Tickler found = ticklerDao.find(saved.getId());
+    
+    // Then
+    assertThat(found).isNotNull();
+    assertThat(found).isEqualTo(saved);
+}
+```
+
+### Test Organization
+
+Tests use hierarchical tagging for filtering:
+- **Required Tags**: `@Tag("integration")`, `@Tag("dao")` (test type & layer)
+- **CRUD Tags**: `@Tag("create")`, `@Tag("read")`, `@Tag("update")`, `@Tag("delete")`
+- **Extended Tags**: `@Tag("query")`, `@Tag("search")`, `@Tag("filter")`, `@Tag("aggregate")`
+
+**Running Tagged Tests:**
+```bash
+mvn test -Dgroups="unit"           # Unit tests only
+mvn test -Dgroups="integration"    # Integration tests only
+mvn test -Dgroups="create,update"  # Specific operations
+```
 
 ### Security Test Patterns
 ```java
@@ -341,6 +422,37 @@ public void testXSSPrevention() {
     assertFalse(output.contains("<script>"));
     assertTrue(output.contains("&lt;script&gt;"));
 }
+```
+
+## Spring Integration Pattern
+
+```java
+// Use SpringUtils.getBean() for dependency injection
+private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
+```
+
+## Development Workflow
+
+**Build & Deploy Cycle**:
+1. `make clean` → `make install --run-tests` → `server log`
+2. For quick iterations: `make install` (skips tests)
+3. Debug logging: `debug-on` → `server restart` → `debug-off`
+
+**DevContainer Environment**:
+- Docker-based development with debugging on port 8000
+- Custom terminal with tool reminders on bash startup
+- MariaDB database on port 3306
+
+**Test Execution**:
+```bash
+# Run all modern tests
+make install --run-modern-tests
+
+# Run specific test categories
+mvn test -Dgroups="unit"           # Fast unit tests only
+mvn test -Dgroups="integration"    # Integration tests only
+mvn test -Dtest=TicklerDao*IntegrationTest  # All TicklerDao integration tests
 ```
 
 ## Code Review Checklist
