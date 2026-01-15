@@ -1561,10 +1561,12 @@ function renderRxStage() {
      });
    }
    function checkIfInactive(id,dinNumber){
-        var url=ctx + "/oscarRx/getInactiveDate.jsp"  ;
-         var data="din="+dinNumber+"&id="+id +"&rand=" +  Math.floor(Math.random()*10001);
-         new Ajax.Request(url,{method: 'post',postBody:data,onSuccess:function(transport){
+        var url=ctx + "/oscarRx/searchDrug.do";
+         var data="method=inactiveDate&din="+dinNumber+"&id="+id +"&rand=" +  Math.floor(Math.random()*10001);
+         new Ajax.Request(url,{method: 'post',postBody:data,
+           onSuccess:function(transport){
                  var json=transport.responseText.evalJSON();
+
                 if(json!=null){
                     var str = "Inactive Drug Since: "+new Date(json.vec[0].time).toDateString();
                     $('inactive_'+json.id).innerHTML = str;

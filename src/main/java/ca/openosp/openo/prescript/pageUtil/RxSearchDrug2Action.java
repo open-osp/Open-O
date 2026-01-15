@@ -83,6 +83,8 @@ public final class RxSearchDrug2Action extends ActionSupport {
             return searchNaturalRemedy();
         } else if ("jsonSearch".equals(method)) {
             return jsonSearch();
+        } else if ("inactiveDate".equals(method)) {
+            return getInactiveDate();
         }
 
 
@@ -228,11 +230,33 @@ public final class RxSearchDrug2Action extends ActionSupport {
         return null;
     }
 
+
+    private String getInactiveDate () {
+        String din = request.getParameter("din");
+        String id = request.getParameter("id");
+
+        try {
+            RxDrugRef drugData = new RxDrugRef();
+            Vector vec = drugData.getInactiveDate(din);
+            vec.add(id);
+            jsonify(vec, response);
+
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Error", e);
+        }
+//        Hashtable d = new Hashtable();
+//
+//        d.put("id", id);
+//        d.put("vec", vec);
+//        mapper.writeValueAsString(d);
+        return null;
+    }
+
     /**
      * Utilty methods - should be split into a class if they get any bigger.
      */
 
-    private static final boolean wildCardRight(final String wildcard) {
+    private static boolean wildCardRight(final String wildcard) {
         if (!StringUtils.isBlank(wildcard)) {
             return Boolean.valueOf(wildcard);
         }
