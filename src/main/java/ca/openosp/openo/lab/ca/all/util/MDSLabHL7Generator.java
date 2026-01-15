@@ -302,7 +302,7 @@ public class MDSLabHL7Generator {
 	 * status marker of `R`.
 	 *
 	 * @param sb the StringBuilder to append the OBR segment to
-	 * @param obrCounter a zero-based counter used to compute the sequence number (sequence = 100 + obrCounter)
+	 * @param obrCounter a one-based counter used to compute the sequence number (sequence = 100 + obrCounter)
 	 * @param testCode the test identifier to include in the OBR segment
 	 * @param testDate the date/time string to place into the OBR date fields
 	 */

@@ -33,7 +33,7 @@ import ca.openosp.openo.commn.model.LabTest;
 import static ca.openosp.openo.lab.ca.all.util.Hl7GeneratorUtil.*;
 
 /**
- * Utility class for generating CML (Calgary Medical Laboratory) format HL7 messages.
+ * Utility class for generating CML format HL7 messages.
  *
  * @since 2026-01-12
  */
@@ -47,7 +47,7 @@ public class CMLLabHL7Generator {
 	}
 
 	/**
-	 * Builds a complete CML (Calgary Medical Laboratory) HL7 message from the provided Lab data.
+	 * Builds a complete CML HL7 message from the provided Lab data.
 	 *
 	 * The message includes MSH, PID, ORC, OBR and OBX (with optional NTE) segments constructed from
 	 * the patient, order and test information contained in the Lab object.
