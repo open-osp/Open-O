@@ -109,7 +109,10 @@ public final class RxWriteScript2Action extends ActionSupport {
             case "getDemoNameAndHIN" -> getDemoNameAndHIN();
             case "updateLongTermStatus" -> updateLongTermStatus();
             case "checkNoStashItem" -> checkNoStashItem();
-            case "searchSpecialInstructions" -> searchSpecialInstructions();
+            case "searchSpecialInstructions" -> {
+                searchSpecialInstructions();
+                yield null;
+            }
             default -> null;
         };
 
@@ -1217,34 +1220,33 @@ public final class RxWriteScript2Action extends ActionSupport {
 
         if (Objects.isNull(strId)) {
 	        hm.put("success", false);
-		} else 
-            if (strId != null) {
-                int drugId = Integer.parseInt(strId);
-                RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-                if (bean == null) {
-                    response.sendRedirect("error.html");
-                    return null;
-                }
-
-                RxPrescriptionData rxData = new RxPrescriptionData();
-                RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
-                oldRx.setLongTerm(isLongTerm);
-                oldRx.setShortTerm(false);
-                boolean saveStatus = oldRx.Save(oldRx.getScript_no());
-
-                if (saveStatus) {
-                    saveStatus = this.rxManager.archiveDrug(loggedInInfo, drugId, bean.getDemographicNo(),
-                            isLongTerm ? Drug.ARCHIVED_REASON_LT_ENABLED : Drug.ARCHIVED_REASON_LT_DISABLED);
-                }
-
-                hm.put("success", saveStatus);
+		} else {
+            int drugId = Integer.parseInt(strId);
+            RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+            if (bean == null) {
+                response.sendRedirect("error.html");
+                return null;
             }
-            response.setContentType("application/json");
-            ObjectNode jsonObject = objectMapper.valueToTree(hm);
-            response.getOutputStream().write(jsonObject.toString().getBytes());
-            return null;
-    }
 
+            RxPrescriptionData rxData = new RxPrescriptionData();
+            RxPrescriptionData.Prescription oldRx = rxData.getPrescription(drugId);
+            oldRx.setLongTerm(isLongTerm);
+            oldRx.setShortTerm(false);
+            boolean saveStatus = oldRx.Save(oldRx.getScript_no());
+
+            if (saveStatus) {
+                saveStatus = this.rxManager.archiveDrug(loggedInInfo, drugId, bean.getDemographicNo(),
+                        isLongTerm ? Drug.ARCHIVED_REASON_LT_ENABLED : Drug.ARCHIVED_REASON_LT_DISABLED);
+            }
+
+            hm.put("success", saveStatus);
+        }
+        response.setContentType("application/json");
+        ObjectNode jsonObject = objectMapper.valueToTree(hm);
+        response.getOutputStream().write(jsonObject.toString().getBytes());
+        return null;
+    }
+  
     public void saveDrug(final HttpServletRequest request) throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
