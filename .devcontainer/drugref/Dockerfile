@@ -3,6 +3,8 @@
 # =============================================================================
 FROM tomcat:9.0.97-jdk11-temurin AS builder
 
+# Note: DRUGREF_BRANCH accepts branch names or tags, but not commit SHAs
+# (shallow clone with --depth 1 doesn't support checking out by SHA)
 ARG DRUGREF_REPO=https://github.com/open-osp/Open-Drugref.git
 ARG DRUGREF_BRANCH=main
 
@@ -10,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends git maven \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
-RUN git clone --branch $DRUGREF_BRANCH $DRUGREF_REPO drugref
+RUN git clone --depth 1 --branch $DRUGREF_BRANCH $DRUGREF_REPO drugref
 
 WORKDIR /build/drugref
 RUN mvn -DskipTests clean package
