@@ -80,9 +80,10 @@ public final class Hl7GeneratorUtil {
             for (int x = 0; x < ccs.length; x++) {
                 String[] idName = ccs[x].split(",");
                 if (x > 0) ccString.append("~");
-                ccString.append(idName[0]).append("^")
-                        .append(idName.length > 1 ? idName[1] : "").append("^")
-                        .append(idName.length > 2 ? idName[2] : "");
+                // Trim CC doctor components when building HL7 string
+                ccString.append(idName[0].trim()).append("^")
+                        .append(idName.length > 1 ? idName[1].trim() : "").append("^")
+                        .append(idName.length > 2 ? idName[2].trim() : "");
             }
         }
         return ccString;
