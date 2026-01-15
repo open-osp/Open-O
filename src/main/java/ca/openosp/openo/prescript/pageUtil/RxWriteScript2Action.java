@@ -109,14 +109,11 @@ public final class RxWriteScript2Action extends ActionSupport {
             case "getDemoNameAndHIN" -> getDemoNameAndHIN();
             case "updateLongTermStatus" -> updateLongTermStatus();
             case "checkNoStashItem" -> checkNoStashItem();
-            case "searchSpecialInstructions" -> {
-                searchSpecialInstructions();
-                yield null; // or whatever the intended return is for this void-like call
-            }
+            case "searchSpecialInstructions" -> searchSpecialInstructions();
             default -> null;
         };
 
-        if (dispatchResult != null || (method != null && !method.isEmpty())) {
+        if (dispatchResult != null) {
             return dispatchResult;
         }
 
