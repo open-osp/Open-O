@@ -99,7 +99,7 @@ public class GDMLLabHL7Generator {
 			.append("^").append(safeUpper(lab.getFirstName()))
 			.append("^")  // Middle name placeholder (empty) - PID-5-3
 			.append("||").append(formatDate(lab.getDob())).append("|").append(lab.getSex())  // PID-7, PID-8
-			.append("|||123 MAIN RD^NORTH YORK^ONTARIO^ON^M6B3Y5||")  // PID-9, PID-10, PID-11, PID-12
+			.append("|||^^^^||")  // PID-9, PID-10, PID-11, PID-12
 			.append(safe(lab.getPhone()))  // PID-13 = HOME phone
 			.append("\n");
 	}
