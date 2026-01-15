@@ -13,7 +13,7 @@ WORKDIR /build
 RUN git clone --branch $DRUGREF_BRANCH $DRUGREF_REPO drugref
 
 WORKDIR /build/drugref
-RUN mvn -Dmaven.test.skip=true clean package
+RUN mvn -DskipTests clean package
 
 # =============================================================================
 # Final stage - minimal runtime image (no build tools)
@@ -23,6 +23,10 @@ FROM tomcat:9.0.97-jdk11-temurin
 LABEL author="OpenOSP" \
       version="1.0.0" \
       description="OpenOSP DrugRef2 Container - Java 11 for legacy dependency compatibility"
+
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # Remove unnecessary default webapps
 RUN rm -rf /usr/local/tomcat/webapps/ROOT/* \
@@ -34,7 +38,9 @@ RUN rm -rf /usr/local/tomcat/webapps/ROOT/* \
 # Copy only the WAR from builder stage
 COPY --from=builder /build/drugref/target/drugref2.war /usr/local/tomcat/webapps/drugref2.war
 
-# Note: drugref2.properties is mounted at runtime via docker-compose
+# Note: drugref2.properties is not baked into the image.
+# It is mounted at runtime via docker-compose to /root/drugref2.properties
+# and DrugRef loads its configuration from that path by default.
 
 EXPOSE 8080
 CMD ["catalina.sh", "run"]

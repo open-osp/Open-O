@@ -23,7 +23,7 @@ services:
       db:
         condition: service_healthy
       drugref:
-        condition: service_started
+        condition: service_healthy
 
   drugref:
     container_name: openo-drugref-dev
@@ -31,8 +31,8 @@ services:
       context: ./drugref
       dockerfile: Dockerfile
       args:
-        DRUGREF_REPO: https://github.com/open-osp/Open-Drugref.git
-        DRUGREF_BRANCH: main
+        DRUGREF_REPO: ${DRUGREF_REPO:-https://github.com/open-osp/Open-Drugref.git}
+        DRUGREF_BRANCH: ${DRUGREF_BRANCH:-main}
     ports:
       - "8180:8080"
     volumes:
