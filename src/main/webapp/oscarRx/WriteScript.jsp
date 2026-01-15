@@ -1491,9 +1491,9 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
 
                     <tr>
                         <td>
-                            <script language=javascript>
+                            <script type="text/javascript">
                                 function ShowDrugInfo(GN) {
-                                    window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(GN), "_blank",
+                                    window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + encodeURIComponent(GN), "_blank",
                                         "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
                                 }
 
@@ -1503,7 +1503,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
 
                                     if (favoriteName.length > 0) {
                                         window.location.href = '<%= request.getContextPath() %>/oscarRx/addFavoriteWriteScript.do?stashId='
-                                            + escape(stashId) + '&favoriteName=' + escape(favoriteName);
+                                            + encodeURIComponent(stashId) + '&favoriteName=' + encodeURIComponent(favoriteName);
                                     }
                                 }
                             </script>

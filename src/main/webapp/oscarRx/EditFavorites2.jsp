@@ -116,8 +116,8 @@
                 }
 
                 if (err == false) {
-                    var data = "favoriteId=" + favoriteId + "&favoriteName=" + favoriteName + "&customName=" + customName + "&takeMin=" + takeMin + "&takeMax=" + takeMax + "&frequencyCode=" + frequencyCode +
-                        "&duration=" + duration + "&durationUnit=" + durationUnit + "&quantity=" + quantity + "&repeat=" + repeat + "&nosubs=" + nosubs + "&prn=" + prn + "&customInstr=" + customInstr + "&special=" + special + "&dispenseInternal=" + dispenseInternal;
+                    var data = "favoriteId=" + favoriteId + "&favoriteName=" + encodeURIComponent(favoriteName) + "&customName=" + encodeURIComponent(customName) + "&takeMin=" + takeMin + "&takeMax=" + takeMax + "&frequencyCode=" + frequencyCode +
+                        "&duration=" + duration + "&durationUnit=" + durationUnit + "&quantity=" + encodeURIComponent(quantity) + "&repeat=" + repeat + "&nosubs=" + nosubs + "&prn=" + prn + "&customInstr=" + encodeURIComponent(customInstr) + "&special=" + encodeURIComponent(special) + "&dispenseInternal=" + dispenseInternal;
                     var url = "<c:out value="${ctx}"/>" + "/oscarRx/updateFavorite2.do?method=ajaxEditFavorite";
 
                     fetch(url, {

@@ -1773,8 +1773,18 @@ public final class RxWriteScript2Action extends ActionSupport {
         this.patientCompliance = trueFalseNull;
     }
 
-    public void setDrugId(int drugId) {
-        this.drugId = drugId;
+    /**
+     * Setter accepts String to handle both numeric IDs and composite IDs.
+     * Only sets the int property if the input is a pure integer.
+     */
+    public void setDrugId(String drugId) {
+        if (drugId != null) {
+            try {
+                this.drugId = Integer.parseInt(drugId);
+            } catch (NumberFormatException e) {
+                // Non-integer drugIds (like Vigilance composite IDs) are handled via request.getParameter()
+            }
+        }
     }
 
     public String getGN() {
