@@ -151,7 +151,7 @@ public class MDSLabHL7Generator {
 		sb.append("PID|||").append(nowYear).append("-").append(accession)
 			.append("|-|").append(safeUpper(lab.getLastName())).append("^")
 			.append(safeUpper(lab.getFirstName())).append("^||")
-			.append(formatDob(lab.getDob())).append("|").append(lab.getSex())
+			.append(formatDob(lab.getDob())).append("|").append(safe(lab.getSex()))
 			.append("|||||").append(safe(lab.getPhone()))
 			.append("||||||X").append(safe(lab.getHin())).append("\n");
 	}
