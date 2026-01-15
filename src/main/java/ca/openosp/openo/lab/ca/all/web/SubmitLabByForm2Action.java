@@ -72,6 +72,14 @@ public class SubmitLabByForm2Action extends ActionSupport {
         return "manage";
     }
 
+    /**
+     * Process a lab form submission: validate privileges, construct a Lab with its LabTest entries,
+     * generate an HL7 message, save and register the HL7 file, and invoke the configured message handler.
+     *
+     * @return the Struts result name "manage"
+     * @throws SecurityException if the current user lacks the required "_lab" write privilege
+     * @throws Exception for parse, I/O, or handler invocation errors that are propagated to the caller
+     */
     public String saveManage() throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String providerNo = loggedInInfo.getLoggedInProviderNo();
@@ -198,6 +206,14 @@ public class SubmitLabByForm2Action extends ActionSupport {
         return manage();
     }
 
+	/**
+	 * Generate an HL7 message for the provided lab using a lab-specific generator.
+	 *
+	 * Uses the lab's labName to select a generator; if the lab type is unsupported the CML generator is used.
+	 *
+	 * @param lab the Lab model containing patient and test data to include in the message
+	 * @return the generated HL7 message as a String
+	 */
 	private String generateHL7(Lab lab) {
 		// Generate appropriate HL7 format based on lab type
 		String labType = lab.getLabName();
