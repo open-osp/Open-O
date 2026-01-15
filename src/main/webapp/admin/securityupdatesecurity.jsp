@@ -277,8 +277,10 @@
                     <td><input type="checkbox" name="b_RemoteLockSet" value="1"
                             <%=security.isUsingMfa() ? "disabled" : ""%>
                             <%= security.getBRemotelockset()==0?"":"checked" %>>
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formLocalPIN"/>: <%=security.isUsingMfa() ? "disabled" : ""%>
-                                                                                  value="1" <%= security.getBLocallockset()==0?"":"checked" %>>
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formLocalPIN"/>:
+                        <input type="checkbox" name="b_LocalLockSet" value="1"
+                                <%=security.isUsingMfa() ? "disabled" : ""%>
+                                <%= security.getBLocallockset()==0?"":"checked" %>>
                     </td>
                 </tr>
                 <!-- new sec -->
