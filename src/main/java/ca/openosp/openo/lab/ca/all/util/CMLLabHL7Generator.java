@@ -73,8 +73,8 @@ public class CMLLabHL7Generator {
 	private static void buildPID(StringBuilder sb, Lab lab) {
 		String hin = safe(lab.getHin());
 		sb.append("PID||||").append(hin)
-			.append("|").append(lab.getLastName()).append("^").append(lab.getFirstName())
-			.append("||").append(formatDate(lab.getDob())).append("|").append(lab.getSex())
+			.append("|").append(safe(lab.getLastName())).append("^").append(safe(lab.getFirstName()))
+			.append("||").append(formatDate(lab.getDob())).append("|").append(safe(lab.getSex()))
 			.append("|||||").append(safe(lab.getPhone()))
 			.append("||||||X").append(hin).append("\n");
 	}
