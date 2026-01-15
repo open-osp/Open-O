@@ -3461,19 +3461,19 @@
   }, {
     "groupId" : "org.springframework.integration",
     "artifactId" : "spring-integration-ftp",
-    "version" : "5.3.10.RELEASE",
+    "version" : "5.5.20",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:bKuJtd9Ey+dm58C9ho42ETy4wz84wlZS64Z4Y/x7GogRu5cKfUPZ/oNPzD0RoCEneww8N6KyDFHVlkWA0LkvlA=="
+    "integrity" : "sha512:oLJBpSJVMilWLLrVNjahJpw4uAYn+8gLeT8HfqsfmlIjKBLxHCTaC/mSvUJy1fZZZTfihnXkt5HlmTpBY2H+VQ=="
   }, {
     "groupId" : "org.springframework.integration",
     "artifactId" : "spring-integration-sftp",
-    "version" : "5.3.10.RELEASE",
+    "version" : "5.5.20",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:O+2ETfhGZHSQEVjGDZs10ixXtWuW4h6pNR/aeqcBEuzFClXF388aAjfNUwpdDFBwDKGF0GrpuyQLFLhs/2PZ1g=="
+    "integrity" : "sha512:iaT6kwrl9YzfGRLBSstbB1Hx6dZDlnpEgjYNB870k2ERc5z7DDFClTdvqyOa+1vFo6GCSVVW0uHAWOKiFK2AxQ=="
   }, {
     "groupId" : "org.springframework.retry",
     "artifactId" : "spring-retry",
