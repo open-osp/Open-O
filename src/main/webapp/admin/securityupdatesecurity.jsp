@@ -272,13 +272,20 @@
 		<% if (MfaManager.isOscarLegacyPinEnabled()) { %>
 
                 <tr>
-                    <td align="right" nowrap><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formRemotePIN"/>:
+                    <td align="right" nowrap>
+                        <label for="b_RemoteLockSet">
+                            <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formRemotePIN"/>:
+                        </label>
                     </td>
-                    <td><input type="checkbox" name="b_RemoteLockSet" value="1"
+                    <td>
+                        <input type="checkbox" id="b_RemoteLockSet" name="b_RemoteLockSet" value="1"
                             <%=security.isUsingMfa() ? "disabled" : ""%>
                             <%= security.getBRemotelockset()==0?"":"checked" %>>
-                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formLocalPIN"/>:
-                        <input type="checkbox" name="b_LocalLockSet" value="1"
+                        <label for="b_LocalLockSet">
+                            <fmt:setBundle basename="oscarResources"/>
+                            <fmt:message key="admin.securityrecord.formLocalPIN"/>:
+                        </label>
+                        <input type="checkbox" id="b_LocalLockSet" name="b_LocalLockSet" value="1"
                                 <%=security.isUsingMfa() ? "disabled" : ""%>
                                 <%= security.getBLocallockset()==0?"":"checked" %>>
                     </td>
