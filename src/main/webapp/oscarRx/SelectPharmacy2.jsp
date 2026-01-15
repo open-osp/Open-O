@@ -195,8 +195,8 @@
 					var pharmacyNameKey = new RegExp($("#pharmacySearch").val(), "i");
 					var pharmacyCityKey = new RegExp($("#pharmacyCitySearch").val(), "i");
 					var pharmacyPostalCodeKey = new RegExp($("#pharmacyPostalCodeSearch").val(), "i");
-					var pharmacyFaxKey = new RegExp($("#pharmacyFaxSearch").val(), "i");
-					var pharmacyPhoneKey = new RegExp($("#pharmacyPhoneSearch").val(), "i");
+					var pharmacyFaxKey = new RegExp($("#pharmacyFaxSearch").val().replaceAll(" ", ""), "i");
+					var pharmacyPhoneKey = new RegExp($("#pharmacyPhoneSearch").val().replaceAll(" ", ""), "i");
 					var pharmacyAddressKey = new RegExp($("#pharmacyAddressSearch").val(), "i");
 
 					$("#pharmacySearch").keyup(function () {
@@ -255,7 +255,7 @@
 						updateSearchKeys();
 						$(".pharmacyItem").hide();
 						$.each($(".fax"), function (key, value) {
-							if ($(value).html().search(pharmacyFaxKey) >= 0 || $(value).html().split("-").join("").search(pharmacyFaxKey) >= 0) {
+							if ($(value).html().search(pharmacyFaxKey) >= 0 || $(value).html().replaceAll(" ", "").split(")").join("").split("-").join("").search(pharmacyFaxKey) >= 0) {
 								if ($(value).siblings(".pharmacyName").html().search(pharmacyNameKey) >= 0) {
 									if ($(value).siblings(".city").html().search(pharmacyCityKey) >= 0) {
 										if ($(value).siblings(".postalCode").html().search(pharmacyPostalCodeKey) >= 0) {
@@ -271,7 +271,7 @@
 						updateSearchKeys();
 						$(".pharmacyItem").hide();
 						$.each($(".phone"), function (key, value) {
-							if ($(value).html().search(pharmacyPhoneKey) >= 0 || $(value).html().split("-").join("").search(pharmacyPhoneKey) >= 0) {
+							if ($(value).html().search(pharmacyPhoneKey) >= 0 || $(value).html().replaceAll(" ", "").split(")").join("").split("-").join("").search(pharmacyPhoneKey) >= 0) {
 								if ($(value).siblings(".pharmacyName").html().search(pharmacyNameKey) >= 0) {
 									if ($(value).siblings(".city").html().search(pharmacyCityKey) >= 0) {
 										if ($(value).siblings(".postalCode").html().search(pharmacyPostalCodeKey) >= 0) {
