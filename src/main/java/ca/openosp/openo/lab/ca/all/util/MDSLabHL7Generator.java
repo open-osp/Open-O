@@ -78,7 +78,17 @@ public class MDSLabHL7Generator {
 		return sb.toString();
 	}
 
-	// MSH segment - billing-accession-1 format
+	/**
+	 * Appends an MSH (message header) segment to the provided StringBuilder for an MDS HL7 message.
+	 *
+	 * The segment includes facility, timestamp, message type, HL7 version and a message control ID
+	 * composed as `{billingNo}-{accession}-1`.
+	 *
+	 * @param sb the StringBuilder to append the MSH segment to
+	 * @param billingNo the billing number used as the first part of the message control ID
+	 * @param accession the accession used as the second part of the message control ID
+	 * @param nowDateTime the current date/time string formatted for the MSH timestamp field
+	 */
 	private static void buildMSH(StringBuilder sb, String billingNo, String accession, String nowDateTime) {
 		sb.append("MSH|^~\\&|MDS||||").append(nowDateTime).append("||ORU|")
 			.append(billingNo).append("-").append(accession).append("-1")
@@ -86,7 +96,15 @@ public class MDSLabHL7Generator {
 	}
 
 	// ZLB segment - Lab facility information (required for MDS)
-	// Format: ZLB||version||address|unknown|unknown|lab_code|lab_name
+	/**
+	 * Appends a ZLB segment containing fixed facility address, contact and MDS lab identifiers.
+	 *
+	 * The segment uses the first two characters of the provided accession as the lab code; when the
+	 * accession string has two or fewer characters the default code "LA" is used.
+	 *
+	 * @param sb        the StringBuilder to append the ZLB segment to
+	 * @param accession accession string whose first two characters are used as the lab code (default "LA")
+	 */
 	private static void buildZLB(StringBuilder sb, String accession) {
 		sb.append("ZLB||").append(accession.length() > 2 ? accession.substring(0, 2) : "LA")
 			.append("||55 QUEEN ST TORONTO M5C 1R6 1(877)849-3637|30||MDS|MDS\n");
@@ -94,7 +112,15 @@ public class MDSLabHL7Generator {
 
 	// ZRG segments - Test group registration (one per test group)
 	// Format: ZRG|sequence|groupNum|||groupName|display|
-	// For now, put all tests in one group
+	/**
+	 * Appends a ZRG segment that groups all tests into a single laboratory group when the lab contains tests.
+	 *
+	 * If the lab has at least one test, a single line with the fixed group designation
+	 * "ZRG|1.1|1000|||GENERAL LABORATORY|1|" followed by a newline is appended to the provided StringBuilder.
+	 *
+	 * @param sb  the StringBuilder to append the ZRG segment to
+	 * @param lab the Lab whose tests determine whether the ZRG segment is emitted
+	 */
 	private static void buildZRG(StringBuilder sb, Lab lab) {
 		if (!lab.getTests().isEmpty()) {
 			sb.append("ZRG|1.1|1000|||GENERAL LABORATORY|1|\n");
@@ -102,7 +128,15 @@ public class MDSLabHL7Generator {
 	}
 
 	// ZMN segments - Test menu definitions (one per test)
-	// Format: ZMN||shortName||displayName|units|value|range|loincCode|flag|groupNum
+	/**
+	 * Append one ZMN segment per LabTest in the given Lab to the provided StringBuilder.
+	 *
+	 * Each ZMN line encodes test metadata (normalized short name, display name, units,
+	 * value, reference range, LOINC/code, flag) and ends with the fixed group number 1000.
+	 *
+	 * @param sb  the StringBuilder to which ZMN segments will be appended
+	 * @param lab the Lab whose tests will be converted into ZMN segments
+	 */
 	private static void buildZMNSegments(StringBuilder sb, Lab lab) {
 		int testIndex = 1;
 		for (LabTest test : lab.getTests()) {
@@ -130,7 +164,19 @@ public class MDSLabHL7Generator {
 	// If CC exists, add additional ZCL segments
 	// Supports multiple formats:
 	// 1. "billingNo,LastName,FirstName" (proper format)
-	// 2. "Dr FullName" or just "FullName" (fallback - uses billing 00000)
+	/**
+	 * Appends ZCL (ordering clinician) segment(s) for the primary provider and any CC doctors.
+	 *
+	 * <p>Appends a ZCL line for the primary ordering provider using the provided billing number
+	 * and provider full name (marked with CC flag "0"). If the Lab contains CC doctor entries,
+	 * each semicolon-separated entry is parsed and results in an additional ZCL line marked with
+	 * CC flag "1".</p>
+	 *
+	 * @param sb the StringBuilder to which ZCL segment lines are appended
+	 * @param lab the Lab containing optional CC doctor data
+	 * @param billingNo billing number for the primary provider
+	 * @param providerFullName full name of the primary provider (last and first combined, uppercase)
+	 */
 	private static void buildZCLSegments(StringBuilder sb, Lab lab, String billingNo, String providerFullName) {
 		appendZclForDoctor(sb, billingNo, providerFullName, /*ccFlag*/ "0");
 
@@ -146,7 +192,14 @@ public class MDSLabHL7Generator {
 		}
 	}
 
-	// PID segment - year-accession format
+	/**
+	 * Append a PID segment that encodes the patient identifier as `year-accession` and includes demographic fields.
+	 *
+	 * @param sb the StringBuilder to append the PID segment to
+	 * @param lab the Lab object supplying patient demographics (name, DOB, sex, phone, HIN)
+	 * @param accession the accession portion used in the patient identifier (normalized)
+	 * @param nowYear the four-digit year used as the prefix for the patient identifier
+	 */
 	private static void buildPID(StringBuilder sb, Lab lab, String accession, String nowYear) {
 		sb.append("PID|||").append(nowYear).append("-").append(accession)
 			.append("|-|").append(safeUpper(lab.getLastName())).append("^")
@@ -158,7 +211,17 @@ public class MDSLabHL7Generator {
 
 	// PV1 segment - Field 8 (referring), Field 9 (CC if exists), Field 17 (admitting)
 	// Field 9 - CC doctor if provided (use first CC doctor)
-	// Supports both "billingNo,LastName,FirstName" and "Dr FullName" formats
+	/**
+	 * Append a PV1 segment containing visit and ordering-provider information to the given StringBuilder.
+	 *
+	 * The segment includes the primary ordering provider (using the supplied billing number and providerFullName),
+	 * appends the first CC (copied/consult) doctor when present, and terminates the segment with the lab request date.
+	 *
+	 * @param sb the StringBuilder accumulating the HL7 message
+	 * @param lab source of patient, CC (copied/consult) and request-date data used in the segment
+	 * @param billingNo billing number for the primary ordering provider
+	 * @param providerFullName full name of the primary ordering provider (already formatted/uppercased)
+	 */
 	private static void buildPV1(StringBuilder sb, Lab lab, String billingNo, String providerFullName) {
 		sb.append("PV1||R|^^^^^^^^|||||-").append(billingNo).append("^")
 			.append(providerFullName).append("^^^^DR.|");
@@ -176,12 +239,23 @@ public class MDSLabHL7Generator {
 			.append(formatDate(lab.getLabReqDate())).append("\n");
 	}
 
-	// ZFR segment
+	/**
+	 * Appends a fixed ZFR segment to the provided message builder.
+	 *
+	 * The segment appended is "ZFR||1|1|||0|1" followed by a newline.
+	 *
+	 * @param sb the StringBuilder to append the ZFR segment to
+	 */
 	private static void buildZFR(StringBuilder sb) {
 		sb.append("ZFR||1|1|||0|1\n");
 	}
 
-	// Initial ZCT segment - just accession without year
+	/**
+	 * Append an initial ZCT segment containing the accession identifier.
+	 *
+	 * @param sb        the StringBuilder receiving the ZCT segment
+	 * @param accession the accession identifier to insert (expected without year prefix)
+	 */
 	private static void buildZCT(StringBuilder sb, String accession) {
 		sb.append("ZCT||").append(accession).append("||").append(accession).append("|||\n");
 	}
@@ -190,7 +264,18 @@ public class MDSLabHL7Generator {
 	// OBX segment - Result in field 5
 	// Format: OBX|setId|valueType|identifier|subId|value|units|refRange|abnormalFlags|||resultStatus||blocked|||performingOrg
 	// For MDS format: Use field type "L" (not "MC") for simple text comments
-	// Field 3 format: ^text where component 2 contains the comment (MDSHandler reads NTE-3-2)
+	/**
+	 * Appends OBR, OBX, NTE (notes) and per-test ZCT segments for every test in the provided Lab.
+	 *
+	 * For each LabTest this method determines the test date and a test code (uses a numeric default
+	 * based on the OBR sequence when the test code is missing), computes the MDS reference range,
+	 * and appends the following segments in order: OBR, OBX, NTE (if notes present), and a ZCT tied
+	 * to the supplied accession.
+	 *
+	 * @param sb the StringBuilder to which HL7 segments are appended
+	 * @param lab the Lab whose tests will be converted into segments
+	 * @param accession the accession value used when emitting ZCT segments for each test
+	 */
 	private static void buildTestSegments(StringBuilder sb, Lab lab, String accession) {
 		int obrCounter = 1;
 		for (LabTest test : lab.getTests()) {
@@ -209,7 +294,18 @@ public class MDSLabHL7Generator {
 		}
 	}
 
-	// OBR segment
+	/**
+	 * Append an OBR segment for a single test to the provided StringBuilder.
+	 *
+	 * The appended OBR line contains a sequence number (100 + obrCounter), the test code,
+	 * the provided test date in the relevant fields, fixed MDS identifiers, and a final
+	 * status marker of `R`.
+	 *
+	 * @param sb the StringBuilder to append the OBR segment to
+	 * @param obrCounter a one-based counter used to compute the sequence number (sequence = 100 + obrCounter)
+	 * @param testCode the test identifier to include in the OBR segment
+	 * @param testDate the date/time string to place into the OBR date fields
+	 */
 	private static void appendObr(StringBuilder sb, int obrCounter, String testCode, String testDate) {
 		sb.append("OBR||").append(100 + obrCounter).append("||")
 			.append(testCode).append("|||")
@@ -217,7 +313,14 @@ public class MDSLabHL7Generator {
 			.append("||||||MDS^MDS|||||||R\n");
 	}
 
-	// OBX segment
+	/**
+	 * Appends an OBX segment representing the given test result to the provided StringBuilder.
+	 *
+	 * @param sb the StringBuilder to append the OBX segment to
+	 * @param test the LabTest containing result value, units, flags, and other metadata
+	 * @param testCode the test identifier used in OBX fields
+	 * @param refRange the human-readable reference range to include for the test result
+	 */
 	private static void appendObx(StringBuilder sb, LabTest test, String testCode, String refRange) {
 		sb.append("OBX|1|")
 			.append(safeWithDefault(test.getCodeType(), "ST")).append("|-")
@@ -235,20 +338,40 @@ public class MDSLabHL7Generator {
 			.append("|||10^100 INTERNATIONAL BLVD TORONTO M9W 6J6 1(877)849-3637^L\n");
 	}
 
-	// Add NTE if notes exist
+	/**
+	 * Appends an NTE segment for the test's notes when present.
+	 *
+	 * @param sb the StringBuilder to append the segment to
+	 * @param test the LabTest whose notes will be written as an NTE segment
+	 */
 	private static void appendNotesNte(StringBuilder sb, LabTest test) {
 		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
 			sb.append("NTE||L|^").append(test.getNotes()).append("\n");
 		}
 	}
 
-	// Add ZCT segment after each test
+	/**
+	 * Appends a ZCT segment for the given accession to the provided StringBuilder.
+	 *
+	 * The segment contains the accession value in both primary fields required by the MDS ZCT format.
+	 *
+	 * @param sb        the StringBuilder to append the segment to
+	 * @param accession the accession identifier to include in the ZCT fields
+	 */
 	private static void appendZctForAccession(StringBuilder sb, String accession) {
 		sb.append("ZCT||").append(accession).append("||").append(accession).append("|||\n");
 	}
 
 	// Add ZPD segment if any test is BLOCKED
-	// MDSHandler checks for ZPD segment with field 3 = "Y" to indicate blocked status
+	/**
+	 * Appends a ZPD segment marking the report as blocked when any lab test is blocked.
+	 *
+	 * Checks the lab's tests for a blocked status equal to "BLOCKED"; if found, appends
+	 * a ZPD segment with a "Y" in the third field to the provided StringBuilder.
+	 *
+	 * @param sb  the StringBuilder to append the ZPD segment to
+	 * @param lab the Lab whose tests are evaluated for blocked status
+	 */
 	private static void buildZPD(StringBuilder sb, Lab lab) {
 		boolean hasBlockedTest = lab.getTests().stream()
 			.anyMatch(t -> "BLOCKED".equals(t.getBlocked()));
@@ -257,6 +380,16 @@ public class MDSLabHL7Generator {
 		}
 	}
 
+	/**
+	 * Normalize an accession identifier for inclusion in MSH message fields.
+	 *
+	 * <p>Removes a leading four-digit year followed by a dash (e.g. "2024-") and all dashes from the accession.
+	 * If the provided accession is null or empty, a fallback value starting with "LAB" followed by the current
+	 * epoch milliseconds is returned.
+	 *
+	 * @param accession the original accession identifier, may be null
+	 * @return the normalized accession with year prefix and dashes removed, or a generated fallback if input was null
+	 */
 	private static String normalizeAccession(String accession) {
 		String result = safeWithDefault(accession, "LAB" + System.currentTimeMillis());
 		result = result.replaceAll("^\\d{4}-", ""); // Remove year prefix if exists
@@ -264,6 +397,12 @@ public class MDSLabHL7Generator {
 		return result;
 	}
 
+	/**
+	 * Builds the provider's full name from the Lab's provider first and last name fields.
+	 *
+	 * @param lab the Lab containing provider name fields
+	 * @return the provider full name in uppercase as "LAST FIRST", trimmed; empty string if neither name is present
+	 */
 	private static String buildProviderFullName(Lab lab) {
 		String fullName = (lab.getProviderLastName() != null ? lab.getProviderLastName().toUpperCase() : "") +
 		                  " " +
@@ -272,7 +411,17 @@ public class MDSLabHL7Generator {
 	}
 
 	// Try to parse as "billingNo,LastName,FirstName"
-	// Fallback: just a name like "Dr Adward" or "John Smith"
+	/**
+	 * Parses a CC doctor string into a CCDoctor containing a billing code and a normalized uppercase name.
+	 *
+	 * <p>If the input contains at least two comma-separated parts, the first part is used as the billing
+	 * code and the subsequent part(s) are combined into the doctor's name. If the input does not
+	 * contain a billing part, a default billing code of "00000" is returned and any leading "Dr." or
+	 * "Dr" prefix is removed from the name before uppercasing.
+	 *
+	 * @param ccDoc the raw CC doctor string (expected either as "billing,name" or a plain name)
+	 * @return a CCDoctor with parsed `billing` and normalized `name`
+	 */
 	private static CCDoctor parseCCDoctor(String ccDoc) {
 		String ccBilling;
 		String ccName;
@@ -294,6 +443,12 @@ public class MDSLabHL7Generator {
 		return new CCDoctor(ccBilling, ccName);
 	}
 
+	/**
+	 * Builds the MDS-formatted reference range for a lab test.
+	 *
+	 * @param test the test from which to derive the reference range
+	 * @return the reference range text if present; otherwise the "`low-high`" range when both low and high are present; otherwise an empty string
+	 */
 	private static String buildMDSReferenceRange(LabTest test) {
 		if (test.getRefRangeText() != null && !test.getRefRangeText().isEmpty()) {
 			return test.getRefRangeText();
@@ -304,6 +459,14 @@ public class MDSLabHL7Generator {
 		return "";
 	}
 
+	/**
+	 * Appends a ZCL segment for a doctor to the given StringBuilder.
+	 *
+	 * @param sb the StringBuilder to which the ZCL line will be appended
+	 * @param billing the doctor's billing number used as the segment identifier
+	 * @param name the doctor's name as it should appear in the segment
+	 * @param ccFlag "0" for primary ordering provider, "1" for a carbon-copy (CC) doctor
+	 */
 	private static void appendZclForDoctor(StringBuilder sb, String billing, String name, String ccFlag) {
 		sb.append("ZCL||-")
 			.append(billing).append("^").append(name)
@@ -315,6 +478,12 @@ public class MDSLabHL7Generator {
 		final String billing;
 		final String name;
 
+		/**
+		 * Creates a CCDoctor holding a provider billing code and display name.
+		 *
+		 * @param billing the doctor's billing identifier
+		 * @param name    the doctor's full display name
+		 */
 		CCDoctor(String billing, String name) {
 			this.billing = billing;
 			this.name = name;

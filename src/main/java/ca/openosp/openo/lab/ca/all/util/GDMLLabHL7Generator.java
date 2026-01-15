@@ -39,6 +39,9 @@ import static ca.openosp.openo.lab.ca.all.util.Hl7GeneratorUtil.*;
  */
 public class GDMLLabHL7Generator {
 
+	/**
+	 * Prevents instantiation of this utility class; all functionality is exposed via static methods.
+	 */
 	private GDMLLabHL7Generator() {
 		// Private constructor to prevent instantiation
 	}
@@ -69,7 +72,14 @@ public class GDMLLabHL7Generator {
 	// OBR|1|||253^URINALYSIS CHEMICAL^L253A^URINALYSIS|R|202306090949|202306090949||0000||N|||||045717^P. AZIZI NAMINI||||||20230609231251|||||
 	// OBX|1|ST|253&21^GLUCOSE|1|NEG|mmol/L|-NEG^NEGATIVE (mmol/L)|N||F||||||
 
-	// MSH segment - EXACT format from sample
+	/**
+	 * Append the MSH segment in the GDML HL7 v2.3 format to the provided StringBuilder.
+	 *
+	 * The segment uses the fixed GDML structure and includes the current date/time and a
+	 * message control identifier based on the current system time, followed by a trailing newline.
+	 *
+	 * @param sb the StringBuilder to append the MSH segment to
+	 */
 	private static void buildMSH(StringBuilder sb) {
 		sb.append("MSH|^~\\&|GDML|GDML|||").append(currentDateTime())
 			.append("||ORU^R01|MAGENTA .").append(System.currentTimeMillis()).append("|P|2.3\n");
@@ -90,7 +100,23 @@ public class GDMLLabHL7Generator {
 	// PID-11 = Patient Address
 	// PID-12 = County Code (empty)
 	// PID-13 = Phone Number - HOME (getHomePhone() reads this field!)
-	// PID-14 = Phone Number - BUSINESS (getWorkPhone() reads this field!)
+	/**
+	 * Appends a PID (patient identification) segment for the given Lab to the provided StringBuilder.
+	 *
+	 * Populates HL7 PID fields with GDML-specific mappings:
+	 * - PID-2: HIN as `HIN^FW^ON` (external ID)
+	 * - PID-3: accession (internal ID) or generated `LAB{timestamp}` when absent
+	 * - PID-5: patient name as `LAST^FIRST^MIDDLE` (last and first uppercased; middle left empty)
+	 * - PID-7: date of birth (formatted)
+	 * - PID-8: sex
+	 * - PID-13: home phone
+	 * - PID-14 (business phone) is sourced elsewhere (getWorkPhone)
+	 *
+	 * Other PID subfields are emitted as empty placeholders to preserve field positions.
+	 *
+	 * @param sb  destination StringBuilder to which the PID segment is appended
+	 * @param lab source Lab whose identifiers and demographics populate the PID fields
+	 */
 	private static void buildPID(StringBuilder sb, Lab lab) {
 		String accession = safeWithDefault(lab.getAccession(), "LAB" + System.currentTimeMillis());
 
@@ -106,7 +132,18 @@ public class GDMLLabHL7Generator {
 			.append("\n");
 	}
 
-	// ZDR segment for CC doctors - field 4 has components: givenName^familyName^middleName
+	/**
+	 * Append ZDR segments for each CC (carbon-copy) doctor listed on the Lab to the provided StringBuilder.
+	 *
+	 * <p>If Lab.getCc() contains a semicolon-separated list, each non-empty entry is parsed into name components
+	 * and emitted as a ZDR line in the form:
+	 * ZDR||||{givenName}^{familyName}^{middleName}
+	 *
+	 * <p>The parser ensures a givenName value is present so downstream consumers recognize the CC entry.
+	 *
+	 * @param sb  the StringBuilder to receive the ZDR segment lines
+	 * @param lab the Lab whose CC field is read for doctor entries
+	 */
 	private static void buildZDRSegments(StringBuilder sb, Lab lab) {
 		if (lab.getCc() != null && !lab.getCc().isEmpty()) {
 			String[] ccDocs = lab.getCc().split(";");
@@ -131,7 +168,19 @@ public class GDMLLabHL7Generator {
 	// OBR with proper XCN format for ordering provider (field 16)
 	// Provider XCN format: ID^FamilyName^GivenName^Middle^Suffix^Prefix^Degree
 	// Handler reads: Prefix + GivenName + Middle + FamilyName
-	// Example: 045717^NAMINI^P.^^^^^  would display as "P. NAMINI"
+	/**
+	 * Appends an OBR segment describing the ordered test and ordering provider to the provided StringBuilder.
+	 *
+	 * The segment is constructed from the first LabTest in the Lab:
+	 * - Uses the test's date/time (short format) for OBR date/time fields.
+	 * - Uses the test's code and name (defaults to "253" and "LABORATORY" if absent).
+	 * - Sets OBR fields required by GDML conventions and includes fixed placeholders for unused fields.
+	 * - Populates OBR-16 (Ordering Provider) in XCN format using lab.getBillingNo(), provider last name, and provider first name.
+	 * The appended segment ends with a newline.
+	 *
+	 * @param sb  StringBuilder to which the OBR segment is appended
+	 * @param lab Lab containing the tests and provider/billing information used to populate the segment
+	 */
 	private static void buildOBR(StringBuilder sb, Lab lab) {
 		LabTest firstTest = lab.getTests().get(0);
 		String testDateTime = formatShortDateTime(firstTest.getDate());
@@ -159,7 +208,16 @@ public class GDMLLabHL7Generator {
 	// OBX|1|ST|253&21^GLUCOSE|1|NEG|mmol/L|-NEG^NEGATIVE (mmol/L)|N||F||||||
 	// Fields: 1=setId, 2=type, 3=identifier, 4=subId, 5=value, 6=units, 7=refRange,
 	//         8=abnormalFlag, 9=probability, 10=natureOfAbnormal, 11=resultStatus,
-	//         12=responsibleObserver, 13=observationMethod(BLOCKED goes here per handler line 937)
+	/**
+	 * Appends OBX segments (and optional NTE notes) for every LabTest in the provided Lab to the given StringBuilder.
+	 *
+	 * For each test this method computes a GDML-formatted reference range, normalizes the HL7 value type
+	 * (converting "FT" to "ST"), builds an OBX identifier (falling back to the first test's code when a test code
+	 * is missing), writes an OBX with a sequential set ID starting at 1, and appends an NTE segment when notes are present.
+	 *
+	 * @param sb  the StringBuilder to which OBX and NTE segments will be appended
+	 * @param lab the Lab whose LabTest entries will be rendered as OBX (the first LabTest's code is used as the default code when a test has none)
+	 */
 	private static void buildOBXSegments(StringBuilder sb, Lab lab) {
 		LabTest firstTest = lab.getTests().get(0);
 		String firstTestCode = safeWithDefault(firstTest.getCode(), "253");
@@ -181,11 +239,38 @@ public class GDMLLabHL7Generator {
 		}
 	}
 
+	/**
+	 * Builds the OBX-3 identifier for a LabTest using GDML conventions.
+	 *
+	 * The identifier is formatted as "{code}&{numericComponent}^{NAME}", where `code` is
+	 * the test's code or `defaultCode` when the test code is absent, `numericComponent` is
+	 * 20 plus `testCounter`, and `NAME` is the test name in uppercase.
+	 *
+	 * @param test the LabTest to build an identifier for
+	 * @param defaultCode fallback code to use when the test has no code
+	 * @param testCounter sequence number used to compute the numeric component (added to 20)
+	 * @return the OBX-3 identifier string in the form "{code}&{20 + testCounter}^{UPPERCASE(test name)}"
+	 */
 	private static String buildObxIdentifier(LabTest test, String defaultCode, int testCounter) {
 		String code = safeWithDefault(test.getCode(), defaultCode);
 		return code + "&" + (20 + testCounter) + "^" + safeUpper(test.getName());
 	}
 
+	/**
+	 * Appends a single OBX segment for the given LabTest to the provided StringBuilder.
+	 *
+	 * The appended OBX sets OBX-1 to the provided set ID, OBX-2 to the value type, OBX-3 to the identifier,
+	 * OBX-4 to "1", OBX-5 to the test value, OBX-6 to the unit, OBX-7 to the reference range, OBX-8 to the test flag
+	 * (defaults to "N"), OBX-11 to the test status (defaults to "F"), OBX-13 to the blocked status, and leaves other
+	 * fields as empty placeholders; the segment is terminated with a newline.
+	 *
+	 * @param sb the StringBuilder to append the OBX segment to
+	 * @param testCounter the sequence number to use for OBX-1 (set ID)
+	 * @param valueType the HL7 value type for OBX-2 (e.g., "ST")
+	 * @param identifier the OBX-3 identifier (code and display)
+	 * @param test the LabTest providing value, unit, flags, status, and blocked status
+	 * @param refRange the formatted reference range to place in OBX-7
+	 */
 	private static void appendObx(StringBuilder sb, int testCounter, String valueType, String identifier, LabTest test, String refRange) {
 		sb.append("OBX|").append(testCounter).append("|") // OBX-1
 			.append(valueType).append("|") // OBX-2
@@ -205,13 +290,31 @@ public class GDMLLabHL7Generator {
 			.append("|\n"); // OBX-16
 	}
 
-	// NTE format: NTE|||comment
+	/**
+	 * Appends an NTE segment containing the test notes to the given StringBuilder if notes are present.
+	 *
+	 * The segment is formatted as: NTE|||{notes}\n. If the test has no notes (null or empty), nothing is appended.
+	 *
+	 * @param sb the StringBuilder to append the NTE segment to
+	 * @param test the LabTest whose notes will be written into the NTE segment
+	 */
 	private static void appendNteIfPresent(StringBuilder sb, LabTest test) {
 		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
 			sb.append("NTE|||").append(test.getNotes()).append("\n");
 		}
 	}
 
+	/**
+	 * Produce a GDML-formatted reference range string for a LabTest.
+	 *
+	 * <p>When both low and high numeric bounds are available returns
+	 * "low-high^low - high". If only a textual range is available and contains
+	 * " - ", attempts to convert it to "low-high^text"; otherwise returns the
+	 * text verbatim. Returns an empty string when no reference information exists.
+	 *
+	 * @param test the LabTest containing reference range information
+	 * @return the GDML-formatted reference range, or an empty string if none is available
+	 */
 	private static String buildGDMLReferenceRange(LabTest test) {
 		if (test.getRefRangeLow() != null && !test.getRefRangeLow().isEmpty()
 				&& test.getRefRangeHigh() != null && !test.getRefRangeHigh().isEmpty()) {
@@ -239,6 +342,12 @@ public class GDMLLabHL7Generator {
 		return "";
 	}
 
+	/**
+	 * Normalize an OBX value type by converting `"FT"` to `"ST"` and falling back to `"ST"` when the input is null.
+	 *
+	 * @param valueType the raw value type (may be null)
+	 * @return `"ST"` if `valueType` equals `"FT"` or is null, otherwise returns `valueType`
+	 */
 	private static String normalizeValueType(String valueType) {
 		return "FT".equals(valueType) ? "ST" : safeWithDefault(valueType, "ST");
 	}

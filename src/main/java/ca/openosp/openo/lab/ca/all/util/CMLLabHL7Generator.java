@@ -33,21 +33,27 @@ import ca.openosp.openo.commn.model.LabTest;
 import static ca.openosp.openo.lab.ca.all.util.Hl7GeneratorUtil.*;
 
 /**
- * Utility class for generating CML (Calgary Medical Laboratory) format HL7 messages.
+ * Utility class for generating CML format HL7 messages.
  *
  * @since 2026-01-12
  */
 public class CMLLabHL7Generator {
 
+	/**
+	 * Prevents instantiation of this utility class.
+	 */
 	private CMLLabHL7Generator() {
 		// Private constructor to prevent instantiation
 	}
 
 	/**
-	 * Generates CML format HL7 message from Lab object.
+	 * Builds a complete CML HL7 message from the provided Lab data.
 	 *
-	 * @param lab Lab object containing patient and test information
-	 * @return String containing HL7 formatted message
+	 * The message includes MSH, PID, ORC, OBR and OBX (with optional NTE) segments constructed from
+	 * the patient, order and test information contained in the Lab object.
+	 *
+	 * @param lab the Lab instance containing patient demographics, ordering information, and tests
+	 * @return the assembled HL7 message as a string
 	 */
 	public static String generate(Lab lab) {
 		StringBuilder sb = new StringBuilder();
@@ -63,6 +69,14 @@ public class CMLLabHL7Generator {
 		return sb.toString();
 	}
 
+	/**
+	 * Appends a CML-format HL7 MSH header segment to the provided StringBuilder.
+	 *
+	 * The segment includes sending/receiving application and facility, message datetime,
+	 * message type (ORU^R01), a control ID derived from the timestamp, and HL7 version 2.3 fields.
+	 *
+	 * @param sb the StringBuilder to append the MSH segment to
+	 */
 	private static void buildMSH(StringBuilder sb) {
 		String timestamp = currentDateTime();
 		sb.append("MSH|^~\\&|CML|CML|OSCAR|OSCAR|").append(timestamp)
@@ -70,6 +84,15 @@ public class CMLLabHL7Generator {
 			.append("|P|2.3|||ER|AL\n");
 	}
 
+	/**
+	 * Appends a PID (Patient Identification) HL7 segment for the given Lab's patient to the provided StringBuilder.
+	 *
+	 * The segment includes the patient's HIN, last and first name, date of birth, sex, phone number,
+	 * and an accession-based identifier placed at the segment end.
+	 *
+	 * @param sb  the StringBuilder to which the PID segment will be appended
+	 * @param lab the Lab containing patient demographic fields used to populate the PID segment
+	 */
 	private static void buildPID(StringBuilder sb, Lab lab) {
 		String hin = safe(lab.getHin());
 		sb.append("PID||||").append(hin)
@@ -79,6 +102,16 @@ public class CMLLabHL7Generator {
 			.append("||||||X").append(hin).append("\n");
 	}
 
+	/**
+	 * Appends an ORC (Common Order) segment to the provided StringBuilder.
+	 *
+	 * The segment contains the accession, billing number, ordering provider name
+	 * (last name ^ first name) and the order date taken from the first test;
+	 * the segment is terminated with a newline.
+	 *
+	 * @param sb  the StringBuilder to which the ORC segment will be appended
+	 * @param lab the Lab whose accession, billing, provider and first-test date are used
+	 */
 	private static void buildORC(StringBuilder sb, Lab lab) {
 		String firstTestDate = formatDateTime(lab.getTests().get(0).getDate());
 		sb.append("ORC|RE|").append(safe(lab.getAccession()))
@@ -88,6 +121,16 @@ public class CMLLabHL7Generator {
 			.append("|||").append(firstTestDate).append("\n");
 	}
 
+	/**
+	 * Builds and appends the OBR (Observation Request) segment for the given lab to the provided StringBuilder.
+	 *
+	 * The segment includes the lab request date, the first test date (from the first test in lab.getTests()),
+	 * billing number, ordering provider names, and the compiled CC doctor string. The completed OBR line
+	 * is appended to `sb` and terminated with a newline.
+	 *
+	 * @param sb  the StringBuilder to which the OBR segment will be appended
+	 * @param lab the Lab object providing labReqDate, the first test's date, billingNo, provider names, and CC doctors
+	 */
 	private static void buildOBR(StringBuilder sb, Lab lab) {
 		String labReqDate = formatDateTime(lab.getLabReqDate());
 		String firstTestDate = formatDateTime(lab.getTests().get(0).getDate());
@@ -105,6 +148,12 @@ public class CMLLabHL7Generator {
 			.append("||LAB|F|||").append(ccString).append("\n");
 	}
 
+	/**
+	 * Appends OBX observation segments and associated NTE note segments for each test in the given Lab to the provided StringBuilder.
+	 *
+	 * @param sb  the StringBuilder to append HL7 OBX and NTE segments to
+	 * @param lab the Lab whose tests will be converted into OBX (and optional NTE) segments
+	 */
 	private static void buildOBXSegments(StringBuilder sb, Lab lab) {
 		int testNo = 1;
 		for (LabTest test : lab.getTests()) {
@@ -114,6 +163,16 @@ public class CMLLabHL7Generator {
 		}
 	}
 
+	/**
+	 * Appends an OBX segment for a single lab test to the provided StringBuilder.
+	 *
+	 * The appended segment encodes the test's identifying code, name, description,
+	 * result value, units, reference range, flag, status, blocked status, and test date/time.
+	 *
+	 * @param sb     the StringBuilder to receive the OBX segment
+	 * @param test   the LabTest whose fields will be encoded into the OBX segment
+	 * @param testNo the sequential OBX set ID for this test (e.g., 1 for the first test)
+	 */
 	private static void appendObxSegment(StringBuilder sb, LabTest test, int testNo) {
 		String refRange = buildReferenceRange(test);
 		sb.append("OBX|").append(testNo).append("|")
@@ -131,6 +190,14 @@ public class CMLLabHL7Generator {
 		.append("|").append(formatDateTime(test.getDate())).append("\n");
 	}
 
+	/**
+	 * Appends an HL7 NTE segment for the given test when the test contains notes.
+	 *
+	 * The appended segment has the format: `NTE|1|L|NOTE: <notes>\n`.
+	 *
+	 * @param sb   the StringBuilder to append the NTE segment to
+	 * @param test the LabTest whose notes will be added if present and non-empty
+	 */
 	private static void appendNteIfPresent(StringBuilder sb, LabTest test) {
 		if (test.getNotes() != null && !test.getNotes().isEmpty()) {
 			sb.append("NTE|1|L|NOTE: ").append(test.getNotes()).append("\n");
