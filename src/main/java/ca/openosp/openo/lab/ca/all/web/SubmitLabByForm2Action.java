@@ -201,18 +201,19 @@ public class SubmitLabByForm2Action extends ActionSupport {
 	private String generateHL7(Lab lab) {
 		// Generate appropriate HL7 format based on lab type
 		String labType = lab.getLabName();
-		if (labType != null) {
-			labType = labType.trim().toUpperCase();
-		}
+		labType = labType == null ? "" : labType.trim().toUpperCase();
 		logger.info("Generating HL7 for lab type: [" + labType + "]");
 
-		if ("MDS".equals(labType)) {
-			return MDSLabHL7Generator.generate(lab);
-		} else if ("GDML".equals(labType)) {
-			return GDMLLabHL7Generator.generate(lab);
-		} else {
-			// Default to CML for null, empty, or "CML"
-			return CMLLabHL7Generator.generate(lab);
+		switch (labType) {
+			case "MDS":
+				return MDSLabHL7Generator.generate(lab);
+			case "GDML":
+				return GDMLLabHL7Generator.generate(lab);
+			case "CML":
+				return CMLLabHL7Generator.generate(lab);
+			default:
+				logger.error("Unsupported lab type: [" + labType + "]; defaulting to CML.");
+				return CMLLabHL7Generator.generate(lab);
 		}
 	}
 }
