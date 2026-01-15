@@ -90,6 +90,9 @@ public final class Hl7GeneratorUtil {
     }
 
     public static NameComponents parseName(String fullName) {
+        if (fullName == null) {
+            return new NameComponents("", "");
+        }
         String cleanName = fullName.replaceAll("(?i)^DR\\.?\\s*", "").trim();
         String[] parts = cleanName.split("\\s+");
 
