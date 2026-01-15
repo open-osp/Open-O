@@ -116,7 +116,7 @@ public final class RxWriteScript2Action extends ActionSupport {
             default -> null;
         };
 
-        if (dispatchResult != null) {
+        if (dispatchResult != null || (method != null && !method.isEmpty())) {
             return dispatchResult;
         }
 
