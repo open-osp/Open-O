@@ -54,9 +54,11 @@ public class CMLLabHL7Generator {
 
 		buildMSH(sb);
 		buildPID(sb, lab);
-		buildORC(sb, lab);
-		buildOBR(sb, lab);
-		buildOBXSegments(sb, lab);
+		if (lab.getTests() != null && !lab.getTests().isEmpty()) {
+			buildORC(sb, lab);
+			buildOBR(sb, lab);
+			buildOBXSegments(sb, lab);
+		}
 
 		return sb.toString();
 	}
