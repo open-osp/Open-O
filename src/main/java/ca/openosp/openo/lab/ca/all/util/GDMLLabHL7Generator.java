@@ -55,8 +55,10 @@ public class GDMLLabHL7Generator {
 		buildMSH(sb);
 		buildPID(sb, lab);
 		buildZDRSegments(sb, lab);
-		buildOBR(sb, lab);
-		buildOBXSegments(sb, lab);
+		if (lab.getTests() != null && !lab.getTests().isEmpty()) {
+			buildOBR(sb, lab);
+			buildOBXSegments(sb, lab);
+		}
 
 		return sb.toString();
 	}
