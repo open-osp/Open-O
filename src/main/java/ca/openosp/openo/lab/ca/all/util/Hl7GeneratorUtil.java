@@ -125,6 +125,9 @@ public final class Hl7GeneratorUtil {
 	}
 
 	public static LocalDate toLocalDate(Date date) {
+		if (date == null) {
+			return null;
+		}
 		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
 
