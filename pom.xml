@@ -159,7 +159,7 @@
         <dependency>
             <groupId>net.bull.javamelody</groupId>
             <artifactId>javamelody-core</artifactId>
-            <version>1.99.3</version>
+            <version>1.99.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
