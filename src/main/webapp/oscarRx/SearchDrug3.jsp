@@ -1498,10 +1498,12 @@ function renderRxStage() {
         var randomId=Math.round(Math.random()*1000000);
         var data="favoriteId="+favoriteId+"&randomId="+randomId;
         var url= ctx + "/oscarRx/useFavorite.do?parameterValue=useFav2";
-        new Ajax.Updater('rxText',url, {method:'get',parameters:data,asynchronous:true,evalScripts:true,insertion: Insertion.Bottom});
-	        skipParseInstr = true;
-	        renderRxStage();
-
+        new Ajax.Updater('rxText',url, {method:'get',parameters:data,asynchronous:true,evalScripts:true,insertion: Insertion.Bottom,
+            onSuccess: function(transport) {
+                skipParseInstr = true;
+                renderRxStage();
+            }
+        });
     }
 
     function calculateRxData(randomId){
