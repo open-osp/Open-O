@@ -28,6 +28,7 @@
 
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscarProp" %>
 <%@ page import="ca.openosp.openo.rx.data.*, ca.openosp.openo.commn.model.PharmacyInfo" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@page import="java.util.List" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
@@ -189,13 +190,11 @@
                                             %>
                                             <tr>
                                                 <td width=20% valign="top"><a <%= styleColor%>
-                                                        href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%= drug.getRegionalIdentifier()
-                                            %>&cn=<%= response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>">
+                                                        href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%= Encode.forUriComponent(drug.getRegionalIdentifier())%>&cn=<%= Encode.forUriComponent(drug.getCustomName())%>&bn=<%=Encode.forUriComponent(drug.getBrandName())%>">
                                                     <%= drug.getRxDate() %>
                                                 </a></td>
                                                 <td width=100%><a <%= styleColor%>
-                                                        href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%= drug.getRegionalIdentifier()
-                                            %>&cn=<%= response.encodeURL(drug.getCustomName())%>&bn=<%=response.encodeURL(drug.getBrandName())%>">
+                                                        href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%= Encode.forUriComponent(drug.getRegionalIdentifier())%>&cn=<%= Encode.forUriComponent(drug.getCustomName())%>&bn=<%=Encode.forUriComponent(drug.getBrandName())%>">
                                                     <%= drug.getFullOutLine().replaceAll(";", " ") %>
                                                 </a></td>
                                             </tr>

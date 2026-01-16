@@ -363,7 +363,7 @@
                     name = name.toUpperCase();
                     confirm("Adding custom allergy: " + name);
                     sendSearchRequest("${ pageContext.servletContext.contextPath }/oscarRx/addReaction2.do",
-                        "ID=0&type=0&name=" + name, "#addAllergyDialogue");
+                        "ID=0&type=0&name=" + encodeURIComponent(name), "#addAllergyDialogue");
                     $("input[value='Custom Allergy']").addClass("highLightButton");
                 }
             }

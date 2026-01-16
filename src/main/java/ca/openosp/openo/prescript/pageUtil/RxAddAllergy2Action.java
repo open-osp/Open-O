@@ -132,15 +132,16 @@ public final class RxAddAllergy2Action extends ActionSupport {
         allergy.setDemographicNo(patient.getDemographicNo());
         allergy.setArchived(false);
 
+        // Add the new allergy (whether new or modified)
+        patient.addAllergy(RxUtil.Today(), allergy);
+
         String ip = request.getRemoteAddr();
         LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_ALLERGY, "" + allergy.getAllergyId(), ip, "" + patient.getDemographicNo(), allergy.getAuditString());
 
+        // Archive old allergy if modifying an existing one
         if (allergyToArchive != null && !allergyToArchive.isEmpty() && !"null".equals(allergyToArchive)) {
             patient.deleteAllergy(Integer.parseInt(allergyToArchive));
             LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ARCHIVE, LogConst.CON_ALLERGY, "" + allergyToArchive, ip, "" + patient.getDemographicNo(), null);
-		    } else {
-			    patient.addAllergy(RxUtil.Today(), allergy);
-			    LogAction.addLog((String) request.getSession().getAttribute("user"), LogConst.ADD, LogConst.CON_ALLERGY, allergy.getAllergyId() + "", ip, "" + patient.getDemographicNo(), allergy.getAuditString());
         }
 
         return SUCCESS;

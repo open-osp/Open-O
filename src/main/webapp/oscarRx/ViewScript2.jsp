@@ -674,7 +674,7 @@ function setDigitalSignatureToRx(digitalSignatureId, scriptId) {
                                         }
 
                                         function ShowDrugInfo(drug) {
-                                            window.open('<c:out value="${ctx}"/>/oscarRx/drugInfo.do?GN=' + escape(drug), "_blank",
+                                            window.open('<c:out value="${ctx}"/>/oscarRx/drugInfo.do?GN=' + encodeURIComponent(drug), "_blank",
                                                 "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
                                         }
 

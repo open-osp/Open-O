@@ -32,6 +32,7 @@
 <%@ page
         import="ca.openosp.openo.rx.data.*,ca.openosp.openo.demographic.data.DemographicData,ca.openosp.OscarProperties,ca.openosp.openo.log.*" %>
 <%@ page import="ca.openosp.openo.commn.model.*" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@page import="java.util.Enumeration" %>
 <%@page import="ca.openosp.openo.commn.model.ProviderPreference" %>
 <%@page import="ca.openosp.openo.web.admin.ProviderPreferencesUIBean" %>
@@ -147,14 +148,14 @@
                 if (document.RxSearchDrugForm.searchString.value.length == 0) {
                     popupDrugOfChoice(720, 700, 'http://doc.oscartools.org/')
                 } else {
-                    var docURL = "http://doc.oscartools.org/search?SearchableText=" + document.RxSearchDrugForm.searchString.value;
+                    var docURL = "http://doc.oscartools.org/search?SearchableText=" + encodeURIComponent(document.RxSearchDrugForm.searchString.value);
                     popupDrugOfChoice(720, 700, docURL);
                 }
             }
 
 
             function goOMD() {
-                var docURL = "<%= request.getContextPath() %>/common/OntarioMDRedirect.jsp?keyword=eCPS&params=" + document.RxSearchDrugForm.searchString.value;
+                var docURL = "<%= request.getContextPath() %>/common/OntarioMDRedirect.jsp?keyword=eCPS&params=" + encodeURIComponent(document.RxSearchDrugForm.searchString.value);
                 popupDrugOfChoice(743, 817, docURL);
             }
 
@@ -178,7 +179,7 @@
                     + '\n  *  Drug-Drug Interaction Information'
                     + '\n  *  Drug Information'
                     + '\n\nAre you sure you wish to use this feature?') == true) {
-                    window.location.href = '<%= request.getContextPath() %>/oscarRx/chooseDrug.do?demographicNo=<%=response.encodeURL(Integer.toString(bean.getDemographicNo()))%>';
+                    window.location.href = '<%= request.getContextPath() %>/oscarRx/chooseDrug.do?demographicNo=<%=Encode.forUriComponent(Integer.toString(bean.getDemographicNo()))%>';
                 }
             }
 
@@ -407,10 +408,10 @@
                                                 %>
                                                 <tr>
                                                     <td valign="top"><a <%=styleColor%>
-                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
+                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=Encode.forUriComponent(prescriptDrug.getRegionalIdentifier())%>&cn=<%=Encode.forUriComponent(prescriptDrug.getCustomName())%>&bn=<%=Encode.forUriComponent(prescriptDrug.getBrandName())%>"><%=prescriptDrug.getRxDate()%>
                                                     </a></td>
                                                     <td><a <%=styleColor%>
-                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=prescriptDrug.getRegionalIdentifier()%>&cn=<%=response.encodeURL(prescriptDrug.getCustomName())%>&bn=<%=response.encodeURL(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
+                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<%=Encode.forUriComponent(prescriptDrug.getRegionalIdentifier())%>&cn=<%=Encode.forUriComponent(prescriptDrug.getCustomName())%>&bn=<%=Encode.forUriComponent(prescriptDrug.getBrandName())%>"><%=RxPrescriptionData.getFullOutLine(prescriptDrug.getSpecial()).replaceAll(";", " ")%>
                                                     </a></td>
                                                     <td width="100px" align="center">
                                                         <%
@@ -650,9 +651,9 @@
                         </tr>
                         <tr>
                             <td>
-                                <script language="javascript">
+                                <script type="text/javascript">
                                     function ShowDrugInfo(GN) {
-                                        window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(GN), "_blank",
+                                        window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + encodeURIComponent(GN), "_blank",
                                             "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
                                     }
                                 </script>

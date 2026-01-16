@@ -106,9 +106,9 @@
 
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
-        <script language="javascript">
+        <script type="text/javascript">
             function ShowDrugInfo(gn) {
-                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(gn), "_blank",
+                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + encodeURIComponent(gn), "_blank",
                     "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
             }
         </script>
@@ -143,7 +143,7 @@
                     var url = '<%=request.getContextPath()%>' + "/oscarRx/addFavorite2.do?parameterValue=addFav2";
                     oscarLog(url);
                     favoriteName = encodeURIComponent(favoriteName);
-                    var data = "drugId=" + drugId + "&favoriteName=" + favoriteName;
+                    var data = "drugId=" + encodeURIComponent(drugId) + "&favoriteName=" + favoriteName;
                     new Ajax.Request(url, {
                         method: 'get', parameters: data, onSuccess: function (transport) {
                             window.location.href = "<c:out value="${ctx}"/>" + "/oscarRx/StaticScript2.jsp?regionalIdentifier=" + '<%=regionalIdentifier%>' + "&cn=" + '<%=cn%>';
@@ -154,11 +154,11 @@
 
             //represcribe a drug
             function reRxDrugSearch3(reRxDrugId) {
-                var dataUpdateId = "reRxDrugId=" + reRxDrugId + "&action=addToReRxDrugIdList&rand=" + Math.floor(Math.random() * 10001);
+                var dataUpdateId = "reRxDrugId=" + encodeURIComponent(reRxDrugId) + "&action=addToReRxDrugIdList&rand=" + Math.floor(Math.random() * 10001);
                 var urlUpdateId = "<c:out value="${ctx}"/>" + "/oscarRx/WriteScript.do?parameterValue=updateReRxDrug";
                 new Ajax.Request(urlUpdateId, {method: 'get', parameters: dataUpdateId});
 
-                var data = "drugId=" + reRxDrugId;
+                var data = "drugId=" + encodeURIComponent(reRxDrugId);
                 var url = "<c:out value="${ctx}"/>" + "/oscarRx/rePrescribe2.do?method=saveReRxDrugIdToStash";
                 new Ajax.Request(url, {
                     method: 'post', parameters: data, asynchronous: false, onSuccess: function (transport) {
