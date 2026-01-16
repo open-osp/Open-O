@@ -866,11 +866,11 @@
   }, {
     "groupId" : "com.sun.xml.ws",
     "artifactId" : "jaxws-ri",
-    "version" : "2.3.3",
+    "version" : "2.3.7",
     "scope" : "compile",
     "type" : "pom",
     "optional" : false,
-    "integrity" : "sha512:NOW4HD0qS0yKCsqyRv5r7e9/imkoOn+p/vpXhifQ61+VsjTI9ZnbWNVkuZtIe0hHMTjC/aX5JKB9gIPZcLfy9g=="
+    "integrity" : "sha512:0OtTclZTpDNaWMzTQLpycU/yA1pxzP1yd+dOMYdy2jpgBVSg6do1VFlJd5M60tS1CsaGlrz4VaLuMQlxCTotlQ=="
   }, {
     "groupId" : "com.sun.xml.ws",
     "artifactId" : "jaxws-rt",
