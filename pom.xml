@@ -418,7 +418,7 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-ftp</artifactId>
-            <version>5.3.10.RELEASE</version>
+            <version>5.5.20</version>
             <exclusions>
                 <!-- Excluded this low version to avoid triggering security issue -->
                 <exclusion>
@@ -430,7 +430,7 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
-            <version>5.3.10.RELEASE</version>
+            <version>5.5.20</version>
         </dependency>
         <!-- throws 10 compilation errors when removed/commented -->
         <dependency>
