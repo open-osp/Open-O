@@ -25,7 +25,7 @@ ARG DOCS_DEST="/var/lib/OscarDocument/oscar/document"
 
 WORKDIR /workspace
 
-# Install required packages and clean up apt lists
+# Install required packages including Playwright browser dependencies and clean up apt lists
 RUN apt-get update && apt-get install -y --no-install-recommends \
     dos2unix curl git wget apt-transport-https ca-certificates gnupg lsb-release \
     libjpeg-turbo8 \
@@ -35,6 +35,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nano openssh-client vim-tiny \
     python3 python3-pip \
     inotify-tools \
+    fonts-roboto fonts-liberation fonts-noto-color-emoji \
+    libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libdbus-1-3 \
+    libxkbcommon0 libatspi2.0-0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+    libgbm1 libasound2 libpango-1.0-0 libcairo2 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (latest LTS)
@@ -61,9 +65,15 @@ RUN which npm && npm install -g @anthropic-ai/claude-code @docusaurus/core @docu
 # Install Gemini CLI.
 RUN npm install -g @google/gemini-cli
 
-# Install Playwright and Playwright MCP server
-RUN npm install -g @executeautomation/playwright-mcp-server playwright && \
-    npx playwright install chromium firefox --with-deps
+# Install Playwright globally first to ensure it's available
+RUN npm install -g playwright@latest && \
+    echo "✅ Playwright CLI installed: $(npx playwright --version)"
+
+# Install all Playwright browsers (Chromium, Chrome, Firefox) with system dependencies
+# Note: --with-deps installs required system libraries for each browser
+# This runs during image build, so browsers are baked into the image
+RUN npx playwright install --with-deps chromium chrome firefox && \
+    echo "✅ Playwright browsers installed (Chromium, Chrome, Firefox)"
 
 # Install pipx and Aider AI coding assistant
 RUN apt-get update && apt-get install -y pipx && \
