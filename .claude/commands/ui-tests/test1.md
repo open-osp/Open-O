@@ -15,10 +15,11 @@ allowed-tools:
   - Bash(cp .playwright-mcp/ui-test-runs/* ui-test-runs/*)
   - Bash(ls ui-test-runs/*)
   - Bash(wc *)
-  - Bash(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/oscar/index.jsp)
+  - Bash(curl * http://localhost:8080/*)
   - Bash(mysql -h db -uroot -ppassword oscar *)
   - Bash(mysql -h db -uroot -ppassword oscar -e *)
-  - Bash(date +%Y%m%d-%H%M%S-%3N)
+  - Bash(mysql * oscar * 2>&1 | tail -1)
+  - Bash(date *)
   - Write(path:ui-test-runs/**)
 model: claude-sonnet-4-5-20250929
 ---
@@ -34,12 +35,15 @@ Automated execution of Test 1 (login + patient demographics) using Playwright MC
 
 ## Pre-Flight Checks
 
-Verify application readiness before starting test:
+Before starting, verify application and database are ready by running these checks:
 
-- Application: !`curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/oscar/index.jsp`
-- Database: !`mysql -h db -uroot -ppassword oscar -e "SELECT user_name FROM security WHERE user_name='openodoc' LIMIT 1;" 2>&1 | tail -1`
+1. **Application Check**: Run `curl -sI http://localhost:8080/oscar/index.jsp | head -1`
+   - Expected: `HTTP/1.1 200` (if you get connection refused or 000, the app server isn't running)
 
-**Expected**: Application returns 200, database shows `openodoc`
+2. **Database Check**: Run `mysql -h db -uroot -ppassword oscar -e "SELECT user_name FROM security WHERE user_name='openodoc' LIMIT 1;"`
+   - Expected: Shows `openodoc` user exists
+
+**If checks fail**: Run `server start` to start Tomcat, or check `server log` for errors.
 
 ## Test Execution Instructions
 

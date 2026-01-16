@@ -8,7 +8,9 @@
         "--no-sandbox",
         "--headless",
         "--browser",
-        "chromium"
+        "chromium",
+        "--executable-path",
+        "/root/.cache/ms-playwright/chromium-1200/chrome-linux64/chrome"
       ],
       "env": {
         "PW_TEST_SCREENSHOT_NO_FONTS_READY": "1"
