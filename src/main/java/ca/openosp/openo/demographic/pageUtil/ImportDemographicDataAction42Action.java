@@ -300,6 +300,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         else if (filetype.contains("zip") && Files.exists(directory)) {
             // unzip into parent directory
             Path rootDirectory = unzipFile(directory);
+            System.out.println("====== ZIP EXTRACTION DEBUG ======");
+            System.out.println("ZIP extracted to: " + rootDirectory);
+            System.out.println("Contents of root directory:");
+            try (DirectoryStream<Path> contents = Files.newDirectoryStream(rootDirectory)) {
+                for (Path item : contents) {
+                    System.out.println("  - " + item.getFileName() + " (isDirectory: " + Files.isDirectory(item) + ", isFile: " + Files.isRegularFile(item) + ")");
+                }
+            } catch (IOException e) {
+                System.out.println("Error listing directory contents: " + e.getMessage());
+            }
+            System.out.println("==================================");
             // process starting at parent directory.
             processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, request, this.getTimeshiftInDays(), students, courseId);
         }
@@ -359,18 +370,24 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
                                             HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws IOException {
+        System.out.println("====== PROCESSING DIRECTORY ======");
+        System.out.println("Processing directory: " + fileDirectory);
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory)) {
             for (Path stream : directoryStream) {
+                System.out.println("Found item: " + stream.getFileName() + " (isDirectory: " + Files.isDirectory(stream) + ")");
 
                 if (Files.isDirectory(stream)) {
                     // set the current directory globally. Other methods use it to retrieve relative files.
                     currentDirectory = stream.toAbsolutePath().toString();
+                    System.out.println("Set currentDirectory to: " + currentDirectory);
 
                     /* check for an XML file that matches the folder name (standard). It's best for performance
                      * to avoid hunting through the folders when not needed.
                      */
                     Path xmlFile = Paths.get(currentDirectory, stream.toFile().getName() + ".xml");
+                    System.out.println("Looking for XML file: " + xmlFile + " (exists: " + Files.exists(xmlFile) + ")");
                     if (Files.exists(xmlFile)) {
+                        System.out.println("Found matching XML file, processing: " + xmlFile);
                         processXmlFile(loggedInInfo, xmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                     }
 
@@ -378,20 +395,29 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                      * otherwise hunting for a valid xml file is required. There should only be 1.
                      */
                     else {
+                        System.out.println("Searching for XML files in directory: " + stream);
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
+                        System.out.println("Found " + possibleXmlFileList.size() + " XML file(s)");
                         for (Path possibleXmlFile : possibleXmlFileList) {
                             if (Files.exists(possibleXmlFile)) {
+                                System.out.println("Processing XML file: " + possibleXmlFile);
                                 processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                             }
                         }
                     }
+                } else if (Files.isRegularFile(stream)) {
+                    // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
+                    System.out.println("Skipping non-directory file: " + stream.getFileName());
                 } else {
                     warnings.add("Directory not found " + stream);
                 }
             }
         } catch (Exception e) {
+            System.out.println("ERROR in processXmlFilesInDirectory: " + e.getMessage());
+            logger.error("Error processing XML files in directory", e);
             throw new RuntimeException(e);
         }
+        System.out.println("====== END PROCESSING DIRECTORY ======");
     }
 
     /**
@@ -408,13 +434,30 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
                 String entryName = zipEntry.getName();
+                System.out.println("Processing ZIP entry: " + entryName + " (isDirectory: " + zipEntry.isDirectory() + ")");
 
-                // Validate the zip entry path using PathValidationUtils
-                File newFile;
+                // Security check: prevent path traversal attacks
+                if (entryName.contains("..")) {
+                    logger.error("Skipping potentially malicious zip entry with path traversal: " + entryName);
+                    zipEntry = zis.getNextEntry();
+                    continue;
+                }
+
+                // Create file path by resolving against target directory
+                File newFile = new File(targetDir, entryName);
+
+                // Validate that the resolved path is within the target directory
                 try {
-                    newFile = PathValidationUtils.validatePath(entryName, targetDir);
-                } catch (SecurityException e) {
-                    logger.error("Skipping potentially malicious zip entry: " + entryName);
+                    String canonicalTargetPath = targetDir.getCanonicalPath();
+                    String canonicalNewFilePath = newFile.getCanonicalPath();
+                    if (!canonicalNewFilePath.startsWith(canonicalTargetPath + File.separator) &&
+                        !canonicalNewFilePath.equals(canonicalTargetPath)) {
+                        logger.error("Skipping potentially malicious zip entry outside target directory: " + entryName);
+                        zipEntry = zis.getNextEntry();
+                        continue;
+                    }
+                } catch (IOException e) {
+                    logger.error("Error validating zip entry path: " + entryName, e);
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
@@ -423,6 +466,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
                         throw new IOException("Failed to create directory " + newFile);
                     }
+                    System.out.println("Created directory: " + newFile);
                 } else {
                     // fix for Windows-created archives
                     File parent = newFile.getParentFile();
@@ -437,8 +481,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                             fos.write(buffer, 0, len);
                         }
                     } catch (Exception e) {
-                        throw new IOException("Failed to create directory " + e);
+                        throw new IOException("Failed to write file: " + e.getMessage(), e);
                     }
+                    System.out.println("Extracted file: " + newFile);
                 }
                 zipEntry = zis.getNextEntry();
             }
@@ -2662,19 +2707,55 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                 f.write(b);
                                 f.close();
                             } else {
-                                String tmpDir = currentDirectory;
-                                //oscarProperties.getProperty("TMP_DIR");
-                                tmpDir = Util.fixDirName(tmpDir);
-                                String path3 = tmpDir + repR[i].getFilePath();
-                                if (!path3.endsWith(contentType)) {
-                                    path3 = path3 + contentType;
-                                }
-                                if (path3.indexOf("\\") != -1) {
-                                    path3 = path3.replace("\\", File.separator);
+                                // filePath is already declared at line 2617
+                                if (filePath == null || filePath.isEmpty()) {
+                                    err_data.add("Error! No file path for Report (" + (i + 1) + ")");
+                                    continue;
                                 }
 
-                                //FileUtils.copyFile(new File(tmpDir + repR[i].getFilePath().substring(repR[i].getFilePath().lastIndexOf("\\")+1)), new File(docDir + docFileName));
-                                FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
+                                // Normalize path separators to system separator
+                                String normalizedPath = filePath.replace("\\", File.separator).replace("/", File.separator);
+
+                                // Try multiple strategies to locate the file
+                                File sourceFile = null;
+
+                                // Strategy 1: File path relative to current directory
+                                File relativeFile = new File(currentDirectory, normalizedPath);
+                                if (relativeFile.exists()) {
+                                    sourceFile = relativeFile;
+                                } else {
+                                    // Strategy 2: Just the filename in current directory
+                                    String fileName = new File(normalizedPath).getName();
+                                    File fileInCurrentDir = new File(currentDirectory, fileName);
+                                    if (fileInCurrentDir.exists()) {
+                                        sourceFile = fileInCurrentDir;
+                                    } else {
+                                        // Strategy 3: Parent directory of current directory + relative path
+                                        File parentDir = new File(currentDirectory).getParentFile();
+                                        if (parentDir != null) {
+                                            File parentRelativeFile = new File(parentDir, normalizedPath);
+                                            if (parentRelativeFile.exists()) {
+                                                sourceFile = parentRelativeFile;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (sourceFile == null) {
+                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + "): " + filePath);
+                                    continue;
+                                }
+
+                                // Add extension if missing
+                                String sourcePath = sourceFile.getAbsolutePath();
+                                if (!sourcePath.endsWith(contentType)) {
+                                    File sourceWithExt = new File(sourcePath + contentType);
+                                    if (sourceWithExt.exists()) {
+                                        sourceFile = sourceWithExt;
+                                    }
+                                }
+
+                                FileUtils.copyFile(sourceFile, new File(docDir + docFileName));
                             }
 
                             if (repR[i].getClass1() != null) {
