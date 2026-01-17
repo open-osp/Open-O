@@ -1541,7 +1541,7 @@
   }, {
     "groupId" : "org.apache.axis2",
     "artifactId" : "axis2-adb",
-    "version" : "1.8.0",
+    "version" : "1.8.2",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
@@ -1549,7 +1549,7 @@
   }, {
     "groupId" : "org.apache.axis2",
     "artifactId" : "axis2-kernel",
-    "version" : "1.8.0",
+    "version" : "1.8.2",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
@@ -1557,7 +1557,7 @@
   }, {
     "groupId" : "org.apache.axis2",
     "artifactId" : "axis2-transport-http",
-    "version" : "1.8.0",
+    "version" : "1.8.2",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
@@ -1565,7 +1565,7 @@
   }, {
     "groupId" : "org.apache.axis2",
     "artifactId" : "axis2",
-    "version" : "1.8.0",
+    "version" : "1.8.2",
     "scope" : "compile",
     "type" : "pom",
     "optional" : false,

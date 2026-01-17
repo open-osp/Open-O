@@ -856,7 +856,7 @@
             <version>1.79</version>
         </dependency>
 
-        <!-- Added for axis2 1.8.0 -->
+        <!-- Added for axis2 1.8.2 -->
         <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
@@ -873,21 +873,21 @@
 
         <!-- AXIS2 (for OLIS) -->
         <!-- 
-            Updated to 1.8.0 by GitHub Dependabot suggestion,
+            Updated to 1.8.2 for Jakarta EE migration preparation,
             the higher version 2.0.0 will need when we migrate to jakarta 
         -->
         <!-- https://mvnrepository.com/artifact/org.apache.axis2/axis2 -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2</artifactId>
-            <version>1.8.0</version>
+            <version>1.8.2</version>
             <type>pom</type>
         </dependency>
         <!-- Detected as "Unused dependency" but don't remove it, caused 404 error after removing -->
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>1.8.0</version>
+            <version>1.8.2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.ws.commons.schema</groupId>
@@ -913,7 +913,7 @@
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-adb</artifactId>
-            <version>1.8.0</version>
+            <version>1.8.2</version>
         </dependency>
 
         <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
