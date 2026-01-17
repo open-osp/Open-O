@@ -1413,11 +1413,11 @@
   }, {
     "groupId" : "net.bull.javamelody",
     "artifactId" : "javamelody-core",
-    "version" : "1.99.3",
+    "version" : "1.99.4",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:nwUVMmSFnc5CCOiUbdf6rLpGbP5wwio/IZZ249bzLZmEYo1LqBMV64XDw5cRy5H0xw4pdAII2IsL02A1Zhjmpg=="
+    "integrity" : "sha512:LvVSp9EgdkKmX2VubGRWcplgXpfTYrzCopNOdGI3ksIUBZxht43g1RhvZvySo8c4JlVLe/iZh+DVL/nIgZsdIw=="
   }, {
     "groupId" : "net.bytebuddy",
     "artifactId" : "byte-buddy-agent",
