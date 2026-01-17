@@ -113,7 +113,7 @@ server log
 
 5. **Review Results**:
    ```bash
-   cat docs/smoke-tests/quick-test-1-results.md
+   cat docs/ui-tests/test-1/test-1-results.md
    ```
 
 ### Future: Automated Execution
@@ -189,7 +189,7 @@ Name: doctor openodoc
 | test-1-06 | Search results (FAKE-J) | Table with 10 matching patients |
 | test-1-07 | Demographic #1 | Complete patient record for FAKE-Jones |
 
-All screenshots saved to: `docs/smoke-tests/screenshots/`
+All screenshots saved to: `docs/ui-tests/test-1/screenshots/`
 
 ---
 
