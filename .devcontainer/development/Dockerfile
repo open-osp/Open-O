@@ -70,10 +70,11 @@ RUN npm install -g @google/gemini-cli
 RUN npm install -g playwright@1.40.0 && \
     echo "✅ Playwright CLI installed: $(npx playwright --version)"
 
-# Install all Playwright browsers (Chromium, Chrome, Firefox) with system dependencies
-# Note: --with-deps installs required system libraries for each browser
-# This runs during image build, so browsers are baked into the image
-RUN npx playwright install --with-deps chromium chrome firefox && \
+# Install all Playwright browsers (Chromium, Chrome, Firefox)
+# Note: System dependencies are already installed above with Ubuntu 24.04 t64 package names.
+# Do NOT use --with-deps as Playwright's dependency list contains deprecated package names
+# (e.g., libasound2 instead of libasound2t64) that don't exist in Ubuntu 24.04.
+RUN npx playwright install chromium chrome firefox && \
     echo "✅ Playwright browsers installed (Chromium, Chrome, Firefox)"
 
 # Install pipx and Aider AI coding assistant
