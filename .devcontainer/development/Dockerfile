@@ -67,7 +67,7 @@ RUN which npm && npm install -g @anthropic-ai/claude-code @docusaurus/core @docu
 RUN npm install -g @google/gemini-cli
 
 # Install Playwright globally first to ensure it's available
-RUN npm install -g playwright@latest && \
+RUN npm install -g playwright@1.40.0 && \
     echo "✅ Playwright CLI installed: $(npx playwright --version)"
 
 # Install all Playwright browsers (Chromium, Chrome, Firefox) with system dependencies
