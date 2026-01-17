@@ -79,7 +79,7 @@ jobs:
           mvn validate ${{ matrix.profile.maven-args }}
 
       - name: Submit ${{ matrix.profile.name }} dependency graph
-        uses: advanced-security/maven-dependency-submission-action@v5
+        uses: advanced-security/maven-dependency-submission-action@3a183dc11227df3dd6351cfffb472965b9265da1 # v5
         with:
           maven-args: '${{ matrix.profile.maven-args }}'
           # Unique correlator for each profile to avoid conflicts
