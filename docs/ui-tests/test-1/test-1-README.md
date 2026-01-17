@@ -274,10 +274,10 @@ netstat -tulpn | grep 8080
 
 ## Related Documentation
 
-- [Full Test Results](quick-test-1-results.md) - Detailed findings and screenshots
-- [Smoke Test Suite README](README.md) - Complete testing guide
-- [Implementation Summary](SUMMARY.md) - Technical implementation details
-- [Modern Test Framework](../modern-test-framework-complete.md) - JUnit 5 patterns
+- [Full Test Results](test-1-results.md) - Detailed findings and screenshots
+- [Smoke Test Suite README](../README.md) - Complete testing guide
+- [Implementation Summary](../SUMMARY.md) - Technical implementation details
+- [Modern Test Framework](../../test/modern-test-framework-complete.md) - JUnit 5 patterns
 
 ---
 
