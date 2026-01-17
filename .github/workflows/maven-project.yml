@@ -8,11 +8,8 @@
 # Usage:
 # - Triggered by pull requests targeting the following branches:
 #   - main
-#   - develop/alpaca
-#   - develop/bullfrog
-#   - develop/coyote
-#   - develop/dolphin
-#   - develop/dogfish
+#   - develop
+#   - experimental
 #
 # Key Jobs:
 # - build: 
@@ -35,11 +32,8 @@ on:
   pull_request:
     branches:
       - main
-      - develop/alpaca
-      - develop/bullfrog
-      - develop/coyote
-      - develop/dolphin
-      - develop/dogfish
+      - develop
+      - experimental
 
 jobs:
   build:

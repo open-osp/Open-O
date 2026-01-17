@@ -30,11 +30,8 @@ on:
   push:
     branches:
       - main
-      - develop/alpaca
-      - develop/bullfrog
-      - develop/coyote
-      - develop/dolphin
-      - develop/dogfish
+      - develop
+      - experimental
     paths:
       - 'pom.xml'
       - 'dependencies-lock.json'
