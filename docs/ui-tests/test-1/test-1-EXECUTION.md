@@ -51,7 +51,7 @@ Verify: Search form, filters, 404: dateFormatUtils.js (expected)
 
 ### Step 4: Search "FAKE-G"
 ```
-Action: Type "FAKE-G" + Enter
+Action: Type "FAKE-G" then PRESS ENTER to submit (form does not auto-submit)
 Screenshot: ui-test-runs/$TIMESTAMP/test-1/screenshots/test-1-04-search-results-patient1.png
 Verify: 10 patients, patient ID 182 visible
 ```
@@ -65,7 +65,7 @@ Verify: FAKE-Gaylord FAKE-Branda, all sections, 404: master.js (expected)
 
 ### Step 6: Search "FAKE-J"
 ```
-Action: Type "FAKE-J" in search box + Enter
+Action: Type "FAKE-J" in search box then PRESS ENTER to submit (form does not auto-submit)
 Screenshot: ui-test-runs/$TIMESTAMP/test-1/screenshots/test-1-06-search-results-patient2.png
 Verify: 10 patients, patient ID 1 visible
 ```

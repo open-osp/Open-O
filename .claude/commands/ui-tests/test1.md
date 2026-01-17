@@ -52,9 +52,9 @@ Follow the 7-step workflow defined in `docs/ui-tests/test-1/test-1-EXECUTION.md`
 1. **Login Page** - Navigate and screenshot login form
 2. **Provider Dashboard** - Login (openodoc/openo2025/2025) and screenshot
 3. **Patient Search** - Click Search menu and screenshot
-4. **Search "FAKE-G"** - Search and screenshot results (verify patient 182 visible)
+4. **Search "FAKE-G"** - Type "FAKE-G" and **press Enter to submit**, screenshot results (verify patient 182 visible)
 5. **Patient #182** - Click patient 182 and screenshot demographic record
-6. **Search "FAKE-J"** - Search and screenshot results (verify patient 1 visible)
+6. **Search "FAKE-J"** - Type "FAKE-J" and **press Enter to submit**, screenshot results (verify patient 1 visible)
 7. **Patient #1** - Click patient 1 and screenshot demographic record
 
 **Key Requirements**:

@@ -50,7 +50,7 @@ Test 1 is a foundational smoke test that validates the most common workflow in O
 
 ### 4. Search for First Patient (Steps 4-5)
 - Enter search term: `FAKE-G`
-- Press Enter to search
+- **IMPORTANT**: Press Enter to submit the search (the form does not auto-submit)
 - **Expected**: Table of results showing patients with "FAKE-G" in their name
 - Click on patient ID 182 (FAKE-Gaylord, FAKE-Branda)
 - **Expected**: Complete demographic record with all patient information
@@ -58,7 +58,7 @@ Test 1 is a foundational smoke test that validates the most common workflow in O
 ### 5. Search for Second Patient (Steps 6-7)
 - Use search box on demographic page
 - Enter search term: `FAKE-J`
-- Press Enter to search
+- **IMPORTANT**: Press Enter to submit the search (the form does not auto-submit)
 - **Expected**: Table of results showing patients with "FAKE-J" in their name
 - Click on patient ID 1 (FAKE-Jacky, FAKE-Jones)
 - **Expected**: Complete demographic record with all patient information
@@ -213,6 +213,7 @@ mysql -h db -uroot -ppassword oscar -e \
 - **Expected Behavior**: Search requires entering search terms (partial or full name)
 - **Does Not**: Display all patients by default
 - **Solution**: Enter at least the first few characters of patient name
+- **Common Issue**: Remember to **press Enter** after typing the search term - the form does not auto-submit
 
 ### Patient Records Missing
 ```bash

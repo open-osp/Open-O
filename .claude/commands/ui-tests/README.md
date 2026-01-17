@@ -24,6 +24,7 @@ Automated execution of Test 1 (login + patient demographics).
 - **Steps**: 7 (login, dashboard, search, 2 patient records)
 - **Screenshots**: 7 captured automatically
 - **Test Data**: openodoc user, patients 1 and 182
+- **Note**: Search requires pressing Enter after typing - the form does not auto-submit
 
 **Usage**:
 ```
