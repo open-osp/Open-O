@@ -656,6 +656,30 @@
     "optional" : false,
     "integrity" : "sha512:HLfbp3yV8KzFFEqazKmkfg7/oz/N7MRg2/PRuhXrgB6yJ8VZUzczVaI09CbuizXqdJEQH4rQMyYoQ0wS1WcEWA=="
   }, {
+    "groupId" : "com.microsoft.playwright",
+    "artifactId" : "driver-bundle",
+    "version" : "1.40.0",
+    "scope" : "test",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:agROXmL2hH8Rzp3HMeoaESr0OE1qCX3yZCzj1yIY67YOew65EbdoH8eFSZfRSKv++dSW9Nn2Z8qXPpoxYI5QuQ=="
+  }, {
+    "groupId" : "com.microsoft.playwright",
+    "artifactId" : "driver",
+    "version" : "1.40.0",
+    "scope" : "test",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:Bx2BbMFbviEofoqyuU7P4Okf9wg1IB26dQPgSaxfBgpgt8eJ63KS9MKf6me4lI8XityepIFf4lyl7ZTk8/Z57w=="
+  }, {
+    "groupId" : "com.microsoft.playwright",
+    "artifactId" : "playwright",
+    "version" : "1.40.0",
+    "scope" : "test",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:Pz7iBFzXb6MNVlG1zUjxlNI5MlS1w03dvnMtDt8+Vub1w6llHSZye1NqGu5v+jRJng4EPJbMu6/gGsVuylbNxw=="
+  }, {
     "groupId" : "com.mysql",
     "artifactId" : "mysql-connector-j",
     "version" : "9.3.0",
@@ -3226,6 +3250,14 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:DW9IfOyQ7JMfzwFeQnWNkKy8BW2rILzLiJc3Ml/HRD7l7zvlHQKBQO9CQxNWLTfu0Kvnlfr7u1oWrjPpQ/EElg=="
+  }, {
+    "groupId" : "org.opentest4j",
+    "artifactId" : "opentest4j",
+    "version" : "1.2.0",
+    "scope" : "test",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:F/d3l6Jg6yvRZmqQ4l78eaVBOvqd8cHLbEzRlJ1hw4skHjuyCVY5a19U0URyAwPXKirAC8W/JFomCjwwmeAcdA=="
   }, {
     "groupId" : "org.ow2.asm",
     "artifactId" : "asm",
