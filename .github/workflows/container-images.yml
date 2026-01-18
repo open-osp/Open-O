@@ -211,7 +211,7 @@ jobs:
           echo "success=true" >> "$GITHUB_OUTPUT"
 
       - name: Push to registry
-        if: steps.test.outputs.success == 'true' && github.event_name == 'push'
+        if: steps.test.outputs.success == 'true' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.force_rebuild == 'true'))
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev
         run: |
@@ -335,7 +335,7 @@ jobs:
           echo "success=true" >> "$GITHUB_OUTPUT"
 
       - name: Push to registry
-        if: steps.test.outputs.success == 'true' && github.event_name == 'push'
+        if: steps.test.outputs.success == 'true' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.force_rebuild == 'true'))
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-mariadb-dev
         run: |
@@ -432,7 +432,7 @@ jobs:
           echo "success=true" >> "$GITHUB_OUTPUT"
 
       - name: Push to registry
-        if: steps.test.outputs.success == 'true' && github.event_name == 'push'
+        if: steps.test.outputs.success == 'true' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.force_rebuild == 'true'))
         env:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-drugref
         run: |
