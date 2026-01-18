@@ -386,6 +386,121 @@ make lock                     # Update Maven dependency lock file
 - Security configuration with Spring Security
 - Multiple application contexts for different modules
 
+### Legacy Integration & Unique Struts2 Migration Pattern
+
+#### **Migration Strategy Overview**
+OpenO EMR uses a unique incremental migration approach from Struts 1.x to Struts 2.x using a "2Action" naming convention that allows both frameworks to coexist during the transition period.
+
+#### **2Action Naming Convention & Structure**
+- **Naming Pattern**: All migrated Struts2 actions follow `*2Action.java` naming (e.g., `AddTickler2Action`, `DisplayDashboard2Action`, `Login2Action`)
+- **Class Structure**:
+  ```java
+  public class Example2Action extends ActionSupport {
+      HttpServletRequest request = ServletActionContext.getRequest();
+      HttpServletResponse response = ServletActionContext.getResponse();
+
+      private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
+
+      public String execute() {
+          // Security check pattern
+          if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_object", "r", null)) {
+              throw new SecurityException("missing required sec object");
+          }
+          // Business logic
+          return "success";
+      }
+  }
+  ```
+
+#### **Struts2 Action Categories**
+
+**1. Simple Execute Actions**
+- Single `execute()` method handling all logic
+- Examples: `AddTickler2Action`, `EditTickler2Action`
+- Return simple result strings like "success", "close", "error"
+
+**2. Method-Based Actions**
+- Use `method` parameter to route to different methods within the action
+- Pattern: `String mtd = request.getParameter("method");`
+- Examples: `CaseloadContent2Action` (noteSearch/search methods), `SystemMessage2Action`
+- Allows multiple related operations in one action class
+
+**3. Inheritance-Based Actions**
+- Extend specialized base classes like `EctDisplayAction`
+- Examples: `EctDisplayMeasurements2Action`, `EctDisplayRx2Action`
+- Inherit common functionality while implementing specific `getInfo()` methods
+- Used for encounter display components in left navbar
+
+#### **Integration Patterns**
+
+**Request/Response Access**
+```java
+HttpServletRequest request = ServletActionContext.getRequest();
+HttpServletResponse response = ServletActionContext.getResponse();
+```
+- Direct servlet API access maintained for compatibility
+- No dependency on Struts2 action properties
+
+**Spring Integration**
+```java
+private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
+```
+- Spring dependency injection via `SpringUtils.getBean()`
+- Maintains loose coupling with Spring container
+- No need for Struts2-Spring plugin complexity
+
+**Security Pattern (Required)**
+```java
+if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_objectname", "r", null)) {
+    throw new SecurityException("missing required sec object");
+}
+```
+- Every 2Action MUST include security validation
+- Uses healthcare-specific role-based access control
+- Throws SecurityException for unauthorized access
+
+#### **Configuration Approach**
+
+**Struts.xml Mapping**
+```xml
+<action name="login" class="ca.openosp.openo.login.Login2Action">
+    <result name="provider" type="redirect">/provider/providercontrol.jsp</result>
+    <result name="failure">/logout.jsp</result>
+</action>
+```
+- Maintains `.do` extension for backward compatibility
+- Spring object factory integration: `<constant name="struts.objectFactory" value="spring"/>`
+- Mixed namespace support for gradual migration
+
+**URL Compatibility**
+- Legacy URLs ending in `.do` continue to work
+- No changes required to existing JSP forms and links
+- Seamless user experience during migration
+
+#### **Best Practices for 2Action Development**
+**1. Security First**
+- Always include security privilege checks
+- Use appropriate security objects for healthcare data
+- Log security violations appropriately
+
+**2. Error Handling**
+- Use OWASP encoding for user inputs: `Encode.forJava(parameter)`
+- Implement proper exception handling
+- Return appropriate result strings
+
+**3. Spring Integration**
+- Use `SpringUtils.getBean()` for dependency injection
+- Leverage existing Spring-managed services
+- Maintain transactional boundaries
+
+**4. Healthcare Context**
+- Include audit logging for patient data access
+- Follow PHI protection patterns
+- Use healthcare-specific validation
+
+This migration pattern allows OpenO EMR to modernize incrementally while maintaining system stability and regulatory compliance throughout the transition process.
+
 ## File Patterns
 
 ### Key File Types
