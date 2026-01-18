@@ -104,7 +104,12 @@ jobs:
 
             # Calculate hash of Dockerfile and relevant context files only
             if [ -n "$extra_context" ]; then
-              HASH=$(find "$context_path" $extra_context \( -name 'Dockerfile' -o -name 'Dockerfile.*' -o -name '*.dockerfile' -o -name '*.sh' -o -name '*.sql' -o -name '*.yml' -o -name '*.yaml' -o -name '*.conf' -o -name '*.cnf' \) -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
+              # Note: extra_context is expected to be a space-separated list of paths.
+              # Paths containing spaces are not supported here.
+              local extra_context_array=()
+              # Intentionally rely on word splitting to support multiple paths.
+              extra_context_array=($extra_context)
+              HASH=$(find "$context_path" "${extra_context_array[@]}" \( -name 'Dockerfile' -o -name 'Dockerfile.*' -o -name '*.dockerfile' -o -name '*.sh' -o -name '*.sql' -o -name '*.yml' -o -name '*.yaml' -o -name '*.conf' -o -name '*.cnf' \) -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
             else
               HASH=$(find "$context_path" \( -name 'Dockerfile' -o -name 'Dockerfile.*' -o -name '*.dockerfile' -o -name '*.sh' -o -name '*.sql' -o -name '*.yml' -o -name '*.yaml' -o -name '*.conf' -o -name '*.cnf' \) -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
             fi
