@@ -79,12 +79,15 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-output.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Failed to pull pre-built image from container registry. Will build locally."
+            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
+            echo "::warning::Docker pull output: $(cat /tmp/pull-output.log | tail -5)"
             echo "Pre-built image not available, will build locally"
           fi
 
@@ -183,12 +186,15 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-output.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Failed to pull pre-built image from container registry. Will build locally."
+            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
+            echo "::warning::Docker pull output: $(cat /tmp/pull-output.log | tail -5)"
             echo "Pre-built image not available, will build locally"
           fi
 
@@ -270,12 +276,15 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-tomcat-output.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built tomcat image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Failed to pull pre-built tomcat image from container registry. Will build locally."
+            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
+            echo "::warning::Docker pull output: $(cat /tmp/pull-tomcat-output.log | tail -5)"
             echo "Pre-built tomcat image not available, will build locally"
           fi
 
@@ -286,12 +295,15 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-mariadb-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-mariadb-output.log; then
             docker tag "$IMAGE" openo-mariadb-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built mariadb image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Failed to pull pre-built mariadb image from container registry. Will build locally."
+            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
+            echo "::warning::Docker pull output: $(cat /tmp/pull-mariadb-output.log | tail -5)"
             echo "Pre-built mariadb image not available, will build locally"
           fi
 
