@@ -87,6 +87,12 @@ jobs:
             -w /workspace \
             openo-tomcat-dev tail -f /dev/null
 
+      - name: Configure git safe directory
+        run: |
+          docker exec openo-tomcat-dev bash -c "
+            git config --global --add safe.directory /workspace
+          "
+
       - name: Build project (no tests)
         run: |
           docker exec openo-tomcat-dev bash -c "
@@ -156,6 +162,7 @@ jobs:
             echo 'Running Modern Tests (JUnit 5 with H2)'
             echo '========================================='
             make install --run-modern-tests
+          "
 
   legacy-tests:
     needs: build
@@ -282,6 +289,12 @@ jobs:
             -v ${{ github.workspace }}/.m2-cache:/root/.m2 \
             -w /workspace \
             openo-tomcat-dev tail -f /dev/null
+
+      - name: Configure git safe directory
+        run: |
+          docker exec openo-tomcat-dev bash -c "
+            git config --global --add safe.directory /workspace
+          "
 
       - name: Run legacy tests
         run: |
