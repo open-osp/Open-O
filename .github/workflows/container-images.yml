@@ -102,11 +102,11 @@ jobs:
             echo "Checking container: $name"
             echo "========================================="
 
-            # Calculate hash of Dockerfile and context
+            # Calculate hash of Dockerfile and relevant context files only
             if [ -n "$extra_context" ]; then
-              HASH=$(find "$context_path" "$extra_context" -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
+              HASH=$(find "$context_path" "$extra_context" \( -name 'Dockerfile' -o -name 'Dockerfile.*' -o -name '*.dockerfile' -o -name '*.sh' -o -name '*.sql' -o -name '*.yml' -o -name '*.yaml' -o -name '*.conf' \) -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
             else
-              HASH=$(find "$context_path" -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
+              HASH=$(find "$context_path" \( -name 'Dockerfile' -o -name 'Dockerfile.*' -o -name '*.dockerfile' -o -name '*.sh' -o -name '*.sql' -o -name '*.yml' -o -name '*.yaml' -o -name '*.conf' \) -type f -exec sha256sum {} \; 2>/dev/null | sort | sha256sum | cut -d' ' -f1)
             fi
             echo "Content hash: $HASH"
             echo "${output_name}_hash=$HASH" >> "$GITHUB_OUTPUT"
