@@ -31,7 +31,7 @@ echo "📁 Installed Chromium directories:"
 ls -d /root/.cache/ms-playwright/chromium-* 2>/dev/null || echo "  None found"
 
 # Get the latest installed Chromium revision
-LATEST_CHROMIUM=$(ls -d /root/.cache/ms-playwright/chromium-* 2>/dev/null | sort -V | tail -1 | grep -oP 'chromium-\K[0-9]+' || echo "")
+LATEST_CHROMIUM=$(ls -d /root/.cache/ms-playwright/chromium-* 2>/dev/null | sort -t- -k2 -n | tail -1 | grep -oP 'chromium-\K[0-9]+' || echo "")
 
 if [ -z "$LATEST_CHROMIUM" ]; then
     echo -e "${RED}❌ No Chromium installation found${NC}"
@@ -85,8 +85,8 @@ else
     echo "To fix this, update the executable-path in .mcp.json to:"
     echo "   ${EXPECTED_PATH}"
     echo
-    echo "Or run this command to update it automatically:"
-    echo "   sed -i 's|\"--executable-path\",.*|\"--executable-path\",\n        \"${EXPECTED_PATH}\"|' ${MCP_JSON}"
+    echo "Or use jq to update it programmatically:"
+    echo "   jq '.mcpServers.playwright.args |= map(if . == \"--executable-path\" then . else if . == \"${CURRENT_PATH}\" then \"${EXPECTED_PATH}\" else . end end)' ${MCP_JSON} > ${MCP_JSON}.tmp && mv ${MCP_JSON}.tmp ${MCP_JSON}"
     exit 1
 fi
 
