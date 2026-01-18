@@ -79,20 +79,33 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-output.log; then
+          # Capture stderr so we can distinguish "not found" from other errors
+          if docker pull "$IMAGE" 2>pull-image-error.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "reason=success" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Failed to pull pre-built image from container registry. Will build locally."
-            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
-            echo "::warning::Docker pull output: $(cat /tmp/pull-output.log | tail -5)"
-            echo "Pre-built image not available, will build locally"
+            if grep -qiE 'manifest unknown|not found' pull-image-error.log; then
+              echo "reason=not-found" >> "$GITHUB_OUTPUT"
+              echo "Pre-built image not available (not found in registry), will build locally"
+            else
+              echo "reason=error" >> "$GITHUB_OUTPUT"
+              echo "Image pull failed due to an unexpected error:"
+              cat pull-image-error.log
+            fi
           fi
+          rm -f pull-image-error.log
+
+      - name: Fail on unexpected image pull error
+        if: steps.pull-image.outputs.reason == 'error'
+        run: |
+          echo "::error::Failed to pull pre-built image from ${{ env.REGISTRY }} for a reason other than 'image not found'. Check network connectivity, registry permissions, or image name."
+          exit 1
 
       - name: Cache Docker layers
-        if: steps.pull-image.outputs.pulled != 'true'
+        if: steps.pull-image.outputs.pulled != 'true' && steps.pull-image.outputs.reason == 'not-found'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -186,15 +199,12 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-output.log; then
+          if docker pull "$IMAGE"; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Failed to pull pre-built image from container registry. Will build locally."
-            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
-            echo "::warning::Docker pull output: $(cat /tmp/pull-output.log | tail -5)"
             echo "Pre-built image not available, will build locally"
           fi
 
@@ -276,15 +286,12 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-tomcat-output.log; then
+          if docker pull "$IMAGE"; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built tomcat image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Failed to pull pre-built tomcat image from container registry. Will build locally."
-            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
-            echo "::warning::Docker pull output: $(cat /tmp/pull-tomcat-output.log | tail -5)"
             echo "Pre-built tomcat image not available, will build locally"
           fi
 
@@ -295,15 +302,12 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-mariadb-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE" 2>&1 | tee /tmp/pull-mariadb-output.log; then
+          if docker pull "$IMAGE"; then
             docker tag "$IMAGE" openo-mariadb-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built mariadb image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::Failed to pull pre-built mariadb image from container registry. Will build locally."
-            echo "::warning::This could be due to: image not available, authentication issues, or permission errors."
-            echo "::warning::Docker pull output: $(cat /tmp/pull-mariadb-output.log | tail -5)"
             echo "Pre-built mariadb image not available, will build locally"
           fi
 
@@ -387,11 +391,15 @@ jobs:
           echo "Waiting for database initialization to complete..."
           initialized=false
           for i in {1..90}; do
-            # Check container logs for the completion message from populate_db.sh
+            # Check container logs for the exact completion message from populate_db.sh: "Database initialization complete!"
             if docker logs db 2>&1 | grep -q "Database initialization complete!"; then
-              echo "Database initialization complete!"
-              initialized=true
-              break
+              # Verify database state to avoid false positives from reused logs
+              provider_count=$(docker exec db mysql -N -u root -ppassword -e "SELECT COUNT(*) FROM oscar.provider;" 2>/dev/null || echo 0)
+              if [ "$provider_count" -gt 0 ]; then
+                echo "Database initialization complete and provider table populated (count=$provider_count)."
+                initialized=true
+                break
+              fi
             fi
             echo "Waiting for database initialization... ($i/90)"
             sleep 2
