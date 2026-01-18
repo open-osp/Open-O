@@ -14,13 +14,15 @@
 # - build:
 #   - Builds the dev container with Docker BuildKit caching
 #   - Runs `make install` to verify the project builds successfully
-#   - Caches Maven dependencies for subsequent jobs
+#   - Uploads Maven dependencies as artifact for parallel test jobs to use
 #
 # - modern-tests (parallel):
+#   - Downloads Maven dependencies artifact from build job
 #   - Runs modern tests (JUnit 5) using H2 in-memory database
 #   - Does NOT require the database container
 #
 # - legacy-tests (parallel):
+#   - Downloads Maven dependencies artifact from build job
 #   - Runs legacy tests (JUnit 4) using MariaDB
 #   - Requires the database container
 #
@@ -61,6 +63,8 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Cache Maven packages
+        # Restores Maven dependencies from previous workflow runs to speed up the build.
+        # After build completes, dependencies are uploaded as artifact for parallel test jobs.
         uses: actions/cache@v4
         with:
           path: .m2-cache
@@ -102,6 +106,13 @@ jobs:
             make install
           "
 
+      - name: Upload Maven cache as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-dependencies-cache
+          path: .m2-cache
+          retention-days: 7
+
   modern-tests:
     needs: build
     runs-on: ubuntu-latest
@@ -110,6 +121,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download Maven cache artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-dependencies-cache
+          path: .m2-cache
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -121,14 +138,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ hashFiles('.devcontainer/development/**') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: .m2-cache
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml', '**/dependencies-lock*.json') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Build dev container (cached)
         run: |
@@ -173,6 +182,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download Maven cache artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: maven-dependencies-cache
+          path: .m2-cache
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -191,14 +206,6 @@ jobs:
           key: ${{ runner.os }}-buildx-db-${{ hashFiles('.devcontainer/db/**', 'database/**') }}
           restore-keys: |
             ${{ runner.os }}-buildx-db-
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: .m2-cache
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml', '**/dependencies-lock*.json') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Build dev container (cached)
         run: |
