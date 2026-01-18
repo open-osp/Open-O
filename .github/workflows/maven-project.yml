@@ -392,9 +392,13 @@ jobs:
           for i in {1..90}; do
             # Check container logs for the exact completion message from populate_db.sh: "Database initialization complete!"
             if docker logs db 2>&1 | grep -q "Database initialization complete!"; then
-              echo "Database initialization complete!"
-              initialized=true
-              break
+              # Verify database state to avoid false positives from reused logs
+              provider_count=$(docker exec db mysql -N -u root -ppassword -e "SELECT COUNT(*) FROM oscar.provider;" 2>/dev/null || echo 0)
+              if [ "$provider_count" -gt 0 ]; then
+                echo "Database initialization complete and provider table populated (count=$provider_count)."
+                initialized=true
+                break
+              fi
             fi
             echo "Waiting for database initialization... ($i/90)"
             sleep 2
