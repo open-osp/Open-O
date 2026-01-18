@@ -92,7 +92,8 @@ jobs:
               echo "Pre-built image not available (not found in registry), will build locally"
             else
               echo "reason=error" >> "$GITHUB_OUTPUT"
-              echo "Image pull failed due to an unexpected error (see logs for details)"
+              echo "Image pull failed due to an unexpected error:"
+              cat pull-image-error.log
             fi
           fi
           rm -f pull-image-error.log
