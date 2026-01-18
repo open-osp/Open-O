@@ -79,6 +79,13 @@ jobs:
             fi
           "
 
+      # Fix git ownership warnings that can cause Maven plugins to fail
+      - name: Configure git safe directory
+        run: |
+          docker exec openo-tomcat-dev bash -c "
+            git config --global --add safe.directory /workspace
+          "
+
       # Run isolated test phases matching 'make install --run-tests' pattern
 
       - name: Phase 1 - Build with modern profile
