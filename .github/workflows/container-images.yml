@@ -445,6 +445,8 @@ jobs:
     needs: [check-containers, build-tomcat, build-mariadb, build-drugref]
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Report results
         env:
