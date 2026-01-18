@@ -375,7 +375,7 @@ jobs:
           echo "Waiting for database initialization to complete..."
           initialized=false
           for i in {1..90}; do
-            # Check container logs for the completion message from populate_db.sh
+            # Check container logs for the exact completion message from populate_db.sh: "Database initialization complete!"
             if docker logs db 2>&1 | grep -q "Database initialization complete!"; then
               echo "Database initialization complete!"
               initialized=true
