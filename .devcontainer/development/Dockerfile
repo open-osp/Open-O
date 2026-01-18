@@ -37,9 +37,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 python3-pip \
     inotify-tools \
     fonts-roboto fonts-liberation fonts-noto-color-emoji \
-    libnss3 libnspr4 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 libdrm2 libdbus-1-3 \
-    libxkbcommon0 libatspi2.0-0t64 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
-    libgbm1 libasound2t64 libpango-1.0-0 libcairo2 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js (latest LTS)
@@ -67,14 +64,14 @@ RUN which npm && npm install -g @anthropic-ai/claude-code @docusaurus/core @docu
 RUN npm install -g @google/gemini-cli
 
 # Install Playwright globally first to ensure it's available
-RUN npm install -g playwright@1.40.0 && \
+# Version 1.56.0 has correct Ubuntu 24.04 t64 package names in its dependency list
+RUN npm install -g playwright@1.56.0 && \
     echo "✅ Playwright CLI installed: $(npx playwright --version)"
 
-# Install all Playwright browsers (Chromium, Chrome, Firefox)
-# Note: System dependencies are already installed above with Ubuntu 24.04 t64 package names.
-# Do NOT use --with-deps as Playwright's dependency list contains deprecated package names
-# (e.g., libasound2 instead of libasound2t64) that don't exist in Ubuntu 24.04.
-RUN npx playwright install chromium chrome firefox && \
+# Install all Playwright browsers (Chromium, Chrome, Firefox) with system dependencies
+# Note: --with-deps installs required system libraries for each browser
+# Version 1.56.0+ correctly uses t64 package names (e.g., libasound2t64) for Ubuntu 24.04
+RUN npx playwright install --with-deps chromium chrome firefox && \
     echo "✅ Playwright browsers installed (Chromium, Chrome, Firefox)"
 
 # Install pipx and Aider AI coding assistant
