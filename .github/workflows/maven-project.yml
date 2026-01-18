@@ -107,9 +107,9 @@ jobs:
       - name: Upload Maven cache as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: maven-cache
+          name: maven-dependencies-cache
           path: .m2-cache
-          retention-days: 1
+          retention-days: 7
 
   modern-tests:
     needs: build
@@ -123,7 +123,7 @@ jobs:
       - name: Download Maven cache artifact
         uses: actions/download-artifact@v4
         with:
-          name: maven-cache
+          name: maven-dependencies-cache
           path: .m2-cache
 
       - name: Set up Docker Buildx
@@ -183,7 +183,7 @@ jobs:
       - name: Download Maven cache artifact
         uses: actions/download-artifact@v4
         with:
-          name: maven-cache
+          name: maven-dependencies-cache
           path: .m2-cache
 
       - name: Set up Docker Buildx
