@@ -77,7 +77,9 @@ PathValidationUtils.validateExistingPath(file, baseDir);
 
 **CRITICAL**: Use NEW namespace `ca.openosp.openo.*` for ALL code
 - **Old**: `org.oscarehr.*`, `oscar.*` → **New**: `ca.openosp.openo.*`
+- **Note**: May encounter old names in comments/documentation; git history shows "renamed" files
 - **DAO Classes**: `ca.openosp.openo.commn.dao.*` (note: "commn" not "common")
+- **Forms DAOs**: `ca.openosp.openo.commn.dao.forms.*`
 - **Models**: `ca.openosp.openo.commn.model.*`
 - **Exception**: `ProviderDao` at `ca.openosp.openo.dao.ProviderDao`
 - **Test Utilities**: Remain at `org.oscarehr.common.dao.*` for backward compatibility
@@ -366,8 +368,8 @@ Multiple modular application contexts:
 
 ### DevContainer Custom Scripts
 Located in `/scripts` directory within the container (copied from `.devcontainer/development/scripts/`):
-make lock                     # Update Maven dependency lock file
-- **Process**: Stops Tomcat → Builds WAR → Creates symlink → Starts Tomcat
+- `make lock` - Update Maven dependency lock file
+- **Build Process**: Stops Tomcat → Builds WAR → Creates symlink → Starts Tomcat
 - **Configuration**: Auto-creates `over_ride_config.properties` from template
 - **Parallel builds**: Uses `-T 1C` for faster Maven builds
 - **Deployment**: Handles versioned WAR directories with symlinks to `/usr/local/tomcat/webapps/oscar`
@@ -485,7 +487,13 @@ if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(re
 - Log security violations appropriately
 
 **2. Error Handling**
-- Use OWASP encoding for user inputs: `Encode.forJava(parameter)`
+- Use context-appropriate OWASP encoding when outputting user data:
+  - `Encode.forHtml()` - HTML body content
+  - `Encode.forHtmlAttribute()` - HTML attribute values
+  - `Encode.forJavaScript()` - JavaScript string contexts
+  - `Encode.forJavaScriptAttribute()` - JS in HTML attributes
+  - `Encode.forCssString()` - CSS string values
+  - `Encode.forUri()` / `Encode.forUriComponent()` - URL paths/parameters
 - Implement proper exception handling
 - Return appropriate result strings
 
@@ -649,6 +657,43 @@ When a PR is merged that references an issue (using keywords like `fixes #123`, 
 
 ---
 
+## Claude Workflow Guidelines
+
+**Context**: Claude operates both as a GitHub Actions workflow (triggered by @claude mentions) and directly via Claude Code CLI. These guidelines apply to both contexts.
+
+### Task Handling
+1. **Simple Questions/Reviews**: Answer directly in comments, reference specific files and line numbers
+2. **Straightforward Changes** (1-3 files): Create feature branch, implement, create PR
+3. **Complex Changes**: Ask clarifying questions first, create implementation plan, proceed after approval
+
+### Branch Protection
+- **Protected Branches**: `develop`, `main`, `experimental` - direct commits prohibited
+- **All changes** must go through pull requests with review
+- Claude creates feature branches: `claude/issue-<number>-<timestamp>`
+
+### Security Checklist (Every Code Change)
+- [ ] Context-appropriate OWASP encoding for user inputs (see Error Handling section)
+- [ ] Parameterized SQL queries (never concatenation)
+- [ ] `SecurityInfoManager.hasPrivilege()` checks in all actions
+- [ ] `PathValidationUtils` for file operations
+- [ ] No PHI in logs or error messages
+
+### PR Requirements
+- ✅ Target `develop` branch (not `main`)
+- ✅ Include tests for new functionality
+- ✅ Reference related issues (`fixes #123`)
+- ✅ Add "Generated with Claude Code" signature
+- ✅ Ensure CI checks pass before requesting review
+
+### When Blocked
+If Claude encounters issues it cannot resolve:
+- Document the problem clearly in comment
+- Explain what was attempted and why it failed
+- Provide specific error messages
+- Ask for guidance on preferred resolution
+
+---
+
 ## Key Code References & Further Information
 
 ### Essential Configuration Files
@@ -780,7 +825,7 @@ void shouldReturnTickler_whenValidIdProvided() {
     assertThat(found).isEqualTo(saved);
 }
 
-3. Add negative test cases
+// 3. Add negative test cases for edge cases and error conditions
 ```
 
 #### BDD Test Writing Quick Reference
