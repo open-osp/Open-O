@@ -4,6 +4,12 @@
 # This workflow automates the build and testing for the Open-O Maven project.
 # It uses a parallelized approach: build first, then run modern and legacy tests in parallel.
 #
+# Container Images:
+# This workflow tries to pull pre-built container images from ghcr.io first.
+# If images are available, it skips local builds (faster CI).
+# If images are not available, it falls back to building locally.
+# See container-images.yml for the workflow that builds and pushes images.
+#
 # Usage:
 # - Triggered by pull requests targeting the following branches:
 #   - main
@@ -12,7 +18,7 @@
 #
 # Key Jobs:
 # - build:
-#   - Builds the dev container with Docker BuildKit caching
+#   - Pulls or builds the dev container
 #   - Runs `make install` to verify the project builds successfully
 #   - Uploads Maven dependencies as artifact for parallel test jobs to use
 #
@@ -42,11 +48,16 @@ on:
       - develop
       - experimental
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,7 +65,31 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Try to pull pre-built image from ghcr.io
+        id: pull-image
+        continue-on-error: true
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
+        run: |
+          echo "Attempting to pull pre-built image from $IMAGE..."
+          if docker pull "$IMAGE"; then
+            docker tag "$IMAGE" openo-tomcat-dev
+            echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "Successfully pulled pre-built image!"
+          else
+            echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-built image not available, will build locally"
+          fi
+
       - name: Cache Docker layers
+        if: steps.pull-image.outputs.pulled != 'true'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -72,8 +107,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build dev container
+      - name: Build dev container (fallback)
+        if: steps.pull-image.outputs.pulled != 'true'
         run: |
+          echo "Building container locally..."
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max \
@@ -118,6 +155,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -131,7 +169,31 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Try to pull pre-built image from ghcr.io
+        id: pull-image
+        continue-on-error: true
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
+        run: |
+          echo "Attempting to pull pre-built image from $IMAGE..."
+          if docker pull "$IMAGE"; then
+            docker tag "$IMAGE" openo-tomcat-dev
+            echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "Successfully pulled pre-built image!"
+          else
+            echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-built image not available, will build locally"
+          fi
+
       - name: Cache Docker layers
+        if: steps.pull-image.outputs.pulled != 'true'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -139,8 +201,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build dev container (cached)
+      - name: Build dev container (fallback)
+        if: steps.pull-image.outputs.pulled != 'true'
         run: |
+          echo "Building container locally..."
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max \
@@ -178,6 +242,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -191,7 +256,47 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Try to pull pre-built tomcat image from ghcr.io
+        id: pull-tomcat
+        continue-on-error: true
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
+        run: |
+          echo "Attempting to pull pre-built image from $IMAGE..."
+          if docker pull "$IMAGE"; then
+            docker tag "$IMAGE" openo-tomcat-dev
+            echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "Successfully pulled pre-built tomcat image!"
+          else
+            echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-built tomcat image not available, will build locally"
+          fi
+
+      - name: Try to pull pre-built mariadb image from ghcr.io
+        id: pull-mariadb
+        continue-on-error: true
+        env:
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-mariadb-dev:latest
+        run: |
+          echo "Attempting to pull pre-built image from $IMAGE..."
+          if docker pull "$IMAGE"; then
+            docker tag "$IMAGE" openo-mariadb-dev
+            echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "Successfully pulled pre-built mariadb image!"
+          else
+            echo "pulled=false" >> "$GITHUB_OUTPUT"
+            echo "Pre-built mariadb image not available, will build locally"
+          fi
+
       - name: Cache Docker layers (tomcat)
+        if: steps.pull-tomcat.outputs.pulled != 'true'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -200,6 +305,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Cache Docker layers (db)
+        if: steps.pull-mariadb.outputs.pulled != 'true'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache-db
@@ -207,8 +313,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-db-
 
-      - name: Build dev container (cached)
+      - name: Build dev container (fallback)
+        if: steps.pull-tomcat.outputs.pulled != 'true'
         run: |
+          echo "Building tomcat container locally..."
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache \
             --cache-to=type=local,dest=/tmp/.buildx-cache-new,mode=max \
@@ -218,8 +326,10 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: Build db container (cached)
+      - name: Build db container (fallback)
+        if: steps.pull-mariadb.outputs.pulled != 'true'
         run: |
+          echo "Building mariadb container locally..."
           docker buildx build \
             --cache-from=type=local,src=/tmp/.buildx-cache-db \
             --cache-to=type=local,dest=/tmp/.buildx-cache-db-new,mode=max \
@@ -265,10 +375,9 @@ jobs:
           echo "Waiting for database initialization to complete..."
           initialized=false
           for i in {1..90}; do
-            # Check that provider table exists and has at least one row (indicates full initialization)
-            count=$(docker exec db mysql -u root -ppassword -N -e "SELECT COUNT(*) FROM oscar.provider;" 2>/dev/null || echo "0")
-            if [ "$count" -gt 0 ] 2>/dev/null; then
-              echo "Database initialization complete! (provider count: $count)"
+            # Check container logs for the completion message from populate_db.sh
+            if docker logs db 2>&1 | grep -q "Database initialization complete!"; then
+              echo "Database initialization complete!"
               initialized=true
               break
             fi
@@ -282,10 +391,11 @@ jobs:
             exit 1
           fi
 
-          # Verify both databases exist
+          # Verify all databases exist
           echo "Verifying databases..."
           docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "oscar" || { echo "ERROR: oscar database not found"; exit 1; }
           docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "oscar_test" || { echo "ERROR: oscar_test database not found"; exit 1; }
+          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "drugref2" || { echo "ERROR: drugref2 database not found"; exit 1; }
           echo "All databases verified!"
 
       - name: Start tomcat container
