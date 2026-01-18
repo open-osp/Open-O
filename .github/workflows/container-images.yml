@@ -125,7 +125,10 @@ jobs:
             # Pull image and check labels
             EXISTING_HASH=""
             if docker pull "$IMAGE" 2>/dev/null; then
-              EXISTING_HASH=$(docker inspect "$IMAGE" --format '{{ index .Config.Labels "org.openosp.content-hash" }}' 2>/dev/null || echo "")
+              if ! EXISTING_HASH=$(docker inspect "$IMAGE" --format '{{ index .Config.Labels "org.openosp.content-hash" }}' 2>/dev/null); then
+                echo "Warning: failed to inspect existing image labels for $IMAGE; will treat as missing hash and rebuild if needed" >&2
+                EXISTING_HASH=""
+              fi
             fi
 
             echo "Existing hash: ${EXISTING_HASH:-<none>}"
