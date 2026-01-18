@@ -199,17 +199,33 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          # Capture stderr so we can distinguish "not found" from other errors
+          if docker pull "$IMAGE" 2>pull-image-error.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "reason=success" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "Pre-built image not available, will build locally"
+            if grep -qiE 'manifest unknown|not found' pull-image-error.log; then
+              echo "reason=not-found" >> "$GITHUB_OUTPUT"
+              echo "Pre-built image not available (not found in registry), will build locally"
+            else
+              echo "reason=error" >> "$GITHUB_OUTPUT"
+              echo "Image pull failed due to an unexpected error:"
+              cat pull-image-error.log
+            fi
           fi
+          rm -f pull-image-error.log
+
+      - name: Fail on unexpected image pull error
+        if: steps.pull-image.outputs.reason == 'error'
+        run: |
+          echo "::error::Failed to pull pre-built image from ${{ env.REGISTRY }} for a reason other than 'image not found'. Check network connectivity, registry permissions, or image name."
+          exit 1
 
       - name: Cache Docker layers
-        if: steps.pull-image.outputs.pulled != 'true'
+        if: steps.pull-image.outputs.pulled != 'true' && steps.pull-image.outputs.reason == 'not-found'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -286,14 +302,30 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-tomcat-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          # Capture stderr so we can distinguish "not found" from other errors
+          if docker pull "$IMAGE" 2>pull-tomcat-error.log; then
             docker tag "$IMAGE" openo-tomcat-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "reason=success" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built tomcat image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "Pre-built tomcat image not available, will build locally"
+            if grep -qiE 'manifest unknown|not found' pull-tomcat-error.log; then
+              echo "reason=not-found" >> "$GITHUB_OUTPUT"
+              echo "Pre-built tomcat image not available (not found in registry), will build locally"
+            else
+              echo "reason=error" >> "$GITHUB_OUTPUT"
+              echo "Tomcat image pull failed due to an unexpected error:"
+              cat pull-tomcat-error.log
+            fi
           fi
+          rm -f pull-tomcat-error.log
+
+      - name: Fail on unexpected tomcat image pull error
+        if: steps.pull-tomcat.outputs.reason == 'error'
+        run: |
+          echo "::error::Failed to pull pre-built tomcat image from ${{ env.REGISTRY }} for a reason other than 'image not found'. Check network connectivity, registry permissions, or image name."
+          exit 1
 
       - name: Try to pull pre-built mariadb image from ghcr.io
         id: pull-mariadb
@@ -302,17 +334,33 @@ jobs:
           IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/openo-mariadb-dev:latest
         run: |
           echo "Attempting to pull pre-built image from $IMAGE..."
-          if docker pull "$IMAGE"; then
+          # Capture stderr so we can distinguish "not found" from other errors
+          if docker pull "$IMAGE" 2>pull-mariadb-error.log; then
             docker tag "$IMAGE" openo-mariadb-dev
             echo "pulled=true" >> "$GITHUB_OUTPUT"
+            echo "reason=success" >> "$GITHUB_OUTPUT"
             echo "Successfully pulled pre-built mariadb image!"
           else
             echo "pulled=false" >> "$GITHUB_OUTPUT"
-            echo "Pre-built mariadb image not available, will build locally"
+            if grep -qiE 'manifest unknown|not found' pull-mariadb-error.log; then
+              echo "reason=not-found" >> "$GITHUB_OUTPUT"
+              echo "Pre-built mariadb image not available (not found in registry), will build locally"
+            else
+              echo "reason=error" >> "$GITHUB_OUTPUT"
+              echo "MariaDB image pull failed due to an unexpected error:"
+              cat pull-mariadb-error.log
+            fi
           fi
+          rm -f pull-mariadb-error.log
+
+      - name: Fail on unexpected mariadb image pull error
+        if: steps.pull-mariadb.outputs.reason == 'error'
+        run: |
+          echo "::error::Failed to pull pre-built mariadb image from ${{ env.REGISTRY }} for a reason other than 'image not found'. Check network connectivity, registry permissions, or image name."
+          exit 1
 
       - name: Cache Docker layers (tomcat)
-        if: steps.pull-tomcat.outputs.pulled != 'true'
+        if: steps.pull-tomcat.outputs.pulled != 'true' && steps.pull-tomcat.outputs.reason == 'not-found'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
@@ -321,7 +369,7 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Cache Docker layers (db)
-        if: steps.pull-mariadb.outputs.pulled != 'true'
+        if: steps.pull-mariadb.outputs.pulled != 'true' && steps.pull-mariadb.outputs.reason == 'not-found'
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache-db
