@@ -461,9 +461,9 @@ jobs:
 
           # Verify all databases exist
           echo "Verifying databases..."
-          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "oscar" || { echo "ERROR: oscar database not found"; exit 1; }
-          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "oscar_test" || { echo "ERROR: oscar_test database not found"; exit 1; }
-          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -q "drugref2" || { echo "ERROR: drugref2 database not found"; exit 1; }
+          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -x "oscar" > /dev/null || { echo "ERROR: oscar database not found"; exit 1; }
+          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -x "oscar_test" > /dev/null || { echo "ERROR: oscar_test database not found"; exit 1; }
+          docker exec db mysql -u root -ppassword -e "SHOW DATABASES;" | grep -x "drugref2" > /dev/null || { echo "ERROR: drugref2 database not found"; exit 1; }
           echo "All databases verified!"
 
       - name: Start tomcat container
