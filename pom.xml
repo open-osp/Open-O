@@ -788,6 +788,12 @@
                     <groupId>commons-lang</groupId>
                     <artifactId>commons-lang</artifactId>
                 </exclusion>
+                <!-- Excluded vulnerable iText 1.3 (XXE vulnerability) -->
+                <!-- com.lowagie.text.* classes provided by openpdf (via openrtf) instead -->
+                <exclusion>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
