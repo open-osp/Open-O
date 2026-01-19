@@ -3213,6 +3213,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
      * @return the resolved File if found, null otherwise
      */
     private File resolveReportSourceFile(String currentDirectory, String filePath, String contentType) {
+        // Defensive null/blank guard for currentDirectory
+        if (currentDirectory == null || currentDirectory.trim().isEmpty()) {
+            logger.warn("resolveReportSourceFile: currentDirectory is null or empty, cannot resolve file path: {}",
+                filePath != null ? Encode.forJava(filePath) : "null");
+            return null;
+        }
+
         String normalizedPath = filePath
             .replace("\\", File.separator)
             .replace("/", File.separator);
