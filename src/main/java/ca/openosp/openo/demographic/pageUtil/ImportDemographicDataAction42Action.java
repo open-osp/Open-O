@@ -2703,7 +2703,10 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                     File allowedRoot = new File(currentDirectory);
                                     PathValidationUtils.validateExistingPath(sourceFile, allowedRoot);
                                 } catch (SecurityException e) {
-                                    logger.error("SECURITY: Rejecting file copy - resolved path outside allowed directory. FilePath: {}, SourceFile: {}", filePath, sourceFile.getAbsolutePath(), e);
+                                    logger.error("SECURITY: Rejecting file copy - resolved path outside allowed directory. FilePath: {}, SourceFile: {}",
+                                        Encode.forJava(new File(filePath).getName()),
+                                        Encode.forJava(sourceFile.getName()),
+                                        e);
                                     err_data.add("Error! Security violation for Report (" + (i + 1) + "): Invalid file path");
                                     continue;
                                 }
@@ -3224,7 +3227,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     PathValidationUtils.validateExistingPath(candidate, currentDir);
                     return candidate;
                 } catch (SecurityException e) {
-                    logger.error("SECURITY: Rejecting malicious file path from XML: {}", filePath, e);
+                    logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(filePath), e);
                     // Continue to next candidate
                 }
             }
@@ -3236,7 +3239,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         PathValidationUtils.validateExistingPath(withExt, currentDir);
                         return withExt;
                     } catch (SecurityException e) {
-                        logger.error("SECURITY: Rejecting malicious file path from XML: {}", filePath, e);
+                        logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(filePath), e);
                         // Continue to next candidate
                     }
                 }
