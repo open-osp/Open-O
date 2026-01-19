@@ -2703,6 +2703,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                     continue;
                                 }
 
+                                // Validate the resolved sourceFile is within the allowed extraction directory
+                                // This prevents path traversal attacks from malicious XML file paths
+                                try {
+                                    File allowedRoot = new File(currentDirectory);
+                                    PathValidationUtils.validateExistingPath(sourceFile, allowedRoot);
+                                } catch (SecurityException e) {
+                                    logger.error("SECURITY: Rejecting file copy - resolved path outside allowed directory. FilePath: {}, SourceFile: {}", filePath, sourceFile.getAbsolutePath(), e);
+                                    err_data.add("Error! Security violation for Report (" + (i + 1) + "): Invalid file path");
+                                    continue;
+                                }
+
                                 FileUtils.copyFile(sourceFile, new File(docDir + docFileName));
                             }
 
