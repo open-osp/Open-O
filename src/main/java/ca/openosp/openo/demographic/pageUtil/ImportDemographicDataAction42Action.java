@@ -3205,12 +3205,27 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Extension handling: for each candidate, also try candidate + contentType
         for (File candidate : candidates) {
             if (candidate.exists()) {
-                return candidate;
+                // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
+                // This prevents path traversal attacks from malicious XML (e.g., "../../../etc/passwd")
+                try {
+                    PathValidationUtils.validateExistingPath(candidate, currentDir);
+                    return candidate;
+                } catch (SecurityException e) {
+                    logger.error("SECURITY: Rejecting malicious file path from XML: {}", filePath, e);
+                    // Continue to next candidate
+                }
             }
             if (contentType != null && !contentType.isEmpty()) {
                 File withExt = new File(candidate.getPath() + contentType);
                 if (withExt.exists()) {
-                    return withExt;
+                    // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
+                    try {
+                        PathValidationUtils.validateExistingPath(withExt, currentDir);
+                        return withExt;
+                    } catch (SecurityException e) {
+                        logger.error("SECURITY: Rejecting malicious file path from XML: {}", filePath, e);
+                        // Continue to next candidate
+                    }
                 }
             }
         }
