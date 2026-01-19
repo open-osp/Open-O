@@ -274,7 +274,7 @@
                 var iNKDA = document.forms.searchAllergy2.iNKDA.value;
                 if (param.indexOf(paramNKDA) >= 0) {
                     var hasDrugAllergy = document.forms.searchAllergy2.hasDrugAllergy.value;
-                    if (hasDrugAllergy == "true") {
+                    if (hasDrugAllergy === "true") {
                         alert("Active drug allergy exists!");
                         return;
                     }
@@ -728,10 +728,6 @@
                     </tr>
                 </table>
             </td>
-        </tr>
-
-        <tr class="lastRow">
-            <td colspan="2"></td>
         </tr>
     </table>
 

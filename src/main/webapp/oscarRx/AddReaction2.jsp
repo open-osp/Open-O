@@ -149,7 +149,7 @@
 
                                 function checkAgeOfOnset() {
                                     var field = document.forms.RxAddAllergyForm.ageOfOnset;
-                                    if (field.value.trim() != "") {
+                                    if (field.value.trim() !== "") {
                                         var t = /^\d{1,3}$/;
                                         if (!t.test(field.value)) {
                                             alert("Invalid Age of Onset (3-digit integer only)");
@@ -235,20 +235,20 @@
                             <table>
                                 <tr id="addReactionSubheading">
                                     <td>
-                                        Adding Allergy: <%=name%>
+                                        Adding Allergy: <%=Encode.forHtmlContent(name)%>
                                     </td>
                                 </tr>
                                 <tr valign="center">
                                     <td>
-                                        <span class="label">Comment: </span>
-                                        <textarea name="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
-                                        <input type="hidden" name="ID" value="<%=drugrefId%>"/>
-                                        <input type="hidden" name="name" id="name" value="<%=name%>"/>
-                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=allergyToArchive%>"/>
+                                        <label for="reactionDescription" class="label">Comment: </label>
+                                        <textarea name="reactionDescription" id="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
+                                        <input type="hidden" name="ID" value="<%=Encode.forHtmlAttribute(drugrefId)%>"/>
+                                        <input type="hidden" name="name" id="name" value="<%=Encode.forHtmlAttribute(name)%>"/>
+                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=Encode.forHtmlAttribute(allergyToArchive)%>"/>
                                     </td>
                                 </tr>
 
-                                <input type="hidden" name="type" id="type" value="<%=type%>"/>
+                                <input type="hidden" name="type" id="type" value="<%=Encode.forHtmlAttribute(type)%>"/>
 
                                 <tr valign="center">
                                     <td>
@@ -274,14 +274,14 @@
 
                                         <span class="label">Start Date:</span>
                                         <input type="text" name="startDate" id="startDate" size="10" maxlength="10"
-                                               value="<%=startDate%>" onblur="checkStartDate();"/>
+                                               value="<%=Encode.forHtmlAttribute(startDate)%>" onblur="checkStartDate();"/>
                                         <img src="<%= request.getContextPath() %>/images/cal.gif" id="startDateCal">(yyyy-mm-dd OR yyyy-mm OR yyyy)
                                     </td>
                                 </tr>
 
                                 <tr valign="center">
                                     <td><span class="label">Age Of Onset:</span> <input type="text"
-                                            name="ageOfOnset" size="4" maxlength="4" value="<%=ageOfOnset%>"
+                                            name="ageOfOnset" size="4" maxlength="4" value="<%=Encode.forHtmlAttribute(ageOfOnset)%>"
                                             onblur="checkAgeOfOnset();"/></td>
 
                                 </tr>
@@ -365,13 +365,10 @@
                             <%
                                 String sBack = "ShowAllergies2.jsp";
                             %> <input type=button class="ControlPushButton"
-                                      onclick="javascript:window.location.href='<%=sBack%>';"
+                                      onclick="window.location.href='<%=sBack%>';"
                                       value="Back to View Allergies"/></td>
                     </tr>
-                    <!----End new rows here-->
-                    <tr height="100%">
-                        <td></td>
-                    </tr>
+
                 </table>
             </td>
         </tr>
