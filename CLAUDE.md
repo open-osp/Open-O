@@ -1,5 +1,17 @@
 # OpenO EMR - Healthcare Electronic Medical Records System
 
+> **⚠️ DEVCONTAINER ENVIRONMENT NOTICE**
+>
+> The `.claude/settings.json` in this repository grants **extensive pre-approved permissions**
+> optimized for **isolated devcontainer development only**. These settings assume:
+> - Sandboxed Docker environment with no external network access to production systems
+> - Development database with synthetic/test data (no real PHI)
+> - Disposable environment that can be safely reset
+>
+> **DO NOT** use these defaults in shared servers, production environments, or any system
+> with access to real patient data. Review and restrict permissions in `.claude/settings.json`
+> if running outside an isolated devcontainer.
+
 **PROJECT IDENTITY**: Always refer to this system as "OpenO EMR" or "OpenO" - NOT "OSCAR EMR" or "OSCAR McMaster"
 
 ## Core Context
@@ -691,6 +703,101 @@ If Claude encounters issues it cannot resolve:
 - Explain what was attempted and why it failed
 - Provide specific error messages
 - Ask for guidance on preferred resolution
+
+---
+
+## AI-Assisted Development
+
+### Claude Code Capabilities
+
+Claude Code is integrated into this repository with the following capabilities:
+
+**Automated Actions (on @claude mention or PR events):**
+- Post PR review comments with inline code annotations
+- Create and update issues with proper labels
+- Create feature branches and push code changes
+- Create pull requests automatically (via `gh pr create`)
+- Access CI/CD status and logs for debugging
+- **Note**: @claude triggers are restricted to repository OWNER, MEMBER, or COLLABORATOR only. CONTRIBUTOR, FIRST_TIME_CONTRIBUTOR, and FIRST_TIMER are excluded for security.
+
+**Tool Permissions:**
+- GitHub CLI access with tiered permissions:
+  - **Allowed**: `gh pr create/view/list/diff/checks`, `gh issue view/list/comment`, `gh run view/list/watch`, `gh repo view`
+  - **Requires confirmation**: `gh pr close`, `gh issue create/edit/close`, `gh label`, `gh run rerun`
+  - **Blocked**: `gh pr merge`, `gh repo create/delete/fork`, `gh secret`, `gh api` write methods
+- Git operations (status, branch, checkout, add, commit, push, pull, fetch, log, diff)
+- File read/write within the repository, subject to the following boundaries:
+  - Scope: Only files inside the checked-out OpenO EMR repository workspace; no access to paths outside the repo.
+  - Protected directories: Claude must not modify Git metadata or CI/CD definitions (e.g., `.git/`, `.github/`, `.github/workflows/`), database seeds/migrations (e.g., `database/`), secrets or credential stores, or other sensitive directories. These protections **must be enforced via explicit write-deny rules** in `.claude/settings.json` (for example: `Write(path:.git/**)`, `Write(path:.github/workflows/**)`, `Write(path:database/**)`).
+  - File size: Intended for source files, configuration, and documentation. Very large files (such as database dumps, large binaries, or media assets) may be rejected by the tools and should not be created or edited by Claude.
+  - File types: Read/write is primarily for text-based project assets (Java, XML, YAML, JSON, JSP, Markdown, shell scripts, etc.). Claude should not generate or alter compiled artifacts, installers, or opaque binary formats.
+  - Deny rules: All file write operations remain subject to (a) the destructive-operation deny list and (b) explicit path-based write restrictions configured in `.claude/settings.json`. At minimum, `.claude/settings.json` **must** include write-deny entries for:
+    - `Write(path:.git/**)`
+    - `Write(path:.github/**)`
+    - `Write(path:.github/workflows/**)`
+    - `Write(path:database/**)`
+    - and any additional secrets/credential directories defined by the deployment environment. If there is any conflict, the deny rules take precedence and the operation must not be performed.
+- Web search and documentation lookup
+- Playwright MCP tools for UI testing
+- See `.claude/settings.json` for complete permission configuration
+
+**Three-Tier Permission Model:**
+The `.claude/settings.json` file defines three permission categories:
+- **ALLOW**: Commands execute immediately without user intervention (core workflow operations)
+- **ASK**: Commands require explicit user confirmation before execution (reversible but potentially disruptive operations)
+- **DENY**: Commands are blocked entirely and cannot be executed (destructive or dangerous operations)
+
+Commands in the ASK tier include:
+- `gh pr close`, `gh issue create/edit/close`, `gh label` - visible repository actions
+- `gh run rerun` - CI resource usage
+- `git reset --soft/--mixed` - recoverable history changes
+- `git stash drop` - potential data loss (single stash entry)
+
+**Safety Guardrails:**
+- **Repository scoped** - Operations run within the checked-out `openo-beta/Open-O` repository context
+- Branch protection rules prevent direct pushes to `develop`, `main`, `experimental`
+- All PRs require human review before merge
+- Destructive operations are blocked:
+  - File deletion: `rm -rf`, `rm -fr`, `rm -r`, `rm --recursive`
+  - Force push: `git push --force/-f`, `git push origin --force/-f`, `git push * --force/-f`, `git push --force-with-lease`, `git push origin --force-with-lease`, `git push origin * --force-with-lease`
+  - History rewriting: `git commit --amend`, `git filter-branch`, `git filter-repo`, `git reflog expire`, `git gc --prune`
+  - Hook bypass: `git commit --no-verify`, `git push --no-verify`
+  - Destructive git: `git rebase`, `git reset --hard`, `git clean` (note: `git reset --soft/--mixed` require confirmation, see ASK tier above)
+  - System: `sudo`
+- GitHub API write methods blocked (`-X DELETE/POST/PUT/PATCH`, `--method DELETE/POST/PUT/PATCH`)
+- Repository management operations (`gh repo create/delete/fork`) are blocked
+- Sensitive repository APIs blocked: `settings`, `collaborators`, `hooks`, `keys`, `invitations`, `branches/*/protection`
+- Remote branch deletion (`git push origin --delete`) is blocked
+- Remote manipulation (`git remote add/set-url`) is blocked
+- Workflow modification (`gh workflow enable/disable`) is blocked
+- Credential manipulation (`gh auth`) is blocked
+- PHI protection enforced via OWASP encoding, parameterized queries, and `SecurityInfoManager` (see Critical Security Requirements)
+
+**Enforcement Mechanism:**
+The safety guardrails above are enforced through Claude Code's permission system configured in `.claude/settings.json`:
+- **Deny rules take precedence** - Commands matching deny patterns are blocked before execution, regardless of allow rules
+- **Pattern matching** - Uses glob-style wildcards (`*`) to match command variations (e.g., `git push --force *` blocks `git push --force origin main`)
+- **Layered defense** - Multiple patterns cover flag ordering variations (e.g., `--force` before or after remote/branch)
+- **Case sensitivity** - Separate patterns for case variants (e.g., `rm -rf` and `rm -Rf` both blocked)
+- **No bypass via equals syntax** - Patterns like `--force-with-lease=*` block the `=refname` variant
+
+Note: These are client-side controls. Repository-level branch protection rules provide server-side enforcement for protected branches.
+
+### Interacting with Claude
+
+**On Pull Requests:**
+- `@claude review` - Comprehensive code review with security focus
+- `@claude fix the lint errors` - Apply automated fixes
+- `@claude explain this change` - Get explanation of PR changes
+
+**On Issues:**
+- `@claude investigate this bug` - Research and provide analysis
+- `@claude implement this feature` - Create implementation PR
+- `@claude add labels` - Categorize with appropriate labels
+
+**Automated Triggers:**
+- New PRs automatically receive code review
+- Issues trigger Claude response when opened or assigned by authorized users (OWNER/MEMBER/COLLABORATOR), if they contain `@claude` in title or body
 
 ---
 
