@@ -417,27 +417,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
-                String entryName = zipEntry.getName();
-
-                // Validate ZIP entry name before processing
-                if (entryName == null || entryName.trim().isEmpty()) {
-                    logger.error("Skipping ZIP entry with null or empty name");
-                    zipEntry = zis.getNextEntry();
-                    continue;
-                }
-
-                // Normalize path separators to handle cross-platform ZIP files
-                String normalizedEntryName = entryName.replace("\\", "/");
-
-                // Create file by resolving entry name against target directory
-                File newFile = new File(targetDir, normalizedEntryName);
-
-                // CRITICAL SECURITY: Validate the resolved path is within the target directory
-                // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
-                try {
-                    PathValidationUtils.validateExistingPath(newFile, targetDir);
-                } catch (SecurityException e) {
-                    logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
+                File newFile = resolveAndValidateZipEntry(zipEntry, targetDir);
+                if (newFile == null) {
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
@@ -472,6 +453,39 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             Files.deleteIfExists(zipFilePath);
         }
         return directoryPath;
+    }
+
+    /**
+     * Resolves and validates a ZIP entry against the target directory.
+     *
+     * @param zipEntry the ZIP entry to validate
+     * @param targetDir the target directory for extraction
+     * @return the validated File if entry is valid, null otherwise
+     */
+    private File resolveAndValidateZipEntry(ZipEntry zipEntry, File targetDir) {
+        String entryName = zipEntry.getName();
+
+        // Validate ZIP entry name before processing
+        if (entryName == null || entryName.trim().isEmpty()) {
+            logger.error("Skipping ZIP entry with null or empty name");
+            return null;
+        }
+
+        // Normalize path separators to handle cross-platform ZIP files
+        String normalizedEntryName = entryName.replace("\\", "/");
+
+        // Create file by resolving entry name against target directory
+        File newFile = new File(targetDir, normalizedEntryName);
+
+        // CRITICAL SECURITY: Validate the resolved path is within the target directory
+        // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
+        try {
+            PathValidationUtils.validateExistingPath(newFile, targetDir);
+            return newFile;
+        } catch (SecurityException e) {
+            logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
+            return null;
+        }
     }
 
     /**
@@ -3203,7 +3217,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             .replace("\\", File.separator)
             .replace("/", File.separator);
 
-        if (isAbsoluteReportPath(filePath, normalizedPath)) {
+        if (isAbsoluteReportPath(normalizedPath)) {
             return null;
         }
 
@@ -3218,45 +3232,85 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Strategy 2: filename only in current directory
         candidates.add(new File(currentDir, fileName));
 
-        // Extension handling: for each candidate, also try candidate + contentType
+        // Try to resolve and validate each candidate
         for (File candidate : candidates) {
-            if (candidate.exists()) {
-                // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
-                // This prevents path traversal attacks from malicious XML (e.g., "../../../etc/passwd")
-                try {
-                    PathValidationUtils.validateExistingPath(candidate, currentDir);
-                    return candidate;
-                } catch (SecurityException e) {
-                    logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(filePath), e);
-                    // Continue to next candidate
-                }
-            }
-            if (contentType != null && !contentType.isEmpty()) {
-                File withExt = new File(candidate.getPath() + contentType);
-                if (withExt.exists()) {
-                    // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
-                    try {
-                        PathValidationUtils.validateExistingPath(withExt, currentDir);
-                        return withExt;
-                    } catch (SecurityException e) {
-                        logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(filePath), e);
-                        // Continue to next candidate
-                    }
-                }
+            File resolved = tryResolveCandidate(candidate, contentType, currentDir, filePath);
+            if (resolved != null) {
+                return resolved;
             }
         }
 
         return null;
     }
 
-    private boolean isAbsoluteReportPath(String originalPath, String normalizedPath) {
-        if (new File(normalizedPath).isAbsolute()) {
+    /**
+     * Attempts to resolve and validate a file candidate, optionally with a content type extension.
+     *
+     * @param candidate the base candidate file to try
+     * @param contentType optional extension to append to the candidate path
+     * @param allowedRoot the allowed root directory for path validation
+     * @param originalPath the original file path from XML for logging
+     * @return the validated File if found and valid, null otherwise
+     */
+    private File tryResolveCandidate(File candidate, String contentType, File allowedRoot, String originalPath) {
+        // Try base candidate first
+        File resolved = tryValidateExisting(candidate, allowedRoot, originalPath);
+        if (resolved != null) {
+            return resolved;
+        }
+
+        // Try candidate with extension
+        if (contentType != null && !contentType.isEmpty()) {
+            File withExt = new File(candidate.getPath() + contentType);
+            return tryValidateExisting(withExt, allowedRoot, originalPath);
+        }
+
+        return null;
+    }
+
+    /**
+     * Validates an existing file against the allowed root directory.
+     *
+     * @param file the file to validate
+     * @param allowedRoot the allowed root directory
+     * @param originalPath the original file path from XML for logging
+     * @return the file if it exists and passes validation, null otherwise
+     */
+    private File tryValidateExisting(File file, File allowedRoot, String originalPath) {
+        if (!file.exists()) {
+            return null;
+        }
+
+        // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
+        // This prevents path traversal attacks from malicious XML (e.g., "../../../etc/passwd")
+        try {
+            PathValidationUtils.validateExistingPath(file, allowedRoot);
+            return file;
+        } catch (SecurityException e) {
+            logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(originalPath), e);
+            return null;
+        }
+    }
+
+    /**
+     * Checks if a normalized path is absolute.
+     *
+     * @param normalizedPath the normalized path to check
+     * @return true if the path is absolute, false otherwise
+     */
+    private boolean isAbsoluteReportPath(String normalizedPath) {
+        if (normalizedPath == null) {
+            return false;
+        }
+
+        File f = new File(normalizedPath);
+        // Covers Unix and most Windows absolute cases
+        if (f.isAbsolute()) {
             return true;
         }
-        if (originalPath != null && originalPath.matches("^[A-Za-z]:[\\\\/].*")) {
-            return true;
-        }
-        return normalizedPath != null && normalizedPath.matches("^[A-Za-z]:[/\\\\].*");
+
+        // Explicit drive-letter pattern for extra defensive checking
+        return normalizedPath.matches("^[A-Za-z]:[/\\\\].*");
     }
 
     private File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
