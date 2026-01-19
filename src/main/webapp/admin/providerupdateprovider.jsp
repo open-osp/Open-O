@@ -164,16 +164,18 @@
                 String keyword = request.getParameter("keyword");
                 ProviderData provider = providerDao.findByProviderNo(keyword);
 
+                if (provider == null) {
+                    out.println("Provider not found");
+                    return;
+                }
+
                 SecurityDao securityDao = (SecurityDao) SpringUtils.getBean(SecurityDao.class);
                 List<Security> results = securityDao.findByProviderNo(provider.getId());
                 Security security = null;
                 if (results.size() > 0) security = results.get(0);
 
-                if (provider == null) {
-                    out.println("failed");
-                } else {
-                    LogAction.addLog((String) session.getAttribute("user"), LogConst.UPDATE, "adminUpdateUser",
-                            request.getParameter("keyword"), request.getRemoteAddr());
+                LogAction.addLog((String) session.getAttribute("user"), LogConst.UPDATE, "adminUpdateUser",
+                        request.getParameter("keyword"), request.getRemoteAddr());
             %>
 
             <table cellspacing="0" cellpadding="2" width="100%" border="0"
@@ -194,7 +196,7 @@
                         </div>
                     </td>
                     <td><input type="text" index="3" name="last_name"
-                               value="<%= provider.getLastName() %>" maxlength="30"></td>
+                               value="<%= provider.getLastName() == null ? "" : provider.getLastName() %>" maxlength="30"></td>
                 </tr>
                 <tr>
                     <td>
@@ -202,7 +204,7 @@
                         </div>
                     </td>
                     <td><input type="text" index="4" name="first_name"
-                               value="<%= provider.getFirstName() %>" maxlength="30"></td>
+                               value="<%= provider.getFirstName() == null ? "" : provider.getFirstName() %>" maxlength="30"></td>
                 </tr>
 
 
@@ -235,22 +237,22 @@
                     <td>
                         <select id="provider_type" name="provider_type">
                             <option value="receptionist"
-                                    <% if (provider.getProviderType().equals("receptionist")) { %>
+                                    <% if ("receptionist".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionReceptionist"/></option>
                             <option value="doctor"
-                                    <% if (provider.getProviderType().equals("doctor")) { %>
+                                    <% if ("doctor".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionDoctor"/></option>
                             <option value="nurse"
-                                    <% if (provider.getProviderType().equals("nurse")) { %>
+                                    <% if ("nurse".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionNurse"/></option>
                             <option value="resident"
-                                    <% if (provider.getProviderType().equals("resident")) { %>
+                                    <% if ("resident".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionResident"/></option>
                             <option value="midwife"
-                                    <% if (provider.getProviderType().equals("midwife")) { %>
+                                    <% if ("midwife".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionMidwife"/></option>
                             <option value="admin"
-                                    <% if (provider.getProviderType().equals("admin")) { %>
+                                    <% if ("admin".equals(provider.getProviderType())) { %>
                                     SELECTED <%}%>><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formType.optionAdmin"/></option>
                         </select>
                         <!--input type="text" name="provider_type" value="<%= provider.getProviderType() %>" maxlength="15" -->
@@ -260,7 +262,7 @@
 
                     List<ProviderData> providerL = providerDao.findAllBilling("1");
                 %>
-                <tr class="supervisor" <%if (!provider.getProviderType().equals("resident")) {%> style="display:none"
+                <tr class="supervisor" <%if (!"resident".equals(provider.getProviderType())) {%> style="display:none"
                 <%
                     } else {
                     }
@@ -289,13 +291,13 @@
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formSpecialty"/>:
                         </td>
                         <td><input type="text" name="specialty"
-                                   value="<%= provider.getSpecialty() %>" maxlength="40"></td>
+                                   value="<%= provider.getSpecialty() == null ? "" : provider.getSpecialty() %>" maxlength="40"></td>
                     </tr>
                     <tr>
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formTeam"/>:
                         </td>
                         <td><input type="text" name="team"
-                                   value="<%= provider.getTeam() %>" maxlength="20"></td>
+                                   value="<%= provider.getTeam() == null ? "" : provider.getTeam() %>" maxlength="20"></td>
                     </tr>
                     <tr>
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formSex"/>:
@@ -303,7 +305,7 @@
                         <td><select name="sex" id="sex">
                             <option value=""></option>
                             <% for (Gender gn : Gender.values()) { %>
-                            <option value=<%=gn.name()%> <%=((provider.getSex().toUpperCase().equals(gn.name())) ? "selected" : "") %>><%=gn.getText()%>
+                            <option value=<%=gn.name()%> <%=((provider.getSex() != null && provider.getSex().toUpperCase().equals(gn.name())) ? "selected" : "") %>><%=gn.getText()%>
                             </option>
                             <% } %>
                         </select>
@@ -437,7 +439,7 @@
                                     if (ll != null) {
                                         for (LookupListItem llItem : ll.getItems()) {
                                             String selected = "";
-                                            if (provider.getPractitionerNoType().equals(llItem.getValue())) {
+                                            if (llItem.getValue() != null && llItem.getValue().equals(provider.getPractitionerNoType())) {
                                                 selected = " selected=\"selected\" ";
                                             }
                                 %>
@@ -606,9 +608,6 @@
                 </tr>
 
             </table>
-            <%
-                }
-            %>
         </form>
 
     </center>
