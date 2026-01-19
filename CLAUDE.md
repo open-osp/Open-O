@@ -152,7 +152,7 @@ public class Example2Action extends ActionSupport {
 - **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
 - **Spring Integration**: Full Spring context with transaction support
 - **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
-- **Documentation**: Complete guide at `docs/modern-test-framework-complete.md`
+- **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
 
 ### Test Organization Standards
 
@@ -186,67 +186,11 @@ void shouldLoadSpringContext()
 
 **Benefits**: Self-documenting, clear failure messages, searchable
 
-### Critical Dependency Resolution Patterns
+### Test Context Configuration
 
-**SpringUtils Anti-Pattern Resolution**:
-The codebase uses static `SpringUtils.getBean()` throughout. Modern tests handle this via reflection in `OpenOTestBase`:
-```java
-@BeforeEach
-void setUpSpringUtils() throws Exception {
-    // CRITICAL: Field is "beanFactory" not "applicationContext"
-    Field contextField = SpringUtils.class.getDeclaredField("beanFactory");
-    contextField.setAccessible(true);
-    contextField.set(null, applicationContext);
-}
-```
+The codebase has legacy patterns (SpringUtils static access, mixed Hibernate/JPA, circular dependencies) that require specific test setup. See **[Test Writing Guide](docs/test/test-writing-guide.md)** for detailed configuration patterns.
 
-**Mixed Hibernate/JPA Configuration**:
-- **Challenge**: Legacy uses both `.hbm.xml` files AND `@Entity` annotations
-- **Solution**: Dual configuration in test context
-```xml
-<!-- Hibernate for XML mappings -->
-<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-    <property name="mappingResources">
-        <list>
-            <value>ca/openosp/openo/commn/model/Provider.hbm.xml</value>
-            <value>ca/openosp/openo/commn/model/Demographic.hbm.xml</value>
-        </list>
-    </property>
-</bean>
-
-<!-- JPA for annotations -->
-<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-    <property name="persistenceUnitName" value="testPersistenceUnit" />
-</bean>
-```
-
-**Manual Bean Definitions Required**:
-- **Issue**: DAOs use SpringUtils in constructors causing circular dependencies
-- **Solution**: Define beans manually in test context, not via component scanning
-```xml
-<!-- Manual DAO definitions to avoid SpringUtils initialization issues -->
-<bean id="ticklerDao" class="ca.openosp.openo.commn.dao.TicklerDaoImpl" autowire="byName" />
-<bean id="oscarLogDao" class="ca.openosp.openo.commn.dao.OscarLogDaoImpl" autowire="byName" />
-```
-
-**Entity Discovery Pattern**:
-- **Problem**: Entities discovered at runtime cause missing dependencies (e.g., `lst_gender` table)
-- **Solution**: Explicitly list entities in `persistence.xml`, no scanning
-```xml
-<persistence-unit name="testPersistenceUnit">
-    <class>ca.openosp.openo.commn.model.Tickler</class>
-    <class>ca.openosp.openo.commn.model.OscarLog</class>
-    <!-- Explicitly list each entity -->
-    <exclude-unlisted-classes>true</exclude-unlisted-classes>
-</persistence-unit>
-```
-
-**Security Mock Pattern**:
-- **Issue**: All operations require SecurityInfoManager privilege checks
-- **Solution**: MockSecurityInfoManager that always returns true
-```xml
-<bean id="securityInfoManager" class="ca.openosp.openo.test.mocks.MockSecurityInfoManager" />
-```
+**Key points**: Extend `OpenOTestBase` (handles SpringUtils), define beans manually in test context, explicitly list entities in persistence.xml.
 
 **Writing Tests - CRITICAL**:
 When asked to write tests, you MUST:
@@ -279,11 +223,6 @@ private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
 - **Deprecation**: Use @deprecated with migration guidance to newer APIs
 - **JSP Documentation**: Add comprehensive JSP comment blocks after copyright headers with purpose, features, parameters, and @since
 - **Inline Comments**: Add comments for complex logic on separate lines (not same line as code)
-
-**Database Patterns**:
-- All tables include `lastUpdateUser`, `lastUpdateDate` for audit trails
-- Complex healthcare schema with 50+ fields in `demographic` table
-- Multi-jurisdictional support (BC, ON, generic provinces)
 
 ## Healthcare Integration Standards
 
@@ -400,7 +339,7 @@ Located in `/scripts` directory within the container (copied from `.devcontainer
 - Security configuration with Spring Security
 - Multiple application contexts for different modules
 
-### Legacy Integration & Unique Struts2 Migration Pattern
+### Legacy Integration & Struts2 Migration Pattern ("2Action") - CRITICAL PATTERN
 
 #### **Migration Strategy Overview**
 OpenO EMR uses a unique incremental migration approach from Struts 1.x to Struts 2.x using a "2Action" naming convention that allows both frameworks to coexist during the transition period.
@@ -574,6 +513,7 @@ This migration pattern allows OpenO EMR to modernize incrementally while maintai
 
 ### Audit and Compliance Patterns
 - Every table includes `lastUpdateUser`, `lastUpdateDate` for audit trails
+- Complex healthcare schema with 50+ fields in `demographic` table
 - Comprehensive logging of all patient data access via `UserActivityFilter`
 - Privacy-compliant data handling with PHI filtering throughout application
 - Multi-jurisdictional support with province-specific configurations
@@ -888,7 +828,7 @@ database/mysql/SnomedCore/snomedinit.sql         # Medical terminology integrati
 # Modern Test Framework (JUnit 5) - ACTIVE AND RECOMMENDED
 src/test-modern/java/ca/openosp/openo/            # Modern JUnit 5 tests
 src/test-modern/resources/                        # Modern test configurations
-docs/modern-test-framework-complete.md            # Complete test framework documentation
+docs/test/modern-test-framework-complete.md            # Complete test framework documentation
 
 # Legacy Test Examples (JUnit 4) - for reference only
 src/test/java/ca/openosp/openo/                   # Legacy test structure
@@ -901,58 +841,10 @@ src/test/resources/over_ride_config.properties    # Test configuration template
 2. **Test real methods only** - Never make up methods that don't exist in the codebase
 3. **Use actual method signatures** - Match the exact parameters and return types
 4. **Extend OpenOTestBase** - Handles SpringUtils anti-pattern and Spring context
-5. **Follow BDD naming strictly**:
-   - Method: `should<Action>_when<Condition>` (camelCase, ONE underscore)
-   - @DisplayName: lowercase "should" + natural language description
-   - NO "test" prefix, NO test numbers, NO multiple underscores
+5. **Follow BDD naming strictly**: `should<Action>_when<Condition>` (camelCase, ONE underscore)
 6. **Check DAO interfaces** - Look at `*Dao.java` files to see available methods before writing tests
 
-Example of proper test development workflow:
-```java
-// 1. First, check the actual DAO interface:
-// src/main/java/ca/openosp/openo/commn/dao/TicklerDao.java
-public interface TicklerDao extends AbstractDao<Tickler> {
-    public Tickler find(Integer id);  // <-- Real method to test
-    public List<Tickler> findActiveByDemographicNo(Integer demoNo); // <-- Real method
-    // ... other actual methods
-}
-
-// 2. Then write BDD-style tests for these ACTUAL methods:
-@Test
-@DisplayName("should return tickler when valid ID is provided")
-void shouldReturnTickler_whenValidIdProvided() {
-    // Given
-    Tickler saved = createAndSaveTickler();
-
-    // When
-    Tickler found = ticklerDao.find(saved.getId()); // Testing real method
-
-    // Then
-    assertThat(found).isNotNull();
-    assertThat(found).isEqualTo(saved);
-}
-
-// 3. Add negative test cases for edge cases and error conditions
-```
-
-#### BDD Test Writing Quick Reference
-```java
-// ✅ CORRECT BDD Test Structure
-@Test
-@DisplayName("should perform expected behavior when condition is met")  // lowercase "should"
-void shouldPerformExpectedBehavior_whenConditionIsMet() {  // camelCase with ONE underscore
-    // Given - set up test data
-    TestData data = createTestData();
-
-    // When - perform the action being tested
-    Result result = systemUnderTest.performAction(data);
-
-    // Then - verify the expected outcome
-    assertThat(result).isNotNull();
-    assertThat(result.getValue()).isEqualTo(expected);
-}
-
-```
+For detailed examples and test development workflow, see **[Test Writing Guide](docs/test/test-writing-guide.md)**.
 
 **Test Execution Commands:**
 ```bash
@@ -997,7 +889,6 @@ mvn test -T 4C                    # 4 threads per CPU core for parallel executio
 ### Documentation & Architecture
 ```bash
 # Project Documentation
-docs/encounter-window-architecture.md             # Encounter window & AJAX patterns
 docs/Password_System.md                           # Security architecture details
 docs/struts-actions-detailed.md                   # Action mapping documentation
 pom.xml                                            # Complete dependency list with versions
