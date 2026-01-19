@@ -3206,7 +3206,6 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
         String fileName = new File(normalizedPath).getName();
         File currentDir = new File(currentDirectory);
-        File parentDir = currentDir.getParentFile();
 
         List<File> candidates = new ArrayList<>();
 
@@ -3215,11 +3214,6 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
         // Strategy 2: filename only in current directory
         candidates.add(new File(currentDir, fileName));
-
-        // Strategy 3: parent directory + relative path
-        if (parentDir != null) {
-            candidates.add(new File(parentDir, normalizedPath));
-        }
 
         // Extension handling: for each candidate, also try candidate + contentType
         for (File candidate : candidates) {
