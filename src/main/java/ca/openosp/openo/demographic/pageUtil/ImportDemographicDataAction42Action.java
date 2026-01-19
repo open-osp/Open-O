@@ -436,7 +436,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 try {
                     PathValidationUtils.validateExistingPath(newFile, targetDir);
                 } catch (SecurityException e) {
-                    logger.error("SECURITY: Rejecting malicious ZIP entry: {}", entryName, e);
+                    logger.error("SECURITY: Rejecting malicious ZIP entry: {}", sanitizeLogValue(entryName), e);
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
@@ -471,6 +471,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             Files.deleteIfExists(zipFilePath);
         }
         return directoryPath;
+    }
+
+    private String sanitizeLogValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll("[\\r\\n\\t\\x00-\\x1F\\x7F]", "_");
     }
 
     /**
