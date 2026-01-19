@@ -78,9 +78,9 @@
 
         <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
-        <script language="javascript">
+        <script type="text/javascript">
             function ShowDrugInfo(gn) {
-                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(gn), "_blank",
+                window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + encodeURIComponent(gn), "_blank",
                     "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
             }
         </script>
@@ -97,16 +97,16 @@
             String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
         %>
 
-        <script language="javascript">
+        <script type="text/javascript">
             function addFavorite(drugId, brandName) {
                 var favoriteName = window.prompt('Please enter a name for the Favorite:',
                     brandName);
 
                 if (favoriteName.length > 0) {
-                    var s = escape('?regionalIdentifier=<%=regionalIdentifier%>&cn=<%=cn%>');
+                    var s = encodeURIComponent('?regionalIdentifier=<%=regionalIdentifier%>&cn=<%=cn%>');
 
                     window.location.href = '<%=request.getContextPath() %>/oscarRx/addFavoriteStaticScript.do?drugId='
-                        + escape(drugId) + '&favoriteName=' + escape(favoriteName)
+                        + encodeURIComponent(drugId) + '&favoriteName=' + encodeURIComponent(favoriteName)
                         + '&returnParams=' + s;
                 }
             }

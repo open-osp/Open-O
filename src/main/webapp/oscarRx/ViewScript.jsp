@@ -322,9 +322,9 @@
                                             document.forms.RxClearPendingForm.submit();
                                         }
                                     </script>
-                                    <script language=javascript>
+                                    <script type="text/javascript">
                                         function ShowDrugInfo(drug) {
-                                            window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + escape(drug), "_blank",
+                                            window.open("<%= request.getContextPath() %>/oscarRx/drugInfo.do?GN=" + encodeURIComponent(drug), "_blank",
                                                 "location=no, menubar=no, toolbar=no, scrollbars=yes, status=yes, resizable=yes");
                                         }
                                     </script>
