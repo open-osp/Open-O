@@ -2683,46 +2683,10 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                     continue;
                                 }
 
-                                // Normalize path separators to system separator
-                                String normalizedPath = filePath.replace("\\", File.separator).replace("/", File.separator);
-
-                                // Try multiple strategies to locate the file
-                                File sourceFile = null;
-
-                                // Strategy 1: File path relative to current directory
-                                File relativeFile = new File(currentDirectory, normalizedPath);
-                                if (relativeFile.exists()) {
-                                    sourceFile = relativeFile;
-                                } else {
-                                    // Strategy 2: Just the filename in current directory
-                                    String fileName = new File(normalizedPath).getName();
-                                    File fileInCurrentDir = new File(currentDirectory, fileName);
-                                    if (fileInCurrentDir.exists()) {
-                                        sourceFile = fileInCurrentDir;
-                                    } else {
-                                        // Strategy 3: Parent directory of current directory + relative path
-                                        File parentDir = new File(currentDirectory).getParentFile();
-                                        if (parentDir != null) {
-                                            File parentRelativeFile = new File(parentDir, normalizedPath);
-                                            if (parentRelativeFile.exists()) {
-                                                sourceFile = parentRelativeFile;
-                                            }
-                                        }
-                                    }
-                                }
-
+                                File sourceFile = resolveReportSourceFile(currentDirectory, filePath, contentType);
                                 if (sourceFile == null) {
                                     err_data.add("Error! Cannot locate file for Report (" + (i + 1) + "): " + filePath);
                                     continue;
-                                }
-
-                                // Add extension if missing
-                                String sourcePath = sourceFile.getAbsolutePath();
-                                if (!sourcePath.endsWith(contentType)) {
-                                    File sourceWithExt = new File(sourcePath + contentType);
-                                    if (sourceWithExt.exists()) {
-                                        sourceFile = sourceWithExt;
-                                    }
                                 }
 
                                 FileUtils.copyFile(sourceFile, new File(docDir + docFileName));
@@ -3202,6 +3166,66 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             return "application/rtf";
         }
         return contentType;
+    }
+
+    /**
+     * Resolves the source file for a report by trying multiple strategies.
+     *
+     * @param currentDirectory the current directory to search from
+     * @param filePath the file path from the report data
+     * @param contentType the content type/extension for the file
+     * @return the resolved File if found, null otherwise
+     */
+    private File resolveReportSourceFile(String currentDirectory, String filePath, String contentType) {
+        String normalizedPath = filePath
+            .replace("\\", File.separator)
+            .replace("/", File.separator);
+
+        if (isAbsoluteReportPath(filePath, normalizedPath)) {
+            return null;
+        }
+
+        String fileName = new File(normalizedPath).getName();
+        File currentDir = new File(currentDirectory);
+        File parentDir = currentDir.getParentFile();
+
+        List<File> candidates = new ArrayList<>();
+
+        // Strategy 1: path relative to current directory
+        candidates.add(new File(currentDir, normalizedPath));
+
+        // Strategy 2: filename only in current directory
+        candidates.add(new File(currentDir, fileName));
+
+        // Strategy 3: parent directory + relative path
+        if (parentDir != null) {
+            candidates.add(new File(parentDir, normalizedPath));
+        }
+
+        // Extension handling: for each candidate, also try candidate + contentType
+        for (File candidate : candidates) {
+            if (candidate.exists()) {
+                return candidate;
+            }
+            if (contentType != null && !contentType.isEmpty()) {
+                File withExt = new File(candidate.getPath() + contentType);
+                if (withExt.exists()) {
+                    return withExt;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isAbsoluteReportPath(String originalPath, String normalizedPath) {
+        if (new File(normalizedPath).isAbsolute()) {
+            return true;
+        }
+        if (originalPath != null && originalPath.matches("^[A-Za-z]:[\\\\/].*")) {
+            return true;
+        }
+        return normalizedPath != null && normalizedPath.matches("^[A-Za-z]:[/\\\\].*");
     }
 
     private File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
