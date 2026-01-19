@@ -4420,8 +4420,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(), localFileIs, admProviderNo);
 
                     if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        logger.debug("filePath" + filePath);
-                        logger.debug("Type :" + type);
+                        logger.debug("fileName: {}", Encode.forJava(file.getName()));
+                        logger.debug("Type: {}", type);
                         MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
                         if (msgHandler != null) {
                             logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
