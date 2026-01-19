@@ -64,6 +64,7 @@
 <%@ page import="ca.openosp.openo.commn.Gender" %>
 <%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
 <%@ page import="ca.openosp.MyDateFormat" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%
     ProviderDataDao providerDao = SpringUtils.getBean(ProviderDataDao.class);
 %>
@@ -196,7 +197,7 @@
                         </div>
                     </td>
                     <td><input type="text" index="3" name="last_name"
-                               value="<%= provider.getLastName() == null ? "" : provider.getLastName() %>" maxlength="30"></td>
+                               value="<%= Encode.forHtmlAttribute(provider.getLastName() == null ? "" : provider.getLastName()) %>" maxlength="30"></td>
                 </tr>
                 <tr>
                     <td>
@@ -204,7 +205,7 @@
                         </div>
                     </td>
                     <td><input type="text" index="4" name="first_name"
-                               value="<%= provider.getFirstName() == null ? "" : provider.getFirstName() %>" maxlength="30"></td>
+                               value="<%= Encode.forHtmlAttribute(provider.getFirstName() == null ? "" : provider.getFirstName()) %>" maxlength="30"></td>
                 </tr>
 
 
@@ -291,13 +292,13 @@
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formSpecialty"/>:
                         </td>
                         <td><input type="text" name="specialty"
-                                   value="<%= provider.getSpecialty() == null ? "" : provider.getSpecialty() %>" maxlength="40"></td>
+                                   value="<%= Encode.forHtmlAttribute(provider.getSpecialty() == null ? "" : provider.getSpecialty()) %>" maxlength="40"></td>
                     </tr>
                     <tr>
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formTeam"/>:
                         </td>
                         <td><input type="text" name="team"
-                                   value="<%= provider.getTeam() == null ? "" : provider.getTeam() %>" maxlength="20"></td>
+                                   value="<%= Encode.forHtmlAttribute(provider.getTeam() == null ? "" : provider.getTeam()) %>" maxlength="20"></td>
                     </tr>
                     <tr>
                         <td align="right"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.provider.formSex"/>:
