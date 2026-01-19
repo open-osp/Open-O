@@ -474,13 +474,10 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Normalize path separators to handle cross-platform ZIP files
         String normalizedEntryName = entryName.replace("\\", "/");
 
-        // Create file by resolving entry name against target directory
-        File newFile = new File(targetDir, normalizedEntryName);
-
-        // CRITICAL SECURITY: Validate the resolved path is within the target directory
-        // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
+        // CRITICAL SECURITY: Validate and sanitize the ZIP entry name
+        // validatePath() sanitizes the filename AND validates containment
         try {
-            PathValidationUtils.validateExistingPath(newFile, targetDir);
+            File newFile = PathValidationUtils.validatePath(normalizedEntryName, targetDir);
             return newFile;
         } catch (SecurityException e) {
             logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
@@ -2707,7 +2704,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                                 File sourceFile = resolveReportSourceFile(currentDirectory, filePath, contentType);
                                 if (sourceFile == null) {
-                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + "): " + filePath);
+                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + "): " + Encode.forJava(filePath));
                                     continue;
                                 }
 
@@ -3207,10 +3204,10 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
     /**
      * Resolves the source file for a report by trying multiple strategies.
      *
-     * @param currentDirectory the current directory to search from
-     * @param filePath the file path from the report data
-     * @param contentType the content type/extension for the file
-     * @return the resolved File if found, null otherwise
+     * @param currentDirectory String the current directory to search from
+     * @param filePath String the file path from the report data
+     * @param contentType String the content type/extension for the file
+     * @return File the resolved File if found, null otherwise
      */
     private File resolveReportSourceFile(String currentDirectory, String filePath, String contentType) {
         // Defensive null/blank guard for currentDirectory
