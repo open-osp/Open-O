@@ -73,6 +73,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.jettison.json.JSONException;
+import org.owasp.encoder.Encode;
 import org.codehaus.jettison.json.JSONObject;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.PMmodule.model.Program;
@@ -436,7 +437,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 try {
                     PathValidationUtils.validateExistingPath(newFile, targetDir);
                 } catch (SecurityException e) {
-                    logger.error("SECURITY: Rejecting malicious ZIP entry: {}", sanitizeLogValue(entryName), e);
+                    logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
@@ -471,13 +472,6 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             Files.deleteIfExists(zipFilePath);
         }
         return directoryPath;
-    }
-
-    private String sanitizeLogValue(String value) {
-        if (value == null) {
-            return null;
-        }
-        return value.replaceAll("[\\r\\n\\t\\x00-\\x1F\\x7F]", "_");
     }
 
     /**
