@@ -632,14 +632,6 @@
     "optional" : false,
     "integrity" : "sha512:sXIDC0TFQB6WcoCJMct5WDDV0d1azfWtRBgt73w6s5EA5W5YMljGsXf0Y93XG5wXSGaMSgZOwuQMsZq9WFO/Dg=="
   }, {
-    "groupId" : "com.lowagie",
-    "artifactId" : "itext",
-    "version" : "1.3",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:x3dYRKcfTUGrzs4+YAKh4PWEhzuqCEblE55l4D9r6R5n+iYAU54ZNpo197s1xfCeLCvxlyQB+72OY6CANf20xw=="
-  }, {
     "groupId" : "com.medseek.clinical.service",
     "artifactId" : "SSOClinicalConnect",
     "version" : "20171101",
