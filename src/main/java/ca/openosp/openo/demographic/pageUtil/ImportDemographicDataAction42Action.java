@@ -385,7 +385,14 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         }
                     }
                 } else if (Files.isRegularFile(stream)) {
-                    // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
+                    String filePath = stream.toString();
+                    if (filePath.toLowerCase().endsWith(".xml")) {
+                        // Set the current directory to the XML file's parent for attachment resolution
+                        currentDirectory = stream.getParent().toAbsolutePath().toString();
+                        processXmlFile(loggedInInfo, stream, warnings, logs, request, timeshiftInDays, students, courseId);
+                    } else {
+                        // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
+                    }
                 } else {
                     warnings.add("Directory not found " + stream);
                 }
