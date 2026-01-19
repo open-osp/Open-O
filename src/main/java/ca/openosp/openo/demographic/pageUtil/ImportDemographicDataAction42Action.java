@@ -395,7 +395,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
                     }
                 } else {
-                    warnings.add("Directory not found " + stream);
+                    warnings.add("Path is neither a file nor directory: " + stream);
                 }
             }
         } catch (Exception e) {
