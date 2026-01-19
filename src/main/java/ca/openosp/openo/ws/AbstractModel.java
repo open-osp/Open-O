@@ -53,7 +53,7 @@ import java.io.Serializable;
  *
  * @since 2026-01-18
  * @see Client
- * @see ca.openosp.openo.ws.rest.HnrWs
+ * @see ca.openosp.openo.caisi_integrator.ws.HnrWs
  * @see javax.xml.bind.annotation.XmlAccessorType
  * @see javax.xml.bind.annotation.XmlType
  * @see java.io.Serializable
