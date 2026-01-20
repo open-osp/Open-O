@@ -475,13 +475,55 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         String normalizedEntryName = entryName.replace("\\", "/");
 
         // CRITICAL SECURITY: Validate and sanitize the ZIP entry name
-        // validatePath() sanitizes the filename AND validates containment
+        // validatePath() sanitizes the filename AND validates containment, but we also
+        // enforce a canonical-path containment check here for defense in depth and
+        // to satisfy static analysis expectations around Zip Slip protection.
         try {
+            // First, use central utility to sanitize the filename.
             File newFile = PathValidationUtils.validatePath(normalizedEntryName, targetDir);
+
+            // Then, explicitly verify that the resolved path (and its parent) are
+            // still within the intended target directory using canonical paths.
+            if (!isWithinDirectory(newFile, targetDir)) {
+                logger.error("SECURITY: ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+                return null;
+            }
+
+            File parent = newFile.getParentFile();
+            if (parent != null && !isWithinDirectory(parent, targetDir)) {
+                logger.error("SECURITY: Parent directory of ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+                return null;
+            }
+
             return newFile;
         } catch (SecurityException e) {
             logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
             return null;
+        }
+    }
+
+    /**
+     * Canonical path containment check used to prevent Zip Slip.
+     * Ensures that {@code file} is equal to or a descendant of {@code baseDir}.
+     *
+     * @param file File the file to check
+     * @param baseDir File the base directory that should contain the file
+     * @return boolean true if file is within baseDir, false otherwise
+     */
+    private boolean isWithinDirectory(File file, File baseDir) {
+        if (file == null || baseDir == null) {
+            return false;
+        }
+        try {
+            File baseCanonical = baseDir.getCanonicalFile();
+            File fileCanonical = file.getCanonicalFile();
+            String basePath = baseCanonical.getPath();
+            String filePath = fileCanonical.getPath();
+
+            return filePath.equals(basePath) || filePath.startsWith(basePath + File.separator);
+        } catch (IOException e) {
+            logger.error("Error performing canonical containment check for {}", file, e);
+            return false;
         }
     }
 
