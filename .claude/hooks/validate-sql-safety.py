@@ -115,7 +115,7 @@ def check_sql_injection_patterns(content: str) -> list[str]:
     # Check for queries that don't use parameterized approach
     raw_query_patterns = [
         # "SELECT ... WHERE id = '" + id + "'"
-        (rf'["\'][^"\']*{sql_keywords}[^"\']*=\s*[\'"]?\s*["\']\s*\+\s*\w+\s*\+\s*["\'][\'"]\s*["\']',
+        (rf'["\'][^"\']*{sql_keywords}[^"\']*=\s*(["\'])\s*\+\s*\w+\s*\+\s*\1',
          "String concatenation with quotes in SQL"),
         # query = "SELECT ... " + variable;
         (rf'\w+\s*=\s*["\'][^"\']*{sql_keywords}[^"\']*["\']\s*\+',
