@@ -1101,6 +1101,11 @@
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-rt-transports-jms</artifactId>
                 </exclusion>
+                <!-- Not used, excluded to fix CVE (DoS via Rhino toFixed) -->
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-frontend-js</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

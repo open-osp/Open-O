@@ -1828,14 +1828,6 @@
     "integrity" : "sha512:ppHjzG0MGRAtR5Un6onFsdX0aTcEBFq+hMRPg7CfpNyfvGW/zZXrPTkpzBI/VgETm5dOLnlfW3P2B0PwiaAnFQ=="
   }, {
     "groupId" : "org.apache.cxf",
-    "artifactId" : "cxf-rt-frontend-js",
-    "version" : "3.5.11",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:UFGYhfJUZ4KncYS0YU4ZFU/cwBdVMjP7DtFMkaMbBfLPN54an1AP09dGJ+8q0D+gN4rYRYr6qm9F11LbCBVwSA=="
-  }, {
-    "groupId" : "org.apache.cxf",
     "artifactId" : "cxf-rt-frontend-simple",
     "version" : "3.5.11",
     "scope" : "compile",
@@ -3114,14 +3106,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:fYNi4VyUGo/MBw9AsUwAEf6UW+hVta8qNRKS3UadOg56kk4m6+lmBQ3RMEFdBGXeGx73cUFcGvSCLQnA9SKcGw=="
-  }, {
-    "groupId" : "org.mozilla",
-    "artifactId" : "rhino",
-    "version" : "1.7.15",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:VhnE9S8YY8XXLNkRXC6cz/VcfnqPTxOV9zSGEg2UqzkAY0+ynVQ1alsPwiFFcGFdXwbhUiYN+XG7AcW8TeS7lQ=="
   }, {
     "groupId" : "org.objenesis",
     "artifactId" : "objenesis",
