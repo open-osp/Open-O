@@ -2746,7 +2746,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                                 File sourceFile = resolveReportSourceFile(currentDirectory, filePath, contentType);
                                 if (sourceFile == null) {
-                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + "): " + Encode.forJava(filePath));
+                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + ")");
                                     continue;
                                 }
 
