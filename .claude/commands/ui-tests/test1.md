@@ -28,7 +28,7 @@ allowed-tools:
   - Bash(mysql -h db -uroot -ppassword oscar -e *)
   - Bash(mysql * oscar * 2>&1 | tail -1)
   - Bash(date *)
-  - Bash(TIMESTAMP=*)
+  - Bash(TIMESTAMP=$(date +%Y%m%d-%H%M%S-%3N))
   - Write(path:ui-test-runs/**)
 model: claude-sonnet-4-5-20250929
 ---
