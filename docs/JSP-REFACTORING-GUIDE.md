@@ -453,9 +453,10 @@ Note: Use dynamic locale from request, not hardcoded "en".
 OpenO EMR uses OWASP CSRF Guard. Forms must include the CSRF token:
 
 ```jsp
+<%@ taglib uri="http://www.owasp.org/index.php/OWASP_CSRFGuard" prefix="csrf" %>
 <form id="appointmentForm" action="${ctx}/appointment/addappointment.do" method="post">
-    <%-- CSRF Token - REQUIRED for all POST forms --%>
-    <input type="hidden" name="OWASP_CSRFTOKEN" value="${sessionScope['OWASP_CSRFTOKEN']}">
+    <%-- CSRF Token - REQUIRED for all POST forms (uses configured token name/value) --%>
+    <csrf:token/>
 
     <%-- Preserve all existing hidden fields --%>
     <input type="hidden" name="displaymode" value="">
