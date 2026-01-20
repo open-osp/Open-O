@@ -146,45 +146,19 @@ public class Example2Action extends ActionSupport {
 3. Debug logging: `debug-on` → `server restart` → `debug-off`
 
 ## Modern Test Framework (JUnit 5)
-**Key Features**:
-- **Parallel Structure**: `src/test-modern/` separate from legacy `src/test/`
-- **Zero Impact**: Legacy tests unchanged, both suites run automatically
-- **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
-- **Spring Integration**: Full Spring context with transaction support
-- **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
-- **Documentation**: Complete guide at `docs/modern-test-framework-complete.md`
 
-### Test Organization Standards
+- **Location**: `src/test-modern/` (separate from legacy `src/test/`)
+- **Context Guide**: `docs/test/claude-test-context.md` (auto-injected by hooks when working on tests)
+- **Full Documentation**: `docs/test/test-writing-best-practices.md`
+- **Base class**: Extend `OpenOTestBase` for all tests
+- **CRITICAL**: Read actual DAO/Manager interfaces before writing tests - never invent methods
 
-Tests use hierarchical tagging for filtering:
-- **Required Tags**: `@Tag("integration")`, `@Tag("dao")` (test type & layer)
-- **CRUD Tags**: `@Tag("create")`, `@Tag("read")`, `@Tag("update")`, `@Tag("delete")`
-- **Extended Tags**: `@Tag("query")`, `@Tag("search")`, `@Tag("filter")`, `@Tag("aggregate")`
-
-**Running Tagged Tests:**
+### Test Execution
 ```bash
-mvn test -Dgroups="unit"           # Unit tests only
-mvn test -Dgroups="integration"    # Integration tests only
-mvn test -Dgroups="create,update"  # Specific operations
+make install --run-modern-tests     # Modern tests only
+mvn test -Dgroups="integration"     # Integration tests
+mvn test -Dgroups="unit"            # Unit tests
 ```
-
-### BDD Test Naming Convention
-
-Modern tests use BDD (Behavior-Driven Development) naming for clarity:
-
-**Patterns**:
-1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
-2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
-3. `should<ExpectedBehavior>` - Simple assertions
-
-**Examples**:
-```java
-void shouldReturnTickler_whenValidIdProvided()
-void findActiveByDemographicNo_multipleStatuses_returnsOnlyActive()
-void shouldLoadSpringContext()
-```
-
-**Benefits**: Self-documenting, clear failure messages, searchable
 
 ### Critical Dependency Resolution Patterns
 
@@ -933,55 +907,6 @@ void shouldReturnTickler_whenValidIdProvided() {
 }
 
 // 3. Add negative test cases for edge cases and error conditions
-```
-
-#### BDD Test Writing Quick Reference
-```java
-// ✅ CORRECT BDD Test Structure
-@Test
-@DisplayName("should perform expected behavior when condition is met")  // lowercase "should"
-void shouldPerformExpectedBehavior_whenConditionIsMet() {  // camelCase with ONE underscore
-    // Given - set up test data
-    TestData data = createTestData();
-
-    // When - perform the action being tested
-    Result result = systemUnderTest.performAction(data);
-
-    // Then - verify the expected outcome
-    assertThat(result).isNotNull();
-    assertThat(result.getValue()).isEqualTo(expected);
-}
-
-```
-
-**Test Execution Commands:**
-```bash
-# Run all modern tests
-mvn test                          # Runs modern tests first, then legacy
-
-# Run all integration tests for a DAO component
-mvn test -Dtest=TicklerDao*IntegrationTest  # All TicklerDao integration tests
-
-# Run specific operation tests
-mvn test -Dtest=TicklerDaoFindIntegrationTest      # Just find operations
-mvn test -Dtest=TicklerDaoWriteIntegrationTest     # Just write operations
-
-# Run by test type (using tags)
-mvn test -Dgroups="unit"                # Fast unit tests only
-mvn test -Dgroups="integration"         # Integration tests only
-
-# Run tests by tags
-mvn test -Dgroups="tickler,read"        # All read operations for tickler
-mvn test -Dgroups="create,update"       # All create and update operations
-mvn test -Dgroups="aggregate"           # All aggregation operations
-
-# Build with tests
-make install --run-tests          # Includes modern tests automatically
-```
-
-**Parallel Execution for Multi-File Tests:**
-```bash
-mvn test -T 4C                    # 4 threads per CPU core for parallel execution
 ```
 
 ### Development Environment References

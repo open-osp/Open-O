@@ -13,6 +13,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $CLAUDE_PROJECT_DIR/.claude/hooks/inject-test-context.py",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
