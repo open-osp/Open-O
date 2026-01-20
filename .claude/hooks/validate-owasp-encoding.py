@@ -141,8 +141,10 @@ def check_java_unsafe_patterns(content: str) -> list[str]:
          "response.getWriter().write() without OWASP encoding"),
         (r'out\s*\.\s*(?:write|print|println)\s*\(\s*(?!Encode\.)',
          "out.print() without OWASP encoding"),
-        (r'PrintWriter\s+\w+\s*=.*;\s*\w+\s*\.\s*(?:write|print|println)\s*\(\s*(?!Encode\.)',
-         "PrintWriter output without OWASP encoding"),
+        # Simplified PrintWriter pattern - just detect method calls without encoding
+        # This catches usage regardless of where the PrintWriter was declared
+        (r'\b\w+\s*\.\s*(?:write|print|println)\s*\(\s*(?!Encode\.|")',
+         "PrintWriter/Writer output without OWASP encoding"),
     ]
 
     for pattern, description in output_patterns:
