@@ -38,10 +38,10 @@ def main():
             context = f.read()
         print(context)
     except FileNotFoundError:
-        print("Warning: Test context file not found: docs/test/claude-test-context.md")
-        print("Please read docs/test/test-writing-best-practices.md for test conventions.")
+        print("Warning: Test context file not found: docs/test/claude-test-context.md", file=sys.stderr)
+        print("Please read docs/test/test-writing-best-practices.md for test conventions.", file=sys.stderr)
     except Exception as e:
-        print(f"Warning: Error reading test context: {e}")
+        print(f"Warning: Error reading test context: {e}", file=sys.stderr)
 
     sys.exit(0)
 

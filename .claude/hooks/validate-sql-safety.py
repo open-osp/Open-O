@@ -65,16 +65,16 @@ def check_sql_injection_patterns(content: str) -> list[str]:
 
     # Pattern 4: executeQuery/executeUpdate with concatenation
     execute_concat = rf'(?:executeQuery|executeUpdate|execute)\s*\(\s*["\'][^"\']*{sql_keywords}[^"\']*["\']\s*\+'
-    execute_concat2 = rf'(?:executeQuery|executeUpdate|execute)\s*\(\s*\w+\s*\+\s*["\']'
+    execute_concat2 = r'(?:executeQuery|executeUpdate|execute)\s*\(\s*\w+\s*\+\s*["\']'
 
     # Pattern 5: createQuery/createNativeQuery with concatenation
     create_query_concat = rf'(?:createQuery|createNativeQuery|createSQLQuery)\s*\(\s*["\'][^"\']*{sql_keywords}[^"\']*["\']\s*\+'
-    create_query_concat2 = rf'(?:createQuery|createNativeQuery|createSQLQuery)\s*\(\s*\w+\s*\+\s*["\']'
+    create_query_concat2 = r'(?:createQuery|createNativeQuery|createSQLQuery)\s*\(\s*\w+\s*\+\s*["\']'
 
     # Pattern 6: Direct variable in SQL string construction
     # "SELECT * FROM " + tableName
-    table_concat = rf'["\']SELECT\s+\*?\s+FROM\s*["\']\s*\+\s*\w+'
-    where_concat = rf'["\']WHERE\s+\w+\s*=\s*["\']\s*\+\s*\w+'
+    table_concat = r'["\']SELECT\s+\*?\s+FROM\s*["\']\s*\+\s*\w+'
+    where_concat = r'["\']WHERE\s+\w+\s*=\s*["\']\s*\+\s*\w+'
 
     patterns_to_check = [
         (concat_pattern, "String concatenation in SQL query"),
@@ -139,25 +139,6 @@ def check_sql_injection_patterns(content: str) -> list[str]:
                 )
 
     return issues
-
-
-def check_safe_patterns_present(content: str) -> bool:
-    """
-    Check if the content uses safe parameterized query patterns.
-    This is informational - presence doesn't excuse unsafe patterns.
-    """
-    safe_patterns = [
-        r'\.setParameter\s*\(',           # JPA/Hibernate setParameter
-        r'\.setString\s*\(',              # PreparedStatement setString
-        r'\.setInt\s*\(',                 # PreparedStatement setInt
-        r'\.setLong\s*\(',                # PreparedStatement setLong
-        r'\.setObject\s*\(',              # PreparedStatement setObject
-        r'PreparedStatement',              # Using PreparedStatement
-        r'\?\s*,?\s*\?|\?\s*\)',          # ? placeholders
-        r':\w+',                           # Named parameters :paramName
-    ]
-
-    return any(re.search(p, content) for p in safe_patterns)
 
 
 def validate_content(file_path: str, content: str) -> tuple[bool, list[str]]:

@@ -55,9 +55,6 @@ def check_jsp_unsafe_patterns(content: str) -> list[str]:
         r'fn:escapeXml\s*\(',    # JSTL escapeXml function
     ]
 
-    # Check for c:out tags which are safe
-    cout_pattern = r'<c:out\s+[^>]*value\s*=\s*["\']?\$\{[^}]+\}["\']?[^>]*/?\s*>'
-
     for match in re.finditer(el_pattern, content):
         el_expr = match.group(0)
         el_content = match.group(1)
