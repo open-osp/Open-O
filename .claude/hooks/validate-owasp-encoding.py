@@ -79,7 +79,7 @@ def check_jsp_unsafe_patterns(content: str) -> list[str]:
 
         # Robust check: if <c:out is found before and a proper closing (/> or </c:out>) appears after
         has_cout_open_before = '<c:out' in context_before
-        has_self_closing_after = bool(re.match(r'^\s*/>', context_after))
+        has_self_closing_after = bool(re.match(r'^["\']?\s*/>', context_after))
         has_cout_close_after = bool(re.search(r'</\s*c:out\s*>', context_after))
         if has_cout_open_before and (has_self_closing_after or has_cout_close_after):
             is_safe = True
