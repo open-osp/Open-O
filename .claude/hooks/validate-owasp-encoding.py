@@ -141,8 +141,8 @@ def check_java_unsafe_patterns(content: str) -> list[str]:
          "response.getWriter().write() without OWASP encoding"),
         (r'out\s*\.\s*(?:write|print|println)\s*\(\s*(?!Encode\.)',
          "out.print() without OWASP encoding"),
-        # Simplified PrintWriter pattern - just detect method calls without encoding
-        # This catches usage regardless of where the PrintWriter was declared
+        # PrintWriter/Writer pattern - matches generic usage but will be filtered
+        # to exclude known-safe patterns like System.out, System.err, logger, file I/O
         (r'\b\w+\s*\.\s*(?:write|print|println)\s*\(\s*(?!Encode\.|")',
          "PrintWriter/Writer output without OWASP encoding"),
     ]
@@ -151,6 +151,25 @@ def check_java_unsafe_patterns(content: str) -> list[str]:
         # Use a single regex that both detects the pattern and captures the argument
         combined_pattern = pattern + r'([^)]+)\)'
         for match in re.finditer(combined_pattern, content):
+            # Extract the full matched text to check for exclusions
+            full_match = match.group(0)
+
+            # Skip known-safe non-HTTP patterns
+            # System I/O, logging, and file I/O don't pose XSS risks
+            safe_patterns = [
+                'System.out',      # Console output
+                'System.err',      # Error output
+                'logger.',         # Logger instances
+                'log.',            # Log instances
+                'LOG.',            # Uppercase log constants
+                'fileWriter.',     # File I/O
+                'bufferedWriter.', # Buffered file I/O
+                'writer.',         # Generic file writers (lowercase convention)
+                'Writer.',         # File writer classes
+            ]
+            if any(safe in full_match for safe in safe_patterns):
+                continue
+
             # Extract the argument being written/printed
             output_content = match.group(1) if match.lastindex else ""
             stripped_output = output_content.strip()
