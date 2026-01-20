@@ -144,13 +144,13 @@ Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All
 
 ### Step 1.2: Key Rules for Scriptlet Consolidation
 
-1. **Security checks MUST come first** - Before any other logic
-2. **Imports should follow security** - Group by package
+1. **Imports and taglibs MUST come first** - All `<%@ page %>`, `<%@ taglib %>`, and related imports go at the very top of the JSP
+2. **Security checks next** - Perform authentication/authorization checks immediately after imports
 3. **Spring beans next** - Get all dependencies upfront
 4. **Parameters after beans** - Read all request parameters
 5. **Database queries follow** - Fetch all needed data
-6. **Transformations last** - Process data for view
-7. **Set pageContext attributes** - Bridge to JSTL/EL
+6. **Transformations next** - Process data for view
+7. **Set pageContext attributes last** - Bridge to JSTL/EL
 
 ### Step 1.3: Error Handling in Scriptlets
 
