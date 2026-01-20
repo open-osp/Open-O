@@ -2764,6 +2764,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                     continue;
                                 }
 
+                                // Resolve and validate the source file
+                                // This returns only regular files (not directories) suitable for FileUtils.copyFile
                                 File sourceFile = resolveReportSourceFile(currentDirectory, filePath, contentType);
                                 if (sourceFile == null) {
                                     err_data.add("Error! Cannot locate file for Report (" + (i + 1) + ")");
@@ -3341,15 +3343,23 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
     }
 
     /**
-     * Validates an existing file against the allowed root directory.
+     * Validates an existing regular file against the allowed root directory.
+     * Only returns files that exist AND are regular files (not directories or special files).
+     * This ensures the returned File can be used with FileUtils.copyFile without errors.
      *
      * @param file the file to validate
      * @param allowedRoot the allowed root directory
      * @param originalPath the original file path from XML for logging
-     * @return the file if it exists and passes validation, null otherwise
+     * @return the file if it exists as a regular file and passes validation, null otherwise
      */
     private File tryValidateExisting(File file, File allowedRoot, String originalPath) {
         if (!file.exists()) {
+            return null;
+        }
+
+        // Only accept regular files, reject directories and other file types
+        // This prevents FileUtils.copyFile from failing when given a directory
+        if (!file.isFile()) {
             return null;
         }
 
