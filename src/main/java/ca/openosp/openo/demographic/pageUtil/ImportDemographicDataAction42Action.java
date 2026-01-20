@@ -3259,6 +3259,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             return null;
         }
 
+        // Defensive null/blank guard for filePath
+        if (filePath == null || filePath.trim().isEmpty()) {
+            logger.warn("resolveReportSourceFile: filePath is null or empty, cannot resolve file. currentDirectory: {}",
+                Encode.forJava(currentDirectory));
+            return null;
+        }
+
         String normalizedPath = filePath
             .replace("\\", File.separator)
             .replace("/", File.separator);
