@@ -961,7 +961,7 @@ For each JSP refactoring:
 
 ## Resources
 
-- [Bootstrap 5.0 Documentation](https://getbootstrap.com/docs/5.0/) (project uses 5.0.2)
+- [Bootstrap 5.3 Documentation](https://getbootstrap.com/docs/5.3/) (project uses 5.3.0)
 - [JSTL 1.2 Reference](https://docs.oracle.com/javaee/5/jstl/1.1/docs/tlddocs/)
 - [MDN Web Docs - Vanilla JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 - [OWASP XSS Prevention](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
