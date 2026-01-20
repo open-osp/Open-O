@@ -74,11 +74,14 @@ DELETE FROM demographic WHERE last_name = 'TEST-UITEST2';
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 4 | Click "Add Record" | Add demographic form opens |
+| 4 | Search any term, click "Create Demographic" | Add demographic form opens |
 | 5 | Fill name, DOB, sex | Required fields populated |
-| 6 | Fill address fields | Address section populated |
-| 7 | Fill phone, email | Contact fields populated |
-| 8 | Click "Add Record" | Success message, patient created |
+| 6 | Fill phone, email (leave HIN empty) | Contact fields populated |
+| 7 | Set Doctor (MRP) | Provider field populated |
+| 8 | Click "Add Record", **wait 5 sec**, log console | Success message, patient created |
+
+> **IMPORTANT**: The "Create Demographic" link only appears after performing a search.
+> Search for any term (e.g., "TEST"), then click the link at the bottom of results.
 
 ### Phase 3: Verify New Patient (Steps 9-12)
 
@@ -137,17 +140,17 @@ DELETE FROM demographic WHERE last_name = 'TEST-UITEST2';
 ### New Patient (Created During Test)
 ```
 Last Name: TEST-UITEST2
-First Name: AutomatedTest
-DOB: 2000-01-15
+First Name: Patient
+DOB: 1990-01-01
 Sex: M (Male)
-HIN: (leave empty)
-Address: 123 Test Street
-City: Toronto
-Province: ON
-Postal: M5V1A1
-Phone: 416-555-0001
-Email: test2@openoemr.test
+HIN: (leave empty - strict validation)
+Phone: 416-555-0199
+Email: test.uitest2@example.com
+Doctor (MRP): openodoc, doctor
 ```
+
+> **NOTE**: HIN is intentionally left empty because the field has strict validation
+> that rejects invalid formats. This is acceptable for test purposes.
 
 ### Edit Values (Applied During Test)
 ```
