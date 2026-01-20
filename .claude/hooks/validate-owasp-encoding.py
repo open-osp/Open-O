@@ -146,23 +146,28 @@ def check_java_unsafe_patterns(content: str) -> list[str]:
     ]
 
     for pattern, description in output_patterns:
-        if re.search(pattern, content):
-            # Check if this is outputting a variable that could be user input
-            # Look for common variable patterns
-            match = re.search(pattern + r'([^)]+)\)', content)
-            if match:
-                output_content = match.group(1) if match.lastindex else ""
-                # Skip if it's a literal string only
-                if output_content.strip().startswith('"') and output_content.strip().endswith('"'):
-                    if '+' not in output_content:  # Pure string literal, no concatenation
-                        continue
+        # Use a single regex that both detects the pattern and captures the argument
+        combined_pattern = pattern + r'([^)]+)\)'
+        for match in re.finditer(combined_pattern, content):
+            # Extract the argument being written/printed
+            output_content = match.group(1) if match.lastindex else ""
+            stripped_output = output_content.strip()
 
-                issues.append(
-                    f"WARNING: {description}\n"
-                    f"  If outputting user data, wrap with Encode.forHtml() or appropriate encoder.\n"
-                    f"  Example: response.getWriter().write(Encode.forHtml(userInput))"
-                )
+            # Skip if it's a pure literal string with no concatenation
+            if (
+                stripped_output.startswith('"')
+                and stripped_output.endswith('"')
+                and '+' not in stripped_output
+            ):
+                continue
 
+            issues.append(
+                f"WARNING: {description}\n"
+                f"  If outputting user data, wrap with Encode.forHtml() or appropriate encoder.\n"
+                f"  Example: response.getWriter().write(Encode.forHtml(userInput))"
+            )
+            # Only need one warning per pattern; break after first unsafe match
+            break
     return issues
 
 
