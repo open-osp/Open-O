@@ -863,7 +863,7 @@ ${pageContext.request.contextPath}
 #### 4. Mixed Bootstrap Versions
 ```html
 <%-- Bootstrap 3 classes used --%>
-<link href="${ctx}/library/bootstrap/3.0.0/css/bootstrap.min.css"...>
+<link href="${ctx}/library/bootstrap/3.3.7/css/bootstrap.min.css"...>
 ```
 
 #### 5. jQuery UI Dependencies
