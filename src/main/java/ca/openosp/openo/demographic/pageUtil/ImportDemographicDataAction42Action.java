@@ -3274,15 +3274,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
     private File resolveReportSourceFile(String currentDirectory, String filePath, String contentType) {
         // Defensive null/blank guard for currentDirectory
         if (currentDirectory == null || currentDirectory.trim().isEmpty()) {
-            logger.warn("resolveReportSourceFile: currentDirectory is null or empty, cannot resolve file path: {}",
-                filePath != null ? Encode.forJava(filePath) : "null");
+            logger.warn("resolveReportSourceFile: currentDirectory is null or empty, cannot resolve file path");
             return null;
         }
 
         // Defensive null/blank guard for filePath
         if (filePath == null || filePath.trim().isEmpty()) {
-            logger.warn("resolveReportSourceFile: filePath is null or empty, cannot resolve file. currentDirectory: {}",
-                Encode.forJava(currentDirectory));
+            logger.warn("resolveReportSourceFile: filePath is null or empty, cannot resolve file");
             return null;
         }
 
@@ -3291,7 +3289,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             .replace("/", File.separator);
 
         if (isAbsoluteReportPath(normalizedPath)) {
-            logger.error("SECURITY: Rejecting absolute file path from XML: {}", Encode.forJava(filePath));
+            logger.error("SECURITY: Rejecting absolute file path from XML");
             return null;
         }
 
@@ -3361,7 +3359,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             PathValidationUtils.validateExistingPath(file, allowedRoot);
             return file;
         } catch (SecurityException e) {
-            logger.error("SECURITY: Rejecting malicious file path from XML: {}", Encode.forJava(originalPath), e);
+            logger.error("SECURITY: Rejecting malicious file path from XML", e);
             return null;
         }
     }
@@ -4548,7 +4546,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(), localFileIs, admProviderNo);
 
                     if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        logger.debug("fileName: {}", Encode.forJava(file.getName()));
+                        logger.debug("File uploaded successfully");
                         logger.debug("Type: {}", type);
                         MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
                         if (msgHandler != null) {
