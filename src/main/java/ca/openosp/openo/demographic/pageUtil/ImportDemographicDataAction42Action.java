@@ -474,16 +474,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Normalize path separators to handle cross-platform ZIP files
         String normalizedEntryName = entryName.replace("\\", "/");
 
-        // CRITICAL SECURITY: Validate and sanitize the ZIP entry name
-        // validatePath() sanitizes the filename AND validates containment, but we also
-        // enforce a canonical-path containment check here for defense in depth and
-        // to satisfy static analysis expectations around Zip Slip protection.
-        try {
-            // First, use central utility to sanitize the filename.
-            File newFile = PathValidationUtils.validatePath(normalizedEntryName, targetDir);
+        // Create file by resolving entry name against target directory (preserves directory structure)
+        File newFile = new File(targetDir, normalizedEntryName);
 
-            // Then, explicitly verify that the resolved path (and its parent) are
-            // still within the intended target directory using canonical paths.
+        // CRITICAL SECURITY: Validate the resolved path is within the target directory
+        // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
+        // Uses validateExistingPath for containment check without stripping path components
+        try {
+            PathValidationUtils.validateExistingPath(newFile, targetDir);
+
+            // Additional defense-in-depth: explicit canonical path containment check
+            // to satisfy static analysis expectations around Zip Slip protection
             if (!isWithinDirectory(newFile, targetDir)) {
                 logger.error("SECURITY: ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
                 return null;
