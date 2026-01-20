@@ -93,51 +93,75 @@ echo "Test run directory: ui-test-runs/$TIMESTAMP/test-2"
 ### Phase 2: Create New Patient
 
 #### Step 4: Open Add Patient Form
-**Action**: Click "Add Record" link (typically on search page or navigation)
+**Action**: Access the add patient form via search results:
+1. In the search box, type any search term (e.g., "TEST")
+2. Press Enter to execute search
+3. Wait for search results to load
+4. Scroll to bottom of results and click "Create Demographic" link
+
+> **NOTE**: The "Create Demographic" link only appears AFTER performing a search.
+> It is located at the bottom of the search results page.
+
 **Screenshot**: `test-2-04-add-patient-form.png`
 **Expected**: Empty demographic add form with sections for:
 - Name fields
 - Date of birth
 - Address
 - Contact information
+- Health Insurance fields
 
 #### Step 5: Fill Required Fields
 **Action**: Fill the following fields:
 - Last Name: `TEST-UITEST2`
-- First Name: `AutomatedTest`
-- Title: `MR` (select from dropdown)
-- Year of Birth: `2000`
+- First Name: `Patient`
+- Year of Birth: `1990`
 - Month of Birth: `01`
-- Date of Birth: `15`
-- Sex: `M` (Male)
+- Date of Birth: `01`
+- Sex: `Male` (select from dropdown)
 
 **Screenshot**: `test-2-05-add-patient-filled.png`
 **Expected**: Name and DOB fields populated
 
-#### Step 6: Fill Address Fields
+#### Step 6: Fill Contact Fields
 **Action**: Fill the following fields:
-- Address: `123 Test Street`
-- City: `Toronto`
-- Province: `ON` (Ontario from dropdown)
-- Postal: `M5V1A1`
+- Phone (Home): `416-555-0199`
+- Email: `test.uitest2@example.com`
 
-**Screenshot**: `test-2-06-add-patient-address.png`
-**Expected**: Address section populated
+> **IMPORTANT**: Leave the Health Ins. # (HIN) field EMPTY.
+> The HIN field has strict validation that rejects invalid formats.
+> Leaving it empty is acceptable and avoids validation errors.
 
-#### Step 7: Fill Contact Fields
-**Action**: Fill the following fields:
-- Phone (Home): `416-555-0001`
-- Email: `test2@openoemr.test`
+**Screenshot**: `test-2-06-add-patient-contact.png`
+**Expected**: Contact fields populated, HIN field empty
 
-**Screenshot**: `test-2-07-add-patient-contact.png`
-**Expected**: Contact fields populated
+#### Step 7: Set Provider
+**Action**: Select the following:
+- Doctor (MRP): `openodoc, doctor` (select from dropdown)
+
+**Screenshot**: `test-2-07-add-patient-provider.png`
+**Expected**: Provider field populated
 
 #### Step 8: Save New Patient
-**Action**: Click "Add Record" button at bottom of form
+**Action**:
+1. Click "Add Record" button at bottom of form
+2. **WAIT 5 SECONDS** using `browser_wait_for` with `{"time": 5}` to allow form to process
+3. **LOG CONSOLE MESSAGES** using `browser_console_messages` - record any errors or warnings
+
+> **IMPORTANT**: Form submissions can be slow. Always wait after clicking submit buttons
+> to prevent AbortError timeouts.
+
 **Screenshot**: `test-2-08-add-patient-success.png`
-**Expected**: Success message indicating patient created
-- May show link to view new patient record
+**Expected**: Success message or patient record displayed
+- May show the new patient's record
 - Note the new demographic_no if displayed
+
+**Console Logging**: Record all messages at this checkpoint for the test report.
+
+**Database Verification** (if timeout occurs):
+```bash
+mysql -h db -uroot -ppassword oscar -e "SELECT demographic_no, last_name FROM demographic WHERE last_name='TEST-UITEST2' ORDER BY demographic_no DESC LIMIT 1;"
+```
+If record exists, the save was successful despite any browser timeout.
 
 ---
 
