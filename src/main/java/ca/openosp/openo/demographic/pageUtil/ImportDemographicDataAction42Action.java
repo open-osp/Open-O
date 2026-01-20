@@ -3271,6 +3271,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             .replace("/", File.separator);
 
         if (isAbsoluteReportPath(normalizedPath)) {
+            logger.error("SECURITY: Rejecting absolute file path from XML: {}", Encode.forJava(filePath != null ? filePath : "null"));
             return null;
         }
 
