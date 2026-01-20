@@ -539,7 +539,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
             return filePath.equals(basePath) || filePath.startsWith(basePath + File.separator);
         } catch (IOException e) {
-            logger.error("Error performing canonical containment check for {}", file, e);
+            logger.error("Error performing canonical containment check for {}", Encode.forJava(file.getPath()), e);
             return false;
         }
     }
