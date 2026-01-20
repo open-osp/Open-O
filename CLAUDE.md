@@ -171,21 +171,25 @@ mvn test -Dgroups="create,update"  # Specific operations
 
 ### BDD Test Naming Convention
 
-Modern tests use BDD (Behavior-Driven Development) naming for clarity:
+Modern tests use BDD (Behavior-Driven Development) naming for clarity. Choose ONE style and use it consistently:
 
-**Patterns**:
-1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
-2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
-3. `should<ExpectedBehavior>` - Simple assertions
-
-**Examples**:
+**Option 1: Pure camelCase (RECOMMENDED for Java)**
 ```java
-void shouldReturnTickler_whenValidIdProvided()
-void findActiveByDemographicNo_multipleStatuses_returnsOnlyActive()
+void shouldReturnTicklerWhenValidIdProvided()
+void shouldThrowExceptionWhenTicklerNotFound()
 void shouldLoadSpringContext()
 ```
 
-**Benefits**: Self-documenting, clear failure messages, searchable
+**Option 2: Snake_case (common in Ruby/Python BDD, valid for Java)**
+```java
+void should_return_tickler_when_valid_id_provided()
+void should_throw_exception_when_tickler_not_found()
+void should_load_spring_context()
+```
+
+**Avoid**: Mixed camelCase with underscores, traditional test naming (testFindById)
+
+**Benefits**: Self-documenting, clear failure messages, searchable, behavior-focused
 
 ### Test Context Configuration
 

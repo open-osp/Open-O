@@ -10,21 +10,29 @@ Never invent methods - verify they exist in the codebase first.
 
 ## BDD NAMING CONVENTION
 
-### Method Naming (ONE underscore max)
-Valid patterns:
-   1. should<Action>_when<Condition>           (PREFERRED)
-   2. <methodName>_<scenario>_<expectedOutcome>
-   3. should<ExpectedBehavior>                  (simple cases)
+### Method Naming (Choose ONE style consistently)
 
-Examples:
-   shouldReturnTickler_whenValidIdProvided()
-   findById_validId_returnsTickler()
-   shouldLoadSpringContext()
+**Option 1: Pure camelCase (RECOMMENDED for Java)**
+   - Pattern: `should<ExpectedBehavior>When<Condition>()`
+   - Examples:
+     - `shouldReturnTicklerWhenValidIdProvided()`
+     - `shouldThrowExceptionWhenTicklerNotFound()`
+     - `shouldLoadSpringContext()`  (no condition needed)
 
-Invalid: testFindById(), test_find_by_id(), should_return_when_valid()
+**Option 2: Snake_case (common in Ruby/Python BDD, valid for Java)**
+   - Pattern: `should_<expected_behavior>_when_<condition>()`
+   - Examples:
+     - `should_return_tickler_when_valid_id_provided()`
+     - `should_throw_exception_when_tickler_not_found()`
+     - `should_load_spring_context()`
 
-### @DisplayName (lowercase "should")
+**AVOID**: Mixed camelCase with underscores (e.g., `shouldReturnTickler_whenValid`)
+**AVOID**: Traditional test naming (e.g., `testFindById()`, `findById_validId_returnsTickler()`)
+
+### @DisplayName (describes behavior from user perspective)
    @DisplayName("should return tickler when valid ID is provided")
+   @DisplayName("should throw exception when tickler not found")
+   @DisplayName("should load Spring context successfully")
 
 ===============================================================================
 
@@ -41,8 +49,8 @@ public class ComponentTest extends OpenOTestBase {  // MUST be public!
     private EntityManager entityManager;
 
     @Test
-    @DisplayName("should perform action when condition met")
-    void shouldPerformAction_whenConditionMet() {
+    @DisplayName("should perform action when condition is met")
+    void shouldPerformActionWhenConditionMet() {  // Pure camelCase
         // Given - set up test data
         Entity entity = createTestEntity();
 
@@ -116,8 +124,8 @@ assertEquals("ACTIVE", result.getStatus());  // Argument order confusion
 
 ## CHECKLIST BEFORE COMMITTING
 
-[ ] Method name follows BDD pattern (ONE underscore)
-[ ] @DisplayName with lowercase "should"
+[ ] Method name follows BDD pattern (pure camelCase or snake_case, consistently)
+[ ] @DisplayName describes behavior from user perspective
 [ ] Appropriate @Tag annotations (min: type + layer)
 [ ] Extends OpenOTestBase (or appropriate base)
 [ ] Given-When-Then structure with comments
