@@ -2020,14 +2020,6 @@
     "integrity" : "sha512:yfTvaR5ePcMF8ptjgmmc5QI5P/BWHp/eE2HnMxnVGfdm/aHYuF10aCrU/ECmg3r38SSbzsAgtQ/dx7odTp8pkQ=="
   }, {
     "groupId" : "org.apache.cxf",
-    "artifactId" : "cxf-rt-transports-jms",
-    "version" : "3.5.11",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:1S+ZN6MaQxgLxhCIw0PEXmCGqIzkQCAY35e9Kl8NNvc6sXyYQY4XHhp4GfTCnI++akaeKJueOvwy7aGK4qbmGA=="
-  }, {
-    "groupId" : "org.apache.cxf",
     "artifactId" : "cxf-rt-transports-local",
     "version" : "3.5.11",
     "scope" : "compile",
@@ -2301,11 +2293,11 @@
   }, {
     "groupId" : "org.apache.james",
     "artifactId" : "apache-mime4j-core",
-    "version" : "0.8.6",
+    "version" : "0.8.10",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:SCWIHxpx/5PDzZNXgnYsjRDQlfhETFrBnFfsb4zJlqZA0k/cqtYIO/mGhbfi08XdQIhb83dIq/Vh+RHtPgIi8g=="
+    "integrity" : "sha512:o7GucQFDM254J6cCOFg5uCyYz6jLm9u+iXSBvHvGMuwx3fTzNTAfT/QVOhaiKlhjRULjiKtsCgsKv3OkEUFfaw=="
   }, {
     "groupId" : "org.apache.logging.log4j",
     "artifactId" : "log4j-1.2-api",
