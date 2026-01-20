@@ -481,18 +481,34 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
         // Uses validateExistingPath for containment check without stripping path components
         try {
+            // First, perform any existing validation logic
             PathValidationUtils.validateExistingPath(newFile, targetDir);
 
-            // Additional defense-in-depth: explicit canonical path containment check
-            // to satisfy static analysis expectations around Zip Slip protection
-            if (!isWithinDirectory(newFile, targetDir)) {
+            // Explicit canonical / normalized path containment check to prevent Zip Slip
+            // and to make the security property obvious to static analysis tools.
+            java.nio.file.Path basePath = targetDir.getCanonicalFile().toPath().normalize();
+            java.nio.file.Path resolvedPath = newFile.getCanonicalFile().toPath().normalize();
+            if (!resolvedPath.startsWith(basePath)) {
                 logger.error("SECURITY: ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
                 return null;
             }
 
+            // Also ensure the parent directory (if any) is within the target directory
             File parent = newFile.getParentFile();
-            if (parent != null && !isWithinDirectory(parent, targetDir)) {
-                logger.error("SECURITY: Parent directory of ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+            if (parent != null) {
+                java.nio.file.Path parentPath = parent.getCanonicalFile().toPath().normalize();
+                if (!parentPath.startsWith(basePath)) {
+                    logger.error("SECURITY: Parent directory of ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+                    return null;
+                }
+            }
+
+            // Additional defense-in-depth: keep existing helper-based checks
+            if (!isWithinDirectory(newFile, targetDir)) {
+                logger.error("SECURITY: ZIP entry {} resolves outside target directory according to isWithinDirectory", Encode.forJava(entryName));
+        } catch (IOException e) {
+            logger.error("SECURITY: I/O error while validating ZIP entry {}: {}", Encode.forJava(entryName), e.getMessage(), e);
+            return null;
                 return null;
             }
 
