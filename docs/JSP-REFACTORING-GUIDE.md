@@ -56,7 +56,7 @@ Before starting any refactoring work, analyze the existing JSP:
 
 List all variables that flow from scriptlets to the view:
 
-```
+```text
 Variable Name     | Type          | Purpose                    | View Usage
 ------------------|---------------|----------------------------|------------------
 curProvider_no    | String        | Current provider ID        | Hidden field, AJAX
@@ -84,8 +84,17 @@ Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@ page import="ca.openosp.openo.commn.dao.ProviderDao" %>
+<%@ page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ page import="org.owasp.encoder.Encode" %>
 <%-- ... all other imports ... --%>
+
+<%-- NOTE: OpenO EMR uses ca.openosp.openo.* namespace (new)
+     DAOs are in ca.openosp.openo.commn.dao.* (note: "commn" not "common")
+     Models are in ca.openosp.openo.commn.model.*
+     Exception: ProviderDao is at ca.openosp.openo.dao.ProviderDao --%>
 
 <%-- ========== TAGLIB DECLARATIONS ========== --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -144,13 +153,16 @@ Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All
 
 ### Step 1.2: Key Rules for Scriptlet Consolidation
 
-1. **Imports and taglibs MUST come first** - All `<%@ page %>`, `<%@ taglib %>`, and related imports go at the very top of the JSP
-2. **Security checks next** - Perform authentication/authorization checks immediately after imports
-3. **Spring beans next** - Get all dependencies upfront
-4. **Parameters after beans** - Read all request parameters
-5. **Database queries follow** - Fetch all needed data
-6. **Transformations next** - Process data for view
-7. **Set pageContext attributes last** - Bridge to JSTL/EL
+**CRITICAL ORDERING REQUIREMENT**: Page imports and taglib declarations MUST be processed before any scriptlet code (including security checks) because security redirects use `response.sendRedirect()` which requires imports to be loaded first.
+
+1. **Page imports MUST come first** - All `<%@ page import="..." %>` directives at the very top
+2. **Taglib declarations next** - All `<%@ taglib ... %>` declarations
+3. **Security checks after imports** - Authentication/authorization checks (can now use response object)
+4. **Spring beans next** - Get all dependencies upfront
+5. **Parameters after beans** - Read all request parameters
+6. **Database queries follow** - Fetch all needed data
+7. **Transformations next** - Process data for view
+8. **Set pageContext attributes last** - Bridge to JSTL/EL
 
 ### Step 1.3: Error Handling in Scriptlets
 
@@ -169,15 +181,59 @@ Wrap database operations and external calls in try-catch:
 %>
 ```
 
-### Step 1.4: Exception - Unavoidable Inline Scriptlets
+### Step 1.4: File Path Security - PathValidationUtils
 
-Some cases require inline scriptlets:
+**SECURITY REQUIREMENT**: ALL file operations involving user input MUST use `PathValidationUtils` to prevent path traversal attacks.
 
 ```jsp
-<%-- Dynamic CSS generation (acceptable exception) --%>
-<%-- WARNING: Ensure status values are sanitized - potential XSS vector --%>
+<%@ page import="ca.openosp.openo.utility.PathValidationUtils" %>
+
+<%
+    // ===== FILE OPERATIONS - SECURITY CRITICAL =====
+
+    // WRONG - Direct file path manipulation (path traversal vulnerability)
+    String userFilename = request.getParameter("filename");
+    File uploadFile = new File(uploadDir + File.separator + userFilename);  // VULNERABLE!
+
+    // CORRECT - Use PathValidationUtils for user-provided filenames
+    File safeFile = PathValidationUtils.validatePath(userFilename, allowedDir);
+
+    // For validating existing file paths
+    PathValidationUtils.validateExistingPath(existingFile, allowedDir);
+
+    // For validating uploaded files from Struts2/Tomcat
+    PathValidationUtils.validateUpload(uploadedFile);
+
+    // Complete upload validation (source + destination)
+    File destFile = PathValidationUtils.validateUpload(sourceFile, filename, destDir);
+
+    // Check if file is in allowed temp directory
+    if (PathValidationUtils.isInAllowedTempDirectory(tempFile)) {
+        // Process temp file
+    }
+%>
+```
+
+**Why this matters**: Path traversal attacks (e.g., `../../etc/passwd`) can allow attackers to read or write files outside allowed directories. `PathValidationUtils` provides consistent, secure validation across the codebase.
+
+See: `docs/path-validation-utils.md` for complete documentation.
+
+### Step 1.5: Exception - Unavoidable Inline Scriptlets
+
+Some cases require inline scriptlets. **CRITICAL**: These exceptions carry security risks.
+
+#### ⚠️ SECURITY WARNING: Dynamic CSS Generation XSS Risk
+
+**HIGH RISK**: Dynamic CSS generation from database data is a potential XSS vector. Malicious data can:
+- Inject CSS to exfiltrate data
+- Break out of the style block to execute JavaScript
+- Perform UI redressing attacks
+
+```jsp
+<%-- Dynamic CSS generation (acceptable exception with MANDATORY escaping) --%>
 <style>
     <c:forEach items="${allStatuses}" var="status">
+    <%-- CRITICAL: Both class names AND color values MUST be escaped --%>
     .status-${fn:escapeXml(status.status)} {
         background-color: ${fn:escapeXml(status.color)};
     }
@@ -185,7 +241,22 @@ Some cases require inline scriptlets:
 </style>
 ```
 
-**SECURITY WARNING**: When generating dynamic CSS class names or values from database data, always escape the values. Malicious data could inject CSS or break out of the style block.
+**Better approach**: Pre-generate CSS classes in Java code or use data attributes with JavaScript:
+```jsp
+<%-- Safer: Use data attributes and JS to apply styles --%>
+<div class="status-indicator" data-status-color="${fn:escapeXml(status.color)}"></div>
+
+<script>
+    // Apply styles via JavaScript after validation
+    document.querySelectorAll('.status-indicator').forEach(el => {
+        const color = el.dataset.statusColor;
+        // Validate color format before applying
+        if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+            el.style.backgroundColor = color;
+        }
+    });
+</script>
+```
 
 If JSTL cannot handle the logic, document why:
 
@@ -201,13 +272,39 @@ If JSTL cannot handle the logic, document why:
 
 ### Step 2.1: Replace Scriptlet Expressions
 
-| Old Pattern (Scriptlet) | New Pattern (EL) |
+| Old Pattern (Scriptlet) | New Pattern (JSTL/EL) |
 |-------------------------|------------------|
-| `<%= variable %>` | `${variable}` |
+| `<%= variable %>` | `${variable}` (for system data) or `<c:out value="${variable}"/>` |
 | `<%= request.getParameter("x") %>` | `${param.x}` |
 | `<%= session.getAttribute("x") %>` | `${sessionScope.x}` |
 | `<%= obj.getProperty() %>` | `${obj.property}` |
-| `<%= Encode.forHtml(x) %>` | `<c:out value="${x}"/>` or `${fn:escapeXml(x)}` |
+
+**SECURITY REQUIREMENT - OWASP Encoder for User Inputs:**
+
+For user-provided data in JSPs, **continue using OWASP Encoder** as it provides context-aware encoding:
+
+| Context | REQUIRED Pattern | Purpose |
+|---------|-----------------|---------|
+| HTML body | `<%= Encode.forHtml(userInput) %>` | Prevents XSS in HTML content |
+| HTML attributes | `<%= Encode.forHtmlAttribute(userInput) %>` | Safe encoding for attribute values |
+| JavaScript | `<%= Encode.forJavaScript(userInput) %>` | Safe for JS string contexts |
+| CSS | `<%= Encode.forCssString(userInput) %>` | Safe for CSS values |
+| URLs | `<%= Encode.forUri(userInput) %>` | Safe for URL components |
+
+**When to use JSTL instead:**
+- `<c:out value="${x}"/>` is acceptable for **system-generated, non-user data**
+- `${fn:escapeXml(x)}` provides basic HTML escaping for **trusted data**
+
+**Example distinction:**
+```jsp
+<%-- User input - MUST use OWASP Encoder --%>
+<div><%= Encode.forHtml(userEnteredName) %></div>
+<input value="<%= Encode.forHtmlAttribute(userEnteredAddress) %>">
+
+<%-- System data - JSTL is acceptable --%>
+<c:out value="${systemGeneratedId}"/>
+<div>${applicationVersion}</div>
+```
 
 ### Step 2.2: Replace Conditional Logic
 
@@ -278,19 +375,18 @@ If JSTL cannot handle the logic, document why:
 
 ### Step 2.4: Handle HTML Attribute Encoding
 
-**Before:**
+**For user input (REQUIRED - use OWASP Encoder):**
 ```jsp
-<input value="<%= Encode.forHtmlAttribute(name) %>">
+<%-- User-provided data - MUST use OWASP Encoder --%>
+<input value="<%= Encode.forHtmlAttribute(userName) %>">
+<div title="<%= Encode.forHtmlAttribute(userComment) %>">
 ```
 
-**After:**
+**For system data (JSTL acceptable):**
 ```jsp
-<input value="${fn:escapeXml(name)}">
-```
-
-Or for complex cases:
-```jsp
-<input value="<c:out value='${name}'/>">
+<%-- System-generated values - JSTL is acceptable --%>
+<input value="${fn:escapeXml(systemId)}">
+<input value="<c:out value='${applicationName}'/>">
 ```
 
 ### Step 2.5: Set Context Path Variable
@@ -305,7 +401,7 @@ At the top of the scriptlet block, set the context path for EL:
 
 Then use in view:
 ```jsp
-<link href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+<%-- Note: Bootstrap 5.3.0 is loaded from CDN per project standards (see below) --%>
 <script src="${ctx}/js/global.js"></script>
 ```
 
@@ -343,14 +439,12 @@ When embedding server values in JavaScript, use OWASP Encoder:
     // WRONG - XSS vulnerability
     var patientName = "${patientName}";
 
-    // CORRECT - Use OWASP Encoder in scriptlet
-    var patientName = "<%= Encode.forJavaScript(patientName) %>";
-
-    // Or set as data attribute and read with JS
+    // CORRECT - Use OWASP Encoder with proper variable retrieval
+    var patientName = "<%= Encode.forJavaScript((String) pageContext.getAttribute(\"patientName\")) %>";
 </script>
 ```
 
-Better approach - use data attributes:
+**Better approach** - use data attributes (recommended):
 ```jsp
 <div id="appointmentData"
      data-provider-no="${fn:escapeXml(providerNo)}"
@@ -392,8 +486,8 @@ Note: Use dynamic locale from request, not hardcoded "en".
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><fmt:message key="appointment.addappointment.title"/></title>
 
-    <%-- Bootstrap 5 CSS (from CDN configured in project) --%>
-    <link href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <%-- Bootstrap 5.3.0 (from CDN per project standards) --%>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <%-- Page-specific styles --%>
     <style>
@@ -450,12 +544,18 @@ Note: Use dynamic locale from request, not hardcoded "en".
 
 ### Step 3.5: Form Structure with CSRF Protection
 
-OpenO EMR uses OWASP CSRF Guard. Forms must include the CSRF token:
+OpenO EMR uses OWASP CSRF Guard (configured in `web.xml` and `Owasp.CsrfGuard.properties`). **All POST forms MUST include the CSRF token** to prevent Cross-Site Request Forgery attacks.
+
+**CSRF Token Implementation:**
+The project uses `CSRFPreservingFilter` and `CsrfJavaScriptInjectionFilter` for automatic token handling.
 
 ```jsp
 <%@ taglib uri="http://www.owasp.org/index.php/OWASP_CSRFGuard" prefix="csrf" %>
 <form id="appointmentForm" action="${ctx}/appointment/addappointment.do" method="post">
-    <%-- CSRF Token - REQUIRED for all POST forms (uses configured token name/value) --%>
+    <%-- CSRF Token - REQUIRED for all POST forms
+         The <csrf:token/> tag automatically uses the configured token name
+         from Owasp.CsrfGuard.properties (typically OWASP_CSRFTOKEN)
+         Token is also available as ${sessionScope['OWASP_CSRFTOKEN']} --%>
     <csrf:token/>
 
     <%-- Preserve all existing hidden fields --%>
@@ -484,6 +584,14 @@ OpenO EMR uses OWASP CSRF Guard. Forms must include the CSRF token:
 </form>
 ```
 
+**Alternative: Manual Token Inclusion**
+If you need to manually include the token (rare cases):
+```jsp
+<input type="hidden" name="OWASP_CSRFTOKEN" value="${sessionScope['OWASP_CSRFTOKEN']}">
+```
+
+**For AJAX requests**, see Phase 5, Step 5.3 for CSRF token handling in fetch() calls.
+
 ---
 
 ## Phase 4: Apply Bootstrap 5
@@ -492,14 +600,14 @@ OpenO EMR uses OWASP CSRF Guard. Forms must include the CSRF token:
 
 ```jsp
 <head>
-    <%-- Bootstrap 5 CSS --%>
-    <link href="${ctx}/library/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <%-- Bootstrap 5.3.0 (from CDN per project standards) --%>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <%-- Content --%>
 
-    <%-- Bootstrap 5 JS Bundle (includes Popper) - at end of body --%>
-    <script src="${ctx}/library/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <%-- Bootstrap 5.3.0 JS Bundle (includes Popper) - at end of body --%>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 ```
 
@@ -862,8 +970,11 @@ ${pageContext.request.contextPath}
 
 #### 4. Mixed Bootstrap Versions
 ```html
-<%-- Bootstrap 3 classes used --%>
+<%-- OLD: Bootstrap 3 classes used --%>
 <link href="${ctx}/library/bootstrap/3.3.7/css/bootstrap.min.css"...>
+
+<%-- NEW: Use Bootstrap 5.3.0 from CDN --%>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 ```
 
 #### 5. jQuery UI Dependencies
