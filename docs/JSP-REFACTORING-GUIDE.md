@@ -492,13 +492,13 @@ OpenO EMR uses OWASP CSRF Guard. Forms must include the CSRF token:
 ```jsp
 <head>
     <%-- Bootstrap 5 CSS --%>
-    <link href="${ctx}/library/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="${ctx}/library/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <%-- Content --%>
 
     <%-- Bootstrap 5 JS Bundle (includes Popper) - at end of body --%>
-    <script src="${ctx}/library/bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+    <script src="${ctx}/library/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 ```
 
