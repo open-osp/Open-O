@@ -3370,7 +3370,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             return file;
         } catch (SecurityException e) {
             logger.error("SECURITY: Rejecting malicious file path from XML. originalPath='{}', resolvedPath='{}'",
-                    originalPath, file.getPath(), e);
+                    Encode.forJava(originalPath), Encode.forJava(file.getPath()), e);
             return null;
         }
     }
