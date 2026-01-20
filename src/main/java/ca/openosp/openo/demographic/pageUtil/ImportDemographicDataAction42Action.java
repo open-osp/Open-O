@@ -506,13 +506,13 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             // Additional defense-in-depth: keep existing helper-based checks
             if (!isWithinDirectory(newFile, targetDir)) {
                 logger.error("SECURITY: ZIP entry {} resolves outside target directory according to isWithinDirectory", Encode.forJava(entryName));
-        } catch (IOException e) {
-            logger.error("SECURITY: I/O error while validating ZIP entry {}: {}", Encode.forJava(entryName), e.getMessage(), e);
-            return null;
                 return null;
             }
 
             return newFile;
+        } catch (IOException e) {
+            logger.error("SECURITY: I/O error while validating ZIP entry {}: {}", Encode.forJava(entryName), e.getMessage(), e);
+            return null;
         } catch (SecurityException e) {
             logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
             return null;
