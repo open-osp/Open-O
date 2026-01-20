@@ -6,8 +6,10 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 
 public class LoginTest {
     
@@ -15,15 +17,16 @@ public class LoginTest {
     @Test
     public void testLoginSuccessful() {
 
-        // Open the login page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the login page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
-        WebElement passwordField = driver.findElement(By.name("password")); 
+        WebElement passwordField = driver.findElement(By.name("password"));
 
         // Enter the username and password
         usernameField.sendKeys("oscardoc");
@@ -32,7 +35,7 @@ public class LoginTest {
         // Locate and click the login button
         WebElement loginButton = driver.findElement(By.cssSelector("input[type='submit'][value='Login']"));
         loginButton.click();
-        
+
         // Verify the login was successful
         String currentUrl = driver.getCurrentUrl();
         Assert.assertTrue(currentUrl.contains("provider/providercontrol.jsp"));
@@ -47,10 +50,11 @@ public class LoginTest {
     @Test
     public void testLoginFailedWithInvalidUsername() {
 
-        // Open the login page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the login page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -64,7 +68,7 @@ public class LoginTest {
         // Locate and click the login button
         WebElement loginButton = driver.findElement(By.cssSelector("input[type='submit'][value='Login']"));
         loginButton.click();
-        
+
         // Verify the login failed
         String currentUrl = driver.getCurrentUrl();
         Assert.assertFalse(currentUrl.contains("provider/providercontrol.jsp"));
@@ -79,10 +83,11 @@ public class LoginTest {
     @Test
     public void testLoginFailedWithInvalidPassword() {
 
-        // Open the login page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the login page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -96,11 +101,11 @@ public class LoginTest {
         // Locate and click the login button
         WebElement loginButton = driver.findElement(By.cssSelector("input[type='submit'][value='Login']"));
         loginButton.click();
-        
+
         // Verify the login failed
         String currentUrl = driver.getCurrentUrl();
         Assert.assertFalse(currentUrl.contains("provider/providercontrol.jsp"));
-        System.out.println("Login failed with invalid passowrd.");   
+        System.out.println("Login failed with invalid passowrd.");
 
         // Close the browser
         driver.quit();
@@ -111,10 +116,11 @@ public class LoginTest {
     @Test
     public void testLoginFailedWithInvalidUsernameAndPassword() {
 
-        // Open the login page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the login page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields

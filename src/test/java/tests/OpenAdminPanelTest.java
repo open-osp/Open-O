@@ -7,8 +7,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 import java.util.Set;
 
 public class OpenAdminPanelTest {
@@ -17,10 +19,11 @@ public class OpenAdminPanelTest {
     @Test
     public void openAdminPanelSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -90,10 +93,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenUnlockAccountWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -166,10 +170,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenAddProviderWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -242,10 +247,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenAddLoginRecordWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -318,10 +324,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenManageEformsWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -394,10 +401,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenScheduleSettingWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -470,10 +478,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenSearchGroupsWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -546,10 +555,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testOpenInsertTemplateWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -622,10 +632,11 @@ public class OpenAdminPanelTest {
     @Test
     public void testAssignRoleWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields

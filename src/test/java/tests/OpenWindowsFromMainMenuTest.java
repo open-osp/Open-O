@@ -7,8 +7,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 import java.util.Set;
 
 // No need to test the open search window scenario as it is already tested in the SearchTest.java file
@@ -21,10 +23,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openCaseloadPageSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -79,10 +82,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openReportWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -152,10 +156,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openBillingWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -225,10 +230,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openInboxWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -298,10 +304,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openMsgWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -371,10 +378,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openConsultationsWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -444,10 +452,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openEdocWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
@@ -517,10 +526,11 @@ public class OpenWindowsFromMainMenuTest {
     @Test
     public void openTicklerWindowSuccessful() throws InterruptedException {
 
-        // Open the main page
-        System.setProperty("webdriver.chrome.driver", "/opt/homebrew/bin/chromedriver"); // Set the path to the chromedriver executable
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        // Open the main page with headless Chrome
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("http://localhost:8080/");
 
         // Locate the username and password fields
