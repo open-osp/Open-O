@@ -395,7 +395,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
                     }
                 } else {
-                    warnings.add("Path is neither a file nor directory: " + stream);
+                    // Log the actual path for debugging, but don't expose it to the user (may contain PHI)
+                    logger.debug("Skipping path that is neither a file nor directory: {}", stream);
+                    warnings.add("Skipped invalid path type (not a file or directory)");
                 }
             }
         } catch (Exception e) {
@@ -562,8 +564,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
             }
         } catch (IOException ex) {
-            warnings.add("Error while locating " + ".xml" + " in " + path.toString());
-            logger.error("Error while locating " + ".xml" + " in " + path, ex);
+            // Don't expose path in user-facing warnings (may contain PHI)
+            warnings.add("Error while searching for XML files in directory");
+            logger.error("Error while locating .xml files in path: {}", path, ex);
         }
         return filteredFileList;
     }
