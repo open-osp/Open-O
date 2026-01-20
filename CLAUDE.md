@@ -146,81 +146,52 @@ public class Example2Action extends ActionSupport {
 3. Debug logging: `debug-on` → `server restart` → `debug-off`
 
 ## Modern Test Framework (JUnit 5)
-
-- **Location**: `src/test-modern/` (separate from legacy `src/test/`)
+**Key Features**:
+- **Parallel Structure**: `src/test-modern/` separate from legacy `src/test/`
+- **Zero Impact**: Legacy tests unchanged, both suites run automatically
+- **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
+- **Spring Integration**: Full Spring context with transaction support
+- **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
+- **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
 - **Context Guide**: `docs/test/claude-test-context.md` (auto-injected by hooks when working on tests)
-- **Full Documentation**: `docs/test/test-writing-best-practices.md`
-- **Base class**: Extend `OpenOTestBase` for all tests
-- **CRITICAL**: Read actual DAO/Manager interfaces before writing tests - never invent methods
 
-### Test Execution
+### Test Organization Standards
+
+Tests use hierarchical tagging for filtering:
+- **Required Tags**: `@Tag("integration")`, `@Tag("dao")` (test type & layer)
+- **CRUD Tags**: `@Tag("create")`, `@Tag("read")`, `@Tag("update")`, `@Tag("delete")`
+- **Extended Tags**: `@Tag("query")`, `@Tag("search")`, `@Tag("filter")`, `@Tag("aggregate")`
+
+**Running Tagged Tests:**
 ```bash
-make install --run-modern-tests     # Modern tests only
-mvn test -Dgroups="integration"     # Integration tests
-mvn test -Dgroups="unit"            # Unit tests
+mvn test -Dgroups="unit"           # Unit tests only
+mvn test -Dgroups="integration"    # Integration tests only
+mvn test -Dgroups="create,update"  # Specific operations
 ```
 
-### Critical Dependency Resolution Patterns
+### BDD Test Naming Convention
 
-**SpringUtils Anti-Pattern Resolution**:
-The codebase uses static `SpringUtils.getBean()` throughout. Modern tests handle this via reflection in `OpenOTestBase`:
+Modern tests use BDD (Behavior-Driven Development) naming for clarity:
+
+**Patterns**:
+1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
+2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
+3. `should<ExpectedBehavior>` - Simple assertions
+
+**Examples**:
 ```java
-@BeforeEach
-void setUpSpringUtils() throws Exception {
-    // CRITICAL: Field is "beanFactory" not "applicationContext"
-    Field contextField = SpringUtils.class.getDeclaredField("beanFactory");
-    contextField.setAccessible(true);
-    contextField.set(null, applicationContext);
-}
+void shouldReturnTickler_whenValidIdProvided()
+void findActiveByDemographicNo_multipleStatuses_returnsOnlyActive()
+void shouldLoadSpringContext()
 ```
 
-**Mixed Hibernate/JPA Configuration**:
-- **Challenge**: Legacy uses both `.hbm.xml` files AND `@Entity` annotations
-- **Solution**: Dual configuration in test context
-```xml
-<!-- Hibernate for XML mappings -->
-<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-    <property name="mappingResources">
-        <list>
-            <value>ca/openosp/openo/commn/model/Provider.hbm.xml</value>
-            <value>ca/openosp/openo/commn/model/Demographic.hbm.xml</value>
-        </list>
-    </property>
-</bean>
+**Benefits**: Self-documenting, clear failure messages, searchable
 
-<!-- JPA for annotations -->
-<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-    <property name="persistenceUnitName" value="testPersistenceUnit" />
-</bean>
-```
+### Test Context Configuration
 
-**Manual Bean Definitions Required**:
-- **Issue**: DAOs use SpringUtils in constructors causing circular dependencies
-- **Solution**: Define beans manually in test context, not via component scanning
-```xml
-<!-- Manual DAO definitions to avoid SpringUtils initialization issues -->
-<bean id="ticklerDao" class="ca.openosp.openo.commn.dao.TicklerDaoImpl" autowire="byName" />
-<bean id="oscarLogDao" class="ca.openosp.openo.commn.dao.OscarLogDaoImpl" autowire="byName" />
-```
+The codebase has legacy patterns (SpringUtils static access, mixed Hibernate/JPA, circular dependencies) that require specific test setup. See **[Test Writing Guide](docs/test/test-writing-guide.md)** for detailed configuration patterns.
 
-**Entity Discovery Pattern**:
-- **Problem**: Entities discovered at runtime cause missing dependencies (e.g., `lst_gender` table)
-- **Solution**: Explicitly list entities in `persistence.xml`, no scanning
-```xml
-<persistence-unit name="testPersistenceUnit">
-    <class>ca.openosp.openo.commn.model.Tickler</class>
-    <class>ca.openosp.openo.commn.model.OscarLog</class>
-    <!-- Explicitly list each entity -->
-    <exclude-unlisted-classes>true</exclude-unlisted-classes>
-</persistence-unit>
-```
-
-**Security Mock Pattern**:
-- **Issue**: All operations require SecurityInfoManager privilege checks
-- **Solution**: MockSecurityInfoManager that always returns true
-```xml
-<bean id="securityInfoManager" class="ca.openosp.openo.test.mocks.MockSecurityInfoManager" />
-```
+**Key points**: Extend `OpenOTestBase` (handles SpringUtils), define beans manually in test context, explicitly list entities in persistence.xml.
 
 **Writing Tests - CRITICAL**:
 When asked to write tests, you MUST:
