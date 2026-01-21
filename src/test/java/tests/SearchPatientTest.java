@@ -73,10 +73,8 @@ public class SearchPatientTest extends BaseTest {
                         // Switch to the eChart window
                         wait.until(ExpectedConditions.numberOfWindowsToBe(3));
                         allWindowHandles = driver.getWindowHandles();
-                        String eChartWindowHandle = null;
                         for (String windowHandle : allWindowHandles) {
                             if (!windowHandle.equals(mainWindowHandle) && !windowHandle.equals(demographicSearchWindowHandle)) {
-                                eChartWindowHandle = windowHandle;
                                 driver.switchTo().window(windowHandle);
                                 if (driver.getCurrentUrl().contains("casemgmt/forward.jsp")) {
                                     break;
@@ -204,10 +202,8 @@ public class SearchPatientTest extends BaseTest {
                         // Switch to the master record window
                         wait.until(ExpectedConditions.numberOfWindowsToBe(3));
                         allWindowHandles = driver.getWindowHandles();
-                        String masterRecordWindowHandle = null;
                         for (String windowHandle : allWindowHandles) {
                             if (!windowHandle.equals(mainWindowHandle) && !windowHandle.equals(demographicSearchWindowHandle)) {
-                                masterRecordWindowHandle = windowHandle;
                                 driver.switchTo().window(windowHandle);
                                 if (driver.getCurrentUrl().contains("search_detail")) {
                                     break;
@@ -285,10 +281,8 @@ public class SearchPatientTest extends BaseTest {
             // Switch to the search demographic window
             wait.until(ExpectedConditions.numberOfWindowsToBe(2));
             Set<String> allWindowHandles = driver.getWindowHandles();
-            String demographicSearchWindowHandle = null;
             for (String windowHandle : allWindowHandles) {
                 if (!windowHandle.equals(mainWindowHandle)) {
-                    demographicSearchWindowHandle = windowHandle;
                     driver.switchTo().window(windowHandle);
                     break;
                 }
@@ -349,10 +343,8 @@ public class SearchPatientTest extends BaseTest {
             // Switch to the search demographic window
             wait.until(ExpectedConditions.numberOfWindowsToBe(2));
             Set<String> allWindowHandles = driver.getWindowHandles();
-            String demographicSearchWindowHandle = null;
             for (String windowHandle : allWindowHandles) {
                 if (!windowHandle.equals(mainWindowHandle)) {
-                    demographicSearchWindowHandle = windowHandle;
                     driver.switchTo().window(windowHandle);
                     break;
                 }
