@@ -24,6 +24,37 @@
 
 --%>
 
+<%--
+  Purpose: Display all consultation requests for a specific demographic/patient in a sortable, filterable table.
+
+  Features:
+    - Lists consultation requests with status, urgency, MRP, provider, service, specialist, and referral date
+    - Implements Bootstrap DataTables for sorting, filtering, and pagination
+    - Opens consultation request details in popup window
+    - Allows creation of new consultation requests via popup form
+    - Uses Spring-managed DemographicManager for demographic data retrieval
+    - Encodes output to prevent XSS vulnerabilities
+
+  Parameters:
+    - de (required): Demographic number identifying the patient
+
+  Session Attributes:
+    - user: Current provider number
+    - userrole: User's role for security authorization
+
+  Security:
+    - Requires _con read rights
+    - Redirects to securityError.jsp if unauthorized
+
+  Technologies:
+    - Bootstrap 3.0.0 for responsive UI
+    - DataTables 1.13.4 for enhanced table functionality
+    - JSTL fmt tags for internationalization
+    - OWASP Encoder for XSS prevention
+
+  @since 2002-11-08
+--%>
+
 <!DOCTYPE html>
 <%@ page import="ca.openosp.openo.commn.model.Provider" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
