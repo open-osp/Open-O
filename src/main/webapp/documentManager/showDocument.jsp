@@ -118,7 +118,7 @@
         Demographic demographic = demographicDao.getDemographic(demographicID);  
 				demoName = demographic.getLastName()+","+demographic.getFirstName();
         mrpProviderName = demographic.getProviderNo() == null || demographic.getProviderNo().isEmpty() ? "Unknown" : providerDao.getProviderNameLastFirst(demographic.getProviderNo());
-        mrpProviderName = " (MRP: " + Encode.forHtmlContent(mrpProviderName) + ")";
+        mrpProviderName = " (MRP: " + mrpProviderName + ")";
     } else {
       demoName = EDocUtil.getProviderName(providerNo);
     }
@@ -267,7 +267,7 @@
                 loc = loc + id;
                 loc = loc + "&queueID=";
                 loc = loc + "<%=inQueue%>";
-                loc = loc + "&demoName=" + demoName;
+                loc = loc + "&demoName=" + encodeURIComponent(demoName);
                 popupStart(1400, 1400, loc, "Splitter");
             }
 
@@ -531,7 +531,7 @@
                                            id="demofind<%=docId%>"/>
                                     <input type="hidden" name="demofindName" value="${e:forHtmlAttribute(demoName)}"
                                            id="demofindName<%=docId%>"/>
-                                    <e:forHtmlContent value='${demoName}' /><c:out value="${mrpProviderName}" default=" (MRP: Unknown)" /><%} else {%>
+                                    <e:forHtmlContent value='${demoName}' /><e:forHtmlContent value='${mrpProviderName}' /><%} else {%>
                                     <input id="saved<%=docId%>" type="hidden" name="saved" value="false"/>
                                     <input type="hidden" name="demog" value="<%=demographicID%>"
                                            id="demofind<%=docId%>"/>
