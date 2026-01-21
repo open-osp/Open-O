@@ -83,9 +83,6 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
             SQLQuery sqlQuery = session.createSQLQuery(query);
             List<?> results = sqlQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP).list();
 
-            logger.info("Thread " + Thread.currentThread().getName() + "[" + Thread.currentThread().getId()
-                    + "] Query results " + results);
-
             //TODO work on method to detect and exclude demographic files that are
             // defined in the securityInfoManager object.
 
@@ -95,8 +92,13 @@ public abstract class AbstractQueryHandler extends HibernateDaoSupport {
             return results;
         } catch (Exception e) {
             if (tx != null) {
-                tx.rollback();
+                try {
+                    tx.rollback();
+                } catch (Exception rollbackEx) {
+                    e.addSuppressed(rollbackEx);
+                }
             }
+            logger.error("Query execution failed");
             throw new RuntimeException("Error executing query", e);
         }
     }
