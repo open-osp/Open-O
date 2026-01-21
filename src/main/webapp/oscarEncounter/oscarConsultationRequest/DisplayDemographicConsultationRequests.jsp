@@ -41,7 +41,7 @@
     }
 %>
 
-<%@ page import="ca.openosp.openo.manager.DemographicManager" %>
+<%@ page import="ca.openosp.openo.managers.DemographicManager" %>
 <%@ page import="ca.openosp.openo.encounter.data.*"%>
 <%@ page import="ca.openosp.openo.encounter.pageUtil.*"%>
 <%@ page import="ca.openosp.openo.providers.data.ProviderData" %>
