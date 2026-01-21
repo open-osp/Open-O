@@ -49,6 +49,7 @@
 <%@page import="org.owasp.encoder.Encode"%>
 <%@ taglib uri="/WEB-INF/rewrite-tag.tld" prefix="rewrite" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
 <%@ page import="ca.openosp.openo.log.*" %>
 <%@ page import="ca.openosp.openo.util.ConversionUtils" %>
 <%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
@@ -416,7 +417,7 @@
             <td valign="top" class="pdfAssignmentToolsColumn">
                 <fieldset>
                     <legend><fmt:message key="inboxmanager.document.PatientMsg"/><span
-                            id="assignedPId_<%=docId%>"><%=demoName%></span></legend>
+                            id="assignedPId_<%=docId%>"><e:forHtmlContent value='${demoName}' /></span></legend>
                     <table>
                         <tr>
                             <td><fmt:message key="inboxmanager.document.DocumentUploaded"/></td>
@@ -454,7 +455,7 @@
                                     %>
                                 </oscar:oscarPropertiesCheck>
                                 <div style="<%=updatableContent==true?"":"visibility: hidden"%>">
-                                    <input onclick="split('<%=docId%>','<%=StringEscapeUtils.escapeEcmaScript(demoName) %>')"
+                                    <input onclick="split('<%=docId%>','${e:forJavaScript(demoName)}')"
                                            type="button" value="<fmt:message key="inboxmanager.document.split"/>"/>
                                     <input id="rotate180btn_<%=docId %>" onclick="rotate180('<%=docId %>')"
                                            type="button"
@@ -528,13 +529,13 @@
                                     <input id="saved<%=docId%>" type="hidden" name="saved" value="true"/>
                                     <input type="hidden" value="<%=demographicID%>" name="demog"
                                            id="demofind<%=docId%>"/>
-                                    <input type="hidden" name="demofindName" value="<%=demoName%>"
+                                    <input type="hidden" name="demofindName" value="${e:forHtmlAttribute(demoName)}"
                                            id="demofindName<%=docId%>"/>
-                                    <%=demoName%><%} else {%>
+                                    <e:forHtmlContent value='${demoName}' /><c:out value="${mrpProviderName}" default=" (MRP: Unknown)" /><%} else {%>
                                     <input id="saved<%=docId%>" type="hidden" name="saved" value="false"/>
                                     <input type="hidden" name="demog" value="<%=demographicID%>"
                                            id="demofind<%=docId%>"/>
-                                    <input type="hidden" name="demofindName" value="<%=demoName%>"
+                                    <input type="hidden" name="demofindName" value="${e:forHtmlAttribute(demoName)}"
                                            id="demofindName<%=docId%>"/>
 
                                     <input type="checkbox" id="activeOnly<%=docId%>" name="activeOnly" checked="checked"
