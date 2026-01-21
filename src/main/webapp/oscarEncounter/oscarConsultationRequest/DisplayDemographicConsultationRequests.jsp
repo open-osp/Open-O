@@ -127,7 +127,6 @@
         padding: 0 8px 0 8px !important;
       }
     </style>
-    </head>
     <script language="javascript">
       jQuery(document).ready( function () {
         jQuery('#consultTable').DataTable({
