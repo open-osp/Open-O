@@ -165,11 +165,10 @@
                                     if (nonDrugField && nonDrugField.value == '') {
                                         alert("Please choose value for non-drug");
                                         return false;
-                                      }
-                                      confirmRemoveNKDA();
-
-                                      return true;
                                     }
+                                    confirmRemoveNKDA();
+
+                                    return true;
                                 }
 
 
