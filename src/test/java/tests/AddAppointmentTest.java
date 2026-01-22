@@ -68,6 +68,12 @@ public class AddAppointmentTest extends BaseTest {
             // Wait for the appointment window to close and return to main window
             wait.until(ExpectedConditions.numberOfWindowsToBe(1));
             driver.switchTo().window(mainWindowHandle);
+
+            // Verify appointment was created (check for patient name in schedule)
+            WebElement createdAppointment = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//a[contains(text(), 'ALEX, JOHN')]")
+            ));
+            Assert.assertNotNull(createdAppointment, "Appointment should appear in the schedule");
         } finally {
             driver.quit();
         }
