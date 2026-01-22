@@ -10,13 +10,12 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.Set;
-import java.util.List;
 
 public class AddAppointmentTest extends BaseTest {
 
     // Test the add appointment successful scenario
     @Test
-    public void testAddAppointmentSuccessful() throws InterruptedException {
+    public void testAddAppointmentSuccessful() {
         WebDriver driver = createHeadlessDriver();
         WebDriverWait wait = createWait(driver);
 
@@ -49,14 +48,10 @@ public class AddAppointmentTest extends BaseTest {
             // Locate the search field, type patient's first name, and click the patient suggestion
             WebElement searchField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("keyword")));
             searchField.sendKeys("Alex");
-            Thread.sleep(1000);
-            List<WebElement> suggestions = driver.findElements(By.tagName("li"));
-            for (WebElement suggestion : suggestions) {
-                if (suggestion.getText().contains("ALEX, JOHN")) {
-                    suggestion.click();
-                    break;
-                }
-            }
+            WebElement suggestion = wait.until(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//li[contains(text(), 'ALEX, JOHN')]")
+            ));
+            suggestion.click();
 
             // Select reason
             Select reasonSelect = new Select(driver.findElement(By.name("reasonCode")));
@@ -70,8 +65,9 @@ public class AddAppointmentTest extends BaseTest {
             WebElement addAppointmentButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("addButton")));
             addAppointmentButton.click();
 
-            // Display the main page for 2 sec
-            Thread.sleep(2000);
+            // Wait for the appointment window to close and return to main window
+            wait.until(ExpectedConditions.numberOfWindowsToBe(1));
+            driver.switchTo().window(mainWindowHandle);
         } finally {
             driver.quit();
         }
