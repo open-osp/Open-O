@@ -23,7 +23,6 @@ public class AddAppointmentTest extends BaseTest {
             // Login
             login(driver, wait);
             Assert.assertTrue(isLoginSuccessful(driver));
-            System.out.println("Login successful, the current URL is: " + driver.getCurrentUrl());
 
             // Click the "08:00" button to open the add appointment window
             WebElement appointmentButton = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("08:00")));
