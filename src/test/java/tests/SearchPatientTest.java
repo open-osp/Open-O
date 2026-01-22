@@ -188,8 +188,8 @@ public class SearchPatientTest extends BaseTest {
             boolean hasNextPage = true;
 
             while (hasNextPage) {
-                // Locate the patient results table
-                WebElement patientResultsTable = driver.findElement(By.id("patientResults"));
+                // Locate the patient results table (use explicit wait to avoid race condition after pagination)
+                WebElement patientResultsTable = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("patientResults")));
                 List<WebElement> rows = patientResultsTable.findElements(By.tagName("tr"));
 
                 // Iterate through each row to open the master record for each patient

@@ -13,7 +13,7 @@ public class GoogleTest extends BaseTest {
         try {
             driver.get("https://www.google.com");
 
-            Assert.assertEquals("Google", driver.getTitle());
+            Assert.assertEquals(driver.getTitle(), "Google");
             System.out.println("The title is: " + driver.getTitle());
         } finally {
             driver.quit();

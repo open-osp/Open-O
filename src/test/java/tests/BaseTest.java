@@ -14,16 +14,21 @@ import java.time.Duration;
  */
 public class BaseTest {
 
-    // Test credentials
-    protected static final String USERNAME = "openodoc";
-    protected static final String PASSWORD = "OpenO2025";
-    protected static final String PIN = "2025";
+    // Test credentials - can be overridden via environment variables
+    protected static final String USERNAME = getEnvOrDefault("TEST_USERNAME", "openodoc");
+    protected static final String PASSWORD = getEnvOrDefault("TEST_PASSWORD", "OpenO2025");
+    protected static final String PIN = getEnvOrDefault("TEST_PIN", "2025");
 
-    // Application URL
-    protected static final String BASE_URL = "http://localhost:8080/";
+    // Application URL - can be overridden via environment variable
+    protected static final String BASE_URL = getEnvOrDefault("TEST_BASE_URL", "http://localhost:8080/");
 
     // Default wait timeout in seconds
     protected static final int DEFAULT_TIMEOUT = 10;
+
+    private static String getEnvOrDefault(String envVar, String defaultValue) {
+        String value = System.getenv(envVar);
+        return (value != null && !value.isEmpty()) ? value : defaultValue;
+    }
 
     /**
      * Creates a headless Chrome WebDriver instance.
