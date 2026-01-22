@@ -691,8 +691,52 @@ function renderRxStage() {
     	}
     }
     
-    
 </script>
+      <style media="screen">
+        #Layer1 {
+          position: absolute;
+          left: 130px;
+          top: 50px;
+          width: 350px;
+          height: auto;
+          visibility: hidden;
+          z-index: 1;
+          background-color: white;
+          border: 2px solid grey;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hiddenLayer {
+          width: 100%;
+          padding: 2px 10px 10px 10px;
+          box-sizing: border-box;
+        }
+
+        .wcblayerTitle {
+          width: 40%;
+          padding-left: 20px;
+          font-weight: bold;
+          background-color: #f2f2f2;
+          text-align: center;
+        }
+
+        .wcblayerContent {
+          padding-left: 20px;
+
+        }
+        #statusDisplay {
+          font-size: x-small;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          gap:5px;
+
+        }
+        #statusDisplay label{
+          font-weight: bold;
+        }
+
+      </style>
         <style media="print">
                    noprint{
                        display:none;
@@ -701,7 +745,7 @@ function renderRxStage() {
                        float:left;
                    }
         </style>
-      <title></title>
+      <title>Medications</title>
     </head>
 
     <%
@@ -1065,8 +1109,6 @@ function renderRxStage() {
                     <%-- End List Drugs Prescribed --%>
 
             </td>
-                <td width="300px" valign="top" >
-                </td>
             </tr>
         </table>
 
@@ -1110,39 +1152,6 @@ function renderRxStage() {
 <%
                         if (pharmacyList != null) {
 %>
-<style>
-  #Layer1 {
-    position: absolute;
-    left: 130px;
-    top: 50px;
-    width: 350px;
-    height: auto;
-    visibility: hidden;
-    z-index: 1;
-    background-color: white;
-    border: 2px solid grey;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .hiddenLayer {
-    width: 100%;
-    padding: 2px 10px 10px 10px;
-    box-sizing: border-box;
-  }
-
-  .wcblayerTitle {
-    width: 40%;
-    padding-left: 20px;
-    font-weight: bold;
-    background-color: #f2f2f2;
-    text-align: center;
-  }
-
-  .wcblayerContent {
-    padding-left: 20px;
-  }
-
-</style>
 
 <div id="Layer1"><!--  This should be changed to automagically fill if this changes often -->
 
@@ -2809,6 +2818,8 @@ function updateLongTerm(rand,repeatEl) {
 	}
 	<% } %>
 }
+
+
 </script>
     <script language="javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/css.js"></script>
     <script language="javascript" src="<%= request.getContextPath() %>/commons/scripts/sort_table/common.js"></script>

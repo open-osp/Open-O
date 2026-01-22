@@ -43,8 +43,10 @@ import org.apache.xmlrpc.XmlRpcException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -276,6 +278,18 @@ public class RxDrugRef {
         return vec;
     }
 
+    public Map<String, String> verify() throws Exception {
+        Vector params = new Vector();
+        String lastUpdateTime = getLastUpdateTime();
+        String drugDatabase = callWebserviceLite("identify", params).toString();
+        String version = callWebserviceLite("version", params).toString();
+        Map<String, String> verify = new HashMap<>();
+        verify.put("lastUpdate", lastUpdateTime);
+        verify.put("drugDatabase", drugDatabase);
+        verify.put("version", version);
+        return verify;
+    }
+
     public String updateDB() throws Exception {
         Vector params = new Vector();
         return (String) callWebserviceLite("updateDB", params);
@@ -445,17 +459,13 @@ public class RxDrugRef {
                 XmlRpcClientLite server = new XmlRpcClientLite(server_url);
                 object = server.execute(procedureName, params);
             }
-        } catch (XmlRpcException exception) {
-            if (exception.code == 0) {
-                logger.error("JavaClient: XML-RPC Fault #{}. NoResultException thrown for procedure: {} with parameters {}", exception.code, procedureName, params);
-            } else {
-                logger.error("JavaClient: XML-RPC Fault #{}", exception.code, exception);
-                throw new Exception("JavaClient: XML-RPC Fault #" + exception.code + ": " + exception);
-            }
-
         } catch (Exception exception) {
-            logger.error("JavaClient: ", exception);
-            throw new Exception("JavaClient: ", exception);
+            if (exception instanceof XmlRpcException && ((XmlRpcException) exception).code == 0) {
+                logger.error("JavaClient: XML-RPC Fault. NoResultException thrown for procedure: {} with parameters {}", procedureName, params);
+            } else {
+                logger.error("JavaClient: XML-RPC Fault ", exception);
+                throw new Exception("JavaClient: XML-RPC Fault #", exception);
+            }
         }
         return object;
     }
