@@ -44,7 +44,7 @@
         return;
     }
 %>
-
+<!DOCTYPE HTML>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -97,7 +97,7 @@
             boolean isNKDA = "No Known Drug Allergies".equals(name);
         %>
 
-        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
@@ -115,8 +115,8 @@
                        height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
-                                    href="ShowAllergies2.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="AddReaction.title"/></b></div>
+                            <div class="DivCCBreadCrumbs"><a href="<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
+                                    href="<%= request.getContextPath() %>/oscarRx/ShowAllergies2.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="AddReaction.title"/></b></div>
                         </td>
                     </tr>
                     <!----Start new rows here-->
@@ -149,7 +149,7 @@
 
                                 function checkAgeOfOnset() {
                                     var field = document.forms.RxAddAllergyForm.ageOfOnset;
-                                    if (field.value.trim() != "") {
+                                    if (field.value.trim() !== "") {
                                         var t = /^\d{1,3}$/;
                                         if (!t.test(field.value)) {
                                             alert("Invalid Age of Onset (3-digit integer only)");
@@ -160,23 +160,70 @@
                                     }
                                 }
 
-                                function doSubmit() {
 
-                                    if (document.forms.RxAddAllergyForm.nonDrug.value == '') {
+
+<%--						<tr>--%>
+<%--							<td ><html:submit property="submit"--%>
+<%--								value="Add Allergy" styleClass="ControlPushButton" /> <input--%>
+<%--								type=button class="ControlPushButton" id="cancelAddReactionButton"--%>
+<%--								onclick="javascript:document.forms.RxAddAllergyForm.reactionDescription.value='';document.forms.RxAddAllergyForm.startDate.value='';document.forms.RxAddAllergyForm.ageOfOnset.value='';document.forms.RxAddAllergyForm.reactionDescription.focus();"--%>
+<%--								value="Reset" /></td>--%>
+<%--						</tr>--%>
+<%--					</table>--%>
+<%--        --%>
+<%--                      </html:form></td>--%>
+<%--			</tr>--%>
+
+<%--			<tr>--%>
+<%--				<td>--%>
+<%--				<%--%>
+<%--                        String sBack="ShowAllergies2.jsp";--%>
+<%--                      %> <input type=button class="ControlPushButton"--%>
+<%--					onclick="javascript:window.location.href='<%=sBack%>';"--%>
+<%--					value="Back to View Allergies" /></td>--%>
+<%--			</tr>--%>
+<%--			<!----End new rows here-->--%>
+<%--			<tr height="100%">--%>
+<%--				<td></td>--%>
+<%--			</tr>--%>
+<%--		</table>--%>
+<%--		</td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td height="0%"--%>
+<%--			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>--%>
+<%--		<td height="0%"--%>
+<%--			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td width="100%" height="0%" colspan="2">&nbsp;</td>--%>
+<%--	</tr>--%>
+<%--	<tr>--%>
+<%--		<td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"--%>
+<%--			colspan="2"></td>--%>
+<%--	</tr>--%>
+<%--</table>--%>
+
+                                  function doSubmit() {
+
+                                    var nonDrugSelect = document.forms.RxAddAllergyForm.nonDrug;
+                                    if (nonDrugSelect) {
+                                      var nonDrugValue = (nonDrugSelect.selectedIndex !== -1) ? nonDrugSelect.options[nonDrugSelect.selectedIndex].value : '';
+
+                                      if (nonDrugValue === '') {
                                         alert("Please choose value for non-drug");
                                         return false;
+                                      }
+                                      confirmRemoveNKDA();
+
+                                      return true;
                                     }
-
-                                    confirmRemoveNKDA();
-
-                                    return true;
                                 }
+
 
                                 function confirmRemoveNKDA() {
                                     <% if (nkdaId!=null && !nkdaId.isEmpty()) { %>
-                                    if (<%=nkdaId%>>
-                                    0
-                                )
+                                    if (parseInt("<%=nkdaId%>") > 0)
                                     {
                                         var yes = confirm("Remove \"No Known Drug Allergies\" from list?");
                                         if (!yes) document.forms.RxAddAllergyForm.allergyToArchive.value = "";
@@ -188,20 +235,20 @@
                             <table>
                                 <tr id="addReactionSubheading">
                                     <td>
-                                        Adding Allergy: <%=name%>
+                                        Adding Allergy: <%=Encode.forHtmlContent(name)%>
                                     </td>
                                 </tr>
                                 <tr valign="center">
                                     <td>
-                                        <span class="label">Comment: </span>
-                                        <textarea name="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
-                                        <input type="hidden" name="ID" value="<%=drugrefId%>"/>
-                                        <input type="hidden" name="name" id="name" value="<%=name%>"/>
-                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=allergyToArchive%>"/>
+                                        <label for="reactionDescription" class="label">Comment: </label>
+                                        <textarea name="reactionDescription" id="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
+                                        <input type="hidden" name="ID" value="<%=Encode.forHtmlAttribute(drugrefId)%>"/>
+                                        <input type="hidden" name="name" id="name" value="<%=Encode.forHtmlAttribute(name)%>"/>
+                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=Encode.forHtmlAttribute(allergyToArchive)%>"/>
                                     </td>
                                 </tr>
 
-                                <input type="hidden" name="type" id="type" value="<%=type%>"/>
+                                <input type="hidden" name="type" id="type" value="<%=Encode.forHtmlAttribute(type)%>"/>
 
                                 <tr valign="center">
                                     <td>
@@ -227,14 +274,14 @@
 
                                         <span class="label">Start Date:</span>
                                         <input type="text" name="startDate" id="startDate" size="10" maxlength="10"
-                                               value="<%=startDate%>" onblur="checkStartDate();"/>
+                                               value="<%=Encode.forHtmlAttribute(startDate)%>" onblur="checkStartDate();"/>
                                         <img src="<%= request.getContextPath() %>/images/cal.gif" id="startDateCal">(yyyy-mm-dd OR yyyy-mm OR yyyy)
                                     </td>
                                 </tr>
 
                                 <tr valign="center">
                                     <td><span class="label">Age Of Onset:</span> <input type="text"
-                                            name="ageOfOnset" size="4" maxlength="4" value="<%=ageOfOnset%>"
+                                            name="ageOfOnset" size="4" maxlength="4" value="<%=Encode.forHtmlAttribute(ageOfOnset)%>"
                                             onblur="checkAgeOfOnset();"/></td>
 
                                 </tr>
@@ -304,7 +351,7 @@
                                     <td>
                                         <input type="submit" name="submit" value="Add Allergy" class="ControlPushButton" onclick="return doSubmit()"/>
                                         <input type=button class="ControlPushButton" id="cancelAddReactionButton"
-                                               onclick="window.location='ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
+                                               onclick="window.location='<%= request.getContextPath() %>/oscarRx/ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
                                                value="Cancel"/>
                                     </td>
                                 </tr>
@@ -318,13 +365,10 @@
                             <%
                                 String sBack = "ShowAllergies2.jsp";
                             %> <input type=button class="ControlPushButton"
-                                      onclick="javascript:window.location.href='<%=sBack%>';"
+                                      onclick="window.location.href='<%=sBack%>';"
                                       value="Back to View Allergies"/></td>
                     </tr>
-                    <!----End new rows here-->
-                    <tr height="100%">
-                        <td></td>
-                    </tr>
+
                 </table>
             </td>
         </tr>
@@ -338,7 +382,7 @@
             <td width="100%" height="0%" colspan="2">&nbsp;</td>
         </tr>
         <tr>
-            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+            <td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"
                 colspan="2"></td>
         </tr>
     </table>
