@@ -280,7 +280,7 @@
                                             Provider cProv  = (Provider) theRequests.consultProvider.get(i);
                                     %>
                                     <tr>
-                                        <td class="stat<%=status%>">
+                                        <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                             <% if ("1".equals(status)) { %>
                                                 <fmt:setBundle basename="oscarResources"/>
                                                 <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgNothingDone"/>
@@ -298,7 +298,7 @@
                                                 <fmt:message key="oscarEncounter.oscarConsultationRequest.DisplayDemographicConsultationRequests.msgBookCon"/>
                                             <% } %>
                                             </td>
-                                            <td class="stat<%=status%>" >
+                                            <td class="stat<%=Encode.forHtmlAttribute(status)%>" >
                                             <% if (urgency.equals("1")){ %> 
                                                 <fmt:setBundle basename="oscarResources"/>
                                                 <fmt:message key="oscarEncounter.oscarConsultationRequest.ConsultationFormRequest.msgUrgent" />
@@ -312,16 +312,16 @@
                                         </td>
                                         <td class="stat<%=Encode.forHtmlAttribute(status)%>"><a
                   href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?de=<%=Encode.forUriComponent(demo)%>&requestId=<%=Encode.forUriComponent(id)%>')">
-                <%=patient%> </a></td>
+                <%=Encode.forHtml(patient)%> </a></td>
                 <td class="stat<%=Encode.forHtmlAttribute(status)%>"><%=Encode.forHtml(provider)%></td>
                 <td class="stat<%=Encode.forHtmlAttribute(status)%>"><%= (cProv != null) ? Encode.forHtml(cProv.getFormattedName()) : "" %></td>
                                         <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                             <a href="javascript:popupOscarRx(700,960,'<%= request.getContextPath() %>/oscarEncounter/ViewRequest.do?de=<%=Encode.forUriComponent(demo)%>&requestId=<%=Encode.forUriComponent(id)%>')">
                                                 <%=Encode.forHtml(StringUtils.trimToEmpty(service))%>
                                             </a>
+                                        </td>
                                         <td class="stat<%= Encode.forHtmlAttribute(status) %>">
                                             <%= Encode.forHtml(StringUtils.trimToEmpty(specialist)) %>
-                                        </td>
                                         </td>
                                         <td class="stat<%=Encode.forHtmlAttribute(status)%>"><%=Encode.forHtml(date)%>
                                         </td>
