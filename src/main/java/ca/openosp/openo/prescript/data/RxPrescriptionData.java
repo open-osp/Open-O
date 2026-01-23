@@ -458,7 +458,7 @@ public class RxPrescriptionData {
 
             for (Prescription p : result) {
                 if (p.getGCN_SEQNO() == drug.getGcnSeqNo()) {
-					if (p.getGCN_SEQNO() != "0") // not custom - safe GCN
+					if (!"0".equals(p.getGCN_SEQNO())) // not custom - safe GCN
                         isCustomName = false;
                     else if (p.getCustomName() != null && drug.getCustomName() != null) // custom
                         isCustomName = !p.getCustomName().equals(drug.getCustomName());
