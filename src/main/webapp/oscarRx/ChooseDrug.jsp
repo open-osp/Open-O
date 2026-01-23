@@ -209,7 +209,7 @@
                                 <input type="hidden" name="rx2" value="true"/>
                                 <%}%>
 
-                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=demoNo%>"/>
+                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=Encode.forHtmlAttribute(demoNo)%>"/>
                                 <table>
                                     <tr>
                                         <td>

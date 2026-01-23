@@ -333,7 +333,7 @@
 			String xComment=prescriptDrug.getComment();
 			String tComment="";
 			if(xComment!=null ){
-				tComment="TITLE='"+xComment+" '";
+				tComment="TITLE='" + Encode.forHtmlAttribute(xComment) + " '";
 			}
 			
 			%>
