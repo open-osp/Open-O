@@ -1501,7 +1501,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                                     var favoriteName = window.prompt('Please enter a name for the Favorite:',
                                         brandName);
 
-                                    if (favoriteName.length > 0) {
+                                    if (favoriteName !== null && favoriteName.length > 0) {
                                         window.location.href = '<%= request.getContextPath() %>/oscarRx/addFavoriteWriteScript.do?stashId='
                                             + encodeURIComponent(stashId) + '&favoriteName=' + encodeURIComponent(favoriteName);
                                     }

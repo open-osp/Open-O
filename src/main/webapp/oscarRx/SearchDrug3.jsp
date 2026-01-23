@@ -1234,7 +1234,6 @@ function renderRxStage() {
                 checkboxRevertStatus(element);
             }
         }
-    }
 
     function checkboxRevertStatus(checkbox) {
         setTimeout(function () {
