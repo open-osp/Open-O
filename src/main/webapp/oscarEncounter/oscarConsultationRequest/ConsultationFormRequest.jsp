@@ -2665,7 +2665,7 @@ if (userAgent != null) {
 								<%
                                     for (FaxConfig faxConfig : faxConfigs) {
                                 %>
-										<option value="<%=Encode.forHtmlAttribute(String.valueOf(faxConfig.getId()))%>" <%=faxConfig.getFaxNumber().equalsIgnoreCase(consultUtil.letterheadFax) ? "selected" : ""%>><%=Encode.forHtmlContent(faxConfig.getAccountName())%></option>
+										<option value="<%=Encode.forHtmlAttribute(faxConfig.getFaxNumber())%>" <%=faxConfig.getFaxNumber().equalsIgnoreCase(consultUtil.letterheadFax) ? "selected" : ""%>><%=Encode.forHtmlContent(faxConfig.getAccountName())%></option>
 								<%
                                     }
                                 %>
