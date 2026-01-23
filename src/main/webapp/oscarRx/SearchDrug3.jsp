@@ -835,15 +835,15 @@ function renderRxStage() {
                                                             <label for="naturalRemedy">Natural</label>
                                                         </fieldset>
                                                         <fieldset id="searchParamSet">
-                                                            <input type="radio" id="wildCardBoth" name="wildcard"
-                                                                   value="false" checked="checked" />
-                                                            <label title="Search exactly as typed (right to left)"
-                                                                   for="wildCardBoth">Exact</label>
-
                                                             <input type="radio" id="wildCardRight" name="wildcard"
-                                                                   value="true" />
+                                                                   value="true" checked="checked" />
+                                                            <label title="Search exactly as typed (right to left)"
+                                                                   for="wildCardRight">Exact</label>
+
+                                                            <input type="radio" id="wildCardBoth" name="wildcard"
+                                                                   value="false" />
                                                             <label title="Search for all words in all phrases"
-                                                                   for="wildCardRight">Any</label>
+                                                                   for="wildCardBoth">Any</label>
                                                         </fieldset>
                                                     </div>
                                                 </div>
