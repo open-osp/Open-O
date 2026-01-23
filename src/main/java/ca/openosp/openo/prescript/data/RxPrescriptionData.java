@@ -679,10 +679,32 @@ public class RxPrescriptionData {
 		 */
 		private String drugPrescribed;
 
+		/**
+		 * Gets the exact drug that was prescribed.
+		 * <p>
+		 * This field stores the actual prescribed drug name, allowing the system to determine
+		 * exactly what was prescribed instead of depending on the brand name every time.
+		 * This is particularly important for generic vs. brand name prescriptions and
+		 * for tracking prescription accuracy.
+		 * </p>
+		 *
+		 * @return String the prescribed drug name, or null if not set
+		 */
 		public String getDrugPrescribed() {
 			return drugPrescribed;
 		}
 
+		/**
+		 * Sets the exact drug that was prescribed.
+		 * <p>
+		 * This field stores the actual prescribed drug name, allowing the system to determine
+		 * exactly what was prescribed instead of depending on the brand name every time.
+		 * This is particularly important for generic vs. brand name prescriptions and
+		 * for tracking prescription accuracy.
+		 * </p>
+		 *
+		 * @param drugPrescribed String the prescribed drug name to set
+		 */
 		public void setDrugPrescribed(String drugPrescribed) {
 			this.drugPrescribed = drugPrescribed;
 		}
