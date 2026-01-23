@@ -2661,17 +2661,15 @@ if (userAgent != null) {
                                                 FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
                                                 List<FaxConfig> faxConfigs = faxConfigDao.findAll(null, null);
                                             %>
-                                            <span id="letterheadFaxSpan">
-										<select name="letterheadFax" id="letterheadFax">
+										<select name="faxAccount" id="faxAccount">
 								<%
                                     for (FaxConfig faxConfig : faxConfigs) {
                                 %>
-										<option value="<%=Encode.forHtmlAttribute(faxConfig.getFaxNumber())%>" <%=faxConfig.getFaxNumber().equalsIgnoreCase(consultUtil.letterheadFax) ? "selected" : ""%>><%=Encode.forHtmlContent(faxConfig.getAccountName())%></option>
+										<option value="<%=Encode.forHtmlAttribute(String.valueOf(faxConfig.getId()))%>" <%=faxConfig.getFaxNumber().equalsIgnoreCase(consultUtil.letterheadFax) ? "selected" : ""%>><%=Encode.forHtmlContent(faxConfig.getAccountName())%></option>
 								<%
                                     }
                                 %>
 									</select>
-								</span>
 
                                         </td>
                                     </tr>
