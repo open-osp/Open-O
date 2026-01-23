@@ -39,6 +39,7 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxWriteScriptForm" %>
 <%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
 <%@ page import="java.util.*" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%long start = System.currentTimeMillis();%>
 
@@ -1501,7 +1502,7 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                                     var favoriteName = window.prompt('Please enter a name for the Favorite:',
                                         brandName);
 
-                                    if (favoriteName.length > 0) {
+                                    if (favoriteName !== null && favoriteName.length > 0) {
                                         window.location.href = '<%= request.getContextPath() %>/oscarRx/addFavoriteWriteScript.do?stashId='
                                             + encodeURIComponent(stashId) + '&favoriteName=' + encodeURIComponent(favoriteName);
                                     }
@@ -1543,7 +1544,8 @@ Outside ProOhip: <%= thisForm.getOutsideProviderOhip() %><br>
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    <a href="javascript:addFavorite('${loopStatus.index}', '${rx2.custom ? fn:escapeXml(rx2.customName) : fn:escapeXml(rx2.brandName)}');">
+                                                    <c:set var="drugNameForFavorite" value="${rx2.custom ? rx2.customName : rx2.brandName}"/>
+                                                    <a href="javascript:addFavorite('${loopStatus.index}', '<%=Encode.forJavaScript((String)pageContext.getAttribute("drugNameForFavorite"))%>');">
                                                         <fmt:message key="WriteScript.msgAddtoFavorites"/>
                                                     </a>
                                                 </td>

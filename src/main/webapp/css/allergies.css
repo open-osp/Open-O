@@ -19,9 +19,10 @@
  * Department of Family Medicine 
  * McMaster University 
  * Hamilton 
- * Ontario, Canada 
+ * Ontario, Canada
  */
---> /* styles.css -- Style sheet for the UI prototype.
+
+/* styles.css -- Style sheet for the UI prototype.
 
 	Colours used:
 		#A9A9A9 = darkgray
@@ -125,7 +126,6 @@ td#allergiesColumnOneRowTwo p.PropSheetLevel1CurrentItemRed {
 }
 
 td#allergiesColumnTwoRowTwo {
-	vertical-align: text-top;
 	width: 80% !important;
 	margin:0px !important;
 	padding:0px !important;

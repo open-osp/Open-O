@@ -78,7 +78,7 @@
 
 </div>
 
-<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"/>
+<script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/Oscar.js"></script>
 <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
 <script type="text/javascript">
 

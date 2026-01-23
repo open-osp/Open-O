@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
+import org.owasp.encoder.Encode;
 
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.model.EmailAttachment;
@@ -58,6 +59,7 @@ public class EmailCompose2Action extends ActionSupport {
         boolean attachEFormItSelf = attachEFormItSelfObj != null && attachEFormItSelfObj;
         String fdid = attachEFormItSelf ? (String) session.getAttribute("fdid") : "";
         String demographicId = (String) session.getAttribute("demographicId");
+        String fid = request.getParameter("fid");
         String emailPDFPassword = (String) session.getAttribute("emailPDFPassword");
         String emailPDFPasswordClue = (String) session.getAttribute("emailPDFPasswordClue");
         String[] attachedDocuments = (String[]) session.getAttribute("attachedDocuments");
@@ -70,6 +72,13 @@ public class EmailCompose2Action extends ActionSupport {
         String bodyEmail = (String) session.getAttribute("bodyEmail");
         String encryptedMessageEmail = (String) session.getAttribute("encryptedMessageEmail");
         String emailPatientChartOption = (String) session.getAttribute("emailPatientChartOption");
+
+        // Validate fid is numeric if provided
+        if (fid != null && !fid.matches("\\d+")) {
+            String sanitizedFid = Encode.forJava(fid);
+            logger.warn("Invalid fid parameter received: {}", sanitizedFid);
+            fid = null;
+        }
 
         // Don't clean up session attributes here - they are needed by the JSP
         // Session cleanup is performed in this action immediately after transferring session data to request attributes.
@@ -116,6 +125,7 @@ public class EmailCompose2Action extends ActionSupport {
         request.setAttribute("emailPatientChartOption", emailPatientChartOption);
         request.setAttribute("demographicId", demographicId);
         request.setAttribute("fdid", session.getAttribute("fdid"));
+        request.setAttribute("fid", fid);
         request.setAttribute("openEFormAfterEmail", session.getAttribute("openEFormAfterEmail"));
         request.setAttribute("deleteEFormAfterEmail", session.getAttribute("deleteEFormAfterEmail"));
         request.setAttribute("isEmailEncrypted", session.getAttribute("isEmailEncrypted"));

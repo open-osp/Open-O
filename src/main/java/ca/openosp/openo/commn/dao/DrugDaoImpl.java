@@ -254,7 +254,7 @@ public class DrugDaoImpl extends AbstractDaoImpl<Drug> implements DrugDao {
             boolean b = true;
             for (int i = 0; i < rt.size(); i++) {
                 Drug p2 = rt.get(i);
-                if (p2.getGcnSeqNo() == drug.getGcnSeqNo()) {
+                if (p2.getGcnSeqNo() != null && p2.getGcnSeqNo().equals(drug.getGcnSeqNo())) {
 
                     if (! "0".equals(p2.getGcnSeqNo())) { // not custom - safe GCN
 
