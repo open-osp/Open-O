@@ -595,7 +595,6 @@ function checkFav(){
 function renderRxStage() {
 	$('rxText').show();
 	$('prescriptionStageSet').show();
-	$('savePrescriptionButtonSet').show();
 }
 
      //not used , represcribe a drug
