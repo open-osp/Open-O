@@ -127,7 +127,25 @@ public class Scratch2Action extends JSONAction {
             } else {
                 jsonObject.put("success", false);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            // Log the failure without including any PHI
+            MiscUtils.getLogger().error(
+                "Failed to delete ScratchPad entry with id: " + Encode.forJava(id),
+                e
+            );
+            try {
+                // Ensure callers can detect the failure via HTTP status and JSON payload
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                jsonObject = new JSONObject();
+                jsonObject.put("success", false);
+            } catch (Exception jsonException) {
+                // Avoid throwing from error handling; just log the secondary failure
+                MiscUtils.getLogger().error(
+                    "Failed to build error JSON response for ScratchPad delete operation",
+                    jsonException
+                );
+            }
+        }
 	    jsonResponse(jsonObject);
     	return null;
     }
