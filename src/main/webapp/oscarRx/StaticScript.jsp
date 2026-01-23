@@ -171,7 +171,7 @@
                                     <td>
                                         <%
                                             if (drug.customName == null) {
-                                        %> <a href="javascript:ShowDrugInfo('<%=drug.genericName%>');">Info</a> <%
+                                        %> <a href="javascript:ShowDrugInfo('<%=Encode.forJavaScriptAttribute(drug.genericName)%>');">Info</a> <%
                                         }
                                     %>
                                     </td>
