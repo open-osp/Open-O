@@ -90,13 +90,49 @@ public class Scratch2Action extends JSONAction {
 
         }else{
 
-           returnText = h.get("text").trim();
+           String textValue = h.get("text");
+           if (textValue == null) {
+               MiscUtils.getLogger().error("ScratchPad text value is null for provider: {}", Encode.forJava(providerNo));
+               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+               return null;
+           }
+           returnText = textValue.trim();
+
             //Get current Id in scratch table
-           int databaseId = Integer.parseInt(h.get("id"));
+           String idValue = h.get("id");
+           if (idValue == null || idValue.trim().isEmpty()) {
+               MiscUtils.getLogger().error("ScratchPad id value is null or empty for provider: {}", Encode.forJava(providerNo));
+               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+               return null;
+           }
+
+           int databaseId;
+           try {
+               databaseId = Integer.parseInt(idValue);
+           } catch (NumberFormatException e) {
+               MiscUtils.getLogger().error("Invalid ScratchPad id format: {}", Encode.forJava(idValue), e);
+               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+               return null;
+           }
            returnId = ""+databaseId;
            MiscUtils.getLogger().debug( "database Id = "+databaseId+" request id "+id);
 
-		   if (databaseId > Integer.parseInt(id)){
+		   if (id == null || id.trim().isEmpty()) {
+               MiscUtils.getLogger().error("Request id parameter is null or empty");
+               response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+               return null;
+           }
+
+           int requestId;
+           try {
+               requestId = Integer.parseInt(id);
+           } catch (NumberFormatException e) {
+               MiscUtils.getLogger().error("Invalid request id format: {}", Encode.forJava(id), e);
+               response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+               return null;
+           }
+
+		   if (databaseId > requestId){
 			   //check to see if the id in database is higher than in the request
               MiscUtils.getLogger().debug(" Database id greater than id");
 
