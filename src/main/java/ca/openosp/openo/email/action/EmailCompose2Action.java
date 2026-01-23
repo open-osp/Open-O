@@ -58,6 +58,7 @@ public class EmailCompose2Action extends ActionSupport {
         boolean attachEFormItSelf = attachEFormItSelfObj != null && attachEFormItSelfObj;
         String fdid = attachEFormItSelf ? (String) session.getAttribute("fdid") : "";
         String demographicId = (String) session.getAttribute("demographicId");
+        String fid = request.getParameter("fid");
         String emailPDFPassword = (String) session.getAttribute("emailPDFPassword");
         String emailPDFPasswordClue = (String) session.getAttribute("emailPDFPasswordClue");
         String[] attachedDocuments = (String[]) session.getAttribute("attachedDocuments");
@@ -70,6 +71,12 @@ public class EmailCompose2Action extends ActionSupport {
         String bodyEmail = (String) session.getAttribute("bodyEmail");
         String encryptedMessageEmail = (String) session.getAttribute("encryptedMessageEmail");
         String emailPatientChartOption = (String) session.getAttribute("emailPatientChartOption");
+
+        // Validate fid is numeric if provided
+        if (fid != null && !fid.matches("\\d+")) {
+            logger.warn("Invalid fid parameter received: " + fid);
+            fid = null;
+        }
 
         // Don't clean up session attributes here - they are needed by the JSP
         // Session cleanup is performed in this action immediately after transferring session data to request attributes.
@@ -116,6 +123,7 @@ public class EmailCompose2Action extends ActionSupport {
         request.setAttribute("emailPatientChartOption", emailPatientChartOption);
         request.setAttribute("demographicId", demographicId);
         request.setAttribute("fdid", session.getAttribute("fdid"));
+        request.setAttribute("fid", fid);
         request.setAttribute("openEFormAfterEmail", session.getAttribute("openEFormAfterEmail"));
         request.setAttribute("deleteEFormAfterEmail", session.getAttribute("deleteEFormAfterEmail"));
         request.setAttribute("isEmailEncrypted", session.getAttribute("isEmailEncrypted"));
