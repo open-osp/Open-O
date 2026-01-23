@@ -1126,10 +1126,24 @@ public class RxPrescriptionData {
             // this.gcn=null;
         }
 
+		/**
+		 * Retrieves the Generic Code Number Sequence Number (GCN_SEQNO) for this prescription drug.
+		 * The GCN_SEQNO is a unique identifier used in drug reference systems to identify specific drug products.
+		 *
+		 * @return String the Generic Code Number Sequence Number, or null if not set
+		 * @since 2022-12-16
+		 */
 		public String getGCN_SEQNO() {
             return this.GCN_SEQNO;
         }
 
+		/**
+		 * Sets the Generic Code Number Sequence Number (GCN_SEQNO) for this prescription drug.
+		 * The GCN_SEQNO is a unique identifier used in drug reference systems to identify specific drug products.
+		 *
+		 * @param RHS String the Generic Code Number Sequence Number to set
+		 * @since 2022-12-16
+		 */
 		public void setGCN_SEQNO(String RHS) {
             this.GCN_SEQNO = RHS;
             // this.gcn=null;
