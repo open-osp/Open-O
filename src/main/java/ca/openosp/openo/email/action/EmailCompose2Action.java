@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
+import org.owasp.encoder.Encode;
 
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.model.EmailAttachment;
@@ -74,7 +75,8 @@ public class EmailCompose2Action extends ActionSupport {
 
         // Validate fid is numeric if provided
         if (fid != null && !fid.matches("\\d+")) {
-            logger.warn("Invalid fid parameter received: " + fid);
+            String sanitizedFid = Encode.forJava(fid);
+            logger.warn("Invalid fid parameter received: {}", sanitizedFid);
             fid = null;
         }
 
