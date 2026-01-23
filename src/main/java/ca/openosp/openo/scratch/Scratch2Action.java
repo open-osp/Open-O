@@ -53,6 +53,9 @@ public class Scratch2Action extends JSONAction {
 
     	try {
     		ScratchPad scratchPad = scratchPadDao.find(Integer.parseInt(id));
+    		if (scratchPad == null) {
+    			throw new IllegalArgumentException("ScratchPad not found for id: " + id);
+    		}
     		request.setAttribute("ScratchPad", scratchPad);
     		return "scratchPadVersion";
     	} catch (NumberFormatException e) {
