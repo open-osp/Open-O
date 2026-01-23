@@ -103,7 +103,7 @@
                 var favoriteName = window.prompt('Please enter a name for the Favorite:',
                     brandName);
 
-                if (favoriteName.length > 0) {
+                if (favoriteName !== null && favoriteName.length > 0) {
                     var s = encodeURIComponent('?regionalIdentifier=<%=Encode.forJavaScript(regionalIdentifier != null ? regionalIdentifier : "")%>&cn=<%=Encode.forJavaScript(cn != null ? cn : "")%>');
 
                     window.location.href = '<%=request.getContextPath() %>/oscarRx/addFavoriteStaticScript.do?drugId='

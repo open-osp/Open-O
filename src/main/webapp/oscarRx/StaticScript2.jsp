@@ -128,10 +128,8 @@
             RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, currentDemographicNo);
             String annotation_display = CaseManagementNoteLink.DISP_PRESCRIP;
         %>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"/>
-        "></script>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"/>
-        "></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/prototype.js"></script>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/scriptaculous.js"></script>
         <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/Oscar.js"/>"></script>
 
         <script language="javascript">
@@ -139,7 +137,7 @@
             function addFavorite2(drugId, brandName) {
                 var favoriteName = window.prompt('Please enter a name for the Favorite:', brandName);
 
-                if (favoriteName.length > 0) {
+                if (favoriteName !== null && favoriteName.length > 0) {
                     var url = '<%=request.getContextPath()%>' + "/oscarRx/addFavorite2.do?parameterValue=addFav2";
                     oscarLog(url);
                     favoriteName = encodeURIComponent(favoriteName);
