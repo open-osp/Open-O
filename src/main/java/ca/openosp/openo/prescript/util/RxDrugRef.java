@@ -278,6 +278,22 @@ public class RxDrugRef {
         return vec;
     }
 
+    /**
+     * Verifies connectivity to the drug reference service and retrieves system metadata.
+     * <p>
+     * This method performs a health check by calling multiple web service endpoints to gather
+     * information about the connected drug database system. It retrieves the last database update
+     * timestamp, identifies the drug database type, and obtains the current database version.
+     *
+     * @return Map&lt;String, String&gt; containing drug reference metadata with the following keys:
+     *         <ul>
+     *         <li>"lastUpdate" - ISO timestamp of the most recent database update</li>
+     *         <li>"drugDatabase" - String identifier of the drug database system in use</li>
+     *         <li>"version" - String version number of the drug reference database</li>
+     *         </ul>
+     * @throws Exception if the drug reference service is unavailable or if any web service call fails
+     * @since 2026-01-21
+     */
     public Map<String, String> verify() throws Exception {
         Vector params = new Vector();
         String lastUpdateTime = getLastUpdateTime();
