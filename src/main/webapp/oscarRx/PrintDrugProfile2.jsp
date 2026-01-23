@@ -213,7 +213,7 @@
                                                 </td>
                                                 <td width=100%>
                                                     <a <%= styleColor%>
-                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript2.jsp?regionalIdentifier=<%= Encode.forUriComponent(drug.getRegionalIdentifier())%>&cn=<%= Encode.forUriComponent(drug.getCustomName())%>&bn=<%=Encode.forUriComponent(drug.getBrandName())%>"><%= drug.getFullOutLine().replaceAll(";", " ")%>
+                                                            href="<%= request.getContextPath() %>/oscarRx/StaticScript2.jsp?regionalIdentifier=<%= Encode.forUriComponent(drug.getRegionalIdentifier())%>&cn=<%= Encode.forUriComponent(drug.getCustomName())%>&bn=<%=Encode.forUriComponent(drug.getBrandName())%>"><%= Encode.forHtml(drug.getFullOutLine().replaceAll(";", " "))%>
                                                     </a>
                                                 </td>
                                             </tr>

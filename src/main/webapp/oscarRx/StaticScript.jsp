@@ -36,6 +36,7 @@
 <%@page import="java.util.ArrayList" %>
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.casemgmt.model.CaseManagementNoteLink" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
@@ -103,7 +104,7 @@
                     brandName);
 
                 if (favoriteName.length > 0) {
-                    var s = encodeURIComponent('?regionalIdentifier=<%=regionalIdentifier%>&cn=<%=cn%>');
+                    var s = encodeURIComponent('?regionalIdentifier=<%=Encode.forJavaScript(regionalIdentifier != null ? regionalIdentifier : "")%>&cn=<%=Encode.forJavaScript(cn != null ? cn : "")%>');
 
                     window.location.href = '<%=request.getContextPath() %>/oscarRx/addFavoriteStaticScript.do?drugId='
                         + encodeURIComponent(drugId) + '&favoriteName=' + encodeURIComponent(favoriteName)

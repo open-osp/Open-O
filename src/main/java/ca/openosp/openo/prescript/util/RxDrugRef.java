@@ -464,7 +464,7 @@ public class RxDrugRef {
                 logger.error("JavaClient: XML-RPC Fault. NoResultException thrown for procedure: {} with parameters {}", procedureName, params);
             } else {
                 logger.error("JavaClient: XML-RPC Fault ", exception);
-                throw new Exception("JavaClient: XML-RPC Fault #", exception);
+                throw new Exception("JavaClient: XML-RPC Fault", exception);
             }
         }
         return object;

@@ -47,10 +47,17 @@ public class Scratch2Action extends JSONAction {
     public String showVersion() throws Exception {
     	String id = request.getParameter("id");
 
-    	ScratchPad scratchPad = scratchPadDao.find(Integer.parseInt(id));
+    	if (id == null || id.trim().isEmpty()) {
+    		throw new IllegalArgumentException("Missing required parameter: id");
+    	}
 
-    	request.setAttribute("ScratchPad", scratchPad);
-    	return "scratchPadVersion";
+    	try {
+    		ScratchPad scratchPad = scratchPadDao.find(Integer.parseInt(id));
+    		request.setAttribute("ScratchPad", scratchPad);
+    		return "scratchPadVersion";
+    	} catch (NumberFormatException e) {
+    		throw new IllegalArgumentException("Invalid id parameter: must be a valid integer", e);
+    	}
     }
     
     public String execute() throws Exception {
@@ -103,7 +110,8 @@ public class Scratch2Action extends JSONAction {
 			jsonResponse(jsonObject);
 
         }else{
-        	MiscUtils.getLogger().error("Scratch pad trying to save data for user " + pNo + " but session user is " + providerNo);
+        	MiscUtils.getLogger().error("Scratch pad trying to save data for user {} but session user is {}",
+        		Encode.forJava(pNo), Encode.forJava(providerNo));
         	response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         
@@ -117,13 +125,18 @@ public class Scratch2Action extends JSONAction {
         try {
             if (id != null && !id.isEmpty()) {
                 ScratchPad scratch = scratchPadDao.find(Integer.parseInt(id));
-                scratch.setStatus(false);
-                scratchPadDao.merge(scratch);
-                jsonObject.put("id", Encode.forHtmlContent(id));
-                jsonObject.put("version", scratch.getDateTime() != null
-                    ? scratch.getDateTime().toInstant().toString()
-                    : null);
-                jsonObject.put("success", true);
+                if (scratch != null) {
+                    scratch.setStatus(false);
+                    scratchPadDao.merge(scratch);
+                    jsonObject.put("id", Encode.forHtmlContent(id));
+                    jsonObject.put("version", scratch.getDateTime() != null
+                        ? scratch.getDateTime().toInstant().toString()
+                        : null);
+                    jsonObject.put("success", true);
+                } else {
+                    MiscUtils.getLogger().warn("ScratchPad not found for id: {}", Encode.forJava(id));
+                    jsonObject.put("success", false);
+                }
             } else {
                 jsonObject.put("success", false);
             }
