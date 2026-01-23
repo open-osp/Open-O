@@ -1797,6 +1797,10 @@ function popForm2(scriptId){
      }
 
      function callAdditionWebService(url,id){
+         var contextPath = '<c:out value="${ctx}"/>';
+         if (url.indexOf(contextPath) !== 0) {
+             url = contextPath + "/oscarRx/" + url;
+         }
          var ran_number=Math.round(Math.random()*1000000);
          var params = "demographicNo=<%=demoNo%>&rand="+ran_number;  //hack to get around ie caching the page
          var updater=new Ajax.Updater(id,url, {method:'get',parameters:params,insertion: Insertion.Bottom,evalScripts:true});
