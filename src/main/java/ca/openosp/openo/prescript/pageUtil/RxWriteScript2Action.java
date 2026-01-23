@@ -120,11 +120,11 @@ public final class RxWriteScript2Action extends ActionSupport {
             case "updateProperty" -> updateProperty();
             case "updateSaveAllDrugs" -> updateSaveAllDrugs();
             case "getDemoNameAndHIN" -> getDemoNameAndHIN();
-            case "updateToLongTerm" -> updateToLongTerm();
+            case "updateLongTermStatus" -> updateLongTermStatus();
             case "checkNoStashItem" -> checkNoStashItem();
             case "searchSpecialInstructions" -> {
                 searchSpecialInstructions();
-                yield null; // or whatever the intended return is for this void-like call
+                yield null;
             }
             default -> null;
         };
@@ -1279,7 +1279,7 @@ public final class RxWriteScript2Action extends ActionSupport {
         return null;
     }
 
-    public String updateToLongTerm() throws IOException, Exception {
+    public String updateLongTermStatus() throws IOException, Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);
 
@@ -1288,7 +1288,7 @@ public final class RxWriteScript2Action extends ActionSupport {
         boolean isLongTerm = Boolean.parseBoolean(request.getParameter("isLongTerm"));
 
         if (Objects.isNull(strId)) {
-	    hm.put("success", false);
+	        hm.put("success", false);
 		} else {
             int drugId = Integer.parseInt(strId);
             RxSessionBean bean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
@@ -1304,18 +1304,18 @@ public final class RxWriteScript2Action extends ActionSupport {
             boolean saveStatus = oldRx.Save(oldRx.getScript_no());
 
             if (saveStatus) {
-    	        saveStatus = this.rxManager.archiveDrug(loggedInInfo, drugId, bean.getDemographicNo(),
-		isLongTerm ? Drug.ARCHIVED_REASON_LT_ENABLED : Drug.ARCHIVED_REASON_LT_DISABLED);
-	
+                saveStatus = this.rxManager.archiveDrug(loggedInInfo, drugId, bean.getDemographicNo(),
+                        isLongTerm ? Drug.ARCHIVED_REASON_LT_ENABLED : Drug.ARCHIVED_REASON_LT_DISABLED);
             }
 
             hm.put("success", saveStatus);
         }
+        response.setContentType("application/json");
         ObjectNode jsonObject = objectMapper.valueToTree(hm);
         response.getOutputStream().write(jsonObject.toString().getBytes());
         return null;
     }
-
+  
     public void saveDrug(final HttpServletRequest request) throws Exception {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         checkPrivilege(loggedInInfo, PRIVILEGE_WRITE);

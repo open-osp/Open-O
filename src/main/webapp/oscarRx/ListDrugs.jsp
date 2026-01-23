@@ -315,30 +315,7 @@
                 <%=prescriptDrug.daysToExpire()%>
                 <% } %>
             </td>
-            <td>
-                <%
-                    if (prescriptDrug.isLongTerm()) {
-                %>
-                *
-                <%
-                    } else {
-                        if (prescriptDrug.getRemoteFacilityId() == null) {
-                            if (securityManager.hasWriteAccess("_rx", roleName$, true)) {
-                %>
-                <a id="notLongTermDrug_<%=prescriptIdInt%>"
-                   title="<fmt:setBundle basename='oscarResources'/><fmt:message key='oscarRx.Prescription.changeDrugLongTerm'/>"
-                   onclick="changeLt('<%=prescriptIdInt%>');" href="javascript:void(0);">
-                    L
-                </a>
-                <% 
-                            } else { 
-                %>
-                <span style="color:blue">L</span>
-                <% 
-                            }
-                        }
-                    } 
-                %>
+            <td valign="top">
                 <div class="drug-maintenance-switch" style="display: flex; align-items: baseline;">
                     <% String drugMaintenanceSwitch = "drugMaintenanceSwitch_" + prescriptIdInt + Math.abs(new Random().nextInt(10001)); %>
                     <input id="<%=drugMaintenanceSwitch%>" type="checkbox" name="checkBox_<%=prescriptIdInt%>"

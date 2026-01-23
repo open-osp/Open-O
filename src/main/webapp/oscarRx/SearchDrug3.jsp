@@ -1211,8 +1211,8 @@ function renderRxStage() {
                         }
 %>
 <script type="text/javascript">
-        function changeLt(drugId) {
-            if (confirm('<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.Prescription.changeDrugLongTermConfirm"/>') == true) {
+        function changeLt(element, drugId) {
+            if (confirm('<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarRx.Prescription.changeDrugLongTermConfirm"/>') === true) {
             const data = "ltDrugId=" + encodeURIComponent(drugId) + "&isLongTerm=" + element.checked + "&rand=" + Math.floor(Math.random() * 10001);
             const url = ctx + "/oscarRx/WriteScript.do?parameterValue=updateLongTermStatus";
             new Ajax.Request(url, {
@@ -1230,8 +1230,9 @@ function renderRxStage() {
                     checkboxRevertStatus(element);
                 }
             });
-        } else {
-            checkboxRevertStatus(element);
+            } else {
+                checkboxRevertStatus(element);
+            }
         }
     }
 
