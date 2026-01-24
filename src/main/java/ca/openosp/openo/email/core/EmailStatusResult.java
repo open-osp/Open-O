@@ -329,7 +329,13 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
      * <p>This method automatically converts semicolon-separated email addresses to
      * comma-separated format for display purposes.</p>
      *
+     * <p><strong>Note:</strong> This normalization behavior differs from the constructor,
+     * which assigns the recipientEmail value directly without conversion. When using the
+     * constructor, ensure email addresses are pre-formatted or call this setter afterward
+     * if normalization is required.</p>
+     *
      * @param recipientEmail String the recipient's email address to set (may contain semicolon-separated addresses)
+     * @throws NullPointerException if recipientEmail is null
      */
     public void setRecipientEmail(String recipientEmail) {
         this.recipientEmail = recipientEmail.replace(";", ", ");
@@ -356,6 +362,11 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
     /**
      * Gets the encryption password.
      *
+     * <p><strong>Security Note:</strong> This password is used for email encryption in a
+     * healthcare context where emails may contain PHI. Handle this value with appropriate
+     * security measures: do not log it, avoid exposing it in error messages, and clear it
+     * from memory when no longer needed.</p>
+     *
      * @return String the encryption password (may be null if not encrypted)
      */
     public String getPassword() {
@@ -364,6 +375,10 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
 
     /**
      * Sets the encryption password.
+     *
+     * <p><strong>Security Note:</strong> This password is used for email encryption in a
+     * healthcare context where emails may contain PHI. Ensure this value is handled
+     * securely and not logged or exposed in error messages.</p>
      *
      * @param password String the encryption password to set
      */
@@ -429,6 +444,7 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
      * Gets the creation date formatted as "yyyy-MM-dd".
      *
      * @return String the formatted creation date
+     * @throws NullPointerException if the created timestamp is null
      */
     public String getCreatedDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -439,6 +455,7 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
      * Gets the creation time formatted as "HH:mm:ss".
      *
      * @return String the formatted creation time
+     * @throws NullPointerException if the created timestamp is null
      */
     public String getCreatedTime() {
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -449,6 +466,7 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
      * Gets the creation timestamp formatted as an ISO 8601 local date-time string.
      *
      * @return String the ISO 8601 formatted creation timestamp
+     * @throws NullPointerException if the created timestamp is null
      */
     public String getCreatedStringDate() {
         LocalDateTime createdLocalDateTime = created.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -457,10 +475,16 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
     }
 
     /**
-     * Converts a string to camel case format (first letter uppercase, rest lowercase).
+     * Converts a string to Title Case format (first letter uppercase, rest lowercase).
+     *
+     * <p><strong>Note:</strong> Despite the method name, this produces Title Case
+     * (e.g., "Firstname") rather than true camelCase (e.g., "firstName"). This is
+     * the expected behavior for formatting person names in this class.</p>
      *
      * @param inputString String the input string to convert
-     * @return String the camel case formatted string
+     * @return String the Title Case formatted string
+     * @throws NullPointerException if inputString is null
+     * @throws StringIndexOutOfBoundsException if inputString is empty
      */
     private String toCamelCase(String inputString) {
         return Character.toUpperCase(inputString.charAt(0)) + inputString.substring(1).toLowerCase();
@@ -475,6 +499,7 @@ public class EmailStatusResult implements Comparable<EmailStatusResult> {
      * @param other EmailStatusResult the EmailStatusResult to compare with
      * @return int a negative integer, zero, or a positive integer as this email
      *         was created before, at the same time as, or after the specified email
+     * @throws NullPointerException if other is null, or if either this.created or other.created is null
      */
     @Override
     public int compareTo(EmailStatusResult other) {
