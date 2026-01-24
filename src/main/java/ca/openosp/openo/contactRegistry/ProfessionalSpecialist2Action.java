@@ -89,7 +89,7 @@ public class ProfessionalSpecialist2Action extends ActionSupport {
      * <p><strong>Request Parameters:</strong></p>
      * <ul>
      *   <li>id (String) - The unique identifier of the professional specialist to retrieve.
-     *       Must be a valid integer value. If null, empty, or invalid, no response is generated.</li>
+     *       Must be a valid integer value. If null or empty, no response is generated.</li>
      * </ul>
      *
      * <p><strong>Response Format:</strong></p>
