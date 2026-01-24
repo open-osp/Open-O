@@ -32,6 +32,8 @@
         <hapifhir.version>6.4.0</hapifhir.version>
         <!-- Apache CXF Version -->
         <cxf.version>3.5.11</cxf.version>
+        <!-- Netty Version (for transitive dependency security fixes) -->
+        <netty.version>4.1.129.Final</netty.version>
         <struts.devMode>false</struts.devMode>
         <!-- Test properties -->
         <skipModernTests>false</skipModernTests>
@@ -108,13 +110,26 @@
                 <artifactId>mina-core</artifactId>
                 <version>2.1.10</version>
             </dependency>
+            <!-- Force secure versions of ALL Netty modules to fix multiple CVEs:
+                 - HTTP/2 DDoS (MadeYouReset) in netty-codec-http2
+                 - DoS via zip bomb in netty-codec
+                 - CRLF Injection and request smuggling in netty-codec-http
+                 Transitive from apache-cxf and webdrivermanager -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+          
             <!-- Force secure version of MIME4J to fix header injection CVE -->
             <!-- Transitive from axis2-transport-http (used for OLIS) -->
             <dependency>
                 <groupId>org.apache.james</groupId>
                 <artifactId>apache-mime4j-core</artifactId>
                 <version>0.8.10</version>
-            </dependency>
+             </dependency>
 
             <!-- Transitive Hibernate/JPA dependencies -->
             <!-- Hibernate core -->

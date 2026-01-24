@@ -955,43 +955,43 @@
   }, {
     "groupId" : "io.netty",
     "artifactId" : "netty-buffer",
-    "version" : "4.1.119.Final",
+    "version" : "4.1.129.Final",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:HMXqJdDNXBGUwl6/rTTB3rSuwlBCUTAUy38OslLqjHbkh8wkEzb/5m7ZRPvOEdvm+UAw9UVraSHc+WOiWjjsJw=="
+    "integrity" : "sha512:TZ++bNn6SnhTDlaAt/7D+agp/899U6zW12iLPtHokZGvdmKC6gNAKXpCd+hTcZuV2JjNE4JEjdF8iQtBSxD6NQ=="
   }, {
     "groupId" : "io.netty",
     "artifactId" : "netty-codec-http2",
-    "version" : "4.1.119.Final",
+    "version" : "4.1.129.Final",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:iYjWadmaKZolqHrV3a4THVfKjltSEF7uqWbOHDUmt7Iwv4EyPVFYQk4cifI8yNHZNcmH7D8yStcHHheOML2PbA=="
+    "integrity" : "sha512:vxWCF/NlHB5j+5GOY6lCHjHeP8gdAOcUkU0BUx0P9vJNaLZNIKnMKo5XbWdEh9l2yFga77vf/cLk8Ah7gSQjoA=="
   }, {
     "groupId" : "io.netty",
     "artifactId" : "netty-codec",
-    "version" : "4.1.119.Final",
+    "version" : "4.1.129.Final",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:smCgGx3YNElSDg2/g84jKHJa9HaRJTSjvPK3DWaoJaLqL6FRA/STz1SeH/m7meiPZoXsDSyUxTzC92Tmt5uMjg=="
+    "integrity" : "sha512:2Y3teF1BFRL7Aq08NaTzA1EGjTxAeIM2G/VE0snNNbid5avgA5BDHw9dgHVlwySA3K7Why91axuATNOya3BMiw=="
   }, {
     "groupId" : "io.netty",
     "artifactId" : "netty-resolver",
-    "version" : "4.1.119.Final",
+    "version" : "4.1.129.Final",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:eMUz585JYi86VLu/Ytu8CAJq9xXb/k6QkkcO6C2H2Qk+rQaWnJP0tQjeXIrll6jzK3ucWKNO+FueLDBhn7ceeQ=="
+    "integrity" : "sha512:X+Kgn7DSj3hELxfrWpsZ/9nohX9InMUfynI/hOH6JmzzelB8tk1/QhDmD5Q4R4GtdgcyxfpwegYtSqUp0RaXAQ=="
   }, {
     "groupId" : "io.netty",
     "artifactId" : "netty-transport",
-    "version" : "4.1.119.Final",
+    "version" : "4.1.129.Final",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:bg+TSYsz28O+a/6SWtXw8Ap5cn5SAUQpmK6M0TEdFIArqo5ahPuq2Pm34BErtqT1R83hBF1Uw9mZCHdYHkwsvQ=="
+    "integrity" : "sha512:3ulAVVAU1Ng/XJrXMIUomsIeAzf9x+svAjqmt4v+7iS2uhdUREU1+4JrIoe+AKY8fBI2Ay74MBl6l3lJs2hZpA=="
   }, {
     "groupId" : "io.projectreactor",
     "artifactId" : "reactor-core",
