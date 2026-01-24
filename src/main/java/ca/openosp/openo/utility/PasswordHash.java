@@ -38,7 +38,7 @@ import java.util.Base64;
  * for secure password storage in healthcare provider authentication systems.
  *
  * <p>This class provides cryptographically secure password hashing and verification
- * using PBKDF2 with HMAC-SHA2 algorithm. It implements industry best practices for
+ * using PBKDF2 (see {@link #PBKDF2_ALGORITHM}) and the "sha1" hash identifier used by this implementation. It implements industry best practices for
  * password storage by using:</p>
  * <ul>
  * <li>Cryptographic salting with SecureRandom to prevent rainbow table attacks</li>
