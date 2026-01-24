@@ -647,10 +647,10 @@
 
 
 
-        <!-- jcharts: can be found in the local_repo folder -->
+        <!-- jcharts: now from Maven Central (same JAR, different coordinates) -->
         <dependency>
-            <groupId>net.sf.jcharts</groupId>
-            <artifactId>krysalis-jCharts</artifactId>
+            <groupId>jcharts</groupId>
+            <artifactId>jcharts</artifactId>
             <version>0.7.5</version>
         </dependency>
 
