@@ -35,7 +35,7 @@ on:
       - staging/*
       - hotfix/*
       - community/*/develop
-      - community/*/staging
+      - community/*/staging/*
     paths:
       - 'pom.xml'
       - 'dependencies-lock.json'
