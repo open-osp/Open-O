@@ -53,6 +53,10 @@
         "&reason=" + (request.getParameter("reason") != null ? URLEncoder.encode(request.getParameter("reason"), StandardCharsets.UTF_8) : "") +
         "&reasonCode=" + (request.getParameter("reasonCode") != null ? URLEncoder.encode(request.getParameter("reasonCode"), StandardCharsets.UTF_8) : "") +
         "&appointmentNo=" + (request.getParameter("appointmentNo") != null ? URLEncoder.encode(request.getParameter("appointmentNo"), StandardCharsets.UTF_8) : "") +
+        "&appointmentDate=" + (request.getParameter("appointmentDate") != null ? request.getParameter("appointmentDate") : "") +
+        "&start_time=" + (request.getParameter("start_time") != null ? request.getParameter("start_time") : "") +
+        "&apptProvider=" + (request.getParameter("apptProvider") != null ? request.getParameter("apptProvider") : "") +
+        "&providerview=" + (request.getParameter("providerview") != null ? request.getParameter("providerview") : "") +
         "&OscarMsgTypeLink=" + request.getParameter("OscarMsgTypeLink") + "&msgType=" + request.getParameter("msgType");
     } else {
         redirectURL = request.getContextPath() + "/CaseManagementView.do";
