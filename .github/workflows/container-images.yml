@@ -40,11 +40,15 @@ on:
       - main
       - develop
       - experimental
+      - staging/*
+      - hotfix/*
   pull_request:
     branches:
       - main
       - develop
       - experimental
+      - staging/*
+      - hotfix/*
   workflow_dispatch:
     inputs:
       force_rebuild:

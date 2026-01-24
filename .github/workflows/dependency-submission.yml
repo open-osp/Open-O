@@ -32,6 +32,10 @@ on:
       - main
       - develop
       - experimental
+      - staging/*
+      - hotfix/*
+      - community/*/develop
+      - community/*/staging
     paths:
       - 'pom.xml'
       - 'dependencies-lock.json'
