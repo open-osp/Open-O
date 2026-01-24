@@ -20,8 +20,8 @@ package ca.openosp.openo.entities;
  * <p>Key fields include payee identification (payeeNo, payeeName), financial data (amtBilled, amtPaid,
  * balanceFwd, newBalance, cheque), and administrative metadata (dataCentre, dataSeq, mspCTLno).</p>
  *
- * @since 2026-01-23
- * @see ca.openosp.openo.billing.CA.BC
+ * @since 2025-10-07
+ * @see ca.openosp.openo.billing.CA.BC.model.TeleplanS21
  */
 public class S21 {
 
@@ -126,7 +126,9 @@ public class S21 {
     /**
      * Gets the date when the payment was processed by BC MSP.
      *
-     * @return String the payment date
+     * <p>Format: YYYYMMDD (e.g., "20250107" for January 7, 2025)</p>
+     *
+     * @return String the payment date in YYYYMMDD format
      */
     public String getPaymentDate() {
         return paymentDate;
@@ -135,7 +137,7 @@ public class S21 {
     /**
      * Sets the date when the payment was processed by BC MSP.
      *
-     * @param paymentDate String the payment date to set
+     * @param paymentDate String the payment date in YYYYMMDD format (e.g., "20250107")
      */
     public void setPaymentDate(String paymentDate) {
         this.paymentDate = paymentDate;
@@ -216,7 +218,10 @@ public class S21 {
     /**
      * Gets the total amount billed to BC MSP for healthcare services.
      *
-     * @return String the amount billed (stored as string for precision)
+     * <p>Monetary values are stored as strings in cents without decimal point
+     * (e.g., "12345" represents $123.45) to maintain precision in financial calculations.</p>
+     *
+     * @return String the amount billed in cents (stored as string for precision)
      */
     public String getAmtBilled() {
         return amtBilled;
@@ -225,7 +230,7 @@ public class S21 {
     /**
      * Sets the total amount billed to BC MSP for healthcare services.
      *
-     * @param amtBilled String the amount billed to set (stored as string for precision)
+     * @param amtBilled String the amount billed in cents (e.g., "12345" for $123.45)
      */
     public void setAmtBilled(String amtBilled) {
         this.amtBilled = amtBilled;
@@ -235,9 +240,10 @@ public class S21 {
      * Gets the actual amount paid by BC MSP for the billed services.
      *
      * <p>This amount may differ from the amount billed due to adjustments,
-     * denials, or partial payments.</p>
+     * denials, or partial payments. Monetary values are stored as strings in cents
+     * without decimal point (e.g., "12345" represents $123.45).</p>
      *
-     * @return String the amount paid (stored as string for precision)
+     * @return String the amount paid in cents (stored as string for precision)
      */
     public String getAmtPaid() {
         return amtPaid;
@@ -246,7 +252,7 @@ public class S21 {
     /**
      * Sets the actual amount paid by BC MSP for the billed services.
      *
-     * @param amtPaid String the amount paid to set (stored as string for precision)
+     * @param amtPaid String the amount paid in cents (e.g., "12345" for $123.45)
      */
     public void setAmtPaid(String amtPaid) {
         this.amtPaid = amtPaid;
@@ -256,9 +262,10 @@ public class S21 {
      * Gets the balance brought forward from previous payment periods.
      *
      * <p>Represents any outstanding balance or credit from prior billing cycles
-     * that affects the current payment calculation.</p>
+     * that affects the current payment calculation. Monetary values are stored as
+     * strings in cents without decimal point (e.g., "12345" represents $123.45).</p>
      *
-     * @return String the balance forward amount (stored as string for precision)
+     * @return String the balance forward amount in cents (stored as string for precision)
      */
     public String getBalanceFwd() {
         return balanceFwd;
@@ -267,7 +274,7 @@ public class S21 {
     /**
      * Sets the balance brought forward from previous payment periods.
      *
-     * @param balanceFwd String the balance forward amount to set (stored as string for precision)
+     * @param balanceFwd String the balance forward amount in cents (e.g., "12345" for $123.45)
      */
     public void setBalanceFwd(String balanceFwd) {
         this.balanceFwd = balanceFwd;
@@ -294,9 +301,14 @@ public class S21 {
     /**
      * Gets the new balance after applying this payment transaction.
      *
-     * <p>Calculated as: balance forward + amount billed - amount paid = new balance</p>
+     * <p>This value is provided by BC MSP billing system and not computed by this entity.
+     * A typical calculation follows the pattern:
+     * {@code balance forward + amount billed - amount paid = new balance},
+     * but the exact rules (including adjustments, fees, or write-offs) are defined by
+     * the MSP billing specification. Monetary values are stored as strings in cents
+     * without decimal point (e.g., "12345" represents $123.45).</p>
      *
-     * @return String the new balance amount (stored as string for precision)
+     * @return String the new balance amount in cents (stored as string for precision)
      */
     public String getNewBalance() {
         return newBalance;
@@ -305,7 +317,7 @@ public class S21 {
     /**
      * Sets the new balance after applying this payment transaction.
      *
-     * @param newBalance String the new balance amount to set (stored as string for precision)
+     * @param newBalance String the new balance amount in cents (e.g., "12345" for $123.45)
      */
     public void setNewBalance(String newBalance) {
         this.newBalance = newBalance;
