@@ -48,7 +48,7 @@ on:
       - develop
       - experimental
       - staging/*
-      - hotfix/* 
+      - hotfix/*
       - community/*/develop
       - community/*/staging/*
 
