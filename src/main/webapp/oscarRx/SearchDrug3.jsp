@@ -809,9 +809,9 @@ function renderRxStage() {
                                         <tr id="searchPrescriptionRow">
                                             <td>
                                                 <div id="searchDrugSet">
-                                                    <div id="searchDrugAutocompleteSet">
-                                                        <label for="searchString" ><fmt:message key="SearchDrug.drugSearchTextBox"  /></label>
-                                                        <input type="text" class="ui-widget-content" id="searchString" name="searchString" autocomplete="off" >
+                                                    <div id="searchDrugAutocompleteSet" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                                        <label for="searchString" style="white-space: nowrap; margin: 0;"><fmt:message key="SearchDrug.drugSearchTextBox"  /></label>
+                                                        <input type="text" class="ui-widget-content" id="searchString" name="searchString" autocomplete="off" style="border: 1px solid #000;">
                                                         <div id="autocomplete_choices"></div>
                                                     </div>
                                                     <div id="advanceSearchParameters">
