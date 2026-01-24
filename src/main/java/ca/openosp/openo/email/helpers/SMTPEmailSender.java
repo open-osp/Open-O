@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * <p>The sender uses JavaMailSender with configurable SMTP settings extracted
  * from EmailConfig objects. All email transmissions require the _email write
- * privilege and are logged for audit purposes.</p>
+ * privilege.</p>
  *
  * <p>Features:</p>
  * <ul>
