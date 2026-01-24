@@ -25,7 +25,7 @@ import org.apache.commons.text.StringEscapeUtils;
  * <ul>
  *   <li>Validates formId is numeric to prevent injection attacks</li>
  *   <li>Sanitizes error messages using HTML entity encoding via StringEscapeUtils</li>
- *   <li>Performs null and empty checks on all input parameters</li>
+ *   <li>Performs null and empty checks on the formId parameter</li>
  * </ul>
  *
  * @see EFormUtil#logError(int, String)
