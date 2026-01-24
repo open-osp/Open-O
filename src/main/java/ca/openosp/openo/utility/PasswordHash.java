@@ -38,7 +38,7 @@ import java.util.Base64;
  * for secure password storage in healthcare provider authentication systems.
  *
  * <p>This class provides cryptographically secure password hashing and verification
- * using PBKDF2 (see {@link #PBKDF2_ALGORITHM}) and the "sha1" hash identifier used by this implementation. It implements industry best practices for
+ * using PBKDF2 with HMAC-SHA1 algorithm. It implements industry best practices for
  * password storage by using:</p>
  * <ul>
  * <li>Cryptographic salting with SecureRandom to prevent rainbow table attacks</li>
@@ -130,7 +130,16 @@ public class PasswordHash
 
 	/**
 	 * The PBKDF2 algorithm identifier used for password hashing.
-	 * Currently uses PBKDF2 with HMAC-SHA2 for cryptographic strength.
+	 *
+	 * <p><strong>Note:</strong> This constant is set to "PBKDF2WithHmacSHA2" which is not a valid
+	 * Java algorithm name and will cause a NoSuchAlgorithmException at runtime. The actual
+	 * implementation uses PBKDF2 with HMAC-SHA1 (indicated by the "sha1" algorithm identifier
+	 * in the hash format at line 248 and verified at line 322). This is a known bug that will
+	 * be fixed in a future PR to use a valid algorithm name such as "PBKDF2WithHmacSHA1" or
+	 * upgrade to "PBKDF2WithHmacSHA256".</p>
+	 *
+	 * @see #createHash(char[])
+	 * @see #verifyPassword(char[], String)
 	 */
 	public static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA2";
 
@@ -218,7 +227,7 @@ public class PasswordHash
 	 * <p>This is the core hash creation method. It:</p>
 	 * <ol>
 	 * <li>Generates a cryptographically secure random salt using SecureRandom</li>
-	 * <li>Applies PBKDF2 with HMAC-SHA2 using the configured iteration count</li>
+	 * <li>Applies PBKDF2 with HMAC-SHA1 using the configured iteration count</li>
 	 * <li>Encodes the salt and hash using Base64 for safe database storage</li>
 	 * <li>Returns a formatted string containing all parameters needed for verification</li>
 	 * </ol>
@@ -227,7 +236,8 @@ public class PasswordHash
 	 * applications as it allows the password to be cleared from memory after use.</p>
 	 *
 	 * @param password char[] a character array containing the password to hash
-	 * @return String a salted PBKDF2 hash in the format "sha1:iterations:hashSize:salt:hash"
+	 * @return String a salted PBKDF2 hash in the format "algorithm:iterations:hashSize:salt:hash"
+	 *         (currently algorithm is "sha1" as seen at line 248)
 	 * @throws CannotPerformOperationException if the PBKDF2 algorithm is not supported or key generation fails
 	 * @see #createHash(String)
 	 * @see #verifyPassword(char[], String)
