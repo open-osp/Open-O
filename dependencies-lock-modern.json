@@ -1185,6 +1185,14 @@
     "optional" : false,
     "integrity" : "sha512:ytWC/BLQdB6eb9fgz4ClD+sE9e9CBD35b4pbeEdsd2ldi0ODbSJB92s1Z26nWZIe3SXq6ywE7JFusTiqKQHOXw=="
   }, {
+    "groupId" : "jcharts",
+    "artifactId" : "jcharts",
+    "version" : "0.7.5",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:OVOQC+vjj0JCSZ0QbVlCX1S3PAR4wwUPDcCRfVw2zDX5TM/qlua/hemxKCvVcvVa/vG0hfgfXtlJPMTTgo9aCw=="
+  }, {
     "groupId" : "joda-time",
     "artifactId" : "joda-time",
     "version" : "2.10.6",
@@ -1248,14 +1256,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:+3RfbL2A+a+FuZ/wy2aljXN/gEIuJ/3slNK8pt42ErRfwiOyOQk2V4HehwnYlGEmHThK1yKFxNfhs3sumd9/ag=="
-  }, {
-    "groupId" : "net.sf.jcharts",
-    "artifactId" : "krysalis-jCharts",
-    "version" : "0.7.5",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:OVOQC+vjj0JCSZ0QbVlCX1S3PAR4wwUPDcCRfVw2zDX5TM/qlua/hemxKCvVcvVa/vG0hfgfXtlJPMTTgo9aCw=="
   }, {
     "groupId" : "net.shibboleth.utilities",
     "artifactId" : "java-support",
