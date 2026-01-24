@@ -91,6 +91,7 @@
       "Bash(gh run view *)",
       "Bash(gh run list *)",
       "Bash(gh run watch *)",
+      "Bash(gh issue create *)",
       "Bash(git status *)",
       "Bash(git branch *)",
       "Bash(git checkout *)",
@@ -214,7 +215,6 @@
     "ask": [
       "Bash(gh pr close *)",
       "Bash(gh issue close *)",
-      "Bash(gh issue create *)",
       "Bash(gh issue edit *)",
       "Bash(gh label *)",
       "Bash(gh run rerun *)",
