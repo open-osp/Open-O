@@ -28,6 +28,38 @@ import ca.openosp.openo.lab.ca.on.CommonLabResultData;
 import ca.openosp.openo.lab.ca.on.LabResultData;
 import ca.openosp.openo.util.StringUtils;
 
+/**
+ * Utility class for generating clinical notes from email communications in the OpenO EMR system.
+ *
+ * <p>This class handles the creation of comprehensive clinical notes from {@link EmailLog} objects,
+ * which represent email communications between healthcare providers and patients. The generated notes
+ * include email content, encryption information, attachments (eForms, documents, lab results, HRM documents,
+ * and forms), and technical metadata for audit trail purposes.</p>
+ *
+ * <p>Key features:</p>
+ * <ul>
+ *   <li>Formats email subject, body, and metadata into clinical note format</li>
+ *   <li>Handles encrypted email content with password clues</li>
+ *   <li>Processes multiple attachment types (eForms, documents, labs, HRM, forms)</li>
+ *   <li>Maintains HIPAA/PIPEDA compliance through secure handling of PHI</li>
+ *   <li>Provides formatted date/time stamps for audit trails</li>
+ *   <li>Supports internal comments for provider-to-provider communication</li>
+ * </ul>
+ *
+ * <p>The utility generates notes in a standardized format that includes:</p>
+ * <ul>
+ *   <li>Email subject and body</li>
+ *   <li>Encryption status and password clues (if encrypted)</li>
+ *   <li>List of attached clinical documents with IDs and dates</li>
+ *   <li>Technical information (sender, recipient, timestamp)</li>
+ *   <li>Internal comments (if configured)</li>
+ * </ul>
+ *
+ * @see EmailLog
+ * @see EmailAttachment
+ * @see LoggedInInfo
+ * @since 2026-01-23
+ */
 public class EmailNoteUtil {
     private EmailLog emailLog;
     private LoggedInInfo loggedInInfo;
@@ -38,15 +70,65 @@ public class EmailNoteUtil {
     private EformDataManager eFormDataManager = SpringUtils.getBean(EformDataManager.class);
     private FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
 
+    /**
+     * Private default constructor to prevent instantiation without required parameters.
+     */
     private EmailNoteUtil() {
     }
 
+    /**
+     * Constructs an EmailNoteUtil instance for generating clinical notes from email communications.
+     *
+     * <p>This constructor initializes the utility with the logged-in user's context and the email log
+     * to be processed. It also initializes the {@link CommonLabResultData} instance for processing
+     * laboratory result attachments.</p>
+     *
+     * @param loggedInInfo {@link LoggedInInfo} the logged-in user's session information, used for
+     *                     accessing healthcare provider context and security credentials
+     * @param emailLog {@link EmailLog} the email communication record containing subject, body,
+     *                 recipients, attachments, encryption information, and metadata
+     */
     public EmailNoteUtil(LoggedInInfo loggedInInfo, EmailLog emailLog) {
         this.emailLog = emailLog;
         this.loggedInInfo = loggedInInfo;
         this.commonLabResultData = new CommonLabResultData();
     }
 
+    /**
+     * Generates a comprehensive clinical note from the email log data.
+     *
+     * <p>This method constructs a formatted clinical note that includes all relevant information
+     * from the email communication. The note follows a standardized structure to ensure consistency
+     * across the EMR system and compliance with healthcare documentation requirements.</p>
+     *
+     * <p>The generated note includes the following sections in order:</p>
+     * <ol>
+     *   <li><b>Header:</b> Email subject line</li>
+     *   <li><b>Body:</b> Main email content (trimmed)</li>
+     *   <li><b>Encryption Information:</b> Password clue if the email is encrypted</li>
+     *   <li><b>Attachments:</b> List of all attached clinical documents (eForms, documents, labs,
+     *       HRM documents, and forms) with their IDs, dates, and encryption passwords if applicable</li>
+     *   <li><b>Encrypted Body:</b> Reference to encrypted message PDF with password if applicable</li>
+     *   <li><b>Technical Information:</b> Sender, recipient(s), timestamp, and unique email log ID
+     *       for audit trail purposes</li>
+     *   <li><b>Internal Comment:</b> Provider-to-provider comments if configured to display</li>
+     * </ol>
+     *
+     * <p>The method handles different types of clinical document attachments including:</p>
+     * <ul>
+     *   <li>eForms (electronic forms)</li>
+     *   <li>Documents (eDoc)</li>
+     *   <li>Laboratory results (HL7)</li>
+     *   <li>Hospital Report Manager (HRM) documents</li>
+     *   <li>Patient forms</li>
+     * </ul>
+     *
+     * <p>Each attachment type is sorted chronologically (most recent first or oldest first depending
+     * on the document type) and includes the document's display name, date, and unique identifier.
+     * If attachments are encrypted, the note includes the encryption password for each attachment.</p>
+     *
+     * @return String the formatted clinical note ready for insertion into the patient's chart
+     */
     public String createNote() {
         StringBuilder noteBuilder = new StringBuilder();
         addHeader(emailLog, noteBuilder);
