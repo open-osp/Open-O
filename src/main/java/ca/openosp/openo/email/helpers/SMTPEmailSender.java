@@ -98,8 +98,7 @@ public class SMTPEmailSender {
      *
      * <p>Validates user privileges, creates a TLS-enabled mail sender, constructs
      * a MIME message with the configured subject, body, and attachments, and
-     * transmits the message to all specified recipients. All send operations are
-     * logged for healthcare audit compliance.</p>
+     * transmits the message to all specified recipients.</p>
      *
      * <p>Security: Requires the _email write privilege. Throws RuntimeException
      * if the user lacks required permissions.</p>
