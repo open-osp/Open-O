@@ -175,7 +175,8 @@ public class Facility extends AbstractModel<Integer> implements Named, Persisten
      * within the CAISI integrator system. The returned value is the Base64 encoding of the
      * SHA-1 hashed password bytes.</p>
      *
-     * @return String the Base64-encoded password hash, or null if password not set
+     * @return String the Base64-encoded password hash
+     * @throws NullPointerException if password has not been set
      */
     public String getPasswordAsBase64() {
         return DatatypeConverter.printBase64Binary(pcGetpassword(this));
