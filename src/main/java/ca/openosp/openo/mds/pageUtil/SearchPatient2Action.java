@@ -60,9 +60,7 @@ import org.apache.struts2.ServletActionContext;
  * @since 2004-02-04
  */
 public class SearchPatient2Action extends ActionSupport {
-    HttpServletRequest request = ServletActionContext.getRequest();
-    HttpServletResponse response = ServletActionContext.getResponse();
-
+    private static final String PATIENT_SEARCH_URL = "/oscarMDS/PatientSearch.jsp?search_mode=search_name&limit1=0&limit2=10";
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
@@ -101,6 +99,9 @@ public class SearchPatient2Action extends ActionSupport {
      */
     public String execute()
             throws ServletException, IOException {
+        
+        HttpServletRequest request = ServletActionContext.getRequest();
+        HttpServletResponse response = ServletActionContext.getResponse();
 
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "r", null)) {
             throw new SecurityException("missing required sec object (_lab)");
@@ -109,23 +110,31 @@ public class SearchPatient2Action extends ActionSupport {
         String labNo = request.getParameter("segmentID");
         String name = request.getParameter("name");
         String labType = request.getParameter("labType");
-        String newURL = "";
         String contextPath = request.getContextPath();
 
+        // Validate required parameters (name is optional, only used for keyword search)
+        if (labNo == null || labType == null) {
+            MiscUtils.getLogger().error("Missing required parameters in SearchPatient2Action: labNo=" + labNo +
+                    ", labType=" + labType);
+            response.sendRedirect(contextPath + PATIENT_SEARCH_URL);
+            return NONE;
+        }
+
+        String newURL = "";
         try {
             String demographicNo = CommonLabResultData.searchPatient(labNo, labType);
-            if (!demographicNo.equals("0")) {
+            if (demographicNo != null && !demographicNo.equals("0")) {
                 // Lab is linked to a patient - open e-chart directly
                 newURL = contextPath + "/oscarMDS/OpenEChart.jsp";
                 newURL = newURL + "?demographicNo=" + Encode.forUriComponent(demographicNo);
             } else {
-                // Lab is not linked - show patient search
-                newURL = contextPath + "/oscarMDS/PatientSearch.jsp?search_mode=search_name&limit1=0&limit2=10";
+                // Lab is not linked or demographicNo is null - show patient search
+                newURL = contextPath + PATIENT_SEARCH_URL;
             }
         } catch (Exception e) {
-            MiscUtils.getLogger().debug("exception in SearchPatient2Action:" + e);
+            MiscUtils.getLogger().error("exception in SearchPatient2Action:" + e);
             // On error, show patient search to allow manual linking
-            newURL = contextPath + "/oscarMDS/PatientSearch.jsp?search_mode=search_name&limit1=0&limit2=10";
+            newURL = contextPath + PATIENT_SEARCH_URL;
         }
 
         if (newURL.indexOf("?") == -1) {
@@ -135,7 +144,7 @@ public class SearchPatient2Action extends ActionSupport {
         }
         newURL = newURL + "labNo=" + Encode.forUriComponent(labNo)
                 + "&labType=" + Encode.forUriComponent(labType)
-                + "&keyword=" + Encode.forUriComponent(name);
+                + "&keyword=" + Encode.forUriComponent(name != null ? name : "");
 
         response.sendRedirect(newURL);
         return NONE;
