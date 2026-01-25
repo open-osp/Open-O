@@ -20,7 +20,7 @@ package ca.openosp.openo.entities;
  * <p>Key fields include payee identification (payeeNo, payeeName), financial data (amtBilled, amtPaid,
  * balanceFwd, newBalance, cheque), and administrative metadata (dataCentre, dataSeq, mspCTLno).</p>
  *
- * @since 2025-10-07
+ * @since 2026-01-23
  * @see ca.openosp.openo.billing.CA.BC.model.TeleplanS21
  */
 public class S21 {
