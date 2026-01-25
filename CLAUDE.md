@@ -152,6 +152,8 @@ public class Example2Action extends ActionSupport {
 - **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
 - **Spring Integration**: Full Spring context with transaction support
 - **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
+- **Unit Test Support**: `OpenOUnitTestBase` for mocked tests without database
+- **Manager Testing**: @Nested classes for organizing 100+ tests per manager (see `DemographicManagerUnitTest`)
 - **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
 
 ### Test Organization Standards
@@ -197,8 +199,12 @@ When asked to write tests, you MUST:
 1. **First examine the actual interface/class** being tested
 2. **Only test methods that actually exist** in the codebase
 3. **Never invent or assume method names** - verify they exist
-4. **Extend OpenOTestBase** for Spring context handling
-5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager
+4. **Choose the right base class**:
+   - `OpenOTestBase` - Integration tests with Spring context and database
+   - `OpenOUnitTestBase` - Unit tests with mocked SpringUtils (no database)
+   - Domain-specific bases like `DemographicUnitTestBase` - Unit tests with test data builders
+5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager (integration tests only)
+6. **For Manager unit tests**: Register SpringUtils mocks BEFORE creating static mocks (LogAction, etc.)
 
 ## Code Quality Standards
 
@@ -827,8 +833,11 @@ database/mysql/SnomedCore/snomedinit.sql         # Medical terminology integrati
 ```bash
 # Modern Test Framework (JUnit 5) - ACTIVE AND RECOMMENDED
 src/test-modern/java/ca/openosp/openo/            # Modern JUnit 5 tests
+src/test-modern/java/ca/openosp/openo/managers/   # Manager unit tests (DemographicManagerUnitTest)
+src/test-modern/java/ca/openosp/openo/test/unit/  # Unit test base classes (OpenOUnitTestBase)
 src/test-modern/resources/                        # Modern test configurations
-docs/test/modern-test-framework-complete.md            # Complete test framework documentation
+docs/test/modern-test-framework-complete.md       # Complete test framework documentation
+docs/test/test-writing-guide.md                   # Test writing patterns and static mocking
 
 # Legacy Test Examples (JUnit 4) - for reference only
 src/test/java/ca/openosp/openo/                   # Legacy test structure
@@ -840,9 +849,16 @@ src/test/resources/over_ride_config.properties    # Test configuration template
 1. **Examine the actual code first** - Read the DAO/Manager interfaces to see what methods actually exist
 2. **Test real methods only** - Never make up methods that don't exist in the codebase
 3. **Use actual method signatures** - Match the exact parameters and return types
-4. **Extend OpenOTestBase** - Handles SpringUtils anti-pattern and Spring context
+4. **Choose the right base class**:
+   - Integration tests: Extend `OpenOTestBase` (Spring context + database)
+   - Unit tests: Extend `OpenOUnitTestBase` (mocked SpringUtils, no database)
+   - Domain unit tests: Extend domain-specific bases like `DemographicUnitTestBase`
 5. **Follow BDD naming strictly**: `should<Action>_when<Condition>` (camelCase, ONE underscore)
 6. **Check DAO interfaces** - Look at `*Dao.java` files to see available methods before writing tests
+7. **For Manager unit tests with static classes** (LogAction, etc.):
+   - Register SpringUtils mocks FIRST, THEN create static mocks
+   - Close static mocks in @AfterEach to prevent test pollution
+   - Use @Nested classes with JavaDoc to organize large test suites
 
 For detailed examples and test development workflow, see **[Test Writing Guide](docs/test/test-writing-guide.md)**.
 
@@ -858,17 +874,23 @@ mvn test -Dtest=TicklerDao*IntegrationTest  # All TicklerDao integration tests
 mvn test -Dtest=TicklerDaoFindIntegrationTest      # Just find operations
 mvn test -Dtest=TicklerDaoWriteIntegrationTest     # Just write operations
 
+# Run Manager unit tests
+mvn test -Dtest=DemographicManagerUnitTest         # All 117 Demographic manager tests
+mvn test -Dtest=*ManagerUnitTest                   # All manager unit tests
+
 # Run by test type (using tags)
-mvn test -Dgroups="unit"                # Fast unit tests only
+mvn test -Dgroups="unit"                # Fast unit tests only (129 tests)
 mvn test -Dgroups="integration"         # Integration tests only
+mvn test -Dgroups="manager"             # All manager layer tests
 
 # Run tests by tags
 mvn test -Dgroups="tickler,read"        # All read operations for tickler
+mvn test -Dgroups="demographic,security" # Demographic security tests
 mvn test -Dgroups="create,update"       # All create and update operations
-mvn test -Dgroups="aggregate"           # All aggregation operations
 
 # Build with tests
 make install --run-tests          # Includes modern tests automatically
+make install --run-unit-tests     # Only unit tests (fast, no database)
 ```
 
 **Parallel Execution for Multi-File Tests:**

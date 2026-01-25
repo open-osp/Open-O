@@ -182,9 +182,11 @@ void shouldPerformExpectedBehavior_whenConditionIsMet() {  // camelCase with ONE
 
 ---
 
-## Test Base Class
+## Test Base Classes
 
-All modern tests should extend `OpenOTestBase`:
+### Integration Tests - OpenOTestBase
+
+All modern integration tests should extend `OpenOTestBase`:
 
 ```java
 @ExtendWith(SpringExtension.class)
@@ -213,6 +215,65 @@ public abstract class OpenOTestBase {
 2. **Spring context**: Provides autowired ApplicationContext
 3. **EntityManager**: Provides properly configured EntityManager
 4. **Transaction support**: Tests are transactional and roll back automatically
+
+### Unit Tests - OpenOUnitTestBase
+
+For unit tests (no database, all mocks), extend `OpenOUnitTestBase`:
+
+```java
+@Tag("unit")
+@Tag("fast")
+public abstract class OpenOUnitTestBase {
+
+    protected MockedStatic<SpringUtils> springUtilsMock;
+    protected Map<Class<?>, Object> mockedBeans = new HashMap<>();
+
+    @BeforeEach
+    void setUpSpringUtilsMocking() {
+        springUtilsMock = mockStatic(SpringUtils.class);
+        springUtilsMock.when(() -> SpringUtils.getBean(any(Class.class)))
+            .thenAnswer(invocation -> mockedBeans.get(invocation.getArgument(0)));
+    }
+
+    @AfterEach
+    void tearDownSpringUtilsMocking() {
+        if (springUtilsMock != null) springUtilsMock.close();
+        mockedBeans.clear();
+    }
+
+    protected <T> void registerMock(Class<T> clazz, T mock) {
+        mockedBeans.put(clazz, mock);
+    }
+}
+```
+
+### Domain-Specific Base Classes
+
+For complex domains (like Demographic), create a domain-specific base class:
+
+```java
+@Tag("unit")
+@Tag("fast")
+@Tag("demographic")
+public abstract class DemographicUnitTestBase extends OpenOUnitTestBase {
+
+    protected SecurityInfoManager mockSecurityInfoManager;
+    protected LoggedInInfo mockLoggedInInfo;
+
+    protected static final Integer TEST_DEMO_NO = 12345;
+
+    @BeforeEach
+    void setUpDemographicMocks() {
+        mockSecurityInfoManager = Mockito.mock(SecurityInfoManager.class);
+        mockLoggedInInfo = Mockito.mock(LoggedInInfo.class);
+        registerMock(SecurityInfoManager.class, mockSecurityInfoManager);
+    }
+
+    // Test data builders
+    protected Demographic createTestDemographic() { /* ... */ }
+    protected DemographicExt createTestDemographicExt(Integer demoNo, String key, String value) { /* ... */ }
+}
+```
 
 ---
 
@@ -268,6 +329,45 @@ class TicklerDaoFindIntegrationTest extends OpenOTestBase {
 
 ---
 
+## Static Class Mocking for Manager Tests
+
+Manager tests often need to mock static classes like `LogAction` or `DemographicContactCreator`.
+
+### Critical Order of Operations
+
+**ALWAYS register SpringUtils mocks BEFORE creating static mocks:**
+
+```java
+@BeforeEach
+void setUp() {
+    // 1. FIRST: Register mocks for SpringUtils (static initializers may need these)
+    registerMock(OscarLogDao.class, createAndRegisterMock(OscarLogDao.class));
+    registerMock(ProfessionalSpecialistDao.class, createAndRegisterMock(ProfessionalSpecialistDao.class));
+
+    // 2. SECOND: Mock static classes (their static initializers run now)
+    logActionMock = mockStatic(LogAction.class);
+    demographicContactCreatorMock = mockStatic(DemographicContactCreator.class);
+
+    // 3. Configure static mock behavior
+    demographicContactCreatorMock.when(() ->
+        DemographicContactCreator.addContactDetailsToDemographicContact(anyList()))
+        .thenAnswer(invocation -> invocation.getArgument(0));
+}
+
+@AfterEach
+void tearDown() {
+    // CRITICAL: Close static mocks in reverse order
+    if (demographicContactCreatorMock != null) demographicContactCreatorMock.close();
+    if (logActionMock != null) logActionMock.close();
+}
+```
+
+### Why Order Matters
+
+When `mockStatic(LogAction.class)` is called, Java loads and initializes the `LogAction` class. If `LogAction`'s static initializer calls `SpringUtils.getBean(OscarLogDao.class)`, that mock must already be registered, or you'll get a `NoClassDefFoundError` or `NullPointerException`.
+
+---
+
 ## Common Issues and Solutions
 
 ### "Table not found" Errors
@@ -301,6 +401,9 @@ class TicklerDaoFindIntegrationTest extends OpenOTestBase {
 ## File Locations
 
 - **Modern tests**: `src/test-modern/java/ca/openosp/openo/`
+- **Unit test base**: `src/test-modern/java/ca/openosp/openo/test/unit/OpenOUnitTestBase.java`
+- **Manager tests**: `src/test-modern/java/ca/openosp/openo/managers/`
+- **Domain bases**: `src/test-modern/java/ca/openosp/openo/managers/DemographicUnitTestBase.java`
 - **Test resources**: `src/test-modern/resources/`
 - **Test context**: `src/test-modern/resources/applicationContext-test.xml`
 - **H2 schema**: `src/test-modern/resources/schema.sql`
