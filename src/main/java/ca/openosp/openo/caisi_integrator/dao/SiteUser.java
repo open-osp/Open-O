@@ -33,8 +33,8 @@ import ca.openosp.openo.caisi_integrator.util.Named;
  * Integrator, which enables data sharing and integration between multiple OpenO EMR installations. Each SiteUser can access
  * patient records and clinical data across federated healthcare sites within the integrator network.</p>
  *
- * <p>The class is enhanced by Apache OpenJPA for persistence capabilities and includes built-in password encryption
- * using SHA-1 hashing for security. User accounts can be disabled to prevent access without deletion, and track
+ * <p>The class is enhanced by Apache OpenJPA for persistence capabilities and uses legacy SHA-1
+ * password hashing. User accounts can be disabled to prevent access without deletion, and track
  * last login timestamps for auditing purposes.</p>
  *
  * <p><strong>Security Considerations:</strong></p>
