@@ -21,14 +21,13 @@ import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
  * history records according to the AR2005 schema (http://www.oscarmcmaster.org/AR2005). All data access
  * operations are thread-safe through internal synchronization mechanisms.</p>
  *
- * <p><strong>Healthcare Context:</strong> Obstetrical history is essential for:
+ * <p><strong>Healthcare Context:</strong> Obstetrical history is essential for:</p>
  * <ul>
  *   <li>Risk assessment during current pregnancy</li>
  *   <li>Identification of potential complications based on past outcomes</li>
  *   <li>Care planning and delivery method decisions</li>
  *   <li>Continuity of care across multiple pregnancies</li>
  * </ul>
- * </p>
  *
  * @see ObstetricalHistory
  * @see ObstetricalHistoryItemList
