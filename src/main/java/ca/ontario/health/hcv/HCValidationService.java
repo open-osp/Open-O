@@ -21,13 +21,12 @@ import javax.xml.ws.Service;
  * backward compatibility with different versions of the OHIP validation service.</p>
  *
  * <p><strong>Healthcare Context:</strong> This service is critical for verifying patient
- * eligibility before providing medical services in Ontario. It helps ensure that:
+ * eligibility before providing medical services in Ontario. It helps ensure that:</p>
  * <ul>
  *   <li>Health Insurance Numbers (HINs) are valid and active</li>
  *   <li>Patient coverage is current and not expired</li>
  *   <li>Billing can be processed correctly through Ontario's healthcare system</li>
  * </ul>
- * </p>
  *
  * <p><strong>Provincial Integration:</strong> This is an Ontario-specific service that
  * integrates with provincial healthcare infrastructure. It is part of the Medical
