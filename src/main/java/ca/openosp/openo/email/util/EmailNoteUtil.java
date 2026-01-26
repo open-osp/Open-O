@@ -96,7 +96,7 @@ public class EmailNoteUtil {
      * from the email communication. The note follows a standardized structure to ensure consistency
      * across the EMR system and compliance with healthcare documentation requirements.</p>
      *
-     * <p>The generated note includes the following sections:</p>
+     * <p>The generated note includes:</p>
      * <ul>
      *   <li>Email subject and body content</li>
      *   <li>Encryption information including password clues when applicable</li>
