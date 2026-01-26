@@ -41,6 +41,14 @@
     <script>
         jQuery.noConflict();
     </script>
+
+    <style>
+        .DisabledLink {
+            color: #999;
+            text-decoration: none;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 <body>
@@ -98,7 +106,7 @@
                 String url = request.getContextPath();
                 url = url + "/appointment/apptStatusSetting.do?dispatch=modify&statusID=";
                 url = url + iStatusID;
-            %> <a href=<%=url%>>Edit</a> &nbsp;&nbsp;&nbsp; <%
+            %> <a href=<%=url%> <%= (iEditable == 0) ? "class='DisabledLink' onclick='return false;' title='Status is not editable'" : ""%> >Edit</a> &nbsp;&nbsp;&nbsp; <%
             int iToStatus = (iActive > 0) ? 0 : 1;
             url = request.getContextPath();
             url = url + "/appointment/apptStatusSetting.do?dispatch=changestatus&iActive=";
