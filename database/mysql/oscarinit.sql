@@ -7764,9 +7764,7 @@ CREATE TABLE IF NOT EXISTS tickler (
   creation_date timestamp not null,
   PRIMARY KEY  (tickler_no),
   KEY `statusIndex` (`status`),
-  KEY `demo_status_date_Index` (demographic_no,status,service_date),
-  KEY `idx_tickler_task_assigned_to` (`task_assigned_to`),
-  KEY `idx_tickler_creator` (`creator`)
+  KEY `demo_status_date_Index` (demographic_no,status,service_date)
 ) ;
 
 --
