@@ -8878,7 +8878,6 @@ CREATE TABLE IF NOT EXISTS `tickler_link` (
   `table_id` int(10) NOT NULL,
   `tickler_no` int(10) NOT NULL,
   PRIMARY KEY  (`id`),
-  KEY `idx_tickler_link_tickler_no` (`tickler_no`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS flowsheet_drug (
