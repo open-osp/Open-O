@@ -17,8 +17,8 @@ import java.io.Serializable;
  *
  * <p>All CAISI Integrator model classes extend this abstract base to ensure consistent
  * object identity semantics based on persistent identifiers. The class enforces that models
- * must be persisted (have a non-null ID) before participating in certain operations like
- * equality comparison and hash-based collections.</p>
+ * warns when models are not persisted (null ID) before participating in operations like
+ * equality comparison and hash-based collections.
  *
  * <p><strong>Type Parameter:</strong></p>
  * <ul>
