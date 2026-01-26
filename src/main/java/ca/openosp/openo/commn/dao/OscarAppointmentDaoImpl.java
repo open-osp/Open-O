@@ -493,6 +493,32 @@ public class OscarAppointmentDaoImpl extends AbstractDaoImpl<Appointment> implem
     }
 
     @Override
+    public List<Appointment> search_unbill_history_daterange(String providerNo, Date startDate, Date endDate, boolean excludeNoShow, boolean excludeCancelled) {
+        StringBuilder sql = new StringBuilder("SELECT a FROM Appointment a WHERE a.providerNo = :providerNo " +
+                "AND a.appointmentDate >= :startDate " +
+                "AND a.appointmentDate <= :endDate " +
+                "AND a.status NOT LIKE 'B%' " +
+                "AND a.demographicNo <> 0 ");
+
+        if (excludeCancelled) {
+            sql.append("AND a.status NOT LIKE 'C%' ");
+        }
+
+        if (excludeNoShow) {
+            sql.append("AND a.status NOT LIKE 'N%' ");
+        }
+
+        sql.append("ORDER BY a.appointmentDate DESC, a.startTime DESC");
+
+        Query query = entityManager.createQuery(sql.toString());
+        query.setParameter("providerNo", providerNo);
+        query.setParameter("startDate", startDate);
+        query.setParameter("endDate", endDate);
+
+        return query.getResultList();
+    }
+
+    @Override
     public List<Appointment> findByDateAndProvider(Date date, String provider_no) {
         Query query = createQuery("a",
                 "a.providerNo = ?1 and a.appointmentDate = ?2 order by a.startTime asc");

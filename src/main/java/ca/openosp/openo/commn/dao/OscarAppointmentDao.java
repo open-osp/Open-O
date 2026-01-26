@@ -106,6 +106,8 @@ public interface OscarAppointmentDao extends AbstractDao<Appointment> {
 
     public List<Appointment> search_unbill_history_daterange(String providerNo, Date startDate, Date endDate);
 
+    public List<Appointment> search_unbill_history_daterange(String providerNo, Date startDate, Date endDat, boolean excludeNoShow, boolean excludeCancelled);
+
     public List<Appointment> findByDateAndProvider(Date date, String provider_no);
 
     public List<Appointment> search_appt(Date startTime, Date endTime, String providerNo);
