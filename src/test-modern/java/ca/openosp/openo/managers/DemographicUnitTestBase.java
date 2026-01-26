@@ -238,13 +238,7 @@ public abstract class DemographicUnitTestBase extends OpenOUnitTestBase {
      */
     protected DemographicCust createTestDemographicCust(Integer id) {
         DemographicCust cust = new DemographicCust();
-        try {
-            java.lang.reflect.Field idField = DemographicCust.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(cust, id);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to set cust ID", e);
-        }
+        cust.setId(id);
         cust.setNurse("nurse1");
         cust.setResident("resident1");
         cust.setMidwife("midwife1");

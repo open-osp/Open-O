@@ -335,7 +335,7 @@ make install --run-tests
 
 ### Successfully Demonstrated Features
 
-Based on the 23 implemented tests:
+Based on the 141 implemented tests (129 unit + 12 integration):
 
 #### ✅ Database Operations
 - CRUD operations (Create, Read, Update, Delete)

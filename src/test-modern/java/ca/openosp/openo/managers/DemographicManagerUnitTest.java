@@ -1397,7 +1397,7 @@ public class DemographicManagerUnitTest extends DemographicUnitTestBase {
         @Test
         @DisplayName("should return merged demographics for parent")
         void shouldReturnMergedDemographics_forParent() {
-            Integer parentId = 1000;
+            int parentId = 1000;
             List<DemographicMerged> expected = List.of(
                 createTestDemographicMerged(1001, parentId),
                 createTestDemographicMerged(1002, parentId)
