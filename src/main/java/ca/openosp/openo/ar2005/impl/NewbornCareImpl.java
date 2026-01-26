@@ -18,8 +18,9 @@ import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
  * family physicians, midwives, and other specified providers.
  *
  * The implementation uses Apache XMLBeans framework to provide type-safe access to XML elements
- * defined in the AR2005 schema. All methods are thread-safe through synchronized access to the
- * underlying XML store.
+ * defined in the AR2005 schema. Access to the underlying XML store is synchronized using the
+ * XMLBeans monitor(), providing thread-safe access to individual XML operations performed by this
+ * class.
  *
  * @since 2026-01-23
  * @see ca.openosp.openo.ar2005.NewbornCare
