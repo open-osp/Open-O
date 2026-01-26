@@ -2902,7 +2902,7 @@ request.setAttribute("missingTests", missingTests);
                         // Case: Current provider has not acknowledged the lab
                     %>
                     <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>"
-                           onclick="openAcknowledgementDialog()" />
+                           onclick="openFileDialog(false)" />
                     <% } else if (isLabNotFiledOrAckFlag) { 
                         // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
                         // Case: Current provider has acknowledged the lab,
