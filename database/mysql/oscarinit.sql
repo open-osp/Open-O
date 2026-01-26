@@ -7764,7 +7764,9 @@ CREATE TABLE IF NOT EXISTS tickler (
   creation_date timestamp not null,
   PRIMARY KEY  (tickler_no),
   KEY `statusIndex` (`status`),
-  KEY `demo_status_date_Index` (demographic_no,status,service_date)
+  KEY `demo_status_date_Index` (demographic_no,status,service_date),
+  KEY `idx_tickler_task_assigned_to` (`task_assigned_to`),
+  KEY `idx_tickler_creator` (`creator`)
 ) ;
 
 --
@@ -8877,7 +8879,8 @@ CREATE TABLE IF NOT EXISTS `tickler_link` (
   `table_name` char(3) NOT NULL,
   `table_id` int(10) NOT NULL,
   `tickler_no` int(10) NOT NULL,
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `idx_tickler_link_tickler_no` (`tickler_no`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS flowsheet_drug (
