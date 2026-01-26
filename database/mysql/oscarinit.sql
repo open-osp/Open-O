@@ -8877,7 +8877,7 @@ CREATE TABLE IF NOT EXISTS `tickler_link` (
   `table_name` char(3) NOT NULL,
   `table_id` int(10) NOT NULL,
   `tickler_no` int(10) NOT NULL,
-  PRIMARY KEY  (`id`),
+  PRIMARY KEY  (`id`)
 ) ;
 
 CREATE TABLE IF NOT EXISTS flowsheet_drug (
