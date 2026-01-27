@@ -23,59 +23,84 @@ jobs:
             const needsTriageId = '3ae30e07';
             const taskId = 'af86fb80';
 
-            // Add issue to project
-            const addResult = await github.graphql(`
-              mutation($projectId: ID!, $contentId: ID!) {
-                addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
-                  item { id }
+            async function run() {
+              try {
+                // Add issue to project
+                let addResult;
+                try {
+                  addResult = await github.graphql(`
+                    mutation($projectId: ID!, $contentId: ID!) {
+                      addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                        item { id }
+                      }
+                    }
+                  `, {
+                    projectId: projectId,
+                    contentId: context.payload.issue.node_id
+                  });
+                } catch (error) {
+                  console.error('Failed to add issue to project:', error);
+                  throw error;
                 }
-              }
-            `, {
-              projectId: projectId,
-              contentId: context.payload.issue.node_id
-            });
 
-            const itemId = addResult.addProjectV2ItemById.item.id;
-            console.log('Added issue to project, item ID:', itemId);
+                const itemId = addResult.addProjectV2ItemById.item.id;
+                console.log('Added issue to project, item ID:', itemId);
 
-            // Set Status to "Needs Triage"
-            await github.graphql(`
-              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
-                updateProjectV2ItemFieldValue(input: {
-                  projectId: $projectId,
-                  itemId: $itemId,
-                  fieldId: $fieldId,
-                  value: { singleSelectOptionId: $optionId }
-                }) {
-                  projectV2Item { id }
+                // Set Status to "Needs Triage"
+                try {
+                  await github.graphql(`
+                    mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: $projectId,
+                        itemId: $itemId,
+                        fieldId: $fieldId,
+                        value: { singleSelectOptionId: $optionId }
+                      }) {
+                        projectV2Item { id }
+                      }
+                    }
+                  `, {
+                    projectId: projectId,
+                    itemId: itemId,
+                    fieldId: statusFieldId,
+                    optionId: needsTriageId
+                  });
+                  console.log('Set Status to Needs Triage');
+                } catch (error) {
+                  console.error(`Failed to set Status field for project item ${itemId}:`, error);
+                  throw error;
                 }
-              }
-            `, {
-              projectId: projectId,
-              itemId: itemId,
-              fieldId: statusFieldId,
-              optionId: needsTriageId
-            });
-            console.log('Set Status to Needs Triage');
 
-            // Set Kind to "Task"
-            await github.graphql(`
-              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
-                updateProjectV2ItemFieldValue(input: {
-                  projectId: $projectId,
-                  itemId: $itemId,
-                  fieldId: $fieldId,
-                  value: { singleSelectOptionId: $optionId }
-                }) {
-                  projectV2Item { id }
+                // Set Kind to "Task"
+                try {
+                  await github.graphql(`
+                    mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                      updateProjectV2ItemFieldValue(input: {
+                        projectId: $projectId,
+                        itemId: $itemId,
+                        fieldId: $fieldId,
+                        value: { singleSelectOptionId: $optionId }
+                      }) {
+                        projectV2Item { id }
+                      }
+                    }
+                  `, {
+                    projectId: projectId,
+                    itemId: itemId,
+                    fieldId: kindFieldId,
+                    optionId: taskId
+                  });
+                  console.log('Set Kind to Task');
+                } catch (error) {
+                  console.error(`Failed to set Kind field for project item ${itemId}:`, error);
+                  throw error;
                 }
-              }
-            `, {
-              projectId: projectId,
-              itemId: itemId,
-              fieldId: kindFieldId,
-              optionId: taskId
-            });
-            console.log('Set Kind to Task');
 
-            console.log(`Issue #${context.payload.issue.number} added to project with Status: Needs Triage, Kind: Task`);
+                console.log(`Issue #${context.payload.issue.number} added to project with Status: Needs Triage, Kind: Task`);
+              } catch (error) {
+                console.error('Issue triage workflow failed:', error);
+                throw error;
+              }
+            }
+
+            await run();
