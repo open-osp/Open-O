@@ -168,7 +168,7 @@ public abstract class OpenOTestBase {
 
 ```xml
 <!-- H2 Database Configuration -->
-<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
     <property name="driverClassName" value="org.h2.Driver" />
     <property name="url" value="jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1" />
     <property name="username" value="sa" />

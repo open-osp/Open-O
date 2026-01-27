@@ -509,9 +509,9 @@
 
         <!-- hibernate / sql -->
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.14.0</version>
         </dependency>
         <!-- throws a 404 error when removed/uncommented -->
         <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->

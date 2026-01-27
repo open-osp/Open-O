@@ -19,7 +19,7 @@
 
 	<!-- DataSource -->
 	<!--
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 	 -->
 	  <aop:aspectj-autoproxy proxy-target-class="true"/>
 	<bean id="dataSource" class="ca.openosp.openo.utility.OscarTrackingBasicDataSource" destroy-method="close">
@@ -30,7 +30,7 @@
 		<property name="username" value="${db_username}" />
 		<property name="password" value="${db_password}" />
 
-		<property name="maxActive" value="${db_max_active}" />
+		<property name="maxTotal" value="${db_max_active}" />
 		<property name="maxIdle" value="${db_max_idle}" />
 		<property name="maxWait" value="${db_max_wait}" />
 
