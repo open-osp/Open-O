@@ -650,6 +650,13 @@
             <version>2.19.2</version>
         </dependency>
 
+        <!-- Jackson JAXB annotations support - provides JaxbAnnotationIntrospector used in Spring configs -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+
 
 
 
