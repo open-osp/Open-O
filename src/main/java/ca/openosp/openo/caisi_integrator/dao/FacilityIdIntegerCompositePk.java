@@ -32,7 +32,6 @@ import java.io.Serializable;
  * persistence capabilities including field-level change tracking, lazy loading, and
  * detached state management.
  *
- * @see ca.openosp.openo.caisi_integrator CAISI Integrator module
  * @since 2026-01-24
  */
 @Embeddable

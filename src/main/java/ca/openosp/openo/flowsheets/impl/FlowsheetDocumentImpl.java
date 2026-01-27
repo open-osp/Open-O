@@ -32,7 +32,6 @@ import ca.openosp.openo.flowsheets.FlowsheetDocument;
  * multi-user healthcare environments.
  *
  * @see FlowsheetDocument
- * @see org.apache.xmlbeans.XmlComplexContentImpl
  * @since 2026-01-24
  */
 public class FlowsheetDocumentImpl extends XmlComplexContentImpl implements FlowsheetDocument {

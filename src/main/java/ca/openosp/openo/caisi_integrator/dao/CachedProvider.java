@@ -685,7 +685,6 @@ public class CachedProvider extends AbstractModel<FacilityIdStringCompositePk> i
      * entity, typically during detachment or remote transfer operations.
      *
      * @return boolean true if serialization is in progress, false otherwise
-     * @see org.apache.openjpa.enhance.PersistenceCapable#pcSerializing()
      */
     public boolean pcSerializing() {
         return this.pcStateManager != null && this.pcStateManager.serializing();
@@ -809,7 +808,6 @@ public class CachedProvider extends AbstractModel<FacilityIdStringCompositePk> i
      * entity instantiation and state restoration.
      *
      * @param o Object the source object ID containing the embedded composite key
-     * @see org.apache.openjpa.enhance.PersistenceCapable#pcCopyKeyFieldsFromObjectId(Object)
      */
     public void pcCopyKeyFieldsFromObjectId(final Object o) {
         this.facilityIdStringCompositePk = (FacilityIdStringCompositePk)((ObjectId)o).getId();

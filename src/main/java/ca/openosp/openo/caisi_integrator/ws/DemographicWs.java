@@ -552,7 +552,7 @@ public interface DemographicWs
      */
     @WebMethod
     @RequestWrapper(localName = "addCachedDemographicForm", targetNamespace = "http://ws.caisi_integrator.oscarehr.org/", className = "ca.openosp.openo.caisi_integrator.webserv.AddCachedDemographicForm")
-    @ResponseWrapper(localName =="addCachedDemographicFormResponse", targetNamespace = "http://ws.caisi_integrator.oscarehr.org/", className = "ca.openosp.openo.caisi_integrator.webserv.AddCachedDemographicFormResponse")
+    @ResponseWrapper(localName = "addCachedDemographicFormResponse", targetNamespace = "http://ws.caisi_integrator.oscarehr.org/", className = "ca.openosp.openo.caisi_integrator.webserv.AddCachedDemographicFormResponse")
     void addCachedDemographicForm(@WebParam(name = "arg0", targetNamespace = "") final CachedDemographicForm p0);
 
     /**

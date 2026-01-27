@@ -13,7 +13,6 @@ package ca.openosp.openo.billings.ca.bc.privateBilling;
  * parties involved (patient/demographic, provider, recipient/payer), along with financial information
  * such as outstanding balance.</p>
  *
- * @see ca.openosp.openo.billings.ca.bc.model.Billing
  * @since 2026-01-23
  */
 public class PrivateBillingModel {

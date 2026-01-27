@@ -31,7 +31,6 @@ import org.apache.xmlbeans.impl.values.XmlComplexContentImpl;
  *
  * @see ObstetricalHistory
  * @see ObstetricalHistoryItemList
- * @see ca.openosp.openo.ar2005.AR2005Document
  *
  * @since 2026-01-24
  */
