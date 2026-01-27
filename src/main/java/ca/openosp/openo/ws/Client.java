@@ -250,8 +250,6 @@ public class Client extends AbstractModel implements Serializable
      * be encrypted at rest in the database.</p>
      * 
      * @param hin String the Health Insurance Number to set
-     * @throws ca.openosp.openo.ws.InvalidHinException if the HIN fails provincial validation (server-side)
-     * @throws ca.openosp.openo.ws.DuplicateHinException if the HIN is already registered (server-side)
      * @see #setProvince(String)
      * @see #setHinType(String)
      * @see #setHinVersion(String)

@@ -37,7 +37,6 @@ import java.io.Serializable;
  *   <li>Indexed fields for optimized database queries</li>
  * </ul>
  *
- * @see ca.openosp.openo.caisi_integrator.dao.FacilityIdLabResult
  * @since 2026-01-24
  */
 @Embeddable

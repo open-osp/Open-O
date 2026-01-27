@@ -598,7 +598,7 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.21.7</version>
+            <version>6.21.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>bouncycastle</groupId>
@@ -654,6 +654,13 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+
+        <!-- Jackson XML support - explicit version to override older transitive from jasperreports -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.19.2</version>
         </dependency>
 
@@ -1108,6 +1115,11 @@
                 <exclusion>
                     <groupId>org.apache.cxf</groupId>
                     <artifactId>cxf-rt-frontend-js</artifactId>
+                </exclusion>
+                <!-- Not used, excluded because Jetty 10 requires jakarta.servlet.* but app uses javax.servlet.* -->
+                <exclusion>
+                    <groupId>org.apache.cxf</groupId>
+                    <artifactId>cxf-rt-transports-http-jetty</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

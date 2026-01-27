@@ -18,8 +18,7 @@ import com.github.scribejava.core.builder.api.DefaultApi10a;
  *
  * @since 2026-01-24
  * @see DefaultApi10a
- * @see ca.openosp.openo.login.oauth.OscarOAuthDataProvider
- * @see ca.openosp.openo.login.oauth.OAuth1Executor
+ * @see ca.openosp.openo.login.OscarOAuthDataProvider
  */
 public class GenericOAuth10aApi extends DefaultApi10a {
     private final String baseUrl;

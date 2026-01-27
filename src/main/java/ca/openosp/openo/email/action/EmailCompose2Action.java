@@ -187,9 +187,9 @@ public class EmailCompose2Action extends ActionSupport {
      *
      * @return String the Struts2 result name: "compose" for successful preparation,
      *         "eFormError" if PDF generation fails for any attachment
-     * @see ca.openosp.openo.managers.EmailComposeManager#getEmailConsentStatus(LoggedInInfo, int)
-     * @see ca.openosp.openo.managers.EmailComposeManager#getRecipients(LoggedInInfo, int)
-     * @see ca.openosp.openo.managers.EmailComposeManager#createEmailPDFPassword(LoggedInInfo, int)
+     * @see ca.openosp.openo.managers.EmailComposeManager#getEmailConsentStatus(LoggedInInfo, Integer)
+     * @see ca.openosp.openo.managers.EmailComposeManager#getRecipients(LoggedInInfo, Integer)
+     * @see ca.openosp.openo.managers.EmailComposeManager#createEmailPDFPassword(LoggedInInfo, Integer)
      * @see ca.openosp.openo.managers.EmailComposeManager#prepareEFormAttachments(LoggedInInfo, String, String[])
      * @see ca.openosp.openo.managers.EmailComposeManager#sanitizeAttachments(List)
      * @see #cleanupEmailSessionAttributes(HttpServletRequest)
