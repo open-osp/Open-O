@@ -817,14 +817,14 @@
 
         <!-- zxing / 2d bar codes -->
         <dependency>
-            <groupId>zxing</groupId>
-            <artifactId>zxing-core</artifactId>
-            <version>1.5</version>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
         </dependency>
         <dependency>
-            <groupId>zxing</groupId>
-            <artifactId>zxing-j2se</artifactId>
-            <version>1.5</version>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.5.3</version>
         </dependency>
 
         <!-- chip / ping libararies -->
