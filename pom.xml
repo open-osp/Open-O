@@ -746,13 +746,6 @@
         <!-- FOR ORN Project - CKD config in XML format -->
         <!-- REMOVED: now included as source code -->
 
-        <!-- patientSiteVisit.jar , suspect this is generated classes and should be removed as a jar in the future -->
-        <!-- can be found in the local_repo folder -->
-        <dependency>
-            <groupId>patientSiteVisit</groupId>
-            <artifactId>patientSiteVisit</artifactId>
-            <version>0.0-SNAPSHOT</version>
-        </dependency>
 
         <!-- apache poi -->
         <dependency>
