@@ -23,7 +23,7 @@
 
 		<property name="maxTotal" value="${db_max_active}" />
 		<property name="maxIdle" value="${db_max_idle}" />
-		<property name="maxWait" value="${db_max_wait}" /> -->
+		<property name="maxWaitMillis" value="${db_max_wait}" /> -->
 		
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://db:3306/oscar?zeroDateTimeBehavior=round&amp;useOldAliasMetadataBehavior=true&amp;jdbcCompliantTruncation=false" />		
@@ -34,7 +34,7 @@
 
 		<property name="maxTotal" value="32" />
 		<property name="maxIdle" value="8" />
-		<property name="maxWait" value="20000" />
+		<property name="maxWaitMillis" value="20000" />
 
 		<property name="testOnBorrow" value="true" />
 		<property name="validationQuery" value="${db_validationQuery}" />
