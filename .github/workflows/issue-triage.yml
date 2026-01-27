@@ -1,0 +1,81 @@
+# .github/workflows/issue-triage.yml
+name: Auto-triage Issues
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: read
+
+jobs:
+  add-to-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add to Project and Set Fields
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          script: |
+            const projectId = 'PVT_kwDOCaYIIc4AoYdb';
+            const statusFieldId = 'PVTSSF_lADOCaYIIc4AoYdbzgf9plc';
+            const kindFieldId = 'PVTSSF_lADOCaYIIc4AoYdbzg8c-5E';
+            const needsTriageId = '3ae30e07';
+            const taskId = 'af86fb80';
+
+            // Add issue to project
+            const addResult = await github.graphql(`
+              mutation($projectId: ID!, $contentId: ID!) {
+                addProjectV2ItemById(input: {projectId: $projectId, contentId: $contentId}) {
+                  item { id }
+                }
+              }
+            `, {
+              projectId: projectId,
+              contentId: context.payload.issue.node_id
+            });
+
+            const itemId = addResult.addProjectV2ItemById.item.id;
+            console.log('Added issue to project, item ID:', itemId);
+
+            // Set Status to "Needs Triage"
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId,
+                  itemId: $itemId,
+                  fieldId: $fieldId,
+                  value: { singleSelectOptionId: $optionId }
+                }) {
+                  projectV2Item { id }
+                }
+              }
+            `, {
+              projectId: projectId,
+              itemId: itemId,
+              fieldId: statusFieldId,
+              optionId: needsTriageId
+            });
+            console.log('Set Status to Needs Triage');
+
+            // Set Kind to "Task"
+            await github.graphql(`
+              mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+                updateProjectV2ItemFieldValue(input: {
+                  projectId: $projectId,
+                  itemId: $itemId,
+                  fieldId: $fieldId,
+                  value: { singleSelectOptionId: $optionId }
+                }) {
+                  projectV2Item { id }
+                }
+              }
+            `, {
+              projectId: projectId,
+              itemId: itemId,
+              fieldId: kindFieldId,
+              optionId: taskId
+            });
+            console.log('Set Kind to Task');
+
+            console.log(`Issue #${context.payload.issue.number} added to project with Status: Needs Triage, Kind: Task`);
