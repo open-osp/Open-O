@@ -6,7 +6,7 @@ on:
     types: [opened]
 
 permissions:
-  issues: read
+  issues: write
 
 jobs:
   add-to-project:
