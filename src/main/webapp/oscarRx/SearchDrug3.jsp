@@ -1311,7 +1311,7 @@ function renderRxStage() {
            var data="randomId="+randomId;
            new Ajax.Request(ctx + "/oscarRx/WriteScript.do?parameterValue=listPreviousInstructions",
            {method: 'post',parameters:data,asynchronous:false,onSuccess:function(transport){
-                 mb.show(randomId,'displayMedHistory', '200px');
+                 mb.show(randomId, ctx + '/oscarRx/displayMedHistory', '200px');
                 }});
     }
 
