@@ -321,13 +321,10 @@ public class RxDrugData {
         }
 
         MinDrug(Hashtable h) {
-			//this.pKey = (String) h.get("id"); //pKey
-			this.pKey = (String) h.get("id");
+			this.pKey = String.valueOf(h.get("id"));
             this.name = (String) h.get("name");
-            //this.type = (String) h.get("category");//type
-			this.type = (String) h.get("category");
+			this.type = String.valueOf(h.get("category"));
             MiscUtils.getLogger().debug("pkey " + pKey + " name " + name + " type " + type);
-            //d.tag  = (Tag)    h.get("tag");
         }
 
         public String getpKey() {
