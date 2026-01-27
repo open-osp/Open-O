@@ -258,7 +258,7 @@ private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
 
 ### Web Technologies
 - **Struts 2.5.33**: Modern actions (2Action pattern) coexisting with legacy Struts 1.x
-- **Apache CXF 3.5.10**: Web services framework for healthcare integrations
+- **Apache CXF 3.6.9**: Web services framework for healthcare integrations
 - **JSP/JSTL**: View layer with extensive medical form templates
 - **Bootstrap 5.3.0**: Modern UI framework loaded from CDN for responsive design
 - **JavaScript/CSS/jQuery**: Frontend with healthcare-specific UI components
