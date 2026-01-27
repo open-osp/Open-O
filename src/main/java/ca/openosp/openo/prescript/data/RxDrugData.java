@@ -321,6 +321,8 @@ public class RxDrugData {
         }
 
         MinDrug(Hashtable h) {
+			// Fix ClassCastException: Hashtable values may be non-String types (e.g., Integer)
+			// Use String.valueOf() with null checks instead of unsafe direct casting
 			Object idVal = h.get("id");
 			this.pKey = (idVal != null) ? String.valueOf(idVal) : null;
 			Object nameVal = h.get("name");
