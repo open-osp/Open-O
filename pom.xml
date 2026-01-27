@@ -745,19 +745,6 @@
             <version>0.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- JAXM API - deprecated since 2003, replaced by SAAJ -->
-        <!-- TODO: Migrate the 3 files using javax.xml.messaging.URLEndpoint to use SAAJ instead:
-             - oscar/form/study/HSFO/pageUtil/XMLTransferUtil.java
-             - oscar/form/study/FrmStudyXMLClientSend.java  
-             - org/oscarehr/rx/erx/controller/ERxCommunicator.java
-             Then remove this dependency as we already have SAAJ (saaj-impl:1.3.18)
-             NOTE: Currently using old JAR from local_repo as no Maven Central version exists -->
-        <dependency>
-            <groupId>javax.xml</groupId>
-            <artifactId>jaxm-api</artifactId>
-            <version>UNKNOWN</version>
-        </dependency>
-
         <!-- apache poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
