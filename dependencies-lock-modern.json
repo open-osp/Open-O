@@ -210,11 +210,11 @@
   }, {
     "groupId" : "com.fasterxml.jackson.dataformat",
     "artifactId" : "jackson-dataformat-xml",
-    "version" : "2.17.1",
+    "version" : "2.19.2",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:gu/ShDRocgQrmr53cF02mHJ9EydRDmTad/yD1icMQ03vERCrlm5XBR98hNigOMPtCY4J51Zhp4H4JZaBCqUa+w=="
+    "integrity" : "sha512:U8+dDliUNfi1wuatNSKRyChfarhfTCWSumD/u3oprHznhrDi6XKKC83pkXRCL8lvmabZrYsHXVAA4oatcAGfDw=="
   }, {
     "groupId" : "com.fasterxml.jackson.datatype",
     "artifactId" : "jackson-datatype-jsr310",
@@ -250,11 +250,11 @@
   }, {
     "groupId" : "com.fasterxml.woodstox",
     "artifactId" : "woodstox-core",
-    "version" : "6.6.2",
+    "version" : "7.1.1",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:AKGDZjBt52gnoNP/gyNgVO1+y/S+IJL9isKftjvMqdhqb/tfQQJwKahppNR/l4rPRBGDl+D8IUgs6jGC6x5HAw=="
+    "integrity" : "sha512:KBBdZAl2aWYSPU4hLbpVXEd2v+tTgJPTc57xE95cbW6SRTqrwWkVv7dhJKXcyCtX880TtC6i5AOKRJUoXGQtOg=="
   }, {
     "groupId" : "com.fasterxml",
     "artifactId" : "classmate",

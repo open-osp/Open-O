@@ -657,6 +657,13 @@
             <version>2.19.2</version>
         </dependency>
 
+        <!-- Jackson XML support - explicit version to override older transitive from jasperreports -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.19.2</version>
+        </dependency>
+
 
 
 
