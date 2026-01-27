@@ -31,7 +31,7 @@
         <!-- Hapi Fhir Version -->
         <hapifhir.version>6.10.5</hapifhir.version>
         <!-- Apache CXF Version -->
-        <cxf.version>3.5.11</cxf.version>
+        <cxf.version>3.6.9</cxf.version>
         <!-- Netty Version (for transitive dependency security fixes) -->
         <netty.version>4.1.129.Final</netty.version>
         <struts.devMode>false</struts.devMode>
