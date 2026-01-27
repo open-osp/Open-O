@@ -598,7 +598,7 @@
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.21.7</version>
+            <version>6.20.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>bouncycastle</groupId>
