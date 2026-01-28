@@ -164,7 +164,8 @@ public final class EDocUtil {
      * All values are normalized to lowercase to ensure consistent matching.
      *
      * @param module String the module name from the request
-     * @return List&lt;String&gt; containing lowercase module values to query for, or empty list if module is null
+     * @return List&lt;String&gt; containing lowercase module values to query for
+     * @throws IllegalArgumentException if module is null
      * @since 2026-01-28
      */
     public static List<String> getModulesForQuery(String module) {
@@ -176,7 +177,7 @@ public final class EDocUtil {
             modules.add("provider");
             modules.add("providers");
         } else {
-            modules.add(module.toLowerCase());
+            modules.add(module.toLowerCase(Locale.ROOT));
         }
         return modules;
     }
@@ -285,7 +286,10 @@ public final class EDocUtil {
         CtlDocument cd = new CtlDocument();
         cd.setId(cdpk);
         String moduleValue = newDocument.getModule();
-        cdpk.setModule(moduleValue != null ? moduleValue.toLowerCase() : moduleValue);
+        if (moduleValue == null) {
+            throw new IllegalArgumentException("module cannot be null");
+        }
+        cdpk.setModule(moduleValue.toLowerCase(Locale.ROOT));
         cdpk.setDocumentNo(document_no);
         cd.getId().setModuleId(ConversionUtils.fromIntString(newDocument.getModuleId()));
         cd.setStatus(String.valueOf(newDocument.getStatus()));
@@ -296,9 +300,12 @@ public final class EDocUtil {
 
     //new method to let the user add a new DocumentType into the database
     public static void addDocTypeSQL(String docType, String module, String status) {
+        if (module == null) {
+            throw new IllegalArgumentException("module cannot be null");
+        }
         CtlDocType ctldoctype = new CtlDocType();
         ctldoctype.setDocType(docType);
-        ctldoctype.setModule(module != null ? module.toLowerCase() : module);
+        ctldoctype.setModule(module.toLowerCase(Locale.ROOT));
         ctldoctype.setStatus(status);
         ctldoctypedao.persist(ctldoctype);
     }

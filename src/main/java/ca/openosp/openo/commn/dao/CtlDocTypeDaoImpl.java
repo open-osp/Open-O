@@ -29,6 +29,7 @@ package ca.openosp.openo.commn.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Query;
 
@@ -83,9 +84,12 @@ public class CtlDocTypeDaoImpl extends AbstractDaoImpl<CtlDocType> implements Ct
     }
 
     public void addDocType(String docType, String module) {
+        if (module == null) {
+            throw new IllegalArgumentException("module cannot be null");
+        }
         CtlDocType d = new CtlDocType();
         d.setDocType(docType);
-        d.setModule(module != null ? module.toLowerCase() : module);
+        d.setModule(module.toLowerCase(Locale.ROOT));
         d.setStatus("A");
         entityManager.persist(d);
     }
