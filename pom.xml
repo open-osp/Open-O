@@ -842,13 +842,15 @@
             <version>1.17.2</version>
         </dependency>
 
-        <!-- janino -->
-        <!-- Migrated from old janino:janino:2.3.2 to modern org.codehaus.janino groupId -->
+        <!-- janino - CRITICAL: Must stay on version 2.x -->
+        <!-- Drools 2.0 (used by PreventionDSImpl for prevention rules) requires janino 2.x API -->
+        <!-- Janino 3.x removed Scanner$LocatedException class, breaking Drools rule compilation -->
+        <!-- DO NOT upgrade to janino 3.x without first upgrading Drools to 7.x+ -->
         <!-- Previous comment: Detected as "Unused dependency" but don't remove it, caused 404 error after removing -->
         <dependency>
-            <groupId>org.codehaus.janino</groupId>
+            <groupId>janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.12</version>
+            <version>2.3.2</version>
         </dependency>
 
 
