@@ -829,13 +829,6 @@
             <version>1.17.2</version>
         </dependency>
 
-        <!-- xerces -->
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.2</version>
-        </dependency>
-
         <!-- janino -->
         <!-- Detected as "Unused dependency" but don't remove it, caused 404 error after removing -->
         <dependency>
