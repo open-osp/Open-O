@@ -105,7 +105,7 @@ if (salt == null || salt.isEmpty()) {
 }
 ```
 
-If either property is missing, the application will log an error and return `null` for the encrypted parameter.
+If either property is missing, the application will log an error, and the generated dashboard URL will contain `encodedParams=null` (for example, `https://dashboard.example.com?encodedParams=null&version=1.1`).
 
 ## Breaking Changes
 
