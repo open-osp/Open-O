@@ -135,6 +135,11 @@ public class JDBCUtil {
                 rs.moveToInsertRow();
                 //To validate or not
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                factory.setXIncludeAware(false);
+                factory.setExpandEntityReferences(false);
                 factory.setValidating(validation);
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 doc = builder.parse(source);
