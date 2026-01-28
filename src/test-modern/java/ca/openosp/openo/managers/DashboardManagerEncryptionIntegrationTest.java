@@ -33,6 +33,7 @@ import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.test.base.OpenOTestBase;
 import ca.openosp.openo.utility.LoggedInInfo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -87,6 +88,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
     }
 
     @Test
+    @DisplayName("Generate encrypted URL when valid configuration is provided")
     void shouldGenerateEncryptedURL_whenValidConfiguration() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);
@@ -97,7 +99,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
             when(properties.getProperty("shared_outcomes_dashboard_key"))
                     .thenReturn("test-password-for-encryption");
             when(properties.getProperty("shared_outcomes_dashboard_salt"))
-                    .thenReturn("8f3c21ab56789def");
+                    .thenReturn("8f3c21ab56789def1234567890abcdef");
             when(properties.getProperty("shared_outcomes_dashboard_clinic_id"))
                     .thenReturn("TEST_CLINIC_001");
 
@@ -113,6 +115,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
     }
 
     @Test
+    @DisplayName("Produce valid Base64 output when encrypting parameters")
     void shouldProduceValidBase64Output_whenEncrypting() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);
@@ -123,7 +126,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
             when(properties.getProperty("shared_outcomes_dashboard_key"))
                     .thenReturn("test-password");
             when(properties.getProperty("shared_outcomes_dashboard_salt"))
-                    .thenReturn("8f3c21ab56789def");
+                    .thenReturn("8f3c21ab56789def1234567890abcdef");
             when(properties.getProperty("shared_outcomes_dashboard_clinic_id"))
                     .thenReturn("TEST_CLINIC");
 
@@ -147,6 +150,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
     }
 
     @Test
+    @DisplayName("Produce different output when called multiple times (random IV)")
     void shouldProduceDifferentOutput_whenCalledMultipleTimes() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);
@@ -157,7 +161,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
             when(properties.getProperty("shared_outcomes_dashboard_key"))
                     .thenReturn("test-password");
             when(properties.getProperty("shared_outcomes_dashboard_salt"))
-                    .thenReturn("8f3c21ab56789def");
+                    .thenReturn("8f3c21ab56789def1234567890abcdef");
             when(properties.getProperty("shared_outcomes_dashboard_clinic_id"))
                     .thenReturn("TEST_CLINIC");
 
@@ -175,6 +179,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
     }
 
     @Test
+    @DisplayName("Return null when password configuration is missing")
     void shouldReturnNull_whenMissingPassword() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);
@@ -185,18 +190,19 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
             when(properties.getProperty("shared_outcomes_dashboard_key"))
                     .thenReturn(null);  // Missing password
             when(properties.getProperty("shared_outcomes_dashboard_salt"))
-                    .thenReturn("8f3c21ab56789def");
+                    .thenReturn("8f3c21ab56789def1234567890abcdef");
 
             when(clinicDAO.getClinic()).thenReturn(testClinic);
 
             String url = dashboardManager.getSharedOutcomesDashboardLaunchURL(loggedInInfo);
 
-            // Should handle gracefully and return URL with null encodedParams
-            assertThat(url).contains("encodedParams=null");
+            // Should return null when encryption fails
+            assertThat(url).isNull();
         }
     }
 
     @Test
+    @DisplayName("Return null when salt configuration is missing")
     void shouldReturnNull_whenMissingSalt() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);
@@ -213,16 +219,17 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
 
             String url = dashboardManager.getSharedOutcomesDashboardLaunchURL(loggedInInfo);
 
-            // Should handle gracefully and return URL with null encodedParams
-            assertThat(url).contains("encodedParams=null");
+            // Should return null when encryption fails
+            assertThat(url).isNull();
         }
     }
 
     @Test
+    @DisplayName("Decrypt correctly using Spring Security Crypto (round-trip test)")
     void shouldDecryptCorrectly_whenUsingSpringSecurityCrypto() {
         String testJson = "{\"clinic\":{\"name\":\"Test Clinic\"},\"user\":{\"username\":\"test\"}}";
         String password = "test-password";
-        String salt = "8f3c21ab56789def";
+        String salt = "8f3c21ab56789def1234567890abcdef";
 
         // Encrypt
         BytesEncryptor encryptor = Encryptors.stronger(password, salt);
@@ -239,6 +246,7 @@ class DashboardManagerEncryptionIntegrationTest extends OpenOTestBase {
     }
 
     @Test
+    @DisplayName("Return null when dashboard URL configuration is missing")
     void shouldReturnNull_whenMissingDashboardURL() {
         try (MockedStatic<OscarProperties> mockedProperties = mockStatic(OscarProperties.class)) {
             OscarProperties properties = mock(OscarProperties.class);

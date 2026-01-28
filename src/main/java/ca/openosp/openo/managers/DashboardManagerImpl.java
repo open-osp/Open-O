@@ -701,6 +701,25 @@ public class DashboardManagerImpl implements DashboardManager {
 
     // TODO add duplicate Dashboard name check.
 
+    /**
+     * Generates an encrypted launch URL for the Shared Outcomes Dashboard.
+     * <p>
+     * Encrypts clinic and user information using Spring Security Crypto (AES-256-CBC)
+     * and returns a URL with Base64-encoded encrypted parameters. The encryption uses
+     * a random initialization vector (IV) for each invocation, ensuring that the same
+     * input produces different encrypted output each time for enhanced security.
+     * <p>
+     * The method validates that required configuration properties are present before
+     * attempting encryption. If any required property is missing or encryption fails,
+     * the method returns null to prevent exposing unencrypted or malformed data.
+     *
+     * @param loggedInInfo LoggedInInfo the current logged-in user context containing
+     *                     provider information to be included in the encrypted payload
+     * @return String the complete dashboard URL with encrypted parameters (e.g.,
+     *         "https://dashboard.example.com?encodedParams=BASE64_STRING&version=1.1"),
+     *         or null if the dashboard URL is not configured or encryption fails
+     * @since 2026-01-28
+     */
     @Override
     public String getSharedOutcomesDashboardLaunchURL(LoggedInInfo loggedInInfo) {
 
@@ -757,12 +776,22 @@ public class DashboardManagerImpl implements DashboardManager {
             if (salt == null || salt.isEmpty()) {
                 throw new IllegalArgumentException("shared_outcomes_dashboard_salt property is required");
             }
+            if (!salt.matches("^[0-9a-fA-F]{32}$")) {
+                throw new IllegalArgumentException(
+                    "shared_outcomes_dashboard_salt must be exactly 32 hex characters (16 bytes). " +
+                    "Generate with: openssl rand -hex 16");
+            }
 
             BytesEncryptor encryptor = Encryptors.stronger(password, salt);
             byte[] encrypted = encryptor.encrypt(json.getBytes(StandardCharsets.UTF_8));
             b64 = Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception e) {
             logger.error("Error encrypting shared dashboard URL parameters", e);
+            return null;
+        }
+
+        if (b64 == null) {
+            return null;
         }
 
         return url + "?" + "encodedParams=" + b64 + "&version=1.1";
