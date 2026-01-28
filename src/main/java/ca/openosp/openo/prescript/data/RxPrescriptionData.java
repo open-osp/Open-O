@@ -37,7 +37,6 @@ import ca.openosp.openo.util.DateUtils;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.logging.log4j.Logger;
@@ -1651,7 +1650,7 @@ public class RxPrescriptionData {
             if (getSpecial() == null || getSpecial().length() < 6)
                 logger.warn("drug special appears to be null or empty : " + getSpecial());
 
-			String escapedSpecial = StringEscapeUtils.escapeSql(this.getSpecial());
+			String escapedSpecial = this.getSpecial() != null ? this.getSpecial().replace("'", "''") : null;
 
             if (escapedSpecial == null || escapedSpecial.length() < 6)
                 logger.warn("drug special after escaping appears to be null or empty : " + escapedSpecial);
