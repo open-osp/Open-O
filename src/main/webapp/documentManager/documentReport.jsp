@@ -114,12 +114,12 @@
         demographicNo = moduleid;
     }
 
-//module can be either demographic or providers from what i can tell
+// module can be "demographic", "provider", or "providers" (use EDocUtil.isProviderModule() for provider checks)
 
     String moduleName = "";
     if (module.equals("demographic")) {
         moduleName = EDocUtil.getDemographicName(loggedInInfo, moduleid);
-    } else if (module.equals("providers")) {
+    } else if (EDocUtil.isProviderModule(module)) {
         moduleName = EDocUtil.getProviderName(moduleid);
     }
 
@@ -382,7 +382,7 @@
 
                 categories.add(privatedocs);
                 categoryKeys.add(moduleName + "'s Private Documents");
-                if (module.equals("providers")) {
+                if (EDocUtil.isProviderModule(module)) {
                     ArrayList publicdocs = EDocUtil.listDocs(loggedInInfo, module, moduleid, view, EDocUtil.PUBLIC, EDocUtil.EDocSort.OBSERVATIONDATE, viewstatus);
                     categories.add(publicdocs);
                     categoryKeys.add("Public Documents");

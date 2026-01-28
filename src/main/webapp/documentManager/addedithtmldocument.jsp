@@ -385,7 +385,7 @@
                     id="obsdate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
                                       alt="Calendar" border="0"/></a></td>
         </tr>
-        <% if (module.equals("providers")) {%>
+        <% if (EDocUtil.isProviderModule(module)) {%>
         <tr>
             <td>Public?</td>
             <td><input type="checkbox" name="docPublic"

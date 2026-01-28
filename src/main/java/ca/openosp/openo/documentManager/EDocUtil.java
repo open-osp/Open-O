@@ -144,6 +144,37 @@ public final class EDocUtil {
     public static final String REVIEW_DATETIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
     public static final String CONTENT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    /**
+     * Checks if the module represents a provider document module.
+     * Supports both "provider" (legacy) and "providers" for backwards compatibility.
+     * Comparison is case-insensitive to handle inconsistent casing in legacy code.
+     *
+     * @param module the module name to check
+     * @return true if the module is "provider" or "providers" (case-insensitive), false otherwise
+     */
+    public static boolean isProviderModule(String module) {
+        return "provider".equalsIgnoreCase(module) || "providers".equalsIgnoreCase(module);
+    }
+
+    /**
+     * Returns a list of module values to use in database queries for backwards compatibility.
+     * For provider modules, returns both "provider" (legacy) and "providers" to handle
+     * databases that may have either value in the module column.
+     *
+     * @param module the module name from the request
+     * @return List containing module values to query for
+     */
+    public static List<String> getModulesForQuery(String module) {
+        List<String> modules = new ArrayList<String>();
+        if (isProviderModule(module)) {
+            modules.add("provider");
+            modules.add("providers");
+        } else {
+            modules.add(module);
+        }
+        return modules;
+    }
+
     private static ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
     private static CaseManagementNoteLinkDAO caseManagementNoteLinkDao = (CaseManagementNoteLinkDAO) SpringUtils.getBean(CaseManagementNoteLinkDAO.class);
     private static CaseManagementNoteDAO caseManagementNoteDao = (CaseManagementNoteDAO) SpringUtils.getBean(CaseManagementNoteDAO.class);

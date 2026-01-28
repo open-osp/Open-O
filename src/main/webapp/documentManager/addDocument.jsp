@@ -335,7 +335,7 @@
                     <input type="checkbox" id="restrictToProgram" name="restrictToProgram">
                     Restrict to current program</label>
             </div>
-            <% if (module.equals("providers")) {%>
+            <% if (EDocUtil.isProviderModule(module)) {%>
             <div class="checkbox">
                 <label>
                     <input type="checkbox" id="docPublic" name="docPublic" <%=formdata.getDocPublic() + " "%>
@@ -432,7 +432,7 @@
             <input type="text" name="docSubClass" id="docSubClass2" class="form-control">
             <div class="autocomplete_style" id="docSubClass_list2"></div>
         </div>
-        <% if (module.equals("providers")) {%>
+        <% if (EDocUtil.isProviderModule(module)) {%>
         <div class="checkbox">
             <label>
                 <input type="checkbox" name="docPublic" <%=formdata.getDocPublic() + " "%> value="checked">
