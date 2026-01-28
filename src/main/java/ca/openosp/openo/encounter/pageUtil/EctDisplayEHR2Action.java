@@ -37,20 +37,11 @@ public class EctDisplayEHR2Action extends EctDisplayAction {
 
         if (!securityInfoManager.hasPrivilege(loggedInInfo, "_ehr", "r", null)) {
             return true;
-        } else {
-            String winName = "ehr" + bean.demographicNo;
-            String url = "javascript:void(0)";
-            Dao.setLeftHeading("Provincial EHR Services");
-            Dao.setLeftURL(url);
-
-            url += ";return false;";
-            Dao.setRightURL(url);
-            Dao.setRightHeadingID(cmd); //no menu so set div id to unique id for this action
-
-            // ClinicalConnect integration removed - no items to display
-
-            return true;
         }
+
+        // ClinicalConnect integration removed - no EHR integrations to display
+        // Return true without modifying the DAO to avoid rendering an empty widget
+        return true;
     }
 
     public String getCmd() {
