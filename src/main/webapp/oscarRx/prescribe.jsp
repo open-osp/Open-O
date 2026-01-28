@@ -246,9 +246,9 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
 
     <%-- Modern flexbox layout for drug name field - replaces float-based layout for better alignment and responsiveness --%>
     <div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:5px;">
-        <label style="width:101px;flex-shrink:0;" title="<%=ATC%>" >Name:</label>
-        <input type="hidden" name="atcCode" value="<%=ATCcode%>" />
-        <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);" value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> TITLE="<%=drugName%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
+        <label style="width:101px;flex-shrink:0;" title="<%=Encode.forHtmlAttribute(ATC)%>" >Name:</label>
+        <input type="hidden" name="atcCode" value="<%=Encode.forHtmlAttribute(ATCcode)%>" />
+        <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);" value="<%=Encode.forHtmlAttribute(drugName)%>"<%} else{%> value="<%=Encode.forHtmlAttribute(drugName)%>"  onchange="changeDrugName('<%=rand%>','<%=Encode.forJavaScript(drugName)%>');" <%}%> TITLE="<%=Encode.forHtmlAttribute(drugName)%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
     </div>
 
 	<!-- Allergy Alert Table-->
