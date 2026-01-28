@@ -113,7 +113,7 @@ public class FrmForm2Action extends ActionSupport {
 
         // Validate formName to prevent SQL injection and path traversal attacks
         if (formName == null || !isValidFormName(formName)) {
-            logger.warn("Invalid form name attempted: " + formName);
+            logger.warn("Invalid form name attempted: {}", formName != null ? formName.replaceAll("[\\r\\n\\t]", "_") : "null");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid form name");
             return NONE;
         }

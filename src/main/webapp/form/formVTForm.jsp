@@ -114,9 +114,6 @@
                 pageWindow = popup;
                 popup.focus();
             }
-            /*else{
-                alert("Miles server is not avaiable!");
-            }*/
 
         }
 

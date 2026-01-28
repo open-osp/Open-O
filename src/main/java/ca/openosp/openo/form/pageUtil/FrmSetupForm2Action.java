@@ -119,7 +119,7 @@ public final class FrmSetupForm2Action extends ActionSupport {
         
         // Validate formName to prevent path traversal attacks
         if (formName == null || !isValidFormName(formName)) {
-            MiscUtils.getLogger().warn("Invalid form name attempted: " + formName);
+            MiscUtils.getLogger().warn("Invalid form name attempted: {}", formName != null ? formName.replaceAll("[\\r\\n\\t]", "_") : "null");
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid form name");
             return NONE;
         }

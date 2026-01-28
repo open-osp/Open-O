@@ -1650,11 +1650,6 @@ public class RxPrescriptionData {
             if (getSpecial() == null || getSpecial().length() < 6)
                 logger.warn("drug special appears to be null or empty : " + getSpecial());
 
-			String escapedSpecial = this.getSpecial() != null ? this.getSpecial().replace("'", "''") : null;
-
-            if (escapedSpecial == null || escapedSpecial.length() < 6)
-                logger.warn("drug special after escaping appears to be null or empty : " + escapedSpecial);
-
             DrugDao dao = SpringUtils.getBean(DrugDao.class);
             Drug drug = new Drug();
 
