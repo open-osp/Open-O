@@ -9,17 +9,26 @@ allowed-tools:
   - mcp__playwright__browser_fill_form
   - mcp__playwright__browser_tabs
   - mcp__playwright__browser_close
+  - mcp__playwright__browser_handle_dialog
   - mcp__playwright__browser_console_messages
   - mcp__playwright__browser_network_requests
+  - mcp__playwright__browser_press_key
+  - mcp__playwright__browser_select_option
+  - mcp__playwright__browser_wait_for
+  - mcp__playwright__browser_run_code
+  - mcp__playwright__browser_evaluate
   - Bash(mkdir ui-test-runs/*)
   - Bash(cp .playwright-mcp/ui-test-runs/* ui-test-runs/*)
+  - Bash(cp /workspace/.playwright-mcp/* ui-test-runs/*)
   - Bash(ls ui-test-runs/*)
+  - Bash(ls /workspace/.playwright-mcp/*)
   - Bash(wc *)
   - Bash(curl * http://localhost:8080/*)
   - Bash(mysql -h db -uroot -ppassword oscar *)
   - Bash(mysql -h db -uroot -ppassword oscar -e *)
   - Bash(mysql * oscar * 2>&1 | tail -1)
   - Bash(date *)
+  - Bash(TIMESTAMP=$(date +%Y%m%d-%H%M%S-%3N))
   - Write(path:ui-test-runs/**)
 model: claude-sonnet-4-5-20250929
 ---

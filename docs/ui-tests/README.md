@@ -61,43 +61,90 @@ ui-test-runs/
 
 ## Test Coverage
 
-### ✅ Implemented Tests
+### Complete Test Matrix
+
+| Test | Name | Steps | Screenshots | Duration | Status |
+|------|------|-------|-------------|----------|--------|
+| 1 | Smoke Test (Login, Search, Demographics) | 7 | 7 | ~3 min | ✅ Implemented |
+| 2 | Comprehensive Demographics | 30 | 30 | ~25 min | ✅ Implemented |
+| 3 | Appointments & Scheduling | 15 | 15 | ~12 min | ✅ Implemented |
+| 4 | Prescriptions (Rx) | 18 | 18 | ~15 min | ✅ Implemented |
+| 5 | Ticklers & Messaging | 12 | 12 | ~8 min | ✅ Implemented |
+| 6 | Encounter & E-Chart | 22 | 22 | ~20 min | ✅ Implemented |
+| 7 | Billing (Ontario MOH) | 15 | 15 | ~12 min | ✅ Implemented |
+| 8 | Lab Results | 12 | 12 | ~10 min | ✅ Implemented |
+| 9 | Prevention & Immunization | 12 | 12 | ~10 min | ✅ Implemented |
+
+**Totals**: 143 steps, 143 screenshots, ~115 minutes for full suite
+
+### Slash Commands
+
+Run tests using Claude Code slash commands:
+
+| Command | Test | Description |
+|---------|------|-------------|
+| `/test1` | Smoke Test | Login, search, patient demographics |
+| `/test2` | Demographics | Create, edit, search, filters |
+| `/test3` | Appointments | Schedule, create, edit, views |
+| `/test4` | Prescriptions | Allergies, drugs, Rx creation |
+| `/test5` | Ticklers | Create, status, messaging |
+| `/test6` | Encounters | E-Chart, vitals, notes, panels |
+| `/test7` | Billing | Ontario MOH billing workflow |
+| `/test8` | Lab Results | Inbox, detail, history |
+| `/test9` | Prevention | Immunizations, reports |
+| `/test-fullsuite` | All Tests | Run all 9 tests sequentially |
+
+### Test Details
 
 #### Test 1 - Smoke Test (Login and Patient Demographics)
-**Type**: Smoke Test
-**Duration**: ~3 minutes
-**Coverage**: Authentication, Dashboard, Patient Search, Demographic Records, Session Management
-**Status**: ✅ Passing (100%)
+**Type**: Smoke Test | **Steps**: 7 | **Duration**: ~3 minutes
+**Coverage**: Authentication, Dashboard, Patient Search, Demographic Records
 **Documentation**: [test-1/](test-1/)
 
-### 🔄 Planned Tests
+#### Test 2 - Comprehensive Demographics
+**Type**: Comprehensive Test | **Steps**: 30 | **Duration**: ~25 minutes
+**Coverage**: Patient creation, editing, search by name/HIN, filters, healthcare team
+**Documentation**: [test-2/](test-2/)
 
-#### Test 2 - Encounter Workflow
-**Type**: Comprehensive Test
-**Coverage**: E-Chart, Clinical Notes, Encounter Window
-**Status**: Not implemented
+#### Test 3 - Appointments & Scheduling
+**Type**: Comprehensive Test | **Steps**: 15 | **Duration**: ~12 minutes
+**Coverage**: Schedule views, appointment creation, editing, status, history
+**Documentation**: [test-3/](test-3/)
 
-#### Test 3 - Prescription Management
-**Type**: Comprehensive Test
-**Coverage**: Drug prescriptions, Interaction checking, Renal dosing
-**Status**: Not implemented
+#### Test 4 - Prescriptions (Rx)
+**Type**: Comprehensive Test | **Steps**: 18 | **Duration**: ~15 minutes
+**Coverage**: Allergy management, drug search, prescription creation, interaction check
+**Documentation**: [test-4/](test-4/)
 
-#### Test 4 - Appointment Booking
-**Type**: Smoke Test
-**Coverage**: Schedule appointments, Reason codes, Provider selection
-**Status**: Not implemented
+#### Test 5 - Ticklers & Messaging
+**Type**: Comprehensive Test | **Steps**: 12 | **Duration**: ~8 minutes
+**Coverage**: Tickler creation, status management, messaging module
+**Documentation**: [test-5/](test-5/)
 
-#### Test 5 - Lab Results Viewing
-**Type**: Smoke Test
-**Coverage**: OLIS integration, Lab display, Cumulative values
-**Status**: Not implemented
+#### Test 6 - Encounter & E-Chart
+**Type**: Comprehensive Test | **Steps**: 22 | **Duration**: ~20 minutes
+**Coverage**: E-Chart, encounter creation, vitals, diagnosis, clinical notes, panels
+**Documentation**: [test-6/](test-6/)
 
-#### Future Tests
-- Billing workflows
-- Tickler management
-- Messaging (provider inbox)
-- Document upload and management
-- E-form creation and submission
+#### Test 7 - Billing (Ontario MOH)
+**Type**: Comprehensive Test | **Steps**: 15 | **Duration**: ~12 minutes
+**Coverage**: Service codes, diagnostic codes, billing submission, history
+**Documentation**: [test-7/](test-7/)
+
+#### Test 8 - Lab Results
+**Type**: Comprehensive Test | **Steps**: 12 | **Duration**: ~10 minutes
+**Coverage**: Lab inbox, result detail, forwarding, history, review status
+**Documentation**: [test-8/](test-8/)
+
+#### Test 9 - Prevention & Immunization
+**Type**: Comprehensive Test | **Steps**: 12 | **Duration**: ~10 minutes
+**Coverage**: Prevention records, immunization entry, history, reports
+**Documentation**: [test-9/](test-9/)
+
+### Additional Documentation
+
+- **[COMPREHENSIVE-TEST-GUIDE.md](COMPREHENSIVE-TEST-GUIDE.md)** - Master guide for all tests
+- **[UI-TEST-PROCESS.md](UI-TEST-PROCESS.md)** - Testing procedures and gold standards
 
 ## Running Smoke Tests
 

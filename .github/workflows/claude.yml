@@ -45,6 +45,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
           # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
@@ -53,7 +54,6 @@ jobs:
           # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
           # prompt: 'Update the pull request description to include a summary of changes.'
 
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+          # Allow gh CLI commands for PR/issue management (uses :* prefix matching syntax)
+          # See https://code.claude.com/docs/en/settings#permission-rule-syntax
+          claude_args: '--allowedTools "Bash(gh pr create:*)" "Bash(gh pr view:*)" "Bash(gh pr list:*)" "Bash(gh pr diff:*)" "Bash(gh pr checks:*)" "Bash(gh pr comment:*)" "Bash(gh issue view:*)" "Bash(gh issue list:*)" "Bash(gh issue comment:*)" "Bash(gh issue create:*)" "Bash(gh run view:*)" "Bash(gh run list:*)" "Bash(gh run watch:*)" "Bash(gh repo view:*)" "Bash(git status:*)" "Bash(git branch:*)" "Bash(git checkout:*)" "Bash(git add:*)" "Bash(git commit:*)" "Bash(git push:*)" "Bash(git pull:*)" "Bash(git fetch:*)" "Bash(git log:*)" "Bash(git diff:*)" "Bash(git show:*)"'

@@ -154,6 +154,8 @@ public class Example2Action extends ActionSupport {
 - **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
 - **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
 - **Context Guide**: `docs/test/claude-test-context.md` (auto-injected by hooks when working on tests)
+- **Unit Test Support**: `OpenOUnitTestBase` for mocked tests without database
+- **Manager Testing**: @Nested classes for organizing 100+ tests per manager (see `DemographicManagerUnitTest`)
 
 ### Test Organization Standards
 
@@ -180,21 +182,11 @@ void shouldThrowExceptionWhenTicklerNotFound()
 void shouldLoadSpringContext()
 ```
 
-**Option 2: Snake_case (common in Ruby/Python BDD, valid for Java)**
-```java
-void should_return_tickler_when_valid_id_provided()
-void should_throw_exception_when_tickler_not_found()
-void should_load_spring_context()
-```
-
-**Avoid**: Mixed camelCase with underscores, traditional test naming (testFindById)
-
-**Benefits**: Self-documenting, clear failure messages, searchable, behavior-focused
+**Benefits**: Self-documenting, clear failure messages, searchable
 
 ### Test Context Configuration
 
 The codebase has legacy patterns (SpringUtils static access, mixed Hibernate/JPA, circular dependencies) that require specific test setup. See **[Test Writing Guide](docs/test/test-writing-guide.md)** for detailed configuration patterns.
-
 **Key points**: Extend `OpenOTestBase` (handles SpringUtils), define beans manually in test context, explicitly list entities in persistence.xml.
 
 **Writing Tests - CRITICAL**:
@@ -202,8 +194,12 @@ When asked to write tests, you MUST:
 1. **First examine the actual interface/class** being tested
 2. **Only test methods that actually exist** in the codebase
 3. **Never invent or assume method names** - verify they exist
-4. **Extend OpenOTestBase** for Spring context handling
-5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager
+4. **Choose the right base class**:
+   - `OpenOTestBase` - Integration tests with Spring context and database
+   - `OpenOUnitTestBase` - Unit tests with mocked SpringUtils (no database)
+   - Domain-specific bases like `DemographicUnitTestBase` - Unit tests with test data builders
+5. **Use @PersistenceContext(unitName = "testPersistenceUnit")** for EntityManager (integration tests only)
+6. **For Manager unit tests**: Register SpringUtils mocks BEFORE creating static mocks (LogAction, etc.)
 
 ## Code Quality Standards
 
@@ -228,11 +224,6 @@ private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
 - **Deprecation**: Use @deprecated with migration guidance to newer APIs
 - **JSP Documentation**: Add comprehensive JSP comment blocks after copyright headers with purpose, features, parameters, and @since
 - **Inline Comments**: Add comments for complex logic on separate lines (not same line as code)
-
-**Database Patterns**:
-- All tables include `lastUpdateUser`, `lastUpdateDate` for audit trails
-- Complex healthcare schema with 50+ fields in `demographic` table
-- Multi-jurisdictional support (BC, ON, generic provinces)
 
 ## Healthcare Integration Standards
 
@@ -268,7 +259,7 @@ private SomeManager someManager = SpringUtils.getBean(SomeManager.class);
 
 ### Web Technologies
 - **Struts 2.5.33**: Modern actions (2Action pattern) coexisting with legacy Struts 1.x
-- **Apache CXF 3.5.10**: Web services framework for healthcare integrations
+- **Apache CXF 3.6.9**: Web services framework for healthcare integrations
 - **JSP/JSTL**: View layer with extensive medical form templates
 - **Bootstrap 5.3.0**: Modern UI framework loaded from CDN for responsive design
 - **JavaScript/CSS/jQuery**: Frontend with healthcare-specific UI components
@@ -349,7 +340,7 @@ Located in `/scripts` directory within the container (copied from `.devcontainer
 - Security configuration with Spring Security
 - Multiple application contexts for different modules
 
-### Legacy Integration & Unique Struts2 Migration Pattern
+### Legacy Integration & Struts2 Migration Pattern ("2Action") - CRITICAL PATTERN
 
 #### **Migration Strategy Overview**
 OpenO EMR uses a unique incremental migration approach from Struts 1.x to Struts 2.x using a "2Action" naming convention that allows both frameworks to coexist during the transition period.
@@ -523,6 +514,7 @@ This migration pattern allows OpenO EMR to modernize incrementally while maintai
 
 ### Audit and Compliance Patterns
 - Every table includes `lastUpdateUser`, `lastUpdateDate` for audit trails
+- Complex healthcare schema with 50+ fields in `demographic` table
 - Comprehensive logging of all patient data access via `UserActivityFilter`
 - Privacy-compliant data handling with PHI filtering throughout application
 - Multi-jurisdictional support with province-specific configurations
@@ -836,8 +828,11 @@ database/mysql/SnomedCore/snomedinit.sql         # Medical terminology integrati
 ```bash
 # Modern Test Framework (JUnit 5) - ACTIVE AND RECOMMENDED
 src/test-modern/java/ca/openosp/openo/            # Modern JUnit 5 tests
+src/test-modern/java/ca/openosp/openo/managers/   # Manager unit tests (DemographicManagerUnitTest)
+src/test-modern/java/ca/openosp/openo/test/unit/  # Unit test base classes (OpenOUnitTestBase)
 src/test-modern/resources/                        # Modern test configurations
-docs/modern-test-framework-complete.md            # Complete test framework documentation
+docs/test/modern-test-framework-complete.md       # Complete test framework documentation
+docs/test/test-writing-guide.md                   # Test writing patterns and static mocking
 
 # Legacy Test Examples (JUnit 4) - for reference only
 src/test/java/ca/openosp/openo/                   # Legacy test structure
@@ -849,12 +844,16 @@ src/test/resources/over_ride_config.properties    # Test configuration template
 1. **Examine the actual code first** - Read the DAO/Manager interfaces to see what methods actually exist
 2. **Test real methods only** - Never make up methods that don't exist in the codebase
 3. **Use actual method signatures** - Match the exact parameters and return types
-4. **Extend OpenOTestBase** - Handles SpringUtils anti-pattern and Spring context
-5. **Follow BDD naming strictly**:
-   - Method: `should<Action>_when<Condition>` (camelCase, ONE underscore)
-   - @DisplayName: lowercase "should" + natural language description
-   - NO "test" prefix, NO test numbers, NO multiple underscores
+4. **Choose the right base class**:
+   - Integration tests: Extend `OpenOTestBase` (Spring context + database)
+   - Unit tests: Extend `OpenOUnitTestBase` (mocked SpringUtils, no database)
+   - Domain unit tests: Extend domain-specific bases like `DemographicUnitTestBase`
+5. **Follow BDD naming strictly**: `should<Action>_when<Condition>` (camelCase, ONE underscore)
 6. **Check DAO interfaces** - Look at `*Dao.java` files to see available methods before writing tests
+7. **For Manager unit tests with static classes** (LogAction, etc.):
+   - Register SpringUtils mocks FIRST, THEN create static mocks
+   - Close static mocks in @AfterEach to prevent test pollution
+   - Use @Nested classes with JavaDoc to organize large test suites
 
 Example of proper test development workflow:
 ```java
@@ -882,6 +881,38 @@ void shouldReturnTickler_whenValidIdProvided() {
 }
 
 // 3. Add negative test cases for edge cases and error conditions
+=======
+For detailed examples and test development workflow, see **[Test Writing Guide](docs/test/test-writing-guide.md)**.
+
+**Test Execution Commands:**
+```bash
+# Run all modern tests
+mvn test                          # Runs modern tests first, then legacy
+
+# Run all integration tests for a DAO component
+mvn test -Dtest=TicklerDao*IntegrationTest  # All TicklerDao integration tests
+
+# Run specific operation tests
+mvn test -Dtest=TicklerDaoFindIntegrationTest      # Just find operations
+mvn test -Dtest=TicklerDaoWriteIntegrationTest     # Just write operations
+
+# Run Manager unit tests
+mvn test -Dtest=DemographicManagerUnitTest         # All 117 Demographic manager tests
+mvn test -Dtest=*ManagerUnitTest                   # All manager unit tests
+
+# Run by test type (using tags)
+mvn test -Dgroups="unit"                # Fast unit tests only (129 tests)
+mvn test -Dgroups="integration"         # Integration tests only
+mvn test -Dgroups="manager"             # All manager layer tests
+
+# Run tests by tags
+mvn test -Dgroups="tickler,read"        # All read operations for tickler
+mvn test -Dgroups="demographic,security" # Demographic security tests
+mvn test -Dgroups="create,update"       # All create and update operations
+
+# Build with tests
+make install --run-tests          # Includes modern tests automatically
+make install --run-unit-tests     # Only unit tests (fast, no database)
 ```
 
 ### Development Environment References
@@ -897,7 +928,6 @@ void shouldReturnTickler_whenValidIdProvided() {
 ### Documentation & Architecture
 ```bash
 # Project Documentation
-docs/encounter-window-architecture.md             # Encounter window & AJAX patterns
 docs/Password_System.md                           # Security architecture details
 docs/struts-actions-detailed.md                   # Action mapping documentation
 pom.xml                                            # Complete dependency list with versions
