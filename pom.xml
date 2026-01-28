@@ -90,6 +90,12 @@
                 <artifactId>jaxb-core</artifactId>
                 <version>2.3.0.1</version>
             </dependency>
+            <!-- Override transitive xercesImpl to fix CVE-2022-23437 and CVE-2020-14338 -->
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.12.2</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -452,6 +458,13 @@
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
             <version>5.5.20</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Exclude old jcraft JSch in favor of maintained mwiede fork -->
+                    <groupId>com.jcraft</groupId>
+                    <artifactId>jsch</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- throws 10 compilation errors when removed/commented -->
         <dependency>

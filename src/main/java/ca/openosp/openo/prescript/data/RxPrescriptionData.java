@@ -1647,8 +1647,12 @@ public class RxPrescriptionData {
             // clean up fields
             if (this.takeMin > this.takeMax) this.takeMax = this.takeMin;
 
-            if (getSpecial() == null || getSpecial().length() < 6)
-                logger.warn("drug special appears to be null or empty : " + getSpecial());
+            // Redact PHI - log only metadata (length), not prescription instructions
+            String specialValue = getSpecial();
+            if (specialValue == null || specialValue.length() < 6) {
+                logger.warn("drug special appears to be null or empty (length={})",
+                        specialValue == null ? 0 : specialValue.length());
+            }
 
             DrugDao dao = SpringUtils.getBean(DrugDao.class);
             Drug drug = new Drug();
