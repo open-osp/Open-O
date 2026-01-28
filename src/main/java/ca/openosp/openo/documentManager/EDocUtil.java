@@ -149,8 +149,9 @@ public final class EDocUtil {
      * Supports both "provider" (legacy) and "providers" for backwards compatibility.
      * Comparison is case-insensitive to handle inconsistent casing in legacy code.
      *
-     * @param module the module name to check
-     * @return true if the module is "provider" or "providers" (case-insensitive), false otherwise
+     * @param module String the module name to check
+     * @return boolean true if the module is "provider" or "providers" (case-insensitive), false otherwise
+     * @since 2026-01-28
      */
     public static boolean isProviderModule(String module) {
         return "provider".equalsIgnoreCase(module) || "providers".equalsIgnoreCase(module);
@@ -160,21 +161,22 @@ public final class EDocUtil {
      * Returns a list of module values to use in database queries for backwards compatibility.
      * For provider modules, returns both "provider" (legacy) and "providers" to handle
      * databases that may have either value in the module column.
+     * All values are normalized to lowercase to ensure consistent matching.
      *
-     * @param module the module name from the request
-     * @return List containing module values to query for
+     * @param module String the module name from the request
+     * @return List&lt;String&gt; containing lowercase module values to query for, or empty list if module is null
+     * @since 2026-01-28
      */
     public static List<String> getModulesForQuery(String module) {
         if (module == null) {
-            logger.warn("module is null for query");
-            return new ArrayList<String>();
+            throw new IllegalArgumentException("module cannot be null for query");
         }
         List<String> modules = new ArrayList<String>();
         if (isProviderModule(module)) {
             modules.add("provider");
             modules.add("providers");
         } else {
-            modules.add(module);
+            modules.add(module.toLowerCase());
         }
         return modules;
     }
