@@ -569,7 +569,7 @@ public class ManageDocument2Action extends ActionSupport {
 
             PDFRenderer rend = new PDFRenderer(pdf);
             //Page index starts at 0, subtracts 1 to account for that
-            BufferedImage image = rend.renderImageWithDPI(pageIndex, 90, ImageType.RGB);
+            BufferedImage image = rend.renderImageWithDPI(pageIndex, 96, ImageType.RGB);
 
             // write cache file
             ImageIO.write(image, "png", pngFile.toFile());
