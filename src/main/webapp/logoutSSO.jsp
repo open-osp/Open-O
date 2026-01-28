@@ -40,15 +40,6 @@
     oscarUrl.setLength(oscarUrl.length() - request.getServletPath().length());
     String redirectURL = econsultUrl + "/SAML2/logout?oscarReturnURL=" + URLEncoder.encode(oscarUrl + "/logout.jsp", "UTF-8");
 
-
-    UserPropertyDAO userPropertyDAO = SpringUtils.getBean(UserPropertyDAO.class);
-    UserProperty prop = userPropertyDAO.getProp(LoggedInInfo.getLoggedInInfoFromSession(request).getLoggedInProviderNo(), "clinicalConnectDisableLogoutWarning");
-    if (prop != null && "true".equals(prop.getValue())) {
-        response.sendRedirect(redirectURL);
-        return;
-    }
-
-
     if (request.getSession().getAttribute("CC_EHR_LOADED") == null) {
         if (request.getSession().getAttribute("oneIdEmail") != null && !request.getSession().getAttribute("oneIdEmail").equals("")) {
 
@@ -87,8 +78,7 @@
     <br/>
 
     <br/><br/>
-    <h6>* If not action is taken in 10 seconds, you will automatically be signed out. To disable this warning, to go
-        Preferences -> ClinicalConnect settings.</h6>
+    <h6>* If not action is taken in 10 seconds, you will automatically be signed out.</h6>
 </div>
 
 </body>

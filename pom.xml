@@ -1216,20 +1216,6 @@
             </exclusions>
         </dependency>
 
-        
-        <dependency>
-            <groupId>com.medseek.clinical.service</groupId>
-            <artifactId>SSOClinicalConnect</artifactId>
-            <version>20171101</version>
-        </dependency>
-
-        <!-- can be found in the local_repo folder -->
-        <dependency>
-            <groupId>com.medseek</groupId>
-            <artifactId>PatientService</artifactId>
-            <version>20161213</version>
-        </dependency>
-
         <dependency>
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt</artifactId>

@@ -146,10 +146,6 @@ Client and patient image management.
 
 Clinical Connect EHR integration.
 
-| Action Name | Class Name | Description |
-|-------------|------------|-------------|
-| clinicalConnectEHRViewer | ca.openosp.openo.integration.clinicalconnect.ClinicalConnectViewer2Action | Views Clinical Connect EHR data |
-
 ## Code Search Module
 
 Medical code search functionality.
