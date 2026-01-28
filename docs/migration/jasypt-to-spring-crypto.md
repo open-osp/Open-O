@@ -142,7 +142,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 String password = "shared-password";  // Same as shared_outcomes_dashboard_key
-String salt = "8f3c21ab56789def";     // Same as shared_outcomes_dashboard_salt
+String salt = "8f3c21ab56789def1234567890abcdef";  // Same as shared_outcomes_dashboard_salt
 
 BytesEncryptor encryptor = Encryptors.stronger(password, salt);
 
