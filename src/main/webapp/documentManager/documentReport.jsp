@@ -659,7 +659,7 @@
                                             </svg>
                                         </a>
                                         <% } %>
-                                        <% if (!(moduleid.equals(session.getAttribute("user")) && "demographic".equals(module))) {
+                                        <% if (!("demographic".equals(module) && moduleid != null && moduleid.equals(session.getAttribute("user")))) {
 
                                             String tickler_url = request.getContextPath() + "/tickler/ForwardDemographicTickler.do?docType=DOC&docId=" + curdoc.getDocId() + "&demographic_no=" + moduleid;
                                         %>
