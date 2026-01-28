@@ -526,13 +526,6 @@
             <version>5.6.15.Final</version>
         </dependency>
 
-        <!-- pdf / jpedal -->
-        <dependency>
-            <groupId>org</groupId>
-            <artifactId>jpedal</artifactId>
-            <version>lgpl</version>
-        </dependency>
-
         <!--  pdfbox -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
