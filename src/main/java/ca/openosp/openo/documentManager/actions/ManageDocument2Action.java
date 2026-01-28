@@ -42,8 +42,6 @@ import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.jpedal.PdfDecoder;
-import org.jpedal.fonts.FontMappings;
 import ca.openosp.openo.PMmodule.caisi_integrator.CaisiIntegratorManager;
 import ca.openosp.openo.PMmodule.caisi_integrator.IntegratorFallBackManager;
 import ca.openosp.openo.PMmodule.model.ProgramProvider;
@@ -1433,38 +1431,28 @@ public class ManageDocument2Action extends ActionSupport {
         File file = new File(documentDir, sanitizedPdfName);
         PathValidationUtils.validateExistingPath(file, baseDir);
 
-        PdfDecoder decode_pdf = new PdfDecoder(true);
-
         // Re-validate file path at point of use for static analysis visibility
         File validatedFile = PathValidationUtils.validateExistingPath(file, baseDir);
-        try (FileInputStream is = new FileInputStream(validatedFile)) {
 
-            FontMappings.setFontReplacements();
+        try (PDDocument document = PDDocument.load(validatedFile)) {
+            PDFRenderer renderer = new PDFRenderer(document);
 
-            decode_pdf.useHiResScreenDisplay(true);
-
-            decode_pdf.setExtractionMode(0, 96, 96 / 72f);
-
-            decode_pdf.openPdfFileFromInputStream(is, false);
-
-            BufferedImage image_to_save = decode_pdf.getPageAsImage(pageNum);
+            // Render at 96 DPI to match jpedal settings (96 DPI / 72 DPI = 1.33 scale)
+            // Note: PDFBox uses 0-based page indexing, jpedal uses 1-based
+            BufferedImage image_to_save = renderer.renderImageWithDPI(pageNum - 1, 96, ImageType.RGB);
 
             // Use sanitized filename for cache file and validate path
             String cacheFileName = sanitizedPdfName.substring(0, sanitizedPdfName.lastIndexOf('.')) + "_" + pageNum + ".png";
             File cacheFile = PathValidationUtils.validatePath(cacheFileName, documentCacheDir);
 
-            decode_pdf.getObjectStore().saveStoredImage(cacheFile.getCanonicalPath(), image_to_save, true, false, "png");
-
-            decode_pdf.flushObjectValues(true);
+            // Write PNG using standard ImageIO
+            ImageIO.write(image_to_save, "png", cacheFile);
+            image_to_save.flush();
 
             return cacheFile;
         } catch (Exception e) {
-            log.error("Error decoding pdf file " + pdfDir + sanitizedPdfName);
+            log.error("Error decoding pdf file " + pdfDir + sanitizedPdfName, e);
             return null;
-        } finally {
-            if (decode_pdf != null) {
-                decode_pdf.closePdfFile();
-            }
         }
     }
 
