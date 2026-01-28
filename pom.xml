@@ -1447,6 +1447,12 @@
         </dependency>
 
         <!-- Removed jaxb-impl duplicate - using org.glassfish.jaxb:jaxb-runtime instead -->
+        <!-- Added for Tomcat 9.0.97 - JAXB runtime implementation (version managed by dependencyManagement) -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+        </dependency>
+
         <!-- JSTL API is included as transitive dependency of javax.servlet.jsp.jstl -->
         <!-- Removed standalone javax.servlet:jstl:1.2 to avoid conflicts -->
 
