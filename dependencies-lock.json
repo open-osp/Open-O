@@ -536,14 +536,6 @@
     "optional" : false,
     "integrity" : "sha512:k8jO0QMHnJwgWpF6c1nn5ga8E6GsaZo2jDPwZWK6nTVoWa7i/OE3DT5vMwkx0vROptpnFABOnJ1Mm7R5JRD8Ag=="
   }, {
-    "groupId" : "com.jcraft",
-    "artifactId" : "jsch",
-    "version" : "0.1.55",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:toJ9jeRxaC/RF0QIBmOup3YSoDd04uvMM1fHxJPV31DU7JyNUsT8ySi9/ddbYrQNPGDxhNqKe4q6RMkq/s7npQ=="
-  }, {
     "groupId" : "com.microsoft.playwright",
     "artifactId" : "driver-bundle",
     "version" : "1.40.0",
@@ -3475,11 +3467,11 @@
   }, {
     "groupId" : "xerces",
     "artifactId" : "xercesImpl",
-    "version" : "2.4.0",
+    "version" : "2.12.2",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:di7lQt/a4bpX1VNGcAVowK5UESfEc8lLvGRASqWn26k7giUkehQ4kX2IIE+CISiAvmXGhXeylME0zxwWk+cyFA=="
+    "integrity" : "sha512:v9IfI1C/C7VGpo0zA/KMahXO4eYwE4wWk0TD9l/jmhXmHG/05SOfOPLx+eSI7/TVVlpKB3QmMGSrajCqn8qu0w=="
   }, {
     "groupId" : "xml-apis",
     "artifactId" : "xml-apis-ext",
