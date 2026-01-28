@@ -177,7 +177,7 @@ public final class EDocUtil {
             modules.add("provider");
             modules.add("providers");
         } else {
-            modules.add(module.toLowerCase(Locale.ROOT));
+            modules.add(module);
         }
         return modules;
     }
