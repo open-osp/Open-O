@@ -27,15 +27,15 @@
  */
 package ca.openosp.openo.managers;
 
-import java.security.Security;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.Logger;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.util.encoders.Base64;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
+import org.springframework.security.crypto.encrypt.Encryptors;
 import ca.openosp.openo.commn.dao.ClinicDAO;
 import ca.openosp.openo.commn.dao.DashboardDao;
 import ca.openosp.openo.commn.dao.IndicatorTemplateDao;
@@ -745,21 +745,24 @@ public class DashboardManagerImpl implements DashboardManager {
 
         logger.debug(json);
 
-        String encrypted = null;
         String b64 = null;
 
-        // system must have the UnlimitedJCEPolicyJDK7.zip installed for this to work
         try {
-            Security.addProvider(new BouncyCastleProvider());
+            String password = OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_key");
+            String salt = OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_salt");
 
-            StandardPBEStringEncryptor encrypter = new StandardPBEStringEncryptor();
-            encrypter.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
-            encrypter.setProviderName("BC");
-            encrypter.setPassword(OscarProperties.getInstance().getProperty("shared_outcomes_dashboard_key"));
-            encrypted = encrypter.encrypt(json);
-            b64 = Base64.toBase64String(encrypted.getBytes());
+            if (password == null || password.isEmpty()) {
+                throw new IllegalArgumentException("shared_outcomes_dashboard_key property is required");
+            }
+            if (salt == null || salt.isEmpty()) {
+                throw new IllegalArgumentException("shared_outcomes_dashboard_salt property is required");
+            }
+
+            BytesEncryptor encryptor = Encryptors.stronger(password, salt);
+            byte[] encrypted = encryptor.encrypt(json.getBytes(StandardCharsets.UTF_8));
+            b64 = Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception e) {
-            logger.error("error", e);
+            logger.error("Error encrypting shared dashboard URL parameters", e);
         }
 
         return url + "?" + "encodedParams=" + b64 + "&version=1.1";
