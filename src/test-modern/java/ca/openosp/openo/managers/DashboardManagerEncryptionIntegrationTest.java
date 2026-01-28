@@ -30,7 +30,7 @@ import ca.openosp.OscarProperties;
 import ca.openosp.openo.commn.dao.ClinicDAO;
 import ca.openosp.openo.commn.model.Clinic;
 import ca.openosp.openo.commn.model.Provider;
-import ca.openosp.openo.test.OpenOTestBase;
+import ca.openosp.openo.test.base.OpenOTestBase;
 import ca.openosp.openo.utility.LoggedInInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
