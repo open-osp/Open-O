@@ -266,13 +266,12 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2.2</version>
         </dependency>
-        <!-- Commons Digester Library -->
+        <!-- Commons Digester3 Library -->
         <dependency>
-            <groupId>commons-digester</groupId>
-            <artifactId>commons-digester</artifactId>
-            <version>1.8</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-digester3</artifactId>
+            <version>3.2</version>
             <exclusions>
-                <!-- Excluded this low version to avoid triggering security issue -->
                 <exclusion>
                     <groupId>commons-beanutils</groupId>
                     <artifactId>commons-beanutils</artifactId>
@@ -1230,11 +1229,6 @@
             <version>20161213</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt</artifactId>
-            <version>1.9.3</version>
-        </dependency>
 
         <!-- Apache Commons Exec - used by ExternalEDocConverter -->
         <dependency>
