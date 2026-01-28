@@ -416,7 +416,7 @@ public class DrugDaoImpl extends AbstractDaoImpl<Drug> implements DrugDao {
 
     @Override
     public Drug findByEverything(String providerNo, int demographicNo, Date rxDate, Date endDate, Date writtenDate,
-                                 String brandName, int gcn_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode,
+                                 String brandName, String gcn_SEQNO, String customName, float takeMin, float takeMax, String frequencyCode,
                                  String duration, String durationUnit, String quantity, String unitName, int repeat, Date lastRefillDate,
                                  boolean nosubs, boolean prn, String escapedSpecial, String outsideProviderName, String outsideProviderOhip,
                                  boolean customInstr, Boolean longTerm, boolean customNote, Boolean pastMed,

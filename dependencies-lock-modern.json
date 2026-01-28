@@ -1097,6 +1097,14 @@
     "optional" : false,
     "integrity" : "sha512:wWBhbLeWy5RB63A+LluAl2pmaccocRtTkQDuvuhcri9026Vc/wRPxwMglvGdC+I6Mq7+zssMY9WOH+Wt0vRomA=="
   }, {
+    "groupId" : "janino",
+    "artifactId" : "janino",
+    "version" : "2.3.2",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:gEOmdC/YDUuEwvfVY9tLPQBu1RI11j9c48BlHaLEq87++T0pZx96zZGP/kZI8zuk+OHq4FgTvUKEywsnptpxwA=="
+  }, {
     "groupId" : "javax.activation",
     "artifactId" : "javax.activation-api",
     "version" : "1.2.0",
@@ -2488,22 +2496,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:o+x8IvbnFuLAa56TsZkr2iPrkuoMw/Ovxb165EqSNf8iFtDACXeZow/S4t1hjn8wzCEAB9ph4d7i5yuPuw3hbw=="
-  }, {
-    "groupId" : "org.codehaus.janino",
-    "artifactId" : "commons-compiler",
-    "version" : "3.1.12",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:zY7Os8nNKE9LOAMhurtfoLB+tEN2hn9QHH4lO/yWvYx/K2D8BJ3yHummwJIlraGCjJ+JIoRtkEMvZPT7EEur3g=="
-  }, {
-    "groupId" : "org.codehaus.janino",
-    "artifactId" : "janino",
-    "version" : "3.1.12",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:9hmz5sUSJ1s8GLyeMEwvWUfXZV0RhKdzAM/+6SmA1C8fQ8y2aSyl4zQDEnuOQdpZT2md3wfw6bAkNXmkNfEgJA=="
   }, {
     "groupId" : "org.codehaus.jettison",
     "artifactId" : "jettison",
