@@ -165,6 +165,10 @@ public final class EDocUtil {
      * @return List containing module values to query for
      */
     public static List<String> getModulesForQuery(String module) {
+        if (module == null) {
+            logger.warn("module is null for query");
+            return new ArrayList<String>();
+        }
         List<String> modules = new ArrayList<String>();
         if (isProviderModule(module)) {
             modules.add("provider");
@@ -278,7 +282,8 @@ public final class EDocUtil {
         CtlDocumentPK cdpk = new CtlDocumentPK();
         CtlDocument cd = new CtlDocument();
         cd.setId(cdpk);
-        cdpk.setModule(newDocument.getModule());
+        String moduleValue = newDocument.getModule();
+        cdpk.setModule(moduleValue != null ? moduleValue.toLowerCase() : moduleValue);
         cdpk.setDocumentNo(document_no);
         cd.getId().setModuleId(ConversionUtils.fromIntString(newDocument.getModuleId()));
         cd.setStatus(String.valueOf(newDocument.getStatus()));
@@ -291,7 +296,7 @@ public final class EDocUtil {
     public static void addDocTypeSQL(String docType, String module, String status) {
         CtlDocType ctldoctype = new CtlDocType();
         ctldoctype.setDocType(docType);
-        ctldoctype.setModule(module);
+        ctldoctype.setModule(module != null ? module.toLowerCase() : module);
         ctldoctype.setStatus(status);
         ctldoctypedao.persist(ctldoctype);
     }

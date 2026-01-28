@@ -117,7 +117,7 @@
 // module can be "demographic", "provider", or "providers" (use EDocUtil.isProviderModule() for provider checks)
 
     String moduleName = "";
-    if (module.equals("demographic")) {
+    if ("demographic".equals(module)) {
         moduleName = EDocUtil.getDemographicName(loggedInInfo, moduleid);
     } else if (EDocUtil.isProviderModule(module)) {
         moduleName = EDocUtil.getProviderName(moduleid);
@@ -359,7 +359,7 @@
             <fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentReport.msgDocuments"/> Manager
         </h2>
 
-        <% if (module.equals("demographic")) { %>
+        <% if ("demographic".equals(module)) { %>
         <oscar:nameage demographicNo="<%=Encode.forHtmlAttribute(moduleid)%>"/>
         <%} %>
 
@@ -648,7 +648,7 @@
 
                                         <% } %>
 
-                                        <% if (module.equals("demographic")) {%>
+                                        <% if ("demographic".equals(module)) {%>
                                         <a href="javascript:void(0)" title="Annotation"
                                            onclick="window.open('${ pageContext.request.contextPath }/annotation/annotation.jsp?display=<%=Encode.forUriComponent(annotation_display)%>&table_id=<%=Encode.forUriComponent(String.valueOf(curdoc.getDocId()))%>&demo=<%=Encode.forUriComponent(moduleid)%>','anwin','width=400,height=500');"
                                            class="btn btn-link" style="padding:0">
@@ -659,7 +659,7 @@
                                             </svg>
                                         </a>
                                         <% } %>
-                                        <% if (!(moduleid.equals(session.getAttribute("user")) && module.equals("demographic"))) {
+                                        <% if (!(moduleid.equals(session.getAttribute("user")) && "demographic".equals(module))) {
 
                                             String tickler_url = request.getContextPath() + "/tickler/ForwardDemographicTickler.do?docType=DOC&docId=" + curdoc.getDocId() + "&demographic_no=" + moduleid;
                                         %>

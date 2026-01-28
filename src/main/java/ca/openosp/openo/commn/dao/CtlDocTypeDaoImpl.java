@@ -85,7 +85,7 @@ public class CtlDocTypeDaoImpl extends AbstractDaoImpl<CtlDocType> implements Ct
     public void addDocType(String docType, String module) {
         CtlDocType d = new CtlDocType();
         d.setDocType(docType);
-        d.setModule(module);
+        d.setModule(module != null ? module.toLowerCase() : module);
         d.setStatus("A");
         entityManager.persist(d);
     }

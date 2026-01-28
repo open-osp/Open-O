@@ -596,7 +596,8 @@ public class EDoc extends TagObject implements Comparable<EDoc> {
 
         ctlDocument = new CtlDocument();
         CtlDocumentPK cdpk = new CtlDocumentPK();
-        cdpk.setModule(this.getModule());
+        String moduleValue = this.getModule();
+        cdpk.setModule(moduleValue != null ? moduleValue.toLowerCase() : moduleValue);
         cdpk.setModuleId(Integer.parseInt(this.getModuleId()));
 
         ctlDocument.setId(cdpk);
