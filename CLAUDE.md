@@ -152,9 +152,10 @@ public class Example2Action extends ActionSupport {
 - **Modern Stack**: JUnit 5, AssertJ, H2 in-memory database, BDD naming
 - **Spring Integration**: Full Spring context with transaction support
 - **Multi-File Architecture**: Component-first naming (`TicklerDao*Test`) for scalability
+- **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
+- **Context Guide**: `docs/test/claude-test-context.md` (auto-injected by hooks when working on tests)
 - **Unit Test Support**: `OpenOUnitTestBase` for mocked tests without database
 - **Manager Testing**: @Nested classes for organizing 100+ tests per manager (see `DemographicManagerUnitTest`)
-- **Documentation**: Complete guide at `docs/test/modern-test-framework-complete.md`
 
 ### Test Organization Standards
 
@@ -172,17 +173,12 @@ mvn test -Dgroups="create,update"  # Specific operations
 
 ### BDD Test Naming Convention
 
-Modern tests use BDD (Behavior-Driven Development) naming for clarity:
+Modern tests use BDD (Behavior-Driven Development) naming for clarity. Choose ONE style and use it consistently:
 
-**Patterns**:
-1. `should<Action>_when<Condition>` - Testing behavior/requirements (camelCase, ONE underscore)
-2. `<methodName>_<scenario>_<expectedOutcome>` - Testing specific methods
-3. `should<ExpectedBehavior>` - Simple assertions
-
-**Examples**:
+**Option 1: Pure camelCase (RECOMMENDED for Java)**
 ```java
-void shouldReturnTickler_whenValidIdProvided()
-void findActiveByDemographicNo_multipleStatuses_returnsOnlyActive()
+void shouldReturnTicklerWhenValidIdProvided()
+void shouldThrowExceptionWhenTicklerNotFound()
 void shouldLoadSpringContext()
 ```
 
@@ -191,7 +187,6 @@ void shouldLoadSpringContext()
 ### Test Context Configuration
 
 The codebase has legacy patterns (SpringUtils static access, mixed Hibernate/JPA, circular dependencies) that require specific test setup. See **[Test Writing Guide](docs/test/test-writing-guide.md)** for detailed configuration patterns.
-
 **Key points**: Extend `OpenOTestBase` (handles SpringUtils), define beans manually in test context, explicitly list entities in persistence.xml.
 
 **Writing Tests - CRITICAL**:
@@ -860,6 +855,33 @@ src/test/resources/over_ride_config.properties    # Test configuration template
    - Close static mocks in @AfterEach to prevent test pollution
    - Use @Nested classes with JavaDoc to organize large test suites
 
+Example of proper test development workflow:
+```java
+// 1. First, check the actual DAO interface:
+// src/main/java/ca/openosp/openo/commn/dao/TicklerDao.java
+public interface TicklerDao extends AbstractDao<Tickler> {
+    public Tickler find(Integer id);  // <-- Real method to test
+    public List<Tickler> findActiveByDemographicNo(Integer demoNo); // <-- Real method
+    // ... other actual methods
+}
+
+// 2. Then write BDD-style tests for these ACTUAL methods:
+@Test
+@DisplayName("should return tickler when valid ID is provided")
+void shouldReturnTickler_whenValidIdProvided() {
+    // Given
+    Tickler saved = createAndSaveTickler();
+
+    // When
+    Tickler found = ticklerDao.find(saved.getId()); // Testing real method
+
+    // Then
+    assertThat(found).isNotNull();
+    assertThat(found).isEqualTo(saved);
+}
+
+// 3. Add negative test cases for edge cases and error conditions
+=======
 For detailed examples and test development workflow, see **[Test Writing Guide](docs/test/test-writing-guide.md)**.
 
 **Test Execution Commands:**
@@ -891,11 +913,6 @@ mvn test -Dgroups="create,update"       # All create and update operations
 # Build with tests
 make install --run-tests          # Includes modern tests automatically
 make install --run-unit-tests     # Only unit tests (fast, no database)
-```
-
-**Parallel Execution for Multi-File Tests:**
-```bash
-mvn test -T 4C                    # 4 threads per CPU core for parallel execution
 ```
 
 ### Development Environment References
