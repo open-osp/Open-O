@@ -232,14 +232,30 @@ public class NioFileManagerImpl implements NioFileManager {
             }
 
             try (PDDocument document = PDDocument.load(sourceFile.toFile())) {
+                int pageIndex = pageNum - 1;
+                int pageCount = document.getNumberOfPages();
+
+                // Validate page index is within bounds
+                if (pageIndex < 0 || pageIndex >= pageCount) {
+                    log.error("Requested page " + pageNum + " is out of range for document with " + pageCount + " pages");
+                    return null;
+                }
+
                 PDFRenderer renderer = new PDFRenderer(document);
                 // Render at 96 DPI to match jpedal settings
                 // Note: jpedal uses 1-based page indexing, PDFBox uses 0-based
-                BufferedImage image_to_save = renderer.renderImageWithDPI(pageNum - 1, 96, ImageType.RGB);
-                ImageIO.write(image_to_save, "png", cacheFilePath.toFile());
+                BufferedImage image_to_save = renderer.renderImageWithDPI(pageIndex, 96, ImageType.RGB);
+
+                // Check ImageIO.write success (returns false on failure)
+                if (!ImageIO.write(image_to_save, "png", cacheFilePath.toFile())) {
+                    log.error("Failed to write PNG image to cache file: " + cacheFilePath);
+                    return null;
+                }
+
                 image_to_save.flush();
             } catch (IOException e) {
                 log.error("Error rendering PDF page to cache", e);
+                return null;  // Must return null on error
             }
         }
 
