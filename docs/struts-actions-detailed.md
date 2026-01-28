@@ -144,7 +144,7 @@ Client and patient image management.
 
 ## Clinical Connect Module
 
-Clinical Connect EHR integration.
+Clinical Connect EHR integration has been removed and this module is deprecated; no Struts actions are currently available.
 
 ## Code Search Module
 
