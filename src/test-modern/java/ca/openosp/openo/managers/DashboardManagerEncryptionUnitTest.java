@@ -32,6 +32,7 @@ import ca.openosp.openo.commn.dao.DashboardDao;
 import ca.openosp.openo.commn.dao.IndicatorTemplateDao;
 import ca.openosp.openo.commn.model.Clinic;
 import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.test.unit.OpenOUnitTestBase;
 import ca.openosp.openo.utility.LoggedInInfo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,12 +40,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.encrypt.Encryptors;
 
@@ -52,6 +50,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -68,9 +69,10 @@ import static org.mockito.Mockito.when;
 @Tag("unit")
 @Tag("encryption")
 @Tag("dashboard")
+@Tag("manager")
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
-class DashboardManagerEncryptionUnitTest {
+@DisplayName("Dashboard Manager Encryption Unit Tests")
+class DashboardManagerEncryptionUnitTest extends OpenOUnitTestBase {
 
     @Mock
     private SecurityInfoManager securityInfoManager;
@@ -84,7 +86,6 @@ class DashboardManagerEncryptionUnitTest {
     @Mock
     private ClinicDAO clinicDAO;
 
-    @InjectMocks
     private DashboardManagerImpl dashboardManager;
 
     private LoggedInInfo loggedInInfo;
@@ -94,6 +95,19 @@ class DashboardManagerEncryptionUnitTest {
 
     @BeforeEach
     void setUp() {
+        // Register mocks for SpringUtils BEFORE creating DashboardManagerImpl
+        registerMock(SecurityInfoManager.class, securityInfoManager);
+        registerMock(IndicatorTemplateDao.class, indicatorTemplateDao);
+        registerMock(DashboardDao.class, dashboardDao);
+        registerMock(ClinicDAO.class, clinicDAO);
+
+        // Configure SecurityInfoManager to allow all operations in tests
+        lenient().when(securityInfoManager.hasPrivilege(any(), anyString(), anyString(), any()))
+            .thenReturn(true);
+
+        // Create DashboardManagerImpl - it will get mocks from SpringUtils
+        dashboardManager = new DashboardManagerImpl();
+
         // Set up test clinic
         testClinic = new Clinic();
         testClinic.setClinicName("Test Clinic");
