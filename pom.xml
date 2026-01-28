@@ -90,6 +90,12 @@
                 <artifactId>jaxb-core</artifactId>
                 <version>2.3.0.1</version>
             </dependency>
+            <!-- Override transitive xercesImpl to fix CVE-2022-23437 and CVE-2020-14338 -->
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>2.12.2</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -452,6 +458,13 @@
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-sftp</artifactId>
             <version>5.5.20</version>
+            <exclusions>
+                <exclusion>
+                    <!-- Exclude old jcraft JSch in favor of maintained mwiede fork -->
+                    <groupId>com.jcraft</groupId>
+                    <artifactId>jsch</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- throws 10 compilation errors when removed/commented -->
         <dependency>
@@ -829,13 +842,15 @@
             <version>1.17.2</version>
         </dependency>
 
-        <!-- janino -->
-        <!-- Migrated from old janino:janino:2.3.2 to modern org.codehaus.janino groupId -->
+        <!-- janino - CRITICAL: Must stay on version 2.x -->
+        <!-- Drools 2.0 (used by PreventionDSImpl for prevention rules) requires janino 2.x API -->
+        <!-- Janino 3.x removed Scanner$LocatedException class, breaking Drools rule compilation -->
+        <!-- DO NOT upgrade to janino 3.x without first upgrading Drools to 7.x+ -->
         <!-- Previous comment: Detected as "Unused dependency" but don't remove it, caused 404 error after removing -->
         <dependency>
-            <groupId>org.codehaus.janino</groupId>
+            <groupId>janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.12</version>
+            <version>2.3.2</version>
         </dependency>
 
 
@@ -1408,7 +1423,7 @@
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>javax.servlet.jsp-api</artifactId>
-                <version>2.3.9</version>
+            <version>2.3.3</version>
             <scope>provided</scope>
         </dependency>
 
