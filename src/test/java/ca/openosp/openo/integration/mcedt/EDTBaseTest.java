@@ -419,4 +419,66 @@ public abstract class EDTBaseTest {
         assertEquals("First builder keystore should match configured value", keystorePath1, clientKeystore1);
         assertEquals("Second builder keystore should match configured value", keystorePath2, clientKeystore2);
     }
+
+    /**
+     * Test that setExternalClientKeystoreFilename does not modify the builder when path is null.
+     * Verifies that null paths are treated as "use default keystore" per the method contract.
+     */
+    @Test
+    public void setExternalClientKeystoreFilename_nullPath_usesDefaultKeystore() throws Exception {
+        // Arrange
+        OscarProperties props = OscarProperties.getInstance();
+        EdtClientBuilderConfig config = new EdtClientBuilderConfig();
+        config.setMtomEnabled(true);
+        config.setServiceUrl(props.getProperty("mcedt.service.url"));
+        config.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
+        config.setServiceId(props.getProperty("mcedt.service.id"));
+
+        EdtClientBuilder builder = new EdtClientBuilder(config);
+
+        // Get the default keystore value before calling the method
+        java.lang.reflect.Field clientKeystoreField = EdtClientBuilder.class.getDeclaredField("clientKeystore");
+        clientKeystoreField.setAccessible(true);
+        Object defaultKeystore = clientKeystoreField.get(builder);
+
+        // Act: call with null path
+        setExternalClientKeystoreFilename(builder, null);
+
+        // Assert: keystore should remain unchanged (still the default)
+        Object keystoreAfter = clientKeystoreField.get(builder);
+        assertEquals("Keystore should remain at default when null path is provided", defaultKeystore, keystoreAfter);
+    }
+
+    /**
+     * Test that setExternalClientKeystoreFilename does not modify the builder when path does not exist.
+     * Verifies that non-existent paths are treated as "use default keystore" per the method contract.
+     */
+    @Test
+    public void setExternalClientKeystoreFilename_nonExistentPath_usesDefaultKeystore() throws Exception {
+        // Arrange
+        OscarProperties props = OscarProperties.getInstance();
+        EdtClientBuilderConfig config = new EdtClientBuilderConfig();
+        config.setMtomEnabled(true);
+        config.setServiceUrl(props.getProperty("mcedt.service.url"));
+        config.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
+        config.setServiceId(props.getProperty("mcedt.service.id"));
+
+        EdtClientBuilder builder = new EdtClientBuilder(config);
+
+        // Get the default keystore value before calling the method
+        java.lang.reflect.Field clientKeystoreField = EdtClientBuilder.class.getDeclaredField("clientKeystore");
+        clientKeystoreField.setAccessible(true);
+        Object defaultKeystore = clientKeystoreField.get(builder);
+
+        // Use a path that does not exist
+        Path nonExistentPath = Paths.get("target", "does-not-exist", "clientKeystore.properties");
+        assertFalse("Test precondition failed: non-existent path unexpectedly exists", Files.exists(nonExistentPath));
+
+        // Act: call with non-existent path
+        setExternalClientKeystoreFilename(builder, nonExistentPath.toAbsolutePath().toString());
+
+        // Assert: keystore should remain unchanged (still the default)
+        Object keystoreAfter = clientKeystoreField.get(builder);
+        assertEquals("Keystore should remain at default when non-existent path is provided", defaultKeystore, keystoreAfter);
+    }
 }
