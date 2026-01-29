@@ -3,6 +3,7 @@ package ca.openosp.openo.integration.mcedt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import org.apache.xml.security.utils.resolver.ResourceResolver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import ca.openosp.openo.commn.dao.utils.ConfigUtils;
 import ca.openosp.openo.integration.ebs.client.ng.EdtClientBuilder;
 import ca.openosp.openo.integration.ebs.client.ng.EdtClientBuilderConfig;
@@ -369,5 +371,52 @@ public abstract class EDTBaseTest {
                 logger.error("Malformed URL: " + clientKeystorePropertiesPath, e);
             }
         }
+    }
+
+    /**
+     * Regression test to verify keystore configuration is isolated per EdtClientBuilder instance.
+     * This test ensures that the race condition fix (making clientKeystore instance-based rather
+     * than static) is maintained. If clientKeystore were ever made static again, this test would fail.
+     */
+    @Test
+    public void clientKeystoreConfigurationIsIsolatedPerBuilderInstance() throws Exception {
+        // Arrange: create two independent EDT configurations and builders
+        OscarProperties props = OscarProperties.getInstance();
+        EdtClientBuilderConfig config1 = new EdtClientBuilderConfig();
+        config1.setMtomEnabled(true);
+        config1.setServiceUrl(props.getProperty("mcedt.service.url"));
+        config1.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
+        config1.setServiceId(props.getProperty("mcedt.service.id"));
+
+        EdtClientBuilderConfig config2 = new EdtClientBuilderConfig();
+        config2.setMtomEnabled(true);
+        config2.setServiceUrl(props.getProperty("mcedt.service.url"));
+        config2.setConformanceKey(props.getProperty("mcedt.service.conformanceKey"));
+        config2.setServiceId(props.getProperty("mcedt.service.id"));
+
+        EdtClientBuilder builder1 = new EdtClientBuilder(config1);
+        EdtClientBuilder builder2 = new EdtClientBuilder(config2);
+
+        // Act: configure different keystore paths on each builder
+        // Using the default keystore location as a test value
+        String keystorePath1 = "clientKeystore.properties";
+        String keystorePath2 = "alternateKeystore.properties";
+
+        builder1.setClientKeystoreFilename(keystorePath1);
+        builder2.setClientKeystoreFilename(keystorePath2);
+
+        // Assert: client keystore configuration is not shared between builders
+        // Using reflection to access the private clientKeystore field
+        java.lang.reflect.Field clientKeystoreField = EdtClientBuilder.class.getDeclaredField("clientKeystore");
+        clientKeystoreField.setAccessible(true);
+
+        Object clientKeystore1 = clientKeystoreField.get(builder1);
+        Object clientKeystore2 = clientKeystoreField.get(builder2);
+
+        assertNotNull("First builder should have client keystore configured", clientKeystore1);
+        assertNotNull("Second builder should have client keystore configured", clientKeystore2);
+        assertNotSame("Client keystore must be isolated per builder instance", clientKeystore1, clientKeystore2);
+        assertEquals("First builder keystore should match configured value", keystorePath1, clientKeystore1);
+        assertEquals("Second builder keystore should match configured value", keystorePath2, clientKeystore2);
     }
 }
