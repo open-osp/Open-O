@@ -137,7 +137,7 @@ public class OnlineHCValidator implements HCValidator {
      * @since 2026-01-29
      */
     private static void setExternalClientKeystoreFilename(EdtClientBuilder builder, String clientKeystorePropertiesPath) {
-        if (clientKeystorePropertiesPath == null) {
+        if (clientKeystorePropertiesPath == null || clientKeystorePropertiesPath.trim().isEmpty()) {
             return;
         }
         Path signaturePropFile = Paths.get(clientKeystorePropertiesPath);
