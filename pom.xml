@@ -481,6 +481,18 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
             <version>5.3.39</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- cglib-nodep to replace old cglib 2.2.2 and eliminate ASM conflicts -->
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>3.3.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto -->
         <dependency>
