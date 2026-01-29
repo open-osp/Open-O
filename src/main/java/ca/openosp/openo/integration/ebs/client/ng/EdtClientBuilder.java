@@ -357,7 +357,13 @@ public class EdtClientBuilder {
     }
 
     /**
-     * Allows overriding the client keystore filename.
+     * Allows overriding the client keystore filename for this EDT client builder instance.
+     * This method sets the keystore path used for client certificate authentication in EDT
+     * service connections. Each EdtClientBuilder instance maintains its own keystore path
+     * to prevent race conditions when multiple EDT services (MCEDT, HCV) are used concurrently.
+     *
+     * @param filename String the client keystore filename or URL path (e.g., "file:/path/to/keystore.properties")
+     * @since 2025-08-26
      */
     public void setClientKeystoreFilename(String filename) {
         this.clientKeystore = filename;

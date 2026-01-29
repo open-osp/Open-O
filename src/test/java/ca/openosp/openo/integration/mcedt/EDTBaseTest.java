@@ -345,9 +345,16 @@ public abstract class EDTBaseTest {
         return edtDelegate;
     }
 
-    /*
-     * User can set an external `clientKeystore.properties` by providing the path to the file.
-     * If the path is not provided, it will default to `src/main/resources/clientKeystore.properties`.
+    /**
+     * Set an external client keystore properties file for the EDT client builder in test context.
+     * This method configures a custom keystore properties file path for MCEDT service
+     * client certificate authentication during testing. If the provided path is null or the
+     * file does not exist, the default keystore at src/main/resources/clientKeystore.properties
+     * will be used.
+     *
+     * @param builder EdtClientBuilder the EDT client builder instance to configure
+     * @param clientKeystorePropertiesPath String the absolute path to the client keystore properties file, or null to use default
+     * @since 2025-08-26
      */
     protected static void setExternalClientKeystoreFilename(EdtClientBuilder builder, String clientKeystorePropertiesPath) {
         if (clientKeystorePropertiesPath == null) {
