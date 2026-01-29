@@ -354,7 +354,7 @@ public abstract class EDTBaseTest {
      *
      * @param builder EdtClientBuilder the EDT client builder instance to configure
      * @param clientKeystorePropertiesPath String the absolute path to the client keystore properties file, or null to use default
-     * @since 2025-08-26
+     * @since 2026-01-29
      */
     protected static void setExternalClientKeystoreFilename(EdtClientBuilder builder, String clientKeystorePropertiesPath) {
         if (clientKeystorePropertiesPath == null) {

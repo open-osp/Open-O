@@ -363,7 +363,7 @@ public class EdtClientBuilder {
      * to prevent race conditions when multiple EDT services (MCEDT, HCV) are used concurrently.
      *
      * @param filename String the client keystore filename or URL path (e.g., "file:/path/to/keystore.properties")
-     * @since 2025-08-26
+     * @since 2026-01-29
      */
     public void setClientKeystoreFilename(String filename) {
         this.clientKeystore = filename;
