@@ -45,7 +45,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
-import org.w3c.tidy.Tidy;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Entities;
+import java.nio.charset.StandardCharsets;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.PageSize;
@@ -67,16 +69,18 @@ public class Doc2PDF {
             // step 2:
             // we create a writer that listens to the document
             // and directs a XML-stream to a file
-            Tidy tidy = new Tidy();
-            tidy.setXHTML(true);
-
             BufferedInputStream in = GetInputFromURI(jsessionid, uri);
-            ByteArrayOutputStream tidyout = new ByteArrayOutputStream();
 
-            tidy.parse(in, tidyout);
+            // Parse directly from InputStream with UTF-8 encoding and base URI
+            org.jsoup.nodes.Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.name(), uri);
+            doc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(Entities.EscapeMode.xhtml)
+                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
 
-            MiscUtils.getLogger().debug(tidyout.toString());
-            String documentTxt = AddAbsoluteTag(request, tidyout.toString(), uri);
+            String cleanHtml = doc.html();
+            MiscUtils.getLogger().debug(cleanHtml);
+            String documentTxt = AddAbsoluteTag(request, cleanHtml, uri);
 
             PrintPDFFromHTMLString(response, documentTxt);
 
@@ -159,15 +163,16 @@ public class Doc2PDF {
             // step 2:
             // we create a writer that listens to the document
             // and directs a XML-stream to a file
-            Tidy tidy = new Tidy();
-            tidy.setXHTML(true);
+            // Parse and clean HTML with Jsoup (handles UTF-8 internally)
+            org.jsoup.nodes.Document doc = Jsoup.parse(docText);
+            doc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(Entities.EscapeMode.xhtml)
+                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
 
-            BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(docText.getBytes()));
-            ByteArrayOutputStream tidyout = new ByteArrayOutputStream();
+            String cleanHtml = doc.html();
 
-            tidy.parse(in, tidyout);
-
-            PrintPDFFromHTMLString(response, AddAbsoluteTag(request, tidyout.toString(), ""));
+            PrintPDFFromHTMLString(response, AddAbsoluteTag(request, cleanHtml, ""));
 
         } catch (Exception e) {
             logger.error("Unexpected error", e);
@@ -182,15 +187,16 @@ public class Doc2PDF {
             // step 2:
             // we create a writer that listens to the document
             // and directs a XML-stream to a file
-            Tidy tidy = new Tidy();
-            tidy.setXHTML(true);
+            // Parse and clean HTML with Jsoup (handles UTF-8 internally)
+            org.jsoup.nodes.Document doc = Jsoup.parse(docText);
+            doc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(Entities.EscapeMode.xhtml)
+                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
 
-            BufferedInputStream in = new BufferedInputStream(new ByteArrayInputStream(docText.getBytes()));
-            ByteArrayOutputStream tidyout = new ByteArrayOutputStream();
+            String cleanHtml = doc.html();
 
-            tidy.parse(in, tidyout);
-
-            String testFile = GetPDFBin(response, AddAbsoluteTag(request, tidyout.toString(), ""));
+            String testFile = GetPDFBin(response, AddAbsoluteTag(request, cleanHtml, ""));
 
             return testFile;
 
