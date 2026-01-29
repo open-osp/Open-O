@@ -76,7 +76,7 @@ public class DelegateFactory {
         config.setServiceId((serviceId == null || serviceId.trim().equals("")) ? props.getProperty("mcedt.service.id") : serviceId);
         config.setMtomEnabled(true);
         EdtClientBuilder builder = new EdtClientBuilder(config);
-        setExternalClientKeystoreFilename(props.getProperty("mcedt.service.clientKeystore.properties"));
+        setExternalClientKeystoreFilename(builder, props.getProperty("mcedt.service.clientKeystore.properties"));
         EDTDelegate edtDelegate = builder.build(EDTDelegate.class);
         if (logger.isInfoEnabled()) {
             logger.info("Created new EDT delegate " + edtDelegate);
@@ -108,7 +108,7 @@ public class DelegateFactory {
      * Set an external `clientKeystore.properties` by providing the path to the file.
      * If the path is not provided, it will default to `src/main/resources/clientKeystore.properties`.
      */
-    private static void setExternalClientKeystoreFilename(String clientKeystorePropertiesPath) {
+    private static void setExternalClientKeystoreFilename(EdtClientBuilder builder, String clientKeystorePropertiesPath) {
         if (clientKeystorePropertiesPath == null) {
             return;
         }
@@ -116,7 +116,7 @@ public class DelegateFactory {
         if (Files.exists(signaturePropFile)) {
             File file = new File(clientKeystorePropertiesPath);
             try {
-                EdtClientBuilder.setClientKeystoreFilename(file.toURI().toURL().toString());
+                builder.setClientKeystoreFilename(file.toURI().toURL().toString());
             } catch (MalformedURLException e) {
                 logger.error("Malformed URL: " + clientKeystorePropertiesPath, e);
             }

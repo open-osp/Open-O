@@ -101,7 +101,7 @@ public class EdtClientBuilder {
         "{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body;";
 
     private static final AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private static String clientKeystore = DEFAULT_CLIENT_KEYSTORE;
+    private String clientKeystore = DEFAULT_CLIENT_KEYSTORE;
 
     protected EdtClientBuilderConfig config;
 
@@ -359,8 +359,8 @@ public class EdtClientBuilder {
     /**
      * Allows overriding the client keystore filename.
      */
-    public static void setClientKeystoreFilename(String filename) {
-        clientKeystore = filename;
+    public void setClientKeystoreFilename(String filename) {
+        this.clientKeystore = filename;
     }
 
     /**
