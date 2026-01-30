@@ -776,7 +776,7 @@
 
         <!-- UPGRADED displaytag to actively maintained hazendaz fork -->
         <!-- Temporary bridge solution - full DataTables migration planned for Q2 2026 -->
-        <!-- Used in 10 JSP files: admin (6), BC billing (3), PMmodule (1), casemgmt (1) -->
+        <!-- Used in JSP files: admin (6), BC billing (3), PMmodule (1), casemgmt (1) -->
         <dependency>
             <groupId>com.github.hazendaz</groupId>
             <artifactId>displaytag</artifactId>
