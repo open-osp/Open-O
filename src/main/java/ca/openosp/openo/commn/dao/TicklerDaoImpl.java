@@ -417,6 +417,15 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Implementation uses JPQL constructor expression for direct DTO projection,
+     * then batch-loads comments and links in separate queries.
+     * </p>
+     *
+     * @since 2026-01-30
+     */
     @SuppressWarnings("unchecked")
     @Override
     public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit) {
@@ -438,6 +447,11 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         return ticklerDTOs;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
     @Override
     public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter) {
         return getTicklerDTOs(filter, 0, TicklerDao.MAX_LIST_RETURN_SIZE);
@@ -452,52 +466,29 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
      */
     private String getTicklerDTOQueryString(List<Object> paramList, CustomFilter filter) {
         int paramIndex = 1;
-        boolean includeMRPClause = true;
-        boolean includeProviderClause = true;
-        boolean includeAssigneeClause = true;
-        boolean includeStatusClause = true;
-        boolean includeClientClause = true;
-        boolean includeDemographicClause = true;
-        boolean includeProgramClause = true;
-        boolean includeMessage = true;
-        boolean includePriorityClause = true;
-        boolean includeServiceStartDateClause = false;
-        boolean includeServiceEndDateClause = false;
 
-        if (filter.getStartDate() != null) {
-            includeServiceStartDateClause = true;
-        }
-        if (filter.getEndDate() != null) {
-            includeServiceEndDateClause = true;
-        }
-
-        if (filter.getProgramId() == null || "".equals(filter.getProgramId()) || filter.getProgramId().equals("All Programs")) {
-            includeProgramClause = false;
-        }
-        if (filter.getProvider() == null || filter.getProvider().equals("All Providers") || filter.getProvider().equals("")) {
-            includeProviderClause = false;
-        }
-        if (filter.getAssignee() == null || filter.getAssignee().equals("All Providers") || filter.getAssignee().equals("")) {
-            includeAssigneeClause = false;
-        }
-        if (filter.getClient() == null || filter.getClient().equals("All Clients")) {
-            includeClientClause = false;
-        }
-        if (filter.getDemographicNo() == null || filter.getDemographicNo().equals("") || filter.getDemographicNo().equalsIgnoreCase("All Clients")) {
-            includeDemographicClause = false;
-        }
-        if (filter.getStatus().equals("") || filter.getStatus().equals("Z")) {
-            includeStatusClause = false;
-        }
-        if (filter.getPriority() == null || "".equals(filter.getPriority())) {
-            includePriorityClause = false;
-        }
-        if (filter.getMrp() == null || filter.getMrp().equals("All Providers") || filter.getMrp().equals("")) {
-            includeMRPClause = false;
-        }
-        if (filter.getMessage() == null || filter.getMessage().trim().isEmpty()) {
-            includeMessage = false;
-        }
+        boolean includeMRPClause = filter.getMrp() != null
+                && !filter.getMrp().isEmpty()
+                && !"All Providers".equals(filter.getMrp());
+        boolean includeProviderClause = filter.getProvider() != null
+                && !filter.getProvider().isEmpty()
+                && !"All Providers".equals(filter.getProvider());
+        boolean includeAssigneeClause = filter.getAssignee() != null
+                && !filter.getAssignee().isEmpty()
+                && !"All Providers".equals(filter.getAssignee());
+        boolean includeStatusClause = filter.getStatus() != null
+                && !filter.getStatus().isEmpty()
+                && !"Z".equals(filter.getStatus());
+        boolean includePriorityClause = filter.getPriority() != null
+                && !filter.getPriority().isEmpty();
+        boolean includeClientClause = isValidIntegerFilter(filter.getClient())
+                && !"All Clients".equals(filter.getClient());
+        boolean includeDemographicClause = isValidIntegerFilter(filter.getDemographicNo())
+                && !"All Clients".equalsIgnoreCase(filter.getDemographicNo());
+        boolean includeProgramClause = isValidIntegerFilter(filter.getProgramId())
+                && !"All Programs".equals(filter.getProgramId());
+        boolean includeMessage = filter.getMessage() != null
+                && !filter.getMessage().trim().isEmpty();
 
         StringBuilder query = new StringBuilder();
         query.append("SELECT NEW ca.openosp.openo.tickler.dto.TicklerListDTO(");
@@ -517,49 +508,29 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
             query.append("WHERE 1=1 ");
         }
 
-        if (includeServiceStartDateClause) {
+        if (filter.getStartDate() != null) {
             query.append("AND t.serviceDate >= ?").append(paramIndex++).append(" ");
             paramList.add(filter.getStartDate());
         }
 
-        if (includeServiceEndDateClause) {
+        if (filter.getEndDate() != null) {
             query.append("AND t.serviceDate <= ?").append(paramIndex++).append(" ");
-
             Calendar cal = Calendar.getInstance();
             cal.setTime(filter.getEndDate());
             cal.set(Calendar.HOUR_OF_DAY, 23);
             cal.set(Calendar.MINUTE, 59);
             cal.set(Calendar.SECOND, 59);
-
             paramList.add(new Date(cal.getTime().getTime()));
         }
 
         if (includeProviderClause) {
-            query.append("AND t.creator IN (");
-            Set<Provider> pset = filter.getProviders();
-            Provider[] providers = pset.toArray(new Provider[pset.size()]);
-            for (int x = 0; x < providers.length; x++) {
-                if (x > 0) {
-                    query.append(",");
-                }
-                query.append("?").append(paramIndex++);
-                paramList.add(providers[x].getProviderNo());
-            }
-            query.append(") ");
+            appendInClause(query, paramList, "t.creator", filter.getProviders(), paramIndex);
+            paramIndex += filter.getProviders().size();
         }
 
         if (includeAssigneeClause) {
-            query.append("AND t.taskAssignedTo IN (");
-            Set<Provider> pset = filter.getAssignees();
-            Provider[] providers = pset.toArray(new Provider[pset.size()]);
-            for (int x = 0; x < providers.length; x++) {
-                if (x > 0) {
-                    query.append(",");
-                }
-                query.append("?").append(paramIndex++);
-                paramList.add(providers[x].getProviderNo());
-            }
-            query.append(") ");
+            appendInClause(query, paramList, "t.taskAssignedTo", filter.getAssignees(), paramIndex);
+            paramIndex += filter.getAssignees().size();
         }
 
         if (includeProgramClause) {
@@ -593,6 +564,48 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         }
 
         return query.toString();
+    }
+
+    /**
+     * Checks if a string value is a valid integer for use in queries.
+     *
+     * @param value the string to check
+     * @return true if the value is non-null, non-empty, and parseable as an integer
+     */
+    private boolean isValidIntegerFilter(String value) {
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Appends an IN clause for a set of providers to the query.
+     *
+     * @param query the query builder
+     * @param paramList the parameter list to populate
+     * @param fieldName the field name (e.g., "t.creator")
+     * @param providers the set of providers
+     * @param paramIndex the starting parameter index
+     */
+    private void appendInClause(StringBuilder query, List<Object> paramList, String fieldName,
+                                Set<Provider> providers, int paramIndex) {
+        query.append("AND ").append(fieldName).append(" IN (");
+        int i = 0;
+        for (Provider provider : providers) {
+            if (i > 0) {
+                query.append(",");
+            }
+            query.append("?").append(paramIndex + i);
+            paramList.add(provider.getProviderNo());
+            i++;
+        }
+        query.append(") ");
     }
 
     /**

@@ -283,7 +283,7 @@ public class TicklerListDTO implements Serializable {
     }
 
     public void setComments(List<TicklerCommentDTO> comments) {
-        this.comments = comments != null ? comments : new ArrayList<>();
+        this.comments = comments != null ? new ArrayList<>(comments) : new ArrayList<>();
     }
 
     public List<TicklerLinkDTO> getLinks() {
@@ -291,6 +291,6 @@ public class TicklerListDTO implements Serializable {
     }
 
     public void setLinks(List<TicklerLinkDTO> links) {
-        this.links = links != null ? links : new ArrayList<>();
+        this.links = links != null ? new ArrayList<>(links) : new ArrayList<>();
     }
 }

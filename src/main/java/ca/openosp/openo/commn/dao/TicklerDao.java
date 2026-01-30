@@ -74,27 +74,32 @@ public interface TicklerDao extends AbstractDao<Tickler> {
      * Returns a list of TicklerListDTOs matching the filter criteria with pagination.
      * <p>
      * This method uses JPQL constructor expressions to fetch only the fields needed
-     * for display, reducing database queries from ~25 per page load to exactly 2 queries.
-     * Comments are batch-loaded in a separate query.
+     * for display, reducing database queries from ~25 per page load to a small fixed set
+     * of queries. Comments and links are each batch-loaded in separate queries.
      * </p>
      *
-     * @param filter CustomFilter the filter criteria
-     * @param offset int the starting position for pagination
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @param offset int the starting position for pagination (0-based)
      * @param limit int the maximum number of results to return
-     * @return List of TicklerListDTO matching the filter with comments populated
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @since 2026-01-30
      */
-    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit);
+    List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit);
 
     /**
      * Returns a list of TicklerListDTOs matching the filter criteria.
      * <p>
      * This method uses JPQL constructor expressions to fetch only the fields needed
-     * for display, reducing database queries from ~25 per page load to exactly 2 queries.
-     * Comments are batch-loaded in a separate query.
+     * for display, reducing database queries from ~25 per page load to a small fixed set
+     * of queries. Comments and links are each batch-loaded in separate queries.
+     * Uses default pagination with MAX_LIST_RETURN_SIZE limit.
      * </p>
      *
-     * @param filter CustomFilter the filter criteria
-     * @return List of TicklerListDTO matching the filter with comments populated
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @since 2026-01-30
      */
-    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter);
+    List<TicklerListDTO> getTicklerDTOs(CustomFilter filter);
 }

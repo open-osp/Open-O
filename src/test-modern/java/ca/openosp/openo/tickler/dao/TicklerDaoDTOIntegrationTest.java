@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025. Magenta Health. All Rights Reserved.
+ * Copyright (c) 2026. Magenta Health. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -54,6 +54,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Tickler DAO DTO Projection Integration Tests")
 @Tag("integration")
 @Tag("database")
+@Tag("dao")
 @Tag("slow")
 @Tag("read")
 @Tag("dto")
@@ -119,17 +120,17 @@ public class TicklerDaoDTOIntegrationTest extends TicklerDaoBaseIntegrationTest 
         @Tag("query")
         @DisplayName("should return empty list when filter matches no ticklers")
         void shouldReturnEmptyList_whenFilterMatchesNoTicklers() {
-            // Given - filter for non-existent status combination
+            // Given - filter for a specific demographic that doesn't exist
             CustomFilter filter = new CustomFilter();
-            filter.setStatus("D"); // Deleted status - none in test data
-            filter.setPriority("Low"); // Low priority - none in test data
+            filter.setStatus("A");
+            filter.setDemographicNo("999999999"); // Non-existent demographic
 
             // When
             List<TicklerListDTO> results = ticklerDao.getTicklerDTOs(filter);
 
             // Then
             assertThat(results).isNotNull();
-            // May be empty or contain results depending on base test data
+            assertThat(results).isEmpty();
         }
 
         @Test

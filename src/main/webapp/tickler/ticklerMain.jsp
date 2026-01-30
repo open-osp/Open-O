@@ -873,7 +873,7 @@
                         </a>
                     </td>
                     <td class="<%=cellColour%>"><a href="javascript:void(0)"
-                                                   onClick="popupPage(600,800,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=tickler.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')">
+                                                   onClick="popupPage(600,800,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=Encode.forUriComponent(String.valueOf(tickler.getDemographicNo()))%>&displaymode=edit&dboperation=search_detail')">
                         <%=Encode.forHtmlContent(tickler.getDemographicLastName())%>,<%=Encode.forHtmlContent(tickler.getDemographicFirstName())%>
                     </a></td>
                     <td class="<%=cellColour%>"><%=Encode.forHtmlContent(tickler.getCreatorFormattedName())%>
@@ -945,7 +945,7 @@
                     </td>
                     <td class="<%=cellColour%> noprint">
                         <a href="javascript:void(0)" class="noteDialogLink"
-                           onClick="openNoteDialog('<%=tickler.getDemographicNo() %>','<%=tickler.getId() %>')"
+                           onClick="openNoteDialog('<%=Encode.forJavaScript(String.valueOf(tickler.getDemographicNo()))%>','<%=Encode.forJavaScript(String.valueOf(tickler.getId()))%>')"
                            title="Add Encounter Note">
                             <span class="glyphicon glyphicon-comment"></span>
                         </a>

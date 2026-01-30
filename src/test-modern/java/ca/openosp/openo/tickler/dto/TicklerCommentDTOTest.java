@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025. Magenta Health. All Rights Reserved.
+ * Copyright (c) 2026. Magenta Health. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Tag("unit")
 @Tag("fast")
+@Tag("read")
 @Tag("tickler")
 @Tag("dto")
 @DisplayName("TicklerCommentDTO")

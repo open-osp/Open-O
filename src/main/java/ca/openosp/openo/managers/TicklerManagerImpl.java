@@ -768,18 +768,48 @@ public class TicklerManagerImpl implements TicklerManager {
         return ticklers;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
     @Override
     public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter) {
         checkPrivilege(loggedInInfo, PRIVILEGE_READ);
 
-        return ticklerDao.getTicklerDTOs(filter);
+        List<TicklerListDTO> result = ticklerDao.getTicklerDTOs(filter);
+
+        // Log access when filtering by demographic (matches search_tickler_bydemo behavior)
+        if (filter.getDemographicNo() != null && !filter.getDemographicNo().isEmpty()) {
+            for (TicklerListDTO dto : result) {
+                LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklerDTOs",
+                        "ticklerId=" + dto.getId());
+            }
+        }
+
+        return result;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
     @Override
     public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit) {
         checkPrivilege(loggedInInfo, PRIVILEGE_READ);
 
-        return ticklerDao.getTicklerDTOs(filter, offset, limit);
+        List<TicklerListDTO> result = ticklerDao.getTicklerDTOs(filter, offset, limit);
+
+        // Log access when filtering by demographic (matches search_tickler_bydemo behavior)
+        if (filter.getDemographicNo() != null && !filter.getDemographicNo().isEmpty()) {
+            for (TicklerListDTO dto : result) {
+                LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklerDTOs",
+                        "ticklerId=" + dto.getId());
+            }
+        }
+
+        return result;
     }
 
     private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {

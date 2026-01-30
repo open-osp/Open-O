@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2025. Magenta Health. All Rights Reserved.
+ * Copyright (c) 2026. Magenta Health. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -37,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Tag("unit")
 @Tag("fast")
+@Tag("read")
 @Tag("tickler")
 @Tag("dto")
 @DisplayName("TicklerListDTO")
@@ -167,31 +168,34 @@ class TicklerListDTOTest {
         }
 
         @Test
-        @DisplayName("should return localized string for active status")
-        void shouldReturnLocalizedString_forActiveStatus() {
+        @DisplayName("should return non-empty string for active status")
+        void shouldReturnNonEmptyString_forActiveStatus() {
             dto.setStatus(Tickler.STATUS.A);
 
-            // The actual value depends on the message bundle
+            // Returns localized message, or the key itself as fallback
             String statusDesc = dto.getStatusDesc(Locale.ENGLISH);
             assertThat(statusDesc).isNotNull();
+            assertThat(statusDesc).isNotEmpty();
         }
 
         @Test
-        @DisplayName("should return localized string for completed status")
-        void shouldReturnLocalizedString_forCompletedStatus() {
+        @DisplayName("should return non-empty string for completed status")
+        void shouldReturnNonEmptyString_forCompletedStatus() {
             dto.setStatus(Tickler.STATUS.C);
 
             String statusDesc = dto.getStatusDesc(Locale.ENGLISH);
             assertThat(statusDesc).isNotNull();
+            assertThat(statusDesc).isNotEmpty();
         }
 
         @Test
-        @DisplayName("should return localized string for deleted status")
-        void shouldReturnLocalizedString_forDeletedStatus() {
+        @DisplayName("should return non-empty string for deleted status")
+        void shouldReturnNonEmptyString_forDeletedStatus() {
             dto.setStatus(Tickler.STATUS.D);
 
             String statusDesc = dto.getStatusDesc(Locale.ENGLISH);
             assertThat(statusDesc).isNotNull();
+            assertThat(statusDesc).isNotEmpty();
         }
     }
 

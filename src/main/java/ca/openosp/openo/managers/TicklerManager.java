@@ -158,27 +158,35 @@ public interface TicklerManager {
      * Returns a list of TicklerListDTOs matching the filter criteria.
      * <p>
      * This method provides optimized data retrieval for list views, reducing database
-     * queries from ~25 per page load (due to EAGER relationships) to exactly 2 queries.
+     * queries from ~25 per page load (due to EAGER relationships) to a small fixed set
+     * of queries (ticklers, comments, and links are each batch-loaded separately).
      * </p>
      *
-     * @param loggedInInfo LoggedInInfo the logged-in user context for security checks
-     * @param filter CustomFilter the filter criteria
-     * @return List of TicklerListDTO matching the filter with comments populated
+     * @param loggedInInfo LoggedInInfo the logged-in user context for security privilege checks
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @throws RuntimeException if user lacks required _tickler read privilege
+     * @since 2026-01-30
      */
-    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter);
+    List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter);
 
     /**
      * Returns a list of TicklerListDTOs matching the filter criteria with pagination.
      * <p>
      * This method provides optimized data retrieval for list views, reducing database
-     * queries from ~25 per page load (due to EAGER relationships) to exactly 2 queries.
+     * queries from ~25 per page load (due to EAGER relationships) to a small fixed set
+     * of queries (ticklers, comments, and links are each batch-loaded separately).
      * </p>
      *
-     * @param loggedInInfo LoggedInInfo the logged-in user context for security checks
-     * @param filter CustomFilter the filter criteria
-     * @param offset int the starting position for pagination
+     * @param loggedInInfo LoggedInInfo the logged-in user context for security privilege checks
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @param offset int the starting position for pagination (0-based)
      * @param limit int the maximum number of results to return
-     * @return List of TicklerListDTO matching the filter with comments populated
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @throws RuntimeException if user lacks required _tickler read privilege
+     * @since 2026-01-30
      */
-    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit);
+    List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit);
 }
