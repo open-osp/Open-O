@@ -23,7 +23,9 @@
 package org.oscarehr.managers;
 
 import org.oscarehr.common.dao.DigitalSignatureDao;
+import org.oscarehr.common.dao.PrescriptionDao;
 import org.oscarehr.common.model.DigitalSignature;
+import org.oscarehr.common.model.Prescription;
 import org.oscarehr.common.model.enumerator.ModuleType;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.EncryptionUtils;
@@ -42,7 +44,10 @@ public class DigitalSignatureManager implements OscarManagerBase {
     @Autowired
     private DigitalSignatureDao digitalSignatureDao;
 
-   
+    @Autowired
+    private PrescriptionDao prescriptionDao;
+
+
     public DigitalSignature getDigitalSignature(int id) {
         DigitalSignature digitalSignature = this.digitalSignatureDao.findDetached(id);
 
@@ -111,6 +116,15 @@ public class DigitalSignatureManager implements OscarManagerBase {
         }
 
         return null;
+    }
+
+    public DigitalSignature getDigitalSignatureByPrescriptionId(Integer prescriptionId) {
+        Prescription prescription = this.prescriptionDao.find(prescriptionId);
+        if (prescription == null || prescription.getDigitalSignatureId() == null) {
+            return null;
+        }
+
+        return this.getDigitalSignature(prescription.getDigitalSignatureId());
     }
 
 }
