@@ -226,11 +226,26 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
      * counting each non-overlapping occurrence of the specified substring. Used to count
      * EncryptedKey elements in SOAP XML content.</p>
      *
-     * @param text String the text to search within
-     * @param substring String the substring pattern to count
+     * <p><b>Input Validation:</b> The substring parameter must not be null or empty.
+     * If the text parameter is null or empty, the method returns 0 (no matches found).
+     * This defensive approach prevents NullPointerException and handles edge cases gracefully.</p>
+     *
+     * @param text String the text to search within (null or empty returns 0)
+     * @param substring String the substring pattern to count (must not be null or empty)
      * @return int the number of times the substring appears in the text (0 if not found)
+     * @throws IllegalArgumentException if substring is null or empty
      */
     private int countOccurrences(String text, String substring) {
+        // Validate substring parameter - must not be null or empty
+        if (substring == null || substring.isEmpty()) {
+            throw new IllegalArgumentException("substring must not be null or empty");
+        }
+
+        // Handle null or empty text gracefully - no matches possible
+        if (text == null || text.isEmpty()) {
+            return 0;
+        }
+
         int count = 0;
         int index = 0;
         while ((index = text.indexOf(substring, index)) != -1) {
