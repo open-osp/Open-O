@@ -45,6 +45,7 @@
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
 <%@ page import="ca.openosp.openo.tickler.dto.TicklerListDTO" %>
 <%@ page import="ca.openosp.openo.tickler.dto.TicklerCommentDTO" %>
+<%@ page import="ca.openosp.openo.tickler.dto.TicklerLinkDTO" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.owasp.encoder.Encode" %>
@@ -905,9 +906,9 @@
                             style="white-space:pre-wrap"><%=Encode.forHtmlContent(tickler.getMessage())%></span>
 
                         <%
-                            List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(tickler.getId().intValue());
+                            List<TicklerLinkDTO> linkList = tickler.getLinks();
                             if (linkList != null) {
-                                for (TicklerLink tl : linkList) {
+                                for (TicklerLinkDTO tl : linkList) {
                                     String type = tl.getTableName();
                         %>
 

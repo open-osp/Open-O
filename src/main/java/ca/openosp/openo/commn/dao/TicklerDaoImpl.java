@@ -41,6 +41,7 @@ import ca.openosp.openo.commn.model.CustomFilter;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.commn.model.Tickler;
 import ca.openosp.openo.tickler.dto.TicklerCommentDTO;
+import ca.openosp.openo.tickler.dto.TicklerLinkDTO;
 import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import org.springframework.stereotype.Repository;
 
@@ -432,6 +433,7 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         List<TicklerListDTO> ticklerDTOs = query.getResultList();
 
         loadCommentsForTicklerDTOs(ticklerDTOs);
+        loadLinksForTicklerDTOs(ticklerDTOs);
 
         return ticklerDTOs;
     }
@@ -630,6 +632,46 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
             TicklerListDTO tickler = ticklerMap.get(comment.getTicklerNo());
             if (tickler != null) {
                 tickler.getComments().add(comment);
+            }
+        }
+    }
+
+    /**
+     * Batch loads links for a list of TicklerListDTOs.
+     * Uses a single query to fetch all links and then maps them to their parent ticklers.
+     *
+     * @param ticklerDTOs List of TicklerListDTO to populate with links
+     */
+    @SuppressWarnings("unchecked")
+    private void loadLinksForTicklerDTOs(List<TicklerListDTO> ticklerDTOs) {
+        if (ticklerDTOs == null || ticklerDTOs.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ticklerIds = new ArrayList<>();
+        Map<Integer, TicklerListDTO> ticklerMap = new HashMap<>();
+
+        for (TicklerListDTO dto : ticklerDTOs) {
+            ticklerIds.add(dto.getId());
+            ticklerMap.put(dto.getId(), dto);
+            dto.setLinks(new ArrayList<>());
+        }
+
+        String linkSql = "SELECT NEW ca.openosp.openo.tickler.dto.TicklerLinkDTO(" +
+                "l.id, l.ticklerNo, l.tableName, l.tableId) " +
+                "FROM TicklerLink l " +
+                "WHERE l.ticklerNo IN (:ticklerIds) " +
+                "ORDER BY l.id ASC";
+
+        Query linkQuery = entityManager.createQuery(linkSql);
+        linkQuery.setParameter("ticklerIds", ticklerIds);
+
+        List<TicklerLinkDTO> links = linkQuery.getResultList();
+
+        for (TicklerLinkDTO link : links) {
+            TicklerListDTO tickler = ticklerMap.get(link.getTicklerNo());
+            if (tickler != null) {
+                tickler.getLinks().add(link);
             }
         }
     }

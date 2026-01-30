@@ -57,12 +57,14 @@ public class TicklerListDTO implements Serializable {
     private String assigneeLastName;
     private String assigneeFirstName;
     private List<TicklerCommentDTO> comments;
+    private List<TicklerLinkDTO> links;
 
     /**
      * Default constructor required for frameworks.
      */
     public TicklerListDTO() {
         this.comments = new ArrayList<>();
+        this.links = new ArrayList<>();
     }
 
     /**
@@ -101,6 +103,7 @@ public class TicklerListDTO implements Serializable {
         this.assigneeLastName = assigneeLastName;
         this.assigneeFirstName = assigneeFirstName;
         this.comments = new ArrayList<>();
+        this.links = new ArrayList<>();
     }
 
     /**
@@ -281,5 +284,13 @@ public class TicklerListDTO implements Serializable {
 
     public void setComments(List<TicklerCommentDTO> comments) {
         this.comments = comments != null ? comments : new ArrayList<>();
+    }
+
+    public List<TicklerLinkDTO> getLinks() {
+        return links;
+    }
+
+    public void setLinks(List<TicklerLinkDTO> links) {
+        this.links = links != null ? links : new ArrayList<>();
     }
 }
