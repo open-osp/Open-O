@@ -300,13 +300,7 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.18.0</version>
         </dependency>
-        <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
-        <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.11.0</version>
-        </dependency>
+        <!-- commons-beanutils removed: migrated to Spring BeanUtils (Phase 1 of issue #2202) -->
         <!-- Added higher version to avoid security issue, suggested by GitHub Dependabot -->
         <!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
         <dependency>

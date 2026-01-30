@@ -24,7 +24,7 @@
 
 package ca.openosp.openo.provider.web;
 
-import org.apache.commons.beanutils.BeanComparator;
+import java.util.Comparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 
@@ -1611,7 +1611,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
         List<Provider> ps = dao.getProviders();
-        Collections.sort(ps, new BeanComparator("lastName"));
+        Collections.sort(ps, Comparator.comparing(Provider::getLastName));
         try {
             for (Provider p : ps) {
                 if (!p.getProviderNo().equals("-1")) {
@@ -1774,7 +1774,7 @@ public class ProviderProperty2Action extends ActionSupport {
 
         ProviderDao dao = SpringUtils.getBean(ProviderDao.class);
         List<Provider> ps = dao.getProviders();
-        Collections.sort(ps, new BeanComparator("lastName"));
+        Collections.sort(ps, Comparator.comparing(Provider::getLastName));
         try {
             for (Provider p : ps) {
                 if (!p.getProviderNo().equals("-1")) {
