@@ -10,7 +10,7 @@
 #
 # Usage:
 # - Triggered on pushes to the develop branch
-# - Triggered on pull requests targeting protected branches
+# - Triggered on pull requests targeting the develop branch
 #
 # Requirements:
 # - SONAR_TOKEN secret must be configured in repository settings
