@@ -54,7 +54,7 @@ public class BeanUtilHlp {
         try {
             BeanWrapper beanWrapper = new BeanWrapperImpl(bean);
             Object propertyValue = beanWrapper.getPropertyValue(fieldName);
-            value = propertyValue != null ? propertyValue.toString() : "";
+            value = propertyValue != null ? propertyValue.toString() : "null";
         } catch (Exception ex) {
             MiscUtils.getLogger().error("Error", ex);
         }
