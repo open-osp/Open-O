@@ -99,7 +99,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ hashFiles('.devcontainer/development/**') }}
+          key: ${{ runner.os }}-buildx-sonar
           restore-keys: |
             ${{ runner.os }}-buildx-
 
@@ -107,7 +107,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .m2-cache
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', '**/dependencies-lock*.json') }}
+          key: ${{ runner.os }}-m2-sonar
           restore-keys: ${{ runner.os }}-m2
 
       - name: Cache SonarCloud packages
