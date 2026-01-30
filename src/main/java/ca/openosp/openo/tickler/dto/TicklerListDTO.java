@@ -31,7 +31,8 @@ import java.util.Locale;
  * Data Transfer Object for Tickler list views.
  * <p>
  * This DTO provides a lightweight representation of tickler data optimized for list display,
- * reducing database queries from ~25 per page load (due to EAGER relationships) to exactly 2 queries.
+ * reducing database queries from ~25 per page load (due to EAGER relationships) to a small, fixed set
+ * of batched queries (currently loading ticklers, their comments, and their links).
  * It contains only the fields needed for display in ticklerMain.jsp.
  * </p>
  *
