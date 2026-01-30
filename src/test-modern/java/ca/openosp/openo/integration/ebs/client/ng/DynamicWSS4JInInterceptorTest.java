@@ -53,6 +53,7 @@ import static org.mockito.Mockito.*;
  * <ul>
  *   <li>Action string generation - verifies correct number of Encryption actions</li>
  *   <li>Encryption detection - tests EncryptedKey counting logic</li>
+ *   <li>Security - validates DoS prevention via bounded EncryptedKey counting</li>
  *   <li>Edge cases - handles malformed messages and unexpected states</li>
  *   <li>Helper methods - validates countOccurrences utility function</li>
  * </ul>
@@ -292,6 +293,58 @@ class DynamicWSS4JInInterceptorTest {
         verify(mockMessage).setContent(eq(InputStream.class), streamCaptor.capture());
         assertThat(streamCaptor.getValue()).isNotNull();
         assertThat(streamCaptor.getValue()).isNotSameAs(inputStream);
+    }
+
+    @Test
+    @Tag("security")
+    @DisplayName("should cap EncryptedKey count at security limit to prevent DoS")
+    void shouldCapEncryptedKeyCount_atSecurityLimit() {
+        // Arrange - simulate malicious message with 100 EncryptedKey elements
+        String soapMessage = createSoapMessage(true, false, 100);
+        mockMessageContent(soapMessage);
+
+        // Act
+        interceptor.handleMessage(mockMessage);
+
+        // Assert - should cap at MAX_ENCRYPTED_KEYS (20)
+        String action = (String) wssProps.get(WSHandlerConstants.ACTION);
+        int encryptionCount = countOccurrences(action, WSHandlerConstants.ENCRYPTION);
+        assertThat(encryptionCount).isEqualTo(20);
+        assertThat(encryptionCount).isLessThan(100);
+    }
+
+    @Test
+    @Tag("security")
+    @DisplayName("should allow legitimate multi-file downloads under security limit")
+    void shouldAllowLegitimateMultiFileDownloads_underSecurityLimit() {
+        // Arrange - realistic MCEDT message with 10 files
+        String soapMessage = createSoapMessage(true, false, 10);
+        mockMessageContent(soapMessage);
+
+        // Act
+        interceptor.handleMessage(mockMessage);
+
+        // Assert - should process all 10 without capping
+        String action = (String) wssProps.get(WSHandlerConstants.ACTION);
+        int encryptionCount = countOccurrences(action, WSHandlerConstants.ENCRYPTION);
+        assertThat(encryptionCount).isEqualTo(10);
+    }
+
+    @Test
+    @Tag("security")
+    @DisplayName("should handle exactly at security limit boundary")
+    void shouldHandleExactly_atSecurityLimitBoundary() {
+        // Arrange - exactly 20 EncryptedKeys (at the limit)
+        String soapMessage = createSoapMessage(true, false, 20);
+        mockMessageContent(soapMessage);
+
+        // Act
+        interceptor.handleMessage(mockMessage);
+
+        // Assert - should process all 20 without warning
+        String action = (String) wssProps.get(WSHandlerConstants.ACTION);
+        int encryptionCount = countOccurrences(action, WSHandlerConstants.ENCRYPTION);
+        assertThat(encryptionCount).isEqualTo(20);
     }
 
     // Helper Methods

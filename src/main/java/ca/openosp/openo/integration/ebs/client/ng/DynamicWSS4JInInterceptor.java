@@ -37,6 +37,16 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
     private static final Logger logger = MiscUtils.getLogger();
 
     /**
+     * Maximum number of EncryptedKey elements allowed in a SOAP message.
+     *
+     * <p>This limit prevents denial-of-service attacks where malicious messages contain
+     * an excessive number of EncryptedKey substrings, which would cause excessive CPU and
+     * memory usage during action string construction. Real MCEDT multi-file downloads
+     * typically contain 1-5 files, so 20 provides a safe upper bound while preventing abuse.</p>
+     */
+    private static final int MAX_ENCRYPTED_KEYS = 20;
+
+    /**
      * Constructs a new DynamicWSS4JInInterceptor with the specified EDT client builder.
      *
      * <p>The interceptor is configured to run in the CXF RECEIVE phase, before WSS4J
@@ -82,7 +92,15 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
                 // Add one Encryption action for each EncryptedKey element
                 int encryptionCount;
                 if (detection.encryptedKeyCount > 0) {
-                    encryptionCount = detection.encryptedKeyCount;
+                    // Apply security limit to prevent DoS attacks from crafted messages
+                    // with excessive EncryptedKey substrings
+                    encryptionCount = Math.min(detection.encryptedKeyCount, MAX_ENCRYPTED_KEYS);
+                    if (detection.encryptedKeyCount > MAX_ENCRYPTED_KEYS) {
+                        logger.warn("DynamicWSS4JInInterceptor detected {} EncryptedKey elements, " +
+                                    "capping at {} to prevent denial-of-service. This may indicate " +
+                                    "a malicious message or malformed MCEDT response.",
+                                    detection.encryptedKeyCount, MAX_ENCRYPTED_KEYS);
+                    }
                 } else {
                     // Unexpected state: encryption detected but no EncryptedKey elements found.
                     // Log for diagnostics and default to a single Encryption action to preserve behavior.
