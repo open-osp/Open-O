@@ -14,7 +14,8 @@
 #
 # Requirements:
 # - SONAR_TOKEN secret must be configured in repository settings
-# - sonar.organization must be set in pom.xml (sonar.projectKey passed via CLI)
+# - Project must be set up on SonarCloud (https://sonarcloud.io)
+# - sonar.organization must be set in pom.xml
 #
 # License:
 # This GitHub Workflow file is part of the Open-O project and is subject
@@ -99,7 +100,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-sonar
+          key: ${{ runner.os }}-buildx-${{ hashFiles('.devcontainer/development/**') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
@@ -107,7 +108,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .m2-cache
-          key: ${{ runner.os }}-m2-sonar
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml', 'dependencies-lock.json') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Cache SonarCloud packages
@@ -162,7 +163,7 @@ jobs:
               echo '========================================='
               echo 'Running SonarCloud Analysis'
               echo '========================================='
-              mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+              mvn -B verify sonar:sonar \
                 -Dsonar.projectKey=openo-beta_Open-O \
                 -DskipTests \
                 -DskipModernTests=true \
