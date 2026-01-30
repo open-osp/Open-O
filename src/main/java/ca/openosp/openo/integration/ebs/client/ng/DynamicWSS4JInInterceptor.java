@@ -109,7 +109,15 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
         /** Indicates if SOAP body encryption is present (EncryptedData elements) */
         boolean hasEncryption;
 
-        /** Indicates if attachment encryption is present (Attachment-Content-Only marker) */
+        /**
+         * Indicates if attachment encryption is present (Attachment-Content-Only marker).
+         *
+         * <p>This flag is currently used only within {@link #detectEncryption(Message)} for
+         * diagnostic logging and troubleshooting of incoming messages. It is intentionally
+         * retained to support future enhancements where attachment-level encryption may
+         * need to be handled differently from SOAP body encryption in the WSS4J action
+         * configuration.</p>
+         */
         boolean hasAttachmentEncryption;
 
         /** Count of EncryptedKey elements in the SOAP message */
