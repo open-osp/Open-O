@@ -29,7 +29,7 @@ import java.util.Map;
  *   <li>Multiple files: Configures N Encryption actions for N EncryptedKey elements</li>
  * </ul>
  *
- * @since 2025-08-13
+ * @since 2026-01-30
  */
 public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message> {
 
