@@ -11,17 +11,7 @@ import ca.openosp.openo.utility.MiscUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
 
 /**
  * Custom CXF interceptor that dynamically configures WSS4J security processing based on
@@ -217,9 +207,11 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
             result.hasAttachmentEncryption = true;
         }
 
-        // Count EncryptedKey elements using robust XML parsing.
-        // Uses XPath with local-name() to handle namespace variations and formatting differences.
-        result.encryptedKeyCount = countEncryptedKeyElements(xml);
+        // Count EncryptedKey elements to determine how many Encryption actions are needed.
+        // Uses simple string matching which is sufficient for well-formed SOAP Security headers.
+        // MCEDT responses follow WS-Security standards and don't contain comments or CDATA in
+        // security headers that could cause false matches.
+        result.encryptedKeyCount = countOccurrences(xml, "<xenc:EncryptedKey");
 
         logger.debug("Encryption detection result: hasEncryption={}, hasAttachmentEncryption={}, encryptedKeyCount={}",
                 result.hasEncryption, result.hasAttachmentEncryption, result.encryptedKeyCount);
@@ -228,56 +220,38 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
     }
 
     /**
-     * Counts EncryptedKey elements in SOAP XML using robust XML/XPath parsing.
+     * Counts the number of occurrences of a substring within a larger text string.
      *
-     * <p>This method uses proper XML parsing with XPath to reliably count EncryptedKey elements
-     * regardless of formatting variations (whitespace, attributes, namespace prefixes). The
-     * XPath expression {@code count(//*[local-name()='EncryptedKey'])} matches all elements
-     * with local name 'EncryptedKey' in any namespace, making it resilient to SOAP/WS-Security
-     * formatting differences.</p>
+     * <p>This helper method performs a case-sensitive sequential search through the text,
+     * counting each non-overlapping occurrence of the specified substring. Used to count
+     * EncryptedKey elements in SOAP XML content.</p>
      *
-     * <p><b>Security Features:</b></p>
-     * <ul>
-     *   <li>XXE prevention via disabled DOCTYPE declarations</li>
-     *   <li>External entity prevention via disabled external general entities</li>
-     *   <li>Namespace-aware parsing for proper WS-Security handling</li>
-     * </ul>
+     * <p><b>Input Validation:</b> The substring parameter must not be null or empty.
+     * If the text parameter is null or empty, the method returns 0 (no matches found).
+     * This defensive approach prevents NullPointerException and handles edge cases gracefully.</p>
      *
-     * <p><b>Error Handling:</b> XML parsing failures propagate as RuntimeException wrapped
-     * in the outer catch block, preventing silent misconfiguration of WSS4J actions.</p>
-     *
-     * @param xml String the SOAP XML content to parse
-     * @return int the number of EncryptedKey elements found (0 if none)
-     * @throws RuntimeException if XML parsing fails
+     * @param text String the text to search within (null or empty returns 0)
+     * @param substring String the substring pattern to count (must not be null or empty)
+     * @return int the number of times the substring appears in the text (0 if not found)
+     * @throws IllegalArgumentException if substring is null or empty
      */
-    private int countEncryptedKeyElements(String xml) {
-        if (xml == null || xml.isEmpty()) {
+    private int countOccurrences(String text, String substring) {
+        // Validate substring parameter - must not be null or empty
+        if (substring == null || substring.isEmpty()) {
+            throw new IllegalArgumentException("substring must not be null or empty");
+        }
+
+        // Handle null or empty text gracefully - no matches possible
+        if (text == null || text.isEmpty()) {
             return 0;
         }
 
-        try {
-            // Configure secure XML parser with XXE prevention
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            factory.setXIncludeAware(false);
-            factory.setExpandEntityReferences(false);
-
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new InputSource(new StringReader(xml)));
-
-            // Use XPath to count EncryptedKey elements (namespace-agnostic)
-            XPath xpath = XPathFactory.newInstance().newXPath();
-            String expression = "count(//*[local-name()='EncryptedKey'])";
-            Double count = (Double) xpath.evaluate(expression, doc, XPathConstants.NUMBER);
-
-            return count.intValue();
-        } catch (Exception e) {
-            logger.error("Error parsing XML to count EncryptedKey elements", e);
-            throw new RuntimeException("Failed to parse SOAP message for encryption detection", e);
+        int count = 0;
+        int index = 0;
+        while ((index = text.indexOf(substring, index)) != -1) {
+            count++;
+            index += substring.length();
         }
+        return count;
     }
 }

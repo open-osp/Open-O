@@ -236,49 +236,43 @@ class DynamicWSS4JInInterceptorTest {
     @Test
     @DisplayName("should handle overlapping EncryptedKey patterns correctly")
     void shouldCountNonOverlapping_whenOverlappingPatternsExist() {
-        // Arrange - test with nested EncryptedKey elements (edge case for XML parsing)
+        // Arrange - test countOccurrences with edge case (nested EncryptedKey elements)
         String xml = "<?xml version=\"1.0\"?>" +
-                    "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                    "<soapenv:Header>" +
-                    "<wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">" +
-                    "<xenc:EncryptedData xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\"/>" +
-                    "<xenc:EncryptedKey xmlns:xenc=\"http://www.w3.org/2001/04/xmlenc#\">" +
-                    "<nested><xenc:EncryptedKey></xenc:EncryptedKey></nested>" +
-                    "</xenc:EncryptedKey>" +
+                    "<soap:Envelope>" +
+                    "<soap:Header>" +
+                    "<wsse:Security>" +
+                    "<xenc:EncryptedData/>" +
+                    "<xenc:EncryptedKey><nested><xenc:EncryptedKey></xenc:EncryptedKey></nested></xenc:EncryptedKey>" +
                     "</wsse:Security>" +
-                    "</soapenv:Header>" +
-                    "<soapenv:Body/>" +
-                    "</soapenv:Envelope>";
+                    "</soap:Header>" +
+                    "<soap:Body/>" +
+                    "</soap:Envelope>";
         mockMessageContent(xml);
 
         // Act
         interceptor.handleMessage(mockMessage);
 
-        // Assert - should count both nested EncryptedKey elements
+        // Assert - should count both occurrences
         String action = (String) wssProps.get(WSHandlerConstants.ACTION);
         int encryptionCount = countOccurrences(action, WSHandlerConstants.ENCRYPTION);
         assertThat(encryptionCount).isEqualTo(2);
     }
 
     @Test
-    @DisplayName("should count only valid EncryptedKey elements, not malformed XML")
-    void shouldCountOnlyValidEncryptedKeyElements() {
-        // Arrange - valid SOAP without any EncryptedKey elements
+    @DisplayName("should not count closing tags as EncryptedKey elements")
+    void shouldNotCountClosingTags_asEncryptedKeyElements() {
+        // Arrange - message with closing tags but no opening tags
         String soapMessage = "<?xml version=\"1.0\"?>" +
-                           "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                           "<soapenv:Header>" +
-                           "<wsse:Security xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">" +
-                           "<!-- No EncryptedKey elements -->" +
-                           "</wsse:Security>" +
-                           "</soapenv:Header>" +
-                           "<soapenv:Body/>" +
-                           "</soapenv:Envelope>";
+                           "<soap:Envelope>" +
+                           "</xenc:EncryptedKey>" +
+                           "</xenc:EncryptedKey>" +
+                           "</soap:Envelope>";
         mockMessageContent(soapMessage);
 
         // Act
         interceptor.handleMessage(mockMessage);
 
-        // Assert - should not detect encryption (no EncryptedKey elements)
+        // Assert - should not detect encryption
         String expectedAction = WSHandlerConstants.TIMESTAMP + " " + WSHandlerConstants.SIGNATURE;
         assertThat(wssProps.get(WSHandlerConstants.ACTION)).isEqualTo(expectedAction);
     }
