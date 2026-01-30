@@ -46,6 +46,7 @@ import ca.openosp.openo.managers.DashboardManager.ObjectName;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.SpringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,6 +115,9 @@ public class ManageDashboard2Action extends ActionSupport {
 
         if (indicatorTemplateFile != null) {
             try {
+                // Validate uploaded file before any file operations
+                PathValidationUtils.validateUpload(indicatorTemplateFile);
+
                 filebytes = Files.readAllBytes(indicatorTemplateFile.toPath());
             } catch (Exception e) {
                 json = objectMapper.createObjectNode();
@@ -195,6 +199,8 @@ public class ManageDashboard2Action extends ActionSupport {
                 // Validate using standard javax.xml.validation
                 javax.xml.validation.SchemaFactory schemaFactory =
                     javax.xml.validation.SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                // Enable secure processing to prevent XXE attacks
+                schemaFactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
                 schemaFactory.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
                 schemaFactory.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                 javax.xml.validation.Schema schema = schemaFactory.newSchema(schemaSource);
