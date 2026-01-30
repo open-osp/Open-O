@@ -101,7 +101,7 @@ public class Doc2PDF {
             configureJsoupForXhtml(doc);
 
             String cleanHtml = doc.html();
-            MiscUtils.getLogger().debug("Parsed HTML content, length: {} bytes", cleanHtml.length());
+            MiscUtils.getLogger().debug("Parsed HTML content, length: {} chars", cleanHtml.length());
             String documentTxt = AddAbsoluteTag(request, cleanHtml, uri);
 
             PrintPDFFromHTMLString(response, documentTxt);
