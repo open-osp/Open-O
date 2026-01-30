@@ -35,6 +35,7 @@ import java.util.Set;
 
 import ca.openosp.openo.commn.model.CustomFilter;
 import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 
 public interface TicklerDao extends AbstractDao<Tickler> {
 
@@ -68,4 +69,32 @@ public interface TicklerDao extends AbstractDao<Tickler> {
     public List<Tickler> getTicklers(CustomFilter filter);
 
     public int getNumTicklers(CustomFilter filter);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria with pagination.
+     * <p>
+     * This method uses JPQL constructor expressions to fetch only the fields needed
+     * for display, reducing database queries from ~25 per page load to exactly 2 queries.
+     * Comments are batch-loaded in a separate query.
+     * </p>
+     *
+     * @param filter CustomFilter the filter criteria
+     * @param offset int the starting position for pagination
+     * @param limit int the maximum number of results to return
+     * @return List of TicklerListDTO matching the filter with comments populated
+     */
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria.
+     * <p>
+     * This method uses JPQL constructor expressions to fetch only the fields needed
+     * for display, reducing database queries from ~25 per page load to exactly 2 queries.
+     * Comments are batch-loaded in a separate query.
+     * </p>
+     *
+     * @param filter CustomFilter the filter criteria
+     * @return List of TicklerListDTO matching the filter with comments populated
+     */
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter);
 }

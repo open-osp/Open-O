@@ -30,7 +30,9 @@ package ca.openosp.openo.commn.dao;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Query;
@@ -38,6 +40,8 @@ import javax.persistence.Query;
 import ca.openosp.openo.commn.model.CustomFilter;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.tickler.dto.TicklerCommentDTO;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -410,5 +414,223 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         if (priority != null && priority.equals("Low"))
             result = Tickler.PRIORITY.Low;
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit) {
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        String sql = getTicklerDTOQueryString(paramList, filter);
+
+        Query query = entityManager.createQuery(sql);
+        for (int x = 0; x < paramList.size(); x++) {
+            query.setParameter(x + 1, paramList.get(x));
+        }
+        query.setFirstResult(offset);
+        setLimit(query, limit);
+
+        List<TicklerListDTO> ticklerDTOs = query.getResultList();
+
+        loadCommentsForTicklerDTOs(ticklerDTOs);
+
+        return ticklerDTOs;
+    }
+
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter) {
+        return getTicklerDTOs(filter, 0, TicklerDao.MAX_LIST_RETURN_SIZE);
+    }
+
+    /**
+     * Builds the JPQL query string for TicklerListDTO projection.
+     *
+     * @param paramList List to populate with query parameters
+     * @param filter CustomFilter the filter criteria
+     * @return String the complete JPQL query
+     */
+    private String getTicklerDTOQueryString(List<Object> paramList, CustomFilter filter) {
+        int paramIndex = 1;
+        boolean includeMRPClause = true;
+        boolean includeProviderClause = true;
+        boolean includeAssigneeClause = true;
+        boolean includeStatusClause = true;
+        boolean includeClientClause = true;
+        boolean includeDemographicClause = true;
+        boolean includeProgramClause = true;
+        boolean includeMessage = true;
+        boolean includePriorityClause = true;
+        boolean includeServiceStartDateClause = false;
+        boolean includeServiceEndDateClause = false;
+
+        if (filter.getStartDate() != null) {
+            includeServiceStartDateClause = true;
+        }
+        if (filter.getEndDate() != null) {
+            includeServiceEndDateClause = true;
+        }
+
+        if (filter.getProgramId() == null || "".equals(filter.getProgramId()) || filter.getProgramId().equals("All Programs")) {
+            includeProgramClause = false;
+        }
+        if (filter.getProvider() == null || filter.getProvider().equals("All Providers") || filter.getProvider().equals("")) {
+            includeProviderClause = false;
+        }
+        if (filter.getAssignee() == null || filter.getAssignee().equals("All Providers") || filter.getAssignee().equals("")) {
+            includeAssigneeClause = false;
+        }
+        if (filter.getClient() == null || filter.getClient().equals("All Clients")) {
+            includeClientClause = false;
+        }
+        if (filter.getDemographicNo() == null || filter.getDemographicNo().equals("") || filter.getDemographicNo().equalsIgnoreCase("All Clients")) {
+            includeDemographicClause = false;
+        }
+        if (filter.getStatus().equals("") || filter.getStatus().equals("Z")) {
+            includeStatusClause = false;
+        }
+        if (filter.getPriority() == null || "".equals(filter.getPriority())) {
+            includePriorityClause = false;
+        }
+        if (filter.getMrp() == null || filter.getMrp().equals("All Providers") || filter.getMrp().equals("")) {
+            includeMRPClause = false;
+        }
+        if (filter.getMessage() == null || filter.getMessage().trim().isEmpty()) {
+            includeMessage = false;
+        }
+
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT NEW ca.openosp.openo.tickler.dto.TicklerListDTO(");
+        query.append("t.id, t.message, t.serviceDate, t.createDate, t.status, t.priority, ");
+        query.append("t.demographicNo, d.LastName, d.FirstName, ");
+        query.append("creator.LastName, creator.FirstName, ");
+        query.append("assignee.LastName, assignee.FirstName) ");
+        query.append("FROM Tickler t ");
+        query.append("LEFT JOIN Demographic d ON d.DemographicNo = t.demographicNo ");
+        query.append("LEFT JOIN Provider creator ON creator.ProviderNo = t.creator ");
+        query.append("LEFT JOIN Provider assignee ON assignee.ProviderNo = t.taskAssignedTo ");
+
+        if (includeMRPClause) {
+            query.append("WHERE d.ProviderNo = ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getMrp());
+        } else {
+            query.append("WHERE 1=1 ");
+        }
+
+        if (includeServiceStartDateClause) {
+            query.append("AND t.serviceDate >= ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getStartDate());
+        }
+
+        if (includeServiceEndDateClause) {
+            query.append("AND t.serviceDate <= ?").append(paramIndex++).append(" ");
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(filter.getEndDate());
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+
+            paramList.add(new Date(cal.getTime().getTime()));
+        }
+
+        if (includeProviderClause) {
+            query.append("AND t.creator IN (");
+            Set<Provider> pset = filter.getProviders();
+            Provider[] providers = pset.toArray(new Provider[pset.size()]);
+            for (int x = 0; x < providers.length; x++) {
+                if (x > 0) {
+                    query.append(",");
+                }
+                query.append("?").append(paramIndex++);
+                paramList.add(providers[x].getProviderNo());
+            }
+            query.append(") ");
+        }
+
+        if (includeAssigneeClause) {
+            query.append("AND t.taskAssignedTo IN (");
+            Set<Provider> pset = filter.getAssignees();
+            Provider[] providers = pset.toArray(new Provider[pset.size()]);
+            for (int x = 0; x < providers.length; x++) {
+                if (x > 0) {
+                    query.append(",");
+                }
+                query.append("?").append(paramIndex++);
+                paramList.add(providers[x].getProviderNo());
+            }
+            query.append(") ");
+        }
+
+        if (includeProgramClause) {
+            query.append("AND t.programId = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.valueOf(filter.getProgramId()));
+        }
+
+        if (includeStatusClause) {
+            query.append("AND t.status = ?").append(paramIndex++).append(" ");
+            paramList.add(convertStatus(filter.getStatus()));
+        }
+
+        if (includePriorityClause) {
+            query.append("AND t.priority = ?").append(paramIndex++).append(" ");
+            paramList.add(convertPriority(filter.getPriority()));
+        }
+
+        if (includeClientClause) {
+            query.append("AND t.demographicNo = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.parseInt(filter.getClient()));
+        }
+
+        if (includeDemographicClause) {
+            query.append("AND t.demographicNo = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.parseInt(filter.getDemographicNo()));
+        }
+
+        if (includeMessage) {
+            query.append("AND t.message = ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getMessage());
+        }
+
+        return query.toString();
+    }
+
+    /**
+     * Batch loads comments for a list of TicklerListDTOs.
+     * Uses a single query to fetch all comments and then maps them to their parent ticklers.
+     *
+     * @param ticklerDTOs List of TicklerListDTO to populate with comments
+     */
+    @SuppressWarnings("unchecked")
+    private void loadCommentsForTicklerDTOs(List<TicklerListDTO> ticklerDTOs) {
+        if (ticklerDTOs == null || ticklerDTOs.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ticklerIds = new ArrayList<>();
+        Map<Integer, TicklerListDTO> ticklerMap = new HashMap<>();
+
+        for (TicklerListDTO dto : ticklerDTOs) {
+            ticklerIds.add(dto.getId());
+            ticklerMap.put(dto.getId(), dto);
+            dto.setComments(new ArrayList<>());
+        }
+
+        String commentSql = "SELECT NEW ca.openosp.openo.tickler.dto.TicklerCommentDTO(" +
+                "c.id, c.ticklerNo, c.message, c.updateDate, p.LastName, p.FirstName) " +
+                "FROM TicklerComment c " +
+                "LEFT JOIN Provider p ON p.ProviderNo = c.providerNo " +
+                "WHERE c.ticklerNo IN (:ticklerIds) " +
+                "ORDER BY c.updateDate ASC";
+
+        Query commentQuery = entityManager.createQuery(commentSql);
+        commentQuery.setParameter("ticklerIds", ticklerIds);
+
+        List<TicklerCommentDTO> comments = commentQuery.getResultList();
+
+        for (TicklerCommentDTO comment : comments) {
+            TicklerListDTO tickler = ticklerMap.get(comment.getTicklerNo());
+            if (tickler != null) {
+                tickler.getComments().add(comment);
+            }
+        }
     }
 }

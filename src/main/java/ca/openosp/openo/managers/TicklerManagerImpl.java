@@ -58,6 +58,7 @@ import ca.openosp.openo.commn.model.TicklerComment;
 import ca.openosp.openo.commn.model.TicklerLink;
 import ca.openosp.openo.commn.model.TicklerTextSuggest;
 import ca.openosp.openo.commn.model.TicklerUpdate;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -765,6 +766,20 @@ public class TicklerManagerImpl implements TicklerManager {
         }
 
         return ticklers;
+    }
+
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter) {
+        checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+
+        return ticklerDao.getTicklerDTOs(filter);
+    }
+
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit) {
+        checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+
+        return ticklerDao.getTicklerDTOs(filter, offset, limit);
     }
 
     private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {
