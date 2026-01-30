@@ -823,13 +823,6 @@
         <!-- Detected as "Unused dependency" but don't remove it, it's using in jsp -->
         <!-- can be found in the local_repo folder -->
 
-        <!-- https://mvnrepository.com/artifact/com.github.jtidy/jtidy -->
-        <dependency>
-            <groupId>com.github.jtidy</groupId>
-            <artifactId>jtidy</artifactId>
-            <version>1.0.5</version>
-        </dependency>
-
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
