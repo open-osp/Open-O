@@ -46,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * optimized data retrieval for list views, reducing database queries from
  * ~25 per page load to exactly 2 queries.</p>
  *
- * @since 2025-01-30
+ * @since 2026-01-30
  * @see ca.openosp.openo.commn.dao.TicklerDao
  * @see TicklerListDTO
  * @see TicklerCommentDTO

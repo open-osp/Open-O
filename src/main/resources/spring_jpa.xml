@@ -17,6 +17,9 @@
             http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
             http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+	<!-- JavaMelody DataSource wrapper for SQL monitoring - TEMPORARY FOR DEV -->
+	<bean id="springDataSourceBeanPostProcessor" class="net.bull.javamelody.SpringDataSourceBeanPostProcessor"/>
+
 	<!-- DataSource -->
 	<!--
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

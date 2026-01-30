@@ -1,6 +1,6 @@
 //CHECKSTYLE:OFF
 /**
- * Copyright (c) 2025. Magenta Health. All Rights Reserved.
+ * Copyright (c) 2026. Magenta Health. All Rights Reserved.
  * This software is published under the GPL GNU General Public License.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ import java.util.Locale;
  * avoiding the EAGER-loaded Provider relationship on TicklerComment entities.
  * </p>
  *
- * @since 2025-01-30
+ * @since 2026-01-30
  */
 public class TicklerCommentDTO implements Serializable {
 

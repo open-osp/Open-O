@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Unit tests for TicklerListDTO helper methods.
  *
- * @since 2025-01-30
+ * @since 2026-01-30
  */
 @Tag("unit")
 @Tag("fast")

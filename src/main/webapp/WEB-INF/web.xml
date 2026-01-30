@@ -446,6 +446,7 @@
     <role-name>monitoring</role-name>
   </security-role>
 
+	 <!-- TEMPORARILY DISABLED FOR LOCAL DEV - DO NOT COMMIT
 	 <security-constraint>
 	     <web-resource-collection>
 	             <web-resource-name>Monitoring</web-resource-name>
@@ -454,11 +455,11 @@
 	     <auth-constraint>
 	             <role-name>monitoring</role-name>
 	     </auth-constraint>
-	     <!-- if SSL enabled (SSL and certificate must then be configured in the server) -->
 	     <user-data-constraint>
 	             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
 	     </user-data-constraint>
     </security-constraint>
+    -->
 	
 	<servlet>
 		<servlet-name>LoginResourceAction</servlet-name>
