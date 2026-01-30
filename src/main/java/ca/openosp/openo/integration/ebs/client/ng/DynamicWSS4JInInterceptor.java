@@ -166,53 +166,56 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
      *   <li>Count of xenc:EncryptedKey elements for action configuration</li>
      * </ul>
      *
+     * <p><b>Error Handling:</b> This method uses fail-fast error handling. Any I/O errors
+     * or exceptions are propagated to the caller rather than being swallowed, preventing
+     * silent misconfiguration of WSS4J security actions that would cause downstream
+     * decryption failures.</p>
+     *
      * @param message Message the CXF SOAP message to analyze for encryption
      * @return EncryptionDetectionResult containing encryption flags and EncryptedKey count
+     * @throws java.io.IOException if an error occurs reading the message content
      */
-    private EncryptionDetectionResult detectEncryption(Message message) {
+    private EncryptionDetectionResult detectEncryption(Message message) throws java.io.IOException {
         EncryptionDetectionResult result = new EncryptionDetectionResult();
-        try {
-            InputStream is = message.getContent(InputStream.class);
-            if (is == null) {
-                logger.warn("No InputStream found in message when detecting encryption.");
-                return result;
-            }
 
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            while ((len = is.read(buffer)) != -1) {
-                bos.write(buffer, 0, len);
-            }
-
-            String xml = bos.toString("UTF-8");
-
-            // Reset stream so CXF can still process it downstream
-            message.setContent(InputStream.class,
-                    new java.io.ByteArrayInputStream(bos.toByteArray()));
-
-            // Detect body encryption markers
-            if (xml.contains("<wsse:EncryptedData") || xml.contains("<xenc:EncryptedData")) {
-                result.hasEncryption = true;
-            }
-
-            // Detect attachment encryption markers
-            if (xml.contains("Attachment-Content-Only")) {
-                result.hasAttachmentEncryption = true;
-            }
-
-            // Count EncryptedKey elements to determine how many Encryption actions are needed.
-            // Uses simple string matching which is sufficient for well-formed SOAP Security headers.
-            // MCEDT responses follow WS-Security standards and don't contain comments or CDATA in
-            // security headers that could cause false matches.
-            result.encryptedKeyCount = countOccurrences(xml, "<xenc:EncryptedKey");
-
-            logger.debug("Encryption detection result: hasEncryption={}, hasAttachmentEncryption={}, encryptedKeyCount={}",
-                    result.hasEncryption, result.hasAttachmentEncryption, result.encryptedKeyCount);
-
-        } catch (Exception e) {
-            logger.error("Error reading message content for encryption detection", e);
+        InputStream is = message.getContent(InputStream.class);
+        if (is == null) {
+            logger.warn("No InputStream found in message when detecting encryption.");
+            return result;
         }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = is.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+
+        String xml = bos.toString("UTF-8");
+
+        // Reset stream so CXF can still process it downstream
+        message.setContent(InputStream.class,
+                new java.io.ByteArrayInputStream(bos.toByteArray()));
+
+        // Detect body encryption markers
+        if (xml.contains("<wsse:EncryptedData") || xml.contains("<xenc:EncryptedData")) {
+            result.hasEncryption = true;
+        }
+
+        // Detect attachment encryption markers
+        if (xml.contains("Attachment-Content-Only")) {
+            result.hasAttachmentEncryption = true;
+        }
+
+        // Count EncryptedKey elements to determine how many Encryption actions are needed.
+        // Uses simple string matching which is sufficient for well-formed SOAP Security headers.
+        // MCEDT responses follow WS-Security standards and don't contain comments or CDATA in
+        // security headers that could cause false matches.
+        result.encryptedKeyCount = countOccurrences(xml, "<xenc:EncryptedKey");
+
+        logger.debug("Encryption detection result: hasEncryption={}, hasAttachmentEncryption={}, encryptedKeyCount={}",
+                result.hasEncryption, result.hasAttachmentEncryption, result.encryptedKeyCount);
+
         return result;
     }
 
