@@ -79,9 +79,13 @@ public class TicklerCommentDTO implements Serializable {
         if (providerLastName == null && providerFirstName == null) {
             return "";
         }
-        String last = providerLastName != null ? providerLastName : "";
-        String first = providerFirstName != null ? providerFirstName : "";
-        return last + ", " + first;
+        if (providerLastName == null) {
+            return providerFirstName;
+        }
+        if (providerFirstName == null) {
+            return providerLastName;
+        }
+        return providerLastName + ", " + providerFirstName;
     }
 
     /**

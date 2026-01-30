@@ -29,11 +29,13 @@ package ca.openosp.openo.commn.dao;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 
@@ -432,7 +434,7 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         ArrayList<Object> paramList = new ArrayList<Object>();
         String sql = getTicklerDTOQueryString(paramList, filter);
 
-        Query query = entityManager.createQuery(sql);
+        Query query = entityManager.createQuery(sql, TicklerListDTO.class);
         for (int x = 0; x < paramList.size(); x++) {
             query.setParameter(x + 1, paramList.get(x));
         }
@@ -625,32 +627,30 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
             return;
         }
 
-        List<Integer> ticklerIds = new ArrayList<>();
-        Map<Integer, TicklerListDTO> ticklerMap = new HashMap<>();
-
-        for (TicklerListDTO dto : ticklerDTOs) {
-            ticklerIds.add(dto.getId());
-            ticklerMap.put(dto.getId(), dto);
-            dto.setComments(new ArrayList<>());
-        }
+        List<Integer> ticklerIds = ticklerDTOs.stream()
+                .map(TicklerListDTO::getId)
+                .collect(Collectors.toList());
 
         String commentSql = "SELECT NEW ca.openosp.openo.tickler.dto.TicklerCommentDTO(" +
-                "c.id, c.ticklerNo, c.message, c.updateDate, p.LastName, p.FirstName) " +
+                "c.id, c.ticklerNo, c.message, c.updateDate, " +
+                "c.provider.LastName, c.provider.FirstName) " +
                 "FROM TicklerComment c " +
-                "LEFT JOIN Provider p ON p.ProviderNo = c.providerNo " +
+                "LEFT JOIN c.provider " +
                 "WHERE c.ticklerNo IN (:ticklerIds) " +
                 "ORDER BY c.updateDate ASC";
 
-        Query commentQuery = entityManager.createQuery(commentSql);
-        commentQuery.setParameter("ticklerIds", ticklerIds);
+        List<TicklerCommentDTO> allComments = entityManager
+                .createQuery(commentSql, TicklerCommentDTO.class)
+                .setParameter("ticklerIds", ticklerIds)
+                .getResultList();
 
-        List<TicklerCommentDTO> comments = commentQuery.getResultList();
+        Map<Integer, List<TicklerCommentDTO>> commentsByTickler = allComments.stream()
+                .collect(Collectors.groupingBy(TicklerCommentDTO::getTicklerNo));
 
-        for (TicklerCommentDTO comment : comments) {
-            TicklerListDTO tickler = ticklerMap.get(comment.getTicklerNo());
-            if (tickler != null) {
-                tickler.getComments().add(comment);
-            }
+        for (TicklerListDTO tickler : ticklerDTOs) {
+            tickler.setComments(
+                    commentsByTickler.getOrDefault(tickler.getId(), Collections.emptyList())
+            );
         }
     }
 

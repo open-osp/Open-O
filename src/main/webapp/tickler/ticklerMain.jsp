@@ -835,10 +835,14 @@
                     if (targetDemographic > 0) {
                         filter.setDemographicNo(String.valueOf(targetDemographic));
                         // Preserve old search_tickler_bydemo behavior: when viewing a specific
-                        // demographic's ticklers, ignore MRP/provider/assignee filters
+                        // demographic's ticklers, only filter by demographic, status, and date range
                         filter.setMrp(null);
                         filter.setProvider(null);
                         filter.setAssignee(null);
+                        filter.setPriority(null);
+                        filter.setProgramId(null);
+                        filter.setMessage(null);
+                        filter.setClient(null);
                     }
 
                     // Use DTO projection for optimized list view (reduces queries from ~25 to 3)

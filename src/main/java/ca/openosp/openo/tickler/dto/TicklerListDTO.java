@@ -116,9 +116,13 @@ public class TicklerListDTO implements Serializable {
         if (demographicLastName == null && demographicFirstName == null) {
             return "";
         }
-        String last = demographicLastName != null ? demographicLastName : "";
-        String first = demographicFirstName != null ? demographicFirstName : "";
-        return last + ", " + first;
+        if (demographicLastName == null) {
+            return demographicFirstName;
+        }
+        if (demographicFirstName == null) {
+            return demographicLastName;
+        }
+        return demographicLastName + ", " + demographicFirstName;
     }
 
     /**
@@ -130,9 +134,13 @@ public class TicklerListDTO implements Serializable {
         if (creatorLastName == null && creatorFirstName == null) {
             return NOT_APPLICABLE;
         }
-        String last = creatorLastName != null ? creatorLastName : "";
-        String first = creatorFirstName != null ? creatorFirstName : "";
-        return last + ", " + first;
+        if (creatorLastName == null) {
+            return creatorFirstName;
+        }
+        if (creatorFirstName == null) {
+            return creatorLastName;
+        }
+        return creatorLastName + ", " + creatorFirstName;
     }
 
     /**
@@ -144,9 +152,13 @@ public class TicklerListDTO implements Serializable {
         if (assigneeLastName == null && assigneeFirstName == null) {
             return NOT_APPLICABLE;
         }
-        String last = assigneeLastName != null ? assigneeLastName : "";
-        String first = assigneeFirstName != null ? assigneeFirstName : "";
-        return last + ", " + first;
+        if (assigneeLastName == null) {
+            return assigneeFirstName;
+        }
+        if (assigneeFirstName == null) {
+            return assigneeLastName;
+        }
+        return assigneeLastName + ", " + assigneeFirstName;
     }
 
     /**
