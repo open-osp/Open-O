@@ -834,6 +834,11 @@
                     int targetDemographic = Integer.parseInt(demographic_no);
                     if (targetDemographic > 0) {
                         filter.setDemographicNo(String.valueOf(targetDemographic));
+                        // Preserve old search_tickler_bydemo behavior: when viewing a specific
+                        // demographic's ticklers, ignore MRP/provider/assignee filters
+                        filter.setMrp(null);
+                        filter.setProvider(null);
+                        filter.setAssignee(null);
                     }
 
                     // Use DTO projection for optimized list view (reduces queries from ~25 to 3)
@@ -945,7 +950,7 @@
                     </td>
                     <td class="<%=cellColour%> noprint">
                         <a href="javascript:void(0)" class="noteDialogLink"
-                           onClick="openNoteDialog('<%=Encode.forJavaScript(String.valueOf(tickler.getDemographicNo()))%>','<%=Encode.forJavaScript(String.valueOf(tickler.getId()))%>')"
+                           onClick="openNoteDialog('<%=Encode.forJavaScriptAttribute(String.valueOf(tickler.getDemographicNo()))%>','<%=Encode.forJavaScriptAttribute(String.valueOf(tickler.getId()))%>')"
                            title="Add Encounter Note">
                             <span class="glyphicon glyphicon-comment"></span>
                         </a>

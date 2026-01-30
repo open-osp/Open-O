@@ -563,6 +563,11 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
             paramList.add(filter.getMessage());
         }
 
+        // ORDER BY clause for deterministic results and stable pagination
+        String orderBy = "ORDER BY t.serviceDate ";
+        orderBy += "desc".equalsIgnoreCase(filter.getSort_order()) ? "DESC " : "ASC ";
+        query.append(orderBy);
+
         return query.toString();
     }
 
