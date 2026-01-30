@@ -164,6 +164,7 @@ jobs:
               echo 'Running SonarCloud Analysis'
               echo '========================================='
               mvn -B verify sonar:sonar \
+                -Dsonar.host.url=https://sonarcloud.io \
                 -Dsonar.projectKey=openo-beta_Open-O \
                 -DskipTests \
                 -DskipModernTests=true \
