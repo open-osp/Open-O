@@ -80,7 +80,17 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
                             .append(WSHandlerConstants.SIGNATURE);
 
                 // Add one Encryption action for each EncryptedKey element
-                int encryptionCount = detection.encryptedKeyCount > 0 ? detection.encryptedKeyCount : 1;
+                int encryptionCount;
+                if (detection.encryptedKeyCount > 0) {
+                    encryptionCount = detection.encryptedKeyCount;
+                } else {
+                    // Unexpected state: encryption detected but no EncryptedKey elements found.
+                    // Log for diagnostics and default to a single Encryption action to preserve behavior.
+                    logger.warn("DynamicWSS4JInInterceptor detected encryption (hasEncryption=true) " +
+                                "but found zero EncryptedKey elements. Defaulting to a single " +
+                                "Encryption action. This may indicate an unexpected message structure.");
+                    encryptionCount = 1;
+                }
                 for (int i = 0; i < encryptionCount; i++) {
                     actionBuilder.append(" ").append(WSHandlerConstants.ENCRYPTION);
                 }
