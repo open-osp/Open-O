@@ -183,7 +183,10 @@ public class DynamicWSS4JInInterceptor extends AbstractPhaseInterceptor<Message>
                 result.hasAttachmentEncryption = true;
             }
 
-            // Count EncryptedKey elements to determine how many Encryption actions are needed
+            // Count EncryptedKey elements to determine how many Encryption actions are needed.
+            // Uses simple string matching which is sufficient for well-formed SOAP Security headers.
+            // MCEDT responses follow WS-Security standards and don't contain comments or CDATA in
+            // security headers that could cause false matches.
             result.encryptedKeyCount = countOccurrences(xml, "<xenc:EncryptedKey");
 
             logger.debug("Encryption detection result: hasEncryption={}, hasAttachmentEncryption={}, encryptedKeyCount={}",
