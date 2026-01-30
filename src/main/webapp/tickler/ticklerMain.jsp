@@ -33,14 +33,10 @@
 <%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@ page import="ca.openosp.openo.commn.dao.ViewDao" %>
 <%@ page import="ca.openosp.openo.commn.model.View" %>
-<%@ page import="ca.openosp.openo.commn.model.TicklerLink" %>
-<%@ page import="ca.openosp.openo.commn.dao.TicklerLinkDao" %>
 <%@ page import="ca.openosp.MyDateFormat" %>
 <%@ page import="ca.openosp.OscarProperties" %>
 <%@ page import="ca.openosp.openo.commn.model.Site" %>
 <%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
-<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
-<%@ page import="ca.openosp.openo.commn.model.TicklerComment" %>
 <%@ page import="ca.openosp.openo.commn.model.CustomFilter" %>
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
 <%@ page import="ca.openosp.openo.tickler.dto.TicklerListDTO" %>
@@ -74,7 +70,6 @@
 %>
 <%!
     TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-    TicklerLinkDao ticklerLinkDao = SpringUtils.getBean(TicklerLinkDao.class);
     ViewDao viewDao = SpringUtils.getBean(ViewDao.class);
 %>
 
@@ -837,29 +832,20 @@
                     filter.setSort_order("desc");
 
                     int targetDemographic = Integer.parseInt(demographic_no);
-
-                    // Use DTO projection for the main tickler list (non-demographic-filtered case)
-                    // This reduces database queries from ~25 to 2 per page load
-                    List<TicklerListDTO> ticklerDTOs = Collections.emptyList();
-                    List<Tickler> ticklerEntities = Collections.emptyList();
-                    boolean useDTOs = (targetDemographic <= 0);
-
                     if (targetDemographic > 0) {
-                        // demographic-specific view uses entity method (lower traffic, more detail needed)
-                        ticklerEntities = ticklerManager.search_tickler_bydemo(loggedInInfo, targetDemographic, ticklerview, filter.getStartDate(), filter.getEndDate());
-                    } else {
-                        // main list view uses optimized DTO projection
-                        ticklerDTOs = ticklerManager.getTicklerDTOs(loggedInInfo, filter);
+                        filter.setDemographicNo(String.valueOf(targetDemographic));
                     }
+
+                    // Use DTO projection for optimized list view (reduces queries from ~25 to 3)
+                    List<TicklerListDTO> ticklers = ticklerManager.getTicklerDTOs(loggedInInfo, filter);
 
                     String numDaysUntilWarn = OscarProperties.getInstance().getProperty("tickler_warn_period");
                     if (numDaysUntilWarn == null || numDaysUntilWarn.isEmpty()) {
                         numDaysUntilWarn = "0";
                     }
 
-                    // Process ticklers using DTOs when available, fall back to entities for demographic-specific view
-                    if (useDTOs) {
-                        for (TicklerListDTO tickler : ticklerDTOs) {
+                    // Single rendering path using DTOs
+                    for (TicklerListDTO tickler : ticklers) {
                             LocalDateTime serviceDate = tickler.getServiceDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                             LocalDateTime currentDate = LocalDateTime.now();
 
@@ -1003,160 +989,7 @@
                 </tr>
                 <% }
                 }
-                    } else {
-                        // Fall back to entity-based rendering for demographic-specific view
-                        for (Tickler tickler : ticklerEntities) {
-                            Demographic demo = tickler.getDemographic();
-                            LocalDateTime serviceDate = tickler.getServiceDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                        LocalDateTime currentDate = LocalDateTime.now();
-
-                        long daysDifference = Duration.between(serviceDate, currentDate).toDays();
-                        long ticklerWarnDays = Long.parseLong(numDaysUntilWarn);
-                        boolean ignoreWarning = (ticklerWarnDays <= 0);
-                        boolean warning = false;
-
-                        //Set the colour of the table cell
-                        String warnColour = "";
-                        if (!ignoreWarning && (daysDifference >= ticklerWarnDays)) {
-                            warnColour = "Red";
-                            warning = true;
-                        }
-
-                        String cellColour = warnColour;
                 %>
-
-                <tr <%=warning ? "class='error'" : ""%> >
-                    <td class="<%=cellColour%>"><input type="checkbox" name="checkbox" value="<%=tickler.getId()%>"
-                                                       class="noprint"></td>
-                    <td class="<%=cellColour%>">
-                        <a href="javascript:void(0)" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="tickler.ticklerMain.editTickler"/>"
-                           onClick="window.open('<%= request.getContextPath() %>/tickler/ticklerEdit.jsp?tickler_no=<%=tickler.getId()%>', 'edit_tickler', 'width=800, height=650')">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </a>
-                    </td>
-                    <td class="<%=cellColour%>"><a href="javascript:void(0)"
-                                                   onClick="popupPage(600,800,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demo.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')">
-                        <%=Encode.forHtmlContent(demo.getLastName())%>,<%=Encode.forHtmlContent(demo.getFirstName())%>
-                    </a></td>
-                    <td class="<%=cellColour%>"><%=tickler.getProvider() == null ? "N/A" : Encode.forHtmlContent(tickler.getProvider().getFormattedName())%>
-                    </td>
-                    <td class="<%=cellColour%>"><%=dateOnlyFormat.format(tickler.getServiceDate())%>
-                    </td>
-                    <td class="<%=cellColour%>"><%=datetimeFormat.format(tickler.getCreateDate())%>
-                    </td>
-                    <td class="<%=cellColour%>"><%=tickler.getPriority()%>
-                    </td>
-                    <td class="<%=cellColour%>"><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%>
-                    </td>
-                    <td class="<%=cellColour%>"><%=tickler.getStatusDesc(locale)%>
-                    </td>
-                    <td class="<%=cellColour%>"><span
-                            style="white-space:pre-wrap"><%=Encode.forHtmlContent(tickler.getMessage())%></span>
-
-                        <%
-                            List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(tickler.getId().intValue());
-                            if (linkList != null) {
-                                for (TicklerLink tl : linkList) {
-                                    String type = tl.getTableName();
-                        %>
-
-                        <%
-                            if (LabResultData.isMDS(type)) {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('SegmentDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                        } else if (LabResultData.isCML(type)) {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('<%= request.getContextPath() %>/lab/CA/ON/CMLDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                        } else if (LabResultData.isHL7TEXT(type)) {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('<%= request.getContextPath() %>/lab/CA/ALL/labDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                        } else if (LabResultData.isDocument(type)) {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('<%=request.getContextPath()%>/documentManager/ManageDocument.do?method=display&doc_no=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                        } else if (LabResultData.isHRM(type)) {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('<%=request.getContextPath()%>/hospitalReportManager/Display.do?id=<%=tl.getTableId()%>&segmentID=<%=tl.getTableId()%>')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                        } else {
-                        %>
-                        <a title="View attachment"
-                           href="javascript:reportWindow('<%= request.getContextPath() %>/lab/CA/BC/labDisplay.jsp?segmentID=<%=tl.getTableId()%>&providerNo=<%=user_no%>&searchProviderNo=<%=user_no%>&status=')"><i
-                                class="glyphicon glyphicon-paperclip"></i></a>
-                        <%
-                            }
-                        %>
-                        <%
-                                }
-                            }
-                        %>
-
-                    </td>
-                    <td class="<%=cellColour%> noprint">
-                        <a href="javascript:void(0)" class="noteDialogLink"
-                           onClick="openNoteDialog('<%=demo.getDemographicNo() %>','<%=tickler.getId() %>')"
-                           title="Add Encounter Note">
-                            <span class="glyphicon glyphicon-comment"></span>
-                        </a>
-                    </td>
-                    <td><%=tickler.getId()%>
-                    </td>
-                </tr>
-                <% Set<TicklerComment> tcomments = tickler.getComments();
-                    for (TicklerComment tc : tcomments) {
-                        // Ugly and wrong. I know. No time to rewrite the bad part.
-                        Provider commentProvider = tc.getProvider();
-                        String formattedName = "";
-                        if (commentProvider != null) {
-                            formattedName = commentProvider.getFormattedName();
-                        }
-                %>
-
-
-                <tr class="followup-comment-<%=tickler.getId()%> comment-row no-sort">
-                    <td></td>
-                    <td></td>
-                    <td><%=Encode.forHtmlContent(demo.getLastName())%>,<%=Encode.forHtmlContent(demo.getFirstName())%>
-                    </td>
-                    <td class="no-sort"><%=Encode.forHtmlContent(formattedName)%>
-                    </td>
-                    <td><%=dateOnlyFormat.format(tickler.getServiceDate())%>
-                    </td>
-
-                    <td class="no-sort">
-                        <% if (tc.isUpdateDateToday()) { %>
-                        <%=timeOnlyFormat.format(tc.getUpdateDate())%>
-                        <% } else { %>
-                        <%=datetimeFormat.format(tc.getUpdateDate())%>
-                        <% } %>
-                    </td>
-
-                    <td><%=tickler.getPriority()%>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td class="no-sort" style="white-space:pre-wrap"><%=Encode.forHtmlContent(tc.getMessage())%>
-                    </td>
-                    <td></td>
-                    <td><%=tickler.getId()%>
-                    </td>
-                </tr>
-                <% }
-                }
-                } // end of useDTOs else block %>
                 </tbody>
             </table>
 
