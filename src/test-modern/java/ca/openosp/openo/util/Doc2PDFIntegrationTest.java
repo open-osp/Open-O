@@ -25,6 +25,7 @@
 
 package ca.openosp.openo.util;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -46,19 +47,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Doc2PDF Integration Tests")
 class Doc2PDFIntegrationTest extends OpenOTestBase {
 
-    @Test
-    @Tag("parse")
-    @DisplayName("should parse simple HTML string to PDF")
-    void shouldParseSimpleHtmlToPdf() {
-        // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
+    private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
+
+    @BeforeEach
+    void setUp() {
+        request = new MockHttpServletRequest();
         request.setProtocol("HTTP/1.1");
         request.setRemoteHost("localhost");
         request.setServerPort(8080);
         request.setContextPath("/openo");
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        response = new MockHttpServletResponse();
+    }
 
+    @Test
+    @Tag("parse")
+    @DisplayName("should produce PDF when simple HTML is provided")
+    void shouldProducePdf_whenSimpleHtmlProvided() {
+        // Given
         String simpleHtml = "<html><body><p>Hello World</p></body></html>";
 
         // When
@@ -71,17 +78,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
 
     @Test
     @Tag("parse")
-    @DisplayName("should handle malformed HTML with missing closing tags")
-    void shouldHandleMalformedHtml() {
+    @DisplayName("should produce PDF when malformed HTML is provided")
+    void shouldProducePdf_whenMalformedHtmlProvided() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         String malformedHtml = "<html><body><p>Unclosed paragraph<div>Nested</html>";
 
         // When
@@ -95,17 +94,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
     @Test
     @Tag("parse")
     @Tag("encoding")
-    @DisplayName("should handle French Canadian characters in HTML")
-    void shouldHandleFrenchCanadianCharacters() {
+    @DisplayName("should preserve encoding when French Canadian characters are present")
+    void shouldPreserveEncoding_whenFrenchCanadianCharactersPresent() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         // Test with French Canadian patient names
         String htmlWithFrench = "<html><body>" +
             "<h1>Patient: François Côté</h1>" +
@@ -124,17 +115,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
     @Test
     @Tag("parse")
     @Tag("encoding")
-    @DisplayName("should handle medical symbols and special characters")
-    void shouldHandleMedicalSymbols() {
+    @DisplayName("should preserve symbols when medical characters are present")
+    void shouldPreserveSymbols_whenMedicalCharactersPresent() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         // Test with medical symbols
         String htmlWithSymbols = "<html><body>" +
             "<p>Dosage: 500μg (micrograms)</p>" +
@@ -153,17 +136,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
 
     @Test
     @Tag("parse")
-    @DisplayName("should handle empty HTML string")
-    void shouldHandleEmptyHtml() {
+    @DisplayName("should produce PDF when empty HTML is provided")
+    void shouldProducePdf_whenEmptyHtmlProvided() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         String emptyHtml = "";
 
         // When
@@ -176,17 +151,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
     @Test
     @Tag("parse")
     @Tag("binary")
-    @DisplayName("should convert HTML string to binary PDF")
-    void shouldConvertHtmlToBinary() {
+    @DisplayName("should return Base64 when converting to binary")
+    void shouldReturnBase64_whenConvertingToBinary() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         String html = "<html><body><h1>Test Document</h1><p>Test content</p></body></html>";
 
         // When
@@ -202,17 +169,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
     @Test
     @Tag("parse")
     @Tag("medical")
-    @DisplayName("should handle realistic medical content")
-    void shouldHandleRealisticMedicalContent() {
+    @DisplayName("should produce PDF when realistic medical content is provided")
+    void shouldProducePdf_whenRealisticMedicalContentProvided() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         // Realistic medical note
         String medicalHtml = "<html><body>" +
             "<h2>Clinical Note</h2>" +
@@ -243,17 +202,9 @@ class Doc2PDFIntegrationTest extends OpenOTestBase {
 
     @Test
     @Tag("parse")
-    @DisplayName("should handle HTML with tables and lists")
-    void shouldHandleComplexHtmlStructure() {
+    @DisplayName("should produce PDF when complex HTML structure is provided")
+    void shouldProducePdf_whenComplexHtmlStructureProvided() {
         // Given
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setProtocol("HTTP/1.1");
-        request.setRemoteHost("localhost");
-        request.setServerPort(8080);
-        request.setContextPath("/openo");
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
         String complexHtml = "<html><body>" +
             "<table border='1'>" +
             "<tr><th>Medication</th><th>Dose</th><th>Frequency</th></tr>" +

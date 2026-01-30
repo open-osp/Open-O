@@ -62,6 +62,31 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 public class Doc2PDF {
     private static Logger logger = MiscUtils.getLogger();
 
+    /**
+     * Configure Jsoup document for XHTML output compatible with iText XMLWorkerHelper.
+     * This ensures consistent HTML cleaning across all PDF conversion methods.
+     *
+     * @param doc The Jsoup document to configure
+     * @since 2026-01-29
+     */
+    private static void configureJsoupForXhtml(org.jsoup.nodes.Document doc) {
+        doc.outputSettings()
+            .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+            .escapeMode(Entities.EscapeMode.xhtml)
+            .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
+    }
+
+    /**
+     * Parses JSP output to PDF and writes it to the HTTP response.
+     * Uses Jsoup for HTML parsing with UTF-8 encoding and XHTML output.
+     *
+     * @param request HttpServletRequest containing request context (protocol, host, port)
+     * @param response HttpServletResponse to write the PDF to (sets Content-Type: application/pdf)
+     * @param uri String URI of the JSP page to parse
+     * @param jsessionid String session ID for authentication
+     * @throws RuntimeException if PDF conversion fails
+     * @since 2026-01-29
+     */
     public static void parseJSP2PDF(HttpServletRequest request, HttpServletResponse response, String uri, String jsessionid) {
 
         try {
@@ -73,13 +98,10 @@ public class Doc2PDF {
 
             // Parse directly from InputStream with UTF-8 encoding and base URI
             org.jsoup.nodes.Document doc = Jsoup.parse(in, StandardCharsets.UTF_8.name(), uri);
-            doc.outputSettings()
-                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
-                .escapeMode(Entities.EscapeMode.xhtml)
-                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
+            configureJsoupForXhtml(doc);
 
             String cleanHtml = doc.html();
-            MiscUtils.getLogger().debug(cleanHtml);
+            MiscUtils.getLogger().debug("Parsed HTML content, length: {} bytes", cleanHtml.length());
             String documentTxt = AddAbsoluteTag(request, cleanHtml, uri);
 
             PrintPDFFromHTMLString(response, documentTxt);
@@ -156,6 +178,16 @@ public class Doc2PDF {
         return;
     }
 
+    /**
+     * Converts an HTML string to PDF and writes it to the HTTP response.
+     * Uses Jsoup for HTML parsing with UTF-8 encoding and XHTML output.
+     *
+     * @param request HttpServletRequest containing request context (protocol, host, port)
+     * @param response HttpServletResponse to write the PDF to (sets Content-Type: application/pdf)
+     * @param docText String containing the HTML content to convert
+     * @throws RuntimeException if PDF conversion fails
+     * @since 2026-01-29
+     */
     public static void parseString2PDF(HttpServletRequest request, HttpServletResponse response, String docText) {
 
         try {
@@ -165,10 +197,7 @@ public class Doc2PDF {
             // and directs a XML-stream to a file
             // Parse and clean HTML with Jsoup (handles UTF-8 internally)
             org.jsoup.nodes.Document doc = Jsoup.parse(docText);
-            doc.outputSettings()
-                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
-                .escapeMode(Entities.EscapeMode.xhtml)
-                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
+            configureJsoupForXhtml(doc);
 
             String cleanHtml = doc.html();
 
@@ -180,6 +209,16 @@ public class Doc2PDF {
 
     }
 
+    /**
+     * Converts an HTML string to binary PDF format (Base64-encoded).
+     * Uses Jsoup for HTML parsing with UTF-8 encoding and XHTML output.
+     *
+     * @param request HttpServletRequest containing request context (protocol, host, port)
+     * @param response HttpServletResponse (not used but maintained for API compatibility)
+     * @param docText String containing the HTML content to convert
+     * @return String Base64-encoded PDF binary data, or null if conversion fails
+     * @since 2026-01-29
+     */
     public static String parseString2Bin(HttpServletRequest request, HttpServletResponse response, String docText) {
 
         try {
@@ -189,10 +228,7 @@ public class Doc2PDF {
             // and directs a XML-stream to a file
             // Parse and clean HTML with Jsoup (handles UTF-8 internally)
             org.jsoup.nodes.Document doc = Jsoup.parse(docText);
-            doc.outputSettings()
-                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
-                .escapeMode(Entities.EscapeMode.xhtml)
-                .prettyPrint(false);  // Critical: prevents whitespace issues in iText XML parser
+            configureJsoupForXhtml(doc);
 
             String cleanHtml = doc.html();
 
@@ -250,7 +286,7 @@ public class Doc2PDF {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter writer = PdfWriter.getInstance(document, baos);
             document.open();
-            InputStream is = new ByteArrayInputStream(docText.getBytes());
+            InputStream is = new ByteArrayInputStream(docText.getBytes(StandardCharsets.UTF_8));
             XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
             document.close();
             return (new String(Base64.encodeBase64(baos.toByteArray())));
@@ -267,7 +303,7 @@ public class Doc2PDF {
 
         try {
 
-            byte[] binDecodedArray = Base64.decodeBase64(docBin.getBytes());
+            byte[] binDecodedArray = Base64.decodeBase64(docBin.getBytes(StandardCharsets.UTF_8));
 
             PrintPDFFromBytes(response, binDecodedArray);
             return;
@@ -316,7 +352,7 @@ public class Doc2PDF {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PdfWriter writer = PdfWriter.getInstance(document, baos);
             document.open();
-            InputStream is = new ByteArrayInputStream(docText.getBytes());
+            InputStream is = new ByteArrayInputStream(docText.getBytes(StandardCharsets.UTF_8));
             XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
             document.close();
             byte[] binArray = baos.toByteArray();
