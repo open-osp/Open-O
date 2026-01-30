@@ -177,6 +177,14 @@
     "integrity" : "sha512:kGAn8E5VII/duD6uY/Elj64QAQfijpy9Z2qNS99znBh9P5v6nLNyEc5KC3LzZQHeMAzYgG4fSwO8O9mDA7laOw=="
   }, {
     "groupId" : "cglib",
+    "artifactId" : "cglib-nodep",
+    "version" : "3.3.0",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:+qHSEh6HrmnheeOq4heszQg04Npxa5GgKf1SbhkmEucWdfJ0C+30jiPvHtxF9nKivhs+eLv7GtWclt09L+7tug=="
+  }, {
+    "groupId" : "cglib",
     "artifactId" : "cglib",
     "version" : "2.2.2",
     "scope" : "compile",
@@ -280,6 +288,14 @@
     "optional" : false,
     "integrity" : "sha512:x390I/2WtbYVkjZTbk5LUJAyzqlDaBhrhsmfTscs9A7PsmghzHEkB3NjkCziuRZE4y5T+n3j/OmIW0ALBCTs0A=="
   }, {
+    "groupId" : "com.github.hazendaz",
+    "artifactId" : "displaytag",
+    "version" : "2.9.0",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:BERkZzVHVcWUGG2qGbqxTfxLQbhb2DbH0kM76zqu0kuQk32c5ylWfqogj3z5Rx3y3W7dz71M9m/feVGo9kBkAQ=="
+  }, {
     "groupId" : "com.github.jai-imageio",
     "artifactId" : "jai-imageio-core",
     "version" : "1.4.0",
@@ -287,14 +303,6 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:X7AWF3F/3G21FP5torJTw9klMmGQqLoQGUHym/9uPBR+YhbFAcpmtNQFHSE7HAX62zcHVjeCv8xWdDVzOHhsAQ=="
-  }, {
-    "groupId" : "com.github.jtidy",
-    "artifactId" : "jtidy",
-    "version" : "1.0.5",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:UbdO2vyS5w9gNRSN/+ek6fQcdUpQEeSoTYKEzFOJ/HDNu7I1hENRAoyS7qAJ3OtgO5VQGkDO0ELbqFyQx9FwMw=="
   }, {
     "groupId" : "com.github.librepdf.openpdf",
     "artifactId" : "openpdf-core-modern",
@@ -921,14 +929,6 @@
     "optional" : false,
     "integrity" : "sha512:TwFPvvJ26/FjK4lf62j/EougiuxjxO31bxHm03M4W3DWzrtxzJWaGBclVXMCBl1azuLu6orRzlaDGuwbO2YKhQ=="
   }, {
-    "groupId" : "displaytag",
-    "artifactId" : "displaytag",
-    "version" : "1.2",
-    "scope" : "compile",
-    "type" : "jar",
-    "optional" : false,
-    "integrity" : "sha512:zejfe+mZG9NlrupVMNs/qWNs86GzwuTzE+6O2g78Glg3V2Jj/VQmiDgbNUHGdfo8xXEqVllBQpMxAXAKDIHvyw=="
-  }, {
     "groupId" : "drools",
     "artifactId" : "drools-all",
     "version" : "2.0",
@@ -1048,6 +1048,14 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:Hgcle2Ma4zMacdfNkTYVLN3rvnhrpQxom+xhip62Wb6OlS/gQF2zYzLLbBLGyHxtZI6BfAJ+qMbgxmDOgvb0JA=="
+  }, {
+    "groupId" : "jakarta.servlet.jsp.jstl",
+    "artifactId" : "jakarta.servlet.jsp.jstl-api",
+    "version" : "1.2.7",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:7xaiGQwv8/Y8vYJbqJdno+2fNvHae6dcUMPU5ZjU7hcRYmm/OZkgVSvJh+2132ycqnEZBICul7f5+ry+kGGPqA=="
   }, {
     "groupId" : "jakarta.servlet",
     "artifactId" : "jakarta.servlet-api",
@@ -1376,6 +1384,14 @@
     "type" : "pom",
     "optional" : false,
     "integrity" : "sha512:pa8yef7BRfr0xG7skikdK4LmX4A6IHLyACGzahSr9CIcheGWWEgfoTPkXejpiE1m29Ae38Df2Ycnvlk1I+tDXQ=="
+  }, {
+    "groupId" : "org.apache.commons",
+    "artifactId" : "commons-beanutils2",
+    "version" : "2.0.0-M2",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:RLxaVRfSGBCGL5cC01zG2MyuKgWLkq2jvIDPHUK/d27JG2Uc8nF344RJZEmBq4pw3xB9N0HdDcIy8cvkqI/tnQ=="
   }, {
     "groupId" : "org.apache.commons",
     "artifactId" : "commons-collections4",
@@ -2497,6 +2513,14 @@
     "optional" : false,
     "integrity" : "sha512:o+x8IvbnFuLAa56TsZkr2iPrkuoMw/Ovxb165EqSNf8iFtDACXeZow/S4t1hjn8wzCEAB9ph4d7i5yuPuw3hbw=="
   }, {
+    "groupId" : "org.checkerframework",
+    "artifactId" : "checker-qual",
+    "version" : "3.51.1",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:YzoMOWvAGIPWxp28U9qYB4TYg31xsJuFnRVxylo7YI5s8km6wEV1pvM0mPyS2Nbu1yAOSax2irDVsNKyvy2Lhg=="
+  }, {
     "groupId" : "org.codehaus.jettison",
     "artifactId" : "jettison",
     "version" : "1.5.4",
@@ -2539,11 +2563,11 @@
   }, {
     "groupId" : "org.dom4j",
     "artifactId" : "dom4j",
-    "version" : "2.1.4",
+    "version" : "2.2.0",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
-    "integrity" : "sha512:tkehycvY6OCoVRYLhSL/+OHU35XlThFqHP5m0XCD/4uMpv5wbWrupufT4BFiEq+aX2x/reZChpoz/HqXHRFq+Q=="
+    "integrity" : "sha512:nmnYxTuC1i1lidVsaGFFWWOsZOocdKc7Lmd75Sl8EE6hrCbrhxrJLy7lQRazARMESBBwriGlcNOyQb4cwTOQqw=="
   }, {
     "groupId" : "org.eclipse.jdt",
     "artifactId" : "ecj",
@@ -2680,6 +2704,14 @@
     "type" : "jar",
     "optional" : false,
     "integrity" : "sha512:0zlZlzBD+BthlpEUF9Vz2Zx4P9NSs0BcQlT7BsfgE6OuXXJVXy509ABB/kbZlE6cNX7aWs/HsWaunJP7vI1AeQ=="
+  }, {
+    "groupId" : "org.glassfish.web",
+    "artifactId" : "jakarta.servlet.jsp.jstl",
+    "version" : "1.2.6",
+    "scope" : "compile",
+    "type" : "jar",
+    "optional" : false,
+    "integrity" : "sha512:mUy2kuSnLux/caKREoxDwZpVe6CZcuQ2qGrJmGI8GxOuiUibli5YCHvl9vnBXActNRdEMDCCyyReKboD42Y7Xw=="
   }, {
     "groupId" : "org.glassfish.web",
     "artifactId" : "javax.servlet.jsp.jstl",
