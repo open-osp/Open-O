@@ -151,7 +151,8 @@ jobs:
             git config --global --add safe.directory /workspace
           "
 
-      - name: Build and analyze
+      - name: Build and analyze (Push to develop)
+        if: github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -161,11 +162,46 @@ jobs:
             -e SONAR_TOKEN="$SONAR_TOKEN" \
             openo-tomcat-dev bash -c "
               echo '========================================='
-              echo 'Running SonarCloud Analysis'
+              echo 'Running SonarCloud Analysis (Branch)'
               echo '========================================='
               mvn -B verify sonar:sonar \
                 -Dsonar.host.url=https://sonarcloud.io \
                 -Dsonar.projectKey=openo-beta_Open-O \
+                -DskipTests \
+                -DskipModernTests=true \
+                -DskipLegacyTests=true \
+                -T 1C
+            "
+
+      - name: Build and analyze (Pull Request)
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.head_ref }}
+          PR_BASE: ${{ github.base_ref }}
+        run: |
+          docker exec \
+            -e GITHUB_TOKEN="$GITHUB_TOKEN" \
+            -e SONAR_TOKEN="$SONAR_TOKEN" \
+            -e PR_NUMBER="$PR_NUMBER" \
+            -e PR_BRANCH="$PR_BRANCH" \
+            -e PR_BASE="$PR_BASE" \
+            openo-tomcat-dev bash -c "
+              echo '========================================='
+              echo 'Running SonarCloud Analysis (Pull Request)'
+              echo '========================================='
+              echo \"PR Number: \$PR_NUMBER\"
+              echo \"PR Branch: \$PR_BRANCH\"
+              echo \"PR Base: \$PR_BASE\"
+              echo '========================================='
+              mvn -B verify sonar:sonar \
+                -Dsonar.host.url=https://sonarcloud.io \
+                -Dsonar.projectKey=openo-beta_Open-O \
+                \"-Dsonar.pullrequest.key=\$PR_NUMBER\" \
+                \"-Dsonar.pullrequest.branch=\$PR_BRANCH\" \
+                \"-Dsonar.pullrequest.base=\$PR_BASE\" \
                 -DskipTests \
                 -DskipModernTests=true \
                 -DskipLegacyTests=true \
