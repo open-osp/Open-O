@@ -195,6 +195,8 @@ public class ManageDashboard2Action extends ActionSupport {
                 // Validate using standard javax.xml.validation
                 javax.xml.validation.SchemaFactory schemaFactory =
                     javax.xml.validation.SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                schemaFactory.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                schemaFactory.setProperty(javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                 javax.xml.validation.Schema schema = schemaFactory.newSchema(schemaSource);
                 javax.xml.validation.Validator validator = schema.newValidator();
                 validator.setErrorHandler(errorHandler);
