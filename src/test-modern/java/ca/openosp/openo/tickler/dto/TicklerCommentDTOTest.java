@@ -63,21 +63,21 @@ class TicklerCommentDTOTest {
         }
 
         @Test
-        @DisplayName("should return partial name when only last name present")
-        void shouldReturnPartialName_whenOnlyLastNamePresent() {
+        @DisplayName("should return just last name when only last name present")
+        void shouldReturnJustLastName_whenOnlyLastNamePresent() {
             dto.setProviderLastName("Smith");
             dto.setProviderFirstName(null);
 
-            assertThat(dto.getProviderFormattedName()).isEqualTo("Smith, ");
+            assertThat(dto.getProviderFormattedName()).isEqualTo("Smith");
         }
 
         @Test
-        @DisplayName("should return partial name when only first name present")
-        void shouldReturnPartialName_whenOnlyFirstNamePresent() {
+        @DisplayName("should return just first name when only first name present")
+        void shouldReturnJustFirstName_whenOnlyFirstNamePresent() {
             dto.setProviderLastName(null);
             dto.setProviderFirstName("John");
 
-            assertThat(dto.getProviderFormattedName()).isEqualTo(", John");
+            assertThat(dto.getProviderFormattedName()).isEqualTo("John");
         }
 
         @Test
@@ -174,6 +174,35 @@ class TicklerCommentDTOTest {
             String date = dto.getUpdateDate(Locale.ENGLISH);
             assertThat(date).isNotNull();
             assertThat(date).isNotEmpty();
+        }
+
+        @Test
+        @DisplayName("should return empty string for time when updateDate is null")
+        void shouldReturnEmptyString_forTime_whenUpdateDateIsNull() {
+            dto.setUpdateDate(null);
+
+            String time = dto.getUpdateTime(Locale.ENGLISH);
+            assertThat(time).isEmpty();
+        }
+
+        @Test
+        @DisplayName("should return space for date time when updateDate is null")
+        void shouldReturnSpace_forDateTime_whenUpdateDateIsNull() {
+            dto.setUpdateDate(null);
+
+            // formatDateTime concatenates formatDate + " " + formatTime
+            // When date is null, both return "", so result is " "
+            String dateTime = dto.getUpdateDateTime(Locale.ENGLISH);
+            assertThat(dateTime).isEqualTo(" ");
+        }
+
+        @Test
+        @DisplayName("should return empty string for date when updateDate is null")
+        void shouldReturnEmptyString_forDate_whenUpdateDateIsNull() {
+            dto.setUpdateDate(null);
+
+            String date = dto.getUpdateDate(Locale.ENGLISH);
+            assertThat(date).isEmpty();
         }
     }
 

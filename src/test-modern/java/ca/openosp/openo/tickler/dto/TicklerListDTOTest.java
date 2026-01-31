@@ -64,21 +64,21 @@ class TicklerListDTOTest {
         }
 
         @Test
-        @DisplayName("should return partial name when only last name present")
-        void shouldReturnPartialName_whenOnlyLastNamePresent() {
+        @DisplayName("should return just last name when only last name present")
+        void shouldReturnJustLastName_whenOnlyLastNamePresent() {
             dto.setDemographicLastName("Smith");
             dto.setDemographicFirstName(null);
 
-            assertThat(dto.getDemographicFormattedName()).isEqualTo("Smith, ");
+            assertThat(dto.getDemographicFormattedName()).isEqualTo("Smith");
         }
 
         @Test
-        @DisplayName("should return partial name when only first name present")
-        void shouldReturnPartialName_whenOnlyFirstNamePresent() {
+        @DisplayName("should return just first name when only first name present")
+        void shouldReturnJustFirstName_whenOnlyFirstNamePresent() {
             dto.setDemographicLastName(null);
             dto.setDemographicFirstName("John");
 
-            assertThat(dto.getDemographicFormattedName()).isEqualTo(", John");
+            assertThat(dto.getDemographicFormattedName()).isEqualTo("John");
         }
 
         @Test
@@ -114,12 +114,12 @@ class TicklerListDTOTest {
         }
 
         @Test
-        @DisplayName("should return partial name when only last name present")
-        void shouldReturnPartialName_whenOnlyLastNamePresent() {
+        @DisplayName("should return just last name when only last name present")
+        void shouldReturnJustLastName_whenOnlyLastNamePresent() {
             dto.setCreatorLastName("Doctor");
             dto.setCreatorFirstName(null);
 
-            assertThat(dto.getCreatorFormattedName()).isEqualTo("Doctor, ");
+            assertThat(dto.getCreatorFormattedName()).isEqualTo("Doctor");
         }
     }
 
@@ -146,12 +146,12 @@ class TicklerListDTOTest {
         }
 
         @Test
-        @DisplayName("should return partial name when only first name present")
-        void shouldReturnPartialName_whenOnlyFirstNamePresent() {
+        @DisplayName("should return just first name when only first name present")
+        void shouldReturnJustFirstName_whenOnlyFirstNamePresent() {
             dto.setAssigneeLastName(null);
             dto.setAssigneeFirstName("Bob");
 
-            assertThat(dto.getAssigneeFormattedName()).isEqualTo(", Bob");
+            assertThat(dto.getAssigneeFormattedName()).isEqualTo("Bob");
         }
     }
 
@@ -248,6 +248,67 @@ class TicklerListDTOTest {
 
             assertThat(dto.getComments()).isNotNull();
             assertThat(dto.getComments()).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("links")
+    class Links {
+
+        @Test
+        @DisplayName("should initialize with empty list")
+        void shouldInitializeWithEmptyList() {
+            assertThat(dto.getLinks()).isNotNull();
+            assertThat(dto.getLinks()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("should set links list")
+        void shouldSetLinksList() {
+            ArrayList<TicklerLinkDTO> links = new ArrayList<>();
+            links.add(new TicklerLinkDTO());
+            dto.setLinks(links);
+
+            assertThat(dto.getLinks()).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("should handle null by setting empty list")
+        void shouldHandleNull_bySettingEmptyList() {
+            dto.setLinks(null);
+
+            assertThat(dto.getLinks()).isNotNull();
+            assertThat(dto.getLinks()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("should defensively copy links list")
+        void shouldDefensivelyCopy_linksList() {
+            ArrayList<TicklerLinkDTO> links = new ArrayList<>();
+            TicklerLinkDTO link = new TicklerLinkDTO();
+            links.add(link);
+            dto.setLinks(links);
+
+            // Mutate original list after setting
+            links.add(new TicklerLinkDTO());
+
+            // DTO's list should remain unchanged
+            assertThat(dto.getLinks()).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("should defensively copy comments list")
+        void shouldDefensivelyCopy_commentsList() {
+            ArrayList<TicklerCommentDTO> comments = new ArrayList<>();
+            TicklerCommentDTO comment = new TicklerCommentDTO();
+            comments.add(comment);
+            dto.setComments(comments);
+
+            // Mutate original list after setting
+            comments.add(new TicklerCommentDTO());
+
+            // DTO's list should remain unchanged
+            assertThat(dto.getComments()).hasSize(1);
         }
     }
 
