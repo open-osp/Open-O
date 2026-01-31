@@ -566,8 +566,10 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         }
 
         // ORDER BY clause for deterministic results and stable pagination
+        // Secondary sort by id ensures consistent ordering when serviceDates are equal
         String orderBy = "ORDER BY t.serviceDate ";
-        orderBy += "desc".equalsIgnoreCase(filter.getSort_order()) ? "DESC " : "ASC ";
+        orderBy += "desc".equalsIgnoreCase(filter.getSort_order()) ? "DESC" : "ASC";
+        orderBy += ", t.id DESC ";
         query.append(orderBy);
 
         return query.toString();
