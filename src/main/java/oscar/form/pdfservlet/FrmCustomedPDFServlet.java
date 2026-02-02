@@ -52,10 +52,12 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.FaxConfigDao;
 import org.oscarehr.common.dao.FaxJobDao;
+import org.oscarehr.common.model.DigitalSignature;
 import org.oscarehr.common.model.FaxConfig;
 import org.oscarehr.common.model.FaxJob;
 import org.oscarehr.common.model.FaxJob.Direction;
 import org.oscarehr.common.model.PharmacyInfo;
+import org.oscarehr.managers.DigitalSignatureManager;
 import org.oscarehr.managers.FaxManager;
 import org.oscarehr.managers.FaxManager.TransactionType;
 import org.oscarehr.util.LocaleUtils;
@@ -78,6 +80,8 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 
 	private final FaxConfigDao faxConfigDao = SpringUtils.getBean(FaxConfigDao.class);
 	private static FaxManager faxManager = SpringUtils.getBean(FaxManager.class);
+
+	private final DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
 
 	@Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws javax.servlet.ServletException, java.io.IOException {
@@ -254,6 +258,7 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 		private String origPrintDate = null;
 		private String numPrint = null;
 		private String imgPath;
+		private String scriptId;
 		Locale locale = null;
 		private String billingNumber;
 
@@ -264,7 +269,7 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 
 		public EndPage(String clinicName, String clinicTel, String clinicFax, String patientPhone, String patientCityPostal, String patientAddress,
 		               String patientName, String patientDOB, String sigDoctorName, String rxDate, String origPrintDate, String numPrint,
-		               String imgPath, String patientHIN, String patientChartNo, String pracNo, Locale locale, String billingNumber, String pharmacyInfo) {
+		               String imgPath, String scriptId, String  patientHIN, String patientChartNo, String pracNo, Locale locale, String billingNumber, String pharmacyInfo) {
 			this.clinicName = clinicName == null ? "" : clinicName;
 			this.clinicTel = clinicTel == null ? "" : clinicTel;
 			this.clinicFax = clinicFax == null ? "" : clinicFax;
@@ -282,6 +287,7 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 				promoText = "";
 			}
 			this.imgPath = imgPath;
+			this.scriptId = scriptId;
 			this.patientHIN = patientHIN==null ? "" : patientHIN;
 			this.patientChartNo = patientChartNo==null ? "" : patientChartNo;
 			this.pracNo = pracNo==null ? "" : pracNo;
@@ -315,11 +321,11 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 			cb.showTextAligned(alignment, text, x, y, rotation);
 			cb.endText();
 		}
-		
+
 		private String geti18nTagValue(Locale locale, String tag) {
 			return LocaleUtils.getMessage(locale,tag);
 		}
-		
+
 		public void renderPage(PdfWriter writer, Document document) {
 			Rectangle page = document.getPageSize();
 			float height = page.getHeight();
@@ -498,14 +504,19 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 				 *  with the bottom left corner located at X: 75f Y: -31f
 				 *  Also need to account for the height of the signature
 				 */
-				if (this.imgPath != null) {
-					Image img = Image.getInstance(this.imgPath);
+				try {
+					DigitalSignature digitalSignature = FrmCustomedPDFServlet.this.digitalSignatureManager
+							.getDigitalSignatureByPrescriptionId(Integer.parseInt(scriptId));
+
+					Image img = Image.getInstance(digitalSignature.getSignatureImage());
 					float imageWidth = 185f;
 					float imageHeight = 40f;
 					// scale the origin image to fix these exact parameters width x height
 					img.scaleToFit(imageWidth, imageHeight);
 					// image, image_width, 0, 0, image_height, x, y
 					cb.addImage(img, imageWidth, 0, 0, imageHeight, 75f, endPara - 28f);
+				} catch (NumberFormatException | NullPointerException e) {
+					logger.error("Error", e);
 				}
 
 				/*
@@ -612,6 +623,7 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 		String patientDOB = req.getParameter("patientDOB");
 		String showPatientDOB = req.getParameter("showPatientDOB");
 		String imgFile = req.getParameter("imgFile");
+		String scriptId_ = req.getParameter("scriptId");
 		String patientHIN = req.getParameter("patientHIN");
 		String patientChartNo = req.getParameter("patientChartNo");
 		String pracNo = req.getParameter("pracNo");
@@ -682,7 +694,7 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 		document.setMargins(15, pageSize.getWidth() - 285f + 5f, 185, 60);// left, right, top , bottom
 
 		//writer = PdfWriter.getInstance(document, baosPDF);
-		writer.setPageEvent(new EndPage(clinicName, clinicTel, clinicFax, patientPhone, patientCityPostal, patientAddress, patientName, patientDOB, sigDoctorName, rxDate, origPrintDate, numPrint, imgFile, patientHIN, patientChartNo, pracNo, locale, billingNumber, pharmacyInfo));
+		writer.setPageEvent(new EndPage(clinicName, clinicTel, clinicFax, patientPhone, patientCityPostal, patientAddress, patientName, patientDOB, sigDoctorName, rxDate, origPrintDate, numPrint, imgFile, scriptId_, patientHIN, patientChartNo, pracNo, locale, billingNumber, pharmacyInfo));
 		document.addTitle(title);
 		document.addSubject("");
 		document.addKeywords("pdf, itext");
