@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -23,123 +23,118 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Print Preview</title>
-<html:base />
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Print Preview</title>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-<logic:notPresent name="RxSessionBean" scope="session">
-	<logic:redirect href="error.html" />
-</logic:notPresent>
-<logic:present name="RxSessionBean" scope="session">
-	<bean:define id="bean" type="oscar.oscarRx.pageUtil.RxSessionBean"
-		name="RxSessionBean" scope="session" />
-	<logic:equal name="bean" property="valid" value="false">
-		<logic:redirect href="error.html" />
-	</logic:equal>
-</logic:present>
-<%
-oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)pageContext.findAttribute("bean");
-%>
-<link rel="stylesheet" type="text/css" href="styles.css">
-</head>
-<body topmargin="0" leftmargin="0" vlink="#0000FF">
-<table border="0" cellpadding="0" cellspacing="0"
-	style="border-collapse: collapse" bordercolor="#111111" width="100%"
-	id="AutoNumber1" height="100%">
-	<%@ include file="TopLinks.jsp"%><!-- Row One included here-->
-	<tr>
-		<td></td>
-		<td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
-			valign="top">
-		<table cellpadding="0" cellspacing="2"
-			style="border-collapse: collapse" bordercolor="#111111" width="100%"
-			height="100%">
-			<tr>
-				<td width="0%" valign="top">
-				<div class="DivCCBreadCrumbs"><a href="SearchPatient.jsp">
-				<bean:message key="SearchPatient.title" /></a> > <b><bean:message
-					key="ChoosePatient.title" /></b></div>
-				</td>
-			</tr>
+        <c:if test="${empty RxSessionBean}">
+            <c:redirect url="error.html"/>
+        </c:if>
+        <c:if test="${not empty RxSessionBean}">
+            <c:set var="bean" value="${RxSessionBean}" scope="page"/>
+            <c:if test="${bean.valid == false}">
+                <c:redirect url="error.html"/>
+            </c:if>
+        </c:if>
+        <%
+            RxSessionBean bean = (RxSessionBean) pageContext.findAttribute("bean");
+        %>
+        <link rel="stylesheet" type="text/css" href="styles.css">
+    </head>
+    <body topmargin="0" leftmargin="0" vlink="#0000FF">
+    <table border="0" cellpadding="0" cellspacing="0"
+           style="border-collapse: collapse" bordercolor="#111111" width="100%"
+           id="AutoNumber1" height="100%">
+        <%@ include file="TopLinks.jsp"%><!-- Row One included here-->
+        <tr>
+            <td></td>
+            <td width="100%" style="border-left: 2px solid #A9A9A9;" height="100%"
+                valign="top">
+                <table cellpadding="0" cellspacing="2"
+                       style="border-collapse: collapse" bordercolor="#111111" width="100%"
+                       height="100%">
+                    <tr>
+                        <td width="0%" valign="top">
+                            <div class="DivCCBreadCrumbs"><a href="SearchPatient.jsp">
+                                <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchPatient.title"/></a> > <b><fmt:setBundle basename="oscarResources"/><fmt:message key="ChoosePatient.title"/></b></div>
+                        </td>
+                    </tr>
 
-			<!----Start new rows here-->
-			<tr>
-				<td>
-				<div class="DivContentTitle"><bean:message
-					key="ChoosePatient.title" /></div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-				<div class="DivContentSectionHead"><bean:message
-					key="ChoosePatient.searchAgain" /></div>
-				</td>
-			</tr>
-			<tr>
-				<td><html:form action="/oscarRx/searchPatient" focus="surname">
-					<table>
-						<tr>
-							<td><bean:message key="ChoosePatient.textBox" /></td>
-							<td><html:text property="surname" size="16" maxlength="16" />
-							</td>
-							<td><html:submit property="submit" value="Search"
-								styleClass="ControlPushButton" /></td>
-						</tr>
-					</table>
-				</html:form></td>
-			</tr>
-			<tr>
-				<td>
-				<div class="DivContentSectionHead"><bean:message
-					key="ChoosePatient.choose" /></div>
-				</td>
-			</tr>
+                    <!----Start new rows here-->
+                    <tr>
+                        <td>
+                            <div class="DivContentTitle"><fmt:setBundle basename="oscarResources"/><fmt:message key="ChoosePatient.title"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="DivContentSectionHead"><fmt:setBundle basename="oscarResources"/><fmt:message key="ChoosePatient.searchAgain"/></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><form action="${pageContext.request.contextPath}/oscarRx/searchPatient.do" method="post" focus="surname">
+                            <table>
+                                <tr>
+                                    <td><fmt:setBundle basename="oscarResources"/><fmt:message key="ChoosePatient.textBox"/></td>
+                                    <td><input type="checkbox" name="surname" size="16" maxlength="16" />
+                                    </td>
+                                    <td><input type="submit" name="submit" value="Search" class="ControlPushButton"/></td>
+                                </tr>
+                            </table>
+                        </form></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="DivContentSectionHead"><fmt:setBundle basename="oscarResources"/><fmt:message key="ChoosePatient.choose"/></div>
+                        </td>
+                    </tr>
 
 
-			<!----End new rows here-->
+                    <!----End new rows here-->
 
-			<tr height="100%">
-				<td></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
+                    <tr height="100%">
+                        <td></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
 
-	<tr>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-		<td height="0%"
-			style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" colspan="2">&nbsp;</td>
-	</tr>
-	<tr>
-		<td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
-			colspan="2"></td>
-	</tr>
-</table>
+        <tr>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+            <td height="0%"
+                style="border-bottom: 2px solid #A9A9A9; border-top: 2px solid #A9A9A9;"></td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" colspan="2">&nbsp;</td>
+        </tr>
+        <tr>
+            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+                colspan="2"></td>
+        </tr>
+    </table>
 
-</body>
+    </body>
 
-</html:html>
+</html>

@@ -23,82 +23,88 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName3$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed2=true;
+    String roleName3$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed2 = true;
 %>
 <security:oscarSec roleName="<%=roleName3$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed2=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed2 = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed2) {
-		return;
-	}
+    if (!authed2) {
+        return;
+    }
 %>
 
 <!DOCTYPE html>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html:html lang="en">
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+
+<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><bean:message key="oscarEncounter.formIntakeHx.title"/></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.title"/></title>
         <link rel="stylesheet" type="text/css" href="westernuStyle.css">
     </head>
-    <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0" onload="window.resizeTo(768,768)" bgcolor="#eeeeee">
-        <html:form action="/form/formname">    
-            <h1><bean:message key="oscarEncounter.formIntakeHx.title"/></h1>
-            
-            <%@include file="formIntakeHxTitleBar.jsp"%>
-            <!--Current Issues-->    
-            <h2><bean:message key="oscarEncounter.formIntakeHx.currentIssuesTitle"/></h2>  
-            <hr/>
-            <table>
-                <tr><td class="title" colspan="2"><bean:message key="oscarEncounter.formIntakeHx.currentIssues.bodySystemProblems"/></td></tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.general"/>:</td>
-                    <td><textarea rows="5" cols="50" name="General"><%=props.getProperty("General","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.nervousSystem"/>:</td>
-                    <td><textarea rows="5" cols="50" name="Nervous"><%=props.getProperty("Nervous","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.headEarsNoseThroat"/>:</td>
-                    <td><textarea rows="5" cols="50" name="HEENT"><%=props.getProperty("HEENT","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.neck"/>:</td>
-                    <td><textarea rows="5" cols="50" name="Neck"><%=props.getProperty("Neck","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.chest"/>:</td>
-                    <td><textarea rows="5" cols="50" name="Chest"><%=props.getProperty("Chest","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.heart"/>:</td>
-                    <td><textarea rows="5" cols="50" name="Heart"><%=props.getProperty("Heart","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.gastro"/>:</td>
-                    <td><textarea rows="5" cols="50" name="Gastrointestinal"><%=props.getProperty("Gastrointestinal","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.genitals"/>:</td>
-                    <td><textarea rows="5" cols="50" name="GenitalsUrinary"><%=props.getProperty("GenitalsUrinary","")%></textarea></td>
-                </tr>
-                <tr>
-                    <td><bean:message key="oscarEncounter.formIntakeHx.currentIssues.psychiatric"/>:</td>
-                    <td><textarea rows="5" cols="50" name="GeneralPsychiatric"><%=props.getProperty("GeneralPsychiatric","")%></textarea></td>
-                </tr>
-            </table>
-            
-         </html:form>
-    </body>   
-</html:html>
+    <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0" onload="window.resizeTo(768,768)"
+          bgcolor="#eeeeee">
+    <form action="${pageContext.request.contextPath}/form/formname.do" method="post">
+        <h1><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.title"/></h1>
+
+        <%@include file="formIntakeHxTitleBar.jsp" %>
+        <!--Current Issues-->
+        <h2><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssuesTitle"/></h2>
+        <hr/>
+        <table>
+            <tr>
+                <td class="title" colspan="2"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.bodySystemProblems"/></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.general"/>:</td>
+                <td><textarea rows="5" cols="50" name="General"><%=props.getProperty("General", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.nervousSystem"/>:</td>
+                <td><textarea rows="5" cols="50" name="Nervous"><%=props.getProperty("Nervous", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.headEarsNoseThroat"/>:</td>
+                <td><textarea rows="5" cols="50" name="HEENT"><%=props.getProperty("HEENT", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.neck"/>:</td>
+                <td><textarea rows="5" cols="50" name="Neck"><%=props.getProperty("Neck", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.chest"/>:</td>
+                <td><textarea rows="5" cols="50" name="Chest"><%=props.getProperty("Chest", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.heart"/>:</td>
+                <td><textarea rows="5" cols="50" name="Heart"><%=props.getProperty("Heart", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.gastro"/>:</td>
+                <td><textarea rows="5" cols="50"
+                              name="Gastrointestinal"><%=props.getProperty("Gastrointestinal", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.genitals"/>:</td>
+                <td><textarea rows="5" cols="50"
+                              name="GenitalsUrinary"><%=props.getProperty("GenitalsUrinary", "")%></textarea></td>
+            </tr>
+            <tr>
+                <td><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.formIntakeHx.currentIssues.psychiatric"/>:</td>
+                <td><textarea rows="5" cols="50"
+                              name="GeneralPsychiatric"><%=props.getProperty("GeneralPsychiatric", "")%></textarea></td>
+            </tr>
+        </table>
+
+    </form>
+    </body>
+</html>
             

@@ -174,4 +174,3 @@ class OscarAlert {
         return labels[this.alertType] || 'Unknown';
     }
 }
-

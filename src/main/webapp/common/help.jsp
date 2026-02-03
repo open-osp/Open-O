@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,32 +24,33 @@
 --%>
 
 
-<% 
-	String topic = request.getParameter("topic"); 
+<%
+    String topic = request.getParameter("topic");
 %>
 
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<html:base />
-<title>CAISI Help</title>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<body>
-<c:choose>
-	<c:when test="${param.topic == null}">
-				No Topic Chosen
-			</c:when>
-	<c:otherwise>
-		<h3><c:out value="${param.topic}" /></h3>
-		<br />
-		<bean:message key="<%=topic%>" bundle="help" />
-	</c:otherwise>
-</c:choose>
-<br />
-<center><input type="button" value="Close"
-	onclick="self.close();" /></center>
-</body>
-</html:html>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
+        <title>CAISI Help</title>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
+    <body>
+    <c:choose>
+        <c:when test="${param.topic == null}">
+            No Topic Chosen
+        </c:when>
+        <c:otherwise>
+            <h3><c:out value="${param.topic}"/></h3>
+            <br/>
+            <fmt:setBundle basename="HelpResources" var="help"/>
+            <fmt:message bundle="${help}" key="<%=topic%>"/>
+        </c:otherwise>
+    </c:choose>
+    <br/>
+    <center><input type="button" value="Close"
+                   onclick="self.close();"/></center>
+    </body>
+</html>

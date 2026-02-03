@@ -27,11 +27,11 @@
 <%
     String user_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.net.*" %>
+<%@ page import="java.util.*, java.sql.*, ca.openosp.*, java.net.*" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Billingreferral" %>
-<%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Billingreferral" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingreferralDao" %>
 <%
     BillingreferralDao billingReferralDao = (BillingreferralDao) SpringUtils.getBean(BillingreferralDao.class);
 %>
@@ -130,8 +130,6 @@
             self.opener.document
         .<%=formName%>.<%=formElement%>.
             value = File0;
-            //    self.opener.document.BillingCreateBillingForm.xml_refer2.value ='';
-            //    self.opener.document.BillingCreateBillingForm.xml_refer3.value ='';
         }
 
     </script>

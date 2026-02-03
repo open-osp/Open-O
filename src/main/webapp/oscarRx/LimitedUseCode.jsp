@@ -30,31 +30,37 @@
     Author     : jackson
 --%>
 
-<%@page %><%@page import="oscar.oscarDemographic.data.*,org.oscarehr.common.model.Demographic"%>
-<%@page import="oscar.oscarEncounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler,java.util.*,oscar.oscarRx.util.*" %>
-<%@page import="oscar.oscarLab.ca.on.*,oscar.util.*,oscar.oscarLab.*" %>
+<%@page %>
+<%@page import="ca.openosp.openo.demographic.data.*,ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.encounter.oscarMeasurements.bean.EctMeasurementsDataBeanHandler,java.util.*,ca.openosp.openo.rx.util.*" %>
+<%@page import="ca.openosp.openo.lab.ca.on.*,ca.openosp.openo.util.*,ca.openosp.openo.lab.*" %>
+<%@ page import="ca.openosp.openo.prescript.util.LimitedUseCode" %>
+<%@ page import="ca.openosp.openo.prescript.util.LimitedUseLookup" %>
 
-           <%
-           String din=request.getParameter("din");
-           String randomId=request.getParameter("randomId");
-            ArrayList<LimitedUseCode> luList = LimitedUseLookup.getLUInfoForDin(din);
+<%
+    String din = request.getParameter("din");
+    String randomId = request.getParameter("randomId");
+    ArrayList<LimitedUseCode> luList = LimitedUseLookup.getLUInfoForDin(din);
 
-            if (luList != null){
-     %>
-            <div style="float:left; margin-left:2px; margin-right: 2px;">
-            <table width="570" style="border-width: 1px; border-spacing: 2px; border-style: outset; border-color: black;">
-                        <tr>
-                                <th colspan="2" align="left">Limited Use Codes</th>
-                        </tr>
+    if (luList != null) {
+%>
+<div style="float:left; margin-left:2px; margin-right: 2px;">
+    <table width="570" style="border-width: 1px; border-spacing: 2px; border-style: outset; border-color: black;">
+        <tr>
+            <th colspan="2" align="left">Limited Use Codes</th>
+        </tr>
 
-                        <%for (LimitedUseCode limitedUseCode : luList){%>
-                        <tr>
-                            <td valign="top">
-                                <a onclick="javascript:addLuCode('instructions_<%=randomId%>','<%=limitedUseCode.getUseId()%>')" href="javascript: return void();"><%=limitedUseCode.getUseId()%></a>&nbsp;
-                            </td>
-                            <td><%=limitedUseCode.getTxt()%></td>
-                        </tr>
-                        <%}%>
-            </table>
-            </div>
-            <%}%>
+        <%for (LimitedUseCode limitedUseCode : luList) {%>
+        <tr>
+            <td valign="top">
+                <a onclick="javascript:addLuCode('instructions_<%=randomId%>','<%=limitedUseCode.getUseId()%>')"
+                   href="javascript: return void();"><%=limitedUseCode.getUseId()%>
+                </a>&nbsp;
+            </td>
+            <td><%=limitedUseCode.getTxt()%>
+            </td>
+        </tr>
+        <%}%>
+    </table>
+</div>
+<%}%>

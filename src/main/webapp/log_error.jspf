@@ -1,6 +1,7 @@
-<%@page import="org.oscarehr.util.MiscUtils"%>
+<%@page import="ca.openosp.openo.utility.MiscUtils"%>
 <%@page import="org.apache.logging.log4j.Logger"%>
-<%@page import="java.io.*,oscar.*"%>
+<%@page import="java.io.*,ca.openosp.*"%>
+<%@ page import="ca.openosp.OscarProperties" %>
 <%
 	Logger logger=MiscUtils.getLogger();
         boolean debugOn = OscarProperties.getInstance().getBooleanProperty("DEBUG", "yes");

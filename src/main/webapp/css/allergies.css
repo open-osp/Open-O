@@ -30,13 +30,13 @@
 		#000000 = black
 		#FF8C00 = darkorange
 */
-BODY {
-	margin:0px !important;
-	padding: 0px !important;
-	background-color:white !important;
-	font-size: normal !important;;
-	font-family: Verdana, Tahoma, Arial, sans-serif !important;
-}
+ :root * {
+	 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+	 font-size: 12px;
+	 overscroll-behavior: none;
+	 -webkit-font-smoothing: antialiased;
+	 -moz-osx-font-smoothing: grayscale;
+ }
 
 table {
 	border-collapse: collapse !important;
@@ -89,7 +89,7 @@ td.Step1Text {
 }
 
 table.allergy_legend td {
-	padding-right:6;
+	padding-right:6px;
 		font-size: x-small !important;
 }
 
@@ -99,12 +99,34 @@ height:10px;
 border:1px solid #999999;
 }
 
+tr#allergiesRowOne {
+	position: sticky;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1000;
+	background-color: white;
+}
+
+td#allergiesColumnOneRowTwo, table#topLink td#topLinkLeftColumn {
+	width: 19.5% !important;
+		margin:0px !important;
+	padding:0px !important;
+	min-width: 150px;
+}
+
+
+td#allergiesColumnOneRowTwo {
+	font-size: x-small !important;
+}
+
 td#allergiesColumnOneRowTwo p.PropSheetLevel1CurrentItemRed {
 	display:none !important;
 }
 
 td#allergiesColumnTwoRowTwo {
-	width: 100% !important;
+	vertical-align: text-top;
+	width: 80% !important;
 	margin:0px !important;
 	padding:0px !important;
 	padding-left:.5% !important;

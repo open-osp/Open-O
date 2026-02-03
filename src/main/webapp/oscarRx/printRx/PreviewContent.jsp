@@ -23,22 +23,21 @@
     Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic" %>
-<%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%--<%@ taglib prefix="logic" uri="http://struts.apache.org/tags-logic" %>--%>
+<%@ taglib prefix="oscar" uri="/oscarPropertiestag" %>
+<%--<%@ taglib prefix="bean" uri="http://struts.apache.org/tags-bean" %>--%>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
 <%@ page import="org.owasp.encoder.Encode" %>
-<%@ page import="oscar.OscarProperties" %>
-<%@ page import="oscar.oscarRx.data.RxPatientData" %>
-<%@ page import="oscar.oscarProvider.data.ProviderData" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
+<%@ page import="ca.openosp.OscarProperties, ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<fmt:setBundle basename="oscarResources"/>
 
 <!DOCTYPE html>
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="RxPreview.title"/></title>
+        <title><fmt:message key="RxPreview.title"/></title>
         <style media="all">
             * {
                 font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
@@ -71,7 +70,6 @@
             }
 
         </style>
-        <html:base/>
 
         <logic:notPresent name="RxSessionBean" scope="session">
             <logic:redirect href="error.html"/>
@@ -84,10 +82,10 @@
             </logic:equal>
         </logic:present>
     </head>
-
+<body>
     <div topmargin="0" leftmargin="0" vlink="#0000FF" id="printableContent">
 
-    <html:form action="/form/formname" styleId="preview2Form">
+    <form action="/form/formname" styleId="preview2Form">
         <input type="hidden" name="demographic_no" value="${sessionScope.RxSessionBean.demographicNo}"/>
         <table>
             <tr>
@@ -138,7 +136,7 @@
                                        value="<%=StringEscapeUtils.escapeHtml((String)request.getAttribute("patientChartNo"))%>"/>
                                 <input type="hidden" name="bandNumber" value="${requestScope.bandNumber}"/>
                                 <input type="hidden" name="patientPhone"
-                                       value="<bean:message key="RxPreview.msgTel"/><%=StringEscapeUtils.escapeHtml((String)request.getAttribute("patientPhone")) %>"/>
+                                       value="<fmt:message key="RxPreview.msgTel"/><%=StringEscapeUtils.escapeHtml((String)request.getAttribute("patientPhone")) %>"/>
                                 <input type="hidden" name="rxDate"
                                        value="<%= StringEscapeUtils.escapeHtml((String)request.getAttribute("rxDateFormatted")) %>"/>
                                 <input type="hidden" name="sigDoctorName"
@@ -149,29 +147,29 @@
                                 <b>${requestScope.doctorName}</b><br>
                                 <c:choose>
                                     <c:when test="${empty infirmaryView_programAddress}">
-                                        <%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicName().replaceAll("\\(\\d{6}\\)", "") %>
+                                        <%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicName().replaceAll("\\(\\d{6}\\)", "") %>
                                         <br>
-                                        <%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicAddress() %>
+                                        <%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicAddress() %>
                                         <br>
-                                        <%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicCity() %>&nbsp;&nbsp;<%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicProvince() %>&nbsp;&nbsp;
-                                        <%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicPostal() %>
-                                        <% if (((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo() != null && !((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo().equals("")) { %>
+                                        <%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicCity() %>&nbsp;&nbsp;<%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicProvince() %>&nbsp;&nbsp;
+                                        <%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicPostal() %>
+                                        <% if (((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo() != null && !((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo().equals("")) { %>
                                         <br><bean:message
-                                            key="RxPreview.PractNo"/>:<%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo() %>
+                                            key="RxPreview.PractNo"/>:<%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getPractitionerNo() %>
                                         <% } %>
                                         <br>
-                                        <bean:message key="RxPreview.msgTel"/>: ${requestScope.phone}<br>
+                                        <fmt:message key="RxPreview.msgTel"/>: ${requestScope.phone}<br>
                                         <oscar:oscarPropertiesCheck property="RXFAX" value="yes">
                                             <bean:message
-                                                    key="RxPreview.msgFax"/>: <%= ((oscar.oscarRx.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicFax() %>
+                                                    key="RxPreview.msgFax"/>: <%= ((ca.openosp.openo.prescript.data.RxProviderData.Provider) request.getAttribute("provider")).getClinicFax() %>
                                             <br>
                                         </oscar:oscarPropertiesCheck>
                                     </c:when>
                                     <c:otherwise>
                                         <c:out value="${infirmaryView_programAddress}" escapeXml="false"/><br>
-                                        <bean:message key="RxPreview.msgTel"/>: ${requestScope.phone}<br>
+                                        <fmt:message key="RxPreview.msgTel"/>: ${requestScope.phone}<br>
                                         <oscar:oscarPropertiesCheck property="RXFAX" value="yes">
-                                            <bean:message key="RxPreview.msgFax"/>: ${finalFax}
+                                            <fmt:message key="RxPreview.msgFax"/>: ${finalFax}
                                         </oscar:oscarPropertiesCheck>
                                     </c:otherwise>
                                 </c:choose>
@@ -189,19 +187,17 @@
 										<oscar:oscarPropertiesCheck value="true" property="showRxBandNumber">
                                             <c:if test="${ not empty requestScope.bandNumber }">
                                                 <br/>
-                                                <b><bean:message key="oscar.oscarRx.bandNumber"/></b>
+                                                <b><fmt:message key="ca.openosp.openo.rx.bandNumber"/></b>
                                                 <c:out value="${ requestScope.bandNumber }"/>
                                             </c:if>
                                         </oscar:oscarPropertiesCheck>
 										<b>
 											<% if (!OscarProperties.getInstance().getProperty("showRxHin", "").equals("false")) { %>
-												<bean:message
-                                                        key="oscar.oscarRx.hin"/><%= Encode.forHtmlContent((String) request.getAttribute("patientHin")) %>
+												<fmt:message key="ca.openosp.openo.rx.hin"/><%= Encode.forHtmlContent((String) request.getAttribute("patientHin")) %>
 											<% } %>
 										</b><br>
 										<% if (OscarProperties.getInstance().getProperty("showRxChartNo", "").equalsIgnoreCase("true")) { %>
-											<bean:message
-                                                    key="oscar.oscarRx.chartNo"/><%=(String) request.getAttribute("patientChartNo")%>
+											<fmt:message key="ca.openosp.openo.rx.chartNo"/><%=(String) request.getAttribute("patientChartNo")%>
 										<% } %>
 								</span>
                                 <span style="float:right">
@@ -216,8 +212,8 @@
                         </c:if>
 
                         <tr valign=bottom>
-                            <td height=25px width=25% style="vertical-align:bottom;"><bean:message
-                                    key="RxPreview.msgSignature"/>:
+                            <td height=25px width=25% style="vertical-align:bottom;">
+                              <fmt:message key="RxPreview.msgSignature"/>:
                             </td>
                             <td height=25px width=75% style="border-bottom: 2px solid;">
                                     <%-- Digital signature is now set in the action --%>
@@ -255,7 +251,7 @@
                             <td height=25px>
                                 <c:if test="${OscarProperties.getInstance().getProperty('signature_tablet', '').equals('yes')}">
                                     <input type="button" value=
-                                        <bean:message key="RxPreview.digitallySign"/> class="noprint"
+                                        <fmt:message key="RxPreview.digitallySign"/> class="noprint"
                                            onclick="setInterval('refreshImage()', POLL_TIME); document.location='<%=request.getContextPath()%>/signature_pad/topaz_signature_pad.jnlp.jsp?<%=DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY%>=${requestScope.signatureRequestId}'"/>
                                 </c:if>
                             </td>
@@ -263,7 +259,7 @@
                                 &nbsp; <c:out value="${requestScope.doctorName}"/>
                                 <c:if test="${not empty requestScope.pracNo && requestScope.pracNo ne 'null'}">
                                     <br>
-                                    &nbsp;<bean:message key="RxPreview.PractNo"/> <c:out value="${requestScope.pracNo}"/>
+                                    &nbsp;<fmt:message key="RxPreview.PractNo"/> <c:out value="${requestScope.pracNo}"/>
                                 </c:if>
                             </td>
                         </tr>
@@ -274,10 +270,10 @@
                                 <tr valign=bottom>
                                     <td height=55px colspan="2">
 										<span style="float:right; font-size:10px;">
-											<bean:message key="RxPreview.msgReprintBy"/> <c:out
+											<fmt:message key="RxPreview.msgReprintBy"/> <c:out
                                                 value="${ProviderData.getProviderName(sessionScope.user)}"/> <br>
-											<bean:message key="RxPreview.msgOrigPrinted"/>:&nbsp;${rx.printDate} <br>
-											<bean:message key="RxPreview.msgTimesPrinted"/>:&nbsp;${rx.numPrints}
+											<fmt:message key="RxPreview.msgOrigPrinted"/>:&nbsp;${rx.printDate} <br>
+											<fmt:message key="RxPreview.msgTimesPrinted"/>:&nbsp;${rx.numPrints}
 										</span>
                                         <input type="hidden" name="origPrintDate" value="${rx.printDate}"/>
                                         <input type="hidden" name="numPrints" value="${rx.numPrints}"/>
@@ -334,6 +330,7 @@
                 </td>
             </tr>
         </table>
-    </html:form>
+    </form>
     </div>
-</html:html>
+</body>
+</html>

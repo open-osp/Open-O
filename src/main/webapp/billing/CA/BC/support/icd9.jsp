@@ -23,71 +23,72 @@
 
 --%>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.DiagnosticCode" %>
-<%@ page import="org.oscarehr.common.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.DiagnosticCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.DiagnosticCodeDao" %>
+<%@ page import="ca.openosp.Misc" %>
 <%
-	DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
+    DiagnosticCodeDao diagnosticCodeDao = SpringUtils.getBean(DiagnosticCodeDao.class);
 %>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>OSCAR Diagnostic Codes</title>
-<link rel="stylesheet" href="../../../../share/css/oscar.css">
-</head>
-<%
-	String form=request.getParameter("form"),field=request.getParameter("field");
-   String searchStr = request.getParameter("searchStr");
-   if (searchStr == null){
-     searchStr = "%";
-   }else{
-       searchStr = "%" +searchStr + "%";
-   }
-   searchStr = oscar.Misc.mysqlEscape(searchStr);
-%>
-<script language="JavaScript">
-function posttoText(index){
-   self.close();
-	opener.document.<%=form%>.<%=field%>.value = index;
-	opener.document.focus();
-}
-</script>
-<body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
-<table width="100%" border="0" cellspacing="0" cellpadding="0"
-	bgcolor="#D3D3D3">
-	<tr>
-		<td height="40" width="25"></td>
-		<td width="90%" align="left">
-		<p><font face="Verdana" color="#4D4D4D"><b><font
-			size="4">oscar<font size="3">Diagnostic Codes (ICD9)</font></font></b></font></p>
-		</td>
-	</tr>
-</table>
-<br>
-<table width="100%" border="0" cellspacing="5" cellpadding="0">
-	<tr bgcolor="#D4D4D4">
-		<td>Link</td>
-		<td>Description</td>
-	</tr>
-	<%
-	boolean color = false;
-	java.util.List<DiagnosticCode> dcodes = diagnosticCodeDao.search(searchStr);
-	for (DiagnosticCode dcode:dcodes){
-%>
-	<tr <%=((color) ? "bgcolor=\"#F6F6F6\"" : "")%> align="left"
-		valign="top">
-		<td class="SmallerText"><a href=#
-			onClick="posttoText('<%=dcode.getDiagnosticCode()%>');"><%=dcode.getDiagnosticCode()%></a>
-		</td>
-		<td class="SmallerText"><%=dcode.getDescription()%></td>
-	</tr>
-	<%
-		color = !(color);
-	}
-%>
-	<tr bgcolor="#D4D4D4">
-		<td colspan="5">&nbsp</td>
-	</tr>
-</table>
-</body>
-</html>
+<html>
+    <head>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>OSCAR Diagnostic Codes</title>
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/share/css/oscar.css">
+    </head>
+    <%
+        String form = request.getParameter("form"), field = request.getParameter("field");
+        String searchStr = request.getParameter("searchStr");
+        if (searchStr == null) {
+            searchStr = "%";
+        } else {
+            searchStr = "%" + searchStr + "%";
+        }
+        searchStr = Misc.mysqlEscape(searchStr);
+    %>
+    <script language="JavaScript">
+    function posttoText(index){
+    self.close();
+    opener.document.<%=form%>.<%=field%>.value = index;
+    opener.document.focus();
+    }
+    </script>
+    <body bgproperties="fixed" topmargin="0" leftmargin="0" rightmargin="0">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0"
+    bgcolor="#D3D3D3">
+    <tr>
+    <td height="40" width="25"></td>
+    <td width="90%" align="left">
+    <p><font face="Verdana" color="#4D4D4D"><b><font
+    size="4">oscar<font size="3">Diagnostic Codes (ICD9)</font></font></b></font></p>
+    </td>
+    </tr>
+    </table>
+    <br>
+    <table width="100%" border="0" cellspacing="5" cellpadding="0">
+    <tr bgcolor="#D4D4D4">
+    <td>Link</td>
+    <td>Description</td>
+    </tr>
+    <%
+        boolean color = false;
+        java.util.List<DiagnosticCode> dcodes = diagnosticCodeDao.search(searchStr);
+        for (DiagnosticCode dcode : dcodes) {
+    %>
+    <tr <%=((color) ? "bgcolor=\"#F6F6F6\"" : "")%> align="left"
+    valign="top">
+    <td class="SmallerText"><a href=#
+    onClick="posttoText('<%=dcode.getDiagnosticCode()%>');"><%=dcode.getDiagnosticCode()%></a>
+    </td>
+    <td class="SmallerText"><%=dcode.getDescription()%></td>
+    </tr>
+    <%
+            color = !(color);
+        }
+    %>
+    <tr bgcolor="#D4D4D4">
+    <td colspan="5">&nbsp</td>
+    </tr>
+    </table>
+    </body>
+    </html>

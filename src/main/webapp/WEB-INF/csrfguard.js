@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-(function() {
+(function () {
     /**
      * Code to ensure our event always gets triggered when the DOM is updated.
      * @param obj
@@ -34,43 +34,47 @@
      * @param fn
      * @source http://www.dustindiaz.com/rock-solid-addevent/
      */
-    function addEvent( obj, type, fn ) {
+    function addEvent(obj, type, fn) {
         if (obj.addEventListener) {
-            obj.addEventListener( type, fn, false );
+            obj.addEventListener(type, fn, false);
             EventCache.add(obj, type, fn);
-        }
-        else if (obj.attachEvent) {
-            obj["e"+type+fn] = fn;
-            obj[type+fn] = function() { obj["e"+type+fn]( window.event ); }
-            obj.attachEvent( "on"+type, obj[type+fn] );
+        } else if (obj.attachEvent) {
+            obj["e" + type + fn] = fn;
+            obj[type + fn] = function () {
+                obj["e" + type + fn](window.event);
+            }
+            obj.attachEvent("on" + type, obj[type + fn]);
             EventCache.add(obj, type, fn);
-        }
-        else {
-            obj["on"+type] = obj["e"+type+fn];
+        } else {
+            obj["on" + type] = obj["e" + type + fn];
         }
     }
 
-    var EventCache = function(){
+    var EventCache = function () {
         var listEvents = [];
         return {
-            listEvents : listEvents,
-            add : function(node, sEventName, fHandler){
+            listEvents: listEvents,
+            add: function (node, sEventName, fHandler) {
                 listEvents.push(arguments);
             },
-            flush : function(){
+            flush: function () {
                 var i, item;
-                for(i = listEvents.length - 1; i >= 0; i = i - 1){
+                for (i = listEvents.length - 1; i >= 0; i = i - 1) {
                     item = listEvents[i];
-                    if(item[0].removeEventListener){
+                    if (item[0].removeEventListener) {
                         item[0].removeEventListener(item[1], item[2], item[3]);
-                    };
-                    if(item[1].substring(0, 2) != "on"){
+                    }
+                    ;
+                    if (item[1].substring(0, 2) != "on") {
                         item[1] = "on" + item[1];
-                    };
-                    if(item[0].detachEvent){
+                    }
+                    ;
+                    if (item[0].detachEvent) {
                         item[0].detachEvent(item[1], item[2]);
-                    };
-                };
+                    }
+                    ;
+                }
+                ;
             }
         };
     }();
@@ -87,15 +91,15 @@
     /** hook using standards based prototype **/
     function hijackStandard() {
         XMLHttpRequest.prototype._open = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+        XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
             this.url = url;
 
             this._open.apply(this, arguments);
         };
 
         XMLHttpRequest.prototype._send = XMLHttpRequest.prototype.send;
-        XMLHttpRequest.prototype.send = function(data) {
-            if(this.onsend != null) {
+        XMLHttpRequest.prototype.send = function (data) {
+            if (this.onsend != null) {
                 this.onsend.apply(this, arguments);
             }
 
@@ -136,18 +140,33 @@
         init_XMLHttpRequest.onreadystatechange = null;
 
         /** methods **/
-        init_XMLHttpRequest.prototype.open = function(method, url, async, user, pass) {
+        init_XMLHttpRequest.prototype.open = function (method, url, async, user, pass) {
             var self = this;
             this.url = url;
 
-            this.base.onreadystatechange = function() {
-                try { self.status = self.base.status; } catch (e) { }
-                try { self.statusText = self.base.statusText; } catch (e) { }
-                try { self.readyState = self.base.readyState; } catch (e) { }
-                try { self.responseText = self.base.responseText; } catch(e) { }
-                try { self.responseXML = self.base.responseXML; } catch(e) { }
+            this.base.onreadystatechange = function () {
+                try {
+                    self.status = self.base.status;
+                } catch (e) {
+                }
+                try {
+                    self.statusText = self.base.statusText;
+                } catch (e) {
+                }
+                try {
+                    self.readyState = self.base.readyState;
+                } catch (e) {
+                }
+                try {
+                    self.responseText = self.base.responseText;
+                } catch (e) {
+                }
+                try {
+                    self.responseXML = self.base.responseXML;
+                } catch (e) {
+                }
 
-                if(self.onreadystatechange != null) {
+                if (self.onreadystatechange != null) {
                     self.onreadystatechange.apply(this, arguments);
                 }
             }
@@ -155,27 +174,27 @@
             this.base.open(method, url, async, user, pass);
         };
 
-        init_XMLHttpRequest.prototype.send = function(data) {
-            if(this.onsend != null) {
+        init_XMLHttpRequest.prototype.send = function (data) {
+            if (this.onsend != null) {
                 this.onsend.apply(this, arguments);
             }
 
             this.base.send(data);
         };
 
-        init_XMLHttpRequest.prototype.abort = function() {
+        init_XMLHttpRequest.prototype.abort = function () {
             this.base.abort();
         };
 
-        init_XMLHttpRequest.prototype.getAllResponseHeaders = function() {
+        init_XMLHttpRequest.prototype.getAllResponseHeaders = function () {
             return this.base.getAllResponseHeaders();
         };
 
-        init_XMLHttpRequest.prototype.getResponseHeader = function(name) {
+        init_XMLHttpRequest.prototype.getResponseHeader = function (name) {
             return this.base.getResponseHeader(name);
         };
 
-        init_XMLHttpRequest.prototype.setRequestHeader = function(name, value) {
+        init_XMLHttpRequest.prototype.setRequestHeader = function (name, value) {
             return this.base.setRequestHeader(name, value);
         };
 
@@ -188,10 +207,13 @@
         var result = false;
 
         /** check exact or subdomain match **/
-        if(current == target) {
+        if (current == target) {
             result = true;
-        } else if(%DOMAIN_STRICT% == false) {
-            if(target.charAt(0) == '.') {
+        } else if (%
+        DOMAIN_STRICT % == false
+    )
+        {
+            if (target.charAt(0) == '.') {
                 result = endsWith(current, target);
             } else {
                 result = endsWith(current, '.' + target);
@@ -206,17 +228,17 @@
         var result = false;
 
         /** parse out domain to make sure it points to our own **/
-        if(src.substring(0, 7) == "http://" || src.substring(0, 8) == "https://") {
+        if (src.substring(0, 7) == "http://" || src.substring(0, 8) == "https://") {
             var token = "://";
             var index = src.indexOf(token);
             var part = src.substring(index + token.length);
             var domain = "";
 
             /** parse up to end, first slash, or anchor **/
-            for(var i=0; i<part.length; i++) {
+            for (var i = 0; i < part.length; i++) {
                 var character = part.charAt(i);
 
-                if(character == '/' || character == ':' || character == '#') {
+                if (character == '/' || character == ':' || character == '#') {
                     break;
                 } else {
                     domain += character;
@@ -225,10 +247,10 @@
 
             result = isValidDomain(document.domain, domain);
             /** explicitly skip anchors **/
-        } else if(src.charAt(0) == '#') {
+        } else if (src.charAt(0) == '#') {
             result = false;
             /** ensure it is a local resource without a protocol **/
-        } else if(!startsWith(src, "//") && (src.charAt(0) == '/' || src.indexOf(':') == -1)) {
+        } else if (!startsWith(src, "//") && (src.charAt(0) == '/' || src.indexOf(':') == -1)) {
             result = true;
         }
 
@@ -247,9 +269,9 @@
          * resources (ex: "protect.html" vs
          * "/Owasp.CsrfGuard.Test/protect.html").
          */
-        if(index > 0) {
+        if (index > 0) {
             part = url.substring(index + token.length);
-        } else if(url.charAt(0) != '/') {
+        } else if (url.charAt(0) != '/') {
             part = "%CONTEXT_PATH%/" + url;
         } else {
             part = url;
@@ -258,17 +280,17 @@
         /** parse up to end or query string **/
         var uriContext = (index == -1);
 
-        for(var i=0; i<part.length; i++) {
+        for (var i = 0; i < part.length; i++) {
             var character = part.charAt(i);
 
-            if(character == '/') {
+            if (character == '/') {
                 uriContext = true;
-            } else if(uriContext == true && (character == '?' || character == '#')) {
+            } else if (uriContext == true && (character == '?' || character == '#')) {
                 uriContext = false;
                 break;
             }
 
-            if(uriContext == true) {
+            if (uriContext == true) {
                 uri += character;
             }
         }
@@ -277,7 +299,7 @@
     }
 
     /** inject tokens as hidden fields into forms **/
-    function injectTokenForm(form, tokenName, tokenValue, pageTokens,injectGetForms) {
+    function injectTokenForm(form, tokenName, tokenValue, pageTokens, injectGetForms) {
 
         if (!injectGetForms) {
             var method = form.getAttribute("method");
@@ -290,7 +312,7 @@
         var value = tokenValue;
         var action = form.getAttribute("action");
 
-        if(action != null && isValidUrl(action)) {
+        if (action != null && isValidUrl(action)) {
             var uri = parseUri(action);
             value = pageTokens[uri] != null ? pageTokens[uri] : tokenValue;
         }
@@ -311,11 +333,11 @@
         // if an img tag has an empty location, on reload it will attempt to GET the html page url with no parameters except the CSRF token
         let ignoreElement = (element.nodeName.toLowerCase() === 'img' && location === '');
 
-        if(location != null && isValidUrl(location) && !ignoreElement) {
+        if (location != null && isValidUrl(location) && !ignoreElement) {
             var uri = parseUri(location);
             var value = (pageTokens[uri] != null ? pageTokens[uri] : tokenValue);
 
-            if(location.indexOf('?') != -1) {
+            if (location.indexOf('?') != -1) {
                 location = location + '&' + tokenName + '=' + value;
             } else {
                 location = location + '?' + tokenName + '=' + value;
@@ -334,7 +356,10 @@
         /** obtain reference to page tokens if enabled **/
         var pageTokens = {};
 
-        if(%TOKENS_PER_PAGE% == true) {
+        if (%
+        TOKENS_PER_PAGE % == true
+    )
+        {
             pageTokens = requestPageTokens();
         }
 
@@ -343,18 +368,26 @@
         var len = all.length;
 
         //these are read from the csrf guard config file(s)
-        var injectForms = %INJECT_FORMS%;
-        var injectGetForms = %INJECT_GET_FORMS%;
-        var injectFormAttributes = %INJECT_FORM_ATTRIBUTES%;
-        var injectAttributes = %INJECT_ATTRIBUTES%;
+        var injectForms =
+    %
+        INJECT_FORMS %;
+        var injectGetForms =
+    %
+        INJECT_GET_FORMS %;
+        var injectFormAttributes =
+    %
+        INJECT_FORM_ATTRIBUTES %;
+        var injectAttributes =
+    %
+        INJECT_ATTRIBUTES %;
 
-        for(var i=0; i<len; i++) {
+        for (var i = 0; i < len; i++) {
             var element = all[i];
 
             /** inject into form **/
-            if(element.tagName.toLowerCase() == "form") {
-                if(injectForms) {
-                    injectTokenForm(element, tokenName, tokenValue, pageTokens,injectGetForms);
+            if (element.tagName.toLowerCase() == "form") {
+                if (injectForms) {
+                    injectTokenForm(element, tokenName, tokenValue, pageTokens, injectGetForms);
 
                     /** adjust array length after addition of new element **/
                     len = all.length;
@@ -363,7 +396,7 @@
                     injectTokenAttribute(element, "action", tokenName, tokenValue, pageTokens);
                 }
                 /** inject into attribute **/
-            } else if(injectAttributes) {
+            } else if (injectAttributes) {
                 if (!['img', 'script', 'link'].includes(element.tagName.toLowerCase())) {
                     injectTokenAttribute(element, "src", tokenName, tokenValue, pageTokens);
                     injectTokenAttribute(element, "href", tokenName, tokenValue, pageTokens);
@@ -385,20 +418,20 @@
         var value = "";
         var nameContext = true;
 
-        for(var i=0; i<text.length; i++) {
+        for (var i = 0; i < text.length; i++) {
             var character = text.charAt(i);
 
-            if(character == ':') {
+            if (character == ':') {
                 nameContext = false;
-            } else if(character != ',') {
-                if(nameContext == true) {
+            } else if (character != ',') {
+                if (nameContext == true) {
                     name += character;
                 } else {
                     value += character;
                 }
             }
 
-            if(character == ',' || (i + 1) >= text.length) {
+            if (character == ',' || (i + 1) >= text.length) {
                 pageTokens[name] = value;
                 name = "";
                 value = "";
@@ -416,10 +449,13 @@
      * The token is now removed and fetched using another POST request to solve,
      * the token hijacking problem.
      */
-    if(isValidDomain(document.domain, "%DOMAIN_ORIGIN%")) {
+    if (isValidDomain(document.domain, "%DOMAIN_ORIGIN%")) {
         /** optionally include Ajax support **/
-        if(%INJECT_XHR% == true) {
-            if(navigator.appName == "Microsoft Internet Explorer") {
+        if (%
+        INJECT_XHR % == true
+    )
+        {
+            if (navigator.appName == "Microsoft Internet Explorer") {
                 hijackExplorer();
             } else {
                 hijackStandard();
@@ -436,8 +472,8 @@
             var token_name = token_pair[0];
             var token_value = token_pair[1];
 
-            XMLHttpRequest.prototype.onsend = function(data) {
-                if(isValidUrl(this.url)) {
+            XMLHttpRequest.prototype.onsend = function (data) {
+                if (isValidUrl(this.url)) {
                     this.setRequestHeader("X-Requested-With", "XMLHttpRequest")
                     this.setRequestHeader(token_name, token_value);
                 }
@@ -445,8 +481,8 @@
         }
 
         /** update nodes in DOM after load **/
-        addEvent(window,'unload',EventCache.flush);
-        addEvent(window,'DOMContentLoaded', function() {
+        addEvent(window, 'unload', EventCache.flush);
+        addEvent(window, 'DOMContentLoaded', function () {
             injectTokens(token_name, token_value);
         });
     } else {

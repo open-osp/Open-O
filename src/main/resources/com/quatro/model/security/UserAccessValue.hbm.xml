@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-mapping PUBLIC
 	"-//Hibernate/Hibernate Mapping DTD//EN"
-	"http://hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd" >
 <hibernate-mapping>
-	<class name="com.quatro.model.security.UserAccessValue" table="v_user_access"
-		mutable="false">
+	<class name="ca.openosp.openo.model.security.UserAccessValue" table="v_user_access"
+				 mutable="false">
 		<composite-id>
 			<key-property name="functionCd" column="objectname" />
 			<key-property name="orgCd" column="orgcd" />
@@ -15,7 +15,7 @@
 		<property name="orgApplicable" column="orgapplicable" />
 	</class>
 	<sql-query name="user_access">
-		<return alias="uav" class="com.quatro.model.security.UserAccessValue" />
+		<return alias="uav" class="ca.openosp.openo.model.security.UserAccessValue" />
 
 		select a.provider_no as {uav.providerNo}, c.code as {uav.orgCd},
 		c.codecsv as {uav.orgCdcsv}, b.objectname as

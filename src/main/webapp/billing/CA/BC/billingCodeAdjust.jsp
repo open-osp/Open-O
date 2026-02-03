@@ -24,134 +24,131 @@
 
 --%>
 
-<%@taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin.billing,_admin" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_admin&type=_admin.billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page	import="java.util.*,oscar.oscarBilling.ca.bc.data.BillingCodeData,oscar.oscarBilling.ca.bc.pageUtil.*"%>
-<%@ page import="org.oscarehr.common.dao.BillingServiceDao,org.oscarehr.util.SpringUtils,org.oscarehr.common.model.*" %>
+<%@page import="java.util.*,ca.openosp.openo.billings.ca.bc.data.BillingCodeData,ca.openosp.openo.billing.ca.bc.pageUtil.*" %>
+<%@ page import="ca.openosp.openo.commn.dao.BillingServiceDao,ca.openosp.openo.utility.SpringUtils,ca.openosp.openo.commn.model.*" %>
+<%@ page import="ca.openosp.openo.commn.model.BillingService" %>
 <%BillingServiceDao billingServiceDao = (BillingServiceDao) SpringUtils.getBean(BillingServiceDao.class); %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>Adjust Billing Codes</title>
-<link rel="stylesheet" type="text/css"
-	href="../../../oscarEncounter/encounterStyles.css">
-<script type="text/javascript">
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title>Adjust Billing Codes</title>
+        <link rel="stylesheet" type="text/css"
+              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
+        <script type="text/javascript">
 
 
+        </script>
+        <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
+    </head>
+    <body class="BodyStyle" vlink="#0000FF" onLoad="setValues()">
+    <!--  -->
+    <table class="MainTable" id="scrollNumber1" name="encounterTable">
+        <tr class="MainTableTopRow">
+            <td width="10%" class="MainTableTopRowLeftColumn">Billing</td>
+            <td width="88%" class="MainTableTopRowRightColumn">
+                <table class="TopStatusBar">
+                    <tr>
+                        <td>Adjust Billing Codes</td>
+                        <td>&nbsp;</td>
+                        <td style="text-align: right"><a
+                                href="javascript:popupStart(300,400,'Help.jsp')"> <fmt:setBundle basename="oscarResources"/><fmt:message key="global.help"/> </a> | <a
+                                href="javascript:popupStart(300,400,'About.jsp')"> <fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/> </a> | <a
+                                href="javascript:popupStart(300,400,'License.jsp')"> <fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/> </a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableLeftColumn" valign="top">&nbsp; <a
+                    href="billingAddCode.jsp?addNew=true">Add Code</a></td>
+            <td class="MainTableRightColumn">
+                <form action="billingCodeAdjust.jsp" method="get">
+                    <%if (request.getAttribute("returnMessage") != null) { %>
+                    <table>
+                        <tr>
+                            <td style="font-color: red;"><%=request.getAttribute("returnMessage")%>
+                            </td>
+                        </tr>
+                    </table>
+                    <%} %>
+                    <table>
+                        <tr>
+                            <td>Billing Code <input type="text" name="bCode" maxlength="5"/>
+                                <input type="submit" name="Search"/></td>
+                        </tr>
+                    </table>
+                </form>
+                <%
 
+                    String sortOrder = request.getParameter("sortOrder") != null ? request.getParameter("sortOrder") : "";
 
-
-</script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
-</head>
-<body class="BodyStyle" vlink="#0000FF" onLoad="setValues()">
-<!--  -->
-<table class="MainTable" id="scrollNumber1" name="encounterTable">
-	<tr class="MainTableTopRow">
-		<td width="10%" class="MainTableTopRowLeftColumn">Billing</td>
-		<td width="88%" class="MainTableTopRowRightColumn">
-		<table class="TopStatusBar">
-			<tr>
-				<td>Adjust Billing Codes</td>
-				<td>&nbsp;</td>
-				<td style="text-align: right"><a
-					href="javascript:popupStart(300,400,'Help.jsp')"> <bean:message
-					key="global.help" /> </a> | <a
-					href="javascript:popupStart(300,400,'About.jsp')"> <bean:message
-					key="global.about" /> </a> | <a
-					href="javascript:popupStart(300,400,'License.jsp')"> <bean:message
-					key="global.license" /> </a></td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableLeftColumn" valign="top">&nbsp; <a
-			href="billingAddCode.jsp?addNew=true">Add Code</a></td>
-		<td class="MainTableRightColumn">
-		<form action="billingCodeAdjust.jsp" method="get">
-		<%if (request.getAttribute("returnMessage") != null) {      %>
-		<table>
-			<tr>
-				<td style="font-color: red;"><%=request.getAttribute("returnMessage")%>
-				</td>
-			</tr>
-		</table>
-		<%}      %>
-		<table>
-			<tr>
-				<td>Billing Code <input type="text" name="bCode" maxlength="5" />
-				<input type="submit" name="Search" /></td>
-			</tr>
-		</table>
-		</form>
-		<%
-
-      String sortOrder = request.getParameter("sortOrder")!=null?request.getParameter("sortOrder"):"";
-
-        String bCode = request.getParameter("bCode");
-        List list = null;
-        if (bCode != null){
-           list = (List) billingServiceDao.findBillingCodesByCode(bCode,billingServiceDao.BC,sortOrder.equals("desc")?1:0);
-        }
-        if (list != null) {
-          String arrow = "";
-          String newOrder =  "";
-          if(sortOrder.equals("desc")){
-            newOrder = "";
-            arrow = "&uarr;";
-          }
-          else if(sortOrder.equals("")){
-            newOrder = "desc";
-             arrow = "&darr;";
-          }
-      %>
-		<table border=1 width="80%">
-			<tr>
-				<th>Service Code<a
-					href="billingCodeAdjust.jsp?sortOrder=<%=newOrder%>"><%=arrow%></a></th>
-				<th>Description</th>
-				<th>Price</th>
-				<th>Options</th>
-			</tr>
-			<%
-          for (int i = 0; i < list.size(); i++) {
-            org.oscarehr.common.model.BillingService bcd = (org.oscarehr.common.model.BillingService) list.get(i);
-        %>
-			<tr align="center">
-				<td><strong><%=bcd.getServiceCode()%> </strong></td>
-				<td><%=bcd.getDescription()%></td>
-				<td><%=bcd.getValue()%></td>
-				<td><a
-					href="billingEditCode.jsp?codeId=<%=bcd.getBillingserviceNo()%>&code=<%=bcd.getServiceCode()%>&desc=<%=bcd.getDescription()%>&value=<%=bcd.getValue()%>">Edit</a>
-				<br>
-				<a href="deletePrivateCode.jsp?code=<%=bcd.getBillingserviceNo()%>">Delete</a></td>
-			</tr>
-			<%}        %>
-		</table>
-		<%}      %>
-		</td>
-	</tr>
-	<tr>
-		<td class="MainTableBottomRowLeftColumn"></td>
-		<td class="MainTableBottomRowRightColumn"></td>
-	</tr>
-</table>
-</body>
-</html:html>
+                    String bCode = request.getParameter("bCode");
+                    List list = null;
+                    if (bCode != null) {
+                        list = (List) billingServiceDao.findBillingCodesByCode(bCode, billingServiceDao.BC, sortOrder.equals("desc") ? 1 : 0);
+                    }
+                    if (list != null) {
+                        String arrow = "";
+                        String newOrder = "";
+                        if (sortOrder.equals("desc")) {
+                            newOrder = "";
+                            arrow = "&uarr;";
+                        } else if (sortOrder.equals("")) {
+                            newOrder = "desc";
+                            arrow = "&darr;";
+                        }
+                %>
+                <table border=1 width="80%">
+                    <tr>
+                        <th>Service Code<a
+                                href="billingCodeAdjust.jsp?sortOrder=<%=newOrder%>"><%=arrow%>
+                        </a></th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Options</th>
+                    </tr>
+                    <%
+                        for (int i = 0; i < list.size(); i++) {
+                            BillingService bcd = (BillingService) list.get(i);
+                    %>
+                    <tr align="center">
+                        <td><strong><%=bcd.getServiceCode()%>
+                        </strong></td>
+                        <td><%=bcd.getDescription()%>
+                        </td>
+                        <td><%=bcd.getValue()%>
+                        </td>
+                        <td><a
+                                href="billingEditCode.jsp?codeId=<%=bcd.getBillingserviceNo()%>&code=<%=bcd.getServiceCode()%>&desc=<%=bcd.getDescription()%>&value=<%=bcd.getValue()%>">Edit</a>
+                            <br>
+                            <a href="deletePrivateCode.jsp?code=<%=bcd.getBillingserviceNo()%>">Delete</a></td>
+                    </tr>
+                    <%} %>
+                </table>
+                <%} %>
+            </td>
+        </tr>
+        <tr>
+            <td class="MainTableBottomRowLeftColumn"></td>
+            <td class="MainTableBottomRowRightColumn"></td>
+        </tr>
+    </table>
+    </body>
+</html>

@@ -38,16 +38,15 @@
 -->
 <%
     if (session.getAttribute("user") == null) {
-        response.sendRedirect("../logout.jsp");
+        response.sendRedirect(request.getContextPath() + "/logout.jsp");
     }
 %>
-<%@ page errorPage="../appointment/errorpage.jsp"
-         import="java.util.*,
-                 java.sql.*" %>
-<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.model.Billingreferral" %>
-<%@page import="org.oscarehr.common.dao.BillingreferralDao" %>
+<%@ page errorPage="/errorpage.jsp"
+         import="java.util.*, java.sql.*" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.model.Billingreferral" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingreferralDao" %>
 <%
     BillingreferralDao billingReferralDao = (BillingreferralDao) SpringUtils.getBean(BillingreferralDao.class);
 %>
@@ -152,9 +151,9 @@
         }
     }
 %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<html:html lang="en">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
         <title>Add/Edit Service Code</title>
@@ -361,13 +360,13 @@
                 <td align="center" bgcolor="#CCCCFF" colspan="2"><input
                         type="hidden" name="action" value='<%=action%>'> <% if (!"search".equals(action)) {%>
                     <input type="submit" name="submit"
-                           value="<bean:message key="admin.resourcebaseurl.btnSave"/>"
+                           value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.resourcebaseurl.btnSave"/>"
                            onclick="javascript:return onSave();"> <% }%> <input
                             type="button" name="Cancel"
-                            value="<bean:message key="admin.resourcebaseurl.btnExit"/>"
+                            value="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.resourcebaseurl.btnExit"/>"
                             onClick="window.close()"></td>
             </tr>
         </form>
     </table>
     </body>
-</html:html>
+</html>

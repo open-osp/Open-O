@@ -8,7 +8,7 @@ INSERT INTO `demographic` VALUES (2,'MR','SUBJECT','MISSING',NULL,NULL,NULL,NULL
 DELETE FROM `provider_facility`;
 DELETE FROM `provider`;
 
-INSERT INTO `provider` VALUES ('999998','oscardoc','doctor','doctor',null,'','','','0001-01-01','','250-999-9998','250-999-9999','ohip','','billing','','1','','','cpsid','','','test2@test2.com','','','0001-01-01 00:00:00','0001-01-01 00:00:00','');
+INSERT INTO `provider` VALUES ('999998','openodoc','doctor','doctor',null,'','','','0001-01-01','','250-999-9998','250-999-9999','ohip','','billing','','1','','','cpsid','','','test2@test2.com','','','0001-01-01 00:00:00','0001-01-01 00:00:00','');
 INSERT INTO `provider_facility`(`provider_no`, `facility_id`) VALUES ('999998', 1);
 
 -- Allergies

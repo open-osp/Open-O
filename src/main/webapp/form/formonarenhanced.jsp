@@ -24,47 +24,49 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName2$%>" objectName="_form" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_form");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_form");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ page import="oscar.form.*"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
+<%@ page import="ca.openosp.openo.form.*" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.form.FrmRecord" %>
+<%@ page import="ca.openosp.openo.form.FrmRecordFactory" %>
 
 <%
     int demoNo = Integer.parseInt(request.getParameter("demographic_no"));
     int formId = Integer.parseInt(request.getParameter("formId"));
-	String pg = request.getParameter("pg");
-	// for oscarcitizens
+    String pg = request.getParameter("pg");
+    // for oscarcitizens
     String historyet = request.getParameter("historyet") == null ? "" : ("&historyet=" + request.getParameter("historyet"));
 
-	if(true) {
+    if (true) {
         out.clear();
-		if (formId == 0) {
-			pageContext.forward("formonarenhancedpg1.jsp?demographic_no=" + demoNo + "&formId=" + formId) ; 
- 		} else {
-			FrmRecord rec = (new FrmRecordFactory()).factory("ONAREnhanced");
-			java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request),demoNo, formId);
+        if (formId == 0) {
+            pageContext.forward("formonarenhancedpg1.jsp?demographic_no=" + demoNo + "&formId=" + formId);
+        } else {
+            FrmRecord rec = (new FrmRecordFactory()).factory("ONAREnhanced");
+            java.util.Properties props = rec.getFormRecord(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo, formId);
 
-			String suffix =  props.getProperty("c_lastVisited", "pg1");
-			if(pg != null && pg.length()>0) {
-				suffix = "pg"+pg;
-			}
-			pageContext.forward("formonarenhanced" + suffix
-				+ ".jsp?demographic_no=" + demoNo + "&formId=" + formId + historyet)  ;
-		}
-		return;
+            String suffix = props.getProperty("c_lastVisited", "pg1");
+            if (pg != null && pg.length() > 0) {
+                suffix = "pg" + pg;
+            }
+            pageContext.forward("formonarenhanced" + suffix
+                    + ".jsp?demographic_no=" + demoNo + "&formId=" + formId + historyet);
+        }
+        return;
     }
 %>

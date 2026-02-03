@@ -24,35 +24,37 @@
 
 --%>
 <%
-	int n = Integer.parseInt(request.getParameter("n"));
+    int n = Integer.parseInt(request.getParameter("n"));
 %>
 
-<tr align="center"  id="obxhx_<%=n%>">
-	<td><a dl="delete_link" href="javascript:void(0)" onclick="deleteObxHx('<%=n%>'); return false;">[x]</a>&nbsp;<%=n %></td>
-	<td>
-		<input type="text" name="pg1_year<%=n %>" size="5" maxlength="4" style="width: 90%"  />
-	</td>
-	<td>
-		<input type="text" name="pg1_sex<%=n %>" size="2"	maxlength="1" style="width: 50%"  />
-	</td>
-	<td>
-		<input type="text" name="pg1_oh_gest<%=n %>" size="3" maxlength="5" style="width: 80%"  />
-	</td>
-	<td>
-		<input type="text" name="pg1_weight<%=n %>" size="5" maxlength="6" style="width: 80%"  />
-	</td>
-	<td>
-		<input type="text" name="pg1_length<%=n %>" size="5" maxlength="6" style="width: 80%"  />
-	</td>
-	<td>
-		<input type="text" name="pg1_place<%=n %>" size="8" maxlength="20" style="width: 80%"  />
-	</td>
-	<td>
-		<input type="checkbox" name="pg1_svb<%=n %>" /> 
-		<input type="checkbox" name="pg1_cs<%=n %>" /> 
-		<input type="checkbox" name="pg1_ass<%=n %>" />
-	</td>
-	<td align="left">
-		<input type="text" name="pg1_oh_comments<%=n %>" size="20" maxlength="80" style="width: 100%"  />
-	</td>
- </tr>
+<tr align="center" id="obxhx_<%=n%>">
+    <td><a dl="delete_link" href="javascript:void(0)"
+           onclick="deleteObxHx('<%=n%>'); return false;">[x]</a>&nbsp;<%=n %>
+    </td>
+    <td>
+        <input type="text" name="pg1_year<%=n %>" size="5" maxlength="4" style="width: 90%"/>
+    </td>
+    <td>
+        <input type="text" name="pg1_sex<%=n %>" size="2" maxlength="1" style="width: 50%"/>
+    </td>
+    <td>
+        <input type="text" name="pg1_oh_gest<%=n %>" size="3" maxlength="5" style="width: 80%"/>
+    </td>
+    <td>
+        <input type="text" name="pg1_weight<%=n %>" size="5" maxlength="6" style="width: 80%"/>
+    </td>
+    <td>
+        <input type="text" name="pg1_length<%=n %>" size="5" maxlength="6" style="width: 80%"/>
+    </td>
+    <td>
+        <input type="text" name="pg1_place<%=n %>" size="8" maxlength="20" style="width: 80%"/>
+    </td>
+    <td>
+        <input type="checkbox" name="pg1_svb<%=n %>"/>
+        <input type="checkbox" name="pg1_cs<%=n %>"/>
+        <input type="checkbox" name="pg1_ass<%=n %>"/>
+    </td>
+    <td align="left">
+        <input type="text" name="pg1_oh_comments<%=n %>" size="20" maxlength="80" style="width: 100%"/>
+    </td>
+</tr>

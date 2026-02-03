@@ -24,105 +24,102 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    
-    boolean isSiteAccessPrivacy=false;
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+
+    boolean isSiteAccessPrivacy = false;
+    boolean authed = true;
 %>
 
 <security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.userAdmin" rights="*" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.userAdmin");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_admin&type=_admin.userAdmin");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 
 <security:oscarSec objectName="_site_access_privacy" roleName="<%=roleName$%>" rights="r" reverse="false">
-	<%isSiteAccessPrivacy=true; %>
+    <%isSiteAccessPrivacy = true; %>
 </security:oscarSec>
 
-<html:html lang="en">
-	<script src="${pageContext.request.contextPath}/csrfguard"></script>
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="admin.securitysearchrecordshtm.title" /></title>
-<link rel="stylesheet" href="../web.css">
-<script LANGUAGE="JavaScript">
-<!--
+<html>
+    <script src="${pageContext.request.contextPath}/csrfguard"></script>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitysearchrecordshtm.title"/></title>
+        <link rel="stylesheet" href="<%= request.getContextPath() %>/web.css">
+        <script LANGUAGE="JavaScript">
+            <!--
 
-	function setfocus() {
-	  document.searchprovider.keyword.focus();
-	  document.searchprovider.keyword.select();
-	}
+            function setfocus() {
+                document.searchprovider.keyword.focus();
+                document.searchprovider.keyword.select();
+            }
 
-  function onsub() {
-    // check input data in the future 
-  }
-	function upCaseCtrl(ctrl) {
-		ctrl.value = ctrl.value.toUpperCase();
-	}
+            function onsub() {
+                // check input data in the future
+            }
 
-//-->
-    </script>
-</head>
+            function upCaseCtrl(ctrl) {
+                ctrl.value = ctrl.value.toUpperCase();
+            }
 
-<body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
-<center>
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr bgcolor="#486ebd">
+            //-->
+        </script>
+    </head>
 
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		<bean:message key="admin.securitysearchrecordshtm.description" /></font></th>
-	</tr>
-</table>
+    <body onLoad="setfocus()" topmargin="0" leftmargin="0" rightmargin="0">
+    <center>
+        <table border="0" cellspacing="0" cellpadding="0" width="100%">
+            <tr bgcolor="#486ebd">
+
+                <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                    <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitysearchrecordshtm.description"/></font></th>
+            </tr>
+        </table>
 
 
+        <table cellspacing="0" cellpadding="2" width="100%" border="0"
+               BGCOLOR="#C4D9E7">
 
-<table cellspacing="0" cellpadding="2" width="100%" border="0"
-	BGCOLOR="#C4D9E7">
+            <form method="post" action="securitysearchresults.jsp" name="searchprovider"
+                  onsubmit="return onsub()">
+                <tr valign="top">
+                    <td rowspan="2" align="right" valign="middle"><font
+                            face="Verdana" color="#0000FF"><b><i><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitysearchrecordshtm.msgCriteria"/></i></b></font></td>
+                    <td nowrap><font size="1" face="Verdana" color="#0000FF">
+                        <input type="radio" name="search_mode" value="search_username">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formUserName"/></font></td>
 
-	<form method="post" action="securitysearchresults.jsp" name="searchprovider"
-		onsubmit="return onsub()">
-	<tr valign="top">
-		<td rowspan="2" align="right" valign="middle"><font
-			face="Verdana" color="#0000FF"><b><i><bean:message
-			key="admin.securitysearchrecordshtm.msgCriteria" /></i></b></font></td>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		<input type="radio" name="search_mode" value="search_username">
-		<bean:message key="admin.securityrecord.formUserName" /></font></td>
+                    <td nowrap><font size="1" face="Verdana" color="#0000FF">
+                        <input type="radio" checked name="search_mode"
+                               value="search_providerno"> <fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securityrecord.formProviderNo"/></font></td>
+                    <td valign="middle" rowspan="2" ALIGN="left"><input type="text"
+                                                                        NAME="keyword" SIZE="17" MAXLENGTH="100"> <INPUT
+                            TYPE="hidden" NAME="orderby" VALUE="user_name">
 
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		<input type="radio" checked name="search_mode"
-			value="search_providerno"> <bean:message
-			key="admin.securityrecord.formProviderNo" /></font></td>
-		<td valign="middle" rowspan="2" ALIGN="left"><input type="text"
-			NAME="keyword" SIZE="17" MAXLENGTH="100"> <INPUT
-			TYPE="hidden" NAME="orderby" VALUE="user_name"> 
+                        <INPUT TYPE="hidden" NAME="limit1" VALUE="0"> <INPUT
+                                TYPE="hidden" NAME="limit2" VALUE="10"><INPUT
+                                TYPE="SUBMIT" NAME="button"
+                                VALUE="<fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitysearchrecordshtm.btnSearch"/>"
+                                SIZE="17"></td>
+                </tr>
+                <tr>
+                    <td nowrap><font size="1" face="Verdana" color="#0000FF"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.securitysearchrecordshtm.reserved"/> </font></td>
+                    <td nowrap><font size="1" face="Verdana" color="#0000FF">
+                    </font></td>
 
-		<INPUT TYPE="hidden" NAME="limit1" VALUE="0"> <INPUT
-			TYPE="hidden" NAME="limit2" VALUE="10"><INPUT
-			TYPE="SUBMIT" NAME="button"
-			VALUE="<bean:message key="admin.securitysearchrecordshtm.btnSearch"/>"
-			SIZE="17"></td>
-	</tr>
-	<tr>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF"><bean:message
-			key="admin.securitysearchrecordshtm.reserved" /> </font></td>
-		<td nowrap><font size="1" face="Verdana" color="#0000FF">
-		</font></td>
+                </tr>
+            </form>
+        </table>
 
-	</tr>
-	</form>
-</table>
-
-</center>
-</body>
-</html:html>
+    </center>
+    </body>
+</html>

@@ -27,9 +27,11 @@
 
     <div style="width: 200px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_control_of_life_events" data-score="1">
-        <strong class="tt highlight" data-toggle="tooltip" data-field-name="control_of_life_events" title="Reports positive ability to manage their life">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_control_of_life_events" data-score="1">
+        <strong class="tt highlight" data-toggle="tooltip" data-field-name="control_of_life_events"
+                title="Reports positive ability to manage their life">
             Control of Life Events</strong>
     </div>
 
@@ -43,9 +45,9 @@
     </label>
 
     <span class="tt inline-block pl-8 font-bold" data-toggle="tooltip"
-        title="No recent change in ability to conduct usual activities" style="width: 210px;">
+          title="No recent change in ability to conduct usual activities" style="width: 210px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
         </svg><input type="checkbox" class="action-required" name="action_required_usual_activities" data-score="1">
         <strong class="highlight" data-field-name="usual_activities">Usual Activities</strong></span>
 
@@ -58,7 +60,7 @@
 
     <label class="flex items-center font-normal pl-4">
         <input type="radio" name="usual_activities" value="some_problem" class="m-0" autocomplete="off"
-            data-score="0.5">
+               data-score="0.5">
         <span class="pl-1">Some Problem</span>
     </label>
 

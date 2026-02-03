@@ -23,13 +23,11 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
-
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html" %>
-<%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="oscar" uri="/oscarPropertiestag" %>
+
+<fmt:setBundle basename="oscarResources"/>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="myDrugRefEnabled">
@@ -76,14 +74,11 @@
 
                 <div class="col-md-4">
                     <c:if test="${empty requestScope.pharmacyFax || requestScope.pharmacyFax == ''}">
-                        <html:form action="/oscarRx/clearPending">
-                            <html:hidden property="action" value=""/>
-                            <div class="alert alert-warning" id="faxWarningNote">
-                                <strong>Warning:</strong> faxing is disabled because no pharmacy fax number is
-                                available.<br><br>To enable faxing, close this window and select a pharmacy
-                                with a fax number before trying again.
-                            </div>
-                        </html:form>
+                        <div class="alert alert-warning" id="faxWarningNote">
+                            <strong>Warning:</strong> faxing is disabled because no pharmacy fax number is
+                            available.<br><br>To enable faxing, close this window and select a pharmacy
+                            with a fax number before trying again.
+                        </div>
                     </c:if>
 
                     <!-- Address Selection -->
@@ -91,7 +86,7 @@
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="form-group mb-3">
-                                    <label for="addressSel" class="form-label"><bean:message
+                                    <label for="addressSel" class="form-label"><fmt:message
                                             key="ViewScript.msgAddress"/></label>
                                     <select name="addressSel" id="addressSel" onChange="addressSelect()"
                                             class="form-select">
@@ -137,7 +132,7 @@
                     <!-- Actions Section -->
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h5 class="mb-0"><bean:message key="ViewScript.msgActions"/></h5>
+                            <h5 class="mb-0"><fmt:message key="ViewScript.msgActions"/></h5>
                         </div>
                         <div class="card-body">
 

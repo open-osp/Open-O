@@ -24,18 +24,17 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="dms.docViewerHead.title" /></title>
-</head>
 
-<body bgcolor="#486ebd" text="#000000" topmargin="0">
-<div align="center"><font face="Arial, Helvetica, sans-serif"
-	size="3"><b><font color="#FFFFFF"><bean:message
-	key="dms.docViewerHead.msgDocumentViewer" /></font></b></font></div>
-</body>
-</html:html>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.docViewerHead.title"/></title>
+    </head>
+
+    <body bgcolor="#486ebd" text="#000000" topmargin="0">
+    <div align="center"><font face="Arial, Helvetica, sans-serif"
+                              size="3"><b><font color="#FFFFFF"><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.docViewerHead.msgDocumentViewer"/></font></b></font></div>
+    </body>
+</html>

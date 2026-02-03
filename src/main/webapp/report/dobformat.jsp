@@ -24,58 +24,59 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
 
 %>
-<%@ page import="java.util.*, java.sql.*,java.io.*, oscar.util.*, java.text.*, java.net.*,sun.misc.*" errorPage="../appointment/errorpage.jsp"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DemographicDao" %>
-<%@page import="org.oscarehr.common.model.Demographic" %>
+<%@ page import="java.util.*, java.sql.*,java.io.*, ca.openosp.openo.util.*, java.text.*, java.net.*,sun.misc.*"
+         errorPage="/errorpage.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
 <%
-	DemographicDao demographicDao = (DemographicDao)SpringUtils.getBean(DemographicDao.class);
+    DemographicDao demographicDao = (DemographicDao) SpringUtils.getBean(DemographicDao.class);
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title>SCRAMBLE SHEET</title>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <title>SCRAMBLE SHEET</title>
 </head>
 <body>
 busy ... busy ... busy
 ..................................................
 <br>
 <%
-	ResultSet rsdemo = null ;
-	int rowsAffected = 0;
-	List<Integer> ids = demographicDao.getDemographicIds();
-	
-	for (Integer id: ids) {
-		Demographic d = demographicDao.getDemographicById(id);
-		if (d.getMonthOfBirth()!=null && d.getMonthOfBirth().length() == 1) {
-			d.setMonthOfBirth("0"+rsdemo.getString("month_of_birth"));
-			demographicDao.save(d);
-		}
+    ResultSet rsdemo = null;
+    int rowsAffected = 0;
+    List<Integer> ids = demographicDao.getDemographicIds();
 
-		if (d.getDateOfBirth()!=null && d.getDateOfBirth().length() == 1) {
-			d.setDateOfBirth("0"+rsdemo.getString("date_of_birth"));
-			demographicDao.save(d);
-		}
-	}
+    for (Integer id : ids) {
+        Demographic d = demographicDao.getDemographicById(id);
+        if (d.getMonthOfBirth() != null && d.getMonthOfBirth().length() == 1) {
+            d.setMonthOfBirth("0" + rsdemo.getString("month_of_birth"));
+            demographicDao.save(d);
+        }
+
+        if (d.getDateOfBirth() != null && d.getDateOfBirth().length() == 1) {
+            d.setDateOfBirth("0" + rsdemo.getString("date_of_birth"));
+            demographicDao.save(d);
+        }
+    }
 
 %>
 

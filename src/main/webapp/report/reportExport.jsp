@@ -24,49 +24,51 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_report,_admin.reporting" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_report&type=_admin.reporting");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_report&type=_admin.reporting");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page contentType="application/octet-stream"%><%@page
-	import="oscar.oscarDemographic.data.*,java.util.*,oscar.oscarPrevention.*,oscar.oscarProvider.data.*,oscar.util.*,oscar.oscarReport.ClinicalReports.*"%>
+<%@page contentType="application/octet-stream" %>
+<%@page
+        import="ca.openosp.openo.demographic.data.*,java.util.*,ca.openosp.openo.prevention.*,ca.openosp.openo.providers.data.*,ca.openosp.openo.util.*,ca.openosp.openo.report.ClinicalReports.*" %>
+<%@ page import="ca.openosp.openo.report.ClinicalReports.ReportEvaluator" %>
 <%
-     
-   
-     ArrayList arrList = (ArrayList) session.getAttribute("ClinicalReports"); 
-     if (arrList != null){
+
+
+    ArrayList arrList = (ArrayList) session.getAttribute("ClinicalReports");
+    if (arrList != null) {
         String id = request.getParameter("id");
-        
-        if (id != null){
-        ReportEvaluator re = (ReportEvaluator) arrList.get(Integer.parseInt(id));
-        
-        String filename = re.getName().replaceAll("/","---").replaceAll(" ","_"); // "report.txt";
-        response.addHeader("Content-Disposition", "attachment;filename=" + filename);
-        
-        out.write(re.getCSV());
-        }else{
-            response.addHeader("Content-Disposition", "attachment;filename=report.txt" );   
-            for (int i = 0; i < arrList.size();i++){
-               ReportEvaluator re = (ReportEvaluator) arrList.get(i);     
-               String filename = re.getName().replaceAll("/","---").replaceAll(" ","_"); // "report.txt";
-                 
-               out.write("'"+filename+"',"+re.getCSV()+'\n');
+
+        if (id != null) {
+            ReportEvaluator re = (ReportEvaluator) arrList.get(Integer.parseInt(id));
+
+            String filename = re.getName().replaceAll("/", "---").replaceAll(" ", "_"); // "report.txt";
+            response.addHeader("Content-Disposition", "attachment;filename=" + filename);
+
+            out.write(re.getCSV());
+        } else {
+            response.addHeader("Content-Disposition", "attachment;filename=report.txt");
+            for (int i = 0; i < arrList.size(); i++) {
+                ReportEvaluator re = (ReportEvaluator) arrList.get(i);
+                String filename = re.getName().replaceAll("/", "---").replaceAll(" ", "_"); // "report.txt";
+
+                out.write("'" + filename + "'," + re.getCSV() + '\n');
             }
         }
-     }else{
-        response.addHeader("Content-Disposition", "attachment;filename=error.txt" ); 
+    } else {
+        response.addHeader("Content-Disposition", "attachment;filename=error.txt");
         out.write("ERROR:No report found.");
-     }
-     
+    }
+
 %>

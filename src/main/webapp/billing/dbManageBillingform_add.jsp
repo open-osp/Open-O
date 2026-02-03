@@ -24,82 +24,81 @@
 
 --%>
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
-<%@ page import="org.oscarehr.common.model.CtlDiagCode" %>
-<%@ page import="org.oscarehr.common.dao.CtlDiagCodeDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlDiagCode" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlDiagCodeDao" %>
 <%
-	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
-	CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
+    CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+    CtlDiagCodeDao ctlDiagCodeDao = SpringUtils.getBean(CtlDiagCodeDao.class);
 %>
 <%
 
 
-String group1="",group2="", group3="";
-String typeid = "", type="";
+    String group1 = "", group2 = "", group3 = "";
+    String typeid = "", type = "";
 
-typeid = request.getParameter("typeid");
-type = request.getParameter("type");
-group1 = request.getParameter("group1");
-group2 = request.getParameter("group2");
-group3 = request.getParameter("group3");
+    typeid = request.getParameter("typeid");
+    type = request.getParameter("type");
+    group1 = request.getParameter("group1");
+    group2 = request.getParameter("group2");
+    group3 = request.getParameter("group3");
 
 %>
 
 <%
-if (type.compareTo("") == 0 || group1.compareTo("") == 0 || group2.compareTo("") == 0 || group3.compareTo("") == 0) {
- String errormsg = "Error: Type Description, Groups Descrption  must be entered.";
- out.println(errormsg);
+    if (type.compareTo("") == 0 || group1.compareTo("") == 0 || group2.compareTo("") == 0 || group3.compareTo("") == 0) {
+        String errormsg = "Error: Type Description, Groups Descrption  must be entered.";
+        out.println(errormsg);
 
-}
-else {
-	CtlBillingService cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group1);
-	cbs.setServiceGroup("Group1");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
-
-
-    cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group2);
-	cbs.setServiceGroup("Group2");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
-
-    cbs = new CtlBillingService();
-	cbs.setServiceTypeName(type);
-	cbs.setServiceType(typeid);
-	cbs.setServiceCode("A007A");
-	cbs.setServiceGroupName(group3);
-	cbs.setServiceGroup("Group3");
-	cbs.setStatus("A");
-	cbs.setServiceOrder(1);
-    ctlBillingServiceDao.persist(cbs);
-
-	String[] param3 =new String[3];
+    } else {
+        CtlBillingService cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group1);
+        cbs.setServiceGroup("Group1");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
 
 
-	CtlDiagCode cdc = new CtlDiagCode();
-	cdc.setServiceType(typeid);
-	cdc.setDiagnosticCode("000");
-	cdc.setStatus("A");
-	ctlDiagCodeDao.persist(cdc);
+        cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group2);
+        cbs.setServiceGroup("Group2");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
+
+        cbs = new CtlBillingService();
+        cbs.setServiceTypeName(type);
+        cbs.setServiceType(typeid);
+        cbs.setServiceCode("A007A");
+        cbs.setServiceGroupName(group3);
+        cbs.setServiceGroup("Group3");
+        cbs.setStatus("A");
+        cbs.setServiceOrder(1);
+        ctlBillingServiceDao.persist(cbs);
+
+        String[] param3 = new String[3];
+
+
+        CtlDiagCode cdc = new CtlDiagCode();
+        cdc.setServiceType(typeid);
+        cdc.setDiagnosticCode("000");
+        cdc.setStatus("A");
+        ctlDiagCodeDao.persist(cdc);
 
 %>
 <% response.sendRedirect("manageBillingform.jsp"); %>
 <%
-}
+    }
 
 
 %>

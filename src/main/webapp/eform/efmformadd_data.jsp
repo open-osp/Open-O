@@ -24,47 +24,57 @@
 
 --%>
 
-<%@ page import="oscar.eform.data.*"%>
-<%@ page import="org.oscarehr.managers.EmailComposeManager"%>
-<%@ page import="org.oscarehr.managers.SecurityInfoManager"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
-<%@ page import="org.oscarehr.util.LoggedInInfo"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ca.openosp.openo.eform.data.*" %>
+<%@ page import="ca.openosp.openo.managers.EmailComposeManager" %>
+<%@ page import="ca.openosp.openo.managers.SecurityInfoManager"%>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.eform.data.EForm" %>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
-	Addition of a floating global toolbar specifically for activation of the 
+	Addition of a floating global toolbar specifically for activation of the
 	Fax and eDocument functions.
 --%>
 
 <c:if test="${ not empty requestScope.page_errors }">
-	<script type='text/javascript'>
-		function hideDiv() {
-		    if (document.getElementById) { // DOM3 = IE5, NS6
-		        document.getElementById('hideshow').style.display = 'none';
-		    }
-		    else {
-		        if (document.layers) { // Netscape 4
-		            document.hideshow.display = 'none';
-		        }
-		        else { // IE 4
-		            document.all.hideshow.style.display = 'none';
-		        }
-		    }
-		}
-	</script>
-	
-	<div id="hideshow" style="position: relative; z-index: 999;">
-		<a href="javascript:hideDiv()">Hide Errors</a> 
-		<span style="font-size: 10px; font-color: darkred;"> <html:errors /> </span>
-	</div>
+    <script type='text/javascript'>
+        function hideDiv() {
+            if (document.getElementById) { // DOM3 = IE5, NS6
+                document.getElementById('hideshow').style.display = 'none';
+            } else {
+                if (document.layers) { // Netscape 4
+                    document.hideshow.display = 'none';
+                } else { // IE 4
+                    document.all.hideshow.style.display = 'none';
+                }
+            }
+        }
+    </script>
+
+    <div id="hideshow" style="position: relative; z-index: 999;">
+        <a href="javascript:hideDiv()">Hide Errors</a>
+        <span style="font-size: 10px; font-color: darkred;"> <%
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= error %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %> </span>
+    </div>
 </c:if>
 
 <%!
     public void addHiddenEmailProperties(LoggedInInfo loggedInInfo, EForm thisEForm, String demographicNo) {
         EmailComposeManager emailComposeManager = SpringUtils.getBean(EmailComposeManager.class);
-        if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.WRITE)) { 
+        if (!emailComposeManager.hasEmailPrivilege(loggedInInfo, SecurityInfoManager.WRITE)) {
             thisEForm.addHiddenInputElement("hasEmailPrivilege", Boolean.FALSE.toString());
-            return; 
+            return;
         }
 
         Boolean hasValidRecipient = emailComposeManager.hasValidRecipient(loggedInInfo, Integer.parseInt(demographicNo));
@@ -78,8 +88,8 @@
 
 <%
     /**
-    * TODO: Move all JSP scriptlet code from efmshowform_data.jsp and efmformadd_data.jsp to the ShowEFormAction.java (create if necessary) action file.
-    */
+     * TODO: Move all JSP scriptlet code from efmshowform_data.jsp and efmformadd_data.jsp to the ShowEFormAction.java (create if necessary) action file.
+     */
     String provider_no = (String) session.getValue("user");
     String demographic_no = request.getParameter("demographic_no");
     String appointment_no = request.getParameter("appointment");
@@ -95,14 +105,14 @@
     } else {
         //if the info is in the request parameter
         thisEForm = new EForm(fid, demographic_no);
-        thisEForm.setProviderNo(provider_no);  //needs provider for the action
+        thisEForm.setProviderNo(provider_no);  //needs providers for the action
     }
 
-    if (appointment_no!=null) {
+    if (appointment_no != null) {
         thisEForm.setAppointmentNo(appointment_no);
     }
 
-    if (eform_link!=null) {
+    if (eform_link != null) {
         thisEForm.setEformLink(eform_link);
     }
 
@@ -119,9 +129,9 @@
      * Ordering is very important.
      * For Javascript: First is last.
      */
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
-    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
     thisEForm.addHeadJavascript(request.getContextPath()+"/js/jquery.are-you-sure.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-ui-1.12.1.min.js");
+    thisEForm.addHeadJavascript(request.getContextPath()+"/library/jquery/jquery-3.6.4.min.js");
 
     thisEForm.addCSS(request.getContextPath()+"/library/bootstrap/5.0.2/css/bootstrap.css", "all");
     thisEForm.addHeadJavascript(request.getContextPath()+"/library/bootstrap/5.0.2/js/bootstrap.bundle.js");

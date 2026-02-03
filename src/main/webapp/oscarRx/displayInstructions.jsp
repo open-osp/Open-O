@@ -24,11 +24,11 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
     <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/dragiframe.js"/>"></script>
@@ -37,106 +37,107 @@
 <body onload="addHandle(document.getElementsByTagName('body').item(0), window);">
 
 
-<a onmouseover="this.style.cursor='pointer';" onMouseDown="parent.mb.hide();" ><img src="<c:out value="${ctx}/images/close.png"/>" border="0" TITLE="Close" style="position: absolute; top: 0.5em; right: 0.5em; "></a> 
-<br />
-<br />
-        
-<table class="mhTable" >
-<tr><td align="center" colspan="3">Instructions Field Reference</td></tr>
-<tr>
-<td valign="top">
-<b>Method</b><br />
-Take	<br />
-Apply	<br />
-Rub well in	<br />
-<br />	
-<b>Route	</b><br />
-PO	<br />
-SL	<br />
-IM	<br />
-Subcut	<br />
-PATCH	<br />
-TOP	<br />
-INH	<br />
-SUPP	<br />
-right eye	<br />
-left eye	<br />
-both eyes	<br />
+<a onmouseover="this.style.cursor='pointer';" onMouseDown="parent.mb.hide();"><img
+        src="<c:out value="${ctx}/images/close.png"/>" border="0" TITLE="Close"
+        style="position: absolute; top: 0.5em; right: 0.5em; "></a>
+<br/>
+<br/>
 
-</td>
+<table class="mhTable">
+    <tr>
+        <td align="center" colspan="3">Instructions Field Reference</td>
+    </tr>
+    <tr>
+        <td valign="top">
+            <b>Method</b><br/>
+            Take <br/>
+            Apply <br/>
+            Rub well in <br/>
+            <br/>
+            <b>Route </b><br/>
+            PO <br/>
+            SL <br/>
+            IM <br/>
+            Subcut <br/>
+            PATCH <br/>
+            TOP <br/>
+            INH <br/>
+            SUPP <br/>
+            right eye <br/>
+            left eye <br/>
+            both eyes <br/>
 
-<td valign="top">
-<b>Frequency	</b><br />
-BID	<br />
-TID	<br />
-QID	<br />
-Q1H	<br />
-Q2H	<br />
-Q1-2H	<br />
-Q3-4H	<br />
-Q4H	<br />
-Q4-6H	<br />
-Q6H	<br />
-Q8H	<br />
-Q12H	<br />
-QAM	<br />
-QPM	<br />
-QHS	<br />
-daily	<br />
-once daily	<br />
-twice daily	<br />
-3x day	<br />
-4x day	<br />
-3x daily	<br />
-4x daily	<br />
-weekly	<br />
-Q1Week	<br />
-Q2Week	<br />
-Q1Month	<br />
-Q3Month	<br />
-monthly	<br />
+        </td>
+
+        <td valign="top">
+            <b>Frequency </b><br/>
+            BID <br/>
+            TID <br/>
+            QID <br/>
+            Q1H <br/>
+            Q2H <br/>
+            Q1-2H <br/>
+            Q3-4H <br/>
+            Q4H <br/>
+            Q4-6H <br/>
+            Q6H <br/>
+            Q8H <br/>
+            Q12H <br/>
+            QAM <br/>
+            QPM <br/>
+            QHS <br/>
+            daily <br/>
+            once daily <br/>
+            twice daily <br/>
+            3x day <br/>
+            4x day <br/>
+            3x daily <br/>
+            4x daily <br/>
+            weekly <br/>
+            Q1Week <br/>
+            Q2Week <br/>
+            Q1Month <br/>
+            Q3Month <br/>
+            monthly <br/>
 
 
-</td>
+        </td>
 
-<td valign="top">
-<b>Number	</b><br />
-1/4	<br />
-1/2	<br />
-1	<br />
-1-2	<br />
-1-3	<br />
-2	<br />
-2-3	<br />
-3	<br />
-3-4	<br />
-4	<br />
-5	<br />
-6	<br />
-7	<br />
-8	<br />
-9	<br />
+        <td valign="top">
+            <b>Number </b><br/>
+            1/4 <br/>
+            1/2 <br/>
+            1 <br/>
+            1-2 <br/>
+            1-3 <br/>
+            2 <br/>
+            2-3 <br/>
+            3 <br/>
+            3-4 <br/>
+            4 <br/>
+            5 <br/>
+            6 <br/>
+            7 <br/>
+            8 <br/>
+            9 <br/>
 
-	<br />
-<b>Duration	</b><br />
-d	<br />
-w	<br />
-m	<br />
-mo	<br />
-day	<br />
-week	<br />
-month	<br />
-days	<br />
-weeks	<br />
-months	<br />
+            <br/>
+            <b>Duration </b><br/>
+            d <br/>
+            w <br/>
+            m <br/>
+            mo <br/>
+            day <br/>
+            week <br/>
+            month <br/>
+            days <br/>
+            weeks <br/>
+            months <br/>
 
-</td>
-</tr>
+        </td>
+    </tr>
 </table>
 
-    
-        
 
-    
 </body>
 </html>

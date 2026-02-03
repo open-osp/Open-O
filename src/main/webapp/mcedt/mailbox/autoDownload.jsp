@@ -25,175 +25,178 @@
 --%>
 
 <!DOCTYPE html>
-<%@ page errorPage="../error.jsp"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ page import="java.math.BigInteger,java.util.*,org.oscarehr.integration.mcedt.mailbox.DetailDataCustom" %>
+<%@ page errorPage="/errorpage.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://www.oscar-emr.com/tags/integration" prefix="i" %>
 
-<%    
-	BigInteger resourceIDBig = (BigInteger)session.getAttribute("resourceID");
-	String resourceID = resourceIDBig.toString();
-	List<DetailDataCustom> resourceList = (ArrayList<DetailDataCustom>)session.getAttribute("resourceList");		
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="java.math.BigInteger,java.util.*,ca.openosp.openo.integration.mcedt.mailbox.DetailDataCustom" %>
+
+<%
+    BigInteger resourceIDBig = (BigInteger) session.getAttribute("resourceID");
+    String resourceID = resourceIDBig.toString();
+    List<DetailDataCustom> resourceList = (ArrayList<DetailDataCustom>) session.getAttribute("resourceList");
 %>
 
 
-<html:html>
-<head>
-<jsp:include page="head-includes.jsp" />
-	<link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
+<html>
+    <head>
+        <jsp:include page="head-includes.jsp"/>
+        <link href="mailbox/css/mcedt.css" rel="stylesheet" type="text/css">
 
-<style type="text/css">
-/* limits table height */
-.scrollable {
-	/*
-	display: block;
-	height: 500px !important;
-	max-height: 500px !important;
-	overflow: auto;
-	*/
-}
+        <style type="text/css">
+            /* limits table height */
+            .scrollable {
+                /*
+                display: block;
+                height: 500px !important;
+                max-height: 500px !important;
+                overflow: auto;
+                */
+            }
 
-/* needed to align elements in navbar */
-select,button {
-	margin: 0px !important;
-}
+            /* needed to align elements in navbar */
+            select, button {
+                margin: 0px !important;
+            }
 
-.navbar {
-	line-height: 50px;
-	height: 50px;
-	vertical-align: middle;
-	margin-bottom: 50px;
-}
-</style>
-<script language="javascript">	
-	
-	window.onload = function() {
-		
-		return download();
-	}
-	
-	function download()
-	{
-				
-		var resourceID = '<%= session.getAttribute("resourceID") %>';
-			//alert(resourceID);
-			
-		if(resourceID != 0){
-			document.getElementById("resourceId").value = resourceID;
-			
-			var method = jQuery("#method");
-			method.val('download');
-			
-			var form = jQuery("#form");
-			form.submit();
-			return true;
-		}						
-		
-	}		
-	
-	function gobacktoedthome(control){
-		return submitForm('cancel', control);
-	}
-	
-	function downloadSelected(control) {
-		return submitForm('download', control);				
-	}					
-		
-	function submitForm(methodType, control){
-		if (control) {
-			control.disabled = true;
-		}
-		
-		var method = jQuery("#method");
-		method.val(methodType);
-		
-		var form = jQuery("#form");
-		form.submit();
-		return true;
-	}
-</script>
+            .navbar {
+                line-height: 50px;
+                height: 50px;
+                vertical-align: middle;
+                margin-bottom: 50px;
+            }
+        </style>
+        <script language="javascript">
+
+            window.onload = function () {
+
+                return download();
+            }
+
+            function download() {
+
+                var resourceID = '<%= session.getAttribute("resourceID") %>';
+                //alert(resourceID);
+
+                if (resourceID != 0) {
+                    document.getElementById("resourceId").value = resourceID;
+
+                    var method = jQuery("#method");
+                    method.val('download');
+
+                    var form = jQuery("#form");
+                    form.submit();
+                    return true;
+                }
+
+            }
+
+            function gobacktoedthome(control) {
+                return submitForm('cancel', control);
+            }
+
+            function downloadSelected(control) {
+                return submitForm('download', control);
+            }
+
+            function submitForm(methodType, control) {
+                if (control) {
+                    control.disabled = true;
+                }
+
+                var method = jQuery("#method");
+                method.val(methodType);
+
+                var form = jQuery("#form");
+                form.submit();
+                return true;
+            }
+        </script>
 
 
-<title>Downloading Claims from MCEDT to Oscar</title>
+        <title>Downloading Claims from MCEDT to Oscar</title>
 
-<html:base />
+        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
 
-</head>
+    </head>
 
-<body>
-	<div class="greyBox">    
-		<div class="center">
-			<h1>MCEDT Documents to Download</h1>
-			
-			<div>
-				<html:form action="/mcedt/kaiautodl" method="post" styleId="form">			
-	
-					<input id="method" name="method" type="hidden" value="" />				
-									
-					<html:hidden styleId="resourceId" property="resourceId" value='' />
-						
-					<div style="visibility:hidden">
-						<button id="downloadBut" class="noBorder greenBox flatLink font12" onclick="return downloadSelected();">Download</button>				
-					</div>				
-					
-				</html:form>			
-				<%
-					if(resourceList!=null){						
-				%>
-				<table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5" style="margin:5px 0 15px;">
-					<thead>
-						<tr class="greenBox">							
-							<th>ID</th>
-							<th>Date</th>
-							<th>Type</th>
-							<!-- <th>Result</th>
-							<th>Status</th> -->
-							<th>File Name</th>
-							<th>Download Status</th>						
-						</tr>
-					</thead>
-					<c:forEach var="r" items="${resourceList}" varStatus="loopStatus">						
-						<tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">							
-							<td><c:out value="${r.resourceID}" /></td>
-							<td>
-								<%-- <fmt:formatDate value="${i:toDate(r.createTimestamp)}"/> --%>							
-								<fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
-							</td>
-							<td><c:out value="${r.resourceType}" /></td>
-							<%-- <td><c:out value="${r.result.code}" /> - <c:out	value="${r.result.msg}" /></td>
-							<td><c:out value="${r.status}" /></td> --%>
-							<td><c:out value="${r.description}" /></td>
-							<td><c:out value="${r.downloadStatus}" /></td>							
-						</tr>						
-					</c:forEach>
-				</table>
-				<%
-					}
-					else{
-				%>		
-					<h3>No new documents to download.</h3>
-				<%
-					}
-				%>		
-			</div>		
-		
-			<div>
-				<% if(resourceID == "0"){ %>
-					<button id="backedthome" class="noBorder blackBox flatLink font12 rightMargin5" onclick="return gobacktoedthome();">Return</button>
-					<%-- <button class="noBorder blackBox flatLink font12" onclick="window.close()">Close</button> --%>
-				<%} %>		
-				<% if(resourceList!=null && resourceID != "0"){ %>
-					<!-- <button class="btn" onclick="return gobacktoedthome(this)">Cancel</button> -->
-					<!-- <button class="btn" onclick="window.close()">Cancel</button> -->
-				<%} %>			
-																					
-			</div>
-		</div>
-	</div>
-</body>
-</html:html>
+    <body>
+    <div class="greyBox">
+        <div class="center">
+            <h1>MCEDT Documents to Download</h1>
+
+            <div>
+                <form action="${pageContext.request.contextPath}/mcedt/kaiautodl.do" method="post" id="form">
+
+                    <input id="method" name="method" type="hidden" value=""/>
+
+                    <input type="hidden" id="resourceId" name="resourceId" value=''/>
+
+                    <div style="visibility:hidden">
+                        <button id="downloadBut" class="noBorder greenBox flatLink font12"
+                                onclick="return downloadSelected();">Download
+                        </button>
+                    </div>
+
+                </form>
+                <%
+                    if (resourceList != null) {
+                %>
+                <table class="table scrollable whiteBox" width="100%" border="0" cellspacing="0" cellpadding="5"
+                       style="margin:5px 0 15px;">
+                    <thead>
+                    <tr class="greenBox">
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <!-- <th>Result</th>
+                        <th>Status</th> -->
+                        <th>File Name</th>
+                        <th>Download Status</th>
+                    </tr>
+                    </thead>
+                    <c:forEach var="r" items="${resourceList}" varStatus="loopStatus">
+                        <tr bgcolor="${loopStatus.index % 2 == 0 ? '#FFF' : '#EEE'}">
+                            <td><c:out value="${r.resourceID}"/></td>
+                            <td>
+                                    <%-- <fmt:formatDate value="${i:toDate(r.createTimestamp)}"/> --%>
+                                <fmt:formatDate value="${i:toDate(r.createTimestamp)}" pattern="MM/dd/yyyy hh:mm"/>
+                            </td>
+                            <td><c:out value="${r.resourceType}"/></td>
+                                <%-- <td><c:out value="${r.result.code}" /> - <c:out	value="${r.result.msg}" /></td>
+                                <td><c:out value="${r.status}" /></td> --%>
+                            <td><c:out value="${r.description}"/></td>
+                            <td><c:out value="${r.downloadStatus}"/></td>
+                        </tr>
+                    </c:forEach>
+                </table>
+                <%
+                } else {
+                %>
+                <h3>No new documents to download.</h3>
+                <%
+                    }
+                %>
+            </div>
+
+            <div>
+                <% if (resourceID == "0") { %>
+                <button id="backedthome" class="noBorder blackBox flatLink font12 rightMargin5"
+                        onclick="return gobacktoedthome();">Return
+                </button>
+                    <%-- <button class="noBorder blackBox flatLink font12" onclick="window.close()">Close</button> --%>
+                <%} %>
+                <% if (resourceList != null && resourceID != "0") { %>
+                <!-- <button class="btn" onclick="return gobacktoedthome(this)">Cancel</button> -->
+                <!-- <button class="btn" onclick="window.close()">Cancel</button> -->
+                <%} %>
+
+            </div>
+        </div>
+    </div>
+    </body>
+</html>

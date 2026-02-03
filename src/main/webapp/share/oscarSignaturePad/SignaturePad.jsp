@@ -1,4 +1,7 @@
-<%--
+<%@ page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@ page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
+<%@ page import="ca.openosp.openo.ui.servlet.ImageRenderingServlet" %>
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %><%--
    Copyright (c) 2005-2012. Centre for Research on Inner City Health, St. Michael's Hospital, Toronto. All Rights Reserved.
    This software is published under the GPL GNU General Public License.
    This program is free software; you can redistribute it and/or
@@ -20,13 +23,9 @@
    Toronto, Ontario, Canada
 --%>
 
-<%@ page import="org.oscarehr.util.DigitalSignatureUtils" %>
-<%@ page import="org.oscarehr.util.LoggedInInfo" %>
-<%@ page import="org.oscarehr.ui.servlet.ImageRenderingServlet" %>
-<%@ page import="org.oscarehr.common.model.enumerator.ModuleType" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <%
     LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     String requestIdKey = request.getParameter(DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY);

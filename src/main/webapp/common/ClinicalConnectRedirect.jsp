@@ -23,14 +23,15 @@
     Ontario, Canada
 
 --%>
-<%@page import="org.oscarehr.ws.rest.util.ClinicalConnectUtil,org.oscarehr.util.LoggedInInfo" %><%
+<%@page import="ca.openosp.openo.webserv.rest.util.ClinicalConnectUtil,ca.openosp.openo.utility.LoggedInInfo" %>
+<%
 
-LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
-if (ClinicalConnectUtil.isReady(loggedInInfo.getLoggedInProviderNo())){
-	String location = ClinicalConnectUtil.getLaunchURL(loggedInInfo, null);
-	response.sendRedirect(location);	
-	return;
-}
+    if (ClinicalConnectUtil.isReady(loggedInInfo.getLoggedInProviderNo())) {
+        String location = ClinicalConnectUtil.getLaunchURL(loggedInInfo, null);
+        response.sendRedirect(location);
+        return;
+    }
 %>
 NO ACCESS TO CLINICAL CONNECT

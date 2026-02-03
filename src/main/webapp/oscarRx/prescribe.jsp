@@ -24,14 +24,14 @@
 
 --%>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="oscar.oscarRx.data.RxDrugData,java.util.*" %>
-<%@page import="java.text.SimpleDateFormat" %>
-<%@page import="java.util.Calendar" %>
-<%@page import="oscar.oscarRx.data.*" %>
-<%@page import="oscar.oscarRx.util.*" %>
-<%@page import="oscar.OscarProperties"%>
+<%@page import="java.util.*" %>
+<%@page import="ca.openosp.openo.rx.util.*" %>
+<%@page import="ca.openosp.OscarProperties" %>
+<%@ page import="ca.openosp.openo.prescript.util.RxUtil" %>
+<%@ page import="ca.openosp.openo.prescript.data.RxPrescriptionData" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
@@ -41,7 +41,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_rx");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
 	if(!authed) {
@@ -52,19 +52,17 @@
     <%
 
 List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("listRxDrugs");
-oscar.oscarRx.pageUtil.RxSessionBean bean = (oscar.oscarRx.pageUtil.RxSessionBean)request.getSession().getAttribute("RxSessionBean");
 
-if(listRxDrugs!=null){
-            String specStr=RxUtil.getSpecialInstructions();
+        if(listRxDrugs!=null){
 
-  for(RxPrescriptionData.Prescription rx : listRxDrugs ){
+    for(RxPrescriptionData.Prescription rx : listRxDrugs ){
          String rand            = Long.toString(rx.getRandomId());
          String instructions    = rx.getSpecial();
          String specialInstruction=rx.getSpecialInstruction();
          String startDate       = RxUtil.DateToString(rx.getRxDate(), "yyyy-MM-dd");
          String writtenDate     = RxUtil.DateToString(rx.getWrittenDate(), "yyyy-MM-dd");
          String lastRefillDate  = RxUtil.DateToString(rx.getLastRefillDate(), "yyyy-MM-dd");
-         int gcn=rx.getGCN_SEQNO();//if gcn is 0, rx is customed drug.
+         String gcnCode         = rx.getGCN_SEQNO();//if gcn is 0, rx is customed drug.
          String customName      = rx.getCustomName();
          Boolean patientCompliance  = rx.getPatientCompliance();
          String frequency       = rx.getFrequencyCode();
@@ -82,6 +80,33 @@ if(listRxDrugs!=null){
          String ATC             = rx.getAtcCode();
          String ATCcode			= rx.getAtcCode();
          String genericName     = rx.getGenericName();
+		 String drugPrescribed  = rx.getDrugPrescribed();
+
+		 if(customName == null) {
+			 customName = "";
+		 }
+
+         if( genericName == null || genericName.isEmpty() ) {
+        	 genericName = "";
+         }
+
+		 if(drugPrescribed == null) {
+			 drugPrescribed = "";
+		 }
+
+		 /*
+		  * The alternate name is applies when a generic is being prescribed
+		  * and when this is not a custom drug.
+		  */
+		 String alternatename = genericName;
+		 if(customName.isEmpty() && drugPrescribed.trim().equalsIgnoreCase(genericName.trim())) {
+			 alternatename = brandName;
+		 }
+
+		 if(alternatename == null) {
+			 alternatename = "";
+		 }
+
          String dosage = rx.getDosage();
  
          String pickupDate      = RxUtil.DateToString(rx.getPickupDate(), "yyyy-MM-dd");
@@ -103,18 +128,20 @@ if(listRxDrugs!=null){
          if(ATC != null && ATC.trim().length()>0)
              ATC="ATC: "+ATC;
          String drugName;
-         boolean isSpecInstPresent=false;
-         if(gcn==0){//it's a custom drug
-            drugName=customName;
-         }else{
-            drugName=brandName;
+
+         if("0".equals(gcnCode)){//it's a custom drug
+             drugName=customName;
+         }else if ( drugPrescribed != null && ! drugPrescribed.isEmpty() ){
+             drugName = drugPrescribed;
+         } else {
+			 drugName = brandName;
          }
-         if(specialInstruction!=null&&!specialInstruction.equalsIgnoreCase("null")&&specialInstruction.trim().length()>0){
-            isSpecInstPresent=true;
-         }
+	     boolean isSpecInstPresent = (specialInstruction != null && ! "null".equalsIgnoreCase(specialInstruction)&&specialInstruction.trim().length() > 0);
+
          //for display
-         if(drugName==null || drugName.equalsIgnoreCase("null"))
-             drugName="" ;
+         if(drugName==null || "null".equalsIgnoreCase(drugName)) {
+	         drugName = "";
+         }
 
          String comment  = rx.getComment();
          if(rx.getComment() == null) {
@@ -168,8 +195,8 @@ if(listRxDrugs!=null){
                     if(rx.getUnitName()!=null && !rx.getUnitName().equalsIgnoreCase("null"))
                         unitNameStr=rx.getUnitName();
                     String prnStr="";
-                    if(prn)
-                        prnStr="prn";
+                    if(prn) { prnStr="prn"; }
+
                 drugName=drugName.replace("'", "\\'");
                 drugName=drugName.replace("\"","\\\"");
                 byte[] drugNameBytes = drugName.getBytes("ISO-8859-1");
@@ -177,14 +204,14 @@ if(listRxDrugs!=null){
                 String fieldSetId = "set_" + rand;
 %>
 
-<fieldset style="margin-top:2px;width:640px;" id="<%=fieldSetId%>">
+<fieldset style="margin-top:2px;" id="<%=fieldSetId%>">
     <a tabindex="-1" href="javascript:void(0);"  style="float:right;margin-left:5px;margin-top:0px;padding-top:0px;" onclick="removePrescribingDrug(<%=fieldSetId%>, <%=DrugReferenceId%>);"><img src='<c:out value="${ctx}/images/close.png"/>' border="0"></a>
     <a tabindex="-1" href="javascript:void(0);"  style="float:right;;margin-left:5px;margin-top:0px;padding-top:0px;" title="Add to Favorites" onclick="addFav('<%=rand%>','<%=drugName%>')">F</a>
     <a tabindex="-1" href="javascript:void(0);" style="float:right;margin-top:0px;padding-top:0px;" onclick="$('rx_more_<%=rand%>').toggle();">  <span id="moreLessWord_<%=rand%>" onclick="updateMoreLess(id)" >more</span> </a>
 
     <label style="float:left;width:80px;" title="<%=ATC%>" >Name:</label>
     <input type="hidden" name="atcCode" value="<%=ATCcode%>" />
-    <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if(gcn==0){%> onkeyup="saveCustomName(this);" value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> TITLE="<%=drugName%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
+    <input tabindex="-1" type="text" id="drugName_<%=rand%>"  name="drugName_<%=rand%>"  size="30" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);" value="<%=drugName%>"<%} else{%> value='<%=drugName%>'  onchange="changeDrugName('<%=rand%>','<%=drugName%>');" <%}%> TITLE="<%=drugName%>"/>&nbsp;<span id="inactive_<%=rand%>" style="color:red;"></span>
 
 	<!-- Allergy Alert Table-->
 
@@ -215,33 +242,62 @@ if(listRxDrugs!=null){
      <%-- Splice in the Indication field --%>
      
     <a tabindex="-1" href="javascript:void(0);" onclick="showHideSpecInst('siAutoComplete_<%=rand%>')" style="float:left;width:80px;">Instructions:</a>
-    <input type="text" id="instructions_<%=rand%>" name="instructions_<%=rand%>" onkeypress="handleEnter(this,event);" value="<%=instructions%>" size="60" onchange="parseIntr(this);" /><a href="javascript:void(0);" tabindex="-1" onclick="displayMedHistory('<%=rand%>');" style="color:red;font-size:13pt;vertical-align:super;text-decoration:none" TITLE="Instruction Examples"><b>*</b></a>  <a href="javascript:void(0);" tabindex="-1" onclick="displayInstructions('<%=rand%>');"><img src="<c:out value="${ctx}/images/icon_help_sml.gif"/>" border="0" TITLE="Instructions Field Reference"></a> <span id="major_<%=rand%>" style="display:none;background-color:red"></span>&nbsp;<span id="moderate_<%=rand%>" style="display:none;background-color:orange"></span>&nbsp;<span id='minor_<%=rand%>' style="display:none;background-color:yellow;"></span>&nbsp;<span id='unknown_<%=rand%>' style="display:none;background-color:#B1FB17"></span>
+    <input type="text" id="instructions_<%=Encode.forHtmlAttribute(rand)%>" name="instructions_<%=Encode.forHtmlAttribute(rand)%>" onkeypress="handleEnter(this,event);"
+           value="<%=Encode.forHtmlAttribute(instructions)%>" size="60" onchange="parseIntr(this);"/><a href="javascript:void(0);" tabindex="-1"
+                                                                               onclick="displayMedHistory('<%=Encode.forJavaScriptAttribute(rand)%>');"
+                                                                               style="color:red;font-size:13pt;vertical-align:super;text-decoration:none"
+                                                                               TITLE="Instruction Examples"><b>*</b></a>
+    <a href="javascript:void(0);" tabindex="-1" onclick="displayInstructions('<%=Encode.forJavaScriptAttribute(rand)%>');"><img
+            src="<%= request.getContextPath() %>/images/icon_help_sml.gif" border="0" TITLE="Instructions Field Reference" /></a>
+    <span id="major_<%=Encode.forHtmlAttribute(rand)%>" style="display:none;background-color:red"></span>&nbsp;<span id="moderate_<%=Encode.forHtmlAttribute(rand)%>"
+                                                                                            style="display:none;background-color:orange"></span>&nbsp;<span
+        id='minor_<%=Encode.forHtmlAttribute(rand)%>' style="display:none;background-color:yellow;"></span>&nbsp;<span id='unknown_<%=Encode.forHtmlAttribute(rand)%>'
+                                                                                              style="display:none;background-color:#B1FB17"></span>
        <br>
-       <label for="siInput_<%=rand%>" ></label>
-       <div id="siAutoComplete_<%=rand%>" <%if(isSpecInstPresent){%> style="overflow:visible;"<%} else{%> style="overflow:visible;display:none;"<%}%> >
-           <label style="float:left;width:80px;">&nbsp;&nbsp;</label><input id="siInput_<%=rand%>"  type="text" size="60" <%if(!isSpecInstPresent) {%>style="color:gray; width:auto" value="Enter Special Instruction" <%} else {%> style="color:black; width:auto" value="<%=specialInstruction%>" <%}%> onblur="changeText('siInput_<%=rand%>');updateSpecialInstruction('siInput_<%=rand%>');" onfocus="changeText('siInput_<%=rand%>');" >
-           <div id="siContainer_<%=rand%>" style="float:right" >
+    <label for="siInput_<%=Encode.forHtmlAttribute(rand)%>"></label>
+    <div id="siAutoComplete_<%=Encode.forHtmlAttribute(rand)%>" <%if (isSpecInstPresent) {%> style="overflow:visible;"<%} else {%>
+         style="overflow:visible;display:none;"<%}%> >
+        <label style="float:left;width:80px;">&nbsp;&nbsp;</label><input id="siInput_<%=Encode.forHtmlAttribute(rand)%>" type="text" size="60"
+                                                                         <%if(!isSpecInstPresent) {%>style="color:gray; width:auto"
+                                                                         value="Enter Special Instruction" <%} else {%>
+                                                                         style="color:black; width:auto"
+                                                                         value="<%=Encode.forHtmlAttribute(specialInstruction)%>" <%}%>
+                                                                         onblur="changeText('siInput_<%=Encode.forJavaScriptAttribute(rand)%>');updateSpecialInstruction('siInput_<%=Encode.forJavaScriptAttribute(rand)%>');"
+                                                                         onfocus="changeText('siInput_<%=Encode.forJavaScriptAttribute(rand)%>');">
+        <div id="siContainer_<%=Encode.forHtmlAttribute(rand)%>" style="float:right">
            </div>
               	<br><br>         
         </div>
 		<div>
-        <label id="labelQuantity_<%=rand%>"  style="float:left;width:80px;">Qty/Mitte:</label><input size="8" <%if(rx.isCustomNote()){%> disabled <%}%> type="text" id="quantity_<%=rand%>"     name="quantity_<%=rand%>"     value="<%=quantityText%>" onblur="updateQty(this);" />
-        <label style="">Repeats:</label><input type="text" size="5" id="repeats_<%=rand%>"  <%if(rx.isCustomNote()){%> disabled <%}%>    name="repeats_<%=rand%>"   value="<%=repeats%>" onInput="updateLongTerm('<%=rand %>',this)" onblur="updateProperty(this.id)"/>
+        <label id="labelQuantity_<%=Encode.forHtmlAttribute(rand)%>" style="float:left;width:80px;">Qty/Mitte:</label><input
+            size="8" <%if (rx.isCustomNote()) {%> disabled <%}%> type="text" id="quantity_<%=Encode.forHtmlAttribute(rand)%>"
+            name="quantity_<%=Encode.forHtmlAttribute(rand)%>" value="<%=Encode.forHtmlAttribute(quantityText)%>" onblur="updateQty(this);"/>
+        <label style="">Repeats:</label><input type="text" size="5" id="repeats_<%=Encode.forHtmlAttribute(rand)%>"  <%if (rx.isCustomNote()) {%>
+                                               disabled <%}%> name="repeats_<%=Encode.forHtmlAttribute(rand)%>" value="<%=Encode.forHtmlAttribute(repeats)%>"
+                                               onInput="updateLongTerm('<%=Encode.forJavaScriptAttribute(rand) %>',this)"
+                                               onblur="updateProperty(this.id)"/>
 		</div>
-		<div id="medTerm_<%=rand%>">
-			<label><bean:message key="WriteScript.msgLongTermMedication" />: </label>
+    <div id="medTerm_<%=Encode.forHtmlAttribute(rand)%>">
+        <label><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgLongTermMedication"/>: </label>
 			<span>
-				<label for="longTermY_<%=rand%>" ><bean:message key="WriteScript.msgYes" /> </label>
-			  	<input type="radio" id="longTermY_<%=rand%>"  name="longTerm_<%=rand%>" value="yes" class="med-term" <%if(longTerm != null && longTerm) {%> checked="checked" <%}%> onChange="updateShortTerm('<%=rand%>',false)"/>
+				<label for="longTermY_<%=Encode.forHtmlAttribute(rand)%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/> </label>
+			  	<input type="radio" id="longTermY_<%=Encode.forHtmlAttribute(rand)%>" name="longTerm_<%=Encode.forHtmlAttribute(rand)%>" value="yes"
+                       class="med-term" <%if (longTerm != null && longTerm) {%> checked="checked" <%}%>
+                       onChange="updateShortTerm('<%=Encode.forJavaScriptAttribute(rand)%>',false)"/>
 			  	
-			  	<label for="longTermN_<%=rand%>" ><bean:message key="WriteScript.msgNo" /> </label>
-			  	<input type="radio" id="longTermN_<%=rand%>"  name="longTerm_<%=rand%>" value="no" class="med-term" <%if(longTerm != null && ! longTerm) {%> checked="checked" <%}%> onChange="updateShortTerm('<%=rand%>',true)"/>
+			  	<label for="longTermN_<%=Encode.forHtmlAttribute(rand)%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/> </label>
+			  	<input type="radio" id="longTermN_<%=Encode.forHtmlAttribute(rand)%>" name="longTerm_<%=Encode.forHtmlAttribute(rand)%>" value="no"
+                       class="med-term" <%if (longTerm != null && !longTerm) {%> checked="checked" <%}%>
+                       onChange="updateShortTerm('<%=Encode.forJavaScriptAttribute(rand)%>',true)"/>
 			  	
-			  	<label for="longTermE_<%=rand%>" ><bean:message key="WriteScript.msgUnset" /> </label>
-			  	<input type="radio" id="longTermE_<%=rand%>"  name="longTerm_<%=rand%>" value="unset" class="med-term" <%if(longTerm == null) {%> checked="checked" <%}%> onChange="updateShortTerm('<%=rand%>',false)"/>
+			  	<label for="longTermE_<%=Encode.forHtmlAttribute(rand)%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnset"/> </label>
+			  	<input type="radio" id="longTermE_<%=Encode.forHtmlAttribute(rand)%>" name="longTerm_<%=Encode.forHtmlAttribute(rand)%>" value="unset"
+                       class="med-term" <%if (longTerm == null) {%> checked="checked" <%}%>
+                       onChange="updateShortTerm('<%=Encode.forJavaScriptAttribute(rand)%>',false)"/>
 				<div style="display:none">
-					<label for="shortTerm_<%=rand%>" ><bean:message key="WriteScript.msgSortTermMedication"/> </label> 
-	        		<input  type="checkbox" id="shortTerm_<%=rand%>"  name="shortTerm_<%=rand%>" class="med-term" <%if(shortTerm) {%> checked="checked" <%}%> />
+					<label for="shortTerm_<%=Encode.forHtmlAttribute(rand)%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgSortTermMedication"/> </label>
+	        		<input type="checkbox" id="shortTerm_<%=Encode.forHtmlAttribute(rand)%>" name="shortTerm_<%=Encode.forHtmlAttribute(rand)%>"
+                           class="med-term" <%if (shortTerm) {%> checked="checked" <%}%> />
 	        	</div>
 	        </span>
 		</div>
@@ -264,72 +320,86 @@ if(listRxDrugs!=null){
        </div>
        <div id="rx_more_<%=rand%>" style="display:none;padding:2px;">
         <div>
-       	  <bean:message key="WriteScript.msgPrescribedRefill"/>:
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedRefill"/>:
        	  &nbsp;
-       	  <bean:message key="WriteScript.msgPrescribedRefillDuration"/>
-       	  <input type="text" size="6" id="refillDuration_<%=rand%>" name="refillDuration_<%=rand%>" value="<%=refillDuration%>"
-       	   onchange="if(isNaN(this.value)||this.value<0){alert('Refill duration must be number (of days)');this.focus();return false;}return true;" /><bean:message key="WriteScript.msgPrescribedRefillDurationDays"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedRefillDuration"/>
+            <input type="text" size="6" id="refillDuration_<%=rand%>" name="refillDuration_<%=rand%>"
+                   value="<%=refillDuration%>"
+                   onchange="if(isNaN(this.value)||this.value<0){alert('Refill duration must be number (of days)');this.focus();return false;}return true;"/><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedRefillDurationDays"/>
        	  &nbsp;       	  
-       	  <bean:message key="WriteScript.msgPrescribedRefillQuantity"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedRefillQuantity"/>
        	  <input type="text" size="6" id="refillQuantity_<%=rand%>" name="refillQuantity_<%=rand%>" value="<%=refillQuantity%>" />
        	  </div><div> 
     	  
-       	  <bean:message key="WriteScript.msgPrescribedDispenseInterval"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedDispenseInterval"/>
        	  <input type="text" size="6" id="dispenseInterval_<%=rand%>" name="dispenseInterval_<%=rand%>" value="<%=dispenseInterval%>" />
        	  </div>
        	  
 	     <%if(OscarProperties.getInstance().getProperty("rx.enable_internal_dispensing","false").equals("true")) {%>  
 	       <div>
-	       	   <bean:message key="WriteScript.msgDispenseInternal"/>	
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgDispenseInternal"/>
 			  <input type="checkbox" name="dispenseInternal_<%=rand%>" id="dispenseInternal_<%=rand%>" <%if(dispenseInternal) {%> checked="checked" <%}%> />
       	 </div>
       	 <% } %>
 		<div>
-          <bean:message key="WriteScript.msgPrescribedByOutsideProvider"/>
-          <input type="checkbox" id="ocheck_<%=rand%>" name="ocheck_<%=rand%>" onclick="$('otext_<%=rand%>').toggle();" <%if(isOutsideProvider){%> checked="checked" <%}else{}%>/>
-          <div id="otext_<%=rand%>" <%if(isOutsideProvider){%>style="display:table;padding:2px;"<%}else{%>style="display:none;padding:2px;"<%}%> >
-                <b><label style="float:left;width:80px;">Name :</label></b> <input type="text" id="outsideProviderName_<%=rand%>" name="outsideProviderName_<%=rand%>" <%if(outsideProvName!=null){%> value="<%=outsideProvName%>"<%}else {%> value=""<%}%> />
-                <b><label style="width:80px;">OHIP No:</label></b> <input type="text" id="outsideProviderOhip_<%=rand%>" name="outsideProviderOhip_<%=rand%>"  <%if(outsideProvOhip!=null){%>value="<%=outsideProvOhip%>"<%}else {%> value=""<%}%>/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPrescribedByOutsideProvider"/>
+            <input type="checkbox" id="ocheck_<%=rand%>" name="ocheck_<%=rand%>"
+                   onclick="$('otext_<%=rand%>').toggle();" <%if (isOutsideProvider) {%> checked="checked" <%
+                } else {
+                }
+            %>/>
+            <div id="otext_<%=rand%>" <%if(isOutsideProvider){%>style="display:table;padding:2px;"
+                 <%}else{%>style="display:none;padding:2px;"<%}%> >
+                <b><label style="float:left;width:80px;">Name :</label></b> <input type="text"
+                                                                                   id="outsideProviderName_<%=rand%>"
+                                                                                   name="outsideProviderName_<%=rand%>" <%if (outsideProvName != null) {%>
+                                                                                   value="<%=outsideProvName%>"<%} else {%>
+                                                                                   value=""<%}%> />
+                <b><label style="width:80px;">OHIP No:</label></b> <input type="text" id="outsideProviderOhip_<%=rand%>"
+                                                                          name="outsideProviderOhip_<%=rand%>"
+                                                                          <%if(outsideProvOhip!=null){%>value="<%=outsideProvOhip%>"<%} else {%>
+                                                                          value=""<%}%>/>
+            </div>
           </div>
-    </div><div>
+        <div>
 
-        <label for="pastMedSelection" title="Medications taken at home that were previously ordered."><bean:message key="WriteScript.msgPastMedication" /></label>
+            <label for="pastMedSelection" title="Medications taken at home that were previously ordered."><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPastMedication"/></label>
         
         <span id="pastMedSelection">
-        	<label for="pastMedY_<%=rand%>"><bean:message key="WriteScript.msgYes"/></label> 
+        	<label for="pastMedY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label>
             <input  type="radio" value="yes" name="pastMed_<%=rand%>" id="pastMedY_<%=rand%>" <%if(pastMed != null && pastMed) {%> checked="checked" <%}%>  />
             
-            <label for="pastMedN_<%=rand%>"><bean:message key="WriteScript.msgNo"/></label> 
+            <label for="pastMedN_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/></label>
             <input  type="radio" value="no" name="pastMed_<%=rand%>" id="pastMedN_<%=rand%>" <%if(pastMed != null && ! pastMed) {%> checked="checked" <%}%>  />
             
-            <label for="pastMedE_<%=rand%>"><bean:message key="WriteScript.msgUnknown"/></label> 
+            <label for="pastMedE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnknown"/></label>
             <input  type="radio" value="unset" name="pastMed_<%=rand%>" id="pastMedE_<%=rand%>" <%if(pastMed == null) {%> checked="checked" <%}%>  />
          </span>         
 	</div><div>
 	
-	<label for="patientCompliantSelection"><bean:message key="WriteScript.msgPatientCompliance"/>:</label>
+            <label for="patientCompliantSelection"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPatientCompliance"/>:</label>
 	<span id="patientCompliantSelection">
-         <label for="patientComplianceY_<%=rand%>"><bean:message key="WriteScript.msgYes"/></label> 
+         <label for="patientComplianceY_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgYes"/></label>
             <input type="radio" value="yes" name="patientCompliance_<%=rand%>" id="patientComplianceY_<%=rand%>" <%if(patientCompliance!=null && patientCompliance) {%> checked="checked" <%}%> />
 
-          <label for="patientComplianceN_<%=rand%>"><bean:message key="WriteScript.msgNo"/></label>
+          <label for="patientComplianceN_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNo"/></label>
             <input type="radio" value="no" name="patientCompliance_<%=rand%>" id="patientComplianceN_<%=rand%>" <%if(patientCompliance!=null && !patientCompliance) {%> checked="checked" <%}%> />
 	
-		<label for="patientComplianceE_<%=rand%>"><bean:message key="WriteScript.msgUnset"/></label>
+		<label for="patientComplianceE_<%=rand%>"><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnset"/></label>
             <input type="radio" value="unset" name="patientCompliance_<%=rand%>" id="patientComplianceE_<%=rand%>" <%if(patientCompliance==null) {%> checked="checked" <%}%> />
     </span>
 	</div><div>
-          <bean:message key="WriteScript.msgNonAuthoritative"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgNonAuthoritative"/>
             <input type="checkbox" name="nonAuthoritativeN_<%=rand%>" id="nonAuthoritativeN_<%=rand%>" <%if(nonAuthoritative) {%> checked="checked" <%}%> />
     </div><div>
     
-    		<bean:message key="WriteScript.msgSubNotAllowed"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgSubNotAllowed"/>
     		<input type="checkbox" name="nosubs_<%=rand%>" id="nosubs_<%=rand%>" <%if(nosubs) {%> checked="checked" <%}%> />
     </div><div>
 
         <label style="float:left;width:80px;">Start Date:</label>
            <input type="text" id="rxDate_<%=rand%>" name="rxDate_<%=rand%>" value="<%=startDate%>" <%if(startDateUnknown) {%> disabled="disabled" <%}%>/>
-        <bean:message key="WriteScript.msgUnknown"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgUnknown"/>
            <input  type="checkbox" name="startDateUnknown_<%=rand%>" id="startDateUnknown_<%=rand%>" <%if(startDateUnknown) {%> checked="checked" <%}%> onclick="toggleStartDateUnknown('<%=rand%>');"/>
            
            </div><div>
@@ -342,7 +412,7 @@ if(listRxDrugs!=null){
        
            </div><div>
            			           
-			<bean:message key="WriteScript.msgProtocolReference"/>: 
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgProtocolReference"/>:
            <input type="text" id="protocol_<%=rand%>"  name="protocol_<%=rand%>" value="<%=protocol%>" />          
 
            <%--  OMD Revalidation: field not required currently. Commented out as this may be used again in the future. 
@@ -352,34 +422,38 @@ if(listRxDrugs!=null){
             
            </div><div>
            
-           <bean:message key="WriteScript.msgPickUpDate"/>: 
-           <input type="text" id="pickupDate_<%=rand%>"  name="pickupDate_<%=rand%>" value="<%=pickupDate%>" onchange="if (!isValidDate(this.value)) {this.value=null}" />
-           <bean:message key="WriteScript.msgPickUpTime"/>: 
-           <input type="text" id="pickupTime_<%=rand%>"  name="pickupTime_<%=rand%>" value="<%=pickupTime%>" onchange="if (!isValidTime(this.value)) {this.value=null}" />
-           </div><div>
-           <bean:message key="WriteScript.msgComment"/>:
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPickUpDate"/>:
+            <input type="text" id="pickupDate_<%=rand%>" name="pickupDate_<%=rand%>" value="<%=pickupDate%>"
+                   onchange="if (!isValidDate(this.value)) {this.value=null}"/>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgPickUpTime"/>:
+            <input type="text" id="pickupTime_<%=rand%>" name="pickupTime_<%=rand%>" value="<%=pickupTime%>"
+                   onchange="if (!isValidTime(this.value)) {this.value=null}"/>
+        </div>
+        <div>
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgComment"/>:
            <input type="text" id="comment_<%=rand%>" name="comment_<%=rand%>" value="<%=comment%>" size="60"/>
            </div><div>  
-           <bean:message key="WriteScript.msgETreatmentType"/>:     
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatmentType"/>:
            <select name="eTreatmentType_<%=rand%>">
            		<option>--</option>
-                         <option value="CHRON" <%=eTreatmentType.equals("CHRON")?"selected":""%>><bean:message key="WriteScript.msgETreatment.Continuous"/></option>
- 				<option value="ACU" <%=eTreatmentType.equals("ACU")?"selected":""%>><bean:message key="WriteScript.msgETreatment.Acute"/></option>
- 				<option value="ONET" <%=eTreatmentType.equals("ONET")?"selected":""%>><bean:message key="WriteScript.msgETreatment.OneTime"/></option>
- 				<option value="PRNL" <%=eTreatmentType.equals("PRNL")?"selected":""%>><bean:message key="WriteScript.msgETreatment.LongTermPRN"/></option>
- 				<option value="PRNS" <%=eTreatmentType.equals("PRNS")?"selected":""%>><bean:message key="WriteScript.msgETreatment.ShortTermPRN"/></option>           </select>
+                <option value="CHRON" <%=eTreatmentType.equals("CHRON") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatment.Continuous"/></option>
+                <option value="ACU" <%=eTreatmentType.equals("ACU") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatment.Acute"/></option>
+                <option value="ONET" <%=eTreatmentType.equals("ONET") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatment.OneTime"/></option>
+                <option value="PRNL" <%=eTreatmentType.equals("PRNL") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatment.LongTermPRN"/></option>
+                <option value="PRNS" <%=eTreatmentType.equals("PRNS") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgETreatment.ShortTermPRN"/></option>
+            </select>
            <select name="rxStatus_<%=rand%>">
            		<option>--</option>
-                         <option value="New" <%=rxStatus.equals("New")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.New"/></option>
-                         <option value="Active" <%=rxStatus.equals("Active")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Active"/></option>
-                         <option value="Suspended" <%=rxStatus.equals("Suspended")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Suspended"/></option>
-                         <option value="Aborted" <%=rxStatus.equals("Aborted")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Aborted"/></option>
-                         <option value="Completed" <%=rxStatus.equals("Completed")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Completed"/></option>
-                         <option value="Obsolete" <%=rxStatus.equals("Obsolete")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Obsolete"/></option>
-                         <option value="Nullified" <%=rxStatus.equals("Nullified")?"selected":""%>><bean:message key="WriteScript.msgRxStatus.Nullified"/></option>
+                <option value="New" <%=rxStatus.equals("New") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.New"/></option>
+                <option value="Active" <%=rxStatus.equals("Active") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Active"/></option>
+                <option value="Suspended" <%=rxStatus.equals("Suspended") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Suspended"/></option>
+                <option value="Aborted" <%=rxStatus.equals("Aborted") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Aborted"/></option>
+                <option value="Completed" <%=rxStatus.equals("Completed") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Completed"/></option>
+                <option value="Obsolete" <%=rxStatus.equals("Obsolete") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Obsolete"/></option>
+                <option value="Nullified" <%=rxStatus.equals("Nullified") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgRxStatus.Nullified"/></option>
            </select>
                 </div><div>                
-                <bean:message key="WriteScript.msgDrugForm"/>: 
+            <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgDrugForm"/>:
                 <%if(rx.getDrugFormList()!=null && rx.getDrugFormList().indexOf(",")!=-1){ %>
                 <select name="drugForm_<%=rand%>">
                 	<%
@@ -397,7 +471,7 @@ if(listRxDrugs!=null){
 
 
        			</div>
-       
+
         </div>
            
            <div id="renalDosing_<%=rand%>" ></div>
@@ -475,7 +549,7 @@ if(listRxDrugs!=null){
 
 
 	.ui-autocomplete-loading { 
-		background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat; 
+        background: white url('<%= request.getContextPath() %>/images/ui-anim_basic_16x16.gif') right center no-repeat;
 	} 
 	.ui-autocomplete {
 		max-height: 200px;
@@ -503,11 +577,8 @@ if(listRxDrugs!=null){
 <script type="text/javascript">
        jQuery("document").ready(function() {
     	   
-               if ( jQuery.browser.msie ) {
-                       jQuery('#rx_save_updates_<%=rand%>').show();
-               } else {
-                       jQuery('#rx_save_updates_<%=rand%>').hide();
-               }
+
+                jQuery('#rx_save_updates_<%=rand%>').hide();
 
 				var idindex = "";
                jQuery( "input[id*='jsonDxSearch']" ).autocomplete({	
@@ -596,29 +667,49 @@ if(listRxDrugs!=null){
               }
             }
 
-            var specArr=new Array();
-            var specStr='<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(specStr)%>';
-            
-            specArr=specStr.split("*");// * is used as delimiter
-            //oscarLog("specArr="+specArr);
-            YAHOO.example.BasicLocal = function() {
-                // Use a LocalDataSource
-                var oDS = new YAHOO.util.LocalDataSource(specArr);
-                // Optional to define fields for single-dimensional array
-                oDS.responseSchema = {fields : ["state"]};
+            YAHOO.example.FnMultipleFields = function () {
+        let url = "<%= request.getContextPath() %>/oscarRx/search.do?parameterValue=searchSpecialInstructions";
+                let oDS = new YAHOO.util.XHRDataSource(url, {connMethodPost: true, connXhrMode: 'ignoreStaleResponse'});
+                oDS.responseType = YAHOO.util.XHRDataSource.TYPE_JSON;// Set the responseType
+                // Define the schema of the delimited results
+                oDS.responseSchema = {
+                    resultsList: "results"
+                };
 
-                // Instantiate the AutoComplete
-                var oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
-                oAC.prehighlightClassName = "yui-ac-prehighlight";
+        oDS.subscribe('dataErrorEvent', function(type, args) {
+            console.error('Special Instructions autocomplete failed:', args);
+        });
+                // Enable caching
+                oDS.maxCacheEntries = 0;
+                // oDS.connXhrMode = "cancelStaleRequests";
+                // Instantiate AutoComplete
+                let oAC = new YAHOO.widget.AutoComplete("siInput_<%=rand%>", "siContainer_<%=rand%>", oDS);
                 oAC.useShadow = true;
+                oAC.resultTypeList = false;
+                oAC.queryMatchSubset = true;
+                oAC.minQueryLength = 1;
+                oAC.maxResultsDisplayed = 40;
 
+                oAC.doBeforeExpandContainer = function (sQuery, oResponse) {
+                    if (oAC._nDisplayedItems < oAC.maxResultsDisplayed) {
+                        oAC.setFooter("");
+                    } else {
+                        oAC.setFooter("<a href='javascript:void(0)' onClick='popupRxSearchWindow();oAC.collapseContainer();'>See more results...</a>");
+                    }
+                    return true;
+                }
+
+                oAC.containerCollapseEvent.subscribe(function () {
+                    $('autocomplete_choices').hide();
+                });
+                oAC.dataRequestEvent.subscribe(function () {
+                    $('autocomplete_choices').show();
+                });
                 return {
                     oDS: oDS,
                     oAC: oAC
                 };
             }();
-
-
 
             checkAllergy('<%=rand%>','<%=rx.getAtcCode()%>');
             checkIfInactive('<%=rand%>','<%=rx.getRegionalIdentifier()%>');
@@ -645,8 +736,8 @@ if(listRxDrugs!=null){
             //oscarLog("listRxDrugsSize="+listRxDrugSize);
             counterRx++;
             //oscarLog("counterRx="+counterRx);
-           var gcn_val=<%=gcn%>;
-           if(gcn_val==0){
+           var gcn_val="<%=gcnCode%>";
+           if(gcn_val === "0"){
                $('drugName_<%=rand%>').focus();
            } else if(counterRx==listRxDrugSize){
                //oscarLog("counterRx="+counterRx+"--listRxDrugSize="+listRxDrugSize);
@@ -657,8 +748,9 @@ if(listRxDrugs!=null){
 <script type="text/javascript">
 counterRx=0;
 
-if(skipParseInstr)
-skipParseInstr=false;
+if(skipParseInstr) {
+	skipParseInstr = false;
+}
 </script>
 <%}%>
 

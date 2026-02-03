@@ -22,21 +22,21 @@
  * Ontario, Canada
  */
 html {
-     -webkit-text-size-adjust:none;
+    -webkit-text-size-adjust: none;
 }
 
 body {
-     font-family:"Helvetica";
-     background-color:white;
-     width:100%;
-     padding:0;
-     margin:0;
+    font-family: "Helvetica";
+    background-color: white;
+    width: 100%;
+    padding: 0;
+    margin: 0;
 }
 
 body > div {
-    width:100%;
-    position:absolute;
-    top:0px;
+    width: 100%;
+    position: absolute;
+    top: 0px;
 }
 
 form {
@@ -52,27 +52,30 @@ a {
     background: #6d84a2 repeat-x;
     font-size: medium;
     font-weight: bold;
-    -webkit-box-sizing:border-box;
+    -webkit-box-sizing: border-box;
     height: 45px;
     border-bottom: 1px black solid;
 }
 
-ul { margin: 0; padding: 0px; }
+ul {
+    margin: 0;
+    padding: 0px;
+}
 
 li {
     min-height: 40px;
-    margin:0;
+    margin: 0;
     border-bottom: 1px solid #E0E0E0;
-    padding:8px 5px 2px 0px; /* 8 5 2 10 */
-    font-size:18px;
-    font-weight:bold;
-    list-style:none;
+    padding: 8px 5px 2px 0px; /* 8 5 2 10 */
+    font-size: 18px;
+    font-weight: bold;
+    list-style: none;
 }
 
 input[type="submit"], input[type="button"], input[type="reset"] {
-    font-size:12px;
-    width:auto;
-    -webkit-appearance:button; /* for iPhone */
+    font-size: 12px;
+    width: auto;
+    -webkit-appearance: button; /* for iPhone */
 }
 
 .wideInput {
@@ -80,14 +83,14 @@ input[type="submit"], input[type="button"], input[type="reset"] {
     background-color: #E8E8E8;
     border: 1px solid #999999;
     -moz-border-radius: 3px;
-    width:70%;
+    width: 70%;
 }
 
 .demoId, .demoIdSearch {
     width: 40px;
     padding-left: 5px;
     padding-top: 9px;
-    text-align:left;
+    text-align: left;
 }
 
 .demoIdSearch a {
@@ -108,32 +111,31 @@ input[type="submit"], input[type="button"], input[type="reset"] {
 .searchBox, #demographicSearch {
     z-index: 2;
     background: #e8e8e8;
-    width:100%;
-    border-bottom:1px solid #c0c0c0;
+    width: 100%;
+    border-bottom: 1px solid #c0c0c0;
 }
 
 .searchBox ul li:last-child {
-    height:0; /* get rid of extra padding at the end */
-    min-height:0;
+    height: 0; /* get rid of extra padding at the end */
+    min-height: 0;
 }
 
 #legend, .tableHeadings, #sortingMessages, .createNew, #demographicSearch,
-#searchResults li div:not(.demoId):not(.demoIdSearch):not(.name):not(.firstName):not(.lastName):not(.sex):not(.dob):not(.doctor)
-{
-    display:none;
+#searchResults li div:not(.demoId):not(.demoIdSearch):not(.name):not(.firstName):not(.lastName):not(.sex):not(.dob):not(.doctor) {
+    display: none;
 }
+
 input[type="submit"]:not(.leftButton):not(.rightButton):not(.mbttn),
 input[type="button"]:not(.leftButton):not(.rightButton),
-input[type="reset"]:not(.leftButton):not(.rightButton)
-{
+input[type="reset"]:not(.leftButton):not(.rightButton) {
     display: none;
 }
 
 .sex, .dob, .doctor {
     font-size: small;
-    padding-right:3px;
+    padding-right: 3px;
     margin-top: -3px;
-    font-weight:normal;
+    font-weight: normal;
 }
 
 .firstName, .lastName, .name {
@@ -143,41 +145,49 @@ input[type="reset"]:not(.leftButton):not(.rightButton)
 
 .sex {
     padding-left: 45px;
-    clear:both;
+    clear: both;
 }
 
 li div {
     display: block;
-    float:left;
-    vertical-align:text-bottom;
+    float: left;
+    vertical-align: text-bottom;
 }
 
 .title {
-    position:absolute;
-    width:100%;
-    text-align:center;
+    position: absolute;
+    width: 100%;
+    text-align: center;
     padding: 0;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: rgba(0, 0, 0, 0.4) 0px -1px 0;
     text-align: center;
-    font-size:17px;
-    top:10px;
+    font-size: 17px;
+    top: 10px;
     background-color: transparent; /*#eeeeff;*/
-    left:0px;
+    left: 0px;
 }
 
 .searchBox .label {
-    float:left;
-    margin-left:2%;
+    float: left;
+    margin-left: 2%;
     font-size: 15px;
-    width:18%;
-    height:30px;
+    width: 18%;
+    height: 30px;
 }
 
-.leftButton { left:10px; }
-.rightButton { right:10px; }
-.top { position:absolute !important; }
+.leftButton {
+    left: 10px;
+}
+
+.rightButton {
+    right: 10px;
+}
+
+.top {
+    position: absolute !important;
+}
 
 .leftButton, .rightButton {
     position: relative;
@@ -187,21 +197,21 @@ li div {
     border-width: 0 5px;
     padding: 0 3px;
     width: auto;
-    min-width:30px;
+    min-width: 30px;
     min-height: 30px;
     line-height: 30px;
     font-family: inherit;
-    font-family:"Helvetica";
+    font-family: "Helvetica";
     font-size: 12px;
     font-weight: bold;
-    top:8px;
+    top: 8px;
     color: #FFFFFF;
     text-shadow: rgba(0, 0, 0, 0.6) 0px -1px 0;
     text-overflow: ellipsis;
     text-decoration: none;
-    text-align:center;
+    text-align: center;
     white-space: nowrap;
-    z-index:1;
+    z-index: 1;
     -webkit-border-image: url(toolButton.png) 0 5 0 5;
     -moz-border-image: url(toolButton.png) 0 5 0 5;
 }
@@ -216,21 +226,26 @@ li div {
     font-size: 12px;
     font-family: inherit;
     overflow: hidden;
-    -webkit-appearance:button;
+    -webkit-appearance: button;
     margin: 0;
     padding: 0 3px;
     width: auto;
-    min-width:30px;
+    min-width: 30px;
     height: 25px;
     line-height: 18px;
     font-family: inherit;
-    font-family:"Helvetica";
+    font-family: "Helvetica";
     font-size: 12px;
     font-weight: bold;
     text-decoration: none;
-    text-align:center;
+    text-align: center;
     white-space: nowrap;
 }
 
-#nextPageButton { right:5px; }
-#prevPageButton { left: 5px; }
+#nextPageButton {
+    right: 5px;
+}
+
+#prevPageButton {
+    left: 5px;
+}

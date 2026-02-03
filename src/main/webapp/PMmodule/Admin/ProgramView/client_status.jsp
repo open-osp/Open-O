@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,21 +24,20 @@
 --%>
 
 
-
-<%@ include file="/taglibs.jsp"%>
+<%@ include file="/taglibs.jsp" %>
 <div class="tabs" id="tabs">
-<table cellpadding="3" cellspacing="0" border="0">
-	<tr>
-		<th title="Programs">Client Status Management</th>
-	</tr>
-</table>
+    <table cellpadding="3" cellspacing="0" border="0">
+        <tr>
+            <th title="Programs">Client Status Management</th>
+        </tr>
+    </table>
 </div>
-<!--  show current staff -->
+<!-- show current staff -->
 <display:table class="simple" cellspacing="2" cellpadding="3"
-	id="status" name="client_statuses" export="false" pagesize="0"
-	requestURI="/PMmodule/ProgramManagerView.do">
-	<display:setProperty name="paging.banner.placement" value="bottom" />
-	<display:setProperty name="basic.msg.empty_list"
-		value="No statuses are currently defined for this program." />
-	<display:column property="name" sortable="true" title="Name" />
+               id="status" name="client_statuses" export="false" pagesize="0"
+               requestURI="/PMmodule/ProgramManagerView.do">
+    <display:setProperty name="paging.banner.placement" value="bottom"/>
+    <display:setProperty name="basic.msg.empty_list"
+                         value="No statuses are currently defined for this program."/>
+    <display:column property="name" sortable="true" title="Name"/>
 </display:table>

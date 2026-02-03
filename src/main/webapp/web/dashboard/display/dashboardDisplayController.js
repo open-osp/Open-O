@@ -26,154 +26,154 @@ var jqplotOptions;
 var placeHolderCount = 0;
 var indicatorPanels = [];
 
-$(document).ready( function() {
-	
-	jqplotOptions = {		
-			title: ' ',
-			seriesDefaults: {
-				shadow: false, 
-				renderer: $.jqplot.PieRenderer, 
-				rendererOptions: { 
-					startAngle: 180, 
-					sliceMargin: 4, 
-					showDataLabels: true,
-					dataLabels: 'value',
-					dataLabelThreshold: 0
-				}
-			},
-			grid: {
-			    drawGridLines: false,        	// wether to draw lines across the grid or not.
-			        gridLineColor: '#cccccc',   // CSS color spec of the grid lines.
-			        background: 'white',      	// CSS color spec for background color of grid.
-			        borderColor: 'white',     	// CSS color spec for border around grid.
-			        borderWidth: 0,           	// pixel width of border around grid.
-			        shadow: false,              // draw a shadow for grid.
-			        shadowAngle: 0,            	// angle of the shadow.  Clockwise from x axis.
-			        shadowOffset: 0,          	// offset from the line of the shadow.
-			        shadowWidth: 0,             // width of the stroke for the shadow.
-			        shadowDepth: 0
-			},
-			legend: { show:true, location: 's' }
-			
-		};
+$(document).ready(function () {
+
+    jqplotOptions = {
+        title: ' ',
+        seriesDefaults: {
+            shadow: false,
+            renderer: $.jqplot.PieRenderer,
+            rendererOptions: {
+                startAngle: 180,
+                sliceMargin: 4,
+                showDataLabels: true,
+                dataLabels: 'value',
+                dataLabelThreshold: 0
+            }
+        },
+        grid: {
+            drawGridLines: false,        	// wether to draw lines across the grid or not.
+            gridLineColor: '#cccccc',   // CSS color spec of the grid lines.
+            background: 'white',      	// CSS color spec for background color of grid.
+            borderColor: 'white',     	// CSS color spec for border around grid.
+            borderWidth: 0,           	// pixel width of border around grid.
+            shadow: false,              // draw a shadow for grid.
+            shadowAngle: 0,            	// angle of the shadow.  Clockwise from x axis.
+            shadowOffset: 0,          	// offset from the line of the shadow.
+            shadowWidth: 0,             // width of the stroke for the shadow.
+            shadowDepth: 0
+        },
+        legend: {show: true, location: 's'}
+
+    };
 
 
-	// get the drill down page
-	$(".indicatorWrapper").on('click', ".indicatorDrilldownBtn", function(event) {
-    	event.preventDefault();
-    	var url = "/web/dashboard/display/DrilldownDisplay.do";
-    	var data = new Object();
-    	data.indicatorTemplateId = (this.id).split("_")[1];
-    	data.method = (this.id).split("_")[0];  
+    // get the drill down page
+    $(".indicatorWrapper").on('click', ".indicatorDrilldownBtn", function (event) {
+        event.preventDefault();
+        var url = "/www/dashboard/display/DrilldownDisplay.do";
+        var data = new Object();
+        data.indicatorTemplateId = (this.id).split("_")[1];
+        data.method = (this.id).split("_")[0];
 
-    	sendData(url, data, null);
+        sendData(url, data, null);
     });
 
-	$(".indicatorWrapper").on("click", ".indicatorGraph", function(event) {
-		event.preventDefault();
-		var url = "/web/dashboard/display/DrilldownDisplay.do";
-		var data = new Object();
-		data.indicatorTemplateId = (this.id).split("_")[1];
-		data.method = "getDrilldown";
+    $(".indicatorWrapper").on("click", ".indicatorGraph", function (event) {
+        event.preventDefault();
+        var url = "/www/dashboard/display/DrilldownDisplay.do";
+        var data = new Object();
+        data.indicatorTemplateId = (this.id).split("_")[1];
+        data.method = "getDrilldown";
 
-		sendData(url, data, null);
-	});
-
-	// get the dashboard manager page
-	$(".dashboardManagerBtn").on('click', function(event) {
-    	event.preventDefault();
-    	var url = "/web/dashboard/admin/DashboardManager.do";
-    	var data = "dashboardId=" + this.id; 
-    	sendData(url, data, null);
+        sendData(url, data, null);
     });
-	
-	// reload this dashboard with fresh data.
-	$(".reloadDashboardBtn").on('click', function(event) {
-    	event.preventDefault();
-    	var url = "/web/dashboard/display/DashboardDisplay.do";
-    	var data = new Object();
-    	data.dashboardId = (this.id).split("_")[1];
-    	data.method = (this.id).split("_")[0]; 
-    	
-    	sendData(url, data, null);
-    });
-	
-	$(".indicatorWrapper").each(function(){	
-		var data = new Object();
-		data.method = "getIndicator";
-		data.indicatorId = this.id.split("_")[1];
 
-		sendData("/web/dashboard/display/DisplayIndicator.do", data, this.id.split("_")[0]);
-	})
-	
-	placeHolderCount = $(".indicatorWrapper").length;
+    // get the dashboard manager page
+    $(".dashboardManagerBtn").on('click', function (event) {
+        event.preventDefault();
+        var url = "/www/dashboard/admin/DashboardManager.do";
+        var data = "dashboardId=" + this.id;
+        sendData(url, data, null);
+    });
+
+    // reload this dashboard with fresh data.
+    $(".reloadDashboardBtn").on('click', function (event) {
+        event.preventDefault();
+        var url = "/www/dashboard/display/DashboardDisplay.do";
+        var data = new Object();
+        data.dashboardId = (this.id).split("_")[1];
+        data.method = (this.id).split("_")[0];
+
+        sendData(url, data, null);
+    });
+
+    $(".indicatorWrapper").each(function () {
+        var data = new Object();
+        data.method = "getIndicator";
+        data.indicatorId = this.id.split("_")[1];
+
+        sendData("/www/dashboard/display/DisplayIndicator.do", data, this.id.split("_")[0]);
+    })
+
+    placeHolderCount = $(".indicatorWrapper").length;
 
 })
 
 // build Indicator panel with Pie chart.
-function buildIndicatorPanel( html, target, id ) {
-	
-	let indicatorGraph;
-	
-	if ( indicatorGraph ) {
-		indicatorGraph.destroy();
-	}
-	
-	let panel = $( "#" + target + "_" + id ).html( html ); //.append("<h3>" +id+ "</h3>");
-	let data = "[" + panel.find( "#graphPlots_" + id ).val() + "]";
-	data = data.replace(/'/g, '"');
-	data = JSON.parse( data )
-	indicatorGraph = $.jqplot ( 'graphContainer_' + id, data, jqplotOptions ).replot();
-	
-	window.onresize = function(event) {
-		indicatorGraph.replot();
-	}
-	
-	let name = panel.find( ".indicatorHeading div" ).text();
-	
-	let paneldata = [ name, id, data ];
-	
-	if( paneldata ) {
-		indicatorPanels.push( paneldata );
-	}
+function buildIndicatorPanel(html, target, id) {
 
-	if( indicatorPanels.length === placeHolderCount ) {
+    let indicatorGraph;
 
-		let panelList;
-		
-		for(let i = 0; i < indicatorPanels.length; i++ ) {
-			let ipanel = indicatorPanels[i];
-			let name, id, data;
+    if (indicatorGraph) {
+        indicatorGraph.destroy();
+    }
 
-			if( ipanel ) {
-				name = ipanel[0].trim();
-				id = ipanel[1];
-				data = ipanel[2];
-				panelList += ( "NAME " + name + ", ID " + id + "\n " + "  DATA " + data + "\n" ); 
-			}
+    let panel = $("#" + target + "_" + id).html(html);
+    let data = "[" + panel.find("#graphPlots_" + id).val() + "]";
+    data = data.replace(/'/g, '"');
+    data = JSON.parse(data)
+    indicatorGraph = $.jqplot('graphContainer_' + id, data, jqplotOptions).replot();
 
-		}		
-		return panelList;
-	}
+    window.onresize = function (event) {
+        indicatorGraph.replot();
+    }
+
+    let name = panel.find(".indicatorHeading div").text();
+
+    let paneldata = [name, id, data];
+
+    if (paneldata) {
+        indicatorPanels.push(paneldata);
+    }
+
+    if (indicatorPanels.length === placeHolderCount) {
+
+        let panelList;
+
+        for (let i = 0; i < indicatorPanels.length; i++) {
+            let ipanel = indicatorPanels[i];
+            let name, id, data;
+
+            if (ipanel) {
+                name = ipanel[0].trim();
+                id = ipanel[1];
+                data = ipanel[2];
+                panelList += ("NAME " + name + ", ID " + id + "\n " + "  DATA " + data + "\n");
+            }
+
+        }
+        return panelList;
+    }
 }
 
 function sendData(path, param, target) {
-	$.ajax({
-		url: ctx + path,
-	    type: 'POST',
-	    data: param,
-	  	dataType: 'html',
-	    success: function(data) {	    	
-	    	if( target === "indicatorId") {
-	    		var panelList = buildIndicatorPanel( data, target, param.indicatorId );
-	    		if( panelList ) {
-	    			console.log( panelList );
-	    		}
-	    	} else {
-		    	document.open();
-		    	document.write(data);
-		    	document.close();	    		
-	    	}
-	    }
-	});
+    $.ajax({
+        url: ctx + path,
+        type: 'POST',
+        data: param,
+        dataType: 'html',
+        success: function (data) {
+            if (target === "indicatorId") {
+                var panelList = buildIndicatorPanel(data, target, param.indicatorId);
+                if (panelList) {
+                    console.log(panelList);
+                }
+            } else {
+                document.open();
+                document.write(data);
+                document.close();
+            }
+        }
+    });
 }

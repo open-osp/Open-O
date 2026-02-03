@@ -26,16 +26,16 @@
 <ul class="list-style-none p-0 m-0 action-container">
     <li>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="black" data-demo="true" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="black" data-demo="true"/>
         </svg>
-        <input type="checkbox" checked onclick="return false;" />
+        <input type="checkbox" checked onclick="return false;"/>
         <strong>Action Required</strong>
     </li>
     <li>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" data-demo="true" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" data-demo="true"/>
         </svg>
-        <input type="checkbox" onclick="return false;" />
+        <input type="checkbox" onclick="return false;"/>
         <strong>No Action Required</strong>
     </li>
 </ul>

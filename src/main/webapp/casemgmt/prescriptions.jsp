@@ -1,4 +1,3 @@
-
 <%--
 
 
@@ -25,84 +24,93 @@
 --%>
 
 
-
 <%-- Updated by Eugene Petruhin on 16 dec 2008 while fixing #2434234 --%>
 
 <%@ include file="/casemgmt/taglibs.jsp" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_rx" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_rx");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ page import="org.oscarehr.casemgmt.model.*" %>
-<%@ page import="org.oscarehr.casemgmt.web.formbeans.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.model.*" %>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.*" %>
 Prescriptions
-<table width="100%" border="0"  cellpadding="0" cellspacing="1" bgcolor="#C0C0C0">
-<tr class="title">
-	<td>Start Date</td>
-	<td>Prescription Details</td>
-	<c:if test="${isIntegratorEnabled}">
-		<td>Location Prescribed</td>
-	</c:if>
-</tr>
-<c:forEach var="prescription" items="${Prescriptions}">
-	<tr>
-		<td bgcolor="white" >
-			<c:if test="${prescription.expired}">
-			*
-			</c:if>
-			<fmt:formatDate pattern="MM/dd/yy" value="${prescription.rxDate}"/>
-		</td>
-		
-		<%String styleColor=""; %>
-		<c:if test="${!prescription.expired && prescription.archived}">
-		<%styleColor="style=\"color:red;text-decoration: line-through;\"";%>
-		</c:if>
-		<c:if test="${prescription.expired && prescription.archived}">
-		<%styleColor="style=\"text-decoration: line-through;\"";%>
-		</c:if>
-		<c:if test="${!prescription.expired && !prescription.archived}">
-		<%styleColor="style=\"color:red;\"";%>
-		</c:if>
-		<td bgcolor="white">
-			<caisirole:SecurityAccess accessName="prescription Write" accessType="access" providerNo='<%=request.getParameter("providerNo")%>' demoNo='<%=request.getParameter("demographicNo")%>' programId='<%=(String)session.getAttribute("case_program_id")%>'>
-				<a <%= styleColor%> target="_blank" href="../oscarRx/StaticScript.jsp?regionalIdentifier=<c:out value="${prescription.regionalIdentifier}"/>&cn=<c:out value="${prescription.customName}"/>" >
-					<c:out value="${prescription.special}"/>
-				</a>
-			</caisirole:SecurityAccess>
-			
-			<caisirole:SecurityAccess accessName="prescription Write" accessType="access" providerNo='<%=request.getParameter("providerNo")%>' demoNo='<%=request.getParameter("demographicNo")%>' programId='<%=(String)session.getAttribute("case_program_id")%>' reverse="true">
-				<span <%= styleColor%> ><c:out value="${prescription.special}"/></span>
-			</caisirole:SecurityAccess>
-		</td>
-		
-		<c:if test="${isIntegratorEnabled}">
-			<td bgcolor="white">
-				<c:if test="${empty prescription.remoteFacilityName}">
-					local
-				</c:if>
-				<c:if test="${not empty prescription.remoteFacilityName}">
-					<c:out value="${prescription.remoteFacilityName}"/>
-				</c:if>
-			</td>
-		</c:if>		
-	</tr>
-</c:forEach>
+<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#C0C0C0">
+    <tr class="title">
+        <td>Start Date</td>
+        <td>Prescription Details</td>
+        <c:if test="${isIntegratorEnabled}">
+            <td>Location Prescribed</td>
+        </c:if>
+    </tr>
+    <c:forEach var="prescription" items="${Prescriptions}">
+        <tr>
+            <td bgcolor="white">
+                <c:if test="${prescription.expired}">
+                    *
+                </c:if>
+                <fmt:formatDate pattern="MM/dd/yy" value="${prescription.rxDate}"/>
+            </td>
+
+            <%String styleColor = ""; %>
+            <c:if test="${!prescription.expired && prescription.archived}">
+                <%styleColor = "style=\"color:red;text-decoration: line-through;\"";%>
+            </c:if>
+            <c:if test="${prescription.expired && prescription.archived}">
+                <%styleColor = "style=\"text-decoration: line-through;\"";%>
+            </c:if>
+            <c:if test="${!prescription.expired && !prescription.archived}">
+                <%styleColor = "style=\"color:red;\"";%>
+            </c:if>
+            <td bgcolor="white">
+                <caisirole:SecurityAccess accessName="prescription Write" accessType="access"
+                                          providerNo='<%=request.getParameter("providerNo")%>'
+                                          demoNo='<%=request.getParameter("demographicNo")%>'
+                                          programId='<%=(String)session.getAttribute("case_program_id")%>'>
+                    <a <%= styleColor%> target="_blank"
+                                        href="<%= request.getContextPath() %>/oscarRx/StaticScript.jsp?regionalIdentifier=<c:out value="${prescription.regionalIdentifier}"/>&cn=<c:out value="${prescription.customName}"/>">
+                        <c:out value="${prescription.special}"/>
+                    </a>
+                </caisirole:SecurityAccess>
+
+                <caisirole:SecurityAccess accessName="prescription Write" accessType="access"
+                                          providerNo='<%=request.getParameter("providerNo")%>'
+                                          demoNo='<%=request.getParameter("demographicNo")%>'
+                                          programId='<%=(String)session.getAttribute("case_program_id")%>'
+                                          reverse="true">
+                    <span <%= styleColor%> ><c:out value="${prescription.special}"/></span>
+                </caisirole:SecurityAccess>
+            </td>
+
+            <c:if test="${isIntegratorEnabled}">
+                <td bgcolor="white">
+                    <c:if test="${empty prescription.remoteFacilityName}">
+                        local
+                    </c:if>
+                    <c:if test="${not empty prescription.remoteFacilityName}">
+                        <c:out value="${prescription.remoteFacilityName}"/>
+                    </c:if>
+                </td>
+            </c:if>
+        </tr>
+    </c:forEach>
 </table>
 <c:if test="${sessionScope.caseManagementViewForm.prescipt_view!='all'}">
-<span style="text-decoration: underline;cursor:pointer;color: blue" onclick="document.caseManagementViewForm.prescipt_view.value='all';document.caseManagementViewForm.method.value='setPrescriptViewType';document.caseManagementViewForm.submit(); return false;" >show all</span>
+    <span style="text-decoration: underline;cursor:pointer;color: blue"
+          onclick="document.caseManagementViewForm.prescipt_view.value='all';document.caseManagementViewForm.method.value='setPrescriptViewType';document.caseManagementViewForm.submit(); return false;">show all</span>
 </c:if>
 <c:if test="${sessionScope.caseManagementViewForm.prescipt_view=='all'}">
-<span style="text-decoration: underline;cursor:pointer;color: blue" onclick="document.caseManagementViewForm.prescipt_view.value='current';document.caseManagementViewForm.method.value='setPrescriptViewType';document.caseManagementViewForm.submit(); return false;" >show current</span>
+    <span style="text-decoration: underline;cursor:pointer;color: blue"
+          onclick="document.caseManagementViewForm.prescipt_view.value='current';document.caseManagementViewForm.method.value='setPrescriptViewType';document.caseManagementViewForm.submit(); return false;">show current</span>
 </c:if>
 <br>
 <span> *expired medications in blue,</span><span style="color:red">current medications in red </span>

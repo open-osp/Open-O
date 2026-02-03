@@ -26,27 +26,33 @@
 <div class="flex items-center w-full">
     <div>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_caregiver_relationship" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_caregiver_relationship" data-score="1">
         <strong>Caregiver Relationship</strong>
     </div>
     <div class="pl-4 flex items-center">
-        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0" value="spouse"
-                autocomplete="off">
+        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0"
+                                                                  value="spouse"
+                                                                  autocomplete="off">
             <span class="pl-1">Spouse</span></label>
 
-        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0" value="sibling"
-                autocomplete="off">
-                <span class="pl-1">Siblings</span></label>
+        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0"
+                                                                  value="sibling"
+                                                                  autocomplete="off">
+            <span class="pl-1">Siblings</span></label>
 
-        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0" value="offpsring"
-                autocomplete="off">
-                <span class="pl-1">Offspring</span></label>
+        <label class="font-normal flex items-center  pl-4"><input type="radio" name="caregiver_relationship" class="m-0"
+                                                                  value="offpsring"
+                                                                  autocomplete="off">
+            <span class="pl-1">Offspring</span></label>
 
-        <label class="font-normal flex items-center ml-2 pl-4"><input type="radio" name="caregiver_relationship" class="m-0" value="other"
-                autocomplete="off">
-                <span class="pl-1">Other</span></label>
-        <label class="font-normal flex items-center ml-2 pl-4"><input type="radio" name="caregiver_relationship" class="m-0" value="na" autocomplete="off">
+        <label class="font-normal flex items-center ml-2 pl-4"><input type="radio" name="caregiver_relationship"
+                                                                      class="m-0" value="other"
+                                                                      autocomplete="off">
+            <span class="pl-1">Other</span></label>
+        <label class="font-normal flex items-center ml-2 pl-4"><input type="radio" name="caregiver_relationship"
+                                                                      class="m-0" value="na" autocomplete="off">
             <span class="pl-1">NA</span></label>
     </div>
 </div>

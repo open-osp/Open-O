@@ -24,28 +24,28 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-	  boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_lab" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_lab");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_lab");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 
-<%@ include file="/taglibs.jsp"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="org.oscarehr.PMmodule.dao.ProviderDao"%>
-<%@page import="org.oscarehr.common.model.DemographicContact"%>
+<%@ include file="/taglibs.jsp" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
+<%@page import="ca.openosp.openo.commn.model.DemographicContact" %>
 <%
-	String id = request.getParameter("id");
+    String id = request.getParameter("id");
 %>
 
 <div id="test_<%=id%>">
@@ -54,7 +54,7 @@ if(!authed) {
 					<fieldset>
                 <legend>Test Information</legend>
 
-                <table border="0">
+                <table border="0" class="lab-test-table">
 					<tr>
 						<td  class="input-append"><label>Date:</label><input type="text" name="test_<%=id%>.valDate" id="test_<%=id%>.valDate" class="input-medium" required><img src="<%=request.getContextPath()%>/images/cal.gif" id="test_<%=id%>.valDate_cal" class="add-on" required></td>
 						<td><label>Flag:</label>
@@ -90,15 +90,17 @@ if(!authed) {
                  <tr>
                  	<td><label>Value:</label><input type="text" name="test_<%=id%>.codeVal" size="10" id="test_<%=id%>.codeVal"/></td>
                  	<td><label>Unit:</label><input type="text" name="test_<%=id%>.codeUnit" size="10" id="test_<%=id%>.codeUnit"/></td>
+                 </tr>
 
+                 <tr>
                  	<td><label>refRange (low):</label><input type="text" name="test_<%=id%>.refRangeLow" id="test_<%=id%>.refRangeLow" size="5"/></td>
                  	<td><label>refRange (high):</label><input type="text" name="test_<%=id%>.refRangeHigh" id="test_<%=id%>.refRangeHigh" size="5"/></td>
-                 	<td><label>refRange (text):</label><input type="text" name="test_<%=id%>.refRangeText" id="test_<%=id%>.refRangeText" size="5"/></td>
+                 	<td><label>refRange (text):</label><input type="text" name="test_<%=id%>.refRangeText" id="test_<%=id%>.refRangeText" size="15"/></td>
                  </tr>
 
  			     <tr>
- 			     	<td><label>Lab Notes:</label></td><td colspan="2"><textarea name="test_<%=id%>.labnotes" id="test_<%=id%>.labnotes" rows="5" cols="30"></textarea></td>
- 			     	<td colspan="2">
+ 			     	<td valign="top"><label>Lab Notes:</label><textarea name="test_<%=id%>.labnotes" id="test_<%=id%>.labnotes" rows="5" cols="30"></textarea></td>
+ 			     	<td valign="top">
  			     		<label>Blocked Test Result:</label>
  			     		<select name="test_<%=id%>.blocked" id="test_<%=id%>.blocked">
  			     			<option value="">No</option>
@@ -109,11 +111,11 @@ if(!authed) {
 
                 </table>
 
-                <a href="#" onclick="deleteTest(<%=id%>); return false;">[Delete]</a>
+                <a href="#" onclick="deleteTest(<%=id%>); return false;" class="btn btn-danger" style="width: 80px; margin-top: 10px;">Delete</a>
 
 		       </fieldset>
 		       <script>
 			       Calendar.setup({ inputField : "test_<%=id%>.valDate", ifFormat : "%Y-%m-%d %H:%m", showsTime :true, button : "test_<%=id%>.valDate_cal" });
 
-		       </script>
+    </script>
 </div>

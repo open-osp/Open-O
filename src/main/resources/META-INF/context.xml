@@ -15,7 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!-- The contents of this file will be loaded for each web application -->
+<!-- The contents of this file will be loaded for each www application -->
 <Context>
     <Resources cacheMaxSize="102400" />
     <CookieProcessor sameSiteCookies="strict" />

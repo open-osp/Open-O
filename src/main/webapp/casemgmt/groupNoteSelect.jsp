@@ -22,33 +22,32 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ page import="ca.openosp.openo.casemgmt.web.formbeans.CaseManagementEntryFormBean"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_casemgmt.notes" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_casemgmt.notes");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@page import="org.oscarehr.common.model.Demographic"%>
-<%@page import="org.oscarehr.common.model.Admission"%>
-<%@page import="org.oscarehr.util.LoggedInInfo"%>
-<%@page import="org.oscarehr.util.SpringUtils"%>
-<%@page import="java.util.List"%>
-<%@page import="org.oscarehr.PMmodule.service.ProgramManager"%>
-<%@page import="org.oscarehr.PMmodule.service.AdmissionManager"%>
-<%@page import="org.oscarehr.common.dao.DemographicDao"%>
-<%@page import="org.oscarehr.common.dao.GroupNoteDao"%>
-<%@page import="org.oscarehr.common.model.GroupNoteLink"%>
-<%@page import="org.oscarehr.casemgmt.web.formbeans.CaseManagementEntryFormBean" %>
-
+<%@page import="ca.openosp.openo.commn.model.Demographic" %>
+<%@page import="ca.openosp.openo.commn.model.Admission" %>
+<%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="java.util.List" %>
+<%@page import="ca.openosp.openo.PMmodule.service.ProgramManager" %>
+<%@page import="ca.openosp.openo.PMmodule.service.AdmissionManager" %>
+<%@page import="ca.openosp.openo.commn.dao.DemographicDao" %>
+<%@page import="ca.openosp.openo.commn.dao.GroupNoteDao" %>
+<%@page import="ca.openosp.openo.commn.model.GroupNoteLink" %>
 <%
 	ProgramManager programManager = (ProgramManager)SpringUtils.getBean(ProgramManager.class);
 	AdmissionManager admissionManager = (AdmissionManager)SpringUtils.getBean(AdmissionManager.class);
@@ -65,85 +64,93 @@
 %>
 <html>
 
-	<head>
-		<title>Group Note - Select Clients</title>
-	</head>
-	<body>
-	
-	<%if(cform.getNoteId() == null) { %>
-		<h4>In order to use this page, you must first save this note and then click on edit for this note then click on group icon to select client members of this group. Please try again.</h4>
-		<input type="button" onclick="window.close();" value="Close Window" />
-	<% } else { %>
+<head>
+    <title>Group Note - Select Clients</title>
+</head>
+<body>
 
-	<%if(noteId!=null&& noteId.length()>0) { 
-		List<GroupNoteLink> currentLinks = groupNoteLinkDao.findLinksByNoteId(Integer.parseInt(noteId));
-		if(currentLinks.size()>0) {
-			isUpdate=true;
-	%>
-	<h5>Current Group Links to this Note</h5>
-	
-	<table border="1" width="80%">
-		<tr>
-			<td>Name</td>
-			<td>Anonymous</td>
-		</tr>
-		
-	<%
-		for(GroupNoteLink link:currentLinks) {
-			Demographic demographic = demographicDao.getDemographic(String.valueOf(link.getDemographicNo()));
-	%>
-	<!-- current links? -->
-	
-		<tr>
-			<td><%=demographic.getFormattedName() %></td>
-			<td><%=link.isAnonymous() %></td>
-		</tr>
-	
-	<% } %>
-	</table>
-	<br/><br/>
-	<% } }%>
-	
-	<h5>Select clients for group note</h5>
-	<form action="groupNoteSelectAction.jsp">
-		<input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
-	<table>
-	
+<%if (noteId == null) { %>
+<h4>In order to use this page, you must first save this note and then click on edit for this note then click on group
+    icon to select client members of this group. Please try again.</h4>
+<input type="button" onclick="window.close();" value="Close Window"/>
+<% } else { %>
+
 <%
-	for(Admission admission:admissions) {
-		Demographic demographic = admission.getClient();
-		if(demographic.getDemographicNo().intValue() == Integer.parseInt(demographicNo)) {
-			continue;
-		}
+    if (noteId.length() > 0) {
+        List<GroupNoteLink> currentLinks = groupNoteLinkDao.findLinksByNoteId(Integer.parseInt(noteId));
+        if (currentLinks.size() > 0) {
+            isUpdate = true;
 %>
-	<tr>
-		<td><input type="checkbox" name="group_client_id" value="<%=demographic.getDemographicNo()%>"/></td>
-		<td><%=demographic.getFormattedName()%></td>
-	</tr>
-<%
-	}
-%>
-	</table>
-	<br/>
-	<input type="text" name="num_anonymous" value="0" size="3"/>&nbsp;
-	Anonymous Clients
-	
-	<br/><br/>
-	
-	<script>
-		function confirmGroupNote() {
-			var update=<%=isUpdate%>;
-			if(update==true) {
-				return confirm('This will cause all previously associated clients to be disassociated with group note, and all previously associated anonymous clients to be set inactive');
-			}
-			return true;
-		}
-	</script>
-	
-	<input type="button" value="cancel" onclick="window.close();"/> &nbsp;&nbsp; <input type="submit" value="Enter note into selected clients" onclick="return confirmGroupNote();"/>
-	<input type="hidden" name="programId" value="<%=request.getParameter("programId")%>"/>
-	</form>
-	<% } %>
-	</body>
+<h5>Current Group Links to this Note</h5>
+
+<table border="1" width="80%">
+    <tr>
+        <td>Name</td>
+        <td>Anonymous</td>
+    </tr>
+
+    <%
+        for (GroupNoteLink link : currentLinks) {
+            Demographic demographic = demographicDao.getDemographic(String.valueOf(link.getDemographicNo()));
+    %>
+    <!-- current links? -->
+
+    <tr>
+        <td><%=demographic.getFormattedName() %>
+        </td>
+        <td><%=link.isAnonymous() %>
+        </td>
+    </tr>
+
+    <% } %>
+</table>
+<br/><br/>
+<% }
+}%>
+
+<h5>Select clients for group note</h5>
+<form action="groupNoteSelectAction.jsp">
+    <input type="hidden" name="demographicNo" value="<%=demographicNo%>"/>
+    <table>
+
+        <%
+            for (Admission admission : admissions) {
+                Demographic demographic = admission.getClient();
+                if (demographic.getDemographicNo().intValue() == Integer.parseInt(demographicNo)) {
+                    continue;
+                }
+        %>
+        <tr>
+            <td><input type="checkbox" name="group_client_id" value="<%=demographic.getDemographicNo()%>"/></td>
+            <td><%=demographic.getFormattedName()%>
+            </td>
+        </tr>
+        <%
+            }
+        %>
+    </table>
+    <br/>
+    <input type="text" name="num_anonymous" value="0" size="3"/>&nbsp;
+    Anonymous Clients
+
+    <br/><br/>
+
+    <script>
+        function confirmGroupNote() {
+            var update =<%=isUpdate%>;
+            if (update == true) {
+                return confirm('This will cause all previously associated clients to be disassociated with group note, and all previously associated anonymous clients to be set inactive');
+            }
+            return true;
+        }
+    </script>
+
+    <input type="button" value="cancel" onclick="window.close();"/> &nbsp;&nbsp; <input type="submit"
+                                                                                        value="Enter note into selected clients"
+                                                                                        onclick="return confirmGroupNote();"/>
+    <input type="hidden" name="programId" value="<%=request.getParameter("programId")%>"/>
+</form>
+<% } %>
+</body>
 
 </html>

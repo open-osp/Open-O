@@ -1,23 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-	Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved. This software is published under the GPL GNU General Public License. This program is free software; you can redistribute it and/or modify it under the terms
-	of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
-	the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program; if not, write to the Free
-	Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. <OSCAR TEAM> This software was written for the Department of Family Medicine McMaster University Hamilton Ontario, Canada
--->
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
-	<display-name>Open-O</display-name>
-	<absolute-ordering />
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			classpath:net/bull/javamelody/monitoring-spring.xml
-			classpath:applicationContext*.xml
-		</param-value>
-	</context-param>
+  <display-name>Open-O</display-name>
+  <absolute-ordering />
+
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+      classpath:net/bull/javamelody/monitoring-spring.xml
+      classpath:applicationContext*.xml
+    </param-value>
+  </context-param>
 
         <filter>
 		   <filter-name>monitoring</filter-name>
@@ -39,9 +34,20 @@
 			<dispatcher>ASYNC</dispatcher>
         </filter-mapping>
         
+
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
     <filter>
             <filter-name>WebServiceSessionInvalidatingFilter</filter-name>
-            <filter-class>org.oscarehr.ws.WebServiceSessionInvalidatingFilter</filter-class>
+            <filter-class>ca.openosp.openo.webserv.WebServiceSessionInvalidatingFilter</filter-class>
     </filter>
     <filter-mapping>
             <filter-name>WebServiceSessionInvalidatingFilter</filter-name>
@@ -49,7 +55,7 @@
     </filter-mapping>
     <filter>
         <filter-name>ResponseDefaultsFilter</filter-name>
-        <filter-class>org.oscarehr.util.ResponseDefaultsFilter</filter-class>
+        <filter-class>ca.openosp.openo.utility.ResponseDefaultsFilter</filter-class>
 		<init-param>
 			<param-name>noCacheEndings</param-name>
 			<param-value>.jsp,.jsf,.json,.do</param-value>
@@ -62,10 +68,10 @@
 
 	<filter>
 		<filter-name>PrivacyStatementAppendingFilter</filter-name>
-		<filter-class>org.oscarehr.common.printing.PrivacyStatementAppendingFilter</filter-class>
+		<filter-class>ca.openosp.openo.commn.printing.PrivacyStatementAppendingFilter</filter-class>
 		<init-param>
 			<param-name>exclusions</param-name>
-			<param-value>/oscarMessenger,/demographic/demographiccontrol.jsp,/demographic/demographiceditdemographic.js.jsp,/demographic/demographicprintdemographic.jsp,/provider/schedulePage.js.jsp</param-value>
+			<param-value>/messenger,/demographic/demographiccontrol.jsp,/demographic/demographiceditdemographic.js.jsp,/demographic/demographicprintdemographic.jsp,/provider/schedulePage.js.jsp</param-value>
 		</init-param>
 	</filter>
 
@@ -91,7 +97,7 @@
 
     <filter>
         <filter-name>UserActivityFilter</filter-name>
-        <filter-class>org.oscarehr.util.UserActivityFilter</filter-class>
+        <filter-class>ca.openosp.openo.utility.UserActivityFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>UserActivityFilter</filter-name>
@@ -100,15 +106,15 @@
 
 	<filter>
 		<filter-name>DbConnectionFilter</filter-name>
-		<filter-class>org.oscarehr.util.DbConnectionFilter</filter-class>
+		<filter-class>ca.openosp.openo.utility.DbConnectionFilter</filter-class>
 	</filter>
 	<filter>
 		<filter-name>LoggedInUserFilter</filter-name>
-		<filter-class>org.oscarehr.util.LoggedInUserFilter</filter-class>
+		<filter-class>ca.openosp.openo.utility.LoggedInUserFilter</filter-class>
 	</filter>
 	<filter>
 		<filter-name>LoginFilter</filter-name>
-		<filter-class>oscar.oscarSecurity.LoginFilter</filter-class>
+		<filter-class>ca.openosp.openo.sec.LoginFilter</filter-class>
 	</filter>
 	<filter>
 		<filter-name>ResponseOverrideFilter</filter-name>
@@ -116,52 +122,49 @@
 	</filter>
 	<filter>
 		<filter-name>PMMFilter</filter-name>
-		<filter-class>org.oscarehr.PMmodule.web.PMMFilter</filter-class>
+		<filter-class>ca.openosp.openo.PMmodule.web.PMMFilter</filter-class>
 	</filter>
 
-	<filter-mapping>
-		<filter-name>DbConnectionFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>LoggedInUserFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>PMMFilter</filter-name>
-		<url-pattern>/PMmodule/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>LoginFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+  <filter-mapping>
+    <filter-name>DbConnectionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoggedInUserFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>PMMFilter</filter-name>
+    <url-pattern>/PMmodule/*</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ResponseOverrideFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>ResponseOverrideFilter</filter-name>
+    <url-pattern>*.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>LoginFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
 	<listener>
        	<listener-class>net.bull.javamelody.SessionListener</listener-class>
     </listener>
 	
 	<listener>
-		<listener-class>oscar.login.Startup</listener-class>
+		<listener-class>ca.openosp.openo.login.Startup</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.oscarehr.common.web.OscarSpringContextLoader</listener-class>
+		<listener-class>ca.openosp.openo.commn.web.OscarSpringContextLoader</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.oscarehr.util.ContextStartupListener</listener-class>
+		<listener-class>ca.openosp.openo.utility.ContextStartupListener</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.oscarehr.web.OscarSessionListener</listener-class>
-	</listener>
-	<listener>
-		<listener-class>oscar.form.study.hsfo2.pageUtil.HsfoQuartzContextListener</listener-class>
+		<listener-class>ca.openosp.openo.web.OscarSessionListener</listener-class>
 	</listener>
 
     <!--  Cross Site Request Forgery Configuration  -->
@@ -181,7 +184,7 @@
     </context-param>
     <filter>
         <filter-name>CSRFGuard</filter-name>
-        <filter-class>org.oscarehr.app.OscarCsrfGuardFilter</filter-class>
+        <filter-class>ca.openosp.openo.app.OscarCsrfGuardFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CSRFGuard</filter-name>
@@ -216,7 +219,7 @@
         <url-pattern>/csrfguard</url-pattern>
     </servlet-mapping>
 
-	<!-- CXF -->
+  <!-- CXF -->
 	<servlet>
 		<servlet-name>CXFServlet</servlet-name>
 		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
@@ -226,7 +229,7 @@
 		<url-pattern>/ws/*</url-pattern>
 	</servlet-mapping>
 
-    <!-- HTTP header security -->
+    <!-- HTTP header sec -->
     <filter>
         <filter-name>ClickjackFilterSameOrigin</filter-name>
         <filter-class>org.owasp.esapi.filters.ClickjackFilter</filter-class>
@@ -242,118 +245,87 @@
 
 	<filter>
 		<filter-name>XforwardHeader</filter-name>
-		<filter-class>org.oscarehr.app.XforwardHeaderFilter</filter-class>
+		<filter-class>ca.openosp.openo.app.XforwardHeaderFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>XforwardHeader</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-    <servlet>
-		<servlet-name>action</servlet-name>
-		<servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<init-param>
-			<param-name>config</param-name>
-			<param-value>/WEB-INF/struts-config.xml</param-value>
-		</init-param>
-		<init-param>
-			<param-name>application</param-name>
-			<param-value>oscarResources</param-value>
-		</init-param>
-		<init-param>
-			<param-name>detail</param-name>
-			<param-value>2</param-value>
-		</init-param>
-		<init-param>
-			<param-name>validate</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>
-
 	<servlet>
 		<servlet-name>UploadDocument</servlet-name>
-		<servlet-class>oscar.DocumentMgtUploadServlet</servlet-class>
+		<servlet-class>ca.openosp.DocumentMgtUploadServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>pdfCreator</servlet-name>
-		<servlet-class>oscar.form.pdfservlet.FrmPDFServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.form.pdfservlet.FrmPDFServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>pdfCustomedCreator</servlet-name>
-		<servlet-class>oscar.form.pdfservlet.FrmCustomedPDFServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.form.pdfservlet.FrmCustomedPDFServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>pdfCreatorEform</servlet-name>
-		<servlet-class>oscar.eform.util.EFormPDFServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.eform.util.EFormPDFServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>reportDownload</servlet-name>
-		<servlet-class>oscar.oscarReport.pageUtil.RptDownloadCSVServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.report.pageUtil.RptDownloadCSVServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>OscarDownload</servlet-name>
-		<servlet-class>oscar.util.OscarDownload</servlet-class>
+		<servlet-class>ca.openosp.openo.util.OscarDownload</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>Download</servlet-name>
-		<servlet-class>oscar.util.GenericDownload</servlet-class>
+		<servlet-class>ca.openosp.openo.util.GenericDownload</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>BackupDownload</servlet-name>
-		<servlet-class>oscar.util.BackupDownload</servlet-class>
+		<servlet-class>ca.openosp.openo.util.BackupDownload</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>UploadTeleplanServlet</servlet-name>
-		<servlet-class>oscar.oscarBilling.ca.bc.MSP.DocumentTeleplanReportUploadServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.billings.ca.bc.MSP.DocumentTeleplanReportUploadServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>ScatterPlotChartServlet</servlet-name>
-		<servlet-class>oscar.oscarEncounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.encounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>DocumentUploadServlet</servlet-name>
-		<servlet-class>oscar.DocumentUploadServlet</servlet-class>
+		<servlet-class>ca.openosp.DocumentUploadServlet</servlet-class>
 		<load-on-startup>0</load-on-startup>
 	</servlet>
-	<!-- <servlet>
-		<servlet-name>HsfoQuartzSchedulerServlet</servlet-name>
-		<servlet-class>oscar.form.study.hsfo2.pageUtil.HsfoQuartzContextListener</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet> -->
 	<servlet>
-		<servlet-name>PatientListByAppointment</servlet-name>
-		<servlet-class>oscar.oscarReport.data.PatientListByAppt</servlet-class>
+		<servlet-name>PatientListByAppt</servlet-name>
+		<servlet-class>ca.openosp.openo.report.data.PatientListByAppt</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>ImageRenderingServlet</servlet-name>
-		<servlet-class>org.oscarehr.ui.servlet.ImageRenderingServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.ui.servlet.ImageRenderingServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>ContentRenderingServlet</servlet-name>
-		<servlet-class>org.oscarehr.ui.servlet.ContentRenderingServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.ui.servlet.ContentRenderingServlet</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>eformViewForPdfGenerationServlet</servlet-name>
-		<servlet-class>org.oscarehr.web.eform.EformViewForPdfGenerationServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.web.eform.EformViewForPdfGenerationServlet</servlet-class>
 	</servlet>
 
 	<servlet>
 		<servlet-name>EFormViewForPdfGenerationServlet</servlet-name>
-		<servlet-class>oscar.eform.util.EFormViewForPdfGenerationServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.eform.util.EFormViewForPdfGenerationServlet</servlet-class>
 	</servlet>
 
 	<servlet>
@@ -366,29 +338,16 @@
 		</init-param>
 
 	</servlet>
-	<!-- <servlet-mapping>
-		<servlet-name>HsfoQuartzSchedulerServlet</servlet-name>
-		<url-pattern>/HsfoQuartzSchedulerServlet</url-pattern>
-	</servlet-mapping> -->
 
-	<servlet-mapping>
-		<servlet-name>EFormViewForPdfGenerationServlet</servlet-name>
-		<url-pattern>/EFormViewForPdfGenerationServlet</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>EFormViewForPdfGenerationServlet</servlet-name>
+    <url-pattern>/EFormViewForPdfGenerationServlet</url-pattern>
+  </servlet-mapping>
 
-	<servlet>
-		<servlet-name>ProxyEformNotification</servlet-name>
-		<servlet-class>org.oscarehr.PMmodule.notification.EmailTriggerServlet</servlet-class>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>ProxyEformNotification</servlet-name>
-		<url-pattern>/ProxyEformNotification</url-pattern>
-	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>EFormSignatureViewForPdfGenerationServlet</servlet-name>
-		<servlet-class>oscar.eform.util.EFormSignatureViewForPdfGenerationServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.eform.util.EFormSignatureViewForPdfGenerationServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -398,7 +357,7 @@
 
 	<servlet>
 		<servlet-name>EFormImageViewForPdfGenerationServlet</servlet-name>
-		<servlet-class>oscar.eform.util.EFormImageViewForPdfGenerationServlet</servlet-class>
+		<servlet-class>ca.openosp.openo.eform.util.EFormImageViewForPdfGenerationServlet</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -406,33 +365,10 @@
 		<url-pattern>/EFormImageViewForPdfGenerationServlet</url-pattern>
 	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>DATISExportTest</servlet-name>
-		<servlet-class>org.oscarehr.PMmodule.exporter.TestServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DATISExportTest</servlet-name>
-		<url-pattern>/PMmodule/export</url-pattern>
-	</servlet-mapping>
 
-	<servlet>
-		<servlet-name>DATISExport</servlet-name>
-		<servlet-class>org.oscarehr.PMmodule.exporter.DATISExporterServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>DATISExport</servlet-name>
-		<url-pattern>/PMmodule/exportfiles</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>action</servlet-name>
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>UploadDocument</servlet-name>
-		<url-pattern>/servlet/oscar.DocumentMgtUploadServlet</url-pattern>
+		<url-pattern>/servlet/ca.openosp.DocumentMgtUploadServlet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>pdfCreator</servlet-name>
@@ -468,14 +404,14 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ScatterPlotChartServlet</servlet-name>
-		<url-pattern>/servlet/oscar.oscarEncounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet</url-pattern>
+		<url-pattern>/servlet/ca.openosp.openo.encounter.oscarMeasurements.pageUtil.ScatterPlotChartServlet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DocumentUploadServlet</servlet-name>
-		<url-pattern>/servlet/oscar.DocumentUploadServlet</url-pattern>
+		<url-pattern>/servlet/ca.openosp.DocumentUploadServlet</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>PatientListByAppointment</servlet-name>
+		<servlet-name>PatientListByAppt</servlet-name>
 		<url-pattern>/patientlistbyappt</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
@@ -497,17 +433,18 @@
 		<url-pattern>*.json</url-pattern>
 	</servlet-mapping>
 
-	<session-config>
-		<session-timeout>120</session-timeout> <!-- 120minutes -->
-	</session-config>
-	 <login-config>
-        <auth-method>BASIC</auth-method>
-    	<realm-name>Monitoring</realm-name>
-    </login-config>
+  <session-config>
+    <session-timeout>120</session-timeout>
+  </session-config>
 
-	<security-role>
-    	<role-name>monitoring</role-name>
-    </security-role>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Monitoring</realm-name>
+  </login-config>
+
+  <security-role>
+    <role-name>monitoring</role-name>
+  </security-role>
 
 	 <security-constraint>
 	     <web-resource-collection>
@@ -525,7 +462,7 @@
 	
 	<servlet>
 		<servlet-name>LoginResourceAction</servlet-name>
-		<servlet-class>oscar.login.LoginResourceAction</servlet-class>
+		<servlet-class>ca.openosp.openo.login.LoginResourceAction</servlet-class>
 	</servlet>
 	
 	<servlet-mapping>
@@ -533,36 +470,13 @@
 		<url-pattern>/loginResource/*</url-pattern>
 	</servlet-mapping>
 
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-		<welcome-file>index.html</welcome-file>
-		<welcome-file>index.htm</welcome-file>
-	</welcome-file-list>
-	<jsp-config>
-	<taglib>
-		<taglib-uri>/WEB-INF/struts-bean.tld</taglib-uri>
-		<taglib-location>/WEB-INF/struts-bean.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>/WEB-INF/struts-html.tld</taglib-uri>
-		<taglib-location>/WEB-INF/struts-html.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>/WEB-INF/struts-logic.tld</taglib-uri>
-		<taglib-location>/WEB-INF/struts-logic.tld</taglib-location>
-	</taglib>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+  </welcome-file-list>
 
-	<taglib>
-		<taglib-uri>/WEB-INF/struts-menu.tld</taglib-uri>
-		<taglib-location>/WEB-INF/struts-menu.tld</taglib-location>
-	</taglib>
-	<taglib>
-		<taglib-uri>/WEB-INF/struts-menu-el.tld</taglib-uri>
-		<taglib-location>/WEB-INF/struts-menu-el.tld</taglib-location>
-	</taglib>
-	</jsp-config>
-
-	<error-page>
-		<location>/errorpage.jsp</location>
-	</error-page>
+  <error-page>
+    <location>/errorpage.jsp</location>
+  </error-page>
 </web-app>

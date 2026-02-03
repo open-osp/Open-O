@@ -22,28 +22,28 @@
     Toronto, Ontario, Canada
 
 --%>
-<%@ include file="/taglibs.jsp"%>
-<br />
+<%@ include file="/taglibs.jsp" %>
+<br/>
 <%-- Error Messages --%>
-<logic:messagesPresent>
-	<table width="100%" border="0" cellpadding="0" cellspacing="1"
-		bgcolor="#C0C0C0">
-		<html:messages id="error" bundle="pmm">
-			<tr>
-				<td class="error"><c:out value="${error}" /></td>
-			</tr>
-		</html:messages>
-	</table>
-</logic:messagesPresent>
+<c:if test="${not empty pageContext.request.getAttribute('org.apache.struts.action.ERROR')}">
+    <table width="100%" border="0" cellpadding="0" cellspacing="1"
+           bgcolor="#C0C0C0">
+        <c:if test="${not empty savedMessage}">
+            <tr>
+                <td class="error">${savedMessage}</td>
+            </tr>
+        </c:if>
+    </table>
+</c:if>
 <%-- Success Messages --%>
-<logic:messagesPresent message="true">
-	<table width="100%" border="0" cellpadding="0" cellspacing="1"
-		bgcolor="#C0C0C0">
-		<html:messages id="message" message="true" bundle="pmm">
-			<tr>
-				<td class="message"><c:out value="${message}" /></td>
-			</tr>
-		</html:messages>
-	</table>
-</logic:messagesPresent>
+<c:if test="${not empty pageContext.request.getAttribute('org.apache.struts.action.MESSAGE')}">
+    <table width="100%" border="0" cellpadding="0" cellspacing="1"
+           bgcolor="#C0C0C0">
+        <c:if test="${not empty savedMessage}">
+            <tr>
+                <td class="message"><c:out value="${savedMessage}"/></td>
+            </tr>
+        </c:if>
+    </table>
+</c:if>
 

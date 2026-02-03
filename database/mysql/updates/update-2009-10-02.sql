@@ -30,8 +30,8 @@ ALTER TABLE `billing_on_cheader1` ADD `clinic` VARCHAR(30) NULL AFTER `timestamp
 ALTER TABLE `rschedule` CHANGE `avail_hour` `avail_hour` TEXT NULL  ;
 
 
-INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_schedule_only', 'Restrict schedule to only login provider and his team', '0');
-INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_billing_only', 'Restrict billing access to only login provider and his team', '0');
+INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_schedule_only', 'Restrict schedule to only login providers and his team', '0');
+INSERT INTO `secObjectName` (`objectName`, `description`, `orgapplicable`) VALUES ('_team_billing_only', 'Restrict billing access to only login providers and his team', '0');
 
 -- add index to improve performance
 ALTER TABLE `appointment` ADD INDEX `location` (`location`) ;

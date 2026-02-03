@@ -23,8 +23,9 @@
     Ontario, Canada
 
 --%>
-<%@taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
- 
+<%@ page import="java.util.List,
+                 org.owasp.encoder.Encode" %>
+
 <html>
 <head>
 </head>
@@ -35,16 +36,28 @@
 You tried to access a resource with insufficient privileges.
 
 <%
-	String[] vals = request.getParameterValues("type");
-	if(vals != null) {
-		for(String val:vals) {
-			%>
-				<h5>Object:<%=val %></h5>
-			<%
-		}
-	}
+    String[] vals = request.getParameterValues("type");
+    if (vals != null) {
+        for (String val : vals) {
 %>
-<html:errors />
- 
+<h5>Object:<%= Encode.forHtml(val) %>
+</h5>
+<%
+        }
+    }
+%>
+<% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= Encode.forHtml(error) %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+
 </body>
 </html>

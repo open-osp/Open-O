@@ -23,26 +23,26 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_demographic" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_demographic");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ page import="org.oscarehr.common.dao.UserPropertyDAO"%>
-<%@ page import="org.oscarehr.common.model.UserProperty"%>
-<%@ page import="org.oscarehr.util.SpringUtils"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+<%@ page import="ca.openosp.openo.commn.dao.UserPropertyDAO" %>
+<%@ page import="ca.openosp.openo.commn.model.UserProperty" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
 <%
     String curUser_no = (String) session.getAttribute("user");
     UserPropertyDAO propertyDao = (UserPropertyDAO) SpringUtils.getBean(UserPropertyDAO.class);
@@ -60,21 +60,23 @@
         }
     }
 %>
-<html:html lang="en">
+<html>
     <head>
-        <title><bean:message key="report.printLabel.title" /></title>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.title"/></title>
     </head>
     <body>
-        <% if (!defaultPrinterName.isEmpty()) { 
-            if( silentPrint == true) {%>
-                <bean:message key="report.printLabel.SilentlyPrintToDefaultPrinter"/>
-            <%} else {%> 
-                <bean:message key="report.printLabel.DefaultPrinter"/> 
-            <%}%>
-            <%=defaultPrinterName%>
-        <%}%>
-        <br>
-        <object id="pdf" type="application/pdf"  data="printClientLabLabelAction.do?demographic_no=<%=request.getParameter("demographic_no")%>" height="80%" width="100%"></object>  
+    <% if (!defaultPrinterName.isEmpty()) {
+        if (silentPrint == true) {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.SilentlyPrintToDefaultPrinter"/>
+    <%} else {%>
+    <fmt:setBundle basename="oscarResources"/><fmt:message key="report.printLabel.DefaultPrinter"/>
+    <%}%>
+    <%=defaultPrinterName%>
+    <%}%>
+    <br>
+    <object id="pdf" type="application/pdf"
+            data="printClientLabLabelAction.do?demographic_no=<%=request.getParameter("demographic_no")%>" height="80%"
+            width="100%"></object>
     </body>
-</html:html>
+</html>
 

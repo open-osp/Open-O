@@ -25,11 +25,12 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Tables Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -38,76 +39,76 @@
     <![endif]-->
 
 
-  </head>
-  <body>
+</head>
+<body>
 
-    <div class="container">
+<div class="container">
 
 
-	    	<h1>Hello, tables! <small><a href="index.jsp">view example list</a></small></h1>
+    <h1>Hello, tables! <small><a href="index.jsp">view example list</a></small></h1>
 
-<table class="table">
+    <table class="table">
         <thead>
-          <tr>
+        <tr>
             <th>#</th>
             <th>Column heading</th>
             <th>Column heading</th>
             <th>Column heading</th>
-          </tr>
+        </tr>
         </thead>
         <tbody>
-          <tr class="active">
+        <tr class="active">
             <td>1</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <td>2</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr class="success">
+        </tr>
+        <tr class="success">
             <td>3</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <td>4</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr class="warning">
+        </tr>
+        <tr class="warning">
             <td>5</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr>
+        </tr>
+        <tr>
             <td>6</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
-          <tr class="danger">
+        </tr>
+        <tr class="danger">
             <td>7</td>
             <td>Column content</td>
             <td>Column content</td>
             <td>Column content</td>
-          </tr>
+        </tr>
         </tbody>
-      </table>
+    </table>
 
-    </div><!-- /.container -->
+</div><!-- /.container -->
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  </body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+</body>
 </html>
 

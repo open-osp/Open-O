@@ -24,116 +24,137 @@
 
 --%>
 <!DOCTYPE html>
-<%@ page import="oscar.eform.data.*, oscar.OscarProperties, oscar.eform.*, java.util.*"%>
-<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@ taglib uri="/WEB-INF/struts-logic.tld" prefix="logic"%>
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-
-<html:html lang="en">
-
-<head>
-    <script src="${pageContext.request.contextPath}/js/global.js"></script>
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
-    <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
-    <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
-    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
-    <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
-
-<script>
-$(function() {
-    $( document ).tooltip();
-  });
-</script>
-</head>
-
-<style>
-.message div{
-font-size: 12px;
-display:inline;
-}
-
-h3{
-margin:0px;
-display:inline;
-font-weight:normal;
-font-size: 12px;
-}
-
-.message ul{
-margin:0px;
-padding:0px;
-display:inline;
-}
-
-.message li{
-list-style: none;
-margin:0px;
-display:inline;
-padding-left:6px;
-}
-
-</style>
-<body>
-
-<c:if test="${ not empty status }">
-    <div class="alert alert-success">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>Success!</strong> Your image was uploaded.
-    </div>
-    <script>
-	window.top.location.href = "<%=request.getContextPath()%>/administration/?show=ImageUpload";
-	</script>
-
-</c:if>
+<%@ page import="ca.openosp.openo.eform.data.*, ca.openosp.OscarProperties, ca.openosp.openo.eform.*, java.util.*" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
 
-	<div class="row-fluid">
-		<div class="well">
-		<html:form action="/eform/imageUpload" enctype="multipart/form-data" method="post">
+<html>
 
-		<div class="text-error message row-fluid"><html:errors /></div>
-		<div class="control-group">
-        	<div class="controls">
-        		<label class="control-label" for="zippedForm"><bean:message key="eform.uploadimages.msgFileName" /></label>
-				<input type="file" name="image" id="image" class="check" size="40"  required>
-				<span style="color:red;">
-		         <i class="icon-warning-sign" title="<bean:message key="global.uploadWarningBody"/>" ></i>
+    <head>
+        <script src="${pageContext.request.contextPath}/js/global.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-3.6.4.min.js"></script>
+        <script src="<%=request.getContextPath() %>/library/jquery/jquery-ui-1.12.1.min.js"></script>
+        <link href="${pageContext.request.contextPath}/css/bootstrap.css" rel="stylesheet">
+        <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.theme-1.12.1.min.css" rel="stylesheet">
+        <link href="<%=request.getContextPath() %>/library/jquery/jquery-ui.structure-1.12.1.min.css" rel="stylesheet">
+
+        <script>
+            $(function () {
+                $(document).tooltip();
+            });
+        </script>
+    </head>
+
+    <style>
+        .message div {
+            font-size: 12px;
+            display: inline;
+        }
+
+        h3 {
+            margin: 0px;
+            display: inline;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        .message ul {
+            margin: 0px;
+            padding: 0px;
+            display: inline;
+        }
+
+        .message li {
+            list-style: none;
+            margin: 0px;
+            display: inline;
+            padding-left: 6px;
+        }
+
+    </style>
+    <body>
+
+    <c:if test="${ not empty status }">
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Success!</strong> Your image was uploaded.
+            <c:if test="${ not empty sanitizedFileName }">
+                <br/>Saved as: <strong>${Encode.formHtmlContent(sanitizedFileName)}</strong>
+            </c:if>
+        </div>
+        <script>
+            <c:choose>
+                <c:when test="${ not empty sanitizedFileName }">
+                    // Delay redirect so user can see the sanitized filename
+                    setTimeout(function() {
+                        window.top.location.href = "<%=request.getContextPath()%>/administration/?show=ImageUpload";
+                    }, 2500);
+                </c:when>
+                <c:otherwise>
+                    window.top.location.href = "<%=request.getContextPath()%>/administration/?show=ImageUpload";
+                </c:otherwise>
+            </c:choose>
+        </script>
+    </c:if>
+
+    <div class="row-fluid">
+        <div class="well">
+            <form action="${pageContext.request.contextPath}/eform/imageUpload.do" enctype="multipart/form-data" method="post">
+
+                <s:if test="hasActionErrors()">
+                    <div class="alert alert-danger">
+                        <s:actionerror/>
+                    </div>
+                </s:if>
+                <s:if test="hasActionMessages()">
+                    <div class="alert alert-info">
+                        <s:actionmessage/>
+                    </div>
+                </s:if>
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="control-label" for="zippedForm"><fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.msgFileName"/></label>
+                        <input type="file" name="image" id="image" class="check" size="40" required>
+                        <span style="color:red;">
+		         <i class="icon-warning-sign" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="global.uploadWarningBody"/>"></i>
 		         </span>
-				<input type="submit" class="btn btn-primary upload" name="subm" value="<bean:message key="eform.uploadimages.btnUpload"/>" disabled>
-			</div>
-		</div>
-		</html:form>
-		</div>
-	</div>
+                        <input type="submit" class="btn btn-primary upload" name="subm"
+                               value="<fmt:setBundle basename="oscarResources"/><fmt:message key="eform.uploadimages.btnUpload"/>" disabled>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
-<script>
-$( document ).ready(function() {
-$(".check").on("change",validate).keyup(validate);
-});
+    <script>
+        $(document).ready(function () {
+            $(".check").on("change", validate).keyup(validate);
+        });
 
-function validate()
-{
+        function validate() {
 
-var id = $(this).attr("id");
-var formHtml = $("#image").val();
-var file = $('#image')[0].files[0];
+            var id = $(this).attr("id");
+            var formHtml = $("#image").val();
+            var file = $('#image')[0].files[0];
 //var filename = file.name;
 //var fileSize = file.size;
 
 //var inputCheck=checkRow(filename);
 
-if (formHtml!="") {
-	    $('.upload').removeAttr("disabled");
-		$('.upload').addClass("btn-success");
-    }else{
-	    $('.upload').attr("disabled", "disabled");
-		$('.upload').removeClass("btn-success");
-    }
-}
+            if (formHtml != "") {
+                $('.upload').removeAttr("disabled");
+                $('.upload').addClass("btn-success");
+            } else {
+                $('.upload').attr("disabled", "disabled");
+                $('.upload').removeClass("btn-success");
+            }
+        }
 
-</script>
-</body>
-</html:html>
+    </script>
+    </body>
+</html>

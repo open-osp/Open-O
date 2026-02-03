@@ -23,15 +23,26 @@
     Ontario, Canada
 
 --%>
-<%@ page session="true"%>
-<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<html:html>
-
+<%@ page session="true" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 <html>
 
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<html:errors />
-</head>
-<html>
-</html:html>
+    <html>
+
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <% 
+    java.util.List<String> actionErrors = (java.util.List<String>) request.getAttribute("actionErrors");
+    if (actionErrors != null && !actionErrors.isEmpty()) {
+%>
+    <div class="action-errors">
+        <ul>
+            <% for (String error : actionErrors) { %>
+                <li><%= Encode.forHtml(error) %></li>
+            <% } %>
+        </ul>
+    </div>
+<% } %>
+    </head>
+    <html>
+</html>

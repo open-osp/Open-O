@@ -17,43 +17,42 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 --%>
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.ClinicLocationDao" %>
-<%@page import="org.oscarehr.common.model.ClinicLocation" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.ClinicLocationDao" %>
+<%@page import="ca.openosp.openo.commn.model.ClinicLocation" %>
 <%
-	ClinicLocationDao clinicLocationDao = (ClinicLocationDao)SpringUtils.getBean(ClinicLocationDao.class);
+    ClinicLocationDao clinicLocationDao = (ClinicLocationDao) SpringUtils.getBean(ClinicLocationDao.class);
 %>
 <%
-String location1="",location1desc ="";
-for (int i=1; i<6; i++){
-	location1 = request.getParameter("location"+i);
-	location1desc=request.getParameter("location"+i+"desc")==null?"":request.getParameter("location"+i+"desc");
+    String location1 = "", location1desc = "";
+    for (int i = 1; i < 6; i++) {
+        location1 = request.getParameter("location" + i);
+        location1desc = request.getParameter("location" + i + "desc") == null ? "" : request.getParameter("location" + i + "desc");
 
-	if (location1 != ""){
-		if (location1desc != null && location1desc.compareTo("") != 0) {
-			StringBuffer sotherBuffer = new StringBuffer(location1desc);
-			int f = location1desc.indexOf('\'');
-			if ( f != -1) {
-				sotherBuffer.deleteCharAt(f);
-				sotherBuffer.insert(f,"\'");
-			}
-			location1desc = sotherBuffer.toString();
+        if (location1 != "") {
+            if (location1desc != null && location1desc.compareTo("") != 0) {
+                StringBuffer sotherBuffer = new StringBuffer(location1desc);
+                int f = location1desc.indexOf('\'');
+                if (f != -1) {
+                    sotherBuffer.deleteCharAt(f);
+                    sotherBuffer.insert(f, "\'");
+                }
+                location1desc = sotherBuffer.toString();
 
 
+                ClinicLocation clinicLocation = new ClinicLocation();
+                clinicLocation.setClinicLocationNo(location1);
+                clinicLocation.setClinicNo(1);
+                clinicLocation.setClinicLocationName(location1desc);
+                clinicLocationDao.persist(clinicLocation);
 
-			ClinicLocation clinicLocation = new ClinicLocation();
-			clinicLocation.setClinicLocationNo(location1);
-			clinicLocation.setClinicNo(1);
-			clinicLocation.setClinicLocationName(location1desc);
-			clinicLocationDao.persist(clinicLocation);
+            }
+        }
+    }
 
-		}
-	}
-}
-
-response.sendRedirect("manageBillingLocation.jsp");
+    response.sendRedirect("manageBillingLocation.jsp");
 
 %>

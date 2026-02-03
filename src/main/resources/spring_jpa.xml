@@ -22,7 +22,7 @@
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 	 -->
 	  <aop:aspectj-autoproxy proxy-target-class="true"/>
-	<bean id="dataSource" class="org.oscarehr.util.OscarTrackingBasicDataSource" destroy-method="close">
+	<bean id="dataSource" class="ca.openosp.openo.utility.OscarTrackingBasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="${db_driver}" />
 		<property name="url" value="${db_uri}${db_name}" />
 		<property name="defaultAutoCommit" value="true" />
@@ -77,7 +77,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- Managed Beans -->
-	<context:component-scan base-package="org.oscarehr.common.dao">
+	<context:component-scan base-package="ca.openosp.openo.commn.dao">
     <context:exclude-filter type="regex" expression=".*\.UserPropertyDAOImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.DemographicDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.DxresearchDAOImpl$"/>
@@ -85,7 +85,6 @@
     <context:exclude-filter type="regex" expression=".*\.EncounterWindowDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.AppointmentArchiveDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.DemographicExtDaoImpl$"/>
-    <context:exclude-filter type="regex" expression=".*\.AdmissionDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.OtherIdDAOImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.HL7HandlerMSHMappingDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.QueueDaoImpl$"/>
@@ -93,7 +92,6 @@
     <context:exclude-filter type="regex" expression=".*\.AppointmentTypeDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.BillingONCHeader1DaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.CasemgmtNoteLockDaoImpl$"/>
-    <context:exclude-filter type="regex" expression=".*\.ClinicDAOImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.DataExportDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.SiteDaoImpl$"/>
     <context:exclude-filter type="regex" expression=".*\.BillingreferralDaoImpl$"/>
@@ -112,15 +110,12 @@
 </context:component-scan>
 
 
-	<context:component-scan base-package="org.oscarehr.eyeform.dao" />
-	<context:component-scan base-package="org.oscarehr.fax.core" />
-	<context:component-scan base-package="org.oscarehr.hospitalReportManager.dao" />
-	<context:component-scan base-package="org.oscarehr.olis.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.ON.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.BC.dao" />
-	<context:component-scan base-package="org.oscarehr.billing.CA.dao" />
-	<context:component-scan base-package="org.oscarehr.PMmodule.dao" />
-	<!-- Sharing Center -->
-	<context:component-scan base-package="org.oscarehr.sharingcenter.dao" />
+	<context:component-scan base-package="ca.openosp.openo.fax.core" />
+	<context:component-scan base-package="ca.openosp.openo.hospitalReportManager.dao" />
+	<context:component-scan base-package="ca.openosp.openo.olis.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.ON.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.BC.dao" />
+	<context:component-scan base-package="ca.openosp.openo.billing.CA.dao" />
+	<context:component-scan base-package="ca.openosp.openo.PMmodule.dao" />
 
 </beans>

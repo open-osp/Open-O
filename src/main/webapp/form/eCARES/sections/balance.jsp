@@ -26,29 +26,32 @@
 <div class="flex items-center">
     <div class="mw-9">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_balance" data-score="1">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_balance" data-score="1">
         <strong>Balance</strong>
     </div>
     <div class="flex w-full border-left-gray items-center">
         <div class="flex-1 flex items-center">
             <span class="font-bold pl-1 w-10 inline-block" data-names="wnl,impaired">
-                <span class="highlight"  data-field-name="balance">Balance</span>
+                <span class="highlight" data-field-name="balance">Balance</span>
             </span>
 
-            <label class="flex items-center font-normal w-9"><input type="radio" name="balance" class="m-0" autocomplete="off"
-                    value="wnl" data-score="0">
+            <label class="flex items-center font-normal w-9"><input type="radio" name="balance" class="m-0"
+                                                                    autocomplete="off"
+                                                                    value="wnl" data-score="0">
                 <span class="pl-1">WNL</span></label>
 
-            <label class="flex items-center font-normal"><input type="radio" name="balance" class="m-0" autocomplete="off"
-                    value="impaired" data-score="1">
+            <label class="flex items-center font-normal"><input type="radio" name="balance" class="m-0"
+                                                                autocomplete="off"
+                                                                value="impaired" data-score="1">
                 <span class="pl-1">Impaired</span></label>
 
         </div>
         <div class="flex-1 flex items-center">
             <span class="tt font-bold w-9" data-names="y,n,number" data-toggle="tooltip"
-                title="Flag if there is any falls in last 6 months">
-                <span class="highlight"  data-field-name="falls">Falls</span>
+                  title="Flag if there is any falls in last 6 months">
+                <span class="highlight" data-field-name="falls">Falls</span>
             </span>
 
             <label class="font-normal flex items-center">
@@ -59,11 +62,12 @@
                 <input type="radio" name="falls" class="m-0" autocomplete="off" data-score="0" value="0">
                 <span class="pl-1">N</span>
             </label>
-            <span class="tt ml-4 highlight" data-toggle="tooltip" data-field-name="falls_number" title="Number of falls in last 6 months">
+            <span class="tt ml-4 highlight" data-toggle="tooltip" data-field-name="falls_number"
+                  title="Number of falls in last 6 months">
                 Number
             </span>
             <input type="number" min="0" max="99" name="falls_number" id="falls_number"
-                class="bottom-line form-control ecares-input h-si w-si">
+                   class="bottom-line form-control ecares-input h-si w-si">
         </div>
     </div>
 

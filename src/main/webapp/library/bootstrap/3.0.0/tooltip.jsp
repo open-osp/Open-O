@@ -25,46 +25,52 @@
 
 --%>
 <html>
-  <head>
+<head>
     <title>Bootstrap 101 Tooltip Template</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="<%=request.getContextPath() %>/library/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"
+          media="screen">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/html5shiv.js"></script>
       <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/assets/js/respond.min.js"></script>
     <![endif]-->
-  </head>
-  <body>
-    
+</head>
+<body>
 
 
+<div class="container">
 
-     
-    <div class="container">
-
-      <div class="starter-template">
+    <div class="starter-template">
         <h1>Hello, tool! <small><a href="index.jsp">view example list</a></small></h1>
-    	<button data-original-title="Tooltip on left" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="left" title="">Tooltip on left</button>
-        <button data-original-title="Tooltip on top" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="">Tooltip on top</button>
-        <button data-original-title="Tooltip on bottom" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" title="">Tooltip on bottom</button>
-        <button data-original-title="Tooltip on right" type="button" class="btn btn-default" data-toggle="tooltip" data-placement="right" title="">Tooltip on right</button>
-      </div>
+        <button data-original-title="Tooltip on left" type="button" class="btn btn-default" data-toggle="tooltip"
+                data-placement="left" title="">Tooltip on left
+        </button>
+        <button data-original-title="Tooltip on top" type="button" class="btn btn-default" data-toggle="tooltip"
+                data-placement="top" title="">Tooltip on top
+        </button>
+        <button data-original-title="Tooltip on bottom" type="button" class="btn btn-default" data-toggle="tooltip"
+                data-placement="bottom" title="">Tooltip on bottom
+        </button>
+        <button data-original-title="Tooltip on right" type="button" class="btn btn-default" data-toggle="tooltip"
+                data-placement="right" title="">Tooltip on right
+        </button>
+    </div>
 
-    </div><!-- /.container --> 
+</div><!-- /.container -->
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="<%=request.getContextPath() %>/library/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
-	<script>
-	$('.btn-default').tooltip();
-	</script>
+<script>
+    $('.btn-default').tooltip();
+</script>
 
 
-  </body>
+</body>
 </html>
 

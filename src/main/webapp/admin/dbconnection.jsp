@@ -1,4 +1,4 @@
-<%--
+<%@ page import="ca.openosp.OscarProperties" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -24,4 +24,4 @@
 
 --%>
 
-<% java.util.Properties oscarVariables = oscar.OscarProperties.getInstance(); %>
+<% java.util.Properties oscarVariables = OscarProperties.getInstance(); %>

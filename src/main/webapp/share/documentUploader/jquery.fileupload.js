@@ -24,7 +24,7 @@
     // "add" method are uploaded immediately, but it is possible to override
     // the "add" callback option to queue file uploads.
     $.widget('blueimp.fileupload', {
-        
+
         options: {
             // The namespace used for event handler binding on the dropZone and
             // fileInput collections.
@@ -75,7 +75,7 @@
             // global progress calculation. Set the following option to false to
             // prevent recalculating the global progress data:
             recalculateProgress: true,
-            
+
             // Additional form data to be sent along with the file uploads can be set
             // using this option, which accepts an array of objects with name and
             // value properties, a function returning such an array, a FormData
@@ -84,7 +84,7 @@
             formData: function (form) {
                 return form.serializeArray();
             },
-            
+
             // The add callback is invoked as soon as files are added to the fileupload
             // widget (via file input selection, drag & drop or add API call).
             // If the singleFileUploads option is enabled, this callback will be
@@ -101,7 +101,7 @@
             add: function (e, data) {
                 data.submit();
             },
-            
+
             // Other callbacks:
             // Callback for the start of each file upload request:
             // send: function (e, data) {}, // .bind('fileuploadsend', func);
@@ -125,14 +125,14 @@
             // drop: function (e, data) {}, // .bind('fileuploaddrop', func);
             // Callback for dragover events of the dropZone collection:
             // dragover: function (e) {}, // .bind('fileuploaddragover', func);
-            
+
             // The plugin options are used as settings object for the ajax calls.
             // The following are jQuery ajax settings required for the file uploads:
             processData: false,
             contentType: false,
             cache: false
         },
-        
+
         // A list of options that require a refresh after assigning a new value:
         _refreshOptionsList: ['namespace', 'dropZone', 'fileInput'],
 
@@ -258,14 +258,14 @@
             // Blob reference is not needed anymore, free memory:
             options.blob = null;
         },
-        
+
         _initIframeSettings: function (options) {
             // Setting the dataType to iframe enables the iframe transport:
             options.dataType = 'iframe ' + (options.dataType || '');
             // The iframe transport accepts a serialized array as form data:
             options.formData = this._getFormData(options);
         },
-        
+
         _initDataSettings: function (options) {
             if (this._isXHRUpload(options)) {
                 if (!this._chunkedUpload(options, true)) {
@@ -278,7 +278,7 @@
                 this._initIframeSettings(options);
             }
         },
-        
+
         _initFormSettings: function (options) {
             // Retrieve missing options from the input field and the
             // associated form, if available:
@@ -299,7 +299,7 @@
                 options.type = 'POST';
             }
         },
-        
+
         _getAJAXSettings: function (data) {
             var options = $.extend({}, this.options, data);
             this._initFormSettings(options);
@@ -350,7 +350,7 @@
                 jqXHR,
                 pipe;
             if (!(this._isXHRUpload(options) && slice && (ub || mcs < fs)) ||
-                    options.data) {
+                options.data) {
                 return false;
             }
             if (testOnly) {
@@ -476,8 +476,8 @@
                 send = function (resolve, args) {
                     jqXHR = jqXHR || (
                         (resolve !== false &&
-                        that._trigger('send', e, options) !== false &&
-                        (that._chunkedUpload(options) || $.ajax(options))) ||
+                            that._trigger('send', e, options) !== false &&
+                            (that._chunkedUpload(options) || $.ajax(options))) ||
                         that._getXHRPromise(false, options.context, args)
                     ).done(function (result, textStatus, jqXHR) {
                         that._onDone(result, textStatus, jqXHR, options);
@@ -508,7 +508,7 @@
             }
             return send();
         },
-        
+
         _onAdd: function (e, data) {
             var that = this,
                 result = true,
@@ -530,7 +530,7 @@
                 return this._trigger('add', e, data);
             }
         },
-        
+
         // File Normalization for Gecko 1.9.1 (Firefox 3.5) support:
         _normalizeFile: function (index, file) {
             if (file.name === undefined && file.size === undefined) {
@@ -555,7 +555,7 @@
                 return el;
             });
         },
-        
+
         _onChange: function (e) {
             var that = e.data.fileupload,
                 data = {
@@ -580,11 +580,11 @@
                 that._replaceFileInput(data.fileInput);
             }
             if (that._trigger('change', e, data) === false ||
-                    that._onAdd(e, data) === false) {
+                that._onAdd(e, data) === false) {
                 return false;
             }
         },
-        
+
         _onDrop: function (e) {
             var that = e.data.fileupload,
                 dataTransfer = e.dataTransfer = e.originalEvent.dataTransfer,
@@ -595,12 +595,12 @@
                     )
                 };
             if (that._trigger('drop', e, data) === false ||
-                    that._onAdd(e, data) === false) {
+                that._onAdd(e, data) === false) {
                 return false;
             }
             e.preventDefault();
         },
-        
+
         _onDragOver: function (e) {
             var that = e.data.fileupload,
                 dataTransfer = e.dataTransfer = e.originalEvent.dataTransfer;
@@ -612,7 +612,7 @@
             }
             e.preventDefault();
         },
-        
+
         _initEventHandlers: function () {
             var ns = this.options.namespace || this.name;
             this.options.dropZone
@@ -630,11 +630,11 @@
             this.options.fileInput
                 .unbind('change.' + ns, this._onChange);
         },
-        
+
         _beforeSetOption: function (key, value) {
             this._destroyEventHandlers();
         },
-        
+
         _afterSetOption: function (key, value) {
             var options = this.options;
             if (!options.fileInput) {
@@ -645,7 +645,7 @@
             }
             this._initEventHandlers();
         },
-        
+
         _setOption: function (key, value) {
             var refresh = $.inArray(key, this._refreshOptionsList) !== -1;
             if (refresh) {
@@ -672,7 +672,7 @@
             this._active = this._loaded = this._total = 0;
             this._initEventHandlers();
         },
-        
+
         destroy: function () {
             this._destroyEventHandlers();
             $.Widget.prototype.destroy.call(this);
@@ -682,7 +682,7 @@
             $.Widget.prototype.enable.call(this);
             this._initEventHandlers();
         },
-        
+
         disable: function () {
             this._destroyEventHandlers();
             $.Widget.prototype.disable.call(this);
@@ -699,7 +699,7 @@
             data.files = $.each($.makeArray(data.files), this._normalizeFile);
             this._onAdd(null, data);
         },
-        
+
         // This method is exposed to the widget API and allows sending files
         // using the fileupload API. The data parameter accepts an object which
         // must have a files property and can contain additional options:
@@ -714,7 +714,7 @@
             }
             return this._getXHRPromise(false, data && data.context);
         }
-        
+
     });
-    
+
 }(jQuery));

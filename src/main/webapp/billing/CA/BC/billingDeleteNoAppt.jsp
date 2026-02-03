@@ -24,97 +24,99 @@
 
 --%>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%
-      String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-      boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_billing" rights="w" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../../../securityError.jsp?type=_billing");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_billing");%>
 </security:oscarSec>
 <%
-if(!authed) {
-	return;
-}
+    if (!authed) {
+        return;
+    }
 %>
 
 
 <%
-  String curUser_no = (String) session.getAttribute("user");  
+    String curUser_no = (String) session.getAttribute("user");
 %>
-<%@ page import="java.sql.*, java.util.*,java.net.*, oscar.MyDateFormat" errorPage="/errorpage.jsp"%>
+<%@ page import="java.sql.*, java.util.*,java.net.*, ca.openosp.MyDateFormat" errorPage="/errorpage.jsp" %>
 
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.BillingDao" %>
-<%@page import="org.oscarehr.common.model.Billing" %>
-<%@page import="oscar.oscarBilling.ca.bc.data.BillingmasterDAO" %>
-<%@page import="oscar.entities.Billingmaster" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.BillingDao" %>
+<%@page import="ca.openosp.openo.commn.model.Billing" %>
+<%@page import="ca.openosp.openo.billings.ca.bc.data.BillingmasterDAO" %>
+<%@page import="ca.openosp.openo.entities.Billingmaster" %>
 
 <%
-	BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
-	BillingmasterDAO billingMasterDao =  SpringUtils.getBean(BillingmasterDAO.class);
+    BillingDao billingDao = SpringUtils.getBean(BillingDao.class);
+    BillingmasterDAO billingMasterDao = SpringUtils.getBean(BillingmasterDAO.class);
 %>
 
 <html>
 <head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<script LANGUAGE="JavaScript">
-    <!--
-    function start(){
-      this.focus();
-    }
-    function closeit() {
-    	//self.opener.refresh();
-      //self.close();      
-    }   
-    //-->
-</script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+    <script LANGUAGE="JavaScript">
+        <!--
+        function start() {
+            this.focus();
+        }
+
+        function closeit() {
+            //self.opener.refresh();
+            //self.close();
+        }
+
+        //-->
+    </script>
 </head>
 <body onload="start()">
 <center>
-<table border="0" cellspacing="0" cellpadding="0" width="90%">
-	<tr bgcolor="#486ebd">
-		<th align="CENTER"><font face="Helvetica" color="#FFFFFF">
-		DELETE A BILLING RECORD</font></th>
-	</tr>
-</table>
-<%
-   String billCode = request.getParameter("billCode");
-   if (billCode.substring(0,1).compareTo("B") == 0) {
-   %>
-<p>
-<h1>Sorry, cannot delete billed items.</h1>
-</p>
-<form><input type="button" value="Back to previous page"
-	onClick="history.go(-1);return false;"></form>
-<% }
-   else{
-   
-	   Billing b = billingDao.find(Integer.parseInt(request.getParameter("billing_no")));
-	   if(b != null) {
-		   b.setStatus("D");
-		   billingDao.merge(b);
-	   }
-	   
-	   for(Billingmaster m: billingMasterDao.getBillingMasterByBillingNo(request.getParameter("billing_no"))) {
-		   m.setBillingstatus("D");
-		   billingMasterDao.update(m);
-	   }
-%>
-<p>
-<h1>Successful Addition of a billing Record.</h1>
-</p>
-<script LANGUAGE="JavaScript">
-      self.close();
-   	self.opener.refresh();
-</script> <%
-  }
-%>
-<p></p>
-<hr width="90%"></hr>
-<form><input type="button" value="Close this window"
-	onClick="window.close()"></form>
+    <table border="0" cellspacing="0" cellpadding="0" width="90%">
+        <tr bgcolor="#486ebd">
+            <th align="CENTER"><font face="Helvetica" color="#FFFFFF">
+                DELETE A BILLING RECORD</font></th>
+        </tr>
+    </table>
+    <%
+        String billCode = request.getParameter("billCode");
+        if (billCode.substring(0, 1).compareTo("B") == 0) {
+    %>
+    <p>
+    <h1>Sorry, cannot delete billed items.</h1>
+    </p>
+    <form><input type="button" value="Back to previous page"
+                 onClick="history.go(-1);return false;"></form>
+    <% } else {
+
+        Billing b = billingDao.find(Integer.parseInt(request.getParameter("billing_no")));
+        if (b != null) {
+            b.setStatus("D");
+            billingDao.merge(b);
+        }
+
+        for (Billingmaster m : billingMasterDao.getBillingMasterByBillingNo(request.getParameter("billing_no"))) {
+            m.setBillingstatus("D");
+            billingMasterDao.update(m);
+        }
+    %>
+    <p>
+    <h1>Successful Addition of a billing Record.</h1>
+    </p>
+    <script LANGUAGE="JavaScript">
+        self.close();
+        self.opener.refresh();
+    </script>
+    <%
+        }
+    %>
+    <p></p>
+    <hr width="90%"></hr>
+    <form><input type="button" value="Close this window"
+                 onClick="window.close()"></form>
 </center>
 </body>
 </html>

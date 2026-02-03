@@ -12,7 +12,6 @@
 var $ = jQuery.noConflict();
 
 $.extend({
-    //
     //$.fileDownload('/path/to/url/', options)
     //  see directly below for possible 'options'
     fileDownload: function (fileUrl, options) {
@@ -44,14 +43,15 @@ $.extend({
             //
             //Requires jQuery UI: options to pass into jQuery UI Dialog
             //
-            dialogOptions: { modal: true },
+            dialogOptions: {modal: true},
 
             //
             //a function to call after a file download dialog/ribbon has appeared
             //Args:
             //  url - the original url attempted
             //
-            successCallback: function (url) { },
+            successCallback: function (url) {
+            },
 
             //
             //a function to call after a file download dialog/ribbon has appeared
@@ -159,7 +159,8 @@ $.extend({
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
-                };
+                }
+                ;
 
                 settings.successCallback(url);
 
@@ -170,7 +171,8 @@ $.extend({
                 //remove the perparing message if it was specified
                 if ($preparingDialog) {
                     $preparingDialog.dialog('close');
-                };
+                }
+                ;
 
                 //wire up a jquery dialog to display the fail message if specified
                 if (settings.failMessageHtml) {
@@ -347,8 +349,7 @@ $.extend({
                             return;
                         }
                     }
-                }
-                catch (err) {
+                } catch (err) {
 
                     //500 error less than IE9
                     internalCallbacks.onFail('', fileUrl);
@@ -375,7 +376,7 @@ $.extend({
 
         function cleanUp(isFailure) {
 
-            setTimeout(function() {
+            setTimeout(function () {
 
                 if (downloadWindow) {
 
@@ -407,4 +408,3 @@ $.extend({
         }
     }
 });
-

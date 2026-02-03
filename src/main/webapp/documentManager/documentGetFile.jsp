@@ -24,92 +24,94 @@
 
 --%>
 
-<%@page import="oscar.util.ConversionUtils"%>
-<%@taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
-<%@taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
-<%@page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
-<%@page import="org.oscarehr.util.SpringUtils" %>
-<%@page import="org.oscarehr.common.dao.DocumentDao" %>
-<%@page import="org.oscarehr.common.model.Document" %>
+<%@page import="ca.openosp.openo.util.ConversionUtils" %>
+<%@page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
+<%@page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@page import="ca.openosp.openo.commn.dao.DocumentDao" %>
+<%@page import="ca.openosp.openo.commn.model.Document" %>
+<%@ page import="ca.openosp.OscarProperties" %>
 
-<%@ taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%
-    String roleName$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
-    boolean authed=true;
+    String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
+    boolean authed = true;
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r" reverse="<%=true%>">
-	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%authed = false; %>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
-	if(!authed) {
-		return;
-	}
+    if (!authed) {
+        return;
+    }
 %>
 
 <%
-	DocumentDao documentDao = SpringUtils.getBean(DocumentDao.class);
-  String filename = "", filetype = "", doc_no = "";
-  String docdownload = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
-  String downloadMethod = oscar.OscarProperties.getInstance().getProperty("DOCUMENT_DOWNLOAD_METHOD");
-  session.setAttribute("docdownload", docdownload);
-  if (request.getParameter("document") != null) {
-    filename = request.getParameter("document");
-    filetype = request.getParameter("type");
-    doc_no = request.getParameter("doc_no");
-    String filePath = docdownload +'/'+ filename;
-    if (filetype.compareTo("active") == 0) {              
-      if ( downloadMethod == null ) {
-      filePath = "../../OscarDocument"+request.getContextPath()+"/document/"+filename;
-      %>
-<html:html lang="en">
-<head>
-<script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-<title><bean:message key="dms.documentGetFile.title" /></title>
-</head>
-<frameset rows="21,*" frameborder="NO" border="0"
-	frames.opera/cache4/pacing="0" cols="*">
-	<frame name="topFrame" scrolling="NO" noresize src="docViewerHead.jsp">
-	<frame name="mainFrame" src="<%=filePath%>">
-</frameset>
-<noframes>
-<body bgcolor="#FFFFFF" text="#000000">
-</body>
-</noframes>
-</html:html>
-
-<%}else{         
-         response.setContentType("application/octet-stream");      
-         response.setHeader("Content-Disposition", "inline;filename=\"" + filename+ "\"");
-         //read the file name.
-         File f = new File(filePath);
-         InputStream is = new FileInputStream(f);                  
-      
-         long length = f.length();
-         byte[] bytes = new byte[(int) length];
-         int offset = 0;
-         int numRead = 0;
-         while (offset < bytes.length 
-             && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-           offset += numRead;
-         }
-         is.close();
-         ServletOutputStream outs = response.getOutputStream();
-         outs.write(bytes);
-         outs.flush();
-         outs.close();
-        }
-  } else {
-      Integer doc_no_as_int = ConversionUtils.fromIntString(doc_no);
-      if (doc_no_as_int != null) {
-	      List<Document> documents = documentDao.findActiveByDocumentNo(doc_no_as_int);
-	      
-		  for(Document d: documents) {
-			out.print(d.getDocxml());
-		  }
-	  }
-     }
-  } else {
+    DocumentDao documentDao = SpringUtils.getBean(DocumentDao.class);
+    String filename = "", filetype = "", doc_no = "";
+    String docdownload = OscarProperties.getInstance().getProperty("DOCUMENT_DIR");
+    String downloadMethod = OscarProperties.getInstance().getProperty("DOCUMENT_DOWNLOAD_METHOD");
+    session.setAttribute("docdownload", docdownload);
+    if (request.getParameter("document") != null) {
+        filename = request.getParameter("document");
+        filetype = request.getParameter("type");
+        doc_no = request.getParameter("doc_no");
+        String filePath = docdownload + '/' + filename;
+        if (filetype.compareTo("active") == 0) {
+            if (downloadMethod == null) {
+                filePath = request.getContextPath() + "/OscarDocument/document/" + filename;
 %>
-<bean:message key="dms.documentGetFile.msgFileNotfound"/>
+<html>
+    <head>
+        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
+        <title><fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentGetFile.title"/></title>
+    </head>
+    <frameset rows="21,*" frameborder="NO" border="0"
+              frames.opera
+    /cache4/pacing="0" cols="*">
+    <frame name="topFrame" scrolling="NO" noresize src="docViewerHead.jsp">
+    <frame name="mainFrame" src="<%=filePath%>">
+    </frameset>
+    <noframes>
+        <body bgcolor="#FFFFFF" text="#000000">
+        </body>
+    </noframes>
+</html>
+
+<%
+        } else {
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "inline;filename=\"" + filename + "\"");
+            //read the file name.
+            File f = new File(filePath);
+            InputStream is = new FileInputStream(f);
+
+            long length = f.length();
+            byte[] bytes = new byte[(int) length];
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                    && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+            is.close();
+            ServletOutputStream outs = response.getOutputStream();
+            outs.write(bytes);
+            outs.flush();
+            outs.close();
+        }
+    } else {
+        Integer doc_no_as_int = ConversionUtils.fromIntString(doc_no);
+        if (doc_no_as_int != null) {
+            List<Document> documents = documentDao.findActiveByDocumentNo(doc_no_as_int);
+
+            for (Document d : documents) {
+                out.print(d.getDocxml());
+            }
+        }
+    }
+} else {
+%>
+<fmt:setBundle basename="oscarResources"/><fmt:message key="dms.documentGetFile.msgFileNotfound"/>
 <%}%>

@@ -26,9 +26,11 @@
 <div class="flex items-center">
     <div style='width: 80px;'>
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
-        </svg><input type="checkbox" class="action-required" name="action_required_exercise" data-score="1">
-        <strong class="tt highlight" data-toggle="tooltip" data-field-name="exercise" title="Frequent being more than 150 minutes per week.">
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
+        </svg>
+        <input type="checkbox" class="action-required" name="action_required_exercise" data-score="1">
+        <strong class="tt highlight" data-toggle="tooltip" data-field-name="exercise"
+                title="Frequent being more than 150 minutes per week.">
             Exercise
         </strong>
     </div>
@@ -39,29 +41,31 @@
     </label>
 
 
-
     <label class="flex items-center font-normal pl-4"><input type="radio" name="exercise" class="m-0"
-            autocomplete="off" data-score="0.5" value="occasional">
+                                                             autocomplete="off" data-score="0.5" value="occasional">
         <span class="pl-1">Occasional</span></label>
 
-    <label class="flex items-center font-normal pl-4"><input type="radio" value="not" name="exercise" class="m-0" autocomplete="off"
-            data-score="1">
+    <label class="flex items-center font-normal pl-4"><input type="radio" value="not" name="exercise" class="m-0"
+                                                             autocomplete="off"
+                                                             data-score="1">
         <span class="pl-1">Not</span></label>
 
     <span class="tt inline-block font-bold" data-toggle="tooltip" title="Smoker" style="padding-left: 46px;">
         <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white" />
+            <circle cx="5" cy="5" r="4" stroke="black" stroke-width="1" fill="white"/>
         </svg><input type="checkbox" class="action-required" name="action_required_smoke" data-score="1">
         <strong class="tt highlight" data-field-name="smoke">Smoker</strong>
     </span>
 
     <label class="flex items-center font-normal pl-4"><input type="radio" name="smoke" class="m-0" value="current"
-            autocomplete="off" data-score="1">
+                                                             autocomplete="off" data-score="1">
         <span class="pl-1">Current</span></label>
 
-    <label class="flex items-center font-normal pl-4"><input type="radio" name="smoke" class="m-0" autocomplete="off" value="ever" data-score="0.5">
+    <label class="flex items-center font-normal pl-4"><input type="radio" name="smoke" class="m-0" autocomplete="off"
+                                                             value="ever" data-score="0.5">
         <span class="pl-1">Ever</span></label>
 
-    <label class="flex items-center font-normal pl-4"><input type="radio" name="smoke" class="m-0" autocomplete="off" value="never" data-score="0">
+    <label class="flex items-center font-normal pl-4"><input type="radio" name="smoke" class="m-0" autocomplete="off"
+                                                             value="never" data-score="0">
         <span class="pl-1">Never</span></label>
 </div>

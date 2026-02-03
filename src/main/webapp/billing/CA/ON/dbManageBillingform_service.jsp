@@ -19,42 +19,42 @@
 --%>
 
 
-<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, oscar.*, java.net.*,oscar.MyDateFormat"%>
+<%@ page import="java.math.*, java.util.*, java.io.*, java.sql.*, ca.openosp.*, java.net.*,ca.openosp.MyDateFormat" %>
 
-<%@ page import="org.oscarehr.util.SpringUtils" %>
-<%@ page import="org.oscarehr.common.model.CtlBillingService" %>
-<%@ page import="org.oscarehr.common.dao.CtlBillingServiceDao" %>
+<%@ page import="ca.openosp.openo.utility.SpringUtils" %>
+<%@ page import="ca.openosp.openo.commn.model.CtlBillingService" %>
+<%@ page import="ca.openosp.openo.commn.dao.CtlBillingServiceDao" %>
 <%
-	CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
+    CtlBillingServiceDao ctlBillingServiceDao = SpringUtils.getBean(CtlBillingServiceDao.class);
 %>
 <%
-String typeid = request.getParameter("typeid");
-String type = request.getParameter("type");
+    String typeid = request.getParameter("typeid");
+    String type = request.getParameter("type");
 
-for(CtlBillingService b:ctlBillingServiceDao.findByServiceType(typeid)) {
-	ctlBillingServiceDao.remove(b.getId());
-}
+    for (CtlBillingService b : ctlBillingServiceDao.findByServiceType(typeid)) {
+        ctlBillingServiceDao.remove(b.getId());
+    }
 
-String[] group = new String[4];
-int rowsAffected = -100;
+    String[] group = new String[4];
+    int rowsAffected = -100;
 
-for(int j=1;j<4;j++){
-	group[j] = request.getParameter("group"+j);
+    for (int j = 1; j < 4; j++) {
+        group[j] = request.getParameter("group" + j);
 
-	for (int i=0; i<20; i++){
-		if(request.getParameter("group"+j+"_service"+i).length() !=0){
-			CtlBillingService cbs = new CtlBillingService();
-			cbs.setServiceTypeName(type);
-			cbs.setServiceType(typeid);
-			cbs.setServiceCode(request.getParameter("group"+j+"_service"+i));
-			cbs.setServiceGroupName(group[j]);
-			cbs.setServiceGroup("Group"+j);
-			cbs.setStatus("A");
-			cbs.setServiceOrder(Integer.parseInt(request.getParameter("group"+j+"_service"+i+"_order")));
-		    ctlBillingServiceDao.persist(cbs);
-		}
-	}
-}
+        for (int i = 0; i < 20; i++) {
+            if (request.getParameter("group" + j + "_service" + i).length() != 0) {
+                CtlBillingService cbs = new CtlBillingService();
+                cbs.setServiceTypeName(type);
+                cbs.setServiceType(typeid);
+                cbs.setServiceCode(request.getParameter("group" + j + "_service" + i));
+                cbs.setServiceGroupName(group[j]);
+                cbs.setServiceGroup("Group" + j);
+                cbs.setStatus("A");
+                cbs.setServiceOrder(Integer.parseInt(request.getParameter("group" + j + "_service" + i + "_order")));
+                ctlBillingServiceDao.persist(cbs);
+            }
+        }
+    }
 
-response.sendRedirect("manageBillingform.jsp");
+    response.sendRedirect("manageBillingform.jsp");
 %>
