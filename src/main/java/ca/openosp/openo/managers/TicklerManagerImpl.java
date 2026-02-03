@@ -58,6 +58,7 @@ import ca.openosp.openo.commn.model.TicklerComment;
 import ca.openosp.openo.commn.model.TicklerLink;
 import ca.openosp.openo.commn.model.TicklerTextSuggest;
 import ca.openosp.openo.commn.model.TicklerUpdate;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -765,6 +766,50 @@ public class TicklerManagerImpl implements TicklerManager {
         }
 
         return ticklers;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter) {
+        checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+
+        List<TicklerListDTO> result = ticklerDao.getTicklerDTOs(filter);
+
+        // Log access when filtering by demographic (matches search_tickler_bydemo behavior)
+        if (filter.getDemographicNo() != null && !filter.getDemographicNo().isEmpty()) {
+            for (TicklerListDTO dto : result) {
+                LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklerDTOs",
+                        "ticklerId=" + dto.getId());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit) {
+        checkPrivilege(loggedInInfo, PRIVILEGE_READ);
+
+        List<TicklerListDTO> result = ticklerDao.getTicklerDTOs(filter, offset, limit);
+
+        // Log access when filtering by demographic (matches search_tickler_bydemo behavior)
+        if (filter.getDemographicNo() != null && !filter.getDemographicNo().isEmpty()) {
+            for (TicklerListDTO dto : result) {
+                LogAction.addLogSynchronous(loggedInInfo, "TicklerManager.getTicklerDTOs",
+                        "ticklerId=" + dto.getId());
+            }
+        }
+
+        return result;
     }
 
     private void checkPrivilege(LoggedInInfo loggedInInfo, String privilege) {
