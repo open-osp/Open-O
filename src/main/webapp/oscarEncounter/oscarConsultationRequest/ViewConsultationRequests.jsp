@@ -58,6 +58,7 @@
 <%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequestUtil" %>
 <%@ page import="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil" %>
 <%@ page import="ca.openosp.openo.commn.IsPropertiesOn" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -315,7 +316,7 @@ background-color:rgb(212, 212, 254);
                             <% } else if (team.isEmpty()) { %>
                             <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.formViewAll"/>
                             <% } else { %>
-                            <%= team %>
+                            <%= Encode.forHtml(team) %>
                             <% } %>
                         </td>
                         <td>
@@ -356,10 +357,10 @@ background-color:rgb(212, 212, 254);
                                             String te = (String) consultUtil.teamVec.get(i);
                                             if (te.equals(team)) {
                                     %>
-                                    <option value="<%=te%>" selected><%=te%>
+                                    <option value="<%=Encode.forHtmlAttribute(te)%>" selected><%=Encode.forHtml(te)%>
                                     </option>
                                     <%} else {%>
-                                    <option value="<%=te%>"><%=te%>
+                                    <option value="<%=Encode.forHtmlAttribute(te)%>"><%=Encode.forHtml(te)%>
                                     </option>
                                     <%
                                             }
@@ -383,9 +384,9 @@ background-color:rgb(212, 212, 254);
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgApptDate"/>
                                     <input type="radio" name="searchDate" value="1" titleKey="Search on Appt. Date"
                                         <%= "1".equals(searchDate) ? "checked" : "" %> />
-                                    <input type="hidden" name="currentTeam" id="currentTeam" value="<%= team != null ? team : "" %>"/>
-                                    <input type="hidden" name="orderby" id="orderby" value="<%= orderby != null ? orderby : "" %>"/>
-                                    <input type="hidden" name="desc" id="desc" value="<%= desc != null ? desc : "" %>"/>
+                                    <input type="hidden" name="currentTeam" id="currentTeam" value="<%= Encode.forHtmlAttribute(team != null ? team : "") %>"/>
+                                    <input type="hidden" name="orderby" id="orderby" value="<%= Encode.forHtmlAttribute(orderby != null ? orderby : "") %>"/>
+                                    <input type="hidden" name="desc" id="desc" value="<%= Encode.forHtmlAttribute(desc != null ? desc : "") %>"/>
                                     <input type="hidden" name="offset" id="offset" value="<%= offset %>"/>
                                     <input type="hidden" name="limit" id="limit" value="<%= limit %>"/>
                                 </div>
@@ -525,7 +526,7 @@ background-color:rgb(212, 212, 254);
 
                                 %>
                                 <tr <%=overdue ? "style='color:red;'" : ""%>>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <% if (status.equals("1")) { %>
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgND"/>
                                         <% } else if (status.equals("2")) { %>
@@ -538,7 +539,7 @@ background-color:rgb(212, 212, 254);
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgBC"/>
                                         <%}%>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <% if (urgency.equals("1")) { %>
                                         <div style="color:red;"> Urgent</div>
                                         <% } else if (urgency.equals("2")) { %>
@@ -549,52 +550,52 @@ background-color:rgb(212, 212, 254);
 
 
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
-                                            <%=sendTo.equals("-1") ? "N/A" : sendTo%>
+                                            <%=sendTo.equals("-1") ? "N/A" : Encode.forHtml(sendTo)%>
                                         </a>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
-                                            <%=patient%>
+                                            <%=Encode.forHtml(patient)%>
                                         </a>
                                     </td>
-                                    <td class="stat<%=status%>">
-                                        <%=provide%>
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
+                                        <%=Encode.forHtml(provide)%>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
-                                            <%=service%>
+                                            <%=Encode.forHtml(service)%>
                                         </a>
 
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
-                                            <%=specialist%>
+                                            <%=Encode.forHtml(specialist)%>
                                         </a>
                                     <% if (eReferral) { %>
                                     <span>(via OCEAN)</span>
                                     <%} %>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <%=date%>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <% if (patBook != null && patBook.trim().equals("1")) {%>
                                         Patient will book
                                         <%} else {%>
                                         <%=appt%>
                                         <%}%>
                                     </td>
-                                    <td class="stat<%=status%>">
+                                    <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
                                             <%=followUpDate%>
                                         </a>
 
                                     </td>
                                     <% if (bMultisites) { %>
-                                    <td bgcolor="<%=(siteBgColor.get(siteName)==null || siteBgColor.get(siteName).length()== 0 ? "#FFFFFF" : siteBgColor.get(siteName))%>">
-                                        <%=siteShortName.get(siteName)%>
+                                    <td bgcolor="<%=Encode.forHtmlAttribute(siteBgColor.get(siteName)==null || siteBgColor.get(siteName).length()== 0 ? "#FFFFFF" : siteBgColor.get(siteName))%>">
+                                        <%=Encode.forHtml(siteShortName.get(siteName))%>
                                     </td>
                                     <%} %>
                                 </tr>
