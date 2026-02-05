@@ -551,12 +551,12 @@ background-color:rgb(212, 212, 254);
 
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
+                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
                                             <%=sendTo.equals("-1") ? "N/A" : Encode.forHtml(sendTo)%>
                                         </a>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
+                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
                                             <%=Encode.forHtml(patient)%>
                                         </a>
                                     </td>
@@ -564,13 +564,13 @@ background-color:rgb(212, 212, 254);
                                         <%=Encode.forHtml(provide)%>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
+                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
                                             <%=Encode.forHtml(service)%>
                                         </a>
 
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
+                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
                                             <%=Encode.forHtml(specialist)%>
                                         </a>
                                     <% if (eReferral) { %>
@@ -588,7 +588,7 @@ background-color:rgb(212, 212, 254);
                                         <%}%>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=id%>')">
+                                        <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
                                             <%=followUpDate%>
                                         </a>
 
