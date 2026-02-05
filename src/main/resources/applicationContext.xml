@@ -60,6 +60,7 @@
 
 	<!-- setup CXF -->
 	<import resource="classpath:spring_ws.xml" />
+	<import resource="spring_ops.xml" />
 	<!-- <context:component-scan base-package="org.oscarehr.common.dao" /> -->
 	
 	<bean id="hl7HandlerMSHMappingDao" class="org.oscarehr.common.dao.HL7HandlerMSHMappingDaoImpl" autowire="byName" />

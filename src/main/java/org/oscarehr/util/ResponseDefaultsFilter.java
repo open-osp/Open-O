@@ -23,6 +23,8 @@
 package org.oscarehr.util;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.filters.OscarBaseFilter;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -35,7 +37,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public final class ResponseDefaultsFilter implements Filter {
+public final class ResponseDefaultsFilter extends OscarBaseFilter {
     private static Logger logger = MiscUtils.getLogger();
     private boolean setEncoding = true;
     private String encoding = "UTF-8";
@@ -84,7 +86,7 @@ public final class ResponseDefaultsFilter implements Filter {
         logger.info("shutdown " + ResponseDefaultsFilter.class.getSimpleName());
     }
 
-    public void doFilter(ServletRequest originalRequest, ServletResponse originalResponse, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest originalRequest, ServletResponse originalResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest)originalRequest;
         HttpServletResponse response = (HttpServletResponse)originalResponse;
         if (this.setEncoding) {

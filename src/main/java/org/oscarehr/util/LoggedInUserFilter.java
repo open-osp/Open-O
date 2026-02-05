@@ -36,15 +36,16 @@ import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Facility;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.Security;
+import org.oscarehr.filters.OscarBaseFilter;
 
-public class LoggedInUserFilter implements javax.servlet.Filter {
+public class LoggedInUserFilter extends OscarBaseFilter {
 	private static final Logger logger = MiscUtils.getLogger();
 
 	public void init(FilterConfig filterConfig) throws ServletException {
 		logger.info("Starting Filter : " + getClass().getSimpleName());
 	}
 
-	public void doFilter(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
+	public void doFilterInternal(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
 		logger.debug("Entering LoggedInUserFilter.doFilter()");
 
 		// set new / current data

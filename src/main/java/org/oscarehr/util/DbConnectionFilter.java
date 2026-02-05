@@ -36,9 +36,10 @@ import javax.sql.DataSource;
 
 import org.apache.logging.log4j.Logger;
 
+import org.oscarehr.filters.OscarBaseFilter;
 import oscar.util.SqlUtils;
 
-public class DbConnectionFilter implements javax.servlet.Filter {
+public class DbConnectionFilter extends OscarBaseFilter {
 	private static final Logger logger = MiscUtils.getLogger();
 
 	private static ThreadLocal<Connection> dbConnection = new ThreadLocal<Connection>();
@@ -61,7 +62,8 @@ public class DbConnectionFilter implements javax.servlet.Filter {
 		logger.info("Starting Filter : " + getClass().getSimpleName());
 	}
 
-	public void doFilter(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
+	@Override
+	public void doFilterInternal(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
 		try {
 			chain.doFilter(tmpRequest, tmpResponse);
 		} catch (Exception e) {

@@ -26,6 +26,7 @@
 package org.oscarehr.util;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.filters.OscarBaseFilter;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 
@@ -44,7 +45,7 @@ import java.util.Date;
 /**
  * Filter for determining the inactivity of a user with a session. Pages that automatically refresh should be marked with the parameter autoRefresh=true
  */
-public final class UserActivityFilter implements Filter {
+public final class UserActivityFilter extends OscarBaseFilter {
 
     private static final Logger logger = MiscUtils.getLogger();
     private static final String LAST_USER_ACTIVITY = "LAST_USER_ACTIVITY";
@@ -55,7 +56,7 @@ public final class UserActivityFilter implements Filter {
     public void destroy() {}
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         boolean redirectToLogout = false;
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;

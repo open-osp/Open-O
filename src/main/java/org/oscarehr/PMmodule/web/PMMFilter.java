@@ -39,13 +39,14 @@ import org.oscarehr.PMmodule.model.Agency;
 import org.oscarehr.PMmodule.service.AgencyManager;
 import org.oscarehr.PMmodule.service.OscarSecurityManager;
 import org.oscarehr.PMmodule.service.ProviderManager;
+import org.oscarehr.filters.OscarBaseFilter;
 import org.oscarehr.util.MiscUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  */
-public class PMMFilter implements Filter {
+public class PMMFilter extends OscarBaseFilter {
 
 	private static Logger logger = MiscUtils.getLogger();
 
@@ -67,7 +68,7 @@ public class PMMFilter implements Filter {
 		this.config = config;
 	}
 
-	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+	public void doFilterInternal(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) baseRequest;
 		HttpSession session = request.getSession();
 		

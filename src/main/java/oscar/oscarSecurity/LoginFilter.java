@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.Logger;
+import org.oscarehr.filters.OscarBaseFilter;
 import org.oscarehr.util.MiscUtils;
 
 import oscar.OscarProperties;
@@ -45,7 +46,7 @@ import oscar.OscarProperties;
 /**
  * @author Dennis Langdeau
  */
-public class LoginFilter implements Filter {
+public class LoginFilter extends OscarBaseFilter {
 
 	private static final Logger logger=MiscUtils.getLogger();
 
@@ -131,7 +132,8 @@ public class LoginFilter implements Filter {
 	/*
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	@Override
+	public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		logger.debug("Entering LoginFilter.doFilter()");
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;

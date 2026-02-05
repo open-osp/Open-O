@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
+import org.oscarehr.filters.OscarBaseFilter;
 import oscar.OscarProperties;
 
 /**
@@ -67,7 +68,7 @@ import oscar.OscarProperties;
  * Please note that this filter results in not well-formed HTML content being outputted to the browser, which in turn 
  * results in page rendered in Quirks mode.
  */
-public class PrivacyStatementAppendingFilter implements Filter {
+public class PrivacyStatementAppendingFilter extends OscarBaseFilter {
 
 	public static final String HTTP_HEADER_VALUE_AJAX_REQUESTED_WITH = "XMLHttpRequest";
 	public static final String HTTP_HEADER_NAME_AJAX_REQUESTED_WITH = "X-Requested-With";
@@ -109,7 +110,7 @@ public class PrivacyStatementAppendingFilter implements Filter {
     }
 
 	@Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		boolean isConfidentialityNotePrinted = false;
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
