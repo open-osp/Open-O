@@ -383,9 +383,9 @@ background-color:rgb(212, 212, 254);
                                     <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.oscarConsultationRequest.ViewConsultationRequests.msgApptDate"/>
                                     <input type="radio" name="searchDate" value="1" titleKey="Search on Appt. Date"
                                         <%= "1".equals(searchDate) ? "checked" : "" %> />
-                                    <input type="hidden" name="currentTeam" id="currentTeam"/>
-                                    <input type="hidden" name="orderby" id="orderby"/>
-                                    <input type="hidden" name="desc" id="desc"/>
+                                    <input type="hidden" name="currentTeam" id="currentTeam" value="<%= team != null ? team : "" %>"/>
+                                    <input type="hidden" name="orderby" id="orderby" value="<%= orderby != null ? orderby : "" %>"/>
+                                    <input type="hidden" name="desc" id="desc" value="<%= desc != null ? desc : "" %>"/>
                                     <input type="hidden" name="offset" id="offset" value="<%= offset %>"/>
                                     <input type="hidden" name="limit" id="limit" value="<%= limit %>"/>
                                 </div>
