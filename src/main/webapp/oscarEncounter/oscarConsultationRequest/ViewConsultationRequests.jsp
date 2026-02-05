@@ -578,18 +578,18 @@ background-color:rgb(212, 212, 254);
                                     <%} %>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
-                                        <%=date%>
+                                        <%=Encode.forHtml(date)%>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <% if (patBook != null && patBook.trim().equals("1")) {%>
                                         Patient will book
                                         <%} else {%>
-                                        <%=appt%>
+                                        <%=Encode.forHtml(appt)%>
                                         <%}%>
                                     </td>
                                     <td class="stat<%=Encode.forHtmlAttribute(status)%>">
                                         <a href="javascript:popupOscarRx(700,960,'<%=request.getContextPath()%>/oscarEncounter/ViewRequest.do?requestId=<%=Encode.forUriComponent(id)%>')">
-                                            <%=followUpDate%>
+                                            <%=Encode.forHtml(followUpDate)%>
                                         </a>
 
                                     </td>
