@@ -387,8 +387,8 @@ background-color:rgb(212, 212, 254);
                                     <input type="hidden" name="currentTeam" id="currentTeam" value="<%= Encode.forHtmlAttribute(team != null ? team : "") %>"/>
                                     <input type="hidden" name="orderby" id="orderby" value="<%= Encode.forHtmlAttribute(orderby != null ? orderby : "") %>"/>
                                     <input type="hidden" name="desc" id="desc" value="<%= Encode.forHtmlAttribute(desc != null ? desc : "") %>"/>
-                                    <input type="hidden" name="offset" id="offset" value="<%= offset %>"/>
-                                    <input type="hidden" name="limit" id="limit" value="<%= limit %>"/>
+                                    <input type="hidden" name="offset" id="offset" value="<%= Encode.forHtmlAttribute(String.valueOf(offset)) %>"/>
+                                    <input type="hidden" name="limit" id="limit" value="<%= Encode.forHtmlAttribute(String.valueOf(limit)) %>"/>
                                 </div>
                             </form>
                         </td>
