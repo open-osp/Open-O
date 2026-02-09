@@ -141,6 +141,9 @@ public class MDSLabHL7Generator {
 		int testIndex = 1;
 		for (LabTest test : lab.getTests()) {
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(testIndex * 100));
+			// Strip leading dashes from test code to avoid parsing issues
+			testCode = testCode.replaceAll("^-+", "");
+
 			String testName = safeWithDefault(test.getName(), "TEST");
 			String units = safe(test.getCodeUnit());
 			String value = safe(test.getCodeValue());
@@ -282,6 +285,9 @@ public class MDSLabHL7Generator {
 			String testDate = formatDateTime(test.getDate());
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(obrCounter * 100));
 
+			// Strip leading dashes from test code to avoid parsing issues
+			testCode = testCode.replaceAll("^-+", "");
+
 			// Build reference range
 			String refRange = buildMDSReferenceRange(test);
 
@@ -322,12 +328,19 @@ public class MDSLabHL7Generator {
 	 * @param refRange the human-readable reference range to include for the test result
 	 */
 	private static void appendObx(StringBuilder sb, LabTest test, String testCode, String refRange) {
+		// Ensure OBX-3 identifier has single dash prefix (avoid double-dash when code already starts with dash)
+		String obxIdentifier = testCode.startsWith("-") ? testCode : "-" + testCode;
+
+		// OBX-4 format: "1-{testCode}" ensures parser extracts full testCode (including leading dash if present)
+		// Parser uses substring(lastIndexOf("-") + 1) which correctly extracts the testCode
+		String obxSubId = "1-" + testCode;
+
 		sb.append("OBX|1|")
-			.append(safeWithDefault(test.getCodeType(), "ST")).append("|-")
-			.append(testCode).append("^")
+			.append(safeWithDefault(test.getCodeType(), "ST")).append("|")
+			.append(obxIdentifier).append("^")
 			.append(safeUpper(test.getName(), "TEST"))
 			.append("^L|")
-			.append(testCode).append("-1-").append(testCode)
+			.append(obxSubId)
 			.append("|")
 			.append(safe(test.getCodeValue()))
 			.append("|").append(safe(test.getCodeUnit()))
