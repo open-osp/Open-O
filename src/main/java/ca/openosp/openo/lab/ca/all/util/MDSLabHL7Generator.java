@@ -328,11 +328,11 @@ public class MDSLabHL7Generator {
 	 * @param refRange the human-readable reference range to include for the test result
 	 */
 	private static void appendObx(StringBuilder sb, LabTest test, String testCode, String refRange) {
-		// Ensure OBX-3 identifier has single dash prefix (avoid double-dash when code already starts with dash)
-		String obxIdentifier = testCode.startsWith("-") ? testCode : "-" + testCode;
+		// OBX-3 identifier requires a dash prefix per MDS format convention
+		String obxIdentifier = "-" + testCode;
 
-		// OBX-4 format: "1-{testCode}" ensures parser extracts full testCode (including leading dash if present)
-		// Parser uses substring(lastIndexOf("-") + 1) which correctly extracts the testCode
+		// The parser extracts the test code from OBX-4 using lastIndexOf("-")
+		// The "1-{testCode}" format ensures the full, normalized testCode is extracted
 		String obxSubId = "1-" + testCode;
 
 		sb.append("OBX|1|")
