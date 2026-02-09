@@ -141,8 +141,12 @@ public class MDSLabHL7Generator {
 		int testIndex = 1;
 		for (LabTest test : lab.getTests()) {
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(testIndex * 100));
-			// Strip leading dashes from test code to avoid parsing issues
-			testCode = testCode.replaceAll("^-+", "");
+
+			// Extract code portion to match MDSHandler.matchOBXToHeader() parsing logic
+			// MDSHandler uses substring(lastIndexOf("-") + 1) on OBX-4, so ZMN field 8 must contain the extracted portion
+			String zmnCode = testCode.contains("-")
+				? testCode.substring(testCode.lastIndexOf("-") + 1)
+				: testCode;
 
 			String testName = safeWithDefault(test.getName(), "TEST");
 			String units = safe(test.getCodeUnit());
@@ -155,7 +159,7 @@ public class MDSLabHL7Generator {
 				.append("|").append(units)
 				.append("|").append(value)
 				.append("|").append(refRange)
-				.append("|").append(testCode)
+				.append("|").append(zmnCode)
 				.append("|").append(flag)
 				.append("|1000\n"); // Group 1000 matches ZRG above
 
@@ -285,9 +289,6 @@ public class MDSLabHL7Generator {
 			String testDate = formatDateTime(test.getDate());
 			String testCode = safeWithDefault(test.getCode(), String.valueOf(obrCounter * 100));
 
-			// Strip leading dashes from test code to avoid parsing issues
-			testCode = testCode.replaceAll("^-+", "");
-
 			// Build reference range
 			String refRange = buildMDSReferenceRange(test);
 
@@ -328,11 +329,10 @@ public class MDSLabHL7Generator {
 	 * @param refRange the human-readable reference range to include for the test result
 	 */
 	private static void appendObx(StringBuilder sb, LabTest test, String testCode, String refRange) {
-		// OBX-3 identifier requires a dash prefix per MDS format convention
+		// OBX-3 identifier requires dash prefix per MDS format convention
 		String obxIdentifier = "-" + testCode;
 
-		// OBX-4 sub-identifier is the normalized test code (matches ZMN field 8)
-		// testCode already has leading dashes stripped, parser uses it directly to match ZMN
+		// OBX-4 uses original code; MDSHandler.matchOBXToHeader() extracts substring(lastIndexOf("-") + 1) to match ZMN
 		String obxSubId = testCode;
 
 		sb.append("OBX|1|")
