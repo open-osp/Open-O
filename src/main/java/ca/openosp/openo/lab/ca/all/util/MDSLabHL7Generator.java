@@ -331,9 +331,9 @@ public class MDSLabHL7Generator {
 		// OBX-3 identifier requires a dash prefix per MDS format convention
 		String obxIdentifier = "-" + testCode;
 
-		// The parser extracts the test code from OBX-4 using lastIndexOf("-")
-		// The "1-{testCode}" format ensures the full, normalized testCode is extracted
-		String obxSubId = "1-" + testCode;
+		// OBX-4 sub-identifier is the normalized test code (matches ZMN field 8)
+		// testCode already has leading dashes stripped, parser uses it directly to match ZMN
+		String obxSubId = testCode;
 
 		sb.append("OBX|1|")
 			.append(safeWithDefault(test.getCodeType(), "ST")).append("|")
