@@ -43,31 +43,19 @@
                 <div class="col-md-8">
                     <div class="h-100 shadow border border-2 rounded">
                         <c:if test="${requestScope.sessionBean.stashSize > 0}">
-                            <c:choose>
-                                <c:when test="${requestScope.dx < 0}">
-                                    <div id="preview"
-                                         class="h-100 w-100"
-                                         style="max-width: 650px; min-width: 480px; min-height: 84vh; border: none; display: block;">
-                                            <%--                                        <jsp:include page="/oscarRx/Preview2.jsp">--%>
+                            <div id="preview"
+                                 class="h-100 w-100"
+                                 style="max-width: 650px; min-width: 480px; min-height: 84vh; border: none; display: block;">
+                                    <%--                                        <jsp:include page="/oscarRx/Preview2.jsp">--%>
 <%--                                        Replace iFrame with jsp-include --%>
-                                        <jsp:include page="/oscarRx/printRx/PreviewContent.jsp">
-                                            <jsp:param name="scriptId"
-                                                       value="${requestScope.sessionBean.getStashItem(0).script_no}"/>
-                                            <jsp:param name="rePrint" value="${requestScope.reprint}"/>
-                                            <jsp:param name="pharmacyId" value="${param.pharmacyId}"/>
-                                            <jsp:param name="pharmaAddress" value="${requestScope.pharmacyAddress}"/>
-                                        </jsp:include>
-                                    </div>
-                                </c:when>
-                                <c:when test="${requestScope.dx == 7}">
-                                    <jsp:include page="HsfoPreview.jsp">
-                                        <jsp:param name="dxCode" value="7"/>
-                                    </jsp:include>
-                                </c:when>
-                                <c:otherwise>
-                                    <!-- Empty content -->
-                                </c:otherwise>
-                            </c:choose>
+                                <jsp:include page="/oscarRx/printRx/PreviewContent.jsp">
+                                    <jsp:param name="scriptId"
+                                               value="${requestScope.sessionBean.getStashItem(0).script_no}"/>
+                                    <jsp:param name="rePrint" value="${requestScope.reprint}"/>
+                                    <jsp:param name="pharmacyId" value="${param.pharmacyId}"/>
+                                    <jsp:param name="pharmaAddress" value="${requestScope.pharmacyAddress}"/>
+                                </jsp:include>
+                            </div>
                         </c:if>
                     </div>
                 </div>
