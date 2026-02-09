@@ -1152,7 +1152,7 @@
             <result name="removeDSHTML">/oscarEncounter/oscarMeasurements/MeasurementGroupDSremove.jsp</result>
         </action>
       <action name="oscarRx/printPreview" class="ca.openosp.openo.rx.RxPrintPreview2Action" >
-        <result name="success">oscarRx/printRx/PrintPreview.jsp</result>
+        <result name="success">/oscarRx/printRx/PrintPreview.jsp</result>
       </action>
 
     <action name="digitalSignature" class="ca.openosp.openo.digitalSignature.DigitalSignatureAction" />
