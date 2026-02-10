@@ -53,6 +53,11 @@ public class DigitalSignature2Action extends ActionSupport {
 
     private DigitalSignatureManager digitalSignatureManager = SpringUtils.getBean(DigitalSignatureManager.class);
 
+    @Override
+    public String execute() throws Exception {
+        return this.uploadSignature();
+    }
+
     /**
      * Handles the upload of a digital signature from various sources.
      *

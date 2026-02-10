@@ -1155,7 +1155,7 @@
         <result name="success">/oscarRx/printRx/PrintPreview.jsp</result>
       </action>
 
-    <action name="digitalSignature" class="ca.openosp.openo.digitalSignature.DigitalSignatureAction" />
+    <action name="digitalSignature" class="ca.openosp.openo.digitalsignature.DigitalSignature2Action" />
 
     <action name="oscarEncounter/oscarMeasurements/SetupEditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctSetupEditMeasurementGroup2Action">
             <result name="continue">/oscarEncounter/oscarMeasurements/EditMeasurementGroup.jsp</result>
