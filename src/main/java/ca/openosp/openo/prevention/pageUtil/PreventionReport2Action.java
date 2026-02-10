@@ -90,7 +90,7 @@ public class PreventionReport2Action extends ActionSupport {
         frm.addDemoIfNotPresent();
         frm.setAsofDate(asofDate);
         RptDemographicQueryBuilder demoQ = new RptDemographicQueryBuilder();
-        ArrayList<ArrayList<String>> list = demoQ.buildQuery(loggedInInfo, frm, asofDate);
+        ArrayList<ArrayList<String>> list = demoQ.buildQuery(loggedInInfo, frm, null);
 
         log.debug("set size " + list.size());
 
