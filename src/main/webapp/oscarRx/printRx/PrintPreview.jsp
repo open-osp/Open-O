@@ -26,14 +26,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="oscar" uri="/oscarPropertiestag" %>
-
+<%@ page import="ca.openosp.openo.commn.model.enumerator.ModuleType" %>
+<%@ page import="ca.openosp.openo.utility.DigitalSignatureUtils" %>
 <fmt:setBundle basename="oscarResources"/>
 
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <c:set var="myDrugRefEnabled">
     <oscar:oscarPropertiesCheck property="MYDRUGREF_DS" value="yes">true</oscar:oscarPropertiesCheck>
 </c:set>
-
+<%
+    request.setAttribute("moduleType", ModuleType.PRESCRIPTION);
+%>
 <html>
 <body>
 <div class="container-fluid" style="min-height: 85vh;">
@@ -109,7 +112,7 @@
                                             <jsp:param name="signatureRequestId" value="${requestScope.signatureRequestId}"/>
                                             <jsp:param name="saveToDB" value="true"/>
                                             <jsp:param name="demographicNo"  value="${requestScope.sessionBean.demographicNo}"/>
-                                            <jsp:param name="ModuleType" value="${ModuleType.PRESCRIPTION.name()}"/>
+                                            <jsp:param name="ModuleType" value="${moduleType.name()}"/>
                                         </jsp:include>
                                     </div>
                                 </div>
