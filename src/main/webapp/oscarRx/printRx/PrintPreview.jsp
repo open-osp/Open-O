@@ -148,7 +148,7 @@
                                 <button type="button"
                                         class="btn btn-success mb-2"
                                         onClick="printIframe();">
-                                    <bean:message key="ViewScript.msgPrint"/>
+                                    <fmt:message key="ViewScript.msgPrint"/>
                                 </button>
 
                                 <button type="button"
@@ -225,7 +225,7 @@
                     <c:if test="${empty sessionScope.rePrint}">
                         <div class="card mb-3">
                             <div class="card-header">
-                                <h5 class="mb-0"><bean:message key="ViewScript.msgAddNotesRx"/></h5>
+                                <h5 class="mb-0"><fmt:message key="ViewScript.msgAddNotesRx"/></h5>
                             </div>
                             <div class="card-body">
                                 <div class="form-group">
@@ -244,7 +244,7 @@
                     <!-- Drug Info Section -->
                     <div class="card mb-3">
                         <div class="card-header">
-                            <h5 class="mb-0"><bean:message key="ViewScript.msgDrugInfo"/></h5>
+                            <h5 class="mb-0"><fmt:message key="ViewScript.msgDrugInfo"/></h5>
                         </div>
                         <div class="card-body">
                             <ul class="list-group">
@@ -272,13 +272,13 @@
                                                 value="${ctx}"/>', '${myDrugRefEnabled}' === 'yes' ? 'true' : 'false');
                                                 resetReRxDrugList('<c:out value="${ctx}"/>');
                                                 closeRxPreviewBootstrapModal();">
-                                    <bean:message key="ViewScript.msgCreateNewRx"/>
+                                    <fmt:message key="ViewScript.msgCreateNewRx"/>
                                 </button>
 
                                 <button type="button"
                                         class="btn btn-outline-secondary ms-3"
                                         onClick="parent.window.close();">
-                                    <bean:message key="ViewScript.msgBackToOscar"/>
+                                    <fmt:message key="ViewScript.msgBackToOscar"/>
                                 </button>
                             </div>
                         </div>
