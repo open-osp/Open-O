@@ -104,6 +104,20 @@
                 return false;
             }
 
+            // Global toggleSection function for AJAX-loaded search results from ChooseAllergy2.jsp
+            // Uses plain JS instead of Scriptaculous Effect.BlindDown/BlindUp which isn't loaded here
+            function toggleSection(typecode) {
+                var img = document.getElementById(typecode + "_img");
+                var content = document.getElementById(typecode + "_content");
+                if (img.src.indexOf('expander') != -1) {
+                    img.src = '<%= request.getContextPath() %>/images/collapser.png';
+                    content.style.display = 'block';
+                } else {
+                    img.src = '<%= request.getContextPath() %>/images/expander.png';
+                    content.style.display = 'none';
+                }
+            }
+
             $(document).ready(function () {
 
                 $.fn.bindActionEvents = function () {
@@ -162,19 +176,8 @@
                         }
                     }
 
-                    //--> Toggle search results listing.
-                    $(".DivContentSectionHead a img").bind("click", function (event) {
-                        event.preventDefault();
-                        var typecode = this.id.split("_")[0];
-                        var imgsrc = document.getElementById(typecode + "_img").src;
-                        if (imgsrc.indexOf('expander') != -1) {
-                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/collapser.png';
-                            $("#" + typecode + "_content").show();
-                        } else {
-                            document.getElementById(typecode + "_img").src = '<%= request.getContextPath() %>/images/expander.png';
-                            $("#" + typecode + "_content").hide();
-                        }
-                    })
+                    //--> Toggle search results listing is now handled by global toggleSection() function
+                    //--> which is called via onclick on the anchor tag in AJAX-loaded content
 
                 } //--> end bind events function.
 
