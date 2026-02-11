@@ -90,10 +90,10 @@ public class PreventionReport2Action extends ActionSupport {
         frm.addDemoIfNotPresent();
         frm.setAsofDate(asofDate);
         RptDemographicQueryBuilder demoQ = new RptDemographicQueryBuilder();
-        // Pass null for asofRosterDate so results are based on the demographic query and asofDate only.
-        // Passing asofDate here would activate a post-query rostering filter that skips non-rostered
-        // patients, which is only appropriate for CMS4 export billing bonus calculations.
-        ArrayList<ArrayList<String>> list = demoQ.buildQuery(loggedInInfo, frm, null);
+        // Use the overload without asofRosterDate so results are based on the demographic query and
+        // asofDate only. The 3-parameter overload activates a post-query rostering filter that skips
+        // non-rostered patients, which is only appropriate for CMS4 export billing bonus calculations.
+        ArrayList<ArrayList<String>> list = demoQ.buildQuery(loggedInInfo, frm);
 
         log.debug("set size " + list.size());
 

@@ -67,6 +67,10 @@ public class RptDemographicQueryBuilder {
     public RptDemographicQueryBuilder() {
     }
 
+    public ArrayList<ArrayList<String>> buildQuery(LoggedInInfo loggedInInfo, RptDemographicReport2Form frm) {
+        return buildQuery(loggedInInfo, frm, null);
+    }
+
     public java.util.ArrayList<ArrayList<String>> buildQuery(LoggedInInfo loggedInInfo, RptDemographicReport2Form frm, String asofRosterDate) {
         MiscUtils.getLogger().debug("in buildQuery");
 
