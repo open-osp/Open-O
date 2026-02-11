@@ -85,8 +85,7 @@ public class RptDemographicQueryBuilder {
     /**
      * Builds a demographic query with optional post-query rostering filtering.
      * When {@code asofRosterDate} is provided, results are filtered to only include patients
-     * who were rostered to the selected provider on that date. This is used by CMS4 export
-     * for billing bonus calculations.
+     * who were rostered to the selected provider on that date.
      *
      * @param loggedInInfo LoggedInInfo the logged-in user session
      * @param frm RptDemographicReport2Form the demographic query form with search criteria
