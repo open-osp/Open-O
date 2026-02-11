@@ -90,9 +90,9 @@ public class PreventionReport2Action extends ActionSupport {
         frm.addDemoIfNotPresent();
         frm.setAsofDate(asofDate);
         RptDemographicQueryBuilder demoQ = new RptDemographicQueryBuilder();
-        // Pass null for asofRosterDate to include all eligible patients regardless of rostering status.
-        // Prevention reports track clinical care needs (immunizations, screenings) for all patients,
-        // unlike CMS4 export which filters by rostering for billing bonus calculations.
+        // Pass null for asofRosterDate so results are based on the demographic query and asofDate only.
+        // Passing asofDate here would activate a post-query rostering filter that skips non-rostered
+        // patients, which is only appropriate for CMS4 export billing bonus calculations.
         ArrayList<ArrayList<String>> list = demoQ.buildQuery(loggedInInfo, frm, null);
 
         log.debug("set size " + list.size());
