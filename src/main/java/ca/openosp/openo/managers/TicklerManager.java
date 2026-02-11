@@ -42,6 +42,7 @@ import ca.openosp.openo.commn.model.Tickler;
 import ca.openosp.openo.commn.model.TicklerCategory;
 import ca.openosp.openo.commn.model.TicklerLink;
 import ca.openosp.openo.commn.model.TicklerTextSuggest;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import ca.openosp.openo.utility.LoggedInInfo;
 
 import java.util.Collections;
@@ -152,4 +153,40 @@ public interface TicklerManager {
     public List<TicklerTextSuggest> getAllTextSuggestions(LoggedInInfo loggedInInfo, int offset, int itemsToReturn);
 
     public List<Tickler> sortTicklerList(Boolean isSortAscending, String sortColumn, List<Tickler> ticklers);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria.
+     * <p>
+     * This method provides optimized data retrieval for list views, reducing database
+     * queries from ~25 per page load (due to EAGER relationships) to a small fixed set
+     * of queries (ticklers, comments, and links are each batch-loaded separately).
+     * </p>
+     *
+     * @param loggedInInfo LoggedInInfo the logged-in user context for security privilege checks
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @throws RuntimeException if user lacks required _tickler read privilege
+     * @since 2026-01-30
+     */
+    List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria with pagination.
+     * <p>
+     * This method provides optimized data retrieval for list views, reducing database
+     * queries from ~25 per page load (due to EAGER relationships) to a small fixed set
+     * of queries (ticklers, comments, and links are each batch-loaded separately).
+     * </p>
+     *
+     * @param loggedInInfo LoggedInInfo the logged-in user context for security privilege checks
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @param offset int the starting position for pagination (0-based)
+     * @param limit int the maximum number of results to return
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @throws RuntimeException if user lacks required _tickler read privilege
+     * @since 2026-01-30
+     */
+    List<TicklerListDTO> getTicklerDTOs(LoggedInInfo loggedInInfo, CustomFilter filter, int offset, int limit);
 }
