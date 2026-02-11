@@ -98,8 +98,14 @@ public class RxDrugData {
             product = (String) hash.get("product");
 			regionalIdentifier = (String) hash.get("regional_identifier");
             drugForm = (String) hash.get("drugForm");
-			if(StringUtils.isNumeric((String) hash.get("drugId"))) {
-				drugId = Integer.parseInt((String) hash.get("drugId"));
+            String drugIdString = (String) hash.get("drugId");
+			if (StringUtils.isNumeric(drugIdString)) {
+                try {
+				    drugId = Integer.parseInt(drugIdString);
+                } catch (NumberFormatException e) {
+                    MiscUtils.getLogger().warn("Unable to parse drugId: " + drugIdString, e);
+                    drugId = null;
+                }
             }
 
             Vector drugRoute = (Vector) hash.get("drugRoute");
