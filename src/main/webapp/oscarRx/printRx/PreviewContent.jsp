@@ -95,7 +95,7 @@
                         <tr>
                             <th valign=top width="100px">
                                 <input type="image"
-                                       src="img/rx.gif" border="0" alt="[Submit]"
+                                       src="oscarRx/img/rx.gif" border="0" alt="[Submit]"
                                        name="submit" title="Print in a half letter size paper"
                                        onclick="${requestScope.reprint eq 'true' ? 'javascript:return onPrint2(\'rePrint\');' : 'javascript:return onPrint2(\'print\');'}"/>
                                     <%-- Clinic title and enhanced RX information are now set in the action --%>
