@@ -73,9 +73,16 @@
         <%
             RxDrugData.DrugSearch drugSearch = (RxDrugData.DrugSearch) request.getAttribute("drugSearch");//set from searchdrugaction
             String demoNo = (String) request.getAttribute("demoNo");//set from searchdrugaction
-            ArrayList brand = drugSearch.getBrand();
-            ArrayList gen = drugSearch.getGen();
-            ArrayList afhcClass = drugSearch.getAfhcClass();
+
+            // Handle null drugSearch - can happen if drugref service is unavailable
+            ArrayList brand = new ArrayList();
+            ArrayList gen = new ArrayList();
+            ArrayList afhcClass = new ArrayList();
+            if (drugSearch != null) {
+                brand = drugSearch.getBrand();
+                gen = drugSearch.getGen();
+                afhcClass = drugSearch.getAfhcClass();
+            }
             int i;
 
             String drugref_route = OscarProperties.getInstance().getProperty("drugref_route");
@@ -197,12 +204,12 @@
                     </tr>
                     <tr>
                         <td>
-                            <form action="${pageContext.request.contextPath}/oscarRx/searchDrug.do" method="post" focus="searchString" onsubmit="processData();">
+                            <form name="RxSearchDrugForm" action="${pageContext.request.contextPath}/oscarRx/searchDrug.do" method="post" focus="searchString" onsubmit="processData();">
                                 <%if (request.getParameter("rx2") != null && request.getParameter("rx2").equals("true")) { %>
                                 <input type="hidden" name="rx2" value="true"/>
                                 <%}%>
 
-                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=demoNo%>"/>
+                                <input type="hidden" name="demographicNo" id="demographicNo" value="<%=Encode.forHtmlAttribute(demoNo)%>"/>
                                 <table>
                                     <tr>
                                         <td>

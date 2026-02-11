@@ -333,7 +333,7 @@
 			String xComment=prescriptDrug.getComment();
 			String tComment="";
 			if(xComment!=null ){
-				tComment="TITLE='"+xComment+" '";
+				tComment="TITLE='" + Encode.forHtmlAttribute(xComment) + " '";
 			}
 			
 			%>
@@ -492,16 +492,19 @@
 
         </tr>
         <script>
-            Event.observe('hidecpp_<%=prescriptIdInt%>', 'change', function (event) {
-                var val = $('hidecpp_<%=prescriptIdInt%>').checked;
-                new Ajax.Request('<c:out value="${ctx}"/>/oscarRx/hideCpp.do?method=update&prescriptId=<%=prescriptIdInt%>&value=' + val, {
-                    method: 'get',
-                    onSuccess: function (transport) {
-                    }
-                });
-
-            });
-
+            (function() {
+                var element = $('hidecpp_<%=prescriptIdInt%>');
+                if (element) {
+                    Event.observe(element, 'change', function (event) {
+                        var val = $('hidecpp_<%=prescriptIdInt%>').checked;
+                        new Ajax.Request('<c:out value="${ctx}"/>/oscarRx/hideCpp.do?method=update&prescriptId=<%=prescriptIdInt%>&value=' + val, {
+                            method: 'get',
+                            onSuccess: function (transport) {
+                            }
+                        });
+                    });
+                }
+            })();
         </script>
         <%}%>
     </table>

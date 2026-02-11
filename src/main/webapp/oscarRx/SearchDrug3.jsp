@@ -28,6 +28,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="csrf" uri="http://www.owasp.org/index.php/Category:OWASP_CSRFGuard_Project/Owasp.CsrfGuard.tld" %>
 <%@page import="org.apache.commons.text.StringEscapeUtils" %>
 <%@page import="ca.openosp.openo.utility.WebUtils" %>
 <%@page import="ca.openosp.openo.commn.model.PharmacyInfo" %>
@@ -224,6 +225,7 @@ if (rx_enhance!=null && rx_enhance.equals("true")) {
         <script type="text/javascript" src="<c:out value="${ctx}/share/javascript/dragiframe.js"/>"></script>
         <script type="text/javascript" src="<c:out value="${ctx}/share/lightwindow/javascript/lightwindow.js"/>"></script>
         <script type="text/javascript" src="<c:out value="${ctx}/js/checkDate.js"/>"></script>
+        <script src="${pageContext.request.contextPath}/csrfguard"></script>
 
 
         <link rel="stylesheet" type="text/css" href="<c:out value="${ctx}/share/yui/css/autocomplete.css"/>">
@@ -784,7 +786,7 @@ function renderRxStage() {
                             <td>
 							<%if(securityManager.hasWriteAccess("_rx",roleName2$,true)) {%>
                                 <form action="${pageContext.request.contextPath}/oscarRx/searchDrug.do"  onsubmit="return checkEnterSendRx();" style="display: inline; margin-bottom:0;" id="drugForm" name="drugForm" method="post">
-
+                                    <input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 
                                     <input type="hidden" property="demographicNo" value="<%=Integer.toString(patient.getDemographicNo())%>" />
                                     <table>
@@ -809,9 +811,9 @@ function renderRxStage() {
                                         <tr id="searchPrescriptionRow">
                                             <td>
                                                 <div id="searchDrugSet">
-                                                    <div id="searchDrugAutocompleteSet">
-                                                        <label for="searchString" ><fmt:message key="SearchDrug.drugSearchTextBox"  /></label>
-                                                        <input type="text" class="ui-widget-content" id="searchString" name="searchString" autocomplete="off" >
+                                                    <div id="searchDrugAutocompleteSet" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                                        <label for="searchString" style="white-space: nowrap; margin: 0;"><fmt:message key="SearchDrug.drugSearchTextBox"  /></label>
+                                                        <input type="text" class="ui-widget-content" id="searchString" name="searchString" autocomplete="off" style="border: 1px solid #000;">
                                                         <div id="autocomplete_choices"></div>
                                                     </div>
                                                     <div id="advanceSearchParameters">
@@ -835,15 +837,15 @@ function renderRxStage() {
                                                             <label for="naturalRemedy">Natural</label>
                                                         </fieldset>
                                                         <fieldset id="searchParamSet">
-                                                            <input type="radio" id="wildCardBoth" name="wildcard"
-                                                                   value="false" checked="checked" />
-                                                            <label title="Search exactly as typed (right to left)"
-                                                                   for="wildCardBoth">Exact</label>
-
                                                             <input type="radio" id="wildCardRight" name="wildcard"
-                                                                   value="true" />
+                                                                   value="true" checked="checked" />
+                                                            <label title="Search exactly as typed (right to left)"
+                                                                   for="wildCardRight">Exact</label>
+
+                                                            <input type="radio" id="wildCardBoth" name="wildcard"
+                                                                   value="false" />
                                                             <label title="Search for all words in all phrases"
-                                                                   for="wildCardRight">Any</label>
+                                                                   for="wildCardBoth">Any</label>
                                                         </fieldset>
                                                     </div>
                                                 </div>
@@ -1234,7 +1236,6 @@ function renderRxStage() {
                 checkboxRevertStatus(element);
             }
         }
-    }
 
     function checkboxRevertStatus(checkbox) {
         setTimeout(function () {
@@ -1310,7 +1311,7 @@ function renderRxStage() {
            var data="randomId="+randomId;
            new Ajax.Request(ctx + "/oscarRx/WriteScript.do?parameterValue=listPreviousInstructions",
            {method: 'post',parameters:data,asynchronous:false,onSuccess:function(transport){
-                 mb.show(randomId,'displayMedHistory', '200px');
+                 mb.show(randomId, ctx + '/oscarRx/displayMedHistory', '200px');
                 }});
     }
 
@@ -1798,6 +1799,10 @@ function popForm2(scriptId){
      }
 
      function callAdditionWebService(url,id){
+         var contextPath = '<c:out value="${ctx}"/>';
+         if (url.indexOf(contextPath) !== 0) {
+             url = contextPath + "/oscarRx/" + url;
+         }
          var ran_number=Math.round(Math.random()*1000000);
          var params = "demographicNo=<%=demoNo%>&rand="+ran_number;  //hack to get around ie caching the page
          var updater=new Ajax.Updater(id,url, {method:'get',parameters:params,insertion: Insertion.Bottom,evalScripts:true});

@@ -98,8 +98,14 @@ public class RxDrugData {
             product = (String) hash.get("product");
 			regionalIdentifier = (String) hash.get("regional_identifier");
             drugForm = (String) hash.get("drugForm");
-			if(StringUtils.isNumeric((String) hash.get("drugId"))) {
-				drugId = Integer.parseInt((String) hash.get("drugId"));
+            String drugIdString = (String) hash.get("drugId");
+			if (StringUtils.isNumeric(drugIdString)) {
+                try {
+				    drugId = Integer.parseInt(drugIdString);
+                } catch (NumberFormatException e) {
+                    MiscUtils.getLogger().warn("Unable to parse drugId: " + drugIdString, e);
+                    drugId = null;
+                }
             }
 
             Vector drugRoute = (Vector) hash.get("drugRoute");
@@ -315,13 +321,15 @@ public class RxDrugData {
         }
 
         MinDrug(Hashtable h) {
-			//this.pKey = (String) h.get("id"); //pKey
-			this.pKey = (String) h.get("id");
-            this.name = (String) h.get("name");
-            //this.type = (String) h.get("category");//type
-			this.type = (String) h.get("category");
+			// Fix ClassCastException: Hashtable values may be non-String types (e.g., Integer)
+			// Use String.valueOf() with null checks instead of unsafe direct casting
+			Object idVal = h.get("id");
+			this.pKey = (idVal != null) ? String.valueOf(idVal) : null;
+			Object nameVal = h.get("name");
+			this.name = (nameVal != null) ? String.valueOf(nameVal) : null;
+			Object categoryVal = h.get("category");
+			this.type = (categoryVal != null) ? String.valueOf(categoryVal) : null;
             MiscUtils.getLogger().debug("pkey " + pKey + " name " + name + " type " + type);
-            //d.tag  = (Tag)    h.get("tag");
         }
 
         public String getpKey() {
