@@ -246,6 +246,9 @@
         function showEncounter(encList) {
             var url2 = '<%=request.getContextPath()%>' + '/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>' + encList + '&printCPP=false&printRx=false';
 
+            // Use an iframe instead of an <object> tag to display encounter notes.
+            // An <object type="text/html"> steals focus from the select list when it
+            // loads, which breaks shift+arrow keyboard selection after the 2nd keypress.
             var iframe = document.createElement('iframe');
             iframe.src = url2;
             iframe.width = getWidth() - 40;
@@ -256,6 +259,8 @@
             docdisp.innerHTML = '';
             docdisp.appendChild(iframe);
 
+            // Restore focus to the encounter list after the iframe loads, so that
+            // shift+arrow selection can continue uninterrupted.
             iframe.addEventListener('load', function() {
                 var el = document.getElementById('encounterlist');
                 if (el && el !== document.activeElement) el.focus();
