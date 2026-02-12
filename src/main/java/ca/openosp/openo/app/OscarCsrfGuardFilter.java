@@ -24,6 +24,7 @@
  */
 package ca.openosp.openo.app;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import ca.openosp.openo.utility.MiscUtils;
 import org.owasp.csrfguard.CsrfGuard;
@@ -54,7 +55,7 @@ import java.util.Set;
  * A CsrfGuardFilter implementation that supports detecting and paring multipart/form-data requests in addition to
  * the existing support
  */
-public class OscarCsrfGuardFilter implements Filter {
+public class OscarCsrfGuardFilter extends OscarBaseFilter {
 
     private FilterConfig filterConfig = null;
 
@@ -64,7 +65,7 @@ public class OscarCsrfGuardFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         CsrfGuard csrfGuard = CsrfGuard.getInstance();
 
