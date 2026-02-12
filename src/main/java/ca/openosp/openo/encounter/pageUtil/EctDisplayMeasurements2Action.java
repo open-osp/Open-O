@@ -111,21 +111,6 @@ public class EctDisplayMeasurements2Action extends EctDisplayAction {
                 }
             }
 
-            if (OscarProperties.getInstance().getBooleanProperty("health_tracker", "true")) {
-                NavBarDisplayDAO.Item item = NavBarDisplayDAO.Item();
-                //temp while testing
-                String dispname = "Health Tracker";
-
-                winName = "viewTracker" + bean.demographicNo;
-                hash = Math.abs(winName.hashCode());
-                url = "window.open('" + request.getContextPath() + "/oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf?demographic_no=" + bean.demographicNo + "&template=tracker'," + hash + ",'height=' + screen.height + ',width=' + screen.width +',resizable=yes,scrollbars=yes, fullscreen=yes');return false;";
-                item.setLinkTitle(dispname);
-                dispname = StringUtils.maxLenString(dispname, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
-                item.setTitle(dispname);
-                item.setURL(url);
-                Dao.addItem(item);
-            }
-
             //next we add dx triggered flowsheets to the module items
             dxResearchBeanHandler dxRes = new dxResearchBeanHandler(bean.demographicNo);
             Vector dxCodes = dxRes.getActiveCodeListWithCodingSystem();

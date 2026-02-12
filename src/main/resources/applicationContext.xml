@@ -76,6 +76,7 @@
 
 	<!-- setup CXF -->
 	<import resource="classpath:spring_ws.xml" />
+	<import resource="spring_ops.xml" />
 	<!-- <context:component-scan base-package="ca.openosp.openo.commn.dao" /> -->
 	
 	<bean id="hl7HandlerMSHMappingDao" class="ca.openosp.openo.commn.dao.HL7HandlerMSHMappingDaoImpl" autowire="byName" />
@@ -210,7 +211,6 @@
 				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/ckdFlowsheet.xml</value>
 				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/painAssistant.xml</value>
 				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/periodicHealthVisit.xml</value>
-				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/healthTracker.xml</value>
 				<value>classpath:oscar/oscarEncounter/oscarMeasurements/flowsheets/hepCFlowsheet.xml</value>
 				
 			</list>

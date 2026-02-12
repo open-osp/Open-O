@@ -135,14 +135,8 @@ public class ReportStatusUpdate2Action extends ActionSupport {
         }
 
         String now = ConversionUtils.toDateString(Calendar.getInstance().getTime(), "dd-MMM-yy HH mm");
-        String jsonStr = "{date:" + now + "}";
         ObjectNode json = objectMapper.createObjectNode();
-        try {
-            json = (ObjectNode) objectMapper.readTree(jsonStr);
-        }
-        catch (Exception e) {
-            logger.error("FAILED TO CREATE JSON", e);
-        } 
+        json.put("date", now);
         logger.info("JSON " + json.toString());
         response.setContentType("application/json");
         try {

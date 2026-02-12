@@ -404,9 +404,9 @@ public class QuickBillingBCHandler {
     }
 
     /**
-     * Triggers exsisting class: BillingSaveBillingAction to recursivley save the bills array list.
-     * @throws IOException
-     * @throws ServletException
+     * Triggers existing class: BillingSaveBillingAction to recursively save the bills array list.
+     *
+     * @return true if bills were saved successfully
      */
     public boolean saveBills() {
 

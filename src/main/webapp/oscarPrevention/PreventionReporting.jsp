@@ -77,6 +77,18 @@
     String asofDate = request.getParameter("asofDate");
     // Create current date value to display as a fallback
     if (asofDate == null) asofDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+    // Get patientSet from parameter first, then fall back to attribute
+    String patientSet = request.getParameter("patientSet");
+    if (patientSet == null) {
+        patientSet = (String) request.getAttribute("patientSet");
+    }
+
+    // Get prevention from parameter first, then fall back to attribute
+    String prevention = request.getParameter("prevention");
+    if (prevention == null) {
+        prevention = (String) request.getAttribute("prevention");
+    }
 %>
 
 <html>
@@ -191,13 +203,13 @@
                 document.getElementById(id).style.display = 'none';
             }
 
-            function showHideNextDate(id, nextDate, nexerWarn) {
+            function showHideNextDate(id, nextDate, neverWarn) {
                 if (document.getElementById(id).style.display == 'none') {
                     showItem(id);
                 } else {
                     hideItem(id);
                     document.getElementById(nextDate).value = "";
-                    document.getElementById(nexerWarn).checked = false;
+                    document.getElementById(neverWarn).checked = false;
 
                 }
             }
@@ -420,8 +432,8 @@
                         </td>
                         <td style="text-align:right">
                             <a
-                                href="javascript:popupStart(300,400,'About.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
-                            | <a href="javascript:popupStart(300,400,'License.jsp')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a>
+                                href="javascript:popup(300,400,'<%= request.getContextPath() %>/oscarEncounter/About.jsp','About')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.about"/></a>
+                            | <a href="javascript:popup(300,400,'<%= request.getContextPath() %>/oscarEncounter/License.jsp','License')"><fmt:setBundle basename="oscarResources"/><fmt:message key="global.license"/></a>
                         </td>
                     </tr>
                 </table>
@@ -436,14 +448,15 @@
                     <div>
                         Patient Demographic Query:
                         <select name="patientSet" id="patientSet">
-                            <option value="-1">--Select Query--</option>
+                            <option value="-1" <%=("-1".equals(patientSet) || patientSet == null) ? "selected" : ""%>>--Select Query--</option>
                             <%
                                 for (int i = 0; i < queryArray.size(); i++) {
                                     RptSearchData.SearchCriteria sc = (RptSearchData.SearchCriteria) queryArray.get(i);
                                     String qId = sc.id;
                                     String qName = sc.queryName;
+                                    String selected = (patientSet != null && patientSet.equals(qId)) ? "selected" : "";
                             %>
-                            <option value="<%=qId%>"><%=qName%>
+                            <option value="<%=Encode.forHtmlAttribute(qId)%>" <%=selected%>><%=Encode.forHtmlContent(qName)%>
                             </option>
                             <%}%>
                         </select>
@@ -451,12 +464,12 @@
                     <div>
                         Prevention:
                         <select name="prevention" id="prevention">
-                            <option value="-1" ${prevention == '-1' ? 'selected' : ''} >--Select Prevention--</option>
-                            <option value="PAP" ${prevention == 'PAP' ? 'selected' : ''} >PAP</option>
-                            <option value="Mammogram" ${prevention == 'Mammogram' ? 'selected' : ''} >Mammogram</option>
-                            <option value="Flu" ${prevention == 'Flu' ? 'selected' : ''} >Flu</option>
-                            <option value="ChildImmunizations" ${prevention == 'ChildImmunizations' ? 'selected' : ''} >Child Immunizations</option>
-                            <option value="FOBT" ${prevention == 'FOBT' ? 'selected' : ''} >FOBT</option>
+                            <option value="-1" <%=("-1".equals(prevention) || prevention == null) ? "selected" : ""%>>--Select Prevention--</option>
+                            <option value="PAP" <%="PAP".equals(prevention) ? "selected" : ""%>>PAP</option>
+                            <option value="Mammogram" <%="Mammogram".equals(prevention) ? "selected" : ""%>>Mammogram</option>
+                            <option value="Flu" <%="Flu".equals(prevention) ? "selected" : ""%>>Flu</option>
+                            <option value="ChildImmunizations" <%="ChildImmunizations".equals(prevention) ? "selected" : ""%>>Child Immunizations</option>
+                            <option value="FOBT" <%="FOBT".equals(prevention) ? "selected" : ""%>>FOBT</option>
                         </select>
                     </div>
                     <div>

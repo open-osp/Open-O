@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpSession;
 
 import ca.openosp.OscarProperties;
+import ca.openosp.openo.filters.OscarBaseFilter;
 
 /**
  * Filter class for handling confidentiality note printing. This class works by appending a confidentiality note
@@ -68,7 +69,7 @@ import ca.openosp.OscarProperties;
  * Please note that this filter results in not well-formed HTML content being outputted to the browser, which in turn
  * results in page rendered in Quirks mode.
  */
-public class PrivacyStatementAppendingFilter implements Filter {
+public class PrivacyStatementAppendingFilter extends OscarBaseFilter {
 
     public static final String HTTP_HEADER_VALUE_AJAX_REQUESTED_WITH = "XMLHttpRequest";
     public static final String HTTP_HEADER_NAME_AJAX_REQUESTED_WITH = "X-Requested-With";
@@ -110,7 +111,7 @@ public class PrivacyStatementAppendingFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         boolean isConfidentialityNotePrinted = false;
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -199,10 +200,6 @@ public class PrivacyStatementAppendingFilter implements Filter {
         if (!isConfidentialtyNotePrinted)
             session.setAttribute(ATTRIBUTE_NAME_CONFIDENTIALITY_NOTE_PRINTED, Boolean.TRUE);
         return isConfidentialtyNotePrinted;
-    }
-
-    @Override
-    public void destroy() {
     }
 
 

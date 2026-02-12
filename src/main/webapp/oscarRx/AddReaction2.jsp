@@ -29,6 +29,8 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+
+<%@page import="org.owasp.encoder.Encode" %>
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
     boolean authed = true;
@@ -42,7 +44,7 @@
         return;
     }
 %>
-
+<!DOCTYPE HTML>
 <html>
     <head>
         <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
@@ -68,23 +70,23 @@
             String allergyToArchive = (String) request.getAttribute("allergyToArchive");
             String nkdaId = (String) request.getAttribute("nkdaId");
 
-            String reaction = new String();
-            String startDate = new String();
-            String ageOfOnset = new String();
-            String lifeStage = new String();
-            String severity = new String();
-            String onsetOfReaction = new String();
+            String reaction = "";
+            String startDate = "";
+            String ageOfOnset = "";
+            String lifeStage = "";
+            String severity = "";
+            String onsetOfReaction = "";
             Boolean nonDrug = null;
 
             if (allergyToArchive != null && !allergyToArchive.isEmpty()) {
                 Allergy a = patient.getAllergy(Integer.parseInt(allergyToArchive));
                 if (a != null) {
-                    reaction = a.getReaction();
-                    startDate = a.getStartDateFormatted();
-                    ageOfOnset = a.getAgeOfOnset();
-                    lifeStage = a.getLifeStage();
-                    severity = a.getSeverityOfReaction();
-                    onsetOfReaction = a.getOnsetOfReaction();
+                    reaction = a.getReaction() != null ? a.getReaction() : "";
+                    startDate = a.getStartDateFormatted() != null ? a.getStartDateFormatted() : "";
+                    ageOfOnset = a.getAgeOfOnset() != null ? a.getAgeOfOnset() : "";
+                    lifeStage = a.getLifeStage() != null ? a.getLifeStage() : "";
+                    severity = a.getSeverityOfReaction() != null ? a.getSeverityOfReaction() : "";
+                    onsetOfReaction = a.getOnsetOfReaction() != null ? a.getOnsetOfReaction() : "";
                     nonDrug = a.isNonDrug();
                 }
                 if (a.getArchived() && nkdaId != null) allergyToArchive = nkdaId;
@@ -95,7 +97,7 @@
             boolean isNKDA = "No Known Drug Allergies".equals(name);
         %>
 
-        <link rel="stylesheet" type="text/css" href="oscarRx/styles.css">
+        <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/oscarRx/styles.css">
 
     </head>
     <body topmargin="0" leftmargin="0" vlink="#0000FF">
@@ -113,8 +115,8 @@
                        height="100%">
                     <tr>
                         <td width="0%" valign="top">
-                            <div class="DivCCBreadCrumbs"><a href="SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
-                                    href="ShowAllergies2.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="AddReaction.title"/></b></div>
+                            <div class="DivCCBreadCrumbs"><a href="<%= request.getContextPath() %>/oscarRx/SearchDrug3.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="SearchDrug.title"/></a>&nbsp;&gt;&nbsp; <a
+                                    href="<%= request.getContextPath() %>/oscarRx/ShowAllergies2.jsp"> <fmt:setBundle basename="oscarResources"/><fmt:message key="EditAllergies.title"/></a>&nbsp;&gt;&nbsp; <b><fmt:setBundle basename="oscarResources"/><fmt:message key="AddReaction.title"/></b></div>
                         </td>
                     </tr>
                     <!----Start new rows here-->
@@ -127,7 +129,7 @@
                     </tr>
                     <tr>
                         <td id="addAllergyDialogue"><form action="<%=request.getContextPath()%>/oscarRx/addAllergy2.do"
-                                                               focus="reactionDescription">
+                                                               name="RxAddAllergyForm" id="RxAddAllergyForm" focus="reactionDescription">
 
                             <script type="text/javascript">
                                 function checkStartDate() {
@@ -147,7 +149,7 @@
 
                                 function checkAgeOfOnset() {
                                     var field = document.forms.RxAddAllergyForm.ageOfOnset;
-                                    if (field.value.trim() != "") {
+                                    if (field.value.trim() !== "") {
                                         var t = /^\d{1,3}$/;
                                         if (!t.test(field.value)) {
                                             alert("Invalid Age of Onset (3-digit integer only)");
@@ -159,22 +161,20 @@
                                 }
 
                                 function doSubmit() {
-
-                                    if (document.forms.RxAddAllergyForm.nonDrug.value == '') {
+                                    var nonDrugField = document.forms.RxAddAllergyForm.nonDrug;
+                                    if (nonDrugField && nonDrugField.value == '') {
                                         alert("Please choose value for non-drug");
                                         return false;
                                     }
-
                                     confirmRemoveNKDA();
 
                                     return true;
                                 }
 
+
                                 function confirmRemoveNKDA() {
                                     <% if (nkdaId!=null && !nkdaId.isEmpty()) { %>
-                                    if (<%=nkdaId%>>
-                                    0
-                                )
+                                    if (parseInt("<%=nkdaId%>") > 0)
                                     {
                                         var yes = confirm("Remove \"No Known Drug Allergies\" from list?");
                                         if (!yes) document.forms.RxAddAllergyForm.allergyToArchive.value = "";
@@ -186,22 +186,20 @@
                             <table>
                                 <tr id="addReactionSubheading">
                                     <td>
-                                        Adding Allergy: <%=name%>
+                                        Adding Allergy: <%=Encode.forHtmlContent(name)%>
                                     </td>
                                 </tr>
                                 <tr valign="center">
                                     <td>
-                                        <span class="label">Comment: </span>
-                                        <textarea name="reactionDescription" cols="40" rows="3">
-                                                       <%=reaction%>
-                                        </textarea>
-                                        <input type="hidden" name="ID" value="<%=drugrefId%>"/>
-                                        <input type="hidden" name="name" id="name" value="<%=name%>"/>
-                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=allergyToArchive%>"/>
+                                        <label for="reactionDescription" class="label">Comment: </label>
+                                        <textarea name="reactionDescription" id="reactionDescription" cols="40" rows="3"><%=Encode.forHtml(reaction)%></textarea>
+                                        <input type="hidden" name="ID" value="<%=Encode.forHtmlAttribute(drugrefId)%>"/>
+                                        <input type="hidden" name="name" id="name" value="<%=Encode.forHtmlAttribute(name)%>"/>
+                                        <input type="hidden" name="allergyToArchive" id="allergyToArchive" value="<%=Encode.forHtmlAttribute(allergyToArchive)%>"/>
                                     </td>
                                 </tr>
 
-                                <input type="hidden" name="type" id="type" value="<%=type%>"/>
+                                <input type="hidden" name="type" id="type" value="<%=Encode.forHtmlAttribute(type)%>"/>
 
                                 <tr valign="center">
                                     <td>
@@ -227,14 +225,14 @@
 
                                         <span class="label">Start Date:</span>
                                         <input type="text" name="startDate" id="startDate" size="10" maxlength="10"
-                                               value="<%=startDate%>" onblur="checkStartDate();"/>
+                                               value="<%=Encode.forHtmlAttribute(startDate)%>" onblur="checkStartDate();"/>
                                         <img src="<%= request.getContextPath() %>/images/cal.gif" id="startDateCal">(yyyy-mm-dd OR yyyy-mm OR yyyy)
                                     </td>
                                 </tr>
 
                                 <tr valign="center">
                                     <td><span class="label">Age Of Onset:</span> <input type="text"
-                                            name="ageOfOnset" size="4" maxlength="4" value="<%=ageOfOnset%>"
+                                            name="ageOfOnset" size="4" maxlength="4" value="<%=Encode.forHtmlAttribute(ageOfOnset)%>"
                                             onblur="checkAgeOfOnset();"/></td>
 
                                 </tr>
@@ -242,13 +240,13 @@
 
                                 <tr valign="center">
                                     <td><span class="label"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.title"/>:</span>
-                                        <select name="lifeStage" value="<%=lifeStage%>">
-                                            <option value=""><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.notset"/></option>
-                                            <option value="N"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.newborn"/></option>
-                                            <option value="I"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.infant"/></option>
-                                            <option value="C"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.child"/></option>
-                                            <option value="T"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.adolescent"/></option>
-                                            <option value="A"><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.adult"/></option>
+                                        <select name="lifeStage">
+                                            <option value="" <%="".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.notset"/></option>
+                                            <option value="N" <%="N".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.newborn"/></option>
+                                            <option value="I" <%="I".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.infant"/></option>
+                                            <option value="C" <%="C".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.child"/></option>
+                                            <option value="T" <%="T".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.adolescent"/></option>
+                                            <option value="A" <%="A".equals(lifeStage) ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.lifestage.opt.adult"/></option>
                                         </select>
                                     </td>
                                 </tr>
@@ -259,22 +257,22 @@
                                 <% } else { %>
                                 <tr valign="center">
                                     <td><span class="label">Severity Of Reaction:</span> <select
-                                            name="severityOfReaction" value="<%=severity%>">
-                                        <option value="4">Unknown</option>
-                                        <option value="1">Mild</option>
-                                        <option value="2">Moderate</option>
-                                        <option value="3">Severe</option>
-                                        <option value="5">No Reaction</option>
+                                            name="severityOfReaction">
+                                        <option value="4" <%="4".equals(severity) || "".equals(severity) ? "selected" : ""%>>Unknown</option>
+                                        <option value="1" <%="1".equals(severity) ? "selected" : ""%>>Mild</option>
+                                        <option value="2" <%="2".equals(severity) ? "selected" : ""%>>Moderate</option>
+                                        <option value="3" <%="3".equals(severity) ? "selected" : ""%>>Severe</option>
+                                        <option value="5" <%="5".equals(severity) ? "selected" : ""%>>No Reaction</option>
                                     </select></td>
                                 </tr>
 
                                 <tr valign="center">
                                     <td><span class="label">Onset Of Reaction:</span> <select
-                                            name="onSetOfReaction" value="<%=onsetOfReaction%>">
-                                        <option value="4">Unknown</option>
-                                        <option value="1">Immediate</option>
-                                        <option value="2">Gradual</option>
-                                        <option value="3">Slow</option>
+                                            name="onSetOfReaction">
+                                        <option value="4" <%="4".equals(onsetOfReaction) || "".equals(onsetOfReaction) ? "selected" : ""%>>Unknown</option>
+                                        <option value="1" <%="1".equals(onsetOfReaction) ? "selected" : ""%>>Immediate</option>
+                                        <option value="2" <%="2".equals(onsetOfReaction) ? "selected" : ""%>>Gradual</option>
+                                        <option value="3" <%="3".equals(onsetOfReaction) ? "selected" : ""%>>Slow</option>
                                     </select></td>
                                 </tr>
 
@@ -304,7 +302,7 @@
                                     <td>
                                         <input type="submit" name="submit" value="Add Allergy" class="ControlPushButton" onclick="return doSubmit()"/>
                                         <input type=button class="ControlPushButton" id="cancelAddReactionButton"
-                                               onclick="window.location='ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
+                                               onclick="window.location='<%= request.getContextPath() %>/oscarRx/ShowAllergies2.jsp?demographicNo=<%=bean.getDemographicNo() %>'"
                                                value="Cancel"/>
                                     </td>
                                 </tr>
@@ -318,13 +316,10 @@
                             <%
                                 String sBack = "ShowAllergies2.jsp";
                             %> <input type=button class="ControlPushButton"
-                                      onclick="javascript:window.location.href='<%=sBack%>';"
+                                      onclick="window.location.href='<%=sBack%>';"
                                       value="Back to View Allergies"/></td>
                     </tr>
-                    <!----End new rows here-->
-                    <tr height="100%">
-                        <td></td>
-                    </tr>
+
                 </table>
             </td>
         </tr>
@@ -338,7 +333,7 @@
             <td width="100%" height="0%" colspan="2">&nbsp;</td>
         </tr>
         <tr>
-            <td width="100%" height="0%" style="padding: 5" bgcolor="#DCDCDC"
+            <td width="100%" height="0%" style="padding: 5px" bgcolor="#DCDCDC"
                 colspan="2"></td>
         </tr>
     </table>

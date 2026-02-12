@@ -54,6 +54,7 @@
                 java.util.List" %>
 <%@page import="ca.openosp.openo.log.LogAction, ca.openosp.openo.log.LogConst" %>
 <%@page import="ca.openosp.openo.documentManager.EDocUtil" %>
+<%@page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
@@ -235,7 +236,7 @@
             <div class="label">Saved by <%=lastCmn.getProviderName()%>
             </div>
             <%}%>
-            <textarea name="note" rows="10"><%=note%></textarea>
+            <textarea name="note" rows="10"><%=Encode.forHtml("Lab Reports".equals(display) ? cmm.getNoteContentForDisplay(note) : note)%></textarea>
             <input type="submit" class="rightButton blueButton top" value="Save"
                    onclick="this.form.saved.value='true';"/> &nbsp;
             <input type="button" class="leftButton top" value="Cancel" onclick="window.close();"/>

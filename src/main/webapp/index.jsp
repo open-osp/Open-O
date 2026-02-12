@@ -30,7 +30,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix="c" %>
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
-<%@ page contentType="text/html;charset=UTF-8" session="false" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" session="false" %>
 
 <%
     // detect if mobile device.
@@ -579,7 +579,7 @@
 							<% if (MfaManager.isOscarLegacyPinEnabled()) { %>
                             <c:if test="${not LoginResourceBean.ssoEnabled}">
                                 <div class="form-group ${ login_error }">
-                                    <input type="password" name="pin" placeholder="Enter your PIN" value=""
+                                    <input type="text" name="pin" placeholder="Enter your PIN" value="" style="-webkit-text-security:disc"
                                            size="15" maxlength="15" autocomplete="off" class="form-control"/>
                                     <span class="extrasmall">
 										<fmt:setBundle basename="oscarResources"/><fmt:message key="loginApplication.formCmt"/>

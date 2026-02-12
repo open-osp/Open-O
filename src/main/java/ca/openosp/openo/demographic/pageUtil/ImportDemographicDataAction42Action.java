@@ -62,6 +62,7 @@ import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
 import com.opensymphony.xwork2.ActionSupport;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -72,6 +73,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.jettison.json.JSONException;
+import org.owasp.encoder.Encode;
 import org.codehaus.jettison.json.JSONObject;
 import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.PMmodule.model.Program;
@@ -87,11 +89,14 @@ import ca.openosp.openo.managers.NioFileManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
+import ca.openosp.openo.utility.SessionConstants;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.webserv.LabUploadWs;
 import ca.openosp.OscarProperties;
 import ca.openosp.openo.demographic.data.DemographicAddResult;
 import ca.openosp.openo.demographic.data.DemographicData;
+import ca.openosp.openo.demographic.data.DemographicRelationship;
 import ca.openosp.openo.encounter.data.EctProgram;
 import ca.openosp.openo.encounter.oscarMeasurements.data.ImportExportMeasurements;
 import ca.openosp.openo.lab.FileUploadCheck;
@@ -227,13 +232,11 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
         // Get context of the temp directory, get the file path to the the temp directory
         ServletContext servletContext = ServletActionContext.getServletContext();
 
-        // Validate the paths
+        // Validate the paths using PathValidationUtils
         File safeDir = (File) servletContext.getAttribute("javax.servlet.context.tempdir"); // Use a safe directory
-
-        String safeDirPath = safeDir.getCanonicalPath() + File.separator;
-
-        // Validate that the file path is within the safe directory
-        if (!filePath.startsWith(safeDirPath)) {
+        try {
+            PathValidationUtils.validateExistingPath(filePath.toFile(), safeDir);
+        } catch (SecurityException e) {
             throw new IllegalArgumentException("Invalid file path: Access outside the allowed directory is not permitted.");
         }
 
@@ -359,7 +362,6 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                             HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws IOException {
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory)) {
             for (Path stream : directoryStream) {
-
                 if (Files.isDirectory(stream)) {
                     // set the current directory globally. Other methods use it to retrieve relative files.
                     currentDirectory = stream.toAbsolutePath().toString();
@@ -383,11 +385,23 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                             }
                         }
                     }
+                } else if (Files.isRegularFile(stream)) {
+                    String filePath = stream.toString();
+                    if (filePath.toLowerCase().endsWith(".xml")) {
+                        // Set the current directory to the XML file's parent for attachment resolution
+                        currentDirectory = stream.getParent().toAbsolutePath().toString();
+                        processXmlFile(loggedInInfo, stream, warnings, logs, request, timeshiftInDays, students, courseId);
+                    } else {
+                        // Skip regular files (like JPG, PDF attachments) - they will be referenced by XML files
+                    }
                 } else {
-                    warnings.add("Directory not found " + stream);
+                    // Log the actual path for debugging, but don't expose it to the user (may contain PHI)
+                    logger.debug("Skipping path that is neither a file nor directory: {}", stream);
+                    warnings.add("Skipped invalid path type (not a file or directory)");
                 }
             }
         } catch (Exception e) {
+            logger.error("Error processing XML files in directory", e);
             throw new RuntimeException(e);
         }
     }
@@ -399,55 +413,37 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
      */
     private Path unzipFile(Path zipFilePath) throws IOException {
         Path directoryPath = zipFilePath.getParent();
-        // Get canonical path of the target directory to prevent path traversal
-        String canonicalTargetPath = directoryPath.toFile().getCanonicalPath();
-        
+        File targetDir = directoryPath.toFile();
+
         byte[] buffer = new byte[1024];
         try (ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
-                String entryName = zipEntry.getName();
-                
-                // Sanitize the entry name to prevent path traversal
-                // Remove any leading slashes and normalize the path
-                entryName = entryName.replaceAll("^[/\\\\]+", "");
-                
-                // Skip entries that contain path traversal sequences
-                if (entryName.contains("..") || entryName.contains("/..") || entryName.contains("\\..")) {
-                    logger.error("Skipping potentially malicious zip entry: " + entryName);
+                File newFile = resolveAndValidateZipEntry(zipEntry, targetDir);
+                if (newFile == null) {
                     zipEntry = zis.getNextEntry();
                     continue;
                 }
-                
-                File newFile = Paths.get(directoryPath.toString(), entryName).toFile();
-                
-                // Validate that the file will be extracted within the target directory
-                String canonicalFilePath = newFile.getCanonicalPath();
-                if (!canonicalFilePath.startsWith(canonicalTargetPath + File.separator)) {
-                    logger.error("Path is not in the correct directory: " + entryName);
-                    zipEntry = zis.getNextEntry();
-                    continue;
-                }
-                
+
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
                         throw new IOException("Failed to create directory " + newFile);
                     }
                 } else {
-                    // fix for Windows-created archives
+                    // Ensure parent directories exist (for Windows-created archives)
                     File parent = newFile.getParentFile();
-                    if (!parent.isDirectory() && !parent.mkdirs()) {
-                        throw new IOException("Failed to create directory " + parent);
+                    if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("Failed to create parent directory " + parent);
                     }
 
-                    // write file content
+                    // Write file content
                     try (FileOutputStream fos = new FileOutputStream(newFile)) {
                         int len;
                         while ((len = zis.read(buffer)) > 0) {
                             fos.write(buffer, 0, len);
                         }
                     } catch (Exception e) {
-                        throw new IOException("Failed to create directory " + e);
+                        throw new IOException("Failed to write file: " + e.getMessage(), e);
                     }
                 }
                 zipEntry = zis.getNextEntry();
@@ -459,6 +455,95 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             Files.deleteIfExists(zipFilePath);
         }
         return directoryPath;
+    }
+
+    /**
+     * Resolves and validates a ZIP entry against the target directory.
+     *
+     * @param zipEntry the ZIP entry to validate
+     * @param targetDir the target directory for extraction
+     * @return the validated File if entry is valid, null otherwise
+     */
+    private File resolveAndValidateZipEntry(ZipEntry zipEntry, File targetDir) {
+        String entryName = zipEntry.getName();
+
+        // Validate ZIP entry name before processing
+        if (entryName == null || entryName.trim().isEmpty()) {
+            logger.error("Skipping ZIP entry with null or empty name");
+            return null;
+        }
+
+        // Normalize path separators to handle cross-platform ZIP files
+        String normalizedEntryName = entryName.replace("\\", "/");
+
+        // Create file by resolving entry name against target directory (preserves directory structure)
+        File newFile = new File(targetDir, normalizedEntryName);
+
+        // CRITICAL SECURITY: Validate the resolved path is within the target directory
+        // This prevents ZIP Slip attacks (e.g., "../../../etc/passwd")
+        // Uses validateExistingPath for containment check without stripping path components
+        try {
+            // First, perform any existing validation logic
+            PathValidationUtils.validateExistingPath(newFile, targetDir);
+
+            // Explicit canonical / normalized path containment check to prevent Zip Slip
+            // and to make the security property obvious to static analysis tools.
+            java.nio.file.Path basePath = targetDir.getCanonicalFile().toPath().normalize();
+            java.nio.file.Path resolvedPath = newFile.getCanonicalFile().toPath().normalize();
+            if (!resolvedPath.startsWith(basePath)) {
+                logger.error("SECURITY: ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+                return null;
+            }
+
+            // Also ensure the parent directory (if any) is within the target directory
+            File parent = newFile.getParentFile();
+            if (parent != null) {
+                java.nio.file.Path parentPath = parent.getCanonicalFile().toPath().normalize();
+                if (!parentPath.startsWith(basePath)) {
+                    logger.error("SECURITY: Parent directory of ZIP entry {} resolves outside target directory {}", Encode.forJava(entryName), targetDir);
+                    return null;
+                }
+            }
+
+            // Additional defense-in-depth: keep existing helper-based checks
+            if (!isWithinDirectory(newFile, targetDir)) {
+                logger.error("SECURITY: ZIP entry {} resolves outside target directory according to isWithinDirectory", Encode.forJava(entryName));
+                return null;
+            }
+
+            return newFile;
+        } catch (IOException e) {
+            logger.error("SECURITY: I/O error while validating ZIP entry {}: {}", Encode.forJava(entryName), e.getMessage(), e);
+            return null;
+        } catch (SecurityException e) {
+            logger.error("SECURITY: Rejecting malicious ZIP entry: {}", Encode.forJava(entryName), e);
+            return null;
+        }
+    }
+
+    /**
+     * Canonical path containment check used to prevent Zip Slip.
+     * Ensures that {@code file} is equal to or a descendant of {@code baseDir}.
+     *
+     * @param file File the file to check
+     * @param baseDir File the base directory that should contain the file
+     * @return boolean true if file is within baseDir, false otherwise
+     */
+    private boolean isWithinDirectory(File file, File baseDir) {
+        if (file == null || baseDir == null) {
+            return false;
+        }
+        try {
+            File baseCanonical = baseDir.getCanonicalFile();
+            File fileCanonical = file.getCanonicalFile();
+            String basePath = baseCanonical.getPath();
+            String filePath = fileCanonical.getPath();
+
+            return filePath.equals(basePath) || filePath.startsWith(basePath + File.separator);
+        } catch (IOException e) {
+            logger.error("Error performing canonical containment check for {}", Encode.forJava(file.getPath()), e);
+            return false;
+        }
     }
 
     /**
@@ -479,8 +564,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
             }
         } catch (IOException ex) {
-            warnings.add("Error while locating " + ".xml" + " in " + path.toString());
-            logger.error("Error while locating " + ".xml" + " in " + path, ex);
+            // Don't expose path in user-facing warnings (may contain PHI)
+            warnings.add("Error while searching for XML files in directory");
+            logger.error("Error while locating .xml files in path: {}", path, ex);
         }
         return filteredFileList;
     }
@@ -683,9 +769,40 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
             String contactNote = StringUtils.noNull(contt[i].getNote());
             String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
+            String cPatient = cLastName + "," + cFirstName;
+
+            // If contact not found, create as "Contact-only" demographic
+            if (StringUtils.empty(cDemoNo)) {
+                String psDate = UtilDateUtilities.DateToString(new Date(), "yyyy-MM-dd");
+                DemographicAddResult demoRes = dd.addDemographic(loggedInInfo,
+                        "", cLastName, cFirstName, "", // title, last, first, middleNames
+                        "", "", "", "", // address, city, province, postal
+                        "", "", "", "", // residentialAddress, residentialCity, residentialProvince, residentialPostal
+                        homePhone, workPhone, // phone, phone2
+                        "", "", "", "", "", // year_of_birth, month, date, hin, ver
+                        "Contact-only", psDate, "", "", "", // roster_status, roster_date, termination_date, termination_reason, enrolledTo
+                        "IN", psDate, "", "", // patient_status, patient_status_date, date_joined, chart_no
+                        "", "", "", // official_lang, spoken_lang, provider_no
+                        "U", "", "", "", "", "", "", // sex, end_date, eff_date, pcn_indicator, hc_type, hc_renew_date, family_doctor
+                        cEmail, "", "", "", "", "", ""); // email, alias, previousAddress, children, sourceOfIncome, citizenship, sin
+                cDemoNo = demoRes.getId();
+
+                // Save phone extensions and cellPhone to demographicExt
+                String providerNo = loggedInInfo.getLoggedInProviderNo();
+                if (StringUtils.filled(workExt)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "wPhoneExt", workExt);
+                }
+                if (StringUtils.filled(homeExt)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "hPhoneExt", homeExt);
+                }
+                if (StringUtils.filled(cellPhone)) {
+                    demographicExtDao.addKey(providerNo, Integer.parseInt(cDemoNo), "demo_cell", cellPhone);
+                }
+
+                insertIntoAdmission(cDemoNo);
+            }
 
             logger.info("adding contacts: " + cLastName + "," + cFirstName + " = " + cDemoNo);
-
 
             cdsDt.PurposeEnumOrPlainText[] contactPurposes = contt[i].getContactPurposeArray();
             String sdm = "", emc = "", cPurpose = null;
@@ -713,88 +830,23 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
             }
 
+            // Create demographic relationships
             if (StringUtils.filled(cDemoNo)) {
-                //this contact was found as a patient in the system, so we will link as an "internal"
+                Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
+                Integer facilityId = null;
+                if (facility != null) facilityId = facility.getId();
 
                 for (int j = 0; j < rel.length; j++) {
                     if (rel[j] == null) continue;
 
-                    DemographicContact demoContact = new DemographicContact();
-                    demoContact.setCreated(new Date());
-                    demoContact.setUpdateDate(new Date());
-                    demoContact.setDemographicNo(patient.getDemographicNo());
-                    demoContact.setContactId(cDemoNo);
-                    demoContact.setType(1);
-                    demoContact.setCategory("personal");
-                    demoContact.setRole(rel[j]);
-                    demoContact.setEc(emc);
-                    demoContact.setSdm(sdm);
-                    demoContact.setNote(contactNote);
-                    demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-                    contactDao.persist(demoContact);
+                    DemographicRelationship demoRel = new DemographicRelationship();
+                    demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
 
                     //clear emc, sdm, contactNote after 1st save
                     emc = "";
                     sdm = "";
                     contactNote = "";
                 }
-
-            } else {
-                //this contact was NOT found in the DB, so we will create an external contact
-                logger.info("need to create external contact for " + cLastName + "," + cFirstName);
-
-                // String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
-
-                Contact c = new Contact();
-                c.setLastName(cLastName);
-                c.setFirstName(cFirstName);
-                c.setPhone(homePhone);
-                c.setWorkPhone(workPhone);
-                c.setEmail(cEmail);
-
-                ContactDao cDao = SpringUtils.getBean(ContactDao.class);
-                cDao.persist(c);
-
-                for (int j = 0; j < rel.length; j++) {
-                    if (rel[j] == null) continue;
-
-                    DemographicContact demoContact = new DemographicContact();
-                    demoContact.setCreated(new Date());
-                    demoContact.setUpdateDate(new Date());
-                    demoContact.setDemographicNo(patient.getDemographicNo());
-                    demoContact.setContactId(String.valueOf(c.getId()));
-                    demoContact.setType(DemographicContact.TYPE_CONTACT);
-                    demoContact.setCategory("personal");
-                    demoContact.setRole(rel[j]);
-                    demoContact.setEc(emc);
-                    demoContact.setSdm(sdm);
-                    demoContact.setNote(contactNote);
-                    demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-                    contactDao.persist(demoContact);
-
-                    //clear emc, sdm, contactNote after 1st save
-                    emc = "";
-                    sdm = "";
-                    contactNote = "";
-                }
-/*
-            		Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
-			        Integer facilityId = null;
-			        if (facility!=null) facilityId = facility.getId();
-
-			        for (int j=0; j<rel.length; j++) {
-			        	if (rel[j]==null) continue;
-
-						DemographicRelationship demoRel = new DemographicRelationship();
-						demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
-
-                    	//clear emc, sdm, contactNote after 1st save
-                    	emc = "";
-                    	sdm = "";
-                    	contactNote = "";
-			        }
-            	}
-*/
             }
         }
 
@@ -2257,8 +2309,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         DrugMonograph dm = rxDrugData.getDrugByDIN(drug.getRegionalIdentifier());
                         if (dm != null) {
                             drug.setAtc(dm.getAtc());
-                            if (dm.drugCode != null) {
-                                drug.setGcnSeqNo(Integer.parseInt(dm.drugCode));
+	                    		if(dm.drugId != null) {
+	                    			drug.setGcnSeqNo(dm.drugId + "");
                             }
                         }
                     } catch (Exception e) {
@@ -2660,7 +2712,17 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                         byte[] b = null;
                         if (repCt != null && repCt.getMedia() != null) b = repCt.getMedia();
-                        else if (repCt != null && repCt.getTextContent() != null) b = repCt.getTextContent().getBytes();
+                        else if (repCt != null && repCt.getTextContent() != null) {
+                            // TextContent may contain base64-encoded binary data (for images, PDFs, etc.)
+                            // or actual text content. Check if it's binary format and decode accordingly.
+                            if (binaryFormat) {
+                                // Binary formats (images, PDFs, etc.) are base64-encoded in TextContent
+                                b = Base64.decodeBase64(repCt.getTextContent());
+                            } else {
+                                // Text formats are stored as-is
+                                b = repCt.getTextContent().getBytes();
+                            }
+                        }
                         if (b == null && filePath == null) {
                             err_othe.add("Error! No report file in xml (" + (i + 1) + ")");
                         } else {
@@ -2696,19 +2758,35 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                                 f.write(b);
                                 f.close();
                             } else {
-                                String tmpDir = currentDirectory;
-                                //oscarProperties.getProperty("TMP_DIR");
-                                tmpDir = Util.fixDirName(tmpDir);
-                                String path3 = tmpDir + repR[i].getFilePath();
-                                if (!path3.endsWith(contentType)) {
-                                    path3 = path3 + contentType;
-                                }
-                                if (path3.indexOf("\\") != -1) {
-                                    path3 = path3.replace("\\", File.separator);
+                                // filePath is already declared at line 2617
+                                if (filePath == null || filePath.isEmpty()) {
+                                    err_data.add("Error! No file path for Report (" + (i + 1) + ")");
+                                    continue;
                                 }
 
-                                //FileUtils.copyFile(new File(tmpDir + repR[i].getFilePath().substring(repR[i].getFilePath().lastIndexOf("\\")+1)), new File(docDir + docFileName));
-                                FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
+                                // Resolve and validate the source file
+                                // This returns only regular files (not directories) suitable for FileUtils.copyFile
+                                File sourceFile = resolveReportSourceFile(currentDirectory, filePath, contentType);
+                                if (sourceFile == null) {
+                                    err_data.add("Error! Cannot locate file for Report (" + (i + 1) + ")");
+                                    continue;
+                                }
+
+                                // Validate the resolved sourceFile is within the allowed extraction directory
+                                // This prevents path traversal attacks from malicious XML file paths
+                                try {
+                                    File allowedRoot = new File(currentDirectory);
+                                    PathValidationUtils.validateExistingPath(sourceFile, allowedRoot);
+                                } catch (SecurityException e) {
+                                    logger.error("SECURITY: Rejecting file copy - resolved path outside allowed directory. FilePath: {}, SourceFile: {}",
+                                        Encode.forJava(new File(filePath).getName()),
+                                        Encode.forJava(sourceFile.getName()),
+                                        e);
+                                    err_data.add("Error! Security violation for Report (" + (i + 1) + "): Invalid file path");
+                                    continue;
+                                }
+
+                                FileUtils.copyFile(sourceFile, new File(docDir + docFileName));
                             }
 
                             if (repR[i].getClass1() != null) {
@@ -2851,7 +2929,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                         err_data.add("Error! No value for Waist Circumference in Care Element (" + (i + 1) + ")");
                     if (wc.getWaistCircumferenceUnit() == null)
                         err_data.add("Error! No unit for Waist Circumference in Care Element (" + (i + 1) + ")");
-                    ImportExportMeasurements.saveMeasurements("WC", demographicNo, admProviderNo, dataField, dataUnit, dateObserved);
+                    ImportExportMeasurements.saveMeasurements("WAIS", demographicNo, admProviderNo, dataField, dataUnit, dateObserved);
                     addOneEntry(CAREELEMENTS);
                 }
                 cdsDt.BloodPressure[] bloodp = ce.getBloodPressureArray();
@@ -3072,6 +3150,9 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                     //participating providers
                     if (p < participatingProviders.length) {
+                        // Participating providers are editors, not signers
+                        cmNote.setSigned(false);
+
                         if (participatingProviders[p].getDateTimeNoteCreated() == null)
                             cmNote.setUpdate_date(new Date());
                         else
@@ -3182,6 +3263,137 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             return "application/rtf";
         }
         return contentType;
+    }
+
+    /**
+     * Resolves the source file for a report by trying multiple strategies.
+     *
+     * @param currentDirectory String the current directory to search from
+     * @param filePath String the file path from the report data
+     * @param contentType String the content type/extension for the file
+     * @return File the resolved File if found, null otherwise
+     */
+    private File resolveReportSourceFile(String currentDirectory, String filePath, String contentType) {
+        // Defensive null/blank guard for currentDirectory
+        if (currentDirectory == null || currentDirectory.trim().isEmpty()) {
+            logger.warn("resolveReportSourceFile: currentDirectory is null or empty, cannot resolve file path");
+            return null;
+        }
+
+        // Defensive null/blank guard for filePath
+        if (filePath == null || filePath.trim().isEmpty()) {
+            logger.warn("resolveReportSourceFile: filePath is null or empty, cannot resolve file");
+            return null;
+        }
+
+        String normalizedPath = filePath
+            .replace("\\", File.separator)
+            .replace("/", File.separator);
+
+        if (isAbsoluteReportPath(normalizedPath)) {
+            logger.error("SECURITY: Rejecting absolute file path from XML");
+            return null;
+        }
+
+        String fileName = new File(normalizedPath).getName();
+        File currentDir = new File(currentDirectory);
+
+        List<File> candidates = new ArrayList<>();
+
+        // Strategy 1: path relative to current directory
+        candidates.add(new File(currentDir, normalizedPath));
+
+        // Strategy 2: filename only in current directory
+        candidates.add(new File(currentDir, fileName));
+
+        // Try to resolve and validate each candidate
+        for (File candidate : candidates) {
+            File resolved = tryResolveCandidate(candidate, contentType, currentDir, filePath);
+            if (resolved != null) {
+                return resolved;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempts to resolve and validate a file candidate, optionally with a content type extension.
+     *
+     * @param candidate the base candidate file to try
+     * @param contentType optional extension to append to the candidate path
+     * @param allowedRoot the allowed root directory for path validation
+     * @param originalPath the original file path from XML for logging
+     * @return the validated File if found and valid, null otherwise
+     */
+    private File tryResolveCandidate(File candidate, String contentType, File allowedRoot, String originalPath) {
+        // Try base candidate first
+        File resolved = tryValidateExisting(candidate, allowedRoot, originalPath);
+        if (resolved != null) {
+            return resolved;
+        }
+
+        // Try candidate with extension
+        if (contentType != null && !contentType.isEmpty()) {
+            File withExt = new File(candidate.getPath() + contentType);
+            return tryValidateExisting(withExt, allowedRoot, originalPath);
+        }
+
+        return null;
+    }
+
+    /**
+     * Validates an existing regular file against the allowed root directory.
+     * Only returns files that exist AND are regular files (not directories or special files).
+     * This ensures the returned File can be used with FileUtils.copyFile without errors.
+     *
+     * @param file the file to validate
+     * @param allowedRoot the allowed root directory
+     * @param originalPath the original file path from XML for logging
+     * @return the file if it exists as a regular file and passes validation, null otherwise
+     */
+    private File tryValidateExisting(File file, File allowedRoot, String originalPath) {
+        if (!file.exists()) {
+            return null;
+        }
+
+        // Only accept regular files, reject directories and other file types
+        // This prevents FileUtils.copyFile from failing when given a directory
+        if (!file.isFile()) {
+            return null;
+        }
+
+        // CRITICAL SECURITY: Validate the resolved path is within the allowed directory
+        // This prevents path traversal attacks from malicious XML (e.g., "../../../etc/passwd")
+        try {
+            PathValidationUtils.validateExistingPath(file, allowedRoot);
+            return file;
+        } catch (SecurityException e) {
+            logger.error("SECURITY: Rejecting malicious file path from XML. originalPath='{}', resolvedPath='{}'",
+                    Encode.forJava(originalPath), Encode.forJava(file.getPath()), e);
+            return null;
+        }
+    }
+
+    /**
+     * Checks if a normalized path is absolute.
+     *
+     * @param normalizedPath the normalized path to check
+     * @return true if the path is absolute, false otherwise
+     */
+    private boolean isAbsoluteReportPath(String normalizedPath) {
+        if (normalizedPath == null) {
+            return false;
+        }
+
+        File f = new File(normalizedPath);
+        // Covers Unix and most Windows absolute cases
+        if (f.isAbsolute()) {
+            return true;
+        }
+
+        // Explicit drive-letter pattern for extra defensive checking
+        return normalizedPath.matches("^[A-Za-z]:[/\\\\].*");
     }
 
     private File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
@@ -3672,7 +3884,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
 
                 isu.setType(type);
                 isu.setUpdate_date(new Date());
-                issueDao.saveIssue(isu);
+                caseManagementManager.saveIssue(isu);
             }
             if (isu != null && isu.getId() != null) {
                 CaseManagementIssue cmIssu = new CaseManagementIssue();
@@ -3719,7 +3931,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                 }
                 isu.setType(type);
                 isu.setUpdate_date(new Date());
-                issueDao.saveIssue(isu);
+                caseManagementManager.saveIssue(isu);
             }
             if (isu != null && isu.getId() != null) {
                 CaseManagementIssue cmIssu = new CaseManagementIssue();
@@ -3860,6 +4072,27 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             ret = true;
         }
         return ret;
+    }
+
+    /**
+     * Extracts the string value from a ResultNormalAbnormalFlag complex type.
+     * Per the XSD schema, this is defined as xs:choice so valid XML should only have one child element set.
+     * If both are unexpectedly set, enum takes precedence for consistency with HL7CreateFile.java.
+     *
+     * @param flag the ResultNormalAbnormalFlag object to extract from
+     * @return the flag value as a string (e.g., "H", "L", "N"), or null if the flag is null
+     */
+    String getResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag flag) {
+        if (flag == null) return null;
+
+        if (flag.getResultNormalAbnormalFlagAsEnum() != null) {
+            // Using toString() to match HL7CreateFile.java pattern; returns HL7 abnormal flag codes (e.g., "H", "L", "A")
+            return flag.getResultNormalAbnormalFlagAsEnum().toString();
+        }
+        if (flag.getResultNormalAbnormalFlagAsPlainText() != null) {
+            return flag.getResultNormalAbnormalFlagAsPlainText();
+        }
+        return null;
     }
 
     String mapPreventionTypeByCode(cdsDt.Code imCode) {
@@ -4063,7 +4296,7 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
             }
         }
 
-        appendIfNotNull(s, "ResultNormalAbnormalFlag", "" + labRes.getResultNormalAbnormalFlag());
+        appendIfNotNull(s, "ResultNormalAbnormalFlag", getResultNormalAbnormalFlag(labRes.getResultNormalAbnormalFlag()));
         appendIfNotNull(s, "TestResultsInformationreportedbytheLaboratory", labRes.getTestResultsInformationReportedByTheLab());
         appendIfNotNull(s, "NotesFromLab", labRes.getNotesFromLab());
         appendIfNotNull(s, "PhysiciansNotes", labRes.getPhysiciansNotes());
@@ -4324,8 +4557,8 @@ public class ImportDemographicDataAction42Action extends ActionSupport {
                     int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(), localFileIs, admProviderNo);
 
                     if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        logger.debug("filePath" + filePath);
-                        logger.debug("Type :" + type);
+                        logger.debug("File uploaded successfully");
+                        logger.debug("Type: {}", type);
                         MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
                         if (msgHandler != null) {
                             logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());

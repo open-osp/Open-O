@@ -23,6 +23,7 @@
     Ontario, Canada
 
 --%>
+
 <%@page import="ca.openosp.openo.utility.LoggedInInfo" %>
 <%@page import="ca.openosp.openo.utility.WebUtils" %>
 <%@page import="ca.openosp.openo.utility.WebUtils" %>
@@ -43,6 +44,7 @@
 <%@ page import="ca.openosp.openo.prescript.pageUtil.RxSessionBean" %>
 <%@ page import="ca.openosp.openo.prescript.data.RxPatientData" %>
 <%@ page import="ca.openosp.openo.commn.model.Allergy" %>
+<%@ page import="ca.openosp.openo.util.DateUtils" %>
 
 <%
     String roleName2$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -147,6 +149,7 @@
                             param, "#addAllergyDialogue");
                     });
 
+
                     //--> Toggle search results listing.
                     $.fn.toggleSection = function (typecode) {
                         var imgsrc = document.getElementById(typecode + "_img").src;
@@ -188,11 +191,41 @@
                         $(".highLightButton").removeClass("highLightButton");
                         var form = $("#searchAllergy2");
                         var url = form.attr('action');
-                        var params = form.serializeArray();
                         var json = {};
-                        $.each(params, function () {
-                            json[this.name] = this.value || '';
-                        });
+
+                        // Build JSON with boolean values for checkboxes (Jackson expects boolean, not "on"/"off")
+                        form.find('input:enabled[name]:not([type=submit]):not([type=button]), select:enabled[name], textarea:enabled[name]')
+                            .each(function () {
+                                const $elem = $(this);
+                                const name = $elem.attr('name');
+                                const rawType = ($elem.attr('type') || '').toLowerCase();
+                                const isCheckbox = rawType === 'checkbox' || $elem.is(':checkbox');
+                                const isRadio = rawType === 'radio' || $elem.is(':radio');
+
+                                // Skip unchecked radios/checkboxes (serializeArray behavior)
+                                if ((isCheckbox || isRadio) && !$elem.is(':checked')) {
+                                    return;
+                                }
+
+                                // Checkbox → boolean true
+                                if (isCheckbox) {
+                                    // Skip typeSelectAll - UI-only field
+                                    if (name !== 'typeSelectAll') {
+                                        json[name] = true;
+                                    }
+                                    return;
+                                }
+
+                                // Radio → actual value
+                                if (isRadio) {
+                                    json[name] = $elem.val() || '';
+                                    return;
+                                }
+
+                                // Other input/select/textarea → value
+                                json[name] = $elem.val() || '';
+                            });
+
                         json.submit = 'Search';
                         // servlet looks for "jsonData" request parameter
                         param = "jsonData=" + JSON.stringify(json);
@@ -230,6 +263,7 @@
                     $(".ControlPushButton").removeClass("highLightButton");
                 })
 
+
                 $().bindActionEvents();
                 $().setDefaults();
 
@@ -240,7 +274,7 @@
                 var iNKDA = document.forms.searchAllergy2.iNKDA.value;
                 if (param.indexOf(paramNKDA) >= 0) {
                     var hasDrugAllergy = document.forms.searchAllergy2.hasDrugAllergy.value;
-                    if (hasDrugAllergy == "true") {
+                    if (hasDrugAllergy === "true") {
                         alert("Active drug allergy exists!");
                         return;
                     }
@@ -284,7 +318,7 @@
 
             //--> Check if search field is empty.
             function isEmpty() {
-                if (document.forms.searchAllergy2.searchString.value.length == 0) {
+                if (document.forms.searchAllergy2.searchString.value.length === 0) {
                     alert("Search Field is Empty");
                     document.forms.searchAllergy2.searchString.focus();
                     return false;
@@ -295,7 +329,7 @@
             function show_Search_Criteria() {
                 var tbl_as = document.getElementById("advancedSearch");
 
-                if (tbl_as.style.display == '') {
+                if (tbl_as.style.display === '') {
                     tbl_as.style.display = 'none';
                 } else {
                     tbl_as.style.display = '';
@@ -329,7 +363,7 @@
                     name = name.toUpperCase();
                     confirm("Adding custom allergy: " + name);
                     sendSearchRequest("${ pageContext.servletContext.contextPath }/oscarRx/addReaction2.do",
-                        "ID=0&type=0&name=" + name, "#addAllergyDialogue");
+                        "ID=0&type=0&name=" + encodeURIComponent(name), "#addAllergyDialogue");
                     $("input[value='Custom Allergy']").addClass("highLightButton");
                 }
             }
@@ -435,7 +469,7 @@
     }
 
     String strView = request.getParameter("view");
-    if (strView == null) strView = "Active";
+    if (strView == null) {strView = "Active";}
 
     String[] navArray = {"Active", "All", "Inactive"};
 
@@ -447,47 +481,51 @@
             out.print("<span class='view_menu'><a href='ShowAllergies2.jsp?demographicNo=" + demoNo + "&view=" + navArray[i] + "'>");
             out.print(navArray[i]);
             out.print("</a></span>");
-        }
-    }
-//1 mild 2 moderate 3 severe 4 unknown
+         }
+					 }
+					 //1 mild 2 moderate 3 severe 4 unknown
 
     String[] ColourCodesArray = new String[6];
-    ColourCodesArray[1] = "#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
-    ColourCodesArray[2] = "#FF6600"; // Moderate
-    ColourCodesArray[3] = "#CC0000"; // Severe
-    ColourCodesArray[4] = "#E0E0E0"; // unknown
+					 ColourCodesArray[1]="#F5F5F5"; // Mild Was set to yellow (#FFFF33) SJHH requested not to flag mild
+					 ColourCodesArray[2]="#FF6600"; // Moderate
+					 ColourCodesArray[3]="#CC0000"; // Severe
+					 ColourCodesArray[4]="#E0E0E0"; // unknown
     ColourCodesArray[5] = "#FFFFFF"; // no reaction
 
-    String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[1] + "'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='" + ColourCodesArray[2] + "'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='" + ColourCodesArray[3] + "'><td> </td></table></td> <td >Severe</td> </tr></table>";
-%>
+					 String allergy_colour_codes = "<table class='allergy_legend' cellspacing='0'><tr><td><b>Legend:</b></td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[1]+"'><td> </td></table></td> <td >Mild</td> <td > <table class='colour_codes' bgcolor='"+ColourCodesArray[2]+"'><td> </td></table></td> <td >Moderate</td><td > <table class='colour_codes' bgcolor='"+ColourCodesArray[3]+"'><td> </td></table></td> <td >Severe</td> </tr></table>";
+				%>
+
 				</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <table border="0">
-                                <tr>
-                                    <td class="Step1Text">
-                                        <%=allergy_colour_codes%>
 
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<table border="0">
+				<tr>
+					<td class="Step1Text">
+						<%=allergy_colour_codes%>
+			
                                         <table class="allergy_table">
-                                            <tr>
-                                                <td><b>Status</b></td>
-                                                <td><b>Entry Date</b></td>
-                                                <td><b>Description</b></td>
-                                                <td><b>Allergy Type</b></td>
-
-                                                <td><b>Non-Drug</b></td>
-                                                <td><b>Severity</b></td>
-                                                <td><b>Onset of Reaction</b></td>
-                                                <td><b>Reaction</b></td>
-                                                <td><b>Start Date</b></td>
-                                                <td><b>Life Stage</b></td>
-                                                <td><b>Age Of Onset</b></td>
-                                                <td><b><img src="<%= request.getContextPath() %>/images/notes.gif" border="0" width="10" height="12"
-                                                            alt="Annotation"></b></td>
-                                                <td><b>Action</b></td>
-                                            </tr>
+						<tr>
+							<td><b>Status</b></td>
+							<td><b>Entry Date</b></td>
+                                                <td><b>Last Updated Date</b></td>
+							<td><b>Description</b></td>
+							<td><b>Allergy Type</b></td>
+							
+							<td><b>Non-Drug</b></td>
+							<td><b>Severity</b></td>
+							<td><b>Onset of Reaction</b></td>
+							<td><b>Reaction</b></td>
+							<td><b>Start Date</b></td>
+							<td><b>Life Stage</b></td>
+							<td><b>Age Of Onset</b></td>
+              <td><b><img src="<%= request.getContextPath() %>/images/notes.gif" border="0" width="10" height="12"
+                          alt="Annotation"></b></td>
+							<td><b>Action</b></td>
+						</tr>
                                             <%
                                                 String strArchived;
                                                 int intArchived = 0;
@@ -560,6 +598,8 @@
                                                 </td>
                                                 <td><%=entryDate == null ? "" : entryDate %>
                                                 </td>
+                                                <td><%=allergy.getLastUpdateDate() != null ? DateUtils.formatDate(allergy.getLastUpdateDate(), request.getLocale()) : "" %>
+                                                </td>
                                                 <td <%=title%> ><%=allergy.getDescription() %>
                                                 </td>
                                                 <td><%=allergy.getTypeDesc() %>
@@ -588,9 +628,7 @@
                                                     <%
                                                         if (!allergy.isIntegratorResult()) {
                                                     %>
-                                                    <a href="#" title="Annotation"
-                                                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=
-                                                           ${patient.getDemographicNo() }','anwin','width=400,height=500');">
+                                                    <a href="#" title="Annotation" onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?display=<%=annotation_display%>&table_id=<%=String.valueOf(allergy.getAllergyId())%>&demo=${patient.getDemographicNo()}','anwin','width=400,height=500');">
                                                         <% if (existingAnnots.size() > 0) {%>
                                                         <img src="<%= request.getContextPath() %>/images/filledNotes.gif" border="0"/>
                                                         <% } else { %>
@@ -620,14 +658,14 @@
                                             } //end of iterate
                                                 if (hasDrugAllergy) iNKDA = 0;
                                             %>
-                                        </table>
+					</table>
 
                                         <%=allergy_colour_codes%>
-                                    </td>
-                                </tr>
+				</td>
+			</tr>
                             </table>
                         </td>
-                    </tr>
+			</tr>
 
                     <tr id="addAllergyInterface">
                         <td>
@@ -644,11 +682,11 @@
                                     <tr id="allergyQuickButtonRow">
                                         <td>
                                             <input type=button class="ControlPushButton"
-                                                   onclick="javascript:addCustomNKDA();" value="NKDA"/>
+                                                   onclick="addCustomNKDA();" value="NKDA"/>
                                             <input type=button class="ControlPushButton"
-                                                   onclick="javascript:addPenicillinAllergy();" value="Penicillin"/>
+                                                   onclick="addPenicillinAllergy();" value="Penicillin"/>
                                             <input type=button class="ControlPushButton"
-                                                   onclick="javascript:addSulfonamideAllergy();" value="Sulfa"/>
+                                                   onclick="addSulfonamideAllergy();" value="Sulfa"/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -678,7 +716,7 @@
                                                    class="ControlPushButton"/>
                                             OR
                                             <input type=button class="ControlPushButton"
-                                                   onclick="javascript:addCustomAllergy();" value="Custom Allergy"/>
+                                                   onclick="addCustomAllergy();" value="Custom Allergy"/>
                                         </td>
                                     </tr>
                                 </table>
@@ -690,10 +728,6 @@
                     </tr>
                 </table>
             </td>
-        </tr>
-
-        <tr class="lastRow">
-            <td colspan="2"></td>
         </tr>
     </table>
 

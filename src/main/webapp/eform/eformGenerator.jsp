@@ -1053,7 +1053,7 @@ and other liscences (MIT, LGPL etc) as indicated
                 textTop += "\tvar weeks = ($('#tickler_weeks').val() ? $('#tickler_weeks').val() : '6');\n"
                 textTop += "\tvar message = ($('#tickler_message').val() ? $('#tickler_message').val() : 'Check for results of '+subject+' ordered ' + today);\n"
                 textTop += "\tvar ticklerDate = setDate(weeks);\n"
-                textTop += "\tvar urgency = ($('#tickler_priority').val() ? $('#ticklerpriority').val() : 'Normal'); // case sensitive: Low Normal High\n"
+                textTop += "\tvar urgency = ($('#tickler_priority').val() ? $('#tickler_priority').val() : 'Normal'); // case sensitive: Low Normal High\n"
                 textTop += "\tvar ticklerToSend = {};\n"
                 textTop += "\tticklerToSend.demographicNo = demographicNo;\n"
                 textTop += "\tticklerToSend.message = message;\n"

@@ -174,7 +174,7 @@
                                                    onClick="updateWaitingList('${waitingListBean.waitingListID}', ${ctr.index});"/>
                                         </td>
                                         <td class="${styleClass}">
-                                            <textarea cols="45" name="note" indexed="true" styleClass="data3" onblur="setParameters(this);"></textarea>
+                                            <textarea cols="45" name="note" indexed="true" class="data3" onblur="setParameters(this);"></textarea>
                                         </td>
                                         <td class="${styleClass}">
                                             <input type="text" name="onListSince" indexed="true" class="data3" onblur="setParameters(this);" onchange="setParameters(this);"/>

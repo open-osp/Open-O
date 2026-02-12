@@ -19,6 +19,7 @@ import ca.openosp.openo.hospitalReportManager.HRMUtil;
 import ca.openosp.openo.managers.FormsManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import ca.openosp.openo.utility.PathValidationUtils;
 import ca.openosp.openo.utility.PDFGenerationException;
 import ca.openosp.openo.utility.SpringUtils;
 
@@ -172,12 +173,14 @@ public class DocumentPreview2Action extends ActionSupport {
             boolean isValidPath = false;
             for (String basePath : allowedBasePaths) {
                 if (basePath != null && !basePath.isEmpty()) {
-                    Path basePathObj = Paths.get(basePath);
-                    if (Files.exists(basePathObj)) {
-                        Path baseCanonicalPath = basePathObj.toRealPath();
-                        if (canonicalPdfPath.startsWith(baseCanonicalPath)) {
+                    java.io.File baseDir = new java.io.File(basePath);
+                    if (baseDir.exists()) {
+                        try {
+                            PathValidationUtils.validateExistingPath(canonicalPdfPath.toFile(), baseDir);
                             isValidPath = true;
                             break;
+                        } catch (SecurityException e) {
+                            // File not in this directory, try next
                         }
                     }
                 }
@@ -221,7 +224,7 @@ public class DocumentPreview2Action extends ActionSupport {
         String demographicNo = StringUtils.isNullOrEmpty(request.getParameter("demographicNo")) ? "0" : request.getParameter("demographicNo");
 
         populateCommonDocs(loggedInInfo, demographicNo);
-		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(new Integer(demographicNo), true);
+		List<EFormData> allEForms = EFormUtil.listPatientEformsCurrent(Integer.valueOf(demographicNo), true);
         request.setAttribute("allEForms", allEForms);
 
         return "fetchDocuments";

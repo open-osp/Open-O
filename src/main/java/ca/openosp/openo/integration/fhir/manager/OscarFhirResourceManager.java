@@ -57,9 +57,11 @@ import ca.openosp.openo.log.LogAction;
 public class OscarFhirResourceManager {
 
     /**
-     * @param configurationManager
-     * @param demographicNo
-     * @return List<ca.openosp.openo.integration.fhir.model.Immunization < Prevention> >
+     * Gets immunizations for a patient by demographic number.
+     *
+     * @param configurationManager the FHIR configuration manager
+     * @param demographicNo the patient's demographic ID
+     * @return list of immunization records for the patient
      */
     public static final List<Immunization<Prevention>> getImmunizationsByDemographicNo(OscarFhirConfigurationManager configurationManager, int demographicNo) {
         PreventionManager preventionManager = SpringUtils.getBean(PreventionManager.class);
@@ -128,10 +130,12 @@ public class OscarFhirResourceManager {
     }
 
     /**
-     * @param configurationManager
-     * @param hcn
-     * @param hcnType
-     * @return List<ca.openosp.openo.integration.fhir.model.Patient>
+     * Gets patients by personal health number (PHN).
+     *
+     * @param configurationManager the FHIR configuration manager
+     * @param hcn the health card number
+     * @param hcnType the type of health card
+     * @return list of patients matching the health card number
      */
     public static final List<Patient> getPatientsByPHN(OscarFhirConfigurationManager configurationManager, String hcn, String hcnType) {
         DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);

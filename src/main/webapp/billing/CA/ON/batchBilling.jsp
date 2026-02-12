@@ -177,7 +177,7 @@
 
             <div class="span2">
                 <fmt:setBundle basename="oscarResources"/><fmt:message key="billing.batchbilling.msgProvider"/><br>
-                <select name="provider" class="span2" onChange="jumpMenu('window',this)">
+                <select name="providers" class="span2" onChange="jumpMenu('window',this)">
                     <option value="#"><b><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.batchbilling.msgProvider"/></b></option>
                     <option value="all"
                             <%=providerview.equals("all") ? "selected" : ""%>><fmt:setBundle basename="oscarResources"/><fmt:message key="billing.batchbilling.msgAllProvider"/></option>

@@ -42,6 +42,8 @@ import javax.ws.rs.core.Response;
 
 import ca.openosp.openo.daos.security.SecroleDao;
 import ca.openosp.openo.model.security.Secrole;
+import ca.openosp.openo.PMmodule.dao.SecUserRoleDao;
+import ca.openosp.openo.PMmodule.model.SecUserRole;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.dao.ProgramAccessDAO;
@@ -135,6 +137,9 @@ public class NotesService extends AbstractServiceImpl {
     @Autowired
     private SecurityInfoManager securityInfoManager;
 
+    @Autowired
+    private SecUserRoleDao secUserRoleDao;
+
 
     @POST
     @Path("/{demographicNo}/all")
@@ -145,9 +150,26 @@ public class NotesService extends AbstractServiceImpl {
         LoggedInInfo loggedInInfo = getLoggedInInfo();
         logger.debug("The config " + jsonobject.toString());
 
-        HttpSession se = getHttpServletRequest().getSession();
-        if (se.getAttribute("userrole") == null) {
-            logger.error("An Error needs to be added to the returned result, remove this when fixed");
+        // Get user role and username - support both session-based and OAuth authentication
+        String userRole = "";
+        String userName = "";
+
+        HttpSession se = loggedInInfo.getSession();
+        if (se != null && se.getAttribute("userrole") != null) {
+            // Session-based authentication
+            userRole = (String) se.getAttribute("userrole");
+            userName = (String) se.getAttribute("user");
+        } else if (loggedInInfo.getLoggedInProvider() != null) {
+            // OAuth authentication - get provider info from LoggedInInfo
+            userName = loggedInInfo.getLoggedInProviderNo();
+            List<SecUserRole> userRoles = secUserRoleDao.getUserRoles(userName);
+            if (userRoles != null && !userRoles.isEmpty()) {
+                userRole = SecUserRole.getRoleNameAsCsv(userRoles);
+            }
+        }
+
+        if (userRole.isEmpty()) {
+            logger.error("Unable to determine user role - neither session nor OAuth authentication available");
             return returnResult;
         }
 
@@ -176,8 +198,8 @@ public class NotesService extends AbstractServiceImpl {
         criteria.setFirstResult(offset);
 
         criteria.setDemographicId(demographicNo);
-        criteria.setUserRole((String) se.getAttribute("userrole"));
-        criteria.setUserName((String) se.getAttribute("user"));
+        criteria.setUserRole(userRole);
+        criteria.setUserName(userName);
 
         // Note order is not user selectable in this version yet
         criteria.setNoteSort("observation_date_desc");
@@ -1117,9 +1139,13 @@ public class NotesService extends AbstractServiceImpl {
         String providerNo = loggedInInfo.getLoggedInProviderNo();
 
 
+        // Validate authentication - support both session-based and OAuth authentication
         HttpSession session = loggedInInfo.getSession();
-        if (session.getAttribute("userrole") == null) {
-//			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        boolean hasSessionAuth = session != null && session.getAttribute("userrole") != null;
+        boolean hasOAuthAuth = loggedInInfo.getLoggedInProvider() != null;
+
+        if (!hasSessionAuth && !hasOAuthAuth) {
+            logger.error("Unable to authenticate - neither session nor OAuth authentication available");
             return null;
         }
 
@@ -1162,7 +1188,8 @@ public class NotesService extends AbstractServiceImpl {
 
         logger.debug("Get Note for editing");
         String strBeanName = "casemgmt_oscar_bean" + demographicNo;
-        EctSessionBean bean = (EctSessionBean) loggedInInfo.getSession().getAttribute(strBeanName);
+        // Bean may be null for OAuth authentication (no session)
+        EctSessionBean bean = (session != null) ? (EctSessionBean) session.getAttribute(strBeanName) : null;
         String encType = getString(jsonobject, "encType");
 
         logger.debug("Encounter Type : " + encType);
@@ -1194,7 +1221,7 @@ public class NotesService extends AbstractServiceImpl {
             } else {
                 note.setEncounter_type(encType);
             }
-            if (bean.encType != null && bean.encType.length() > 0) {
+            if (bean != null && bean.encType != null && bean.encType.length() > 0) {
                 note.setEncounter_type(bean.encType);
             }
 

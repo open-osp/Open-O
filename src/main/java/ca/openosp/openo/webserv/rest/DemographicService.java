@@ -613,8 +613,8 @@ public class DemographicService extends AbstractServiceImpl {
      * <p>
      * Currently supports LastName[,FirstName] and address searches.
      *
-     * @param id Id of the demographic to get data for
-     * @return Returns data for the demographic provided
+     * @param query the search query string
+     * @return Returns search results for demographics matching the query
      */
     @GET
     @Path("/quickSearch")

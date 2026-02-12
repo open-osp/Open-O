@@ -8,7 +8,7 @@
     <constant name="struts.enable.SlashesInActionNames" value="true" />
     <constant name="struts.serve.static" value="true" />
     <constant name="struts.serve.static.browserCache" value="true" />
-    <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*" />
+    <constant name="struts.action.excludePattern" value=".*\.(css|js|png|jpg|gif)$|^/ws/.*|^/servlet/(ca\.openosp\.DocumentUploadServlet|oscar\.DocumentTeleplanReportUploadServlet)$" />
     <constant name="struts.custom.i18n.resources" value="oscarResources"/>
     <constant name="struts.custom.i18n.resources" value="oscarResources,MessageResources_mcedt"/>
     <constant name="struts.multipart.maxSize" value="524288000" />
@@ -300,7 +300,7 @@
             <result name="success">/oscarRx/ShowAllergies.jsp</result>
         </action>
         <action name="oscarRx/addAllergy2" class="ca.openosp.openo.prescript.pageUtil.RxAddAllergy2Action">
-            <result name="success">/oscarRx/ShowAllergies2.jsp</result>
+            <result name="success" type="redirect">/oscarRx/ShowAllergies2.jsp</result>
         </action>
         <action name="oscarRx/addReaction" class="ca.openosp.openo.prescript.pageUtil.RxAddReaction2Action">
             <result name="success">/oscarRx/AddReaction.jsp</result>
@@ -950,7 +950,6 @@
             <result name="success">/oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp</result>
         </action>
         <action name="oscarEncounter/eRefer" class="ca.openosp.openo.encounter.oceanEReferal.pageUtil.ERefer2Action">
-            <result name="success">/oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp</result>
         </action>
         <action name="oscarEncounter/RequestConsultation" class="ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctConsultationFormRequest2Action">
             <result name="success">/oscarEncounter/oscarConsultationRequest/ConfirmConsultationRequest.jsp</result>
@@ -1093,16 +1092,6 @@
             <result name="reload">/oscarEncounter/oscarMeasurements/TemplateFlowSheet.jsp</result>
             <result name="failure">/oscarEncounter/oscarMeasurements/FlowUpdate.jsp</result>
         </action>
-        <action name="oscarEncounter/oscarMeasurements/TrackerUpdate" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.FormUpdate2Action">
-            <result name="success">/oscarEncounter/oscarMeasurements/close.jsp</result>
-            <result name="reload">/oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf?reload</result>
-            <result name="failure">/oscarEncounter/oscarMeasurements/HealthTrackerPage.jspf</result>
-        </action>
-        <action name="oscarEncounter/oscarMeasurements/TrackerSlimUpdate" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.FormUpdate2Action">
-            <result name="success">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf?reload</result>
-            <result name="reload">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf?reload</result>
-            <result name="failure">/oscarEncounter/oscarMeasurements/HealthTrackerSlim.jspf</result>
-        </action>
         <action name="oscarEncounter/Measurements" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctMeasurements2Action">
             <result name="success">/oscarEncounter/oscarMeasurements/ProcessMeasurementsSubmission.jsp</result>
             <result name="failure">/oscarEncounter/oscarMeasurements/Measurements.jsp</result>
@@ -1162,7 +1151,13 @@
             <result name="addDSHTML">/oscarEncounter/oscarMeasurements/MeasurementGroupDSadd.jsp</result>
             <result name="removeDSHTML">/oscarEncounter/oscarMeasurements/MeasurementGroupDSremove.jsp</result>
         </action>
-        <action name="oscarEncounter/oscarMeasurements/SetupEditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctSetupEditMeasurementGroup2Action">
+      <action name="oscarRx/printPreview" class="ca.openosp.openo.rx.RxPrintPreview2Action" >
+        <result name="success">/oscarRx/printRx/PrintPreview.jsp</result>
+      </action>
+
+    <action name="digitalSignature" class="ca.openosp.openo.digitalsignature.DigitalSignature2Action" />
+
+    <action name="oscarEncounter/oscarMeasurements/SetupEditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctSetupEditMeasurementGroup2Action">
             <result name="continue">/oscarEncounter/oscarMeasurements/EditMeasurementGroup.jsp</result>
         </action>
         <action name="oscarEncounter/oscarMeasurements/EditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctEditMeasurementGroup2Action">
@@ -1334,6 +1329,7 @@
             <result name="success">/provider/setNoteStaleDate.jsp</result>
             <result name="gen">/provider/setGenProperty.jsp</result>
             <result name="genRxPageSize">/provider/setGenRxPageSizeProperty.jsp</result>
+            <result name="genHl7LabResultPrefs">/provider/setHl7LabResultPrefs.jsp</result>
             <result name="genRxDefaultQuantity">/provider/setGenRxDefaultQuantityProperty.jsp</result>
             <result name="genRxProfileView">/provider/setGenRxProfileViewProperty.jsp</result>
             <result name="genRxUseRx3">/provider/setToUseRx3.jsp</result>
@@ -1459,6 +1455,7 @@
         <action name="oscarBilling/DocumentErrorReportUpload" class="ca.openosp.openo.billings.ca.on.pageUtil.BillingDocumentErrorReportUpload2Action">
             <result name="success">/billing/CA/ON/billingEAreport.jsp</result>
             <result name="outside">/billing/CA/ON/billingLreport.jsp</result>
+            <result name="error">/billing/CA/ON/billingOBECEA.jsp</result>
         </action>
         <!--action name="PMmodule/remoteReferal" class="oscar.remotereferal.OscarRemoteReferal2Action">
             <result name="success">/eform/efmshowform_data.jsp</result>
@@ -1515,6 +1512,7 @@
             <result name="error">/errorpage.jsp</result>
         </action>
         <action name="demographic/DemographicExport" class="ca.openosp.openo.demographic.pageUtil.DemographicExportAction42Action">
+            <result name="success">/demographic/demographicExport.jsp</result>
             <result name="fail">/demographic/demographicExport.jsp</result>
         </action>
         <action name="demographic/cihiExportOMD4" class="ca.openosp.openo.demographic.pageUtil.CihiExport2Action" method="execute">
@@ -1548,6 +1546,7 @@
         </action>
         <action name="eform/imageUpload" class="ca.openosp.openo.eform.upload.ImageUpload2Action">
             <result name="success">/eform/partials/upload_image.jsp</result>
+            <result name="error">/eform/partials/upload_image.jsp</result>
         </action>
         <action name="eform/delEForm" class="ca.openosp.openo.eform.actions.DelEForm2Action">
             <result name="success">/eform/efmformmanager.jsp</result>
@@ -1695,7 +1694,7 @@
             <result name="failed">/documentManager/addedithtmldocument.jsp</result>
         </action>
         <action name="Scratch" class="ca.openosp.openo.scratch.Scratch2Action">
-            <result name="success">/scratch/index.jsp</result>
+            <result name="success">/scratch</result>
             <result name="scratchPadVersion">/scratch/version.jsp</result>
         </action>
         <action name="report/DeleteDemographicReport" class="ca.openosp.openo.report.pageUtil.RptDemographQueryFavouriteDelete2Action">
