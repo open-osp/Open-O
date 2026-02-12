@@ -42,6 +42,7 @@
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
 <%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay,ca.openosp.openo.casemgmt.web.NoteDisplayLocal" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
@@ -249,7 +250,8 @@
             // Use an iframe instead of an <object> tag to display encounter notes.
             // An <object type="text/html"> steals focus from the select list when it
             // loads, which breaks shift+arrow keyboard selection after the 2nd keypress.
-            var iframe = document.createElement('iframe');
+            let iframe = document.createElement('iframe');
+            iframe.title = 'Encounter notes';
             iframe.src = url2;
             iframe.width = getWidth() - 40;
             iframe.height = getHeight() - 300;
@@ -259,11 +261,12 @@
             docdisp.innerHTML = '';
             docdisp.appendChild(iframe);
 
-            // Restore focus to the encounter list after the iframe loads, so that
-            // shift+arrow selection can continue uninterrupted.
+            // Restore focus to the encounter list only if the iframe stole it,
+            // so that shift+arrow selection can continue uninterrupted without
+            // overriding focus if the user has intentionally moved elsewhere.
             iframe.addEventListener('load', function() {
                 var el = document.getElementById('encounterlist');
-                if (el && el !== document.activeElement) el.focus();
+                if (el && (document.activeElement === iframe || document.activeElement === document.body)) el.focus();
             });
 
             document.getElementById('docinfo').innerHTML = '';
@@ -472,7 +475,7 @@
     <table>
         <%if (errorMessage.length() > 0) {%>
         <tr>
-            <td><b><font color="red"><%=errorMessage%>
+            <td><b><font color="red"><%=Encode.forHtml(errorMessage)%>
             </font></b></td>
         </tr>
         <%}%>
