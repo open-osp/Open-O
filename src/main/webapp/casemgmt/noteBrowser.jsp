@@ -245,29 +245,29 @@
         }
 
         function showEncounter(encList) {
-            var url2 = '<%=request.getContextPath()%>' + '/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>' + encList + '&printCPP=false&printRx=false';
+            const url2 = '<%=request.getContextPath()%>' + '/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>' + encList + '&printCPP=false&printRx=false';
 
             // Use an iframe instead of an <object> tag to display encounter notes.
             // An <object type="text/html"> steals focus from the select list when it
             // loads, which breaks shift+arrow keyboard selection after the 2nd keypress.
             let iframe = document.createElement('iframe');
             iframe.title = 'Encounter notes';
-            iframe.src = url2;
             iframe.width = getWidth() - 40;
             iframe.height = getHeight() - 300;
             iframe.style.border = 'none';
-
-            var docdisp = document.getElementById('docdisp');
-            docdisp.innerHTML = '';
-            docdisp.appendChild(iframe);
 
             // Restore focus to the encounter list only if the iframe stole it,
             // so that shift+arrow selection can continue uninterrupted without
             // overriding focus if the user has intentionally moved elsewhere.
             iframe.addEventListener('load', function() {
-                var el = document.getElementById('encounterlist');
+                const el = document.getElementById('encounterlist');
                 if (el && (document.activeElement === iframe || document.activeElement === document.body)) el.focus();
             });
+
+            iframe.src = url2;
+            const docdisp = document.getElementById('docdisp');
+            docdisp.innerHTML = '';
+            docdisp.appendChild(iframe);
 
             document.getElementById('docinfo').innerHTML = '';
             document.getElementById('docextrainfo').innerHTML = '';
