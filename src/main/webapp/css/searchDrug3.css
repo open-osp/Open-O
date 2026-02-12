@@ -7,6 +7,27 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+#prescriptionStageSet {
+  box-shadow: 0 2px 4px 0 rgba(38, 40, 42, 0.3);
+  border-radius: 4px;
+  border: lightgray thin solid;
+  background-color: whitesmoke;
+  padding: 0 10px;
+  margin-top: 5px;
+}
+
+#prescriptionStageSet fieldset {
+  border-radius: 4px;
+  background-color: white;
+  margin: 10px 0!important;
+  padding: 10px !important;
+}
+
+#searchPrescriptionRow {
+  display: flex;
+  flex-direction: column;
+}
+
 #medicationsHeadingRow {
 	position: sticky;
 	top: 0;

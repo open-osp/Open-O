@@ -28,7 +28,6 @@
 <%@ taglib uri="/WEB-INF/oscarProperties-tag.tld" prefix="oscar" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="ca.openosp.openo.providers.data.ProSignatureData, ca.openosp.openo.providers.data.ProviderData" %>
-<%@ page import="ca.openosp.openo.rx.data.*" %>
 <%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 
 <%@ page import="ca.openosp.*,
@@ -552,11 +551,9 @@
 
                                 %>
 
-                                <input type="hidden" name="<%= DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY %>"
-                                       value="<%=signatureRequestId%>"/>
-                                <img id="signature" style="width:300px; height:60px" src="<%=startimageUrl%>"
-                                     alt="digital_signature"/>
-                                <input type="hidden" name="imgFile" id="imgFile" value=""/>
+								<input type="hidden" name="<%= DigitalSignatureUtils.SIGNATURE_REQUEST_ID_KEY %>" value="<%=signatureRequestId%>" />
+								<img id="signature" style="width:260px; height:130px; object-fit: contain;" src="<%=startimageUrl%>" alt="digital_signature" />
+								<input type="hidden" name="imgFile" id="imgFile" value="" />
 
                                 <script type="text/javascript">
                                     var POLL_TIME = 2500;
@@ -624,7 +621,7 @@
                             }
                         %>
 
-                        <% if (PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo)) { %>
+                        <% if (PrescriptionQrCodeUIBean.isPrescriptionQrCodeEnabledForProvider(providerNo) && rx != null && rx.getScript_no() != null) { %>
                         <tr>
                             <td colspan="2">
                                 <img src="<%=request.getContextPath()%>/contentRenderingServlet/prescription_qr_code_<%=rx.getScript_no()%>.png?source=prescriptionQrCode&prescriptionId=<%=rx.getScript_no()%>"
@@ -633,9 +630,9 @@
                         </tr>
                         <% } %>
 
-                        <% if (ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null && ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT").length() > 0) { %>
+                        <% if (ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") != null && !ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT").isEmpty()) { %>
                         <tr valign=bottom align="center">
-                            <td height=25px colspan="2" style="font-size: 9px"></br>
+                            <td height=25px colspan="2" style="font-size: 9px"><br/>
                                 <%= ca.openosp.OscarProperties.getInstance().getProperty("FORMS_PROMOTEXT") %>
                             </td>
                         </tr>
@@ -643,8 +640,8 @@
                         </tfoot>
                         <tbody>
                         <%
-                            String strRx = "";
-                            StringBuffer strRxNoNewLines = new StringBuffer();
+                            StringBuilder strRx = new StringBuilder();
+                            StringBuilder strRxNoNewLines = new StringBuilder();
 
                             for (i = 0; i < bean.getStashSize(); i++) {
                                 rx = bean.getStashItem(i);
@@ -656,32 +653,28 @@
                                 }
                         %>
                         <tr style="page-break-inside: avoid;">
-                            <td colspan=2 style><%=fullOutLine%>
+                            <td colspan=2>
+                              <%=fullOutLine%>
                             </td>
                         </tr>
-
                         <%
-                                strRx += rx.getFullOutLine() + ";;";
-                                strRxNoNewLines.append(rx.getFullOutLine().replaceAll(";", " ") + "\n");
+                                strRx.append(rx.getFullOutLine()).append(";;");
+                                strRxNoNewLines.append(rx.getFullOutLine().replaceAll(";", " ")).append("\n");
                             }
                         %>
-                        <tr valign="bottom">
-                            <td colspan="2" id="additNotes"></td>
-                        </tr>
-
-                        <input type="hidden" name="rx"
-                               value="<%= StringEscapeUtils.escapeHtml4(strRx.replaceAll(";","\\\n")) %>"/>
-                        <input type="hidden" name="rx_no_newlines" value="<%= strRxNoNewLines.toString() %>"/>
-                        <input type="hidden" name="additNotes" value=""/>
-                        </tbody>
-                    </table>
-                </td>
-                <td style="vertical-align: top;padding: 5px;">
-                    <div id="pharmInfo">
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </form>
-    </body>
+						<input type="hidden" name="rx" value="<%= StringEscapeUtils.escapeHtml4(strRx.toString().replaceAll(";","\\\n")) %>" />
+						<input type="hidden" name="rx_no_newlines" value="<%= strRxNoNewLines.toString() %>" />
+						<input type="hidden" name="additNotes" value=""/>
+					</tbody>
+				</table>
+			</td>
+	        <td style="vertical-align: top;padding: 5px;">
+		        <div id="pharmInfo">
+					${param.pharmaAddress != null ? param.pharmaAddress : ''}
+		        </div>
+	        </td>
+		</tr>
+	</table>
+</form>
+</body>
 </html>

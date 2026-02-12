@@ -1151,7 +1151,13 @@
             <result name="addDSHTML">/oscarEncounter/oscarMeasurements/MeasurementGroupDSadd.jsp</result>
             <result name="removeDSHTML">/oscarEncounter/oscarMeasurements/MeasurementGroupDSremove.jsp</result>
         </action>
-        <action name="oscarEncounter/oscarMeasurements/SetupEditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctSetupEditMeasurementGroup2Action">
+      <action name="oscarRx/printPreview" class="ca.openosp.openo.rx.RxPrintPreview2Action" >
+        <result name="success">/oscarRx/printRx/PrintPreview.jsp</result>
+      </action>
+
+    <action name="digitalSignature" class="ca.openosp.openo.digitalsignature.DigitalSignature2Action" />
+
+    <action name="oscarEncounter/oscarMeasurements/SetupEditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctSetupEditMeasurementGroup2Action">
             <result name="continue">/oscarEncounter/oscarMeasurements/EditMeasurementGroup.jsp</result>
         </action>
         <action name="oscarEncounter/oscarMeasurements/EditMeasurementGroup" class="ca.openosp.openo.encounter.oscarMeasurements.pageUtil.EctEditMeasurementGroup2Action">
