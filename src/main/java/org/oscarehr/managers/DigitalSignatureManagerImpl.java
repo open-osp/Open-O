@@ -23,7 +23,9 @@
 package org.oscarehr.managers;
 
 import org.oscarehr.common.dao.DigitalSignatureDao;
+import org.oscarehr.common.dao.PrescriptionDao;
 import org.oscarehr.common.model.DigitalSignature;
+import org.oscarehr.common.model.Prescription;
 import org.oscarehr.common.model.enumerator.ModuleType;
 import org.oscarehr.util.DigitalSignatureUtils;
 import org.oscarehr.util.EncryptionUtils;
@@ -42,10 +44,12 @@ import java.util.Objects;
 public class DigitalSignatureManagerImpl implements DigitalSignatureManager {
 
     private final DigitalSignatureDao digitalSignatureDao;
+    private final PrescriptionDao prescriptionDao;
 
     @Autowired
-    public DigitalSignatureManagerImpl(DigitalSignatureDao digitalSignatureDao) {
+    public DigitalSignatureManagerImpl(DigitalSignatureDao digitalSignatureDao, PrescriptionDao prescriptionDao) {
         this.digitalSignatureDao = digitalSignatureDao;
+        this.prescriptionDao = prescriptionDao;
     }
 
 
@@ -120,6 +124,16 @@ public class DigitalSignatureManagerImpl implements DigitalSignatureManager {
         }
 
         return null;
+    }
+
+    @Override
+    public DigitalSignature getDigitalSignatureByPrescriptionId(Integer prescriptionId) {
+        Prescription prescription = this.prescriptionDao.find(prescriptionId);
+        if (prescription == null || prescription.getDigitalSignatureId() == null) {
+            return null;
+        }
+
+        return this.getDigitalSignature(prescription.getDigitalSignatureId());
     }
 
 }

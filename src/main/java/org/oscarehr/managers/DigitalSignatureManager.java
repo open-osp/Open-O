@@ -83,5 +83,14 @@ public interface DigitalSignatureManager extends OscarManagerBase {
      */
     DigitalSignature processAndSaveDigitalSignature(LoggedInInfo loggedInInfo, String signatureRequestId, Integer demographicNo, ModuleType moduleType);
 
+    /**
+     * Retrieves the digital signature associated with a specific prescription ID.
+     * This method attempts to locate and return the digital signature linked
+     * to the provided prescription ID from the database.
+     *
+     * @param prescriptionId The ID of the prescription for which the digital signature is being retrieved.
+     * @return The corresponding {@code DigitalSignature} object, or {@code null} if no signature is found.
+     */
+    DigitalSignature getDigitalSignatureByPrescriptionId(Integer prescriptionId);
 }
 
