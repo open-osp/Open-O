@@ -609,8 +609,8 @@
 
     function checkFav() {
       //console.log("****** in checkFav");
-      var usefav = '<%=usefav%>';
-      var favid = '<%=favid%>';
+      var usefav = '<%=Encode.forJavaScript(usefav)%>';
+      var favid = '<%=Encode.forJavaScript(favid)%>';
       if (usefav == "true" && favid != null && favid != 'null') {
         //console.log("****** favid "+favid);
         useFav2(favid);
@@ -2724,307 +2724,334 @@
         method: 'POST', parameters: data,
         requestHeaders: {'Accept': 'application/json'},
         onSuccess: function (transport) {
-          var json = transport.responseText.evalJSON();
-          $(methodStr).innerHTML = json.method;
-          $(routeStr).innerHTML = json.route;
-          $(frequencyStr).innerHTML = json.frequency;
-          $(minimumStr).innerHTML = json.takeMin;
-          $(maximumStr).innerHTML = json.takeMax;
-          if (json.duration == null || json.duration == "null") {
-            $(durationStr).innerHTML = '';
-          } else {
-            $(durationStr).innerHTML = json.duration;
-          }
-          $(durationUnitStr).innerHTML = json.durationUnit;
-          $(quantityStr).innerHTML = json.calQuantity;
-          if (json.unitName != null && json.unitName != "null" && json.unitName != "NULL" && json.unitName != "Null") {
-            $(unitNameStr).innerHTML = json.unitName;
-          } else {
-            $(unitNameStr).innerHTML = '';
-          }
-          if (json.prn) {
-            $(prnStr).innerHTML = "prn";
-            $(prnVal).value = true;
-          } else {
-            $(prnStr).innerHTML = "";
-            $(prnVal).value = false;
-          }
+              var json = transport.responseText.evalJSON();
+              console.log(json);
+              $(methodStr).innerHTML = json.method;
+              $(routeStr).innerHTML = json.route;
+              $(frequencyStr).innerHTML = json.frequency;
+              $(minimumStr).innerHTML = json.takeMin;
+              $(maximumStr).innerHTML = json.takeMax;
+              if (json.duration == null || json.duration == "null") {
+                  $(durationStr).innerHTML = '';
+              } else {
+                  $(durationStr).innerHTML = json.duration;
+              }
+              $(durationUnitStr).innerHTML = json.durationUnit;
+              $(quantityStr).innerHTML = json.calQuantity;
+              if (json.unitName != null && json.unitName != "null" && json.unitName != "NULL" && json.unitName != "Null") {
+                  $(unitNameStr).innerHTML = json.unitName;
+              } else {
+                  $(unitNameStr).innerHTML = '';
+              }
+              if (json.prn) {
+                  $(prnStr).innerHTML = "prn";
+                  $(prnVal).value = true;
+              } else {
+                  $(prnStr).innerHTML = "";
+                  $(prnVal).value = false;
+              }
 
-        }
+          }
       });
       return true;
     }
 
-    function parseIntr(element) {
-      var elemId = element.id;
-      var ar = elemId.split("_");
-      var rand = ar[1];
+    const methods = ["Take", "Apply", "Rub well in"];
+    const routes = ["PO", "SL", "IM", "Subcut", "PATCH", "TOP", "INH", "SUPP", "right eye", "left eye", "both eyes"];
+    const frequencies = ["BID", "TID", "QID", "once daily", "twice daily", "3x daily", "4x daily", "weekly"];
+    const numbers = ["1/4", "1/2", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const durations = ["day", "days", "week", "weeks", "month", "months", "3 months"];
+
+    let placeholderInterval;
+
+    function getRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function generateExample() {
+        return getRandom(methods) + " " +
+            getRandom(routes) + " " +
+            getRandom(frequencies) + " " +
+            getRandom(numbers) + " for " +
+            getRandom(durations);
+    }
+
+    function startShowingSampleInstructions(element, randId) {
+        element.placeholder = "e.g. " + generateExample();
+        element._placeholderInterval = setInterval(() => {
+            element.placeholder = "e.g. " + generateExample();
+        }, 2000);
+
+        document.getElementById("disp_instruct_link_" + randId).classList.add('ripple-wrap');
+        document.getElementById("disp_instruct_img_" + randId).classList.add('ripple-icon', 'pulse-icon');
+    }
+
+
+    function stopShowingSampleInstructions(element, randId) {
+        clearInterval(element._placeholderInterval);
+        element._placeholderInterval = null;
+
+        document.getElementById("disp_instruct_link_" + randId).classList.remove('ripple-wrap');
+        document.getElementById("disp_instruct_img_" + randId).classList.remove('ripple-icon', 'pulse-icon');
+    }
+
+        function parseIntr(element) {
+            var elemId = element.id;
+            var ar = elemId.split("_");
+            var rand = ar[1];
       var instruction = "parameterValue=updateDrug&instruction=" + encodeURIComponent(element.value) + "&action=parseInstructions&randomId=" + rand;
       var url = ctx + "/oscarRx/UpdateScript.do";
-      var quantity = "quantity_" + rand;
-      var str;
-      var methodStr = "method_" + rand;
-      var routeStr = "route_" + rand;
-      var frequencyStr = "frequency_" + rand;
-      var minimumStr = "minimum_" + rand;
-      var maximumStr = "maximum_" + rand;
-      var durationStr = "duration_" + rand;
-      var durationUnitStr = "durationUnit_" + rand;
-      var quantityStr = "quantityStr_" + rand;
-      var unitNameStr = "unitName_" + rand;
-      var prnStr = "prn_" + rand;
-      var prnVal = "prnVal_" + rand;
-      new Ajax.Request(url, {
+            var quantity = "quantity_" + rand;
+            var str;
+            var methodStr = "method_" + rand;
+            var routeStr = "route_" + rand;
+            var frequencyStr = "frequency_" + rand;
+            var minimumStr = "minimum_" + rand;
+            var maximumStr = "maximum_" + rand;
+            var durationStr = "duration_" + rand;
+            var durationUnitStr = "durationUnit_" + rand;
+            var quantityStr = "quantityStr_" + rand;
+            var unitNameStr = "unitName_" + rand;
+            var prnStr = "prn_" + rand;
+            var prnVal = "prnVal_" + rand;
+            new Ajax.Request(url, {
         method: 'POST', parameters: instruction, asynchronous: false,
         requestHeaders: {'Accept': 'application/json'},
         onSuccess: function (transport) {
-          var json = transport.responseText.evalJSON();
-          if (json.policyViolations != null && json.policyViolations.length > 0) {
-            for (var x = 0; x < json.policyViolations.length; x++) {
-              alert(json.policyViolations[x]);
-            }
-            $("saveButton").disabled = true;
-            $("saveOnlyButton").disabled = true;
-          } else {
-            $("saveButton").disabled = false;
-            $("saveOnlyButton").disabled = false;
-          }
+                    var json = transport.responseText.evalJSON();
+                    if (json.policyViolations != null && json.policyViolations.length > 0) {
+                        for (var x = 0; x < json.policyViolations.length; x++) {
+                            alert(json.policyViolations[x]);
+                        }
+                        $("saveButton").disabled = true;
+                        $("saveOnlyButton").disabled = true;
+                    } else {
+                        $("saveButton").disabled = false;
+                        $("saveOnlyButton").disabled = false;
+                    }
 
-          $(methodStr).innerHTML = json.method;
-          $(routeStr).innerHTML = json.route;
-          $(frequencyStr).innerHTML = json.frequency;
-          $(minimumStr).innerHTML = json.takeMin;
-          $(maximumStr).innerHTML = json.takeMax;
-          if (json.duration == null || json.duration == "null") {
-            $(durationStr).innerHTML = '';
-          } else {
-            $(durationStr).innerHTML = json.duration;
-          }
-          $(durationUnitStr).innerHTML = json.durationUnit;
-          if (json.unitName != null && json.unitName != "null" && json.unitName != "NULL" && json.unitName != "Null") {
-            $(unitNameStr).innerHTML = json.unitName;
-          } else {
-            $(unitNameStr).innerHTML = '';
-          }
-          if (json.calQuantity != 0) {
-            //this is oftentimes zero when re-prescribing a drug where the unitName != null.
-            //Until a more reliable calculated quantity is being returned, don't update if the calculated quantity is 0
-            //silently changing to 0 can be problematic in situations where the quantity has already been set
-            //to an appropriate value.
-            $(quantityStr).innerHTML = json.calQuantity;
-            if ($(unitNameStr).innerHTML != '')
-              $(quantity).value = $(quantityStr).innerHTML + " " + $(unitNameStr).innerHTML;
-            else
-              $(quantity).value = $(quantityStr).innerHTML;
+                    $(methodStr).innerHTML = json.method;
+                    $(routeStr).innerHTML = json.route;
+                    $(frequencyStr).innerHTML = json.frequency;
+                    $(minimumStr).innerHTML = json.takeMin;
+                    $(maximumStr).innerHTML = json.takeMax;
+                    if (json.duration == null || json.duration == "null") {
+                        $(durationStr).innerHTML = '';
+                    } else {
+                        $(durationStr).innerHTML = json.duration;
+                    }
+                    $(durationUnitStr).innerHTML = json.durationUnit;
+                    if (json.unitName != null && json.unitName != "null" && json.unitName != "NULL" && json.unitName != "Null") {
+                        $(unitNameStr).innerHTML = json.unitName;
+                    } else {
+                        $(unitNameStr).innerHTML = '';
+                    }
+                    if (json.calQuantity != 0) {
+                        //this is oftentimes zero when re-prescribing a drug where the unitName != null.
+                        //Until a more reliable calculated quantity is being returned, don't update if the calculated quantity is 0
+                        //silently changing to 0 can be problematic in situations where the quantity has already been set
+                        //to an appropriate value.
+                        $(quantityStr).innerHTML = json.calQuantity;
+                        if ($(unitNameStr).innerHTML != '')
+                            $(quantity).value = $(quantityStr).innerHTML + " " + $(unitNameStr).innerHTML;
+                        else
+                            $(quantity).value = $(quantityStr).innerHTML;
 
-          }
-          if (json.prn) {
-            $(prnStr).innerHTML = "prn";
-            $(prnVal).value = true;
-          } else {
-            $(prnStr).innerHTML = "";
-            $(prnVal).value = false;
-          }
+                    }
+                    if (json.prn) {
+                        $(prnStr).innerHTML = "prn";
+                        $(prnVal).value = true;
+                    } else {
+                        $(prnStr).innerHTML = "";
+                        $(prnVal).value = false;
+                    }
+                }
+            });
+            return true;
         }
-      });
-      return true;
-    }
 
-    function addLuCode(eleId, luCode) {
-      $(eleId).value = $(eleId).value + " LU Code: " + luCode;
-    }
+        function addLuCode(eleId, luCode) {
+            $(eleId).value = $(eleId).value + " LU Code: " + luCode;
+        }
 
-    function getRenalDosingInformation(divId, atcCode) {
+        function getRenalDosingInformation(divId, atcCode) {
       var url = "<%= request.getContextPath() %>/oscarRx/RenalDosing.jsp";
-      var ran_number = Math.round(Math.random() * 1000000);
+            var ran_number = Math.round(Math.random() * 1000000);
       var params = "demographicNo=<%=demoNo%>&atcCode=" + encodeURIComponent(atcCode) + "&divId=" + divId + "&rand=" + ran_number;
-      new Ajax.Updater(divId, url, {
-        method: 'get',
-        parameters: params,
-        insertion: Insertion.Bottom,
-        asynchronous: true
-      });
-    }
+            new Ajax.Updater(divId, url, {
+                method: 'get',
+                parameters: params,
+                insertion: Insertion.Bottom,
+                asynchronous: true
+            });
+        }
 
-    function getLUC(divId, randomId, din) {
+        function getLUC(divId, randomId, din) {
       var url = ctx + "/oscarRx/LimitedUseCode.jsp";
       var params = "randomId=" + randomId + "&din=" + encodeURIComponent(din);
-      new Ajax.Updater(divId, url, {
-        method: 'get',
-        parameters: params,
-        insertion: Insertion.Bottom,
-        asynchronous: true
-      });
-    }
-
-    function validateRxDate() {
-      var x = true;
-      jQuery('input[name^="rxDate__"]').each(function () {
-        var str1 = jQuery(this).val();
-
-        var dt = str1.split("-");
-        if (dt.length > 3) {
-          jQuery(this).focus();
-          alert('Start Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
-          x = false;
-          return;
+            new Ajax.Updater(divId, url, {
+                method: 'get',
+                parameters: params,
+                insertion: Insertion.Bottom,
+                asynchronous: true
+            });
         }
 
-        var dt1 = 1, mon1 = 0, yr1 = parseInt(dt[0], 10);
-        if (isNaN(yr1) || yr1 < 0 || yr1 > 9999) {
-          jQuery(this).focus();
-          alert('Invalid Start Date! Please check the year');
-          x = false;
-          return;
+        function validateRxDate() {
+            var x = true;
+            jQuery('input[name^="rxDate__"]').each(function () {
+                var str1 = jQuery(this).val();
+
+                 var dt = str1.split("-");
+                 if (dt.length>3) {
+                 	jQuery(this).focus();
+                     alert('Start Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
+                     x = false;
+                     return;
+                 }
+
+                 var dt1=1, mon1=0, yr1=parseInt(dt[0],10);
+                 if (isNaN(yr1) || yr1<0 || yr1>9999) {
+                 	jQuery(this).focus();
+                     alert('Invalid Start Date! Please check the year');
+                     x = false;
+                     return;
+                 }
+                 if (dt.length>1) {
+                 	mon1 = parseInt(dt[1],10)-1;
+                 	if (isNaN(mon1) || mon1<0 || mon1>11) {
+                 		jQuery(this).focus();
+                 		alert('Invalid Start Date! Please check the month');
+                         x = false;
+                         return;
+                 	}
+                 }
+                 if (dt.length>2) {
+                 	dt1 = parseInt(dt[2],10);
+                     if (isNaN(dt1) || dt1<1 || dt1>31) {
+                     	jQuery(this).focus();
+                         alert('Invalid Start Date! Please check the day');
+                         x = false;
+                         return;
+                     }
+                 }
+                 var date1 = new Date(yr1, mon1, dt1);
+                 var now  = new Date();
+
+                 if(date1 > now) {
+                 	jQuery(this).focus();
+                     alert('Start Date cannot be in the future. (' + str1 +')');
+                     x = false;
+                     return;
+     	        }
+             });
+             return x;
+         }
+      
+        function validateWrittenDate() {
+          var x = true;
+            jQuery('input[name^="writtenDate_"]').each(function(){
+                var str1  = jQuery(this).val();
+    
+                var dt = str1.split("-");
+                if (dt.length>3) {
+                  jQuery(this).focus();
+                    alert('Written Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
+                    x = false;
+                    return;
+                }
+    
+                var dt1 = 1, mon1 = 0, yr1 = parseInt(dt[0], 10);
+                if (isNaN(yr1) || yr1 < 0 || yr1 > 9999) {
+                    jQuery(this).focus();
+                    alert('Invalid Written Date! Please check the year');
+                    x = false;
+                    return;
+                }
+                if (dt.length > 1) {
+                    mon1 = parseInt(dt[1], 10) - 1;
+                    if (isNaN(mon1) || mon1 < 0 || mon1 > 11) {
+                        jQuery(this).focus();
+                        alert('Invalid Written Date! Please check the month');
+                        x = false;
+                        return;
+                    }
+                }
+                if (dt.length > 2) {
+                    dt1 = parseInt(dt[2], 10);
+                    if (isNaN(dt1) || dt1 < 1 || dt1 > 31) {
+                        jQuery(this).focus();
+                        alert('Invalid Written Date! Please check the day');
+                        x = false;
+                        return;
+                    }
+                }
+                var date1 = new Date(yr1, mon1, dt1);
+                var now = new Date();
+    
+                if (date1 > now) {
+                    jQuery(this).focus();
+                    alert('Written Date cannot be in the future. (' + str1 + ')');
+                    x = false;
+                    return;
+                }
+            });
+            return x;
         }
-        if (dt.length > 1) {
-          mon1 = parseInt(dt[1], 10) - 1;
-          if (isNaN(mon1) || mon1 < 0 || mon1 > 11) {
-            jQuery(this).focus();
-            alert('Invalid Start Date! Please check the month');
-            x = false;
-            return;
+    
+    
+        function updateSaveAllDrugsPrintCheckContinue() {
+            updateSaveAllDrugsPrintContinue();
+        }
+    
+        function updateSaveAllDrugsCheckContinue() {
+            updateSaveAllDrugsContinue();
+        }
+    
+        const CONFIRMATION_MESSAGE = {
+            SINGLE: 'is 1 unstaged ReRx drug',
+            MULTIPLE: (count) => "are " + count + " unstaged ReRx drugs"
+        };
+    
+        const SAVE_WARNING = 'If you continue, the unstaged ReRx drug(s) will not be re-prescribed.';
+        const SAVE_PROMPT = 'Are you sure you want to save this prescription?';
+    
+        function showUnstagedReRxConfirmation(onConfirm) {
+            if (selectedReRxIDs.length === 0) {
+                onConfirm();
+                return;
+            }
+    
+            const message = buildConfirmationMessage(selectedReRxIDs.length);
+            if (confirm(message)) {
+                cancelAndClearSelection();
+                onConfirm();
+            }
+        }
+    
+        function buildConfirmationMessage(count) {
+            const statusMessage = count === 1
+                ? CONFIRMATION_MESSAGE.SINGLE
+                : CONFIRMATION_MESSAGE.MULTIPLE(count);
+            return "There " + statusMessage + ".\n" + SAVE_WARNING + "\n" + SAVE_PROMPT;
+        }
+
+        function updateSaveAllDrugsPrintContinue() {
+            if (!validateWrittenDate()) {
+                return false;
+            }
+            if (!validateRxDate()) {
+                return false;
+            }
+    
+        <%if (OscarProperties.getInstance().isPropertyActive("rx_strict_med_term")) {%>
+        if(!checkMedTerm()){
+          return false;
+        }
+        <%
           }
-        }
-        if (dt.length > 2) {
-          dt1 = parseInt(dt[2], 10);
-          if (isNaN(dt1) || dt1 < 1 || dt1 > 31) {
-            jQuery(this).focus();
-            alert('Invalid Start Date! Please check the day');
-            x = false;
-            return;
-          }
-        }
-        var date1 = new Date(yr1, mon1, dt1);
-        var now = new Date();
-
-        if (date1 > now) {
-          jQuery(this).focus();
-          alert('Start Date cannot be in the future. (' + str1 + ')');
-          x = false;
-          return;
-        }
-      });
-      return x;
-    }
-
-
-    function validateWrittenDate() {
-      var x = true;
-      jQuery('input[name^="writtenDate_"]').each(function () {
-        var str1 = jQuery(this).val();
-
-        var dt = str1.split("-");
-        if (dt.length > 3) {
-          jQuery(this).focus();
-          alert('Written Date wrong format! Must be yyyy or yyyy-mm or yyyy-mm-dd');
-          x = false;
-          return;
-        }
-
-        var dt1 = 1, mon1 = 0, yr1 = parseInt(dt[0], 10);
-        if (isNaN(yr1) || yr1 < 0 || yr1 > 9999) {
-          jQuery(this).focus();
-          alert('Invalid Written Date! Please check the year');
-          x = false;
-          return;
-        }
-        if (dt.length > 1) {
-          mon1 = parseInt(dt[1], 10) - 1;
-          if (isNaN(mon1) || mon1 < 0 || mon1 > 11) {
-            jQuery(this).focus();
-            alert('Invalid Written Date! Please check the month');
-            x = false;
-            return;
-          }
-        }
-        if (dt.length > 2) {
-          dt1 = parseInt(dt[2], 10);
-          if (isNaN(dt1) || dt1 < 1 || dt1 > 31) {
-            jQuery(this).focus();
-            alert('Invalid Written Date! Please check the day');
-            x = false;
-            return;
-          }
-        }
-        var date1 = new Date(yr1, mon1, dt1);
-        var now = new Date();
-
-        if (date1 > now) {
-          jQuery(this).focus();
-          alert('Written Date cannot be in the future. (' + str1 + ')');
-          x = false;
-          return;
-        }
-      });
-      return x;
-    }
-
-
-    function updateSaveAllDrugsPrintCheckContinue() {
-      updateSaveAllDrugsPrintContinue();
-    }
-
-    function updateSaveAllDrugsCheckContinue() {
-      updateSaveAllDrugsContinue();
-    }
-
-    const CONFIRMATION_MESSAGE = {
-      SINGLE: 'is 1 unstaged ReRx drug',
-      MULTIPLE: (count) => "are " + count + " unstaged ReRx drugs"
-    };
-
-    const SAVE_WARNING = 'If you continue, the unstaged ReRx drug(s) will not be re-prescribed.';
-    const SAVE_PROMPT = 'Are you sure you want to save this prescription?';
-
-    function showUnstagedReRxConfirmation(onConfirm) {
-      if (selectedReRxIDs.length === 0) {
-        onConfirm();
-        return;
-      }
-
-      const message = buildConfirmationMessage(selectedReRxIDs.length);
-      if (confirm(message)) {
-        cancelAndClearSelection();
-        onConfirm();
-      }
-    }
-
-    function buildConfirmationMessage(count) {
-      const statusMessage = count === 1
-        ? CONFIRMATION_MESSAGE.SINGLE
-        : CONFIRMATION_MESSAGE.MULTIPLE(count);
-      return "There " + statusMessage + ".\n" + SAVE_WARNING + "\n" + SAVE_PROMPT;
-    }
-
-    <%--	<%--%>
-    <%--		ArrayList<Object> args = new ArrayList<Object>();--%>
-    <%--		args.add(String.valueOf(demoNo));--%>
-    <%--		args.add(providerNo);--%>
-
-    <%--		Study myMeds = StudyFactory.getFactoryInstance().makeStudy(Study.MYMEDS, args);--%>
-    <%--		out.write(myMeds.printInitcode());--%>
-    <%--	%>--%>
-
-
-    function updateSaveAllDrugsPrintContinue() {
-      if (!validateWrittenDate()) {
-        return false;
-      }
-      if (!validateRxDate()) {
-        return false;
-      }
-
-      <%
-		if (OscarProperties.getInstance().isPropertyActive("rx_strict_med_term")) {
-		%>
-      if (!checkMedTerm()) {
-        return false;
-      }
-      <%
-		}
-		%>
-      setPharmacyId();
+          %>
+       setPharmacyId();
       var data = Form.serialize($('drugForm'));
       var url = ctx + "/oscarRx/WriteScript.do?parameterValue=updateSaveAllDrugs&rand=" + Math.floor(Math.random() * 10001);
       new Ajax.Request(url,
