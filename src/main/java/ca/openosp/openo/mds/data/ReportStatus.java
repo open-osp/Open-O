@@ -46,6 +46,8 @@ public class ReportStatus {
 
     private String oscarProviderNo;
 
+    private boolean isHl7AllowOthersFileForYou;
+
     public ReportStatus() {
         // allow empty constructor
     }
@@ -173,6 +175,14 @@ public class ReportStatus {
      */
     public void setOscarProviderNo(String oscarProviderNo) {
         this.oscarProviderNo = oscarProviderNo;
+    }
+
+    public boolean isHl7AllowOthersFileForYou() {
+        return isHl7AllowOthersFileForYou;
+    }
+
+    public void setHl7AllowOthersFileForYou(boolean isHl7AllowOthersFileForYou) {
+        this.isHl7AllowOthersFileForYou = isHl7AllowOthersFileForYou;
     }
 
 }
