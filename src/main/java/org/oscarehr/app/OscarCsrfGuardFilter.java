@@ -24,6 +24,7 @@
 package org.oscarehr.app;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.oscarehr.filters.OscarBaseFilter;
 import org.oscarehr.util.MiscUtils;
 import org.owasp.csrfguard.CsrfGuard;
 import org.owasp.csrfguard.CsrfGuardException;
@@ -53,7 +54,7 @@ import java.util.Set;
  * A CsrfGuardFilter implementation that supports detecting and paring multipart/form-data requests in addition to 
  * the existing support
  */
-public class OscarCsrfGuardFilter implements Filter {
+public class OscarCsrfGuardFilter extends OscarBaseFilter {
 
 	private FilterConfig filterConfig = null;
 
@@ -63,7 +64,7 @@ public class OscarCsrfGuardFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+	public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
 		CsrfGuard csrfGuard = CsrfGuard.getInstance();
 

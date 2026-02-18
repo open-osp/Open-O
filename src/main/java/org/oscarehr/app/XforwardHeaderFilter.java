@@ -23,12 +23,14 @@
  */
 package org.oscarehr.app;
 
+import org.oscarehr.filters.OscarBaseFilter;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 
-public class XforwardHeaderFilter implements Filter {
+public class XforwardHeaderFilter extends OscarBaseFilter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -36,7 +38,7 @@ public class XforwardHeaderFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if(request instanceof HttpServletRequest) {
             chain.doFilter(new ModifyRemoteAddress((HttpServletRequest) request), response);
         } else {
