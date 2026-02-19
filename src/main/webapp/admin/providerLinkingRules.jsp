@@ -5,12 +5,12 @@
 <c:set var="roleName" value="${sessionScope.userrole},${sessionScope.user}" />
 
 <security:oscarSec roleName="${roleName}" objectName="_admin" rights="w" reverse="true">
-    <c:redirect url="../securityError.jsp">
+    <c:redirect url="${pageContext.servletContext.contextPath}/securityError.jsp">
         <c:param name="type" value="_admin" />
     </c:redirect>
 </security:oscarSec>
 <security:oscarSec roleName="${roleName}" objectName="_lab" rights="w" reverse="true">
-    <c:redirect url="../securityError.jsp">
+    <c:redirect url="${pageContext.servletContext.contextPath}/securityError.jsp">
         <c:param name="type" value="_lab" />
     </c:redirect>
 </security:oscarSec>
@@ -77,7 +77,7 @@
     </script>
 </head>
 <body>
-<jsp:include page="../images/spinner.jsp" flush="true"/>
+<jsp:include page="/images/spinner.jsp" flush="true"/>
 
     <div class="container mt-5">
         <div class="card shadow-sm rounded-3">
