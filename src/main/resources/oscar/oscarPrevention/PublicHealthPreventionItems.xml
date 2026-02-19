@@ -331,7 +331,7 @@ Varicella Immunoglobulin	VarIg
 
 	<item 
 		resultDesc=""
-		desc="Mammorgram" name="MAM" link="" layout="PAPMAM" minAge="40"
+		desc="Mammogram" name="MAM" link="" layout="PAPMAM" minAge="40"
 		maxAge="70" sex="F" showIfMinRecordNum="1" />
 
 	<item 
