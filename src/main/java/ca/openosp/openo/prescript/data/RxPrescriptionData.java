@@ -467,8 +467,9 @@ public class RxPrescriptionData {
             boolean isCustomName = true;
 
             for (Prescription p : result) {
-                if (p.getGCN_SEQNO() == drug.getGcnSeqNo()) {
-					if (p.getGCN_SEQNO() != "0") // not custom - safe GCN
+                if (p.getGCN_SEQNO() != null && p.getGCN_SEQNO().equals(drug.getGcnSeqNo())) {
+					// not custom - safe GCN
+					if (!"0".equals(p.getGCN_SEQNO()))
                         isCustomName = false;
                     else if (p.getCustomName() != null && drug.getCustomName() != null) // custom
                         isCustomName = !p.getCustomName().equals(drug.getCustomName());
@@ -688,10 +689,32 @@ public class RxPrescriptionData {
 		 */
 		private String drugPrescribed;
 
+		/**
+		 * Gets the exact drug that was prescribed.
+		 * <p>
+		 * This field stores the actual prescribed drug name, allowing the system to determine
+		 * exactly what was prescribed instead of depending on the brand name every time.
+		 * This is particularly important for generic vs. brand name prescriptions and
+		 * for tracking prescription accuracy.
+		 * </p>
+		 *
+		 * @return String the prescribed drug name, or null if not set
+		 */
 		public String getDrugPrescribed() {
 			return drugPrescribed;
 		}
 
+		/**
+		 * Sets the exact drug that was prescribed.
+		 * <p>
+		 * This field stores the actual prescribed drug name, allowing the system to determine
+		 * exactly what was prescribed instead of depending on the brand name every time.
+		 * This is particularly important for generic vs. brand name prescriptions and
+		 * for tracking prescription accuracy.
+		 * </p>
+		 *
+		 * @param drugPrescribed String the prescribed drug name to set
+		 */
 		public void setDrugPrescribed(String drugPrescribed) {
 			this.drugPrescribed = drugPrescribed;
 		}
@@ -1113,10 +1136,24 @@ public class RxPrescriptionData {
             // this.gcn=null;
         }
 
+		/**
+		 * Retrieves the Generic Code Number Sequence Number (GCN_SEQNO) for this prescription drug.
+		 * The GCN_SEQNO is a unique identifier used in drug reference systems to identify specific drug products.
+		 *
+		 * @return String the Generic Code Number Sequence Number, or null if not set
+		 * @since 2022-12-16
+		 */
 		public String getGCN_SEQNO() {
             return this.GCN_SEQNO;
         }
 
+		/**
+		 * Sets the Generic Code Number Sequence Number (GCN_SEQNO) for this prescription drug.
+		 * The GCN_SEQNO is a unique identifier used in drug reference systems to identify specific drug products.
+		 *
+		 * @param RHS String the Generic Code Number Sequence Number to set
+		 * @since 2022-12-16
+		 */
 		public void setGCN_SEQNO(String RHS) {
             this.GCN_SEQNO = RHS;
             // this.gcn=null;
