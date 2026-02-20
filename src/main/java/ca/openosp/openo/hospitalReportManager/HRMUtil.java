@@ -14,14 +14,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import ca.openosp.OscarProperties;
+import ca.openosp.openo.commn.dao.IncomingLabRulesDao;
+import ca.openosp.openo.commn.model.IncomingLabRules;
 import ca.openosp.openo.hospitalReportManager.dao.*;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.hospitalReportManager.model.HRMCategory;
 import ca.openosp.openo.hospitalReportManager.model.HRMDocument;
 import ca.openosp.openo.hospitalReportManager.model.HRMDocumentSubClass;
 import ca.openosp.openo.hospitalReportManager.model.HRMDocumentToDemographic;
+import ca.openosp.openo.hospitalReportManager.model.HRMDocumentToProvider;
 import ca.openosp.openo.hospitalReportManager.model.HRMSubClass;
 import ca.openosp.openo.managers.NioFileManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -43,9 +47,11 @@ public class HRMUtil {
 
     private static HRMDocumentDao hrmDocumentDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
     private static HRMDocumentToDemographicDao hrmDocumentToDemographicDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+    private static HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
     private static HRMSubClassDao hrmSubClassDao = (HRMSubClassDao) SpringUtils.getBean(HRMSubClassDao.class);
     private static HRMDocumentSubClassDao hrmDocumentSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
     private static HRMCategoryDao hrmCategoryDao = SpringUtils.getBean(HRMCategoryDao.class);
+    private static IncomingLabRulesDao incomingLabRulesDao = SpringUtils.getBean(IncomingLabRulesDao.class);
     private static final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
     private static final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
@@ -362,5 +368,49 @@ public class HRMUtil {
     private static String getHRMDocumentDisplayName(Integer hrmId) {
         HRMDocument hrmDocument = hrmDocumentDao.find(hrmId);
         return getHRMDocumentDisplayName(hrmDocument.getDescription(), "", hrmDocument.getReportType(), hrmDocument.getReportStatus());
+    }
+
+    public static void assignProviderToDocument(Integer hrmDocumentId, String providerNo) {
+        HRMDocumentToProvider existingMapping = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, providerNo);
+        if (existingMapping == null) {
+            HRMDocumentToProvider providerMapping = new HRMDocumentToProvider();
+            providerMapping.setHrmDocumentId(hrmDocumentId);
+            providerMapping.setProviderNo(providerNo);
+            providerMapping.setSignedOff(0);
+            hrmDocumentToProviderDao.persist(providerMapping);
+        }
+    }
+
+    public static void processIncomingLabRules(Integer hrmDocumentId, String providerNo) {
+        List<IncomingLabRules> incomingLabRules = incomingLabRulesDao.findCurrentByProviderNo(providerNo);
+        if (incomingLabRules == null || incomingLabRules.isEmpty()) {
+            return;
+        }
+
+        // Get all existing provider mappings for this document once
+        List<HRMDocumentToProvider> existingMappings = hrmDocumentToProviderDao.findByHrmDocumentId(hrmDocumentId);
+        Set<String> existingProviderNumbers = existingMappings.stream()
+            .map(HRMDocumentToProvider::getProviderNo)
+            .collect(Collectors.toSet());
+
+        // Process only HRM rules and create mappings for providers not already assigned
+        incomingLabRules.stream()
+            .filter(rule -> rule.getForwardTypeStrings().contains("HRM"))
+            .map(IncomingLabRules::getFrwdProviderNo)
+            .filter(forwardProviderNo -> !existingProviderNumbers.contains(forwardProviderNo))
+            .forEach(forwardProviderNo -> {
+                HRMDocumentToProvider mapping = new HRMDocumentToProvider();
+                mapping.setHrmDocumentId(hrmDocumentId);
+                mapping.setProviderNo(forwardProviderNo);
+                mapping.setSignedOff(0);
+                hrmDocumentToProviderDao.persist(mapping);
+            });
+    }
+
+    public static void removeUnclaimedProviderMappings(Integer hrmDocumentId) {
+        HRMDocumentToProvider existingUnmatched = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(hrmDocumentId, "-1");
+        if(existingUnmatched != null) {
+            hrmDocumentToProviderDao.remove(existingUnmatched.getId());
+        }
     }
 }

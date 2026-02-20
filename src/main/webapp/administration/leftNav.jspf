@@ -254,6 +254,11 @@ String curProvider_no = (String)session.getAttribute("user");
 					<li><a href="${ctx}/admin/labforwardingrules.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.labFwdRules"/></a></li>
 					
 					<li><a href="${ctx}/admin/addQueue.jsp" class="contentLink"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.AddNewQueue"/></a></li>
+
+					<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_lab" rights="r" reverse="<%=false%>">				
+					<li><a href='javascript:void(0);'
+						class="xlink" rel="${ctx}/admin/providerLinkingRules.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.ProviderLinkingRules"/></a></li>		
+					</security:oscarSec>
 				</ul>
 				</div>
 				</div>
@@ -602,9 +607,8 @@ String curProvider_no = (String)session.getAttribute("user");
 						class="xlink" rel="${ctx}/admin/displayDocumentCategories.jsp"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentCategories"/></a></li>
                                                 
 					<li><a href='javascript:void(0);'
-						class="xlink" rel="${ctx}/admin/displayDocumentDescriptionTemplate.jsp?setDefault=true"><fmt:setBundle basename="oscarResources"/><fmt:message key="admin.admin.DocumentDescriptionTemplate"/></a></li>		
-				</security:oscarSec>		
-						
+						class="xlink" rel="${ctx}/admin/displayDocumentDescriptionTemplate.jsp?setDefault=true"><bean:message key="admin.admin.DocumentDescriptionTemplate"/></a></li>		
+				</security:oscarSec>						
 						
 				<security:oscarSec roleName="<%=roleName$%>" objectName="_admin" rights="r" reverse="<%=false%>">			
 				<li><a href='javascript:void(0);'

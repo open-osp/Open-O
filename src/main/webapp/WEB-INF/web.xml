@@ -228,6 +228,10 @@
 		<servlet-name>CXFServlet</servlet-name>
 		<url-pattern>/ws/*</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CXFServlet</servlet-name>
+		<url-pattern>/ops/*</url-pattern>
+	</servlet-mapping>
 
     <!-- HTTP header sec -->
     <filter>
