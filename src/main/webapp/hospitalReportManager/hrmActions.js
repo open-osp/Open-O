@@ -89,6 +89,7 @@ function addDemoToHrm(reportId, csrfToken) {
                     "<a href=\"#\" onclick=\"removeDemoFromHrm('" + reportId + "')\">(remove)</a>";
                 $('autocompletedemo' + reportId + 'hrm').hide();
                 toggleButtonBar(true, reportId);
+                window.location.reload();
             }
         }
     });

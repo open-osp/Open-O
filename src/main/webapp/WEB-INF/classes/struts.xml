@@ -22,6 +22,7 @@
             <result name="success">/admin/lookUpLists/</result>
         </action>
         <action name="admin/oncallClinic" class="ca.openosp.openo.admin.reports.SaveOnCallClinic2Action"/>
+        <action name="providerLinkingRules" class="ca.openosp.openo.dashboard.admin.ProviderLinkingRulesAction" />
         <action name="web/dashboard/display/DashboardDisplay" class="ca.openosp.openo.dashboard.display.DisplayDashboard2Action">
             <result name="success">/web/dashboard/display/DashboardDisplay.jsp</result>
             <result name="unauthorized">/securityError.jsp</result>

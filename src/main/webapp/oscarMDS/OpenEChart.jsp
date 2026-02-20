@@ -25,6 +25,7 @@
 --%>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.net.URLEncoder" %>
 <%
     // Check if demographicNo is present and valid
@@ -63,7 +64,13 @@
         int curMonth = (cal.get(Calendar.MONTH)+1);
         int curDay = cal.get(Calendar.DAY_OF_MONTH);
 
-        %>
+%>
+
+<c:if test="${param.mrpAttached == 'true'}">
+if (window.opener && !window.opener.closed) {
+    window.opener.location.reload();
+}
+</c:if>
 
         location.href = '${pageContext.request.contextPath}/oscarEncounter/IncomingEncounter.do?demographicNo=<%=demographicNo%>&reason=Lab+Results-Notes&curDate=<%=curYear%>-<%=curMonth%>-<%=curDay%>&encType=<%=URLEncoder.encode("Lab Results","UTF-8")%>&status=';
         window.resizeTo(980, 700);
