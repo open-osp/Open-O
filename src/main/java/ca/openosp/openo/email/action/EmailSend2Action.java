@@ -85,7 +85,6 @@ public class EmailSend2Action extends ActionSupport {
 
     private EmailData prepareEmailFields(HttpServletRequest request) {
         String senderConfigId = request.getParameter("senderConfigId");
-        String fromEmail = request.getParameter("senderEmailAddress");
         String[] receiverEmails = request.getParameterValues("receiverEmailAddress");
         String subject = request.getParameter("subjectEmail");
         String body = request.getParameter("bodyEmail");
@@ -106,7 +105,6 @@ public class EmailSend2Action extends ActionSupport {
 
         EmailData emailData = new EmailData();
         emailData.setSenderConfigId(senderConfigId);
-        emailData.setSender(fromEmail);
         emailData.setRecipients(receiverEmails);
         emailData.setSubject(subject);
         emailData.setBody(body);

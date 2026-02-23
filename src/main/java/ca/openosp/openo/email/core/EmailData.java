@@ -94,10 +94,18 @@ public class EmailData {
      * Sets the ID of the email configuration from a string value.
      * Convenience method for parsing request parameters.
      *
-     * @param senderConfigId String the email config ID; null or empty values are stored as null
+     * @param senderConfigId String the email config ID; null, empty, or non-numeric values are stored as null
      */
     public void setSenderConfigId(String senderConfigId) {
-        this.senderConfigId = StringUtils.isNullOrEmpty(senderConfigId) ? null : Integer.parseInt(senderConfigId);
+        if (StringUtils.isNullOrEmpty(senderConfigId)) {
+            this.senderConfigId = null;
+            return;
+        }
+        try {
+            this.senderConfigId = Integer.parseInt(senderConfigId);
+        } catch (NumberFormatException e) {
+            this.senderConfigId = null;
+        }
     }
 
     /**

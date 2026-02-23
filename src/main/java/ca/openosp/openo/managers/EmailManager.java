@@ -100,11 +100,14 @@ public class EmailManager {
             throw new RuntimeException("missing required sec object (_email)");
         }
 
+        if (emailData.getSenderConfigId() == null) {
+            throw new IllegalArgumentException("Sender email configuration ID is required");
+        }
         EmailConfig emailConfig = emailConfigDao.findActiveEmailConfigById(emailData.getSenderConfigId());
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, emailData.getDemographicNo());
         Provider provider = providerManager.getProvider(loggedInInfo, emailData.getProviderNo());
 
-        EmailLog emailLog = new EmailLog(emailConfig, emailData.getSender(), emailData.getRecipients(), emailData.getSubject(), emailData.getBody(), EmailStatus.FAILED);
+        EmailLog emailLog = new EmailLog(emailConfig, emailConfig.getSenderEmail(), emailData.getRecipients(), emailData.getSubject(), emailData.getBody(), EmailStatus.FAILED);
         setEmailAttachments(emailLog, emailData.getAttachments());
         emailLog.setEncryptedMessage(emailData.getEncryptedMessage());
         emailLog.setPassword(emailData.getPassword());
