@@ -42,6 +42,7 @@
 <jsp:useBean id="oscarVariables" class="java.util.Properties" scope="page"/>
 
 <%@page import="java.net.URLDecoder, java.net.URLEncoder,java.util.Date, java.util.List" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%@page import="ca.openosp.openo.documentManager.EDocUtil,ca.openosp.openo.documentManager.EDoc" %>
 <%@page import="ca.openosp.openo.casemgmt.web.NoteDisplay,ca.openosp.openo.casemgmt.web.NoteDisplayLocal" %>
 <%@page import="ca.openosp.openo.utility.SpringUtils" %>
@@ -244,8 +245,30 @@
         }
 
         function showEncounter(encList) {
-            var url2 = '<%=request.getContextPath()%>' + '/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>' + encList + '&printCPP=false&printRx=false';
-            document.getElementById('docdisp').innerHTML = '<object data="' + url2 + '"  width="' + (getWidth() - 40) + '" height="' + (getHeight() - 300) + '" type="text/html"></object>';
+            const url2 = '<%=request.getContextPath()%>' + '/CaseManagementEntry.do?method=displayNotes&demographicNo=<%=demographicID%>' + encList + '&printCPP=false&printRx=false';
+
+            // Use an iframe instead of an <object> tag to display encounter notes.
+            // An <object type="text/html"> steals focus from the select list when it
+            // loads, which breaks shift+arrow keyboard selection after the 2nd keypress.
+            let iframe = document.createElement('iframe');
+            iframe.title = 'Encounter notes';
+            iframe.width = getWidth() - 40;
+            iframe.height = getHeight() - 300;
+            iframe.style.border = 'none';
+
+            // Restore focus to the encounter list only if the iframe stole it,
+            // so that shift+arrow selection can continue uninterrupted without
+            // overriding focus if the user has intentionally moved elsewhere.
+            iframe.addEventListener('load', function() {
+                const el = document.getElementById('encounterlist');
+                if (el && (document.activeElement === iframe || document.activeElement === document.body)) el.focus();
+            });
+
+            iframe.src = url2;
+            const docdisp = document.getElementById('docdisp');
+            docdisp.innerHTML = '';
+            docdisp.appendChild(iframe);
+
             document.getElementById('docinfo').innerHTML = '';
             document.getElementById('docextrainfo').innerHTML = '';
             document.getElementById('printnotesbutton').style.visibility = 'visible';
@@ -273,7 +296,7 @@
 
             if (selected.length == 0) {
 
-                var div_ref = document.all("docbuttons");
+                var div_ref = document.getElementById("docbuttons");
                 div_ref.style.visibility = "hidden";
                 docid = "0";
                 showPageImg(docid, "");
@@ -283,7 +306,7 @@
                 th1.selectedIndex = -1;
             }
             if (selected.length >= 2) {
-                var div_ref = document.all("docbuttons");
+                var div_ref = document.getElementById("docbuttons");
                 div_ref.style.visibility = "hidden";
 
                 var docList = '';
@@ -311,13 +334,13 @@
                 doctype = selected[0].value.substring(docidindexend + 1, selected[0].value.length);
 
                 showPageImg(docid, doctype);
-                var div_ref = document.all("docbuttons");
+                var div_ref = document.getElementById("docbuttons");
                 div_ref.style.visibility = "visible";
                 if (doctype == "text/html") {
-                    var div_ref = document.all("refilebutton");
+                    var div_ref = document.getElementById("refilebutton");
                     div_ref.style.visibility = "hidden";
                 } else {
-                    var div_ref = document.all("refilebutton");
+                    var div_ref = document.getElementById("refilebutton");
                     div_ref.style.visibility = "visible";
                 }
             }
@@ -344,7 +367,7 @@
                 getDoc();
                 doclistObj.focus();
             } else if (doclistObj.length == 0) {
-                div_ref = document.all("docbuttons");
+                div_ref = document.getElementById("docbuttons");
                 div_ref.style.visibility = "hidden";
 
             }
@@ -452,7 +475,7 @@
     <table>
         <%if (errorMessage.length() > 0) {%>
         <tr>
-            <td><b><font color="red"><%=errorMessage%>
+            <td><b><font color="red"><%=Encode.forHtml(errorMessage)%>
             </font></b></td>
         </tr>
         <%}%>
