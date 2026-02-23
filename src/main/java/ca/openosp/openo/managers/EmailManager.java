@@ -104,6 +104,9 @@ public class EmailManager {
             throw new IllegalArgumentException("Sender email configuration ID is required");
         }
         EmailConfig emailConfig = emailConfigDao.findActiveEmailConfigById(emailData.getSenderConfigId());
+        if (emailConfig == null) {
+            throw new IllegalArgumentException("No active email configuration found for ID " + emailData.getSenderConfigId());
+        }
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, emailData.getDemographicNo());
         Provider provider = providerManager.getProvider(loggedInInfo, emailData.getProviderNo());
 
