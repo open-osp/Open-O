@@ -376,8 +376,9 @@
         </parameter>
         <java:condition>prev.getAgeInMonths() &gt;= 48</java:condition>
         <java:condition>prev.getAgeInYears() &lt; 10</java:condition>
-        <java:condition>prev.getNumberOfPreventionType("MMR") == 1</java:condition>                                        
-        <java:consequence>              
+        <java:condition>prev.getNumberOfPreventionType("MMR") == 1</java:condition>
+        <java:condition>prev.getNumberOfPreventionType("MMRV") == 0</java:condition>
+        <java:consequence>
               prev.log("MMR 2");
               prev.addWarning("MMR", "Needs Second MMR or MMRV");
         </java:consequence>
@@ -390,7 +391,8 @@
         </parameter>
         <java:condition>prev.getAgeInMonths() &gt;= 48</java:condition>
         <java:condition>prev.getAgeInYears() &lt; 10</java:condition>
-        <java:condition>prev.getNumberOfPreventionType("MMRV") == 1</java:condition>  
+        <java:condition>prev.getNumberOfPreventionType("MMRV") == 1</java:condition>
+        <java:condition>prev.getNumberOfPreventionType("MMR") == 0</java:condition>
         <java:consequence>
               prev.log("MMRV 1");
               prev.addWarning("MMRV", "Needs Second MMR or MMRV");
