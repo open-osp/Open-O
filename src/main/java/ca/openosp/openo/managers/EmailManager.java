@@ -100,7 +100,7 @@ public class EmailManager {
             throw new RuntimeException("missing required sec object (_email)");
         }
 
-        EmailConfig emailConfig = emailConfigDao.findActiveEmailConfig(emailData.getSender());
+        EmailConfig emailConfig = emailConfigDao.findActiveEmailConfigById(emailData.getSenderConfigId());
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, emailData.getDemographicNo());
         Provider provider = providerManager.getProvider(loggedInInfo, emailData.getProviderNo());
 
