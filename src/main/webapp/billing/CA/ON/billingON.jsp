@@ -787,20 +787,15 @@
             var mm = str_date.substring(eval(str_date.indexOf("-") + 1), str_date.lastIndexOf("-"));
             var dd = str_date.substring(eval(str_date.lastIndexOf("-") + 1));
             var bWrongDate = false;
-            sMsg = "";
             if (yyyy > varYear) {
-                sMsg = "year";
                 bWrongDate = true;
             } else if (yyyy == varYear && mm > varMonth) {
-                sMsg = "month";
                 bWrongDate = true;
             } else if (yyyy == varYear && mm == varMonth && dd > varDate) {
-                sMsg = "date";
                 bWrongDate = true;
             }
             if (bWrongDate) {
-		alert("You may have a wrong Service/admission Date!" + " Wrong " + sMsg);
-		return false;
+                return confirm("Warning: the inputted service or admission date is in the future.\n\nClick OK to continue, Cancel to edit.");
             } else {
                 return true;
             }
