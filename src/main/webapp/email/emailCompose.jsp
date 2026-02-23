@@ -212,7 +212,7 @@
                                             onchange="showAdditionalParamOption()">
                                         <c:forEach items="${ senderAccounts }" var="senderAccount">
                                             <option value="${ senderAccount.id }"
-                                                    data-email-type="${ e:forHtmlAttribute(senderAccount.emailType) }" ${ senderAccount.id eq param.senderConfigId or (empty param.senderConfigId and (senderAccount.senderEmail eq senderEmail or senderAccount.senderEmail eq param.senderEmail)) ? 'selected' : '' }>
+                                                    data-email-type="${ e:forHtmlAttribute(senderAccount.emailType) }" ${ senderAccount.id eq param.senderConfigId or senderAccount.id eq senderConfigId or (empty param.senderConfigId and empty senderConfigId and (senderAccount.senderEmail eq senderEmail or senderAccount.senderEmail eq param.senderEmail)) ? 'selected' : '' }>
                                                 <c:out value="${ senderAccount.senderFirstName }"/> <c:out
                                                     value="${ senderAccount.senderLastName }"/> <c:out
                                                     value="(${ senderAccount.senderEmail })"/>
