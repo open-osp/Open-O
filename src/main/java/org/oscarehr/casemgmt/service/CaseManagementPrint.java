@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CaseManagementPrint {
 	
@@ -241,9 +242,16 @@ public class CaseManagementPrint {
 			if (printLabs) {
 				// get the labs which fall into the date range which are attached to this patient
 				CommonLabResultData comLab = new CommonLabResultData();
-				ArrayList<LabResultData> labs = comLab.populateLabResultsData(loggedInInfo, "", demono, "", "", "", "U");
+				List<LabResultData> labs = comLab.populateLabResultsData(loggedInInfo, "", demono, "", "", "", "U");
 
 				Collections.sort(labs);
+
+				if (useDateRange && startDate != null && endDate != null)
+					labs = labs.stream()
+							.filter(lab ->
+								lab.getDateObj().after(startDate.getTime())
+										&& lab.getDateObj().before(endDate.getTime()))
+							.collect(Collectors.toList());
 
 				LinkedHashMap<String, LabResultData> accessionMap = new LinkedHashMap<String, LabResultData>();
 				for (int i = 0; i < labs.size(); i++) {
