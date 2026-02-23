@@ -796,36 +796,85 @@ request.setAttribute("missingTests", missingTests);
         }
 
         /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: #3e8e41;}
+        .dropdown:hover .dropbtn {background-color: #3e8e41;}
 
-#labVersionInfoModal .modal-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
+        #labVersionInfoModal .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
 
-#labVersionInfoModal .info-section {
-    margin-bottom: 20px;
-}
+        #labVersionInfoModal .info-section {
+            margin-bottom: 20px;
+        }
 
-#labVersionInfoModal .info-section p {
-    margin: 5px 0;
-    color: #555;
-}
+        #labVersionInfoModal .info-section p {
+            margin: 5px 0;
+            color: #555;
+        }
 
-#labVersionInfoModal .test-list {
-    margin-left: 10px;
-}
+        #labVersionInfoModal .test-list {
+            margin-left: 10px;
+        }
 
-#labVersionInfoModal .test-item {
-    display: flex;
-    justify-content: space-between;
-    margin: 5px 0;
-}
+        #labVersionInfoModal .test-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
 
-#labVersionInfoModal .status {
-    font-weight: bold;
-}
+        #labVersionInfoModal .status {
+            font-weight: bold;
+        }
+
+        /* White background and shadow for fileDialog and combinedAckFileDialog */
+        .ui-dialog:has(#fileDialog),
+        .ui-dialog:has(#combinedAckFileDialog) {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Center Submit/Cancel buttons for both dialogs */
+        /* .ui-dialog:has(#fileDialog) .ui-dialog-buttonpane, */
+        .ui-dialog:has(#combinedAckFileDialog) .ui-dialog-buttonpane {
+            text-align: center;
+        }
+        /* .ui-dialog:has(#fileDialog) .ui-dialog-buttonset, */
+        .ui-dialog:has(#combinedAckFileDialog) .ui-dialog-buttonset {
+            float: none;
+            display: inline-block;
+        }
+
+        /* Primary color for Submit button in combinedAckFileDialog */
+        #combinedAckOkButton.ui-button {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: #fff;
+        }
+        #combinedAckOkButton.ui-button:hover {
+            background: #0b5ed7;
+            border-color: #0a58ca;
+        }
+
+        /* Accordion border on expanded content panel */
+        #combinedAckAccordion .ui-accordion-content {
+            border: 1px solid #dee2e6;
+        }
+
+        /* Keep accordion header color unchanged when active/focused */
+        #combinedAckAccordion .ui-accordion-header,
+        #combinedAckAccordion .ui-accordion-header.ui-state-active,
+        #combinedAckAccordion .ui-accordion-header:hover {
+            color: inherit;
+            background: #e9ecef;
+            border-color: #dee2e6;
+        }
+
+        /* Prevent icon from turning white on active/hover (designed for dark backgrounds) */
+        #combinedAckAccordion .ui-accordion-header.ui-state-active .ui-icon,
+        #combinedAckAccordion .ui-accordion-header:hover .ui-icon {
+            filter: brightness(0);
+        }
+
     </style>
 
     <script language="JavaScript">
@@ -1049,25 +1098,77 @@ request.setAttribute("missingTests", missingTests);
        	}
 
         jQuery(document).ready(function() {
+            // "Acknowledge/File Document" modal checkbox handler (Acknowledge button flow).
+            // Keeps "Select All" in sync with individual provider checkboxes.
+            // The OK button is always enabled — the provider can acknowledge without selecting anyone.
+            jQuery(document).on('change', '.combinedAckProviderCheckbox, #combinedAckSelectAllCheckbox', function() {
+                if (this.id === 'combinedAckSelectAllCheckbox') {
+                    jQuery(".combinedAckProviderCheckbox:not(.combined-disabled-checkbox)").prop('checked', this.checked);
+                }
+            });
+
+            // "File Document" dialog checkbox handler ("File for..." button flow).
+            // Keeps "Select All" in sync with individual provider checkboxes.
+            // The OK button stays disabled until at least one provider is checked,
+            // because filing requires an explicit provider target.
             jQuery(document).on('change', '.ackProviderCheckbox, #ackSelectAllCheckbox', function() {
                 if (this.id === 'ackSelectAllCheckbox') {
-                    // When "Select All" changes, update all checkboxes
                     jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").prop('checked', this.checked);
                 }
-                jQuery("#ackYesButton").button("option", "disabled", jQuery(".ackProviderCheckbox:checked").length === 0);
+                const hasChecked = jQuery(".ackProviderCheckbox:checked").length > 0;
+                jQuery("#fileDialogOkButton").button("option", "disabled", !hasChecked);
+            });
+
+            // Accordion for "File Document" section in combinedAckFileDialog.
+            // Expanded by default when the lab is linked to other providers (isHl7OfferFileForOthers=true), collapsed otherwise.
+            jQuery("#combinedAckAccordion").accordion({
+                collapsible: true,
+                active: jQuery("#isHl7OfferFileForOthers").val() === "true" ? 0 : false,
+                heightStyle: "content"
+            });
+
+            // Submit the dialog when Enter is pressed in the comment input.
+            jQuery("#combinedAckComment").on("keydown", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    jQuery("#combinedAckOkButton").trigger("click");
+                }
             });
         });
 
-        // Global flag to track if "file on behalf" was triggered
-        var doFileOnBehalfOfProviders = false;
-
-        // Opens the modal dialog asking if the user wants to file on behalf of others.
+        // Entry point for both the "Acknowledge" button (isFileOnly=false) and
+        // the "File for..." button (isFileOnly=true). Routes to the correct dialog.
+        //
+        // isFileOnly=true  — "File for..." button:
+        //   The logged-in provider has already acknowledged. Opens the "File Document"
+        //   dialog (#fileDialog) so they can file on behalf of other providers.
+        //
+        // isFileOnly=false — "Acknowledge" button:
+        //   If skipComment=true: acknowledges directly via #tempAckBtn without any prompt.
+        //   Otherwise (skipComment=false): opens the combined "Acknowledge/File Document"
+        //   modal so the provider can enter a comment. When isHl7OfferFileForOthers=true,
+        //   the modal also allows optionally filing for other linked providers.
         function openFileDialog(isFileOnly) {
-            if ((jQuery(".ackProviderCheckbox:not(.disabled-checkbox)").length === 0 && !isFileOnly) || jQuery("#isHl7OfferFileForOthers").val() === "false") {
+            if (isFileOnly) {
+                openFileOnlyDialog();
+                return;
+            }
+            if (jQuery("#skipAckComment").val() === "true") {
                 jQuery('#tempAckBtn').click();
                 return;
             }
+            openCombinedAckFileDialog(false);
+        }
 
+        // Opens the "File Document" dialog (#fileDialog) for the "File for..." button flow.
+        // Reached only when the logged-in provider has already acknowledged the lab and at
+        // least one other linked provider has not yet filed or acknowledged.
+        //
+        // The provider selects one or more providers from the list and confirms. FileLabs.do
+        // is called for each selected provider in parallel, then the page reloads to reflect
+        // the updated filing status. The OK button starts disabled and enables only once
+        // at least one provider is checked.
+        function openFileOnlyDialog() {
             jQuery("#fileDialog").dialog({
                 autoOpen: false,
                 modal: true,
@@ -1079,40 +1180,121 @@ request.setAttribute("missingTests", missingTests);
                         text: "No",
                         click: function() {
                             jQuery("#fileDialog").dialog("close");
-                            if (!isFileOnly) { jQuery("#tempAckBtn").click(); }
                         }
                     },
                     {
                         text: "Yes",
-                        id: "ackYesButton",
+                        id: "fileDialogOkButton",
                         click: function() {
-                            doFileOnBehalfOfProviders = true;
+                            const selectedProviders = jQuery(".ackProviderCheckbox:checked").map(function() {
+                                return jQuery(this).val();
+                            }).get();
                             jQuery("#fileDialog").dialog("close");
-
-                            if (isFileOnly) {
-                                fileOnBehalfOfMultipleProviders().then(() => location.reload());
-                            } else {
-                                const skipAckComment = jQuery("#skipAckComment").val() === 'true';
-                                if (skipAckComment) {
-                                    handleLab('acknowledgeForm_'+jQuery("#segmentID").val(),jQuery("#segmentID").val(), 'ackLabAndFileForOther');
-                                } else {
-                                    getComment('ackLabAndFileForOther', jQuery("#segmentID").val());
-                                }
-                            }
+                            fileOnBehalfOfMultipleProviders(selectedProviders).then(function() {
+                                location.reload();
+                            });
                         },
-                        disabled: true // Initially disabled
+                        disabled: true
                     }
                 ]
             }).dialog("open");
         }
 
-        // Sends file requests for all selected providers.
-        function fileOnBehalfOfMultipleProviders() {
-            const selectedProviders = jQuery(".ackProviderCheckbox:checked").map(function() {
-                return jQuery(this).val();
-            }).get();
+        // Opens the "Acknowledge/File Document" modal (#combinedAckFileDialog).
+        // Used when the logged-in provider clicks "Acknowledge" and has opted in to
+        // offer filing for others (isHl7OfferFileForOthers=true).
+        //
+        // Combines two actions into a single step:
+        //   1. Enter an acknowledgement comment (pre-populated if one already exists).
+        //   2. Optionally select other linked providers to file the result on their behalf.
+        //
+        // OK button behaviour:
+        //   - Providers selected: files for each via FileLabs.do, then acknowledges.
+        //   - No providers selected: acknowledges with the entered comment directly.
+        //   - Cancel: closes the modal without acknowledging or filing.
+        function openCombinedAckFileDialog(isFileOnly) {
+            const segmentId = jQuery("#segmentID").val();
 
-            if (selectedProviders.length === 0) {
+            // Pre-populate the comment field with any comment the provider has already saved for this lab.
+            const textEl = document.getElementById(providerNo + "_" + segmentId + "commentText");
+            jQuery("#combinedAckComment").val(textEl ? textEl.innerHTML : "");
+
+            // Persist isFileOnly on the dialog element so the checkbox change handler can read it
+            // without it needing to be in scope as a closure variable.
+            jQuery("#combinedAckFileDialog").data("isFileOnly", isFileOnly);
+
+            jQuery("#combinedAckFileDialog").dialog({
+                autoOpen: false,
+                modal: true,
+                height: 'auto',
+                minWidth: 700,
+                resizable: true,
+                buttons: [
+                    {
+                        text: "Submit",
+                        id: "combinedAckOkButton",
+                        click: function() {
+                            const selectedProviders = jQuery(".combinedAckProviderCheckbox:checked").map(function() {
+                                return jQuery(this).val();
+                            }).get();
+                            const comment = jQuery("#combinedAckComment").val();
+
+                            jQuery("#combinedAckFileDialog").dialog("close");
+
+                            if (selectedProviders.length > 0) {
+                                // File on behalf of selected providers, then acknowledge if needed.
+                                fileOnBehalfOfMultipleProviders(selectedProviders).then(function() {
+                                    if (!isFileOnly) {
+                                        acknowledgeWithComment(comment, segmentId);
+                                    } else {
+                                        location.reload();
+                                    }
+                                });
+                            } else if (!isFileOnly) {
+                                // No providers selected — just acknowledge with the entered comment.
+                                acknowledgeWithComment(comment, segmentId);
+                            }
+                        },
+                        // Require at least one provider when filing only; always enabled when acknowledging.
+                        disabled: isFileOnly
+                    },
+                    {
+                        text: "Cancel",
+                        click: function() {
+                            jQuery("#combinedAckFileDialog").dialog("close");
+                        }
+                    }
+                ]
+            }).dialog("open");
+
+            jQuery("#combinedAckComment").focus();
+        }
+
+        // Writes the acknowledgement comment into the lab's hidden form field and triggers
+        // the acknowledge action. Called from the combined modal after the provider confirms.
+        function acknowledgeWithComment(comment, segmentId) {
+            const ackForm = document.forms['acknowledgeForm_' + segmentId];
+            if (ackForm && ackForm.comment) {
+                ackForm.comment.value = comment;
+            }
+            handleLab('acknowledgeForm_' + segmentId, segmentId, 'ackLab');
+        }
+
+        // Files the lab result on behalf of each provider in selectedProviders by calling
+        // FileLabs.do for each one. Called from both the "File Document" dialog (#fileDialog)
+        // and the "Acknowledge/File Document" modal (#combinedAckFileDialog).
+        //
+        // For each provider, an auto-generated comment is recorded that includes the logged-in
+        // provider's name, the target provider's name, and a timestamp.
+        //
+        // All requests run in parallel via Promise.allSettled, so a failure for one provider
+        // does not block the others. Individual failures are logged to the console.
+        // The returned promise always resolves, allowing the caller to proceed with the next
+        // step (acknowledge or page reload) regardless of individual filing outcomes.
+        //
+        // @param {string[]} selectedProviders - provider numbers to file the lab on behalf of
+        function fileOnBehalfOfMultipleProviders(selectedProviders) {
+            if (!selectedProviders || selectedProviders.length === 0) {
                 return Promise.reject(new Error("No providers selected"));
             }
 
@@ -1122,7 +1304,7 @@ request.setAttribute("missingTests", missingTests);
             const loggedInProviderName = jQuery("#loggedInProviderName").val();
 
             const ajaxCalls = selectedProviders.map(providerNo => {
-                const providerName = jQuery(".ackProviderName[data-provider-no='" + providerNo + "']").val();
+                const providerName = jQuery(".combinedAckProviderName[data-provider-no='" + providerNo + "'], .ackProviderName[data-provider-no='" + providerNo + "']").first().val();
                 const comment = createFilingComment(providerName, loggedInProviderName);
                 const url = "${e:forJavaScript(pageContext.servletContext.contextPath)}" + "/oscarMDS/FileLabs.do";
 
@@ -1156,11 +1338,14 @@ request.setAttribute("missingTests", missingTests);
                 if (failed.length > 0) {
                     console.error("Some AJAX calls failed:", failed);
                 }
-
-                doFileOnBehalfOfProviders = false;
             });
         }
 
+        // Generates the auto-filing comment recorded when a lab is filed on behalf of another provider.
+        // Produces: "Filed by <loggedInProviderName> on behalf of <providerName> on YYYY.MM.DD @ H:MMam/pm"
+        //
+        // @param {string} providerName         - name of the provider being filed for
+        // @param {string} loggedInProviderName - name of the provider performing the filing
         function createFilingComment(providerName, loggedInProviderName) {
             const now = new Date();
             const yyyy = now.getFullYear();
@@ -1195,23 +1380,34 @@ request.setAttribute("missingTests", missingTests);
         }
 
         boolean notBeenAcked = ackList.size() == 0;
+        // True when the logged-in provider has already acknowledged this lab result.
+        // Controls which action button is rendered: "Acknowledge" (false) or "File for..." (true).
         boolean ackFlag = false;
-        boolean isLabNotFiledOrAckFlag = false; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
+
+        // True when at least one OTHER linked provider has not yet filed or acknowledged this lab.
+        // When both ackFlag and this flag are true, the "File for..." button is shown so the
+        // logged-in provider can file the result on behalf of those providers.
+        boolean isLabNotFiledOrAckFlag = false;
+
         String labStatus = "";
         if (ackList != null) {
             for (int i = 0; i < ackList.size(); i++) {
                 ReportStatus reportStatus = ackList.get(i);
+
+                // Resolve each provider's hl7AllowOthersFileForYou preference up front so the
+                // filing dialogs can disable providers who have opted out of being filed for by others.
                 reportStatus.setHl7AllowOthersFileForYou(providerManager.isHl7AllowOthersFileForYou(loggedInInfo, reportStatus.getOscarProviderNo()));
+
                 if (providerNo.equals(reportStatus.getOscarProviderNo())) {
+                    // Found the logged-in provider's entry — capture their current lab status.
                     labStatus = reportStatus.getStatus();
                     if (labStatus.equals("A")) {
-                        ackFlag = true;//lab has been ack by this providers.
-                        break;
+                        ackFlag = true;
                     }
-                }
-
-                if ("N".equals(reportStatus.getStatus())) {
-                    isLabNotFiledOrAckFlag = true; // Flag is true if any provider has NOT filed OR NOT acknowledged the lab
+                } else if ("N".equals(reportStatus.getStatus())) {
+                    // A different linked provider has not yet filed or acknowledged this lab.
+                    // Once the logged-in provider acknowledges, the "File for..." button will appear.
+                    isLabNotFiledOrAckFlag = true;
                 }
             }
         }
@@ -1224,6 +1420,11 @@ request.setAttribute("missingTests", missingTests);
         String label = "";
         if (hl7Lab != null && hl7Lab.getLabel() != null) label = hl7Lab.getLabel();
 
+        // JS expression fired by #tempAckBtn in the fallback acknowledge flow
+        // (when isHl7OfferFileForOthers=false). Behaviour depends on the provider's
+        // lab_ack_comment preference (skipComment):
+        //   true  → acknowledge immediately without prompting for a comment (handleLab).
+        //   false → open a JS prompt() to collect a comment before acknowledging (getComment).
         String ackLabFunc;
         if (skipComment) {
             ackLabFunc = "handleLab('acknowledgeForm_" + segmentID + "','" + segmentID + "','ackLab');";
@@ -1307,13 +1508,26 @@ request.setAttribute("missingTests", missingTests);
 <input type="hidden" id="loggedInProviderName" value="${e:forHtml(loggedInProviderName)}" />
 <input type="hidden" id="isHl7OfferFileForOthers" value="${e:forHtml(isHl7OfferFileForOthers)}" />
 
-<!-- Hidden dialog that appears when a locum MD clicks "Acknowledge" -->
+<!--
+    Hidden button used by the legacy fallback acknowledge flow (isHl7OfferFileForOthers=false).
+    Its onclick is set server-side to ackLabFunc, which either prompts for an acknowledgement
+    comment via getComment() or acknowledges directly via handleLab(), depending on the
+    provider's lab_ack_comment preference (skipComment).
+-->
+<button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
+
+<!--
+    "File Document" dialog (#fileDialog) — opened by the "File for..." button.
+    Reached when the logged-in provider has already acknowledged the lab and at least
+    one other linked provider has not yet filed or acknowledged.
+    Lists eligible providers; those who have opted out appear greyed out and cannot be selected.
+    Managed by openFileOnlyDialog() in the script block above.
+-->
 <div id="fileDialog" title="File Document" style="display: none;">
 
-    <!-- Hidden button used to trigger temp acknowledgment logic if no providers are found -->
-    <button id="tempAckBtn" onclick="${e:forHtml(ackLabFunc)}" style="display:none;"></button>
-
-    <!-- Flag to determine if skip comment logic should be applied -->
+    <!-- skipAckComment: mirrors the server-side skipComment flag. When "true", the legacy
+         #tempAckBtn flow acknowledges without prompting for a comment. Unused in the
+         combined modal flow. -->
     <input id="skipAckComment" type="hidden" value="${e:forHtml(skipComment)}" />
 
     <!-- Form that lists providers to file on behalf of -->
@@ -1327,7 +1541,9 @@ request.setAttribute("missingTests", missingTests);
         <c:forEach var="report" items="${ackList}" varStatus="status">
             <c:choose>
                 <c:when test="${report.oscarProviderNo == sessionScope.user}">
-                    <!-- Save logged-in provider details -->
+                    <!-- The logged-in provider's details are also stored as top-level hidden inputs
+                         outside this dialog (see #loggedInProviderNo / #loggedInProviderName above).
+                         These inner values mirror those and are retained for historical reasons. -->
                     <input type="hidden" id="loggedInProviderNo" value="${e:forHtml(report.oscarProviderNo)}" />
                     <input type="hidden" id="loggedInProviderName" value="${e:forHtml(report.providerName)}" />
                 </c:when>
@@ -1359,7 +1575,70 @@ request.setAttribute("missingTests", missingTests);
                 </c:otherwise>
             </c:choose>
         </c:forEach>
-        <p>Tip: In your user preferences, you can hide this prompt or prevent others from filing results on your behalf. See "Set HL7 Lab Result Preferences".</p>
+        <p>Tip: In your user preferences, you can prevent others from filing results on your behalf.  See "Set HL7 Lab Result Preferences"</p>
+    </form>
+</div>
+
+<!--
+    "Acknowledge/File Document" modal (#combinedAckFileDialog) — opened by the "Acknowledge" button
+    when the provider has opted in to offer filing for others (isHl7OfferFileForOthers=true).
+    Lets the provider complete two actions in one step:
+      - Enter or confirm an acknowledgement comment.
+      - Optionally select other linked providers to file the result on their behalf.
+    Managed by openCombinedAckFileDialog() in the script block above.
+-->
+<div id="combinedAckFileDialog" title="Acknowledge/File Document" style="display: none;">
+    <form id="combinedFileForm">
+        <label for="combinedAckComment" style="display: block; margin-bottom: 4px;"><b>Please enter a comment (max 255 characters):</b></label>
+        <input type="text" id="combinedAckComment" maxlength="255" style="width: 99%; margin-bottom: 10px;" />
+
+        <c:set var="eligibleProviderCount" value="0" />
+        <c:forEach var="report" items="${ackList}">
+            <c:if test="${report.oscarProviderNo != sessionScope.user && report.status != 'F' && report.status != 'A'}">
+                <c:set var="eligibleProviderCount" value="${eligibleProviderCount + 1}" />
+            </c:if>
+        </c:forEach>
+        <c:if test="${eligibleProviderCount > 0}">
+        <div id="combinedAckAccordion">
+            <span>(Optional) File Document On Behalf of Others</span>
+            <div>
+                <p>This result is linked to other providers who have not acknowledged or filed it yet.</p>
+                <p>Do you want to "file" this result on their behalf?</p>
+                <p>Important - doing so will mean they likely will not see this result. Only proceed if you are sure they will not need to see this result.</p>
+
+                <input type="checkbox" id="combinedAckSelectAllCheckbox" />
+                <label for="combinedAckSelectAllCheckbox"><b>Select All</b></label><br/>
+
+                <c:forEach var="report" items="${ackList}" varStatus="status">
+                    <c:if test="${report.oscarProviderNo != sessionScope.user && report.status != 'F' && report.status != 'A'}">
+                        <c:set var="isDisabled" value="${!report.isHl7AllowOthersFileForYou()}" />
+                        <c:set var="combinedProviderId" value="combinedAckProvider${status.index}" />
+                        <c:set var="combinedProviderNo" value="${e:forHtml(report.oscarProviderNo)}" />
+                        <c:set var="combinedProviderName" value="${e:forHtml(report.providerName)}" />
+
+                        <input type="checkbox"
+                            name="combinedProviders"
+                            id="${combinedProviderId}"
+                            value="${combinedProviderNo}"
+                            class="combinedAckProviderCheckbox${isDisabled ? ' combined-disabled-checkbox' : ''}"
+                            ${isDisabled ? 'disabled' : ''} />
+
+                        <label for="${combinedProviderId}"
+                            style="${isDisabled ? 'color: gray; cursor: not-allowed;' : ''}">
+                            <e:forHtml value="${combinedProviderName}${isDisabled ? ' (opted out by user preference)' : ''}" />
+                        </label>
+
+                        <input type="hidden"
+                            class="combinedAckProviderName"
+                            data-provider-no="${combinedProviderNo}"
+                            value="${e:forHtml(report.providerName)}" /><br/>
+                    </c:if>
+                </c:forEach>
+
+                <p>Tip: in your user preferences, you can automatically show this prompt or prevent others from filing results on your behalf.  See "Set HL7 Lab Result Preferences"</p>
+            </div>
+        </div>
+        </c:if>
     </form>
 </div>
 
@@ -1485,9 +1764,9 @@ request.setAttribute("missingTests", missingTests);
                                        value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>"
                                        onclick="openFileDialog(false)" />
                                 <% } else if (isLabNotFiledOrAckFlag) {
-                                    // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
-                                    // Case: Current provider has acknowledged the lab,
-                                    // but at least one of the linked providers has NOT filed or acknowledged
+                                    // The logged-in provider has acknowledged, at least one other linked
+                                    // provider has not yet filed or acknowledged. Show "File for..." so they can file
+                                    // the result on behalf of those providers via the File Document dialog.
                                 %>
                                 <input type="button"
                                     value="File for..."
@@ -2899,14 +3178,14 @@ request.setAttribute("missingTests", missingTests);
             <tr>
                 <td align="left" width="50%">
                     <% if (!ackFlag) {
-                        // Case: Current provider has not acknowledged the lab
+                        // The logged-in provider has not yet acknowledged this lab. Show "Acknowledge".
                     %>
                     <input type="button" value="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarMDS.segmentDisplay.btnAcknowledge"/>"
                            onclick="openFileDialog(false)" />
-                    <% } else if (isLabNotFiledOrAckFlag) { 
-                        // Flag is true if any provider has NOT filed OR NOT acknowledged the lab 
-                        // Case: Current provider has acknowledged the lab,
-                        // but at least one of the linked providers has NOT filed or acknowledged
+                    <% } else if (isLabNotFiledOrAckFlag) {
+                        // The logged-in provider has acknowledged, at least one other linked provider
+                        // has not yet filed or acknowledged. Show "File for..." so they can file the result on behalf
+                        // of those providers via the File Document dialog.
                     %>
                     <input type="button"
                         value="File for..."
