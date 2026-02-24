@@ -1064,6 +1064,12 @@
                                     <a href="javascript: function myFunction() {return false; }"
                                        onClick="popupPage(500,800,'<%= request.getContextPath() %>/billing/CA/ON/billinghistory.jsp?demographic_no=<%=demographic.getDemographicNo()%>&last_name=<%=URLEncoder.encode(demographic.getLastName(), StandardCharsets.UTF_8)%>&first_name=<%=URLEncoder.encode(demographic.getFirstName(), StandardCharsets.UTF_8)%>&orderby=appointment_date&displaymode=appt_history&dboperation=appt_history&limit1=0&limit2=10')">
                                         <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgBillHistory"/></a>
+                                    <%if ("online".equals(oscarProps.getProperty("hcv.type", "simple"))) { %>
+                                    <br/>
+                                    <a href="javascript:void(0);"
+                                       onclick="validateHC(); return false;">
+                                       Validate OHIP</a>
+                                    <% } %>
                                     <%
                                     } else {
                                     %>
@@ -3430,10 +3436,6 @@
                                                                     style="width:20% !important;" <%=getDisabled("ver")%>
                                                                     value="<%=StringUtils.trimToEmpty(demographic.getVer())%>"
                                                                     onBlur="upCaseCtrl(this)" id="verBox">
-                                                            <%if ("online".equals(oscarProps.getProperty("hcv.type", "simple"))) { %>
-                                                            <input type="button" value="Validate"
-                                                                   onClick="validateHC()"/>
-                                                            <% } %>
                                                         </td>
                                                         <td align="right">
                                                             <b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.formEFFDate"/>:</b>
