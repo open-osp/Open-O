@@ -1068,7 +1068,7 @@
                                     <br/>
                                     <a href="javascript:void(0);"
                                        onclick="validateHC(); return false;">
-                                       Validate OHIP</a>
+                                       <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.msgValidateOHIP"/></a>
                                     <% } %>
                                     <%
                                     } else {
