@@ -3436,6 +3436,10 @@
                                                                     style="width:20% !important;" <%=getDisabled("ver")%>
                                                                     value="<%=StringUtils.trimToEmpty(demographic.getVer())%>"
                                                                     onBlur="upCaseCtrl(this)" id="verBox">
+                                                            <%if ("online".equals(oscarProps.getProperty("hcv.type", "simple"))) { %>
+                                                            <input type="button" value="Validate"
+                                                                   onClick="validateHC()"/>
+                                                            <% } %>
                                                         </td>
                                                         <td align="right">
                                                             <b><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographiceditdemographic.formEFFDate"/>:</b>
