@@ -58,7 +58,7 @@ public class QueueDocumentLinkDaoImpl extends AbstractDaoImpl<QueueDocumentLink>
 
     @Override
     public List<QueueDocumentLink> getActiveQueueDocLink() {
-        Query query = entityManager.createQuery("SELECT q from QueueDocumentLink q where q.status=?1");
+        Query query = entityManager.createQuery("SELECT q from QueueDocumentLink q where q.status=?1 ORDER BY q.docId ASC");
         query.setParameter(1, "A");
 
         @SuppressWarnings("unchecked")
