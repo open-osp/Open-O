@@ -333,7 +333,7 @@
                 var docid = docs[i];
                 nowDocLabIds.push(docid);
                 var placeholder = document.createElement('div');
-                placeholder.id = 'docPlaceholder_' + docid.replace(/\s/g, '');
+                placeholder.id = 'docPlaceholder_' + docid.replace(' ', '');
                 docsContainer.appendChild(placeholder);
             }
             nowDocLabIds.reverse();
