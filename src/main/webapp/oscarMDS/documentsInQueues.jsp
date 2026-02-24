@@ -333,7 +333,7 @@
                 var docid = docs[i];
                 nowDocLabIds.push(docid);
                 var placeholder = document.createElement('div');
-                placeholder.id = 'docPlaceholder_' + docid.replace(' ', '');
+                placeholder.id = 'docPlaceholder_' + docid.replace(/\s/g, '');
                 docsContainer.appendChild(placeholder);
             }
             nowDocLabIds.reverse();
@@ -906,14 +906,18 @@
             var data = "segmentID=" + docNo + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&demoName=" + demoName;
             if (inQueue)
                 data += "&inQueue=" + inQueue;
-            new Ajax.Updater(div, url, {
+            var ajaxOptions = {
                 method: 'get',
                 parameters: data,
                 evalScripts: true,
                 onSuccess: function (transport) {
                     focusFirstDocLab();
                 }
-            });
+            };
+            if (!placeholder) {
+                ajaxOptions.insertion = Insertion.Bottom;
+            }
+            new Ajax.Updater(div, url, ajaxOptions);
 
         }
 
