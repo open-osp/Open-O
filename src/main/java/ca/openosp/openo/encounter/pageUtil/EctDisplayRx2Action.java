@@ -40,6 +40,7 @@ import ca.openosp.openo.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -120,6 +121,13 @@ public class EctDisplayRx2Action extends EctDisplayAction {
                     logger.error("error getting remote drugs", e);
                 }
             }
+
+            // Sort active medications to the top of the list, preserving
+            // relative order within each group (stable sort).
+            // Active definition matches getClassColour() below.
+            uniqueDrugs.sort(Comparator.comparingInt(drug ->
+                ((drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm()) ? 0 : 1
+            ));
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
