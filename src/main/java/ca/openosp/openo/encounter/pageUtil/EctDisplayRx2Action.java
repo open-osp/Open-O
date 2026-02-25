@@ -49,6 +49,9 @@ public class EctDisplayRx2Action extends EctDisplayAction {
     private String cmd = "Rx";
     private static final Logger logger = MiscUtils.getLogger();
 
+    public static final Comparator<Prescription> ACTIVE_FIRST =
+        Comparator.comparingInt(drug -> isActiveDrug(drug) ? 0 : 1);
+
     public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao) {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -125,9 +128,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
             // Sort active medications to the top of the list, preserving
             // relative order within each group (stable sort).
             // Lower value = sorted higher in the list (0 = active first, 1 = non-active after).
-            uniqueDrugs.sort(Comparator.comparingInt(drug ->
-                isActiveDrug(drug) ? 0 : 1
-            ));
+            uniqueDrugs.sort(ACTIVE_FIRST);
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
@@ -239,7 +240,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
     }
 
 
-    private static boolean isActiveDrug(Prescription drug) {
+    public static boolean isActiveDrug(Prescription drug) {
         return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
     }
 
