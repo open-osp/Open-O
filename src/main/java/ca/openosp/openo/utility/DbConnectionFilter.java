@@ -34,11 +34,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.sql.DataSource;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.logging.log4j.Logger;
 
 import ca.openosp.openo.util.SqlUtils;
 
-public class DbConnectionFilter implements javax.servlet.Filter {
+public class DbConnectionFilter extends OscarBaseFilter {
     private static final Logger logger = MiscUtils.getLogger();
 
     private static ThreadLocal<Connection> dbConnection = new ThreadLocal<Connection>();
@@ -61,7 +62,7 @@ public class DbConnectionFilter implements javax.servlet.Filter {
         logger.info("Starting Filter : " + getClass().getSimpleName());
     }
 
-    public void doFilter(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
         try {
             chain.doFilter(tmpRequest, tmpResponse);
         } catch (Exception e) {

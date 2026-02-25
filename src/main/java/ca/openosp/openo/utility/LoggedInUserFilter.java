@@ -32,19 +32,21 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.model.Facility;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.commn.model.Security;
 
-public class LoggedInUserFilter implements javax.servlet.Filter {
+public class LoggedInUserFilter extends OscarBaseFilter {
     private static final Logger logger = MiscUtils.getLogger();
 
     public void init(FilterConfig filterConfig) throws ServletException {
         logger.info("Starting Filter : " + getClass().getSimpleName());
     }
 
-    public void doFilter(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
+    @Override
+    public void doFilterInternal(ServletRequest tmpRequest, ServletResponse tmpResponse, FilterChain chain) throws IOException, ServletException {
         logger.debug("Entering LoggedInUserFilter.doFilter()");
 
         // set new / current data

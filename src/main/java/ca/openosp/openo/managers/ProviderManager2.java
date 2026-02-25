@@ -732,31 +732,36 @@ public class ProviderManager2 {
 
     }
 
-    public boolean updateAutoLinkToMrpProperty(LoggedInInfo loggedInInfo, String value) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.WRITE, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.WRITE, null)) {
-			throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
-		}
+    public boolean updateProviderLinkingRulesProperty(LoggedInInfo loggedInInfo, String value) {
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+            throw new RuntimeException("missing required security object (_admin or _lab)");
+        }
 
-		List<Property> properties = propertyDao.findGlobalByName(Property.PROPERTY_KEY.auto_link_to_mrp);
-		if (properties.size() > 0) {
-			for (Property property: properties) {
-				property.setValue(value);
-				propertyDao.merge(property);
-			}
-		}
+        List<Property> properties = propertyDao.findGlobalByName(Property.PROPERTY_KEY.provider_linking_rules);
+        if (properties.size() > 0) {
+            for (Property property: properties) {
+                property.setValue(value);
+                propertyDao.merge(property);
+            }
+        } else {
+            Property property = new Property();
+            property.setName(Property.PROPERTY_KEY.provider_linking_rules.name());
+            property.setValue(value);
+            propertyDao.persist(property);
+        }
 
-		return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
-	}
+        return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+    }
 
-	public boolean viewAutoLinkToMrpPropertyStatus(LoggedInInfo loggedInInfo) {
-		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin.lab", SecurityInfoManager.READ, null) &&
-            !securityInfoManager.hasPrivilege(loggedInInfo, "_admin.hrm", SecurityInfoManager.READ, null)) {
-			throw new RuntimeException("missing required security object (_admin.hrm or _admin.lab)");
-		}
+    public boolean viewProviderLinkingRulesPropertyStatus(LoggedInInfo loggedInInfo) {
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_admin", SecurityInfoManager.WRITE, null) &&
+            !securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+            throw new RuntimeException("missing required security object (_admin or _lab)");
+        }
 
-		return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.auto_link_to_mrp);
-	}
+        return propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+    }
 
 	// If no property is found, it returns true by default.
 	public boolean isHl7OfferFileForOthers(LoggedInInfo loggedInInfo, String providerNo) {

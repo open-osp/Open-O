@@ -34,6 +34,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.PMmodule.model.Agency;
 import ca.openosp.openo.PMmodule.service.AgencyManager;
@@ -46,7 +47,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  *
  */
-public class PMMFilter implements Filter {
+public class PMMFilter extends OscarBaseFilter {
 
     private static Logger logger = MiscUtils.getLogger();
 
@@ -68,7 +69,7 @@ public class PMMFilter implements Filter {
         this.config = config;
     }
 
-    public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) baseRequest;
         HttpSession session = request.getSession();
 

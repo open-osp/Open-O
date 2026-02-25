@@ -28,7 +28,6 @@ package ca.openosp.openo.sec;
 import java.io.IOException;
 import java.util.Date;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -38,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.utility.MiscUtils;
 
@@ -46,7 +46,7 @@ import ca.openosp.OscarProperties;
 /**
  * @author Dennis Langdeau
  */
-public class LoginFilter implements Filter {
+public class LoginFilter extends OscarBaseFilter {
 
     private static final Logger logger = MiscUtils.getLogger();
 
@@ -130,7 +130,7 @@ public class LoginFilter implements Filter {
     /*
      * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
      */
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         logger.debug("Entering LoginFilter.doFilter()");
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;

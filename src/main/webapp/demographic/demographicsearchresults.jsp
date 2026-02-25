@@ -328,7 +328,6 @@
                         for (Integer r : results) {
                             demoList.add(demographicDao.getDemographicById(r));
                         }
-
                     } else {
                         demoList = doSearch(demographicDao, searchMode, ptStatus, keyword, limit, offset, orderBy, providerNo, outOfDomain);
                     }
@@ -459,6 +458,7 @@
                     </security:oscarSec> <!-- Rights --> <security:oscarSec roleName="<%=roleName$%>"
                                                                             objectName="_rx" rights="r">
 			<a class="rxBtn" title="Prescriptions"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/oscarRx/choosePatient.do?providerNo=<%=demo.getProviderNo()%>&demographicNo=<%=dem_no%>')">Rx</a>
+
 			</security:oscarSec>
 			<security:oscarSec roleName="<%=roleName$%>" objectName="_tickler" rights="r">
 			<a class="ticklerBtn" title="Tickler"  href="javascript:void(0)" onclick="popup(700,1027,'<c:out value="${ctx}"/>/tickler/ticklerMain.jsp?demoview=<%=dem_no%>')">T</a>
