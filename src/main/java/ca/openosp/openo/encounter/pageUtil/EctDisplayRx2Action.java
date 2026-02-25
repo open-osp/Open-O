@@ -124,9 +124,9 @@ public class EctDisplayRx2Action extends EctDisplayAction {
 
             // Sort active medications to the top of the list, preserving
             // relative order within each group (stable sort).
-            // Active definition matches getClassColour() below.
+            // Lower value = sorted higher in the list (0 = active first, 1 = non-active after).
             uniqueDrugs.sort(Comparator.comparingInt(drug ->
-                ((drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm()) ? 0 : 1
+                isActiveDrug(drug) ? 0 : 1
             ));
 
             long now = System.currentTimeMillis();
@@ -203,7 +203,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
             sb.append("expireInReference ");
         }
 
-        if ((drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm()) {
+        if (isActiveDrug(drug)) {
             sb.append("currentDrug ");
         }
 
@@ -238,6 +238,10 @@ public class EctDisplayRx2Action extends EctDisplayAction {
 
     }
 
+
+    private static boolean isActiveDrug(Prescription drug) {
+        return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
+    }
 
     public String getCmd() {
         return cmd;
