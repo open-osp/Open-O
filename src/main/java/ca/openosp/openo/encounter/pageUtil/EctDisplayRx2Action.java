@@ -240,6 +240,22 @@ public class EctDisplayRx2Action extends EctDisplayAction {
     }
 
 
+    /**
+     * Determines whether a prescription is considered active for display purposes.
+     *
+     * <p>A drug is active if it is current and not archived, or if it is long-term.
+     * This definition is shared between the medication sort order ({@link #ACTIVE_FIRST})
+     * and the CSS class assignment in {@link #getClassColour}.</p>
+     *
+     * <p><b>Note:</b> This method does not filter archived long-term drugs — it will
+     * return {@code true} for a drug that is long-term even if archived. In
+     * {@link #getInfo}, archived drugs are pre-filtered before sort and display.
+     * If moving this to a utility class, additional checks (e.g. {@code !drug.isArchived()})
+     * would be needed for standalone use.</p>
+     *
+     * @param drug Prescription the prescription to evaluate
+     * @return boolean {@code true} if the drug is considered active
+     */
     public static boolean isActiveDrug(Prescription drug) {
         return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
     }
