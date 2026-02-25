@@ -10,6 +10,9 @@ import java.util.List;
 
 import ca.openosp.openo.commn.model.EFormData;
 import ca.openosp.openo.commn.model.EmailAttachment;
+import ca.openosp.openo.casemgmt.model.ProviderExt;
+import ca.openosp.openo.commn.dao.ProviderExtDao;
+import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.commn.model.EmailLog;
 import ca.openosp.openo.commn.model.EmailLog.ChartDisplayOption;
 import ca.openosp.openo.documentManager.EDoc;
@@ -33,10 +36,12 @@ public class EmailNoteUtil {
     private LoggedInInfo loggedInInfo;
     private String DATE_FORMAT = "yyyy.MM.dd";
     private String TIME_FORMAT = "hh:mm a";
+    private static final String SENT_DATE_FORMAT = "dd-MMM-yyyy H:mm";
 
     private CommonLabResultData commonLabResultData;
     private EformDataManager eFormDataManager = SpringUtils.getBean(EformDataManager.class);
     private FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
+    private ProviderExtDao providerExtDao = SpringUtils.getBean(ProviderExtDao.class);
 
     private EmailNoteUtil() {
     }
@@ -56,6 +61,7 @@ public class EmailNoteUtil {
         addEncryptedBody(emailLog, noteBuilder);
         addTechnicalInformation(emailLog, noteBuilder);
         addInternalComment(emailLog, noteBuilder);
+        addSentByLine(noteBuilder);
         return noteBuilder.toString();
     }
 
@@ -267,5 +273,28 @@ public class EmailNoteUtil {
 
     private String getEmailTime() {
         return DateUtils.format(TIME_FORMAT, emailLog.getTimestamp(), null);
+    }
+
+    private void addSentByLine(StringBuilder noteBuilder) {
+        String dateTime = new SimpleDateFormat(SENT_DATE_FORMAT).format(emailLog.getTimestamp());
+        noteBuilder.append("\n\n[Sent on ").append(dateTime)
+                .append(" by ").append(resolveProviderDisplayName()).append("]");
+    }
+
+    /**
+     * Resolves the display name for the logged-in provider.
+     *
+     * <p>Uses the custom signature from {@link ProviderExt} if configured,
+     * otherwise falls back to the provider's full name — consistent with
+     * encounter note sign &amp; save behaviour.
+     *
+     * @return String the display name to use in the sent-by line
+     */
+    private String resolveProviderDisplayName() {
+        Provider provider = loggedInInfo.getLoggedInProvider();
+        if (provider == null) return "";
+        ProviderExt pe = providerExtDao.find(provider.getProviderNo());
+        String sig = pe != null ? pe.getSignature() : null;
+        return (sig != null && !sig.isBlank()) ? sig.trim() : provider.getFullName();
     }
 }
