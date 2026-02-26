@@ -53,6 +53,7 @@
 <%@page import="ca.openosp.openo.commn.dao.DemographicCustDao" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicExtDao" %>
 <%@page import="ca.openosp.openo.commn.dao.DemographicExtArchiveDao" %>
+<%@page import="org.owasp.encoder.Encode" %>
 <%@page import="ca.openosp.openo.commn.model.DemographicExt" %>
 <%@page import="ca.openosp.openo.commn.model.DemographicExtArchive" %>
 
@@ -332,8 +333,10 @@
                         if (hinDemo.getVer() != null && !hinDemo.getVer().equals("66")) {
 
         %>
-        ***<font color='red'><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.msgDuplicatedHIN"/></font>
-        ***<br><br><a href=# onClick="history.go(-1);return false;"><b>&lt;-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnBack"/></b></a>
+        <font color='red'><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicupdatearecord.msgDuplicatedHINError"/></font><br>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.msgDuplicatedHINDetail"/>
+        <a href="demographiccontrol.jsp?demographic_no=<%= Encode.forUriComponent(hinDemo.getDemographicNo().toString()) %>&displaymode=edit&dboperation=search_detail"><%= Encode.forHtml(hinDemo.getLastName() + ", " + hinDemo.getFirstName()) %></a><br><br>
+        <a href=# onClick="history.go(-1);return false;"><b>&lt;-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnBack"/></b></a>
         <%
                             return;
                         }
