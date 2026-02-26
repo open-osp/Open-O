@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", function(){
     removeElements();
     hideElements();
     addNavElement();
+    disableTextareaResize();
     moveSubjectReverse();
-
     // Add eForm attachments
     addEFormAttachments();
 
@@ -835,6 +835,16 @@ function HideSpin() {
 	jQuery(window).on('load', function() {
 		appendImageInputs();
 	})
+
+	/**
+	 * Disables resizing on all textarea elements to prevent content from being
+	 * truncated during PDF generation.
+	 */
+	function disableTextareaResize() {
+		const style = document.createElement("style");
+		style.textContent = "textarea { resize: none !important; }";
+		document.head.appendChild(style);
+	}
 
 	function handleEmailPrivilege() {
 		// Get the value of the element with ID 'hasEmailPrivilege'
