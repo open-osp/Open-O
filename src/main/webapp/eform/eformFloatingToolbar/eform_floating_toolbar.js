@@ -841,7 +841,12 @@ function HideSpin() {
 	 * truncated during PDF generation.
 	 */
 	function disableTextareaResize() {
+		if (document.getElementById("eform-disable-textarea-resize")) {
+			return;
+		}
+
 		const style = document.createElement("style");
+		style.id = "eform-disable-textarea-resize";
 		style.textContent = "textarea { resize: none !important; }";
 		document.head.appendChild(style);
 	}
