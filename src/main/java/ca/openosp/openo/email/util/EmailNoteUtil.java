@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import ca.openosp.openo.commn.model.EFormData;
 import ca.openosp.openo.commn.model.EmailAttachment;
@@ -276,7 +277,7 @@ public class EmailNoteUtil {
     }
 
     private void addSentByLine(StringBuilder noteBuilder) {
-        String dateTime = new SimpleDateFormat(SENT_DATE_FORMAT).format(emailLog.getTimestamp());
+        String dateTime = DateUtils.format(SENT_DATE_FORMAT, emailLog.getTimestamp(), null);
         noteBuilder.append("\n\n[Sent on ").append(dateTime)
                 .append(" by ").append(resolveProviderDisplayName()).append("]");
     }
@@ -294,7 +295,10 @@ public class EmailNoteUtil {
         Provider provider = loggedInInfo.getLoggedInProvider();
         if (provider == null) return "";
         ProviderExt pe = providerExtDao.find(provider.getProviderNo());
-        String sig = pe != null ? pe.getSignature() : null;
-        return (sig != null && !sig.isBlank()) ? sig.trim() : provider.getFullName();
+        return Optional.ofNullable(pe)
+                .map(ProviderExt::getSignature)
+                .filter(sig -> !sig.isBlank())
+                .map(String::trim)
+                .orElseGet(provider::getFullName);
     }
 }
