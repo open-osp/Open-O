@@ -334,9 +334,9 @@
 
         %>
         <font color='red'><fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicupdatearecord.msgDuplicatedHINError"/></font><br>
-        <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.demographicaddarecord.msgDuplicatedHINDetail"/>
+        <fmt:setBundle basename="oscarResources"/><fmt:message key="demographic.msgDuplicatedHINDetail"/>
         <a href="demographiccontrol.jsp?demographic_no=<%= Encode.forUriComponent(hinDemo.getDemographicNo().toString()) %>&displaymode=edit&dboperation=search_detail"><%= Encode.forHtml(hinDemo.getLastName() + ", " + hinDemo.getFirstName()) %></a><br><br>
-        <a href=# onClick="history.go(-1);return false;"><b>&lt;-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnBack"/></b></a>
+        <a href="#" onClick="history.go(-1);return false;"><b>&lt;-<fmt:setBundle basename="oscarResources"/><fmt:message key="global.btnBack"/></b></a>
         <%
                             return;
                         }
