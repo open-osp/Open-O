@@ -278,8 +278,12 @@ public class EmailNoteUtil {
 
     private void addSentByLine(StringBuilder noteBuilder) {
         String dateTime = DateUtils.format(SENT_DATE_FORMAT, emailLog.getTimestamp(), null);
-        noteBuilder.append("\n\n[Sent on ").append(dateTime)
-                .append(" by ").append(resolveProviderDisplayName()).append("]");
+        String displayName = resolveProviderDisplayName();
+        noteBuilder.append("\n\n[Sent on ").append(dateTime);
+        if (!displayName.isBlank()) {
+            noteBuilder.append(" by ").append(displayName);
+        }
+        noteBuilder.append("]");
     }
 
     /**
