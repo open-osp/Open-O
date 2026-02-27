@@ -264,14 +264,16 @@ public class Demographic2Action extends ActionSupport {
     }
 
     public String checkForDuplicates() {
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request),
+                "_demographic", "r", null)) {
+            throw new SecurityException("missing required sec object");
+        }
+
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
-        String yearOfBirth = request.getParameter("yearOfBirth");
-        String monthOfBirth = request.getParameter("monthOfBirth");
-        String dayOfBirth = request.getParameter("dayOfBirth");
 
-        List<Demographic> duplicateList = demographicDao.getDemographicWithLastFirstDOBExact(lastName, firstName,
-                yearOfBirth, monthOfBirth, dayOfBirth);
+        List<Demographic> duplicateList = demographicDao.getDemographicWithLastFirstDOBExact(
+                lastName, firstName, null, null, null);
 
         Map<String, Object> result = new HashMap<>();
         result.put("hasDuplicates", !duplicateList.isEmpty());
@@ -279,7 +281,7 @@ public class Demographic2Action extends ActionSupport {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
-            new ObjectMapper().writeValue(response.getWriter(), result);
+            objectMapper.writeValue(response.getWriter(), result);
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error in checkForDuplicates", e);
         }
