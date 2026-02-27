@@ -538,10 +538,13 @@
 
             function ignoreDuplicates() {
                 let ignore = true;
-                const lastName = jQuery("#last_name").val();
-                const firstName = jQuery("#first_name").val();
+                const lastName = jQuery.trim(jQuery("#last_name").val());
+                const firstName = jQuery.trim(jQuery("#first_name").val());
+                if (!lastName || !firstName) {
+                    return true;
+                }
                 jQuery.ajaxSetup({async: false});
-                let findDuplicate = jQuery.post("<%=request.getContextPath()%>/demographicSupport.do?method=checkForDuplicates&lastName=" + lastName + "&firstName=" + firstName);
+                let findDuplicate = jQuery.post("<%=request.getContextPath()%>/demographicSupport.do", { method: "checkForDuplicates", lastName: lastName, firstName: firstName });
                 findDuplicate.success(function (data) {
                     if (data.hasDuplicates) {
                         ignore = confirm('There are other patients in this system with the same first and last name. Are you sure you want to create this new patient record?');
