@@ -264,7 +264,7 @@ public class Demographic2Action extends ActionSupport {
 
     public String checkForDuplicates() {
         if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request),
-                "_demographic", "r", null)) {
+                "_demographic", "w", null)) {
             throw new SecurityException("missing required sec object (_demographic)");
         }
 
