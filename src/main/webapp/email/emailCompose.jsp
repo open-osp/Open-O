@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/oscar-tag.tld" prefix="oscar" %>
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 <%@ taglib prefix="html" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="https://www.owasp.org/index.php/OWASP_Java_Encoder_Project" prefix="e" %>
 
 <html>
 <head>
@@ -207,11 +208,11 @@
                             <div class="row">
                                 <div class="col-sm-12 form-group">
                                     <label for="senderEmailAddress">Sender</label>
-                                    <select class="form-select" name="senderEmailAddress" id="senderEmailAddress"
+                                    <select class="form-select" name="senderConfigId" id="senderEmailAddress"
                                             onchange="showAdditionalParamOption()">
                                         <c:forEach items="${ senderAccounts }" var="senderAccount">
-                                            <option value="${ senderAccount.senderEmail }"
-                                                    data-email-type="${ senderAccount.emailType }" ${ senderAccount.senderEmail eq senderEmail or senderAccount.senderEmail eq param.senderEmail ? 'selected' : '' }>
+                                            <option value="${ senderAccount.id }"
+                                                    data-email-type="${ e:forHtmlAttribute(senderAccount.emailType) }" ${ senderAccount.id eq param.senderConfigId or senderAccount.id eq senderConfigId or (empty param.senderConfigId and empty senderConfigId and (senderAccount.senderEmail eq senderEmail or senderAccount.senderEmail eq param.senderEmail)) ? 'selected' : '' }>
                                                 <c:out value="${ senderAccount.senderFirstName }"/> <c:out
                                                     value="${ senderAccount.senderLastName }"/> <c:out
                                                     value="(${ senderAccount.senderEmail })"/>
