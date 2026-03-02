@@ -779,7 +779,7 @@
             <class>ca.openosp.openo.prevention.Prevention</class>
         </parameter>
         <java:condition>prev.getAgeInYears() &gt;= 18</java:condition>
-        <java:condition>prev.getAgeInYears() &lt; 70</java:condition>
+        <java:condition>prev.getAgeInYears() &lt;= 74</java:condition>
         <java:condition>prev.isFemale()</java:condition>             
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") != -1</java:condition>
         <java:condition>!prev.isInelligible("MAM")</java:condition>
