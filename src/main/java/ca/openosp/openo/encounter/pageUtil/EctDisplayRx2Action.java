@@ -40,7 +40,6 @@ import ca.openosp.openo.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -48,9 +47,6 @@ import java.util.Locale;
 public class EctDisplayRx2Action extends EctDisplayAction {
     private String cmd = "Rx";
     private static final Logger logger = MiscUtils.getLogger();
-
-    public static final Comparator<Prescription> ACTIVE_FIRST =
-        Comparator.comparingInt(drug -> isActiveDrug(drug) ? 0 : 1);
 
     public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao) {
 
@@ -125,10 +121,11 @@ public class EctDisplayRx2Action extends EctDisplayAction {
                 }
             }
 
-            // Sort active medications to the top of the list, preserving
-            // relative order within each group (stable sort).
-            // Lower value = sorted higher in the list (0 = active first, 1 = non-active after).
-            uniqueDrugs.sort(ACTIVE_FIRST);
+            // Single-pass stable partition: active prescriptions first, preserving
+            // relative order within each group. Calls isActiveDrug() exactly once per
+            // drug (O(n)) instead of O(n log n) times via a sort comparator, avoiding
+            // repeated GregorianCalendar allocations inside Prescription.isCurrent().
+            stablePartitionActiveFirst(uniqueDrugs);
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
@@ -244,7 +241,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
      * Determines whether a prescription is considered active for display purposes.
      *
      * <p>A drug is active if it is current and not archived, or if it is long-term.
-     * This definition is shared between the medication sort order ({@link #ACTIVE_FIRST})
+     * This definition is shared between {@link #stablePartitionActiveFirst(List)}
      * and the CSS class assignment in {@link #getClassColour}.</p>
      *
      * <p><b>Note:</b> This method does not filter archived long-term drugs — it will
@@ -258,6 +255,31 @@ public class EctDisplayRx2Action extends EctDisplayAction {
      */
     public static boolean isActiveDrug(Prescription drug) {
         return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
+    }
+
+    /**
+     * Reorders {@code drugs} in-place so that active prescriptions come first,
+     * preserving the original relative order within each group (stable partition).
+     *
+     * <p>Calls {@link #isActiveDrug(Prescription)} exactly once per element
+     * (O(n)), avoiding the repeated {@link java.util.GregorianCalendar} allocations
+     * that would occur if the same check were used inside a sort comparator.</p>
+     *
+     * @param drugs List the mutable list of prescriptions to reorder
+     */
+    public static void stablePartitionActiveFirst(List<Prescription> drugs) {
+        List<Prescription> active = new ArrayList<>(drugs.size());
+        List<Prescription> inactive = new ArrayList<>(drugs.size());
+        for (Prescription drug : drugs) {
+            if (isActiveDrug(drug)) {
+                active.add(drug);
+            } else {
+                inactive.add(drug);
+            }
+        }
+        drugs.clear();
+        drugs.addAll(active);
+        drugs.addAll(inactive);
     }
 
     public String getCmd() {
