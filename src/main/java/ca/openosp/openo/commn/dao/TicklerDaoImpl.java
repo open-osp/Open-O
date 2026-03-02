@@ -29,15 +29,22 @@ package ca.openosp.openo.commn.dao;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Query;
 
 import ca.openosp.openo.commn.model.CustomFilter;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.tickler.dto.TicklerCommentDTO;
+import ca.openosp.openo.tickler.dto.TicklerLinkDTO;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -410,5 +417,282 @@ public class TicklerDaoImpl extends AbstractDaoImpl<Tickler> implements TicklerD
         if (priority != null && priority.equals("Low"))
             result = Tickler.PRIORITY.Low;
         return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Implementation uses JPQL constructor expression for direct DTO projection,
+     * then batch-loads comments and links in separate queries.
+     * </p>
+     *
+     * @since 2026-01-30
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit) {
+        ArrayList<Object> paramList = new ArrayList<Object>();
+        String sql = getTicklerDTOQueryString(paramList, filter);
+
+        Query query = entityManager.createQuery(sql, TicklerListDTO.class);
+        for (int x = 0; x < paramList.size(); x++) {
+            query.setParameter(x + 1, paramList.get(x));
+        }
+        query.setFirstResult(offset);
+        setLimit(query, limit);
+
+        List<TicklerListDTO> ticklerDTOs = query.getResultList();
+
+        loadCommentsForTicklerDTOs(ticklerDTOs);
+        loadLinksForTicklerDTOs(ticklerDTOs);
+
+        return ticklerDTOs;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 2026-01-30
+     */
+    @Override
+    public List<TicklerListDTO> getTicklerDTOs(CustomFilter filter) {
+        return getTicklerDTOs(filter, 0, TicklerDao.MAX_LIST_RETURN_SIZE);
+    }
+
+    /**
+     * Builds the JPQL query string for TicklerListDTO projection.
+     *
+     * @param paramList List to populate with query parameters
+     * @param filter CustomFilter the filter criteria
+     * @return String the complete JPQL query
+     */
+    private String getTicklerDTOQueryString(List<Object> paramList, CustomFilter filter) {
+        int paramIndex = 1;
+
+        boolean includeMRPClause = filter.getMrp() != null
+                && !filter.getMrp().isEmpty()
+                && !"All Providers".equals(filter.getMrp());
+        boolean includeProviderClause = filter.getProvider() != null
+                && !filter.getProvider().isEmpty()
+                && !"All Providers".equals(filter.getProvider());
+        boolean includeAssigneeClause = filter.getAssignee() != null
+                && !filter.getAssignee().isEmpty()
+                && !"All Providers".equals(filter.getAssignee());
+        boolean includeStatusClause = filter.getStatus() != null
+                && !filter.getStatus().isEmpty()
+                && !"Z".equals(filter.getStatus());
+        boolean includePriorityClause = filter.getPriority() != null
+                && !filter.getPriority().isEmpty();
+        boolean includeClientClause = isValidIntegerFilter(filter.getClient())
+                && !"All Clients".equals(filter.getClient());
+        boolean includeDemographicClause = isValidIntegerFilter(filter.getDemographicNo())
+                && !"All Clients".equalsIgnoreCase(filter.getDemographicNo());
+        boolean includeProgramClause = isValidIntegerFilter(filter.getProgramId())
+                && !"All Programs".equals(filter.getProgramId());
+        boolean includeMessage = filter.getMessage() != null
+                && !filter.getMessage().trim().isEmpty();
+
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT NEW ca.openosp.openo.tickler.dto.TicklerListDTO(");
+        query.append("t.id, t.message, t.serviceDate, t.createDate, t.status, t.priority, ");
+        query.append("t.demographicNo, d.LastName, d.FirstName, ");
+        query.append("creator.LastName, creator.FirstName, ");
+        query.append("assignee.LastName, assignee.FirstName) ");
+        query.append("FROM Tickler t ");
+        query.append("LEFT JOIN Demographic d ON d.DemographicNo = t.demographicNo ");
+        query.append("LEFT JOIN Provider creator ON creator.ProviderNo = t.creator ");
+        query.append("LEFT JOIN Provider assignee ON assignee.ProviderNo = t.taskAssignedTo ");
+
+        if (includeMRPClause) {
+            query.append("WHERE d.ProviderNo = ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getMrp());
+        } else {
+            query.append("WHERE 1=1 ");
+        }
+
+        if (filter.getStartDate() != null) {
+            query.append("AND t.serviceDate >= ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getStartDate());
+        }
+
+        if (filter.getEndDate() != null) {
+            query.append("AND t.serviceDate <= ?").append(paramIndex++).append(" ");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(filter.getEndDate());
+            cal.set(Calendar.HOUR_OF_DAY, 23);
+            cal.set(Calendar.MINUTE, 59);
+            cal.set(Calendar.SECOND, 59);
+            paramList.add(new Date(cal.getTime().getTime()));
+        }
+
+        if (includeProviderClause) {
+            appendInClause(query, paramList, "t.creator", filter.getProviders(), paramIndex);
+            paramIndex += filter.getProviders().size();
+        }
+
+        if (includeAssigneeClause) {
+            appendInClause(query, paramList, "t.taskAssignedTo", filter.getAssignees(), paramIndex);
+            paramIndex += filter.getAssignees().size();
+        }
+
+        if (includeProgramClause) {
+            query.append("AND t.programId = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.valueOf(filter.getProgramId()));
+        }
+
+        if (includeStatusClause) {
+            query.append("AND t.status = ?").append(paramIndex++).append(" ");
+            paramList.add(convertStatus(filter.getStatus()));
+        }
+
+        if (includePriorityClause) {
+            query.append("AND t.priority = ?").append(paramIndex++).append(" ");
+            paramList.add(convertPriority(filter.getPriority()));
+        }
+
+        if (includeClientClause) {
+            query.append("AND t.demographicNo = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.parseInt(filter.getClient()));
+        }
+
+        if (includeDemographicClause) {
+            query.append("AND t.demographicNo = ?").append(paramIndex++).append(" ");
+            paramList.add(Integer.parseInt(filter.getDemographicNo()));
+        }
+
+        if (includeMessage) {
+            query.append("AND t.message = ?").append(paramIndex++).append(" ");
+            paramList.add(filter.getMessage());
+        }
+
+        // ORDER BY clause for deterministic results and stable pagination
+        // Secondary sort by id ensures consistent ordering when serviceDates are equal
+        String orderBy = "ORDER BY t.serviceDate ";
+        orderBy += "desc".equalsIgnoreCase(filter.getSort_order()) ? "DESC" : "ASC";
+        orderBy += ", t.id DESC ";
+        query.append(orderBy);
+
+        return query.toString();
+    }
+
+    /**
+     * Checks if a string value is a valid integer for use in queries.
+     *
+     * @param value the string to check
+     * @return true if the value is non-null, non-empty, and parseable as an integer
+     */
+    private boolean isValidIntegerFilter(String value) {
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Appends an IN clause for a set of providers to the query.
+     *
+     * @param query the query builder
+     * @param paramList the parameter list to populate
+     * @param fieldName the field name (e.g., "t.creator")
+     * @param providers the set of providers
+     * @param paramIndex the starting parameter index
+     */
+    private void appendInClause(StringBuilder query, List<Object> paramList, String fieldName,
+                                Set<Provider> providers, int paramIndex) {
+        query.append("AND ").append(fieldName).append(" IN (");
+        int i = 0;
+        for (Provider provider : providers) {
+            if (i > 0) {
+                query.append(",");
+            }
+            query.append("?").append(paramIndex + i);
+            paramList.add(provider.getProviderNo());
+            i++;
+        }
+        query.append(") ");
+    }
+
+    /**
+     * Batch loads comments for a list of TicklerListDTOs.
+     * Uses a single query to fetch all comments and then maps them to their parent ticklers.
+     *
+     * @param ticklerDTOs List of TicklerListDTO to populate with comments
+     */
+    @SuppressWarnings("unchecked")
+    private void loadCommentsForTicklerDTOs(List<TicklerListDTO> ticklerDTOs) {
+        if (ticklerDTOs == null || ticklerDTOs.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ticklerIds = ticklerDTOs.stream()
+                .map(TicklerListDTO::getId)
+                .collect(Collectors.toList());
+
+        String commentSql = "SELECT NEW ca.openosp.openo.tickler.dto.TicklerCommentDTO(" +
+                "c.id, c.ticklerNo, c.message, c.updateDate, " +
+                "c.provider.LastName, c.provider.FirstName) " +
+                "FROM TicklerComment c " +
+                "LEFT JOIN c.provider " +
+                "WHERE c.ticklerNo IN (:ticklerIds) " +
+                "ORDER BY c.updateDate ASC";
+
+        List<TicklerCommentDTO> allComments = entityManager
+                .createQuery(commentSql, TicklerCommentDTO.class)
+                .setParameter("ticklerIds", ticklerIds)
+                .getResultList();
+
+        Map<Integer, List<TicklerCommentDTO>> commentsByTickler = allComments.stream()
+                .collect(Collectors.groupingBy(TicklerCommentDTO::getTicklerNo));
+
+        for (TicklerListDTO tickler : ticklerDTOs) {
+            tickler.setComments(
+                    commentsByTickler.getOrDefault(tickler.getId(), Collections.emptyList())
+            );
+        }
+    }
+
+    /**
+     * Batch loads links for a list of TicklerListDTOs.
+     * Uses a single query to fetch all links and then maps them to their parent ticklers.
+     *
+     * @param ticklerDTOs List of TicklerListDTO to populate with links
+     */
+    @SuppressWarnings("unchecked")
+    private void loadLinksForTicklerDTOs(List<TicklerListDTO> ticklerDTOs) {
+        if (ticklerDTOs == null || ticklerDTOs.isEmpty()) {
+            return;
+        }
+
+        List<Integer> ticklerIds = new ArrayList<>();
+        Map<Integer, TicklerListDTO> ticklerMap = new HashMap<>();
+
+        for (TicklerListDTO dto : ticklerDTOs) {
+            ticklerIds.add(dto.getId());
+            ticklerMap.put(dto.getId(), dto);
+            dto.setLinks(new ArrayList<>());
+        }
+
+        String linkSql = "SELECT NEW ca.openosp.openo.tickler.dto.TicklerLinkDTO(" +
+                "l.id, l.ticklerNo, l.tableName, l.tableId) " +
+                "FROM TicklerLink l " +
+                "WHERE l.ticklerNo IN (:ticklerIds) " +
+                "ORDER BY l.id ASC";
+
+        Query linkQuery = entityManager.createQuery(linkSql);
+        linkQuery.setParameter("ticklerIds", ticklerIds);
+
+        List<TicklerLinkDTO> links = linkQuery.getResultList();
+
+        for (TicklerLinkDTO link : links) {
+            TicklerListDTO tickler = ticklerMap.get(link.getTicklerNo());
+            if (tickler != null) {
+                tickler.getLinks().add(link);
+            }
+        }
     }
 }
