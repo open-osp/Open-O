@@ -56,14 +56,14 @@ function createAndShowAlert(alertId, message, alertType, duration, onDismissEven
  * Show an error alert
  */
 function showErrorAlert() {
-    this.createAndShowAlert('submit-error-alert', 'The form could not be saved. Please try again.', 'danger', 5, undefined);
+    createAndShowAlert('submit-error-alert', 'The form could not be saved. Please try again.', 'danger', 5, undefined);
 }
 
 /**
  * Show a success alert
  */
 function showSuccessAlert(onDismissEvent) {
-    this.createAndShowAlert('submit-success-alert', 'The form has been saved successfully.', 'success', 5, onDismissEvent);
+    createAndShowAlert('submit-success-alert', 'The form has been saved successfully.', 'success', 5, onDismissEvent);
 }
 
 function sleep(ms) {
@@ -74,7 +74,7 @@ function sleep(ms) {
 /**
  * The `OscarAlert` class, which is to create and manage
  * Bootstrap alert messages dynamically with customizable countdown timers and
- * dismissal functionality.Z
+ * dismissal functionality.
  * */
 class OscarAlert {
 
@@ -89,11 +89,22 @@ class OscarAlert {
 
         this.alertDiv.innerHTML = this.getInnerHTML(message);
 
-        this.alertDiv.querySelector('.btn-close').addEventListener('click', () => this.dismissAlert());
+        const closeBtn = this.alertDiv.querySelector('.btn-close');
+        if(closeBtn) {
+            closeBtn.addEventListener('click', () => this.dismissAlert());
+        }
+
+        this.shadowHost = null;
     }
 
     counter() {
-        const element = document.getElementById(`countdown-${this.alertDiv.id}`);
+        let element = null;
+        if (this.shadowHost && this.shadowHost.shadowRoot) {
+            element = this.shadowHost.shadowRoot.getElementById(`countdown-${this.alertDiv.id}`);
+        } else {
+            element = document.getElementById(`countdown-${this.alertDiv.id}`);
+        }
+
         if (this.countdown <= 0) {
             this.dismissAlert();  // This already clears the interval
             return;
@@ -111,7 +122,7 @@ class OscarAlert {
     }
 
     isVisible() {
-        return document.getElementById(`${this.alertDiv.id}`) && this.alertDiv.classList.contains('show');
+        return this.alertDiv.classList.contains('show');
     }
 
     async showAlert() {
@@ -127,7 +138,13 @@ class OscarAlert {
         clearInterval(this.counterHandlerNumber);
         this.updateAlertVisibility(false);
         this.resetCountdownInterval();
-        this.alertDiv.remove();
+
+        if (this.shadowHost) {
+            this.shadowHost.remove();
+        } else {
+            this.alertDiv.remove(); // Fallback
+        }
+
         if (this.onDismissEvent)
             this.onDismissEvent();
     }
@@ -136,8 +153,54 @@ class OscarAlert {
         this.countdown = this.duration;
     }
 
+    /**
+     * Creates a Shadow DOM wrapper to isolate Bootstrap CSS
+     * and injects it into the parent.
+     */
     injectInToParentBefore(parent) {
-        parent.appendChild(this.alertDiv);
+        // Get Context Path for CSS loading
+        const contextPath = document.getElementById("context") ? document.getElementById("context").value : "";
+
+        // Create the Shadow Host
+        this.shadowHost = document.createElement('div');
+        this.shadowHost.id = `host-${this.alertDiv.id}`;
+
+        // Positioning on screen
+        Object.assign(this.shadowHost.style, {
+            position: 'fixed',
+            top: '85vh',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: '10001',
+            width: 'auto',
+            minWidth: '350px',
+            maxWidth: '90vw',
+            textAlign: 'left',
+            fontFamily: 'sans-serif'
+        });
+
+        // 4. Attach Shadow DOM
+        const shadow = this.shadowHost.attachShadow({ mode: 'open' });
+
+        // 5. Create CSS Link
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `${contextPath}/library/bootstrap/5.0.2/css/bootstrap.css`;
+
+        // 6. Create Helper CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            :host { display: block; }
+            .alert { box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        `;
+
+        // 7. Prepare Shadow DOM
+        shadow.appendChild(link);
+        shadow.appendChild(style);
+        shadow.appendChild(this.alertDiv);
+
+        // 8. Append Host to Parent
+        parent.appendChild(this.shadowHost);
     }
 
     setOnDismissEvent(onDismissEvent) {
@@ -157,7 +220,7 @@ class OscarAlert {
         return `
             <strong>${this.getLabel()}</strong> ${message}
             <br> <small>${this.getDismissalMessage()}<span id="countdown-${this.alertDiv.id}">${this.countdown}</span> seconds.</small>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" ></button>
+            <button type="button" class="btn-close" aria-label="Close" style="cursor: pointer;"></button>
         `;
     }
 
