@@ -250,7 +250,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
      * If moving this to a utility class, additional checks (e.g. {@code !drug.isArchived()})
      * would be needed for standalone use.</p>
      *
-     * @param drug Prescription the prescription to evaluate
+     * @param drug the prescription to evaluate
      * @return boolean {@code true} if the drug is considered active
      */
     public static boolean isActiveDrug(Prescription drug) {
@@ -265,11 +265,15 @@ public class EctDisplayRx2Action extends EctDisplayAction {
      * (O(n)), avoiding the repeated {@link java.util.GregorianCalendar} allocations
      * that would occur if the same check were used inside a sort comparator.</p>
      *
-     * @param drugs List the mutable list of prescriptions to reorder
+     * @param drugs the mutable list of prescriptions to reorder
+     * @since 2026-03-02
      */
     public static void stablePartitionActiveFirst(List<Prescription> drugs) {
+        if (drugs == null || drugs.isEmpty()) {
+            return;
+        }
         List<Prescription> active = new ArrayList<>(drugs.size());
-        List<Prescription> inactive = new ArrayList<>(drugs.size());
+        List<Prescription> inactive = new ArrayList<>();
         for (Prescription drug : drugs) {
             if (isActiveDrug(drug)) {
                 active.add(drug);

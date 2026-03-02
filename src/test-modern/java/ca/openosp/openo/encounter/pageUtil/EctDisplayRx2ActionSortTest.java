@@ -156,11 +156,6 @@ public class EctDisplayRx2ActionSortTest {
         EctDisplayRx2Action.stablePartitionActiveFirst(drugs);
 
         // longTerm and active are both "active" — should come first, in original relative order
-        assertThat(drugs.indexOf(longTerm)).isLessThan(drugs.indexOf(expired));
-        assertThat(drugs.indexOf(active)).isLessThan(drugs.indexOf(expired));
-        assertThat(drugs.indexOf(longTerm)).isLessThan(drugs.indexOf(archived));
-        assertThat(drugs.indexOf(active)).isLessThan(drugs.indexOf(archived));
-        // Relative order within active group preserved: longTerm came before active in input
-        assertThat(drugs.indexOf(longTerm)).isLessThan(drugs.indexOf(active));
+        assertThat(drugs).containsExactly(longTerm, active, expired, archived);
     }
 }
