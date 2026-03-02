@@ -139,10 +139,28 @@
 </table>
 
 <table width="100%" border="0" bgcolor="#EEEEFF">
+    <thead>
+        <tr style="font-family:Verdana, Arial, Helvetica, sans-serif;
+                    font-size: 11px; font-weight: bold; color: #6f6f6f">
+            <td style="width: 5%;"></td>
+            <td style="width: 45%; padding-left: 8px;">
+                <span>Status Filters</span>
+            </td>
+            <td style="width: 25%;">
+                <span>Service Date-Range</span>
+            </td>
+            <td style="width: 25%;">
+                <span>Select Provider</span>
+            </td>
+        </tr>
+    </thead>
     <form name="serviceform" method="get" action="billingReportControl.jsp">
         <tr>
-            <td width="30%" align="right"><font size="2" color="#333333"
-                                                face="Verdana, Arial, Helvetica, sans-serif"> <input
+            <td style="width: 5%;"></td>
+            <%--<td width="25%" align="center"><font size="2" color="#333333"
+                                                face="Verdana, Arial, Helvetica, sans-serif">--%>
+            <td width="45%" style="font-family:Verdana, Arial, Helvetica, sans-serif; font-size: 13px;">
+                <input
                     type="radio" name="reportAction" value="unbilled"
                 <%=reportAction.equals("unbilled")?"checked":""%>> Unbilled <input
                     type="radio" name="reportAction" value="billed"
@@ -152,12 +170,27 @@
         <input type="radio" name="reportAction" value="billob"  <%=reportAction.equals("billob")?"checked":""%>>
         OB
           <input type="radio" name="reportAction" value="flu" <%=reportAction.equals("flu")?"checked":""%>>
-        FLU</font>--></td>
-            <td width="50%">
-                <div align="right"></div>
-                <div align="center"><font
-                        face="Verdana, Arial, Helvetica, sans-serif" size="2" color="#333333"><b>Select
-                    provider </b></font> <select name="providerview">
+        FLU</font></td>-->
+            <label style="display: inline-flex; align-items: center; margin-left: 10px;">
+                    <input type="checkbox" name="filter_noshow" value="true"
+                        <%= request.getParameter("filter_noshow") != null ? "checked" : "" %> > No-Show
+                </label>
+
+                <label style="padding-left: 10px; display: inline-flex; align-items: center;">
+                    <input type="checkbox" name="filter_cancelled" value="true"
+                        <%= request.getParameter("filter_cancelled") != null ? "checked" : "" %> > Cancelled
+                </label>
+            </td>
+
+            <td width="25%">
+                <div ><input type="text" name="xml_vdate"
+                value="<%=xml_vdate%>"> <font size="1"
+                        face="Arial, Helvetica, sans-serif"><a href="#"
+                    onClick="openBrWindow('billingCalendarPopup.jsp?type=&returnItem=xml_vdate&returnForm=serviceform&year=<%=curYear%>&month=<%=curMonth%>','','width=300,height=300')">Begin:</a></font>
+                </div>
+            </td>
+            <td width="25%">
+                <div> <select name="providerview">
                     <% String proFirst = "";
                         String proLast = "";
                         String proOHIP = "";
@@ -183,30 +216,26 @@
                     %>
                 </select></div>
             </td>
-            <td width="20%"><font color="#333333" size="2"
-                                  face="Verdana, Arial, Helvetica, sans-serif"> <input
-                    type="hidden" name="verCode" value="V03"> <input
-                    type="submit" name="Submit" value="Create Report"> </font></td>
-        </tr>
+            </tr>
         <tr>
-            <td width="19%">
-                <div align="right"><input type='button' name='print'
-                                          value='Print' onClick='window.print()'> <font color="#003366"><font
-                        face="Arial, Helvetica, sans-serif" size="2"><b> <font
-                        color="#333333">Service Date-Range</font></b></font></font></div>
+            <td width="5%">
+                </td>
+                                          <td width="45%">
+
             </td>
-            <td width="41%">
-                <div align="center"><input type="text" name="xml_vdate"
-                                           value="<%=xml_vdate%>"> <font size="1"
+            <td width="25%"><input type="text" name="xml_appointment_date"
+                                           value="<%=xml_appointment_date%>"> <font size="1"
                                                                          face="Arial, Helvetica, sans-serif"><a href="#"
-                                                                                                                onClick="openBrWindow('billingCalendarPopup.jsp?type=&returnItem=xml_vdate&returnForm=serviceform&year=<%=curYear%>&month=<%=curMonth%>','','width=300,height=300')">Begin:</a></font>
-                </div>
-            </td>
-            <td width="40%"><input type="text" name="xml_appointment_date"
-                                   value="<%=xml_appointment_date%>"> <font size="1"
-                                                                            face="Arial, Helvetica, sans-serif"><a
-                    href="#"
-                    onClick="openBrWindow('billingCalendarPopup.jsp?type=&returnItem=xml_appointment_date&returnForm=serviceform&year=<%=curYear%>&month=<%=curMonth%>','','width=300,height=300')">End:</a></font>
+                                                                                                                onClick="openBrWindow('billingCalendarPopup.jsp?type=&returnItem=xml_appointment_date&returnForm=serviceform&year=<%=curYear%>&month=<%=curMonth%>','','width=300,height=300')">End:</a></font>
+                </td>
+            <td width="25%">
+                                    <font color="#333333" size="2"
+                                                                            face="Verdana, Arial, Helvetica, sans-serif">
+                    <input
+			type="hidden" name="verCode" value="V03"> <input
+                        type="submit" name="Submit" value="Create Report"> </font>
+
+                    <input type='button' name='print' value='Print' onClick='window.print()' style="margin-left: 10px">
             </td>
         </tr>
     </form>
