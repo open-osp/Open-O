@@ -145,6 +145,21 @@ public class EctDisplayRx2ActionSortTest {
     }
 
     @Test
+    @DisplayName("Archived long-term drug should be classified as active per isActiveDrug semantics")
+    void shouldClassifyAsActive_whenDrugIsArchivedAndLongTerm() {
+        Prescription archivedLongTerm = longTermDrug(1);
+        archivedLongTerm.setArchived("true");
+        Prescription expired = expiredDrug(2);
+
+        List<Prescription> drugs = new ArrayList<>(List.of(expired, archivedLongTerm));
+        EctDisplayRx2Action.stablePartitionActiveFirst(drugs);
+
+        // Archived long-term drugs are "active" per isActiveDrug() — downstream
+        // filtering in getInfo() handles their removal from display.
+        assertThat(drugs).containsExactly(archivedLongTerm, expired);
+    }
+
+    @Test
     @DisplayName("Mixed active, long-term, and expired should group correctly")
     void shouldGroupCorrectly_whenAllTypesPresent() {
         Prescription expired = expiredDrug(5);
