@@ -41,9 +41,11 @@ import ca.openosp.openo.PMmodule.dao.ProviderDao;
 import ca.openosp.openo.commn.dao.DemographicCustDao;
 import ca.openosp.openo.commn.dao.DemographicDao;
 import ca.openosp.openo.commn.dao.IncomingLabRulesDao;
+import ca.openosp.openo.commn.dao.PropertyDao;
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.model.DemographicCust;
 import ca.openosp.openo.commn.model.IncomingLabRules;
+import ca.openosp.openo.commn.model.Property;
 import ca.openosp.openo.commn.model.Provider;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentSubClassDao;
@@ -231,20 +233,29 @@ public class HRMReportParser {
                 logger.debug("MERGED DOCUMENTS ID" + document.getId());
 
 
-                HRMReportParser.routeReportToDemographic(report, document);
+                String demProviderNo = HRMReportParser.routeReportToDemographic(report, document);
                 HRMReportParser.doSimilarReportCheck(loggedInInfo, report, document);
-                // Attempt a route to the providers listed in the report -- if they don't exist, note that in the record
-                Boolean routeSuccess = HRMReportParser.routeReportToProvider(report, document.getId());
-                if (!routeSuccess) {
 
-                    logger.info("Adding the providers name to the list of unidentified providers, for file:" + report.getFileLocation());
+                PropertyDao propertyDao = SpringUtils.getBean(PropertyDao.class);
 
-                    // Add the providers name to the list of unidentified providers for this report
-                    document.setUnmatchedProviders((document.getUnmatchedProviders() != null ? document.getUnmatchedProviders() : "") + "|" + ((report.getDeliverToUserIdLastName() != null) ? report.getDeliverToUserIdLastName() + ", " + report.getDeliverToUserIdFirstName() : report.getDeliverToUserId()) + " (" + report.getDeliverToUserId() + ")");
-                    hrmDocumentDao.merge(document);
-                    // Route this report to the "system" user so that a search for "all" in the inbox will come up with them
-                    HRMReportParser.routeReportToProvider(document.getId(), "-1");
+                // Link the HRM to the MRP
+                boolean providerLinkingRules = propertyDao.isActiveBooleanProperty(Property.PROPERTY_KEY.provider_linking_rules);
+                if (providerLinkingRules && demProviderNo != null && !demProviderNo.equals("0")) {
+                    routeReportToProvider(document.getId(), demProviderNo);
                 }
+
+				// Attempt a route to the provider listed in the report -- if they don't exist, note that in the record
+				Boolean routeSuccess = HRMReportParser.routeReportToProvider(report, document.getId());
+				if (!routeSuccess) {
+					
+					logger.info("Adding the provider name to the list of unidentified providers, for file:"+report.getFileLocation());
+					
+					// Add the provider name to the list of unidentified providers for this report
+					document.setUnmatchedProviders((document.getUnmatchedProviders() != null ? document.getUnmatchedProviders() : "") + "|" + ((report.getDeliverToUserIdLastName()!=null)?report.getDeliverToUserIdLastName() + ", " + report.getDeliverToUserIdFirstName():report.getDeliverToUserId()) + " (" + report.getDeliverToUserId() + ")");
+					hrmDocumentDao.merge(document);
+					// Route this report to the "system" user so that a search for "all" in the inbox will come up with them
+					HRMReportParser.routeReportToProvider(document.getId(), "-1");
+				}
 
                 HRMReportParser.routeReportToSubClass(report, document.getId());
             }
@@ -260,11 +271,11 @@ public class HRMReportParser {
         }
     }
 
-    private static void routeReportToDemographic(HRMReport report, HRMDocument mergedDocument) {
+    private static String routeReportToDemographic(HRMReport report, HRMDocument mergedDocument) {
 
         if (report == null) {
             logger.info("routeReportToDemographic cannot continue, report parameter is null");
-            return;
+            return null;
         }
 
 
@@ -275,6 +286,7 @@ public class HRMReportParser {
 
         List<Demographic> matchingDemographicListByHin = demographicDao.searchDemographicByHIN(report.getHCN());
 
+        String demProviderNo = null;
         if (matchingDemographicListByHin.size() > 0) {
             if (OscarProperties.getInstance().isPropertyActive("omd_hrm_demo_matching_criteria")) {
                 for (Demographic d : matchingDemographicListByHin) {
@@ -282,6 +294,7 @@ public class HRMReportParser {
                             && report.getDateOfBirthAsString().equalsIgnoreCase(d.getBirthDayAsString())
                             && report.getLegalLastName().equalsIgnoreCase(d.getLastName())) {
                         HRMReportParser.routeReportToDemographic(mergedDocument.getId(), d.getDemographicNo());
+                        demProviderNo = d.getProviderNo();
                         break;
                     }
                 }
@@ -291,9 +304,12 @@ public class HRMReportParser {
                 // if not empty and DOB matches as well, route report to Demographic
                 if (report.getDateOfBirthAsString().equalsIgnoreCase(demographic.getBirthDayAsString())) {
                     HRMReportParser.routeReportToDemographic(mergedDocument.getId(), demographic.getDemographicNo());
+                    demProviderNo = demographic.getProviderNo();
                 }
             }
         }
+
+        return demProviderNo;
     }
 
 
@@ -590,8 +606,14 @@ public class HRMReportParser {
 
     public static void routeReportToProvider(Integer reportId, String providerNo) {
         HRMDocumentToProviderDao hrmDocumentToProviderDao = (HRMDocumentToProviderDao) SpringUtils.getBean(HRMDocumentToProviderDao.class);
-        HRMDocumentToProvider providerRouting = new HRMDocumentToProvider();
 
+        // Check if routing already exists
+        HRMDocumentToProvider existing = hrmDocumentToProviderDao.findByHrmDocumentIdAndProviderNo(reportId, providerNo);
+        if (existing != null) {
+            return; // Don't create duplicate
+        }
+
+        HRMDocumentToProvider providerRouting = new HRMDocumentToProvider();
         providerRouting.setHrmDocumentId(reportId);
         providerRouting.setProviderNo(providerNo);
 

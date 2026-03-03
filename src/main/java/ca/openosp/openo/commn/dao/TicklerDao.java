@@ -35,6 +35,7 @@ import java.util.Set;
 
 import ca.openosp.openo.commn.model.CustomFilter;
 import ca.openosp.openo.commn.model.Tickler;
+import ca.openosp.openo.tickler.dto.TicklerListDTO;
 
 public interface TicklerDao extends AbstractDao<Tickler> {
 
@@ -68,4 +69,37 @@ public interface TicklerDao extends AbstractDao<Tickler> {
     public List<Tickler> getTicklers(CustomFilter filter);
 
     public int getNumTicklers(CustomFilter filter);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria with pagination.
+     * <p>
+     * This method uses JPQL constructor expressions to fetch only the fields needed
+     * for display, reducing database queries from ~25 per page load to a small fixed set
+     * of queries. Comments and links are each batch-loaded in separate queries.
+     * </p>
+     *
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @param offset int the starting position for pagination (0-based)
+     * @param limit int the maximum number of results to return
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @since 2026-01-30
+     */
+    List<TicklerListDTO> getTicklerDTOs(CustomFilter filter, int offset, int limit);
+
+    /**
+     * Returns a list of TicklerListDTOs matching the filter criteria.
+     * <p>
+     * This method uses JPQL constructor expressions to fetch only the fields needed
+     * for display, reducing database queries from ~25 per page load to a small fixed set
+     * of queries. Comments and links are each batch-loaded in separate queries.
+     * Uses default pagination with MAX_LIST_RETURN_SIZE limit.
+     * </p>
+     *
+     * @param filter CustomFilter the filter criteria including status, provider, date range, etc.
+     * @return List&lt;TicklerListDTO&gt; matching the filter with comments and links populated,
+     *         or empty list if no matches found
+     * @since 2026-01-30
+     */
+    List<TicklerListDTO> getTicklerDTOs(CustomFilter filter);
 }

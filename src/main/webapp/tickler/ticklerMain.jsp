@@ -33,16 +33,15 @@
 <%@ page import="ca.openosp.openo.PMmodule.dao.ProviderDao" %>
 <%@ page import="ca.openosp.openo.commn.dao.ViewDao" %>
 <%@ page import="ca.openosp.openo.commn.model.View" %>
-<%@ page import="ca.openosp.openo.commn.model.TicklerLink" %>
-<%@ page import="ca.openosp.openo.commn.dao.TicklerLinkDao" %>
 <%@ page import="ca.openosp.MyDateFormat" %>
 <%@ page import="ca.openosp.OscarProperties" %>
 <%@ page import="ca.openosp.openo.commn.model.Site" %>
 <%@ page import="ca.openosp.openo.commn.dao.SiteDao" %>
-<%@ page import="ca.openosp.openo.commn.model.Tickler" %>
-<%@ page import="ca.openosp.openo.commn.model.TicklerComment" %>
 <%@ page import="ca.openosp.openo.commn.model.CustomFilter" %>
 <%@ page import="ca.openosp.openo.managers.TicklerManager" %>
+<%@ page import="ca.openosp.openo.tickler.dto.TicklerListDTO" %>
+<%@ page import="ca.openosp.openo.tickler.dto.TicklerCommentDTO" %>
+<%@ page import="ca.openosp.openo.tickler.dto.TicklerLinkDTO" %>
 <%@ page import="java.text.DateFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.owasp.encoder.Encode" %>
@@ -71,7 +70,6 @@
 %>
 <%!
     TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-    TicklerLinkDao ticklerLinkDao = SpringUtils.getBean(TicklerLinkDao.class);
     ViewDao viewDao = SpringUtils.getBean(ViewDao.class);
 %>
 
@@ -834,35 +832,44 @@
                     filter.setSort_order("desc");
 
                     int targetDemographic = Integer.parseInt(demographic_no);
-                    List<Tickler> ticklers = Collections.emptyList();
                     if (targetDemographic > 0) {
-                        ticklers = ticklerManager.search_tickler_bydemo(loggedInInfo, targetDemographic, ticklerview, filter.getStartDate(), filter.getEndDate());
-                    } else {
-                        ticklers = ticklerManager.getTicklers(loggedInInfo, filter);
+                        filter.setDemographicNo(String.valueOf(targetDemographic));
+                        // Preserve old search_tickler_bydemo behavior: when viewing a specific
+                        // demographic's ticklers, only filter by demographic, status, and date range
+                        filter.setMrp(null);
+                        filter.setProvider(null);
+                        filter.setAssignee(null);
+                        filter.setPriority(null);
+                        filter.setProgramId(null);
+                        filter.setMessage(null);
+                        filter.setClient(null);
                     }
+
+                    // Use DTO projection for optimized list view (reduces queries from ~25 to 3)
+                    List<TicklerListDTO> ticklers = ticklerManager.getTicklerDTOs(loggedInInfo, filter);
 
                     String numDaysUntilWarn = OscarProperties.getInstance().getProperty("tickler_warn_period");
                     if (numDaysUntilWarn == null || numDaysUntilWarn.isEmpty()) {
                         numDaysUntilWarn = "0";
                     }
-                    for (Tickler tickler : ticklers) {
-                        Demographic demo = tickler.getDemographic();
-                        LocalDateTime serviceDate = tickler.getServiceDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                        LocalDateTime currentDate = LocalDateTime.now();
 
-                        long daysDifference = Duration.between(serviceDate, currentDate).toDays();
-                        long ticklerWarnDays = Long.parseLong(numDaysUntilWarn);
-                        boolean ignoreWarning = (ticklerWarnDays <= 0);
-                        boolean warning = false;
+                    // Single rendering path using DTOs
+                    for (TicklerListDTO tickler : ticklers) {
+                            LocalDateTime serviceDate = tickler.getServiceDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                            LocalDateTime currentDate = LocalDateTime.now();
 
-                        //Set the colour of the table cell
-                        String warnColour = "";
-                        if (!ignoreWarning && (daysDifference >= ticklerWarnDays)) {
-                            warnColour = "Red";
-                            warning = true;
-                        }
+                            long daysDifference = Duration.between(serviceDate, currentDate).toDays();
+                            long ticklerWarnDays = Long.parseLong(numDaysUntilWarn);
+                            boolean ignoreWarning = (ticklerWarnDays <= 0);
+                            boolean warning = false;
 
-                        String cellColour = warnColour;
+                            String warnColour = "";
+                            if (!ignoreWarning && (daysDifference >= ticklerWarnDays)) {
+                                warnColour = "Red";
+                                warning = true;
+                            }
+
+                            String cellColour = warnColour;
                 %>
 
                 <tr <%=warning ? "class='error'" : ""%> >
@@ -875,10 +882,10 @@
                         </a>
                     </td>
                     <td class="<%=cellColour%>"><a href="javascript:void(0)"
-                                                   onClick="popupPage(600,800,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=demo.getDemographicNo()%>&displaymode=edit&dboperation=search_detail')">
-                        <%=Encode.forHtmlContent(demo.getLastName())%>,<%=Encode.forHtmlContent(demo.getFirstName())%>
+                                                   onClick="popupPage(600,800,'<%= request.getContextPath() %>/demographic/demographiccontrol.jsp?demographic_no=<%=Encode.forUriComponent(String.valueOf(tickler.getDemographicNo()))%>&displaymode=edit&dboperation=search_detail')">
+                        <%=Encode.forHtmlContent(tickler.getDemographicLastName())%>,<%=Encode.forHtmlContent(tickler.getDemographicFirstName())%>
                     </a></td>
-                    <td class="<%=cellColour%>"><%=tickler.getProvider() == null ? "N/A" : Encode.forHtmlContent(tickler.getProvider().getFormattedName())%>
+                    <td class="<%=cellColour%>"><%=Encode.forHtmlContent(tickler.getCreatorFormattedName())%>
                     </td>
                     <td class="<%=cellColour%>"><%=dateOnlyFormat.format(tickler.getServiceDate())%>
                     </td>
@@ -886,7 +893,7 @@
                     </td>
                     <td class="<%=cellColour%>"><%=tickler.getPriority()%>
                     </td>
-                    <td class="<%=cellColour%>"><%=tickler.getAssignee() != null ? tickler.getAssignee().getLastName() + ", " + tickler.getAssignee().getFirstName() : "N/A"%>
+                    <td class="<%=cellColour%>"><%=Encode.forHtmlContent(tickler.getAssigneeFormattedName())%>
                     </td>
                     <td class="<%=cellColour%>"><%=tickler.getStatusDesc(locale)%>
                     </td>
@@ -894,9 +901,9 @@
                             style="white-space:pre-wrap"><%=Encode.forHtmlContent(tickler.getMessage())%></span>
 
                         <%
-                            List<TicklerLink> linkList = ticklerLinkDao.getLinkByTickler(tickler.getId().intValue());
+                            List<TicklerLinkDTO> linkList = tickler.getLinks();
                             if (linkList != null) {
-                                for (TicklerLink tl : linkList) {
+                                for (TicklerLinkDTO tl : linkList) {
                                     String type = tl.getTableName();
                         %>
 
@@ -947,7 +954,7 @@
                     </td>
                     <td class="<%=cellColour%> noprint">
                         <a href="javascript:void(0)" class="noteDialogLink"
-                           onClick="openNoteDialog('<%=demo.getDemographicNo() %>','<%=tickler.getId() %>')"
+                           onClick="openNoteDialog('<%=Encode.forJavaScriptAttribute(String.valueOf(tickler.getDemographicNo()))%>','<%=Encode.forJavaScriptAttribute(String.valueOf(tickler.getId()))%>')"
                            title="Add Encounter Note">
                             <span class="glyphicon glyphicon-comment"></span>
                         </a>
@@ -955,21 +962,16 @@
                     <td><%=tickler.getId()%>
                     </td>
                 </tr>
-                <% Set<TicklerComment> tcomments = tickler.getComments();
-                    for (TicklerComment tc : tcomments) {
-                        // Ugly and wrong. I know. No time to rewrite the bad part.
-                        Provider commentProvider = tc.getProvider();
-                        String formattedName = "";
-                        if (commentProvider != null) {
-                            formattedName = commentProvider.getFormattedName();
-                        }
+                <% List<TicklerCommentDTO> tcomments = tickler.getComments();
+                    for (TicklerCommentDTO tc : tcomments) {
+                        String formattedName = tc.getProviderFormattedName();
                 %>
 
 
                 <tr class="followup-comment-<%=tickler.getId()%> comment-row no-sort">
                     <td></td>
                     <td></td>
-                    <td><%=Encode.forHtmlContent(demo.getLastName())%>,<%=Encode.forHtmlContent(demo.getFirstName())%>
+                    <td><%=Encode.forHtmlContent(tickler.getDemographicLastName())%>,<%=Encode.forHtmlContent(tickler.getDemographicFirstName())%>
                     </td>
                     <td class="no-sort"><%=Encode.forHtmlContent(formattedName)%>
                     </td>
@@ -995,7 +997,8 @@
                     </td>
                 </tr>
                 <% }
-                } %>
+                }
+                %>
                 </tbody>
             </table>
 

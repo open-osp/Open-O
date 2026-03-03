@@ -26,13 +26,12 @@
 
 package ca.openosp.openo.utility;
 
+import ca.openosp.openo.filters.OscarBaseFilter;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.log.LogAction;
 import ca.openosp.openo.log.LogConst;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -45,21 +44,13 @@ import java.util.Date;
 /**
  * Filter for determining the inactivity of a user with a session. Pages that automatically refresh should be marked with the parameter autoRefresh=true
  */
-public final class UserActivityFilter implements Filter {
+public final class UserActivityFilter extends OscarBaseFilter {
 
     private static final Logger logger = MiscUtils.getLogger();
     private static final String LAST_USER_ACTIVITY = "LAST_USER_ACTIVITY";
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
-    @Override
-    public void destroy() {
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         boolean redirectToLogout = false;
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;

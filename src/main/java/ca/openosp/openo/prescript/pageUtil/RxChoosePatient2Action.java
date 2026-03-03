@@ -91,9 +91,7 @@ public final class RxChoosePatient2Action extends ActionSupport {
         request.getSession().setAttribute("RxSessionBean", bean);
 
         RxPatientData rx = null;
-        RxPatientData.Patient patient = null;
-
-        patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
+        RxPatientData.Patient patient = RxPatientData.getPatient(loggedInInfo, bean.getDemographicNo());
 
         String provider = (String) request.getSession().getAttribute("user");
         WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
