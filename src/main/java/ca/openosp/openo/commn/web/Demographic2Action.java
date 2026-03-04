@@ -34,7 +34,6 @@ import org.apache.struts2.ServletActionContext;
 import ca.openosp.openo.commn.dao.DemographicArchiveDao;
 import ca.openosp.openo.commn.dao.DemographicDao;
 import ca.openosp.openo.commn.dao.DemographicExtArchiveDao;
-import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.model.DemographicArchive;
 import ca.openosp.openo.commn.model.DemographicExtArchive;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -264,22 +263,28 @@ public class Demographic2Action extends ActionSupport {
     }
 
     public String checkForDuplicates() {
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request),
+                "_demographic", "w", null)) {
+            throw new SecurityException("missing required sec object (_demographic)");
+        }
+
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
-        String yearOfBirth = request.getParameter("yearOfBirth");
-        String monthOfBirth = request.getParameter("monthOfBirth");
-        String dayOfBirth = request.getParameter("dayOfBirth");
-
-        List<Demographic> duplicateList = demographicDao.getDemographicWithLastFirstDOBExact(lastName, firstName,
-                yearOfBirth, monthOfBirth, dayOfBirth);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("hasDuplicates", !duplicateList.isEmpty());
+
+        if (firstName == null || firstName.trim().isEmpty()
+                || lastName == null || lastName.trim().isEmpty()) {
+            result.put("hasDuplicates", false);
+        } else {
+            result.put("hasDuplicates", demographicDao.existsByFirstAndLastName(
+                    firstName.trim(), lastName.trim()));
+        }
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
-            new ObjectMapper().writeValue(response.getWriter(), result);
+            objectMapper.writeValue(response.getWriter(), result);
         } catch (Exception e) {
             MiscUtils.getLogger().error("Error in checkForDuplicates", e);
         }
