@@ -18,7 +18,7 @@ public class EmailConfigDaoImpl extends AbstractDaoImpl<EmailConfig> implements 
 
     @Transactional
     public EmailConfig findActiveEmailConfig(EmailConfig emailConfig) {
-        Query query = entityManager.createQuery("SELECT e FROM EmailConfig e WHERE e.senderEmail = ?1 AND e.emailType = ?2 AND e.emailType = ?3 AND e.active = true");
+        Query query = entityManager.createQuery("SELECT e FROM EmailConfig e WHERE e.senderEmail = ?1 AND e.emailType = ?2 AND e.emailProvider = ?3 AND e.active = true");
 
         query.setParameter(1, emailConfig.getSenderEmail());
         query.setParameter(2, emailConfig.getEmailType());
@@ -30,6 +30,23 @@ public class EmailConfigDaoImpl extends AbstractDaoImpl<EmailConfig> implements 
     public EmailConfig findActiveEmailConfig(String senderEmail) {
         Query query = entityManager.createQuery("SELECT e FROM EmailConfig e WHERE e.senderEmail = ?1 AND e.active = true");
         query.setParameter(1, senderEmail);
+        return getSingleResultOrNull(query);
+    }
+
+    /**
+     * Finds an active email configuration by its database ID.
+     *
+     * <p>Retrieves the email configuration matching the specified primary key, only if it is
+     * currently active. This method is used when the caller already knows the specific
+     * configuration ID (e.g., from a user-selected dropdown) and needs to verify it is
+     * still active before sending.</p>
+     *
+     * @param id int the primary key of the email configuration
+     * @return EmailConfig the matching active email configuration, or null if no active config exists with this ID
+     */
+    public EmailConfig findActiveEmailConfigById(int id) {
+        Query query = entityManager.createQuery("SELECT e FROM EmailConfig e WHERE e.id = ?1 AND e.active = true");
+        query.setParameter(1, id);
         return getSingleResultOrNull(query);
     }
 
