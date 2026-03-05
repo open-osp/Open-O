@@ -714,8 +714,8 @@
         <parameter identifier="prev">
             <class>ca.openosp.openo.prevention.Prevention</class>
         </parameter>
-        <java:condition>prev.getAgeInYears() &gt;= 50</java:condition>
-        <java:condition>prev.getAgeInYears() &lt; 70</java:condition>
+        <java:condition>prev.getAgeInYears() &gt;= 40</java:condition>
+        <java:condition>prev.getAgeInYears() &lt;= 74</java:condition>
         <java:condition>prev.isFemale()</java:condition>
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") &gt;= 22</java:condition>        
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") &lt;= 24</java:condition>        
@@ -732,8 +732,8 @@
         <parameter identifier="prev">
             <class>ca.openosp.openo.prevention.Prevention</class>
         </parameter>
-        <java:condition>prev.getAgeInYears() &gt;= 50</java:condition>
-        <java:condition>prev.getAgeInYears() &lt; 70</java:condition>
+        <java:condition>prev.getAgeInYears() &gt;= 40</java:condition>
+        <java:condition>prev.getAgeInYears() &lt;= 74</java:condition>
         <java:condition>prev.isFemale()</java:condition>
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") &gt; 24</java:condition>        
         <java:condition>!prev.isPreventionNever("MAM")</java:condition>
@@ -749,8 +749,8 @@
         <parameter identifier="prev">
             <class>ca.openosp.openo.prevention.Prevention</class>
         </parameter>
-        <java:condition>prev.getAgeInYears() &gt;= 50</java:condition>
-        <java:condition>prev.getAgeInYears() &lt; 70</java:condition>
+        <java:condition>prev.getAgeInYears() &gt;= 40</java:condition>
+        <java:condition>prev.getAgeInYears() &lt;= 74</java:condition>
         <java:condition>prev.isFemale()</java:condition>
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") == -1</java:condition>
         <java:condition>!prev.isInelligible("MAM")</java:condition>
@@ -781,7 +781,7 @@
             <class>ca.openosp.openo.prevention.Prevention</class>
         </parameter>
         <java:condition>prev.getAgeInYears() &gt;= 18</java:condition>
-        <java:condition>prev.getAgeInYears() &lt; 70</java:condition>
+        <java:condition>prev.getAgeInYears() &lt;= 74</java:condition>
         <java:condition>prev.isFemale()</java:condition>             
         <java:condition>prev.getHowManyMonthsSinceLast("MAM") != -1</java:condition>
         <java:condition>!prev.isInelligible("MAM")</java:condition>
