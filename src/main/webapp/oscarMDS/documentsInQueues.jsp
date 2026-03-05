@@ -321,15 +321,22 @@
         var queueID;
 
         function showDocInQueue(qid) {
-            $('docs').innerHTML = '';
+            var docsContainer = $('docs');
+            while (docsContainer.firstChild) {
+                docsContainer.removeChild(docsContainer.firstChild);
+            }
             var docs = queueDocNos[qid];
             nowChildId = 'docs';
             nowMultiple = 1;
             nowDocLabIds = new Array();
-            for (var i = docs.length - 1; i > -1; i--) {
+            for (var i = 0; i < docs.length; i++) {
                 var docid = docs[i];
                 nowDocLabIds.push(docid);
+                var placeholder = document.createElement('div');
+                placeholder.id = 'docPlaceholder_' + docid.replace(' ', '');
+                docsContainer.appendChild(placeholder);
             }
+            nowDocLabIds.reverse();
             queueID = qid;
             showFirstTime();
         }
@@ -881,12 +888,9 @@
             //create child element in docViews
             docNo = docNo.replace(' ', '');//trim
             var type = checkType(docNo);
-            //oscarLog('type'+type);
-            //var div=childId;
 
-            //var div=window.frames[0].document.getElementById(childId);
-            var div = $(childId);
-            //alert(div);
+            var placeholder = $('docPlaceholder_' + docNo);
+            var div = placeholder || $(childId);
             var url = '';
             if (type == 'DOC')
                 url = "<%= request.getContextPath() %>/documentManager/showDocument.jsp";
@@ -899,20 +903,21 @@
             else
                 url = "";
 
-            //oscarLog('url='+url);
             var data = "segmentID=" + docNo + "&providerNo=" + providerNo + "&searchProviderNo=" + searchProviderNo + "&status=" + status + "&demoName=" + demoName;
             if (inQueue)
                 data += "&inQueue=" + inQueue;
-            // oscarLog('url='+url+'+-+ \n data='+data+"----div:"+div);
-            new Ajax.Updater(div, url, {
+            var ajaxOptions = {
                 method: 'get',
                 parameters: data,
-                insertion: Insertion.Bottom,
                 evalScripts: true,
                 onSuccess: function (transport) {
                     focusFirstDocLab();
                 }
-            });
+            };
+            if (!placeholder) {
+                ajaxOptions.insertion = Insertion.Bottom;
+            }
+            new Ajax.Updater(div, url, ajaxOptions);
 
         }
 
