@@ -40,6 +40,7 @@ import ca.openosp.openo.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +48,9 @@ import java.util.Locale;
 public class EctDisplayRx2Action extends EctDisplayAction {
     private String cmd = "Rx";
     private static final Logger logger = MiscUtils.getLogger();
+
+    public static final Comparator<Prescription> ACTIVE_FIRST =
+        Comparator.comparingInt(drug -> isActiveDrug(drug) ? 0 : 1);
 
     public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao) {
 
@@ -120,6 +124,11 @@ public class EctDisplayRx2Action extends EctDisplayAction {
                     logger.error("error getting remote drugs", e);
                 }
             }
+
+            // Sort active medications to the top of the list, preserving
+            // relative order within each group (stable sort).
+            // Lower value = sorted higher in the list (0 = active first, 1 = non-active after).
+            uniqueDrugs.sort(ACTIVE_FIRST);
 
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
@@ -195,7 +204,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
             sb.append("expireInReference ");
         }
 
-        if ((drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm()) {
+        if (isActiveDrug(drug)) {
             sb.append("currentDrug ");
         }
 
@@ -230,6 +239,26 @@ public class EctDisplayRx2Action extends EctDisplayAction {
 
     }
 
+
+    /**
+     * Determines whether a prescription is considered active for display purposes.
+     *
+     * <p>A drug is active if it is current and not archived, or if it is long-term.
+     * This definition is shared between the medication sort order ({@link #ACTIVE_FIRST})
+     * and the CSS class assignment in {@link #getClassColour}.</p>
+     *
+     * <p><b>Note:</b> This method does not filter archived long-term drugs — it will
+     * return {@code true} for a drug that is long-term even if archived. In
+     * {@link #getInfo}, archived drugs are pre-filtered before sort and display.
+     * If moving this to a utility class, additional checks (e.g. {@code !drug.isArchived()})
+     * would be needed for standalone use.</p>
+     *
+     * @param drug Prescription the prescription to evaluate
+     * @return boolean {@code true} if the drug is considered active
+     */
+    public static boolean isActiveDrug(Prescription drug) {
+        return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
+    }
 
     public String getCmd() {
         return cmd;
