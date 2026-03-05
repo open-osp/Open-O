@@ -71,6 +71,7 @@ import oscar.OscarProperties;
 import oscar.log.LogAction;
 import oscar.log.LogConst;
 import oscar.oscarRx.data.RxPharmacyData;
+import oscar.oscarRx.pageUtil.RxSessionBean;
 
 public class FrmCustomedPDFServlet extends HttpServlet {
 
@@ -692,6 +693,13 @@ public class FrmCustomedPDFServlet extends HttpServlet {
 		// 285=left margin+width of box, 5f is space for looking nice
 		// document.setMargins(15, pageSize.getWidth() - 285f + 5f, 170, 60);// left, right, top , bottom
 		document.setMargins(15, pageSize.getWidth() - 285f + 5f, 185, 60);// left, right, top , bottom
+
+		if ((Objects.isNull(scriptId_) || scriptId_.equalsIgnoreCase("null"))
+				&& ((RxSessionBean)req.getSession().getAttribute("RxSessionBean")).getStash() != null
+				&& ((RxSessionBean)req.getSession().getAttribute("RxSessionBean")).getStash().length > 0) {
+			scriptId_ = String.valueOf(((RxSessionBean) req.getSession().getAttribute("RxSessionBean"))
+					.getStash()[0].getScript_no());
+		}
 
 		//writer = PdfWriter.getInstance(document, baosPDF);
 		writer.setPageEvent(new EndPage(clinicName, clinicTel, clinicFax, patientPhone, patientCityPostal, patientAddress, patientName, patientDOB, sigDoctorName, rxDate, origPrintDate, numPrint, imgFile, scriptId_, patientHIN, patientChartNo, pracNo, locale, billingNumber, pharmacyInfo));
