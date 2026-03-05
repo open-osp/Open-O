@@ -121,6 +121,12 @@ public class EctDisplayRx2Action extends EctDisplayAction {
                 }
             }
 
+            // Single-pass stable partition: active prescriptions first, preserving
+            // relative order within each group. Calls isActiveDrug() exactly once per
+            // drug (O(n)) instead of O(n log n) times via a sort comparator, avoiding
+            // repeated GregorianCalendar allocations inside Prescription.isCurrent().
+            stablePartitionActiveFirst(uniqueDrugs);
+
             long now = System.currentTimeMillis();
             long month = 1000L * 60L * 60L * 24L * 30L;
             for (Prescription drug : uniqueDrugs) {
@@ -195,7 +201,7 @@ public class EctDisplayRx2Action extends EctDisplayAction {
             sb.append("expireInReference ");
         }
 
-        if ((drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm()) {
+        if (isActiveDrug(drug)) {
             sb.append("currentDrug ");
         }
 
@@ -230,6 +236,55 @@ public class EctDisplayRx2Action extends EctDisplayAction {
 
     }
 
+
+    /**
+     * Determines whether a prescription is considered active for display purposes.
+     *
+     * <p>A drug is active if it is current and not archived, or if it is long-term.
+     * This definition is shared between {@link #stablePartitionActiveFirst(List)}
+     * and the CSS class assignment in {@link #getClassColour}.</p>
+     *
+     * <p><b>Note:</b> This method does not filter archived long-term drugs — it will
+     * return {@code true} for a drug that is long-term even if archived. In
+     * {@link #getInfo}, archived drugs are pre-filtered before sort and display.
+     * If moving this to a utility class, additional checks (e.g. {@code !drug.isArchived()})
+     * would be needed for standalone use.</p>
+     *
+     * @param drug the prescription to evaluate
+     * @return boolean {@code true} if the drug is considered active
+     */
+    public static boolean isActiveDrug(Prescription drug) {
+        return (drug.isCurrent() && !drug.isArchived()) || drug.isLongTerm();
+    }
+
+    /**
+     * Reorders {@code drugs} in-place so that active prescriptions come first,
+     * preserving the original relative order within each group (stable partition).
+     *
+     * <p>Calls {@link #isActiveDrug(Prescription)} exactly once per element
+     * (O(n)), avoiding the repeated {@link java.util.GregorianCalendar} allocations
+     * that would occur if the same check were used inside a sort comparator.</p>
+     *
+     * @param drugs the mutable list of prescriptions to reorder
+     * @since 2026-03-02
+     */
+    public static void stablePartitionActiveFirst(List<Prescription> drugs) {
+        if (drugs == null || drugs.isEmpty()) {
+            return;
+        }
+        List<Prescription> active = new ArrayList<>(drugs.size());
+        List<Prescription> inactive = new ArrayList<>();
+        for (Prescription drug : drugs) {
+            if (isActiveDrug(drug)) {
+                active.add(drug);
+            } else {
+                inactive.add(drug);
+            }
+        }
+        drugs.clear();
+        drugs.addAll(active);
+        drugs.addAll(inactive);
+    }
 
     public String getCmd() {
         return cmd;

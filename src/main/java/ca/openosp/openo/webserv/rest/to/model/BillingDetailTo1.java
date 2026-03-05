@@ -26,6 +26,8 @@ package ca.openosp.openo.webserv.rest.to.model;
 
 import ca.openosp.openo.commn.model.BillingONItem;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -45,7 +47,9 @@ public class BillingDetailTo1 implements Serializable {
     private String providerNo;
     private Integer appointmentNo;
     private String province;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date billingDate;
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date billingTime;
     private BigDecimal total;
     private BigDecimal paid;
