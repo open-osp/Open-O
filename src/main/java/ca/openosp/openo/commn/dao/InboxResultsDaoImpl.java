@@ -275,7 +275,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC "
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
 
                 } else if (demographicNo != null && !"".equals(demographicNo)) {
@@ -316,7 +316,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC "
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (patientSearch) { // N arg
                     docNoLoc = 1;
@@ -361,7 +361,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC," : "doc.observationdate DESC,") + " doc.document_no DESC "
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC "
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
 
                 } else {
@@ -390,7 +390,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no "
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC"
                         + (isPaged ? " LIMIT " + (page * pageSize) + "," + pageSize : "");
                 }
             } else { // Don't mix labs and docs.
@@ -418,7 +418,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC"
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (demographicNo != null && !"".equals(demographicNo)) {
                     docNoLoc = 1;
@@ -445,7 +445,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC " : "doc.observationdate DESC ")
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC"
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else if (patientSearch) {
                     docNoLoc = 1;
@@ -472,7 +472,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + isDocAbnormalSql
                         + dateSql
                         + " GROUP BY doc.document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC")
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "doc.contentdatetime DESC" : "doc.observationdate DESC") + ", doc.document_no DESC"
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 } else {
                     docNoLoc = 1;
@@ -515,7 +515,7 @@ public class InboxResultsDaoImpl implements InboxResultsDao {
                         + " ON d.demographic_no = -1"
                         + ") AS X "
                         + " GROUP BY document_no"
-                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "contentdatetime DESC" : "observationdate DESC")
+                        + " ORDER BY " + (dateSearchType.equals("receivedCreated") ? "contentdatetime DESC" : "observationdate DESC") + ", document_no DESC"
                         + (isPaged ? "	LIMIT " + (page * pageSize) + "," + pageSize : "");
                 }
             }
