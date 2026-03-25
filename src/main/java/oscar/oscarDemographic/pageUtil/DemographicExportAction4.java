@@ -2573,9 +2573,9 @@ public class DemographicExportAction4 extends Action {
 		}
 
 		//Remove zip & export files from temp dir
-		Util.cleanFile(zipName, tmpDir);
-		Util.cleanFiles(files);
-		Util.cleanFile(tmpDir);
+//		Util.cleanFile(zipName, tmpDir);
+//		Util.cleanFiles(files);
+//		Util.cleanFile(tmpDir);
 	}
 			break;
 
