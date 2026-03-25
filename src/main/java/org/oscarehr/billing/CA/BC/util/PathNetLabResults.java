@@ -36,24 +36,24 @@ public class PathNetLabResults {
     private Hl7Obr hl7Obr;
     private ProviderLabRoutingModel providerLabRouting;
     private PatientLabRouting patientLabRouting;
-    private Long minResultStatus;
+    private String resultStatus;
 
-    public PathNetLabResults(Hl7Msh hl7Msh, Hl7Pid hl7Pid, Hl7Orc hl7Orc, Hl7Obr hl7Obr, ProviderLabRoutingModel providerLabRouting, String minResultStatus) {
+    public PathNetLabResults(Hl7Msh hl7Msh, Hl7Pid hl7Pid, Hl7Orc hl7Orc, Hl7Obr hl7Obr, ProviderLabRoutingModel providerLabRouting, String resultStatus) {
         this.hl7Msh = hl7Msh;
         this.hl7Pid = hl7Pid;
         this.hl7Orc = hl7Orc;
         this.hl7Obr = hl7Obr;
         this.providerLabRouting = providerLabRouting;
-        this.minResultStatus = Long.valueOf(minResultStatus);
+        this.resultStatus = resultStatus;
     }
 
-    public PathNetLabResults(Hl7Msh hl7Msh, Hl7Pid hl7Pid, Hl7Orc hl7Orc, Hl7Obr hl7Obr, PatientLabRouting patientLabRouting, String minResultStatus) {
+    public PathNetLabResults(Hl7Msh hl7Msh, Hl7Pid hl7Pid, Hl7Orc hl7Orc, Hl7Obr hl7Obr, PatientLabRouting patientLabRouting, String resultStatus) {
         this.hl7Msh = hl7Msh;
         this.hl7Pid = hl7Pid;
         this.hl7Orc = hl7Orc;
         this.hl7Obr = hl7Obr;
         this.patientLabRouting = patientLabRouting;
-        this.minResultStatus = Long.valueOf(minResultStatus);
+        this.resultStatus = resultStatus;
     }
 
     public Hl7Msh getHl7Msh() {
@@ -104,11 +104,11 @@ public class PathNetLabResults {
         this.patientLabRouting = patientLabRouting;
     }
 
-    public Long getMinResultStatus() {
-        return minResultStatus;
+    public String getResultStatus() {
+        return resultStatus;
     }
 
-    public void setMinResultStatus(Long minResultStatus) {
-        this.minResultStatus = minResultStatus;
+    public void setMinResultStatus(String resultStatus) {
+        this.resultStatus = resultStatus;
     }
 }
