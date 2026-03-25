@@ -23,111 +23,6 @@
  */
 package oscar.oscarDemographic.pageUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.WordUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.xmlbeans.XmlOptions;
-import org.oscarehr.PMmodule.dao.ProviderDao;
-import org.oscarehr.casemgmt.model.CaseManagementIssue;
-import org.oscarehr.casemgmt.model.CaseManagementNote;
-import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
-import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
-import org.oscarehr.casemgmt.service.CaseManagementManager;
-import org.oscarehr.common.dao.AbstractCodeSystemDao;
-import org.oscarehr.common.dao.ContactDao;
-import org.oscarehr.common.dao.DemographicArchiveDao;
-import org.oscarehr.common.dao.DemographicContactDao;
-import org.oscarehr.common.dao.DemographicDao;
-import org.oscarehr.common.dao.DemographicExtDao;
-import org.oscarehr.common.dao.DemographicPharmacyDao;
-import org.oscarehr.common.dao.DrugReasonDao;
-import org.oscarehr.common.dao.DxresearchDAO;
-import org.oscarehr.common.dao.EpisodeDao;
-import org.oscarehr.common.dao.Hl7TextInfoDao;
-import org.oscarehr.common.dao.Hl7TextMessageDao;
-import org.oscarehr.common.dao.OscarAppointmentDao;
-import org.oscarehr.common.dao.PartialDateDao;
-import org.oscarehr.common.dao.PharmacyInfoDao;
-import org.oscarehr.common.dao.ProfessionalSpecialistDao;
-import org.oscarehr.common.exception.PatientDirectiveException;
-import org.oscarehr.common.model.AbstractCodeSystemModel;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.Contact;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicArchive;
-import org.oscarehr.common.model.DemographicContact;
-import org.oscarehr.common.model.DemographicPharmacy;
-import org.oscarehr.common.model.DrugReason;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.Episode;
-import org.oscarehr.common.model.Hl7TextInfo;
-import org.oscarehr.common.model.Hl7TextMessage;
-import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.PharmacyInfo;
-import org.oscarehr.common.model.ProfessionalSpecialist;
-import org.oscarehr.common.model.Provider;
-//import org.oscarehr.e2e.director.E2ECreator;
-//import org.oscarehr.e2e.util.EverestUtils;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
-import org.oscarehr.hospitalReportManager.dao.HRMDocumentToProviderDao;
-import org.oscarehr.hospitalReportManager.model.HRMDocument;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
-import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
-import org.oscarehr.managers.DemographicManager;
-import org.oscarehr.managers.SecurityInfoManager;
-import org.oscarehr.sharingcenter.DocumentType;
-import org.oscarehr.sharingcenter.dao.DemographicExportDao;
-import org.oscarehr.sharingcenter.model.DemographicExport;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.util.MiscUtils;
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.WebUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import cds.AlertsAndSpecialNeedsDocument.AlertsAndSpecialNeeds;
 import cds.AllergiesAndAdverseReactionsDocument.AllergiesAndAdverseReactions;
 import cds.AppointmentsDocument.Appointments;
@@ -150,20 +45,53 @@ import cds.ReportsDocument.Reports;
 import cds.ReportsDocument.Reports.OBRContent;
 import cds.ReportsDocument.Reports.ReportReviewed;
 import cds.RiskFactorsDocument.RiskFactors;
-import cdsDt.AdverseReactionType;
-import cdsDt.EnrollmentStatus;
-import cdsDt.PersonNamePurposeCode;
-import cdsDt.PersonNameSimple;
-import cdsDt.PhoneNumber;
-import cdsDt.ResidualInformation;
+import cdsDt.*;
 import cdsDt.ResidualInformation.DataElement;
-import cdsDt.ResultNormalAbnormalFlag;
-import cdsDt.YnIndicator;
 import cdsDt.YnIndicatorsimple.Enum;
-import oscar.OscarProperties;
-import oscar.appt.ApptStatusData;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.xmlbeans.XmlOptions;
+import org.oscarehr.PMmodule.dao.ProviderDao;
+import org.oscarehr.casemgmt.model.CaseManagementIssue;
+import org.oscarehr.casemgmt.model.CaseManagementNote;
+import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
+import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
+import org.oscarehr.casemgmt.service.CaseManagementManager;
+import org.oscarehr.common.dao.*;
+import org.oscarehr.common.exception.PatientDirectiveException;
+import org.oscarehr.common.model.*;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentDao;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentToDemographicDao;
+import org.oscarehr.hospitalReportManager.dao.HRMDocumentToProviderDao;
+import org.oscarehr.hospitalReportManager.model.HRMDocument;
+import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
+import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
+import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
+import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.sharingcenter.DocumentType;
+import org.oscarehr.sharingcenter.dao.DemographicExportDao;
+import org.oscarehr.sharingcenter.model.DemographicExport;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
+import org.oscarehr.util.WebUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import oscar.OscarProperties;
+import oscar.appt.ApptStatusData;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarDemographic.data.DemographicRelationship;
@@ -183,6 +111,25 @@ import oscar.oscarRx.data.RxPrescriptionData;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URL;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -652,7 +599,6 @@ public class DemographicExportAction4 extends Action {
 			if (phoneNoValid(demoExt.get("demo_cell"))) {
 				addPhone(demoExt.get("demo_cell"), null, cdsDt.PhoneNumberType.C, demo.addNewPhoneNumber());
 			}
-			demoExt = null;
 
 			if (oscarProperties.isPropertyActive("NEW_CONTACTS_UI")) {
 				addDemographicContacts(loggedInInfo, demoNo, demo);
@@ -669,9 +615,9 @@ public class DemographicExportAction4 extends Action {
 				PharmacyInfo pi = pharmacyInfoDao.find(dp.getPharmacyId());
 				if(pi != null) {
 					PreferredPharmacy preferredPharmacy = demo.addNewPreferredPharmacy();
-					PhoneNumber pn =  preferredPharmacy.addNewPhoneNumber();
+
 					if(!StringUtils.isNullOrEmpty(pi.getFax())) {
-						addPhone(pi.getFax(), "", cdsDt.PhoneNumberType.W,pn);
+						addPhone(pi.getFax(), "", cdsDt.PhoneNumberType.W, preferredPharmacy.addNewPhoneNumber());
 					}
 
 
@@ -1790,41 +1736,53 @@ public class DemographicExportAction4 extends Action {
 				for (Object[] info : infos) {
 					Hl7TextInfo hl7TxtInfo = (Hl7TextInfo)info[0];
 					Hl7TextMessage hl7TextMessage = hl7TxtMssgDao.find(hl7TxtInfo.getLabNumber());
-					if (hl7TextMessage==null) continue;
+					if (hl7TextMessage==null) {
+						continue;
+					}
 					
 					String hl7Body = new String(Base64.decodeBase64(hl7TextMessage.getBase64EncodedeMessage()));
-					if (!StringUtils.filled(hl7Body)) continue;
+					if (!StringUtils.filled(hl7Body)) {
+						continue;
+					}
 					
-					MessageHandler h = Factory.getHandler(hl7TextMessage.getType(), hl7Body);
-					if (h==null) continue;
+					MessageHandler messageHandler = Factory.getHandler(hl7TextMessage.getType(), hl7Body);
+					if (messageHandler==null) {
+						continue;
+					}
 					
-					for (int i=0; i<h.getOBRCount(); i++) {
-						for (int j=0; j<h.getOBXCount(i); j++) {
-							String result = h.getOBXResult(i, j);
+					for (int i=0; i<messageHandler.getOBRCount(); i++) {
+						for (int j=0; j<messageHandler.getOBXCount(i); j++) {
+							String result = messageHandler.getOBXResult(i, j);
 							String comments = null;
-							for (int k=0; k<h.getOBXCommentCount(i, j); k++) {
-								comments = Util.addLine(comments, h.getOBXComment(i, j, k));
+							for (int k=0; k<messageHandler.getOBXCommentCount(i, j); k++) {
+								comments = Util.addLine(comments, messageHandler.getOBXComment(i, j, k));
 							}
-							
+
+							String accessionNumber = messageHandler.getAccessionNum();
+
 							if (StringUtils.filled(result) || StringUtils.filled(comments)) {
 								HashMap<String,String> labMeaValues = new HashMap<String,String>();
 								labMeaValues.put("labType", hl7TextMessage.getType());
-								labMeaValues.put("identifier", h.getOBXIdentifier(i, j));
-								labMeaValues.put("name", h.getOBXName(i, j));
-								labMeaValues.put("labname", h.getPatientLocation());
-								labMeaValues.put("datetime", h.getTimeStamp(i, j));
-								labMeaValues.put("abnormal", h.getOBXAbnormalFlag(i, j));
-								labMeaValues.put("unit", h.getOBXUnits(i, j));
-								labMeaValues.put("accession", h.getAccessionNum());
-								if ( !"-".equals(h.getOBXReferenceRange(i, j)) ) {
-									labMeaValues.put("range", h.getOBXReferenceRange(i, j));
+								labMeaValues.put("identifier", messageHandler.getOBXIdentifier(i, j));
+								labMeaValues.put("name", messageHandler.getOBXName(i, j));
+								labMeaValues.put("labname", messageHandler.getPatientLocation());
+								labMeaValues.put("datetime", messageHandler.getTimeStamp(i, j));
+								labMeaValues.put("abnormal", messageHandler.getOBXAbnormalFlag(i, j));
+								labMeaValues.put("unit", messageHandler.getOBXUnits(i, j));
+								labMeaValues.put("accession", accessionNumber);
+								if ( !"-".equals(messageHandler.getOBXReferenceRange(i, j)) ) {
+									labMeaValues.put("range", messageHandler.getOBXReferenceRange(i, j));
 								}
-								labMeaValues.put("request_datetime", h.getRequestDate(i));
-								labMeaValues.put("olis_status", h.getOBXResultStatus(i, j));
+								labMeaValues.put("request_datetime", messageHandler.getRequestDate(0));
+								labMeaValues.put("olis_status", messageHandler.getOBXResultStatus(i, j));
 								labMeaValues.put("lab_no", String.valueOf(hl7TxtInfo.getLabNumber()));
-								labMeaValues.put("blocked", h.isTestResultBlocked(i, j) ? "BLOCKED" : "");
+								labMeaValues.put("blocked", messageHandler.isTestResultBlocked(i, j) ? "BLOCKED" : "");
 								labMeaValues.put("other_id", i+"-"+j);
-								
+
+								labMeaValues.put("messageType", messageHandler.getMsgType());
+								labMeaValues.put("labComment", messageHandler.getNteForPID());
+								labMeaValues.put("requestingClient", messageHandler.getDocName());
+
 								if (StringUtils.filled(result)) {
 									labMeaValues.put("measureData", result);
 									labMeaValues.put("comments", comments);
@@ -1834,66 +1792,38 @@ public class DemographicExportAction4 extends Action {
 								
 	                    		String range = labMeaValues.get("range");
 	                    		if( StringUtils.filled(range)) {
-	                    			String rangeLimits[] = range.split("-");
+	                    			String[] rangeLimits = range.split("-");
 	                    			if( rangeLimits.length == 2 ) {
 	                    				labMeaValues.put("minimum", rangeLimits[0]);
 	                        			labMeaValues.put("maximum", rangeLimits[1]);
 	                    			}
 	                    		}
 
-								LaboratoryResults labResults2 = patientRec.addNewLaboratoryResults();
-								exportLabResult(labMeaValues, labResults2, demoNo);
+								labMeaValues.put("dateReceived", messageHandler.getTimeStamp(i,j));
+
+								/*
+								 * Determine if the OBX results are embedded content such as Base64 encoded
+								 * PDF binary, or images.
+								 * Forward to reports if true.
+								 */
+								if(messageHandler.isEmbeddedContent()) {
+									mapLaboratoryResultToReport(labMeaValues, patientRec.addNewReports());
+								}
+
+								/*
+								 * Map to a LaboratoryResult if false
+								 */
+								else {
+									exportLabResult(labMeaValues, patientRec.addNewLaboratoryResults(), demoNo);
+								}
+
+							} else {
+								// log anomaly
+								exportError.add(String.format("Error! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
 							}
 						}
 					}
 				}
-				
-				/*
-				//get lab readings from measurements table
-				List<LabMeasurements> labMeaList = ImportExportMeasurements.getLabMeasurements(demoNo);
-				for (LabMeasurements labMea : labMeaList) {
-					LaboratoryResults labResults = patientRec.addNewLaboratoryResults();
-					exportLabResult(labMea, labResults, demoNo);
-					
-					String lab_no = labMea.getExtVal("lab_no");
-					if (StringUtils.filled(lab_no)) {
-						Hl7TextMessage hl7TextMessage = hl7TxtMssgDao.find(Integer.valueOf(lab_no));
-						String hl7Body = new String(Base64.decodeBase64(hl7TextMessage.getBase64EncodedeMessage()));
-						MessageHandler h = Factory.getHandler(hl7TextMessage.getType(), hl7Body);
-						for (int i=0; i<h.getOBRCount(); i++) {
-							for (int j=0; j<h.getOBXCount(i); j++) {
-								if (StringUtils.filled(h.getOBXResult(i, j))) continue; //skip entries with result
-								
-								String commentAsResult = null;
-								for (int k=0; k<h.getOBXCommentCount(i, j); k++) {
-									commentAsResult = Util.addLine(commentAsResult, h.getOBXComment(i, j, k));
-								}
-								
-								if (StringUtils.filled(commentAsResult)) {
-									HashMap<String,String> labMeaValues = new HashMap<String,String>();
-									
-									labMeaValues.put("identifier", h.getOBXIdentifier(i, j));
-									labMeaValues.put("name", h.getOBXName(i, j));
-									labMeaValues.put("labname", h.getPatientLocation());
-									labMeaValues.put("datetime", h.getTimeStamp(i, j));
-									labMeaValues.put("abnormal", h.getOBXAbnormalFlag(i, j));
-									labMeaValues.put("measureData", commentAsResult);
-									labMeaValues.put("unit", h.getOBXUnits(i, j));
-									labMeaValues.put("accession", h.getAccessionNum());
-									labMeaValues.put("range", h.getOBXReferenceRange(i, j));
-									labMeaValues.put("request_datetime", h.getRequestDate(i));
-									labMeaValues.put("olis_status", h.getOBXResultStatus(i, j));
-									labMeaValues.put("lab_no", lab_no);
-									labMeaValues.put("other_id", i+"-"+j);
-									
-									LaboratoryResults labResults2 = patientRec.addNewLaboratoryResults();
-									exportLabResult(labMeaValues, labResults2, demoNo);
-								}
-							}
-						}
-					}
-				}
-				*/
 			}
 
 			if (exAppointments) {
@@ -1972,7 +1902,7 @@ public class DemographicExportAction4 extends Action {
 						rpr.setFormat(cdsDt.ReportFormat.TEXT);
 
 						cdsDt.ReportContent rpc = rpr.addNewContent();
-						InputStream in = new FileInputStream(f);
+						InputStream in = Files.newInputStream(f.toPath());
 						byte[] b = new byte[(int)f.length()];
 
 						int offset=0, numRead=0;
@@ -2463,14 +2393,10 @@ public class DemographicExportAction4 extends Action {
 			}catch(Exception e){
 				logger.error("Error", e);
 			}
-			try {
-				FileWriter fw = new FileWriter(files.get(files.size()-1));
+			try (FileWriter fw = new FileWriter(files.get(files.size()-1))) {
+
 				omdCdsDoc.save(fw,options);
 				fw.flush();
-				fw.close();
-
-					//omdCdsDoc.save(files.get(files.size()-1), options);
-
 			} catch (IOException ex) {logger.error("Error", ex);
 					throw new Exception("Cannot write .xml file(s) to export directory.\n Please check directory permissions.");
 		}
@@ -2515,7 +2441,7 @@ public class DemographicExportAction4 extends Action {
 			logger.debug("Error! Failed to zip export files");
 	}
 
-		if (pgpReady.equals("Yes")) {
+		if ("Yes".equals(pgpReady)) {
 			//PGP encrypt zip file
 			PGPEncrypt pgp = new PGPEncrypt();
 			if (pgp.encrypt(zipName, tmpDir)) {
@@ -3211,32 +3137,6 @@ public class DemographicExportAction4 extends Action {
 		return extensionTooLong;
 	}
 
-	/*
-	private void exportLabResult(LabMeasurements labMea, LaboratoryResults labResults, String demoNo) {
-		HashMap<String,String> labMeaValues = new HashMap<String,String>();
-		
-		labMeaValues.put("identifier", labMea.getExtVal("identifier"));
-		labMeaValues.put("name_internal", labMea.getExtVal("name_internal"));
-		labMeaValues.put("name", labMea.getExtVal("name"));
-		labMeaValues.put("labname", labMea.getExtVal("labname"));
-		labMeaValues.put("datetime", labMea.getExtVal("datetime"));
-		labMeaValues.put("abnormal", labMea.getExtVal("abnormal"));
-		labMeaValues.put("measureData", labMea.getMeasure().getDataField());
-		labMeaValues.put("unit", labMea.getExtVal("unit"));
-		labMeaValues.put("accession", labMea.getExtVal("accession"));
-		labMeaValues.put("comments", labMea.getExtVal("comments"));
-		labMeaValues.put("range", labMea.getExtVal("range"));
-		labMeaValues.put("minimum", labMea.getExtVal("minimum"));
-		labMeaValues.put("maximum", labMea.getExtVal("maximum"));
-		labMeaValues.put("request_datetime", labMea.getExtVal("request_datetime"));
-		labMeaValues.put("olis_status", labMea.getExtVal("olis_status"));
-		labMeaValues.put("lab_no", labMea.getExtVal("lab_no"));
-		labMeaValues.put("other_id", labMea.getExtVal("other_id"));
-		
-		exportLabResult(labMeaValues, labResults, demoNo);
-	}
-	*/
-	
 	private void exportLabResult(HashMap<String,String> labMea, LaboratoryResults labResults, String demoNo) {
 
 		//lab test code, test name, test name reported by lab
@@ -3262,24 +3162,30 @@ public class DemographicExportAction4 extends Action {
 			collDate.setFullDate(Util.calDate("0001-01-01"));
 		}
 
-		//lab normal/abnormal flag
-		/*
-		labResults.setResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag.U);
-		String abnormalFlag = StringUtils.noNull(labMea.get("abnormal"));
-		if (abnormalFlag.equals("A") || abnormalFlag.equals("L")) labResults.setResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag.Y);
-		if (abnormalFlag.equals("N")) labResults.setResultNormalAbnormalFlag(cdsDt.ResultNormalAbnormalFlag.N);
-*/
 		//lab unit of measure
 		String measureData = StringUtils.noNull(labMea.get("measureData"));
-		if (StringUtils.filled(measureData)) {
+
+		/*
+		 * filters out any possible Base64 encoded binary data that should not be here
+		 */
+		if (StringUtils.filled(measureData) && !Base64.isBase64(measureData)) {
 			LaboratoryResults.Result result = labResults.addNewResult();
-			if (measureData.length()>120 && !Base64.isBase64(measureData)) {
-				measureData = measureData.substring(0, 120);
-				exportError.add("Error! Result text length > 120 - truncated; Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);
+
+			if (measureData.length()>120) {
+				// split long text values into 120 character text fields
+				while (measureData.length()>120) {
+					result.setValue(measureData.substring(0, 120));
+					measureData = measureData.substring(120);
+				}
+			} else {
+				result.setValue(measureData);
 			}
-			result.setValue(measureData);
+
 			measureData = labMea.get("unit");
-			if (StringUtils.filled(measureData)) result.setUnitOfMeasure(measureData);
+
+			if (StringUtils.filled(measureData)) {
+				result.setUnitOfMeasure(measureData);
+			}
 		}
 
 		//lab accession number
@@ -3296,7 +3202,6 @@ public class DemographicExportAction4 extends Action {
 
 		ResultNormalAbnormalFlag rnaf = labResults.addNewResultNormalAbnormalFlag();
 		rnaf.setResultNormalAbnormalFlagAsPlainText(labMea.get("abnormal"));
-		//labResults.setResultNormalAbnormalFlag(rnaf);
 
 		//lab reference range
 		String range = StringUtils.noNull(labMea.get("range"));
@@ -3471,6 +3376,112 @@ public class DemographicExportAction4 extends Action {
 		de.setContent(value);
 		de.setDataType(dataType);
 		de.setName(name);
+	}
+
+	private void mapLaboratoryResultToReport(HashMap<String,String> labMeaValues, Reports report) {
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+		cdsDt.ReportContent reportContent = report.addNewContent();
+		String result = labMeaValues.get("measureData");
+		String comments = labMeaValues.get("comments");
+		String observationDate = labMeaValues.get("datetime");
+		String requestDate = labMeaValues.get("request_datetime");
+		String sourceFacility = labMeaValues.get("labname");
+		String labResultId = labMeaValues.get("identifier");
+		String dateReceived = labMeaValues.get("dateReceived");
+		String name = labMeaValues.get("name");
+		String requester = labMeaValues.get("requestingClient");
+		String labComment = labMeaValues.get("labComment");
+
+		if(isBase64(result)) {
+			byte[] pdfBinary = Base64.decodeBase64( result.getBytes() );
+			reportContent.setMedia(pdfBinary);
+			report.setFormat(cdsDt.ReportFormat.BINARY);
+			addOneEntry(REPORTBINARY);
+			if(StringUtils.isNullOrEmpty(labResultId)) {
+				labResultId = "pdf";
+			}
+			report.setFileExtensionAndVersion(labResultId.toLowerCase());
+		} else {
+			reportContent.setTextContent(result);
+			report.setFormat(cdsDt.ReportFormat.TEXT);
+			addOneEntry(REPORTTEXT);
+			if(StringUtils.isNullOrEmpty(labResultId)) {
+				labResultId = "txt";
+			}
+			report.setFileExtensionAndVersion(labResultId.toLowerCase());
+		}
+
+		//TODO these should be categorized based on the lab report content
+		report.setClass1(ReportClass.LAB_REPORT);
+
+		if(!StringUtils.isNullOrEmpty(name)) {
+			report.setSubClass(name);
+		}
+
+		try {
+			if (!StringUtils.isNullOrEmpty(observationDate)) {
+				report.addNewEventDateTime().setFullDateTime(Util.calDateTZD(simpleDateFormat.parse(observationDate)));
+			}
+
+			if(!StringUtils.isNullOrEmpty(dateReceived)) {
+				report.addNewReceivedDateTime().setFullDateTime(Util.calDateTZD(simpleDateFormat.parse(dateReceived)));
+			}
+
+			if (!StringUtils.isNullOrEmpty(requestDate)) {
+				report.addNewSentDateTime().setFullDateTime(Util.calDateTZD(simpleDateFormat.parse(requestDate)));
+			}
+		} catch (Exception e) {
+			// do nothing.
+		}
+
+		if (!StringUtils.isNullOrEmpty(sourceFacility)) {
+			report.setSourceFacility(sourceFacility);
+		}
+
+		report.setMessageUniqueID(labMeaValues.get("accession"));
+
+		if(! StringUtils.isNullOrEmpty(comments)) {
+			report.setNotes(Util.replaceTags(comments));
+		}
+
+		if(! StringUtils.isNullOrEmpty(requester)) {
+			if(requester.contains(" ")) {
+				report.addNewRecipientName().setFirstName(requester.split(" ")[0]);
+				report.addNewRecipientName().setLastName(requester.split(" ")[1]);
+			} else {
+				report.addNewRecipientName().setFirstName(requester);
+			}
+
+		}
+
+		if(! StringUtils.isNullOrEmpty(labComment)) {
+			report.setNotes(Util.replaceTags(labComment));
+		}
+	}
+
+
+	private boolean isBase64(String input) {
+		if (input == null || input.isEmpty()) {
+			return false;
+		}
+
+		String value = input.trim();
+		Pattern BASE64_PATTERN = Pattern.compile(
+				"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+		);
+
+		if (!BASE64_PATTERN.matcher(value).matches()) {
+			return false;
+		}
+
+		try {
+			Base64.decodeBase64(value);
+			return true;
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 }
 
