@@ -23,10 +23,6 @@
  */
 package oscar.oscarLab.ca.all.parsers;
 
-import java.util.ArrayList;
-
-import org.apache.logging.log4j.Logger;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.Structure;
@@ -36,6 +32,9 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
 
 public class AlphaHandler extends DefaultGenericHandler implements MessageHandler {
 
@@ -681,4 +680,7 @@ public class AlphaHandler extends DefaultGenericHandler implements MessageHandle
 		sb.append("obxCount="+getOBXCount(0));
     	logger.debug(sb.toString());
     }
+
+	@Override
+	public boolean isEmbeddedContent() { return false; }
 }

@@ -134,4 +134,9 @@ public final class RefI12Handler extends ChainnedMessageAdapter<REF_I12> {
 	    return null;
     }
 
+	@Override
+	public boolean isEmbeddedContent() {
+		return false;
+	}
+
 }

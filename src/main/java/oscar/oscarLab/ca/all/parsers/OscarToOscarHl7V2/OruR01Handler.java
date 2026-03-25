@@ -163,4 +163,9 @@ public final class OruR01Handler extends ChainnedMessageAdapter<ORU_R01> {
 		// TODO Auto-generated method stub
 	    return null;
     }
+
+	@Override
+	public boolean isEmbeddedContent() {
+		return false;
+	}
 }

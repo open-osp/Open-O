@@ -24,8 +24,6 @@
 package oscar.oscarLab.ca.all.parsers;
 // import java.util.HashMap;
 
-import java.util.HashMap;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v23.segment.MSH;
@@ -33,6 +31,8 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+
+import java.util.HashMap;
 
 
 /**
@@ -312,5 +312,8 @@ public class IHAPOIHandler extends MEDITECHHandler implements MessageHandler  {
 		}
 		return healthNumber;
 	}
+
+	@Override
+	public boolean isEmbeddedContent() { return false; }
 	
 }

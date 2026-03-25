@@ -965,4 +965,7 @@ public class MDSHandler implements MessageHandler {
     	return false;
     }
 
+    @Override
+    public boolean isEmbeddedContent() { return false; }
+
 }

@@ -958,8 +958,29 @@ public class PATHL7Handler implements MessageHandler {
     	
     	return "";
     }
-    
-	/**
+
+    /**
+     * Determines whether all OBX segments associated with each OBR contain the value type "ED".
+     * This method checks each OBR segment for its associated OBX segments and validates
+     * that every OBX valueType is "ED". If any OBX segment does not have a valueType
+     * matching "ED", the method returns false.
+     *
+     * @return true if all OBX segments in all OBRs have the valueType "ED", false otherwise
+     */
+    @Override
+    public boolean isEmbeddedContent() {
+        boolean result = true;
+        for(int x=0;x<getOBRCount();x++) {
+            for(int y=0;y<getOBXCount(x);y++) {
+                if(!"ED".equals( getOBXValueType(x, y))) {
+                    result=false;
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
 	 * If the first OBX segment is presenting a textual report and the lab type is 
 	 * not in the unstructured (PATH or ITS) lab types.  
 	 * 

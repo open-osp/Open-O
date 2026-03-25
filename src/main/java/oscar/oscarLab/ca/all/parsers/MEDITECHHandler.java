@@ -1108,4 +1108,7 @@ public class MEDITECHHandler implements MessageHandler {
     	return false;
     }
 
+    @Override
+    public boolean isEmbeddedContent() { return false; }
+
 }

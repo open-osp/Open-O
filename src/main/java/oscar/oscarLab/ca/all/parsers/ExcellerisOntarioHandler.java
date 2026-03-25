@@ -35,18 +35,6 @@
 package oscar.oscarLab.ca.all.parsers;
 
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.logging.log4j.Logger;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v231.datatype.CX;
@@ -59,7 +47,13 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import org.apache.logging.log4j.Logger;
 import oscar.util.UtilDateUtilities;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 public class ExcellerisOntarioHandler implements MessageHandler {
@@ -947,6 +941,26 @@ public class ExcellerisOntarioHandler implements MessageHandler {
     //for OMD validation
     public boolean isTestResultBlocked(int i, int j) {
     	return false;
+    }
+
+    /**
+     * Checks whether all OBX segments within all OBR groups contain embedded content.
+     * Embedded content is determined based on the value type "ED" in each OBX segment.
+     * Iterates through each OBR group and their respective OBX segments to validate this condition.
+     *
+     * @return true if all OBX segments across all OBR groups have a value type of "ED", false otherwise.
+     */
+    @Override
+    public boolean isEmbeddedContent() {
+        boolean result = true;
+        for(int x=0;x<getOBRCount();x++) {
+            for(int y=0;y<getOBXCount(x);y++) {
+                if(!"ED".equals( getOBXValueType(x, y))) {
+                    result=false;
+                }
+            }
+        }
+        return result;
     }
     
 }

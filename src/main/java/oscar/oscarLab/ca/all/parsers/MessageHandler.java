@@ -25,9 +25,9 @@
 
 package oscar.oscarLab.ca.all.parsers;
 
-import java.util.ArrayList;
-
 import ca.uhn.hl7v2.HL7Exception;
+
+import java.util.ArrayList;
 
 /**
  *  When implementing this class a global variable 'msg' should be created as
@@ -341,7 +341,7 @@ public interface MessageHandler {
     public ArrayList getDocNums();
 
     /**
-     * Returns a string audit of the messages.  If not required handler should just return an empty string;
+     * Returns a string audit of the messages.  If not required, the handler should just return an empty string;
      */
     public String audit();
 
@@ -354,4 +354,12 @@ public interface MessageHandler {
     public String getNteForOBX(int i,int j);
     
     public String getNteForPID();
+
+    /**
+     * Determines whether this lab message contains embedded content,
+     * such as PDF's, Images, RFT files, etc.
+     *
+     * @return true if the content is embedded, false otherwise
+     */
+    boolean isEmbeddedContent();
 }

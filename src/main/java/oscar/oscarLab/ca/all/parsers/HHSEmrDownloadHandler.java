@@ -25,19 +25,6 @@
 
 package oscar.oscarLab.ca.all.parsers;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.integration.hl7.model.PatientId;
-import org.oscarehr.util.MiscUtils;
-
-import oscar.Misc;
-import oscar.OscarProperties;
-import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Group;
 import ca.uhn.hl7v2.model.Segment;
@@ -46,6 +33,18 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.integration.hl7.model.PatientId;
+import org.oscarehr.util.MiscUtils;
+import oscar.Misc;
+import oscar.OscarProperties;
+import oscar.util.UtilDateUtilities;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -833,4 +832,7 @@ public String getAccessionNum(){
         SimpleDateFormat simpledateformat = new SimpleDateFormat("HH:mm");
         return simpledateformat.format(date);
     }
+
+	@Override
+	public boolean isEmbeddedContent() { return false; }
 }

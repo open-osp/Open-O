@@ -23,14 +23,6 @@
 
 package oscar.oscarLab.ca.all.parsers;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.util.MiscUtils;
-
-import oscar.util.UtilDateUtilities;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.segment.OBX;
@@ -38,6 +30,12 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.util.MiscUtils;
+import oscar.util.UtilDateUtilities;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 public class EpsilonHandler  extends CMLHandler implements MessageHandler {
 	private static Logger logger = MiscUtils.getLogger();
@@ -397,6 +395,8 @@ public class EpsilonHandler  extends CMLHandler implements MessageHandler {
 	            return(null);
 	        }
 	    }
-	    
+
+	@Override
+	public boolean isEmbeddedContent() { return false; }
 	  
 }

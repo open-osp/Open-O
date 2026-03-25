@@ -266,4 +266,7 @@ public final class OscarToOscarHl7V2Handler implements MessageHandler {
     	return false;
     }
 
+    @Override
+    public boolean isEmbeddedContent() { return false; }
+
 }

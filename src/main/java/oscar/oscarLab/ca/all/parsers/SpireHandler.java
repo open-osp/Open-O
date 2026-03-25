@@ -1047,4 +1047,7 @@ public class SpireHandler implements MessageHandler {
     public boolean isTestResultBlocked(int i, int j) {
     	return false;
     }
+
+    @Override
+    public boolean isEmbeddedContent() { return false; }
 }

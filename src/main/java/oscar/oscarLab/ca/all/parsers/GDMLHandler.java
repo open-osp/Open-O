@@ -34,23 +34,6 @@
 
 package oscar.oscarLab.ca.all.parsers;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.logging.log4j.Logger;
-import org.oscarehr.common.dao.Hl7TextInfoDao;
-import org.oscarehr.common.model.Hl7TextMessageInfo;
-import org.oscarehr.common.model.Hl7TextMessageInfo2;
-import org.oscarehr.util.SpringUtils;
-
-import oscar.util.UtilDateUtilities;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Segment;
 import ca.uhn.hl7v2.model.v23.datatype.XCN;
@@ -61,6 +44,18 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.Logger;
+import org.oscarehr.common.dao.Hl7TextInfoDao;
+import org.oscarehr.common.model.Hl7TextMessageInfo;
+import org.oscarehr.common.model.Hl7TextMessageInfo2;
+import org.oscarehr.util.SpringUtils;
+import oscar.util.UtilDateUtilities;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -938,5 +933,8 @@ public class GDMLHandler implements MessageHandler {
             return false;
         }
     }
+
+    @Override
+    public boolean isEmbeddedContent() { return false; }
 
 }
