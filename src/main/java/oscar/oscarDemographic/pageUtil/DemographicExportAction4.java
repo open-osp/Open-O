@@ -3459,8 +3459,9 @@ public class DemographicExportAction4 extends Action {
 
 		if(! StringUtils.isNullOrEmpty(requester)) {
 			if(requester.contains(" ")) {
-				report.addNewRecipientName().setFirstName(requester.split(" ")[0]);
-				report.addNewRecipientName().setLastName(requester.split(" ")[1]);
+				PersonNameSimple recipientName = report.addNewRecipientName();
+				recipientName.setFirstName(requester.split(" ")[0]);
+				recipientName.setLastName(requester.split(" ")[1]);
 			} else {
 				report.addNewRecipientName().setFirstName(requester);
 			}
