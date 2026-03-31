@@ -532,7 +532,10 @@ public class DemographicExportAction4 extends Action {
 			if (StringUtils.filled(chartNo)) demo.setChartNumber(chartNo);
 
 			String email = demographic.getEmail();
-			if (StringUtils.filled(email)) demo.setEmail(email);
+			if (StringUtils.filled(email)) {
+				email = validateAndRewriteEmail(email);
+				demo.setEmail(email);
+			}
 
 			String providerNo = demographic.getProviderNo();
 			if (StringUtils.filled(providerNo)) {
@@ -666,7 +669,9 @@ public class DemographicExportAction4 extends Action {
 					}
 
 
-					if (StringUtils.filled(pi.getEmail()) && pi.getEmail().contains("@")) preferredPharmacy.setEmailAddress(pi.getEmail());
+					if (StringUtils.filled(pi.getEmail()) && pi.getEmail().contains("@")) {
+						preferredPharmacy.setEmailAddress(validateAndRewriteEmail(pi.getEmail()));
+					}
 					preferredPharmacy.setName(pi.getName());
 
 				}
@@ -1825,7 +1830,7 @@ public class DemographicExportAction4 extends Action {
 
 							} else {
 								// log anomaly
-								exportError.add(String.format("Error! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
+								exportError.add(String.format("Warning! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
 							}
 						}
 					}
@@ -1921,8 +1926,13 @@ public class DemographicExportAction4 extends Action {
 							}
 							
 							String contentType = Util.mimeToExt(edoc.getContentType());
-							if (StringUtils.empty(contentType)) contentType = cutExt(edoc.getFileName());
-							if (StringUtils.empty(contentType)) exportError.add("Error! No File Extension&Version info for Document \""+edoc.getFileName()+"\"");
+							if (StringUtils.empty(contentType)) {
+								contentType = cutExt(edoc.getFileName());
+							}
+							if (StringUtils.empty(contentType)) {
+								contentType = "txt";
+								exportError.add("Warning! No File Extension or Version info for Document \""+edoc.getFileName()+"\" Defaulting to \"txt\"");
+							}
 							rpr.setFileExtensionAndVersion(contentType);
 	
 							if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
@@ -1939,7 +1949,7 @@ public class DemographicExportAction4 extends Action {
 							if (cdsDt.ReportClass.Enum.forString(docClass)!=null) {
 								rpr.setClass1(cdsDt.ReportClass.Enum.forString(docClass));
 							} else {
-								exportError.add("Error! No Class Type for Document \""+edoc.getFileName()+"\"");
+								exportError.add("Warning! No Known Class Type for Document \""+edoc.getFileName()+"\"");
 								rpr.setClass1(cdsDt.ReportClass.OTHER_LETTER);
 							}
 							String docSubClass = edoc.getDocSubClass();
@@ -3060,7 +3070,9 @@ public class DemographicExportAction4 extends Action {
 				exportError.add("Error! No Last Name for contact ("+index+") for Patient "+demoNo);
 			}
 
-			if (StringUtils.filled(relDemo.getEmail())) contact.setEmailAddress(relDemo.getEmail());
+			if (StringUtils.filled(relDemo.getEmail())) {
+				contact.setEmailAddress(validateAndRewriteEmail(relDemo.getEmail()));
+			}
 
 			boolean phoneExtTooLong = false;
 			if (phoneNoValid(relDemo.getPhone())) {
@@ -3094,7 +3106,9 @@ public class DemographicExportAction4 extends Action {
 					exportError.add("Error! No Last Name for contact ("+index+") for Patient "+demoNo);
 				}
 
-				if (StringUtils.filled(c.getEmail())) contact.setEmailAddress(c.getEmail());
+				if (StringUtils.filled(c.getEmail())) {
+					contact.setEmailAddress(validateAndRewriteEmail(c.getEmail()));
+				}
 
 				boolean phoneExtTooLong = false;
 				if (phoneNoValid(c.getPhone())) {
@@ -3140,6 +3154,109 @@ public class DemographicExportAction4 extends Action {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * Validates and rewrites an email address to ensure that it matches the expected
+	 * format. If the email is invalid, attempts to clean up and reconstruct it by
+	 * removing invalid characters and ensuring the presence of essential parts like the
+	 * local part, domain, and a valid structure.
+	 *
+	 * @param email The email address to validate and rewrite. May be null or empty.
+	 * @return The validated and potentially rewritten email address. If the email is
+	 *         null, empty, or cannot be rewritten to a valid format, it is returned
+	 *         as-is.
+	 */
+	private String validateAndRewriteEmail(String email) {
+		if (email == null || email.isEmpty()) {
+			return email;
+		}
+
+		String emailPattern = "([.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(([a-zA-Z0-9_-])*.([a-zA-Z0-9_-])+)+";
+
+		// Always validate the email
+		if (!email.matches(emailPattern)) {
+			email = rewriteEmail(email, emailPattern);
+		} else {
+			// Even if it matches the basic pattern, verify it ends with a valid TLD (letters only)
+			int atIndex = email.indexOf('@');
+			if (atIndex > 0) {
+				String domainPart = email.substring(atIndex + 1);
+				int lastDotIndex = domainPart.lastIndexOf('.');
+				if (lastDotIndex > 0 && lastDotIndex < domainPart.length() - 1) {
+					String tld = domainPart.substring(lastDotIndex + 1);
+					// TLD should contain only letters
+					if (!tld.matches("[a-zA-Z]+")) {
+						email = rewriteEmail(email, emailPattern);
+					}
+				}
+			}
+		}
+
+		return email;
+	}
+
+	private String rewriteEmail(String email, String emailPattern) {
+		// Find the @ symbol position
+		int atIndex = email.indexOf('@');
+		if (atIndex > 0) {
+			// Extract local part (before @)
+			String localPart = email.substring(0, atIndex);
+			// Extract domain part (after @)
+			String domainPart = email.substring(atIndex + 1);
+
+			// For domain part, find first invalid character and truncate there
+			int invalidCharIndex = -1;
+			for (int i = 0; i < domainPart.length(); i++) {
+				char c = domainPart.charAt(i);
+				if (!(Character.isLetterOrDigit(c) || c == '.' || c == '-' || c == '_')) {
+					invalidCharIndex = i;
+					break;
+				}
+			}
+			if (invalidCharIndex >= 0) {
+				domainPart = domainPart.substring(0, invalidCharIndex);
+			}
+
+			// Additional check: ensure domain ends with a valid TLD (letters only after last dot)
+			int lastDotIndex = domainPart.lastIndexOf('.');
+			if (lastDotIndex > 0 && lastDotIndex < domainPart.length() - 1) {
+				String afterLastDot = domainPart.substring(lastDotIndex + 1);
+				// Find where non-letter characters start in the TLD
+				int nonLetterIndex = -1;
+				for (int i = 0; i < afterLastDot.length(); i++) {
+					if (!Character.isLetter(afterLastDot.charAt(i))) {
+						nonLetterIndex = i;
+						break;
+					}
+				}
+				if (nonLetterIndex >= 0) {
+					// Truncate at the first non-letter in TLD
+					domainPart = domainPart.substring(0, lastDotIndex + 1 + nonLetterIndex);
+				}
+			}
+
+			// Remove invalid characters from local part (keep only valid ones)
+			localPart = localPart.replaceAll("[^.a-zA-Z0-9_-]", "");
+
+			// Try to reconstruct and validate
+			if (!localPart.isEmpty() && !domainPart.isEmpty() && domainPart.contains(".")) {
+				String reconstructed = localPart + "@" + domainPart;
+				// Verify reconstructed email matches pattern AND has valid TLD
+				int recAtIndex = reconstructed.indexOf('@');
+				if (recAtIndex > 0) {
+					String recDomain = reconstructed.substring(recAtIndex + 1);
+					int recLastDot = recDomain.lastIndexOf('.');
+					if (recLastDot > 0 && recLastDot < recDomain.length() - 1) {
+						String recTld = recDomain.substring(recLastDot + 1);
+						if (recTld.matches("[a-zA-Z]+") && reconstructed.matches(emailPattern)) {
+							return reconstructed;
+						}
+					}
+				}
+			}
+		}
+		return email;
 	}
 
 	private boolean addPhone(String phoneNo, String phoneExt, cdsDt.PhoneNumberType.Enum phoneNoType, cdsDt.PhoneNumber cdsDtPhoneNumber) {
@@ -3357,6 +3474,7 @@ public class DemographicExportAction4 extends Action {
 			doc = builder.parse(f);
 		} catch (Exception e) {
 			logger.error("Parse exception", e);
+			exportError.add("XML file is not valid: " + e.getMessage());
 			return false;
 		}
 
@@ -3365,7 +3483,8 @@ public class DemographicExportAction4 extends Action {
 		try {
 			validator.validate(new DOMSource(doc));
 		} catch (Exception e) {
-			logger.error("In file '" + f.getName() + "': "+ e.getMessage());
+			logger.error("In file '{}': {}", f.getName(), e.getMessage());
+			exportError.add("XML file is not valid: " + e.getMessage());
 			return false;
 		}
 
@@ -3536,6 +3655,8 @@ public class DemographicExportAction4 extends Action {
 		report.setFormat(cdsDt.ReportFormat.BINARY);
 		addOneEntry(REPORTBINARY);
 	}
+
+
 }
 
 class Enrolment {
