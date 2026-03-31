@@ -127,6 +127,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -167,12 +169,16 @@ public class DemographicExportAction4 extends Action {
 	public static final int CMS4 = 0;
 	public static final int E2E = 1;
 
+	private static final long MAX_EMBEDDED_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024; // 10MB limit
+	private static final boolean SKIP_EMBEDDING_LARGE_DOCUMENTS = true; // large doucments tend to exhaust memory.
+
 	private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 	
-	Integer exportNo = 0;
-	ArrayList<String> exportError = null;
-	HashMap<String, Integer> entries = new HashMap<String, Integer>();
-	OscarProperties oscarProperties = OscarProperties.getInstance();
+	private static Integer exportNo = 0;
+	private static ArrayList<String> exportError = null;
+	private static final HashMap<String, Integer> entries = new HashMap<String, Integer>();
+	private static final OscarProperties oscarProperties = OscarProperties.getInstance();
+	private String tmpDir;
 
 
 	@Override
@@ -241,8 +247,8 @@ public class DemographicExportAction4 extends Action {
 	}
 
 	String ffwd = "fail";
-	String tmpDir = oscarProperties.getProperty("TMP_DIR") + File.separator +  RandomStringUtils.random(8, true, false);
-
+		
+	this.tmpDir = Paths.get(oscarProperties.getProperty("TMP_DIR"), RandomStringUtils.random(8, true, false)).toString();
 	
 	// Sharing Center - holds the ID that will 'potentially' be exported.
 	int documentExportId = 0;
@@ -526,7 +532,10 @@ public class DemographicExportAction4 extends Action {
 			if (StringUtils.filled(chartNo)) demo.setChartNumber(chartNo);
 
 			String email = demographic.getEmail();
-			if (StringUtils.filled(email)) demo.setEmail(email);
+			if (StringUtils.filled(email)) {
+				email = validateAndRewriteEmail(email);
+				demo.setEmail(email);
+			}
 
 			String providerNo = demographic.getProviderNo();
 			if (StringUtils.filled(providerNo)) {
@@ -660,7 +669,9 @@ public class DemographicExportAction4 extends Action {
 					}
 
 
-					if (StringUtils.filled(pi.getEmail()) && pi.getEmail().contains("@")) preferredPharmacy.setEmailAddress(pi.getEmail());
+					if (StringUtils.filled(pi.getEmail()) && pi.getEmail().contains("@")) {
+						preferredPharmacy.setEmailAddress(validateAndRewriteEmail(pi.getEmail()));
+					}
 					preferredPharmacy.setName(pi.getName());
 
 				}
@@ -1819,7 +1830,7 @@ public class DemographicExportAction4 extends Action {
 
 							} else {
 								// log anomaly
-								exportError.add(String.format("Error! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
+								exportError.add(String.format("Warning! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
 							}
 						}
 					}
@@ -1892,83 +1903,95 @@ public class DemographicExportAction4 extends Action {
 				for (int j=0; j<edoc_list.size(); j++) {
 					EDoc edoc = edoc_list.get(j);
 
-					File f = new File(edoc.getFilePath());
-					if (!f.exists()) {
-						exportError.add("Error! Document \""+f.getName()+"\" does not exist!");
-					} else if (f.length()>Runtime.getRuntime().freeMemory()) {
-						exportError.add("Error! Document \""+f.getName()+"\" too big to be exported. Not enough memory!");
+					File filePath = new File(edoc.getFilePath());
+					if (!filePath.exists()) {
+						exportError.add("Error! Document \""+filePath.getName()+"\" does not exist!");
 					} else {
-						Reports rpr = patientRec.addNewReports();
-						rpr.setFormat(cdsDt.ReportFormat.TEXT);
-
-						cdsDt.ReportContent rpc = rpr.addNewContent();
-						InputStream in = Files.newInputStream(f.toPath());
-						byte[] b = new byte[(int)f.length()];
-
-						int offset=0, numRead=0;
-						while ((numRead=in.read(b,offset,b.length-offset)) >= 0
-							   && offset < b.length) offset += numRead;
-
-						if (offset < b.length) throw new IOException("Could not completely read file " + f.getName());
-						in.close();
-						if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
-							String str = new String(b);
-							rpc.setTextContent(str);
+						// no binary data, no file. 
+						byte[] binaryData;
+						try(InputStream in = Files.newInputStream(filePath.toPath())) {
+							
+							Reports rpr = patientRec.addNewReports();
 							rpr.setFormat(cdsDt.ReportFormat.TEXT);
-							addOneEntry(REPORTTEXT);
-						} else {
-							rpc.setMedia(b);
-							rpr.setFormat(cdsDt.ReportFormat.BINARY);
-							addOneEntry(REPORTBINARY);
-						}
 
-						String contentType = Util.mimeToExt(edoc.getContentType());
-						if (StringUtils.empty(contentType)) contentType = cutExt(edoc.getFileName());
-						if (StringUtils.empty(contentType)) exportError.add("Error! No File Extension&Version info for Document \""+edoc.getFileName()+"\"");
-						rpr.setFileExtensionAndVersion(contentType);
+							binaryData = new byte[(int) filePath.length()];
+							int offset = 0, numRead = 0;
+							while ((numRead = in.read(binaryData, offset, binaryData.length - offset)) >= 0
+									&& offset < binaryData.length) {
+								offset += numRead;
+							}
 
-						String docClass = edoc.getDocClass();
-						if (cdsDt.ReportClass.Enum.forString(docClass)!=null) {
-							rpr.setClass1(cdsDt.ReportClass.Enum.forString(docClass));
-						} else {
-							exportError.add("Error! No Class Type for Document \""+edoc.getFileName()+"\"");
-							rpr.setClass1(cdsDt.ReportClass.OTHER_LETTER);
+							if (offset < binaryData.length) {
+								throw new IOException("Could not completely read file " + filePath.getName());
+							}
+							
+							String contentType = Util.mimeToExt(edoc.getContentType());
+							if (StringUtils.empty(contentType)) {
+								contentType = cutExt(edoc.getFileName());
+							}
+							if (StringUtils.empty(contentType)) {
+								contentType = "txt";
+								exportError.add("Warning! No File Extension or Version info for Document \""+edoc.getFileName()+"\" Defaulting to \"txt\"");
+							}
+							rpr.setFileExtensionAndVersion(contentType);
+	
+							if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
+								String str = new String(binaryData);
+								rpr.addNewContent().setTextContent(str);
+								rpr.setFormat(cdsDt.ReportFormat.TEXT);
+								addOneEntry(REPORTTEXT);
+							} else {
+								// decide if document should be embedded or referenced
+								handleEmbeddingBinaryDocuments(binaryData, rpr, edoc.getFilePath());
+							}
+							
+							String docClass = edoc.getDocClass();
+							if (cdsDt.ReportClass.Enum.forString(docClass)!=null) {
+								rpr.setClass1(cdsDt.ReportClass.Enum.forString(docClass));
+							} else {
+								exportError.add("Warning! No Known Class Type for Document \""+edoc.getFileName()+"\"");
+								rpr.setClass1(cdsDt.ReportClass.OTHER_LETTER);
+							}
+							String docSubClass = edoc.getDocSubClass();
+							if (StringUtils.filled(docSubClass)) {
+								rpr.setSubClass(docSubClass);
+							}
+							String obsDateStr = edoc.getObservationDate(); // TODO Should this actually be "edoc.getContentDateTime()"
+							Date observationDate = UtilDateUtilities.StringToDate(obsDateStr, "yyyy/MM/dd");
+							if (observationDate!=null) {
+								rpr.addNewEventDateTime().setFullDateTime(Util.calDateTZD(observationDate));
+							} else {
+								exportError.add("Not exporting invalid Event Date (Reports) for Patient "+demoNo+" ("+(j+1)+")");
+							}
+							String dateTimeStamp = edoc.getDateTimeStamp();
+							if (UtilDateUtilities.StringToDate(dateTimeStamp, "yyyy-MM-dd HH:mm:ss")!=null) {
+								rpr.addNewReceivedDateTime().setFullDateTime(Util.calDate(dateTimeStamp));
+							} else {
+								exportError.add("Not exporting invalid Received DateTime (Reports) for Patient "+demoNo+" ("+(j+1)+")");
+							}
+							Date reviewDateTime = edoc.getReviewDateTimeDate();
+							if (reviewDateTime!=null) {
+								ReportReviewed reportReviewed = rpr.addNewReportReviewed();
+								reportReviewed.addNewDateTimeReportReviewed().setFullDate(Util.calDate(reviewDateTime));
+								Util.writeNameSimple(reportReviewed.addNewName(), edoc.getReviewerName());
+								String ohipNo = StringUtils.noNull(edoc.getReviewerOhip());
+								if (ohipNo.length()<=6) reportReviewed.setReviewingOHIPPhysicianId(ohipNo);
+							}
+	
+							if (StringUtils.filled(edoc.getSource())) {
+								Util.writeNameSimple(rpr.addNewSourceAuthorPhysician().addNewAuthorName(), edoc.getSource());
+							}
+							if (StringUtils.filled(edoc.getSourceFacility())) rpr.setSourceFacility(edoc.getSourceFacility());
+	
+							if (edoc.getDocId()==null) continue;
+	
+							annotation = getNonDumpNote(CaseManagementNoteLink.DOCUMENT, Long.valueOf(edoc.getDocId()), null);
+							if (StringUtils.filled(annotation)) {
+								rpr.setNotes(annotation);
+							}
+						} catch (Exception e) {
+							exportError.add(e.getMessage());
 						}
-						String docSubClass = edoc.getDocSubClass();
-						if (StringUtils.filled(docSubClass)) {
-							rpr.setSubClass(docSubClass);
-						}
-						String obsDateStr = edoc.getObservationDate(); // TODO Should this actually be "edoc.getContentDateTime()"
-						Date observationDate = UtilDateUtilities.StringToDate(obsDateStr, "yyyy/MM/dd");
-						if (observationDate!=null) {
-							rpr.addNewEventDateTime().setFullDateTime(Util.calDateTZD(observationDate));
-						} else {
-							exportError.add("Not exporting invalid Event Date (Reports) for Patient "+demoNo+" ("+(j+1)+")");
-						}
-						String dateTimeStamp = edoc.getDateTimeStamp();
-						if (UtilDateUtilities.StringToDate(dateTimeStamp, "yyyy-MM-dd HH:mm:ss")!=null) {
-							rpr.addNewReceivedDateTime().setFullDateTime(Util.calDate(dateTimeStamp));
-						} else {
-							exportError.add("Not exporting invalid Received DateTime (Reports) for Patient "+demoNo+" ("+(j+1)+")");
-						}
-						Date reviewDateTime = edoc.getReviewDateTimeDate();
-						if (reviewDateTime!=null) {
-							ReportReviewed reportReviewed = rpr.addNewReportReviewed();
-							reportReviewed.addNewDateTimeReportReviewed().setFullDate(Util.calDate(reviewDateTime));
-							Util.writeNameSimple(reportReviewed.addNewName(), edoc.getReviewerName());
-							String ohipNo = StringUtils.noNull(edoc.getReviewerOhip());
-							if (ohipNo.length()<=6) reportReviewed.setReviewingOHIPPhysicianId(ohipNo);
-						}
-
-						if (StringUtils.filled(edoc.getSource())) {
-							Util.writeNameSimple(rpr.addNewSourceAuthorPhysician().addNewAuthorName(), edoc.getSource());
-						}
-						if (StringUtils.filled(edoc.getSourceFacility())) rpr.setSourceFacility(edoc.getSourceFacility());
-
-						if (edoc.getDocId()==null) continue;
-
-						annotation = getNonDumpNote(CaseManagementNoteLink.DOCUMENT, Long.valueOf(edoc.getDocId()), null);
-						if (StringUtils.filled(annotation)) rpr.setNotes(annotation);
 					}
 				}
 
@@ -2024,15 +2047,14 @@ public class DemographicExportAction4 extends Action {
 
 							}
 
+
 							if (reportContent!=null) {
-								if (reportContent!=null) {
-									if (reportContent.get("textcontent")!=null) {
-										cdsDt.ReportContent content = rpr.addNewContent();
-										content.setTextContent((String)reportContent.get("textcontent"));
-									} else if (reportContent.get("media")!=null) {
-										cdsDt.ReportContent content = rpr.addNewContent();
-										content.setMedia((byte[])reportContent.get("media"));
-									}
+								if (reportContent.get("textcontent")!=null) {
+									cdsDt.ReportContent content = rpr.addNewContent();
+									content.setTextContent((String)reportContent.get("textcontent"));
+								} else if (reportContent.get("media")!=null) {
+									cdsDt.ReportContent content = rpr.addNewContent();
+									content.setMedia((byte[])reportContent.get("media"));
 								}
 							}
 
@@ -2377,9 +2399,9 @@ public class DemographicExportAction4 extends Action {
 
 
 			//export file to temp directory
-			try{
+			try {
 				File directory = new File(tmpDir);
-				if(!directory.exists()){
+				if(! directory.exists() || ! directory.isDirectory()){
 					//this would never happen
 					throw new Exception("Temporary Export Directory does not exist!");
 				}
@@ -2393,53 +2415,61 @@ public class DemographicExportAction4 extends Action {
 			}catch(Exception e){
 				logger.error("Error", e);
 			}
+
 			try (FileWriter fw = new FileWriter(files.get(files.size()-1))) {
-
-				omdCdsDoc.save(fw,options);
-				fw.flush();
-			} catch (IOException ex) {logger.error("Error", ex);
-					throw new Exception("Cannot write .xml file(s) to export directory.\n Please check directory permissions.");
-		}
-	}
-
-	// Validate export against xsd
-	for (File f: files) {
-		Boolean valid = validateExport(f);
-		if (!valid) {
-			String msg = "Exported file " + f.getName() + " fails OntarioMD XSD validation";
-			logger.warn(msg);
-			exportError.add(msg);
-		} else {
-			logger.info("Exported file " + f.getName() + " is valid");
+				logger.info("Saving export document for demographic " + demoNo);
+			    omdCdsDoc.save(fw, options);
+			    fw.flush();
+			} catch (OutOfMemoryError oome) {
+			    logger.error("Out of memory while saving export for demographic " + demoNo +
+			                 ". Document may be too large.", oome);
+			    throw new Exception("Export file is too large to process. " +
+			                       "Please contact support or try exporting with fewer records.");
+			} catch (IOException ex) {
+			    logger.error("Error", ex);
+			    throw new Exception("Cannot write .xml file(s) to export directory.\n" +
+			                       "Please check directory permissions.");
+			}
 		}
 
-	}
+		// Validate export against xsd
+		for (File f: files) {
+			Boolean valid = validateExport(f);
+			if (!valid) {
+				String msg = "Exported file " + f.getName() + " fails OntarioMD XSD validation";
+				logger.warn(msg);
+				exportError.add(msg);
+			} else {
+				logger.info("Exported file " + f.getName() + " is valid");
+			}
 
-	if(files.isEmpty()) {
-		logger.warn("no files to export");
-		return mapping.findForward("fail");
-	}
+		}
 
-	//create ReadMe.txt & ExportEvent.log
-	files.add(makeReadMe(dirs, files));
-	dirs.add("");
-	files.add(makeExportLog(files.get(0).getParentFile()));
-	dirs.add("");
+		if(files.isEmpty()) {
+			logger.warn("no files to export");
+			return mapping.findForward("fail");
+		}
 
-	//zip all export files
-	String zipName = files.get(0).getName().replace(".xml", ".zip");
-	if (setName!=null && !setName.isEmpty() && !setName.equals("-1")) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
-	if (providerNoMRP!=null && !providerNoMRP.isEmpty() && !providerNoMRP.equals("-1")) {
-		ProviderDao providerDao= SpringUtils.getBean(ProviderDao.class);
-		Provider p = providerDao.getProvider(providerNoMRP);
-		String name = p.getFirstName() + "_" + p.getLastName() + "_" + p.getOhipNo();
-		zipName = "export_"+name+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
-	}
-//
-//	if (setName!=null) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".pgp";
-	if (!Util.zipFiles(files, dirs, zipName, tmpDir)) {
-			logger.debug("Error! Failed to zip export files");
-	}
+		//create ReadMe.txt & ExportEvent.log
+		files.add(makeReadMe(dirs, files));
+		dirs.add("");
+		files.add(makeExportLog(files.get(0).getParentFile()));
+		dirs.add("");
+
+		//zip all export files
+		String zipName = files.get(0).getName().replace(".xml", ".zip");
+		if (setName!=null && !setName.isEmpty() && !setName.equals("-1")) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
+		if (providerNoMRP!=null && !providerNoMRP.isEmpty() && !providerNoMRP.equals("-1")) {
+			ProviderDao providerDao= SpringUtils.getBean(ProviderDao.class);
+			Provider p = providerDao.getProvider(providerNoMRP);
+			String name = p.getFirstName() + "_" + p.getLastName() + "_" + p.getOhipNo();
+			zipName = "export_"+name+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
+		}
+
+		//	if (setName!=null) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".pgp";
+		if (!Util.zipFiles(files, dirs, zipName, tmpDir)) {
+				logger.debug("Error! Failed to zip export files");
+		}
 
 		if ("Yes".equals(pgpReady)) {
 			//PGP encrypt zip file
@@ -3040,7 +3070,9 @@ public class DemographicExportAction4 extends Action {
 				exportError.add("Error! No Last Name for contact ("+index+") for Patient "+demoNo);
 			}
 
-			if (StringUtils.filled(relDemo.getEmail())) contact.setEmailAddress(relDemo.getEmail());
+			if (StringUtils.filled(relDemo.getEmail())) {
+				contact.setEmailAddress(validateAndRewriteEmail(relDemo.getEmail()));
+			}
 
 			boolean phoneExtTooLong = false;
 			if (phoneNoValid(relDemo.getPhone())) {
@@ -3074,7 +3106,9 @@ public class DemographicExportAction4 extends Action {
 					exportError.add("Error! No Last Name for contact ("+index+") for Patient "+demoNo);
 				}
 
-				if (StringUtils.filled(c.getEmail())) contact.setEmailAddress(c.getEmail());
+				if (StringUtils.filled(c.getEmail())) {
+					contact.setEmailAddress(validateAndRewriteEmail(c.getEmail()));
+				}
 
 				boolean phoneExtTooLong = false;
 				if (phoneNoValid(c.getPhone())) {
@@ -3120,6 +3154,109 @@ public class DemographicExportAction4 extends Action {
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * Validates and rewrites an email address to ensure that it matches the expected
+	 * format. If the email is invalid, attempts to clean up and reconstruct it by
+	 * removing invalid characters and ensuring the presence of essential parts like the
+	 * local part, domain, and a valid structure.
+	 *
+	 * @param email The email address to validate and rewrite. May be null or empty.
+	 * @return The validated and potentially rewritten email address. If the email is
+	 *         null, empty, or cannot be rewritten to a valid format, it is returned
+	 *         as-is.
+	 */
+	private String validateAndRewriteEmail(String email) {
+		if (email == null || email.isEmpty()) {
+			return email;
+		}
+
+		String emailPattern = "([.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(([a-zA-Z0-9_-])*.([a-zA-Z0-9_-])+)+";
+
+		// Always validate the email
+		if (!email.matches(emailPattern)) {
+			email = rewriteEmail(email, emailPattern);
+		} else {
+			// Even if it matches the basic pattern, verify it ends with a valid TLD (letters only)
+			int atIndex = email.indexOf('@');
+			if (atIndex > 0) {
+				String domainPart = email.substring(atIndex + 1);
+				int lastDotIndex = domainPart.lastIndexOf('.');
+				if (lastDotIndex > 0 && lastDotIndex < domainPart.length() - 1) {
+					String tld = domainPart.substring(lastDotIndex + 1);
+					// TLD should contain only letters
+					if (!tld.matches("[a-zA-Z]+")) {
+						email = rewriteEmail(email, emailPattern);
+					}
+				}
+			}
+		}
+
+		return email;
+	}
+
+	private String rewriteEmail(String email, String emailPattern) {
+		// Find the @ symbol position
+		int atIndex = email.indexOf('@');
+		if (atIndex > 0) {
+			// Extract local part (before @)
+			String localPart = email.substring(0, atIndex);
+			// Extract domain part (after @)
+			String domainPart = email.substring(atIndex + 1);
+
+			// For domain part, find first invalid character and truncate there
+			int invalidCharIndex = -1;
+			for (int i = 0; i < domainPart.length(); i++) {
+				char c = domainPart.charAt(i);
+				if (!(Character.isLetterOrDigit(c) || c == '.' || c == '-' || c == '_')) {
+					invalidCharIndex = i;
+					break;
+				}
+			}
+			if (invalidCharIndex >= 0) {
+				domainPart = domainPart.substring(0, invalidCharIndex);
+			}
+
+			// Additional check: ensure domain ends with a valid TLD (letters only after last dot)
+			int lastDotIndex = domainPart.lastIndexOf('.');
+			if (lastDotIndex > 0 && lastDotIndex < domainPart.length() - 1) {
+				String afterLastDot = domainPart.substring(lastDotIndex + 1);
+				// Find where non-letter characters start in the TLD
+				int nonLetterIndex = -1;
+				for (int i = 0; i < afterLastDot.length(); i++) {
+					if (!Character.isLetter(afterLastDot.charAt(i))) {
+						nonLetterIndex = i;
+						break;
+					}
+				}
+				if (nonLetterIndex >= 0) {
+					// Truncate at the first non-letter in TLD
+					domainPart = domainPart.substring(0, lastDotIndex + 1 + nonLetterIndex);
+				}
+			}
+
+			// Remove invalid characters from local part (keep only valid ones)
+			localPart = localPart.replaceAll("[^.a-zA-Z0-9_-]", "");
+
+			// Try to reconstruct and validate
+			if (!localPart.isEmpty() && !domainPart.isEmpty() && domainPart.contains(".")) {
+				String reconstructed = localPart + "@" + domainPart;
+				// Verify reconstructed email matches pattern AND has valid TLD
+				int recAtIndex = reconstructed.indexOf('@');
+				if (recAtIndex > 0) {
+					String recDomain = reconstructed.substring(recAtIndex + 1);
+					int recLastDot = recDomain.lastIndexOf('.');
+					if (recLastDot > 0 && recLastDot < recDomain.length() - 1) {
+						String recTld = recDomain.substring(recLastDot + 1);
+						if (recTld.matches("[a-zA-Z]+") && reconstructed.matches(emailPattern)) {
+							return reconstructed;
+						}
+					}
+				}
+			}
+		}
+		return email;
 	}
 
 	private boolean addPhone(String phoneNo, String phoneExt, cdsDt.PhoneNumberType.Enum phoneNoType, cdsDt.PhoneNumber cdsDtPhoneNumber) {
@@ -3335,11 +3472,9 @@ public class DemographicExportAction4 extends Action {
 		Document doc = null;
 		try {
 			doc = builder.parse(f);
-		} catch (SAXException e) {
+		} catch (Exception e) {
 			logger.error("Parse exception", e);
-			return false;
-		} catch (IOException e) {
-			logger.error("Parse exception", e);
+			exportError.add("XML file is not valid: " + e.getMessage());
 			return false;
 		}
 
@@ -3347,15 +3482,13 @@ public class DemographicExportAction4 extends Action {
 		Validator validator = schema.newValidator();
 		try {
 			validator.validate(new DOMSource(doc));
-		} catch (SAXException e) {
-			logger.error("In file '" + f.getName() + "': "+ e.getMessage());
-			return false;
-		} catch (IOException e) {
-			logger.error("In file '" + f.getName() + "': " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("In file '{}': {}", f.getName(), e.getMessage());
+			exportError.add("XML file is not valid: " + e.getMessage());
 			return false;
 		}
-		return result;
 
+		return result;
 	}
 
 	private String getSimpleDateFormatFromPatientDateFormat(String fmt) {
@@ -3382,7 +3515,6 @@ public class DemographicExportAction4 extends Action {
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-		cdsDt.ReportContent reportContent = report.addNewContent();
 		String result = labMeaValues.get("measureData");
 		String comments = labMeaValues.get("comments");
 		String observationDate = labMeaValues.get("datetime");
@@ -3396,15 +3528,13 @@ public class DemographicExportAction4 extends Action {
 
 		if(isBase64(result)) {
 			byte[] pdfBinary = Base64.decodeBase64( result.getBytes() );
-			reportContent.setMedia(pdfBinary);
-			report.setFormat(cdsDt.ReportFormat.BINARY);
-			addOneEntry(REPORTBINARY);
 			if(StringUtils.isNullOrEmpty(labResultId)) {
 				labResultId = "pdf";
 			}
 			report.setFileExtensionAndVersion(labResultId.toLowerCase());
+			handleEmbeddingBinaryDocuments(pdfBinary, report, labMeaValues.get("lab_no"));
 		} else {
-			reportContent.setTextContent(result);
+			report.addNewContent().setTextContent(result);
 			report.setFormat(cdsDt.ReportFormat.TEXT);
 			addOneEntry(REPORTTEXT);
 			if(StringUtils.isNullOrEmpty(labResultId)) {
@@ -3448,8 +3578,9 @@ public class DemographicExportAction4 extends Action {
 
 		if(! StringUtils.isNullOrEmpty(requester)) {
 			if(requester.contains(" ")) {
-				report.addNewRecipientName().setFirstName(requester.split(" ")[0]);
-				report.addNewRecipientName().setLastName(requester.split(" ")[1]);
+				PersonNameSimple recipientName = report.addNewRecipientName();
+				recipientName.setFirstName(requester.split(" ")[0]);
+				recipientName.setLastName(requester.split(" ")[1]);
 			} else {
 				report.addNewRecipientName().setFirstName(requester);
 			}
@@ -3483,6 +3614,49 @@ public class DemographicExportAction4 extends Action {
 			return false;
 		}
 	}
+
+	/**
+	 * Handles embedding of binary document data into a report. If the document exceeds the maximum allowed size
+	 * and the option to skip large documents is enabled, the method saves the document locally and links to it
+	 * in the report. Otherwise, embeds the binary document directly into the report.
+	 *
+	 * @param pdfBinary The binary content of the PDF document to be embedded.
+	 * @param report The report object that will be updated with the document content or a reference to it.
+	 * @param documentId A unique identifier for the document, used for generating file paths or logging purposes.
+	 */
+	private void handleEmbeddingBinaryDocuments(byte[] pdfBinary, Reports report, String documentId) {
+		long javaHeapFree = Runtime.getRuntime().freeMemory();
+
+		// save to file and reference
+		if ((pdfBinary.length > MAX_EMBEDDED_DOCUMENT_SIZE_BYTES
+				|| pdfBinary.length > javaHeapFree) && SKIP_EMBEDDING_LARGE_DOCUMENTS) {
+			// when the document is too large, save the document locally, then add a link to the document into the report XML
+			String fileExtension = report.getFileExtensionAndVersion();
+			if(!fileExtension.contains(".")) {
+				fileExtension = "." + fileExtension;
+			}
+			String randomFileName = UUID.randomUUID().toString();
+			Path path = Paths.get(tmpDir, documentId + "_" + randomFileName + fileExtension);
+			try (FileOutputStream fos = new FileOutputStream(path.toFile())) {
+				fos.write(pdfBinary);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			report.setMedia(ReportMedia.HARDCOPY);
+			report.setFilePath(documentId + "_" + randomFileName);
+			logger.warn("Skipping embedding of large document with size {} bytes for element {}", pdfBinary.length, documentId);
+		}
+
+		// or embed directly into the report XML
+		else {
+			report.addNewContent().setMedia(pdfBinary);
+		}
+
+		report.setFormat(cdsDt.ReportFormat.BINARY);
+		addOneEntry(REPORTBINARY);
+	}
+
+
 }
 
 class Enrolment {
