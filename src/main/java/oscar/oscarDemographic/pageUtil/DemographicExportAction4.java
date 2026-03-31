@@ -1913,7 +1913,7 @@ public class DemographicExportAction4 extends Action {
 							
 							Reports rpr = patientRec.addNewReports();
 							rpr.setFormat(cdsDt.ReportFormat.TEXT);
-							cdsDt.ReportContent rpc = rpr.addNewContent();
+
 							binaryData = new byte[(int) filePath.length()];
 							int offset = 0, numRead = 0;
 							while ((numRead = in.read(binaryData, offset, binaryData.length - offset)) >= 0
@@ -1937,7 +1937,7 @@ public class DemographicExportAction4 extends Action {
 	
 							if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
 								String str = new String(binaryData);
-								rpc.setTextContent(str);
+								rpr.addNewContent().setTextContent(str);
 								rpr.setFormat(cdsDt.ReportFormat.TEXT);
 								addOneEntry(REPORTTEXT);
 							} else {
