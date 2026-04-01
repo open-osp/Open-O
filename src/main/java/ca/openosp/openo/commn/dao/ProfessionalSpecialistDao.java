@@ -31,4 +31,8 @@ public interface ProfessionalSpecialistDao extends AbstractDao<ProfessionalSpeci
     List<ProfessionalSpecialist> findByService(String serviceName);
 
     List<ProfessionalSpecialist> findByServiceId(Integer serviceId);
+
+    List<ProfessionalSpecialist> findByEDataOscarKey(String eDataOscarKey);
+
+    List<ProfessionalSpecialist> findByEDataOscarKeyNotNull();
 }

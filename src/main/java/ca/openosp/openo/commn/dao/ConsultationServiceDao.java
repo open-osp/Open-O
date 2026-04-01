@@ -22,4 +22,8 @@ public interface ConsultationServiceDao extends AbstractDao<ConsultationServices
     public ConsultationServices findByDescription(String description);
 
     public ConsultationServices findReferringDoctorService(boolean activeOnly);
+
+    public ConsultationServices findByExternalId(String externalId);
+
+    public List<ConsultationServices> findByExternalIdNotNull();
 }

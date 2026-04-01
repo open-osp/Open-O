@@ -149,20 +149,18 @@ public class ProfessionalSpecialist extends AbstractModel<Integer> implements Se
     public void setStreetAddress(String streetAddress) {
         this.streetAddress = StringUtils.trimToNull(streetAddress);
 
-        if (this.streetAddress != null && this.streetAddress.contains(",")) {
-            this.addressArray = this.streetAddress.split(",");
-
-            while (this.addressArray.length < 5) {
-                this.addressArray[this.addressArray.length + 1] = ",";
-            }
-
-        } else if (this.streetAddress == null) {
+        if (this.streetAddress != null) {
+            String[] split = this.streetAddress.split(",", -1); // Keep empty tokens
             this.addressArray = new String[5];
-            this.addressArray[0] = ","; // address line
-            this.addressArray[1] = ","; // city
-            this.addressArray[2] = ","; // postal
-            this.addressArray[3] = ","; // province
-            this.addressArray[4] = ","; // country
+            for (int i = 0; i < 5; i++) {
+                if (i < split.length) {
+                     this.addressArray[i] = split[i] != null ? split[i] : "";
+                } else {
+                     this.addressArray[i] = "";
+                }
+            }
+        } else {
+            this.addressArray = new String[]{"", "", "", "", ""};
         }
     }
 
@@ -633,9 +631,16 @@ public class ProfessionalSpecialist extends AbstractModel<Integer> implements Se
 
     public String[] getAddressArray() {
         if (this.addressArray == null) {
-            return new String[]{","};
+            this.addressArray = new String[]{"", "", "", "", ""};
         }
-        return addressArray;
+        // Ensure array is at least size 5 to prevent IndexOutOfBounds in setters
+        if (this.addressArray.length < 5) {
+            String[] newArray = new String[5];
+            System.arraycopy(this.addressArray, 0, newArray, 0, this.addressArray.length);
+            for(int i=this.addressArray.length;i<5;i++) newArray[i]="";
+            this.addressArray = newArray;
+        }
+        return this.addressArray;
     }
 
     public void setAddressArray(String[] addressArray) {

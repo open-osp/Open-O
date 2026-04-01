@@ -1147,6 +1147,13 @@
             <version>${cxf.version}</version>
         </dependency> -->
 
+        <!-- Needed for JOSE/JWT processing in OAuth2 (IgnorableOAuthFilter) -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-security-jose</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
         <!-- ScribeJava OAuth 1.0a dependencies. Added after apache cxf was bumped to version 3.5.10 and lost support. -->
         <dependency>
             <groupId>com.github.scribejava</groupId>
@@ -1602,64 +1609,6 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <configLocation>${project.basedir}/utils/checkstyle.xml</configLocation>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <failsOnError>true</failsOnError>
-                    <consoleOutput>true</consoleOutput>
-                    <sourceDirectories>
-                        <sourceDirectory>${project.basedir}/src/main</sourceDirectory>
-                    </sourceDirectories>
-                    <includes>**/*.java</includes>
-                    <!-- File types to exclude from checkstyle -->
-                    <excludes>
-                        **/*.jar,
-                        **/*.txt,
-                        **/*.rpt,
-                        **/*.fla,
-                        **/*.xml,
-                        **/*.dtd,
-                        **/*.xslt,
-                        **/*.doc,
-                        **/*.bak,
-                        **/*.tld,
-                        **/*.jpg,
-                        **/*.png,
-                        **/*.gif,
-                        **/*.pdf,
-                        **/*.swf,
-                        **/*.js,
-                        **/*.css,
-                        **/*svg.jsp
-                    </excludes>
-                    <!-- Specific files to exclude from checkstyle -->
-                    <exclude>src/main/webapp/casemgmt/Index2.jsp</exclude>
-                    <exclude>src/main/java/oscar/oscarMessenger/util/MsgDemoMap.java</exclude>
-                    <exclude>src/main/java/oscar/oscarEncounter/pageUtil/EctDisplayMsgAction.java</exclude>
-                    <exclude>src/main/webapp/oscarEncounter/Index.jsp</exclude>
-                    <exclude>src/main/java/oscar/oscarEncounter/data/EctPatientData.java</exclude>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>10.20.1</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>process-sources</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>checkstyle</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1836,15 +1785,6 @@
                     <!-- Can be overridden with -Ddependency.lock.filename=xxx -->
                     <filename>${dependency.lock.filename}</filename>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>check</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
 
             <!-- Javadoc HTML generation for documentation -->

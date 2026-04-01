@@ -60,6 +60,8 @@ public class ConsultationServices extends AbstractModel<Integer> implements Seri
     @JoinTable(name = "serviceSpecialists", joinColumns = @JoinColumn(name = "serviceId"), inverseJoinColumns = @JoinColumn(name = "specId"))
     private List<ProfessionalSpecialist> specialists;
 
+    private String externalId;
+
     public ConsultationServices() {
     }
 
@@ -134,5 +136,14 @@ public class ConsultationServices extends AbstractModel<Integer> implements Seri
     public void setSpecialists(List<ProfessionalSpecialist> specialists) {
         this.specialists = specialists;
     }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
 
 }

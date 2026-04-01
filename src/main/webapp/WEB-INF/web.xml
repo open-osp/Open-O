@@ -14,6 +14,16 @@
     </param-value>
   </context-param>
 
+    <!-- SMART on FHIR Configuration Filter -->
+    <filter>
+        <filter-name>SmartConfigurationFilter</filter-name>
+        <filter-class>ca.openosp.openo.webserv.fhir.SmartConfigurationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SmartConfigurationFilter</filter-name>
+        <url-pattern>/.well-known/smart-configuration</url-pattern>
+    </filter-mapping>
+
         <filter>
 		   <filter-name>monitoring</filter-name>
 		   <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>

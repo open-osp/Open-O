@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+            http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+    <!--
+      FHIR Server + SMART on FHIR OAuth 2.0 Configuration
+      Implements a minimal OAuth 2.0 provider using existing tables.
+    -->
+
+    <!-- 1. OAuth 2.0 Data Provider (JDBC) -->
+    <bean id="fhirOAuthProvider" class="ca.openosp.openo.webserv.fhir.FHIROAuth2Provider">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 2. OAuth 2.0 Endpoints (Authorize, Token) -->
+    <bean id="oauth2Service" class="ca.openosp.openo.webserv.fhir.OAuth2Service">
+        <property name="dataProvider" ref="fhirOAuthProvider"/>
+    </bean>
+
+    <!-- 3. OAuth 2.0 Request Filter (Protects FHIR resources) -->
+    <bean id="ignorableOAuthFilter" class="ca.openosp.openo.webserv.fhir.IgnorableOAuthFilter">
+        <property name="dataProvider" ref="fhirOAuthProvider"/>
+    </bean>
+
+    <!-- 4. FHIR Services -->
+    <bean id="fhirMetadataService" class="ca.openosp.openo.webserv.fhir.FhirMetadataService" autowire="byName"/>
+    <bean id="fhirPractitionerService" class="ca.openosp.openo.webserv.fhir.FhirPractitionerService" autowire="byName"/>
+    <bean id="fhirOrganizationService" class="ca.openosp.openo.webserv.fhir.FhirOrganizationService" autowire="byName"/>
+
+    <!-- 5. FHIR JSON Provider -->
+    <bean id="fhirJsonProvider" class="ca.openosp.openo.webserv.fhir.FhirJsonProvider"/>
+
+    <!-- 6. JAX-RS Server at /fhir -->
+    <jaxrs:server id="fhirEndpoints" address="/fhir">
+        <jaxrs:serviceBeans>
+            <ref bean="fhirMetadataService"/>
+            <ref bean="fhirPractitionerService"/>
+            <ref bean="fhirOrganizationService"/>
+            <ref bean="oauth2Service"/>
+        </jaxrs:serviceBeans>
+
+        <jaxrs:providers>
+            <ref bean="fhirJsonProvider"/>
+            <ref bean="ignorableOAuthFilter"/>
+            <!-- Generic Jackson provider for non-FHIR objects (OAuth responses like OAuthError, ClientAccessToken) -->
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider"/>
+            <!-- Accept x-www-form-urlencoded bodies for token endpoint -->
+            <bean class="org.apache.cxf.jaxrs.provider.FormEncodingProvider"/>
+        </jaxrs:providers>
+
+        <jaxrs:features>
+            <cxf:logging/>
+        </jaxrs:features>
+    </jaxrs:server>
+
+</beans>

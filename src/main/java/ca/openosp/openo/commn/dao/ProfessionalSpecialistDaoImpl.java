@@ -207,4 +207,32 @@ public class ProfessionalSpecialistDaoImpl extends AbstractDaoImpl<ProfessionalS
 
         return cList;
     }
+    @Override
+    public List<ProfessionalSpecialist> findByEDataOscarKey(String eDataOscarKey) {
+        if (StringUtils.isBlank(eDataOscarKey)) {
+            return null;
+        }
+
+        // Query by eDataOscarKey
+        Query query = entityManager.createQuery("select x from " + modelClass.getSimpleName() + " x WHERE x.eDataOscarKey = ?1 order by x.lastName");
+        query.setParameter(1, eDataOscarKey);
+
+        @SuppressWarnings("unchecked")
+        List<ProfessionalSpecialist> cList = query.getResultList();
+
+        if (cList != null && cList.size() > 0) {
+            return cList;
+        }
+        return null;
+    }
+
+    @Override
+    public List<ProfessionalSpecialist> findByEDataOscarKeyNotNull() {
+        Query query = entityManager.createQuery("select x from " + modelClass.getSimpleName() + " x WHERE x.eDataOscarKey is not null order by x.lastName,x.firstName");
+
+        @SuppressWarnings("unchecked")
+        List<ProfessionalSpecialist> cList = query.getResultList();
+
+        return cList;
+    }
 }
