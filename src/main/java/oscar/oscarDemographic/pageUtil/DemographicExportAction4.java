@@ -290,11 +290,11 @@ public class DemographicExportAction4 extends Action {
 
 
 			// DEMOGRAPHICS
-			DemographicData d = new DemographicData();
+			DemographicData demographicData = new DemographicData();
 
-			org.oscarehr.common.model.Demographic demographic = null;
+			org.oscarehr.common.model.Demographic demographic;
 			try {
-				demographic = d.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
+				demographic = demographicData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
 			}catch(PatientDirectiveException e) {
 				exportError.add("Unable to export patient " + demoNo + " due to Patient Directive");
 				continue;
@@ -518,8 +518,16 @@ public class DemographicExportAction4 extends Action {
 			if (StringUtils.filled(patientStatusDate)) demo.setPersonStatusDate(Util.calDate(patientStatusDate));
 
 			//patient notes
-			String demoNotes = d.getDemographicNotes(demoNo);
-			if (StringUtils.filled(demoNotes)) demo.setNoteAboutPatient(demoNotes);
+			String demoNotes = demographicData.getDemographicNotes(demoNo);
+			String demoAlertNote = demographicData.getDemographicAlerts(demoNo);
+
+			if (StringUtils.filled("[note]: " + demoNotes)) {
+				demo.setNoteAboutPatient(demoNotes);
+			}
+
+			if (StringUtils.filled(demoAlertNote)) {
+				demo.setNoteAboutPatient("[alert]: " + demoAlertNote + "\n" + demo.getNoteAboutPatient());
+			}
 
 			String dob = StringUtils.noNull(DemographicData.getDob(demographic,"-"));
 			demo.setDateOfBirth(Util.calDate(dob));

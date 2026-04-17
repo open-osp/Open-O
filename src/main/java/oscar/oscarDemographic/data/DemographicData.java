@@ -195,9 +195,17 @@ public class DemographicData {
 		return retval;
 	}
 
+	public String getDemographicAlerts(String demographicNo) {
+		String retval = "";
+		DemographicCust demographicCust = demographicCustDao.find(Integer.parseInt(demographicNo));
+		if(demographicCust != null) {
+			retval = demographicCust.getAlert();
+		}
+		return retval;
+	}
+
 	public Demographic getDemographic(LoggedInInfo loggedInInfo, String DemographicNo) {
-		Demographic demographic =  demographicManager.getDemographic(loggedInInfo,DemographicNo);
-		return demographic;
+		return  demographicManager.getDemographic(loggedInInfo,DemographicNo);
 	}
 
 	public String getDemographicNoByMyOscarUserName(LoggedInInfo loggedInInfo, String myOscarUserName) {
