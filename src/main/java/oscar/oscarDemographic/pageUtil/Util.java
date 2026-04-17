@@ -40,15 +40,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import cdsDt.ResidualInformation;
 import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.XmlCalendar;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
@@ -597,6 +595,37 @@ public class Util {
         }
     }
     
+    public static cdsDt.ResidualInformation fillResidualInfo(String name, String dataType, String content) {
+        List<ResidualInformation.DataElement> dataElementArray = new ArrayList<cdsDt.ResidualInformation.DataElement>();
+        cdsDt.ResidualInformation residualInformation = cdsDt.ResidualInformation.Factory.newInstance();
+
+        cdsDt.ResidualInformation.DataElement data = residualInformation.addNewDataElement();
+        data.setName(name);
+        data.setDataType(dataType);
+        data.setContent(content);
+        dataElementArray.add(data);
+        residualInformation.setDataElementArray((cdsDt.ResidualInformation.DataElement[]) dataElementArray.toArray(new cdsDt.ResidualInformation.DataElement[dataElementArray.size()]));
+        return residualInformation;
+    }
+
+    public static cdsDt.ResidualInformation fillResidualInfoSummary(String content) {
+       cdsDt.ResidualInformation residualInformation = null;
+
+        if (StringUtils.filled(content)) {
+            residualInformation = fillResidualInfo("Summary", "String", content);
+        }
+
+        return residualInformation;
+    }
+
+    public static cdsDt.ResidualInformation.DataElement createResidualDataElement(String name, String dataType, String content) {
+        cdsDt.ResidualInformation.DataElement data = cdsDt.ResidualInformation.DataElement.Factory.newInstance();
+        data.setName(name);
+        data.setDataType(dataType);
+        data.setContent(content);
+        return data;
+    }
+
     static public String getImmunizationType(String preventionType) {
     	if (preventionToImmunizationType.isEmpty()) setPreventionTypes();
     	return preventionToImmunizationType.get(preventionType);

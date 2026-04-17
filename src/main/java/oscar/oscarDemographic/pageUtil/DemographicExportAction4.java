@@ -40,6 +40,7 @@ import cds.MedicationsAndTreatmentsDocument.MedicationsAndTreatments;
 import cds.OmdCdsDocument;
 import cds.PastHealthDocument.PastHealth;
 import cds.PatientRecordDocument.PatientRecord;
+import cds.PersonalHistoryDocument;
 import cds.ProblemListDocument.ProblemList;
 import cds.ReportsDocument.Reports;
 import cds.ReportsDocument.Reports.OBRContent;
@@ -722,7 +723,7 @@ public class DemographicExportAction4 extends Action {
 				}
 				if (!systemIssue && cmm.getLinkByNote(cmn.getId()).isEmpty()) { //this is not an annotation
 						encounter = cmn.getNote();
-						if (encounter.startsWith("imported.cms4.2011.06")) continue; //this is a "header", cms4 only
+                            if (encounter.startsWith("imported.cms5.2017.06")) continue; //this is a "header", cms4 only
 				}
 
 				annotation = getNonDumpNote(CaseManagementNoteLink.CASEMGMTNOTE, cmn.getId(), null);
@@ -757,7 +758,11 @@ public class DemographicExportAction4 extends Action {
 							}
 						}
 						summary = Util.addSummary(summary, "Notes", annotation);
-					//	patientRec.addNewPersonalHistory().setCategorySummaryLine(summary);
+                            PersonalHistoryDocument.PersonalHistory personalHistory = patientRec.addNewPersonalHistory();
+                            ResidualInformation residualInformation = Util.fillResidualInfoSummary(summary);
+                            if (residualInformation != null) {
+                                personalHistory.addNewResidualInfo().set(residualInformation);
+                            }
 					}
 				}
 				if (exFamilyHistory) {
