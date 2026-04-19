@@ -23,12 +23,12 @@
  */
 package oscar.oscarDemographic.pageUtil;
 
+import cds.*;
 import cds.AlertsAndSpecialNeedsDocument.AlertsAndSpecialNeeds;
 import cds.AllergiesAndAdverseReactionsDocument.AllergiesAndAdverseReactions;
 import cds.AppointmentsDocument.Appointments;
 import cds.CareElementsDocument.CareElements;
 import cds.ClinicalNotesDocument.ClinicalNotes;
-import cds.DemographicsDocument;
 import cds.DemographicsDocument.Demographics;
 import cds.DemographicsDocument.Demographics.Enrolment.EnrolmentHistory;
 import cds.DemographicsDocument.Demographics.Enrolment.EnrolmentHistory.EnrolledToPhysician;
@@ -37,10 +37,8 @@ import cds.FamilyHistoryDocument.FamilyHistory;
 import cds.ImmunizationsDocument.Immunizations;
 import cds.LaboratoryResultsDocument.LaboratoryResults;
 import cds.MedicationsAndTreatmentsDocument.MedicationsAndTreatments;
-import cds.OmdCdsDocument;
 import cds.PastHealthDocument.PastHealth;
 import cds.PatientRecordDocument.PatientRecord;
-import cds.PersonalHistoryDocument;
 import cds.ProblemListDocument.ProblemList;
 import cds.ReportsDocument.Reports;
 import cds.ReportsDocument.Reports.OBRContent;
@@ -81,6 +79,8 @@ import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
 import org.oscarehr.managers.DemographicManager;
+import org.oscarehr.managers.EformDataManager;
+import org.oscarehr.managers.ProviderManager2;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.sharingcenter.DocumentType;
 import org.oscarehr.sharingcenter.dao.DemographicExportDao;
@@ -130,8 +130,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 /**
@@ -151,6 +156,9 @@ public class DemographicExportAction4 extends Action {
 	private static final Hl7TextInfoDao hl7TxtInfoDao = (Hl7TextInfoDao)SpringUtils.getBean(Hl7TextInfoDao.class);
 	private static final Hl7TextMessageDao hl7TxtMssgDao = (Hl7TextMessageDao)SpringUtils.getBean(Hl7TextMessageDao.class);
 	private static final DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
+	private static final EformDataManager eformManager = SpringUtils.getBean(EformDataManager.class);
+	private static final ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+
 	private static final String PATIENTID = "Patient";
 	private static final String ALERT = "Alert";
 	private static final String ALLERGY = "Allergy";
@@ -292,7 +300,7 @@ public class DemographicExportAction4 extends Action {
 			// DEMOGRAPHICS
 			DemographicData demographicData = new DemographicData();
 
-			org.oscarehr.common.model.Demographic demographic;
+			Demographic demographic;
 			try {
 				demographic = demographicData.getDemographic(LoggedInInfo.getLoggedInInfoFromSession(request), demoNo);
 			}catch(PatientDirectiveException e) {
@@ -313,16 +321,16 @@ public class DemographicExportAction4 extends Action {
 			demo.setUniqueVendorIdSequence(demoNo);
 			entries.put(PATIENTID+exportNo, Integer.valueOf(demoNo));
 
-			cdsDt.PersonNameStandard personName = demo.addNewNames();
-			cdsDt.PersonNameStandard.LegalName legalName = personName.addNewLegalName();
-			cdsDt.PersonNameStandard.LegalName.FirstName firstName = legalName.addNewFirstName();
-			cdsDt.PersonNameStandard.LegalName.LastName  lastName  = legalName.addNewLastName();
-			legalName.setNamePurpose(cdsDt.PersonNamePurposeCode.L);
+			PersonNameStandard personName = demo.addNewNames();
+			PersonNameStandard.LegalName legalName = personName.addNewLegalName();
+			PersonNameStandard.LegalName.FirstName firstName = legalName.addNewFirstName();
+			PersonNameStandard.LegalName.LastName  lastName  = legalName.addNewLastName();
+			legalName.setNamePurpose(PersonNamePurposeCode.L);
 
 			String name= StringUtils.noNull(demographic.getFirstName());
 			if (StringUtils.filled(name)) {
 				firstName.setPart(name);
-				firstName.setPartType(cdsDt.PersonNamePartTypeCode.GIV);
+				firstName.setPartType(PersonNamePartTypeCode.GIV);
 //				firstName.setPartQualifier(cdsDt.PersonNamePartQualifierCode.BR);
 			} else {
 				exportError.add("Error! No First Name for Patient "+demoNo);
@@ -330,7 +338,7 @@ public class DemographicExportAction4 extends Action {
 			name = StringUtils.noNull(demographic.getLastName());
 			if (StringUtils.filled(name)) {
 				lastName.setPart(name);
-				lastName.setPartType(cdsDt.PersonNamePartTypeCode.FAMC);
+				lastName.setPartType(PersonNamePartTypeCode.FAMC);
 //				lastName.setPartQualifier(cdsDt.PersonNamePartQualifierCode.BR);
 			} else {
 				exportError.add("Error! No Last Name for Patient "+demoNo);
@@ -338,52 +346,52 @@ public class DemographicExportAction4 extends Action {
 
 			name = StringUtils.noNull(demographic.getMiddleNames());
 			if (StringUtils.filled(name)) {
-				cdsDt.PersonNameStandard.OtherNames otherNames = personName.addNewOtherNames();
+				PersonNameStandard.OtherNames otherNames = personName.addNewOtherNames();
 				otherNames.setNamePurpose(PersonNamePurposeCode.L);
-				cdsDt.PersonNameStandard.OtherNames.OtherName otherName = otherNames.addNewOtherName();
+				PersonNameStandard.OtherNames.OtherName otherName = otherNames.addNewOtherName();
 				otherName.setPart(name);
-				otherName.setPartType(cdsDt.PersonNamePartTypeCode.GIV);
-				otherName.setPartQualifier(cdsDt.PersonNamePartQualifierCode.CL);
+				otherName.setPartType(PersonNamePartTypeCode.GIV);
+				otherName.setPartQualifier(PersonNamePartQualifierCode.CL);
 			}
 
 
 			String title = demographic.getTitle();
 			if (StringUtils.filled(title)) {
-				if (title.equalsIgnoreCase("DR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.DR);
-				if (title.equalsIgnoreCase("MISS")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MISS);
-				if (title.equalsIgnoreCase("MADAM")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MADAM);
-				if (title.equalsIgnoreCase("MME")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MME);
-				if (title.equalsIgnoreCase("MLLE")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MLLE);
-				if (title.equalsIgnoreCase("MAJOR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MAJOR);
-				if (title.equalsIgnoreCase("MAYOR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MAYOR);
-				if (title.equalsIgnoreCase("BRO")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.BRO);
-				if (title.equalsIgnoreCase("CAPT")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.CAPT);
-				if (title.equalsIgnoreCase("Chief")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.CHIEF);
-				if (title.equalsIgnoreCase("Cst")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.CST);
-				if (title.equalsIgnoreCase("Corp")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.CORP);
-				if (title.equalsIgnoreCase("FR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.FR);
-				if (title.equalsIgnoreCase("HON")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.HON);
-				if (title.equalsIgnoreCase("LT")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.LT);
+				if (title.equalsIgnoreCase("DR")) personName.setNamePrefix(PersonNamePrefixCode.DR);
+				if (title.equalsIgnoreCase("MISS")) personName.setNamePrefix(PersonNamePrefixCode.MISS);
+				if (title.equalsIgnoreCase("MADAM")) personName.setNamePrefix(PersonNamePrefixCode.MADAM);
+				if (title.equalsIgnoreCase("MME")) personName.setNamePrefix(PersonNamePrefixCode.MME);
+				if (title.equalsIgnoreCase("MLLE")) personName.setNamePrefix(PersonNamePrefixCode.MLLE);
+				if (title.equalsIgnoreCase("MAJOR")) personName.setNamePrefix(PersonNamePrefixCode.MAJOR);
+				if (title.equalsIgnoreCase("MAYOR")) personName.setNamePrefix(PersonNamePrefixCode.MAYOR);
+				if (title.equalsIgnoreCase("BRO")) personName.setNamePrefix(PersonNamePrefixCode.BRO);
+				if (title.equalsIgnoreCase("CAPT")) personName.setNamePrefix(PersonNamePrefixCode.CAPT);
+				if (title.equalsIgnoreCase("Chief")) personName.setNamePrefix(PersonNamePrefixCode.CHIEF);
+				if (title.equalsIgnoreCase("Cst")) personName.setNamePrefix(PersonNamePrefixCode.CST);
+				if (title.equalsIgnoreCase("Corp")) personName.setNamePrefix(PersonNamePrefixCode.CORP);
+				if (title.equalsIgnoreCase("FR")) personName.setNamePrefix(PersonNamePrefixCode.FR);
+				if (title.equalsIgnoreCase("HON")) personName.setNamePrefix(PersonNamePrefixCode.HON);
+				if (title.equalsIgnoreCase("LT")) personName.setNamePrefix(PersonNamePrefixCode.LT);
 
 
-				if (title.equalsIgnoreCase("MISS")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MISS);
-				if (title.equalsIgnoreCase("MR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MR);
-				if (title.equalsIgnoreCase("MRS")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MRS);
-				if (title.equalsIgnoreCase("MS")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MS);
-				if (title.equalsIgnoreCase("MSSR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.MSSR);
-				if (title.equalsIgnoreCase("PROF")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.PROF);
-				if (title.equalsIgnoreCase("REEVE")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.REEVE);
-				if (title.equalsIgnoreCase("REV")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.REV);
-				if (title.equalsIgnoreCase("RT_HON")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.RT_HON);
-				if (title.equalsIgnoreCase("SEN")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.SEN);
-				if (title.equalsIgnoreCase("SGT")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.SGT);
-				if (title.equalsIgnoreCase("SR")) personName.setNamePrefix(cdsDt.PersonNamePrefixCode.SR);
+				if (title.equalsIgnoreCase("MISS")) personName.setNamePrefix(PersonNamePrefixCode.MISS);
+				if (title.equalsIgnoreCase("MR")) personName.setNamePrefix(PersonNamePrefixCode.MR);
+				if (title.equalsIgnoreCase("MRS")) personName.setNamePrefix(PersonNamePrefixCode.MRS);
+				if (title.equalsIgnoreCase("MS")) personName.setNamePrefix(PersonNamePrefixCode.MS);
+				if (title.equalsIgnoreCase("MSSR")) personName.setNamePrefix(PersonNamePrefixCode.MSSR);
+				if (title.equalsIgnoreCase("PROF")) personName.setNamePrefix(PersonNamePrefixCode.PROF);
+				if (title.equalsIgnoreCase("REEVE")) personName.setNamePrefix(PersonNamePrefixCode.REEVE);
+				if (title.equalsIgnoreCase("REV")) personName.setNamePrefix(PersonNamePrefixCode.REV);
+				if (title.equalsIgnoreCase("RT_HON")) personName.setNamePrefix(PersonNamePrefixCode.RT_HON);
+				if (title.equalsIgnoreCase("SEN")) personName.setNamePrefix(PersonNamePrefixCode.SEN);
+				if (title.equalsIgnoreCase("SGT")) personName.setNamePrefix(PersonNamePrefixCode.SGT);
+				if (title.equalsIgnoreCase("SR")) personName.setNamePrefix(PersonNamePrefixCode.SR);
 			}
 
 			String lang = demographic.getOfficialLanguage();
 			if (StringUtils.filled(lang)) {
-				if (lang.equalsIgnoreCase("English"))	 demo.setPreferredOfficialLanguage(cdsDt.OfficialSpokenLanguageCode.ENG);
-				else if (lang.equalsIgnoreCase("French")) demo.setPreferredOfficialLanguage(cdsDt.OfficialSpokenLanguageCode.FRE);
+				if (lang.equalsIgnoreCase("English"))	 demo.setPreferredOfficialLanguage(OfficialSpokenLanguageCode.ENG);
+				else if (lang.equalsIgnoreCase("French")) demo.setPreferredOfficialLanguage(OfficialSpokenLanguageCode.FRE);
 			} else {
 				exportError.add("Error! No Preferred Official Language for Patient "+demoNo);
 			}
@@ -394,10 +402,10 @@ public class DemographicExportAction4 extends Action {
 			}
 
 			String sex = demographic.getSex();
-			if (cdsDt.Gender.Enum.forString(sex)!=null) {
-				demo.setGender(cdsDt.Gender.Enum.forString(sex));
+			if (Gender.Enum.forString(sex)!=null) {
+				demo.setGender(Gender.Enum.forString(sex));
 			} else {
-				demo.setGender(cdsDt.Gender.U);
+				demo.setGender(Gender.U);
 				exportError.add("Error! No Gender for Patient "+demoNo);
 			}
 
@@ -467,7 +475,7 @@ public class DemographicExportAction4 extends Action {
 			}
 
 			if(enList.size()>0) {
-				DemographicsDocument.Demographics.Enrolment demoEnrolment = demo.addNewEnrolment();
+				Demographics.Enrolment demoEnrolment = demo.addNewEnrolment();
 				for(int x=0;x<enList.size();x++) {
 					EnrolmentHistory ehx = demoEnrolment.addNewEnrolmentHistory();
 					Enrolment enrolment = enList.get(x);
@@ -488,14 +496,13 @@ public class DemographicExportAction4 extends Action {
 
 					if(enrolment.terminationDate != null) {
 						ehx.setEnrollmentTerminationDate(Util.calDate(enrolment.terminationDate));
-						ehx.setTerminationReason(cdsDt.TerminationReasonCode.Enum.forString(enrolment.terminationReason));
+						ehx.setTerminationReason(TerminationReasonCode.Enum.forString(enrolment.terminationReason));
 						ehx.setEnrollmentStatus(EnrollmentStatus.X_0);
 					} else {
 						ehx.setEnrollmentStatus(EnrollmentStatus.X_1);
 					}
 				}
 			}
-
 
 			//Person Status (Patient Status)
 			String patientStatus = StringUtils.noNull(demographic.getPatientStatus());
@@ -504,9 +511,9 @@ public class DemographicExportAction4 extends Action {
 				patientStatus = "";
 				exportError.add("Error! No Person Status Code for Patient "+demoNo);
 			}
-			if (patientStatus.equalsIgnoreCase("AC")) personStatusCode.setPersonStatusAsEnum(cdsDt.PersonStatus.A);
-			else if (patientStatus.equalsIgnoreCase("IN")) personStatusCode.setPersonStatusAsEnum(cdsDt.PersonStatus.I);
-			else if (patientStatus.equalsIgnoreCase("DE")) personStatusCode.setPersonStatusAsEnum(cdsDt.PersonStatus.D);
+			if (patientStatus.equalsIgnoreCase("AC")) personStatusCode.setPersonStatusAsEnum(PersonStatus.A);
+			else if (patientStatus.equalsIgnoreCase("IN")) personStatusCode.setPersonStatusAsEnum(PersonStatus.I);
+			else if (patientStatus.equalsIgnoreCase("DE")) personStatusCode.setPersonStatusAsEnum(PersonStatus.D);
 			else {
 				if ("MO".equalsIgnoreCase(patientStatus)) patientStatus = "Moved";
 				else if ("FI".equalsIgnoreCase(patientStatus)) patientStatus = "Fired";
@@ -557,11 +564,11 @@ public class DemographicExportAction4 extends Action {
 			}
 
 			if (StringUtils.filled(demographic.getHin())) {
-				cdsDt.HealthCard healthCard = demo.addNewHealthCard();
+				HealthCard healthCard = demo.addNewHealthCard();
 
 				healthCard.setNumber(demographic.getHin());
 				if (Util.setProvinceCode(demographic.getHcType())!=null) healthCard.setProvinceCode(Util.setProvinceCode(demographic.getHcType()));
-				else healthCard.setProvinceCode(cdsDt.HealthCardProvinceCode.X_70); //Asked, unknown
+				else healthCard.setProvinceCode(HealthCardProvinceCode.X_70); //Asked, unknown
 				if (healthCard.getProvinceCode()==null) {
 					exportError.add("Error! No Health Card Province Code for Patient "+demoNo);
 				}
@@ -574,10 +581,10 @@ public class DemographicExportAction4 extends Action {
 				}
 			}
 			if (StringUtils.filled(demographic.getAddress())) {
-				cdsDt.Address addr = demo.addNewAddress();
-				cdsDt.AddressStructured address = addr.addNewStructured();
+				Address addr = demo.addNewAddress();
+				AddressStructured address = addr.addNewStructured();
 
-				addr.setAddressType(cdsDt.AddressType.M);
+				addr.setAddressType(AddressType.M);
 				address.setLine1(demographic.getAddress());
 				if (StringUtils.filled(demographic.getCity()) || StringUtils.filled(demographic.getProvince()) || StringUtils.filled(demographic.getPostal())) {
 					address.setCity(StringUtils.noNull(demographic.getCity()));
@@ -587,10 +594,10 @@ public class DemographicExportAction4 extends Action {
 			}
 
 			if (StringUtils.filled(demographic.getResidentialAddress())) {
-				cdsDt.Address addr = demo.addNewAddress();
-				cdsDt.AddressStructured address = addr.addNewStructured();
+				Address addr = demo.addNewAddress();
+				AddressStructured address = addr.addNewStructured();
 
-				addr.setAddressType(cdsDt.AddressType.R);
+				addr.setAddressType(AddressType.R);
 				address.setLine1(demographic.getResidentialAddress());
 				if (StringUtils.filled(demographic.getResidentialCity()) || StringUtils.filled(demographic.getResidentialProvince()) || StringUtils.filled(demographic.getResidentialPostal())) {
 					address.setCity(StringUtils.noNull(demographic.getResidentialCity()));
@@ -601,21 +608,21 @@ public class DemographicExportAction4 extends Action {
 
 			boolean phoneExtTooLong = false;
 			if (phoneNoValid(demographic.getPhone())) {
-				phoneExtTooLong = addPhone(demographic.getPhone(), demoExt.get("hPhoneExt"), cdsDt.PhoneNumberType.R, demo.addNewPhoneNumber());
+				phoneExtTooLong = addPhone(demographic.getPhone(), demoExt.get("hPhoneExt"), PhoneNumberType.R, demo.addNewPhoneNumber());
 				if (phoneExtTooLong) {
 					exportError.add("Home phone extension too long - trimmed for Patient "+demoNo);
 				}
 			}
 
 			if (phoneNoValid(demographic.getPhone2())) {
-				phoneExtTooLong = addPhone(demographic.getPhone2(), demoExt.get("wPhoneExt"), cdsDt.PhoneNumberType.W, demo.addNewPhoneNumber());
+				phoneExtTooLong = addPhone(demographic.getPhone2(), demoExt.get("wPhoneExt"), PhoneNumberType.W, demo.addNewPhoneNumber());
 				if (phoneExtTooLong) {
 					exportError.add("Work phone extension too long, export trimmed for Patient "+demoNo);
 				}
 			}
 
 			if (phoneNoValid(demoExt.get("demo_cell"))) {
-				addPhone(demoExt.get("demo_cell"), null, cdsDt.PhoneNumberType.C, demo.addNewPhoneNumber());
+				addPhone(demoExt.get("demo_cell"), null, PhoneNumberType.C, demo.addNewPhoneNumber());
 			}
 
 			if (oscarProperties.isPropertyActive("NEW_CONTACTS_UI")) {
@@ -635,14 +642,14 @@ public class DemographicExportAction4 extends Action {
 					PreferredPharmacy preferredPharmacy = demo.addNewPreferredPharmacy();
 
 					if(!StringUtils.isNullOrEmpty(pi.getFax())) {
-						addPhone(pi.getFax(), "", cdsDt.PhoneNumberType.W, preferredPharmacy.addNewPhoneNumber());
+						addPhone(pi.getFax(), "", PhoneNumberType.W, preferredPharmacy.addNewPhoneNumber());
 					}
 
 
-					cdsDt.Address addr = preferredPharmacy.addNewAddress();
-					cdsDt.AddressStructured address = addr.addNewStructured();
+					Address addr = preferredPharmacy.addNewAddress();
+					AddressStructured address = addr.addNewStructured();
 
-					addr.setAddressType(cdsDt.AddressType.R);
+					addr.setAddressType(AddressType.R);
 					if(!StringUtils.isNullOrEmpty(pi.getAddress())) {
 						address.setLine1( StringUtils.maxLenString(pi.getAddress(), 50, 49, ""));
 					}
@@ -792,7 +799,7 @@ public class DemographicExportAction4 extends Action {
 								if (diagnosisAssigned) {
 									summary = Util.addSummary(summary, "Diagnosis", isu.getIssue().getDescription());
 								} else {
-									cdsDt.StandardCoding diagnosis = fHist.addNewDiagnosisProcedureCode();
+									StandardCoding diagnosis = fHist.addNewDiagnosisProcedureCode();
 									diagnosis.setStandardCodingSystem(codeSystem);
 									String code = codeSystem.equalsIgnoreCase("icd9") ? Util.formatIcd9(isu.getIssue().getCode()) : isu.getIssue().getCode();
 									diagnosis.setStandardCode(code);
@@ -840,7 +847,7 @@ public class DemographicExportAction4 extends Action {
 							} else if (cme.getKeyVal().equals(CaseManagementNoteExt.LIFESTAGE)) {
 								if (bLIFESTAGE) continue;
 								if ("NICTA".contains(cme.getValue()) && cme.getValue().length()==1) {
-									fHist.setLifeStage(cdsDt.LifeStage.Enum.forString(cme.getValue()));
+									fHist.setLifeStage(LifeStage.Enum.forString(cme.getValue()));
 									summary = Util.addSummary(summary, CaseManagementNoteExt.LIFESTAGE, cme.getValue());
 								}
 								bLIFESTAGE = true;
@@ -866,7 +873,7 @@ public class DemographicExportAction4 extends Action {
 								if (diagnosisAssigned) {
 									summary = Util.addSummary(summary, "Diagnosis", isu.getIssue().getDescription());
 								} else {
-									cdsDt.StandardCoding diagnosis = pHealth.addNewDiagnosisProcedureCode();
+									StandardCoding diagnosis = pHealth.addNewDiagnosisProcedureCode();
 
 									diagnosis.setStandardCodingSystem(codeSystem);
 									String code = codeSystem.equalsIgnoreCase("icd9") ? Util.formatIcd9(isu.getIssue().getCode()) : isu.getIssue().getCode();
@@ -904,7 +911,7 @@ public class DemographicExportAction4 extends Action {
 							} else if (cme.getKeyVal().equals(CaseManagementNoteExt.LIFESTAGE)) {
 								if (bLIFESTAGE) continue;
 									if ("NICTA".contains(cme.getValue()) && cme.getValue().length()==1) {
-									pHealth.setLifeStage(cdsDt.LifeStage.Enum.forString(cme.getValue()));
+									pHealth.setLifeStage(LifeStage.Enum.forString(cme.getValue()));
 									summary = Util.addSummary(summary, CaseManagementNoteExt.LIFESTAGE, cme.getValue());
 								}
 								bLIFESTAGE = true;
@@ -949,7 +956,7 @@ public class DemographicExportAction4 extends Action {
 								if (diagnosisAssigned) {
 									summary = Util.addSummary(summary, "Diagnosis", isu.getIssue().getDescription());
 								} else {
-									cdsDt.StandardCoding diagnosis = pList.addNewDiagnosisCode();
+									StandardCoding diagnosis = pList.addNewDiagnosisCode();
 									diagnosis.setStandardCodingSystem(codeSystem);
 									String code = codeSystem.equalsIgnoreCase("icd9") ? Util.formatIcd9(isu.getIssue().getCode()) : isu.getIssue().getCode();
 									diagnosis.setStandardCode(code);
@@ -987,7 +994,7 @@ public class DemographicExportAction4 extends Action {
 							} else if (cme.getKeyVal().equals(CaseManagementNoteExt.LIFESTAGE)) {
 								if (bLIFESTAGE) continue;
 								if ("NICTA".contains(cme.getValue()) && cme.getValue().length()==1) {
-									pList.setLifeStage(cdsDt.LifeStage.Enum.forString(cme.getValue()));
+									pList.setLifeStage(LifeStage.Enum.forString(cme.getValue()));
 									summary = Util.addSummary(summary, CaseManagementNoteExt.LIFESTAGE, cme.getValue());
 								}
 								bLIFESTAGE = true;
@@ -1046,7 +1053,7 @@ public class DemographicExportAction4 extends Action {
 							} else if (cme.getKeyVal().equals(CaseManagementNoteExt.LIFESTAGE)) {
 								if (bLIFESTAGE) continue;
 								if ("NICTA".contains(cme.getValue()) && cme.getValue().length()==1) {
-									rFact.setLifeStage(cdsDt.LifeStage.Enum.forString(cme.getValue()));
+									rFact.setLifeStage(LifeStage.Enum.forString(cme.getValue()));
 									summary = Util.addSummary(summary, CaseManagementNoteExt.LIFESTAGE, cme.getValue());
 								}
 								bLIFESTAGE = true;
@@ -1118,7 +1125,7 @@ public class DemographicExportAction4 extends Action {
 								if (StringUtils.filled(prvd.getOhip_no()) && prvd.getOhip_no().length()<=6) pProvider.setOHIPPhysicianId(prvd.getOhip_no());
 
 								//note created datetime
-								cdsDt.DateTimeFullOrPartial noteCreatedDateTime = pProvider.addNewDateTimeNoteCreated();
+								DateTimeFullOrPartial noteCreatedDateTime = pProvider.addNewDateTimeNoteCreated();
 								if (cmn.getUpdate_date()!=null) noteCreatedDateTime.setFullDateTime(Util.calDateTZD(cm_note.getUpdate_date()));
 								else noteCreatedDateTime.setFullDateTime(Util.calDateTZD(new Date()));
 							}
@@ -1132,7 +1139,7 @@ public class DemographicExportAction4 extends Action {
 								if (StringUtils.filled(prvd.getOhip_no()) && prvd.getOhip_no().length()<=6) noteReviewer.setOHIPPhysicianId(prvd.getOhip_no());
 
 								//note reviewed datetime
-								cdsDt.DateTimeFullOrPartial noteReviewedDateTime = noteReviewer.addNewDateTimeNoteReviewed();
+								DateTimeFullOrPartial noteReviewedDateTime = noteReviewer.addNewDateTimeNoteReviewed();
 								if (cm_note.getUpdate_date()!=null) noteReviewedDateTime.setFullDateTime(Util.calDateTZD(cm_note.getUpdate_date()));
 								else noteReviewer.addNewDateTimeNoteReviewed().setFullDateTime(Util.calDateTZD(new Date()));
 							}
@@ -1196,7 +1203,7 @@ public class DemographicExportAction4 extends Action {
 						if(dx.getStatus() == 'C') {
 							Util.putPartialDate(pList.addNewResolutionDate(),  dx.getUpdateDate(), "yyyy-MM-dd");
 						}
-						cdsDt.StandardCoding diagnosis = pList.addNewDiagnosisCode();
+						StandardCoding diagnosis = pList.addNewDiagnosisCode();
 						diagnosis.setStandardCodingSystem(dx.getCodingSystem());
 						String code = dx.getCodingSystem().equalsIgnoreCase("icd9") ? Util.formatIcd9(dx.getDxresearchCode()) : dx.getDxresearchCode();
 						diagnosis.setStandardCode(code);
@@ -1228,7 +1235,7 @@ public class DemographicExportAction4 extends Action {
 					if(episode.getEndDate() != null) {
 						Util.putPartialDate(pList.addNewResolutionDate(),  episode.getEndDate(), "yyyy-MM-dd");
 					}
-					cdsDt.StandardCoding diagnosis = pList.addNewDiagnosisCode();
+					StandardCoding diagnosis = pList.addNewDiagnosisCode();
 					diagnosis.setStandardCodingSystem(episode.getCodingSystem());
 					String code = episode.getCodingSystem().equalsIgnoreCase("icd9") ? Util.formatIcd9(episode.getCode()) : episode.getCode();
 					diagnosis.setStandardCode(code);
@@ -1262,7 +1269,7 @@ public class DemographicExportAction4 extends Action {
 					}
 					String regionalId = allergy.getRegionalIdentifier();
 					if (StringUtils.filled(regionalId) && !regionalId.trim().equalsIgnoreCase("null")) {
-						cdsDt.DrugCode drugCode = alr.addNewCode();
+						DrugCode drugCode = alr.addNewCode();
 						drugCode.setCodeType("DIN");
 						drugCode.setCodeValue(regionalId);
 						aSummary = Util.addSummary(aSummary, "DIN", regionalId);
@@ -1271,13 +1278,13 @@ public class DemographicExportAction4 extends Action {
 					if (StringUtils.filled(typeCode)) {
 						if (typeCode.equals("0")) {
 							//alr.setReactionType(cdsDt.AdverseReactionType.AL);
-							alr.setPropertyOfOffendingAgent(cdsDt.PropertyOfOffendingAgent.ND);
+							alr.setPropertyOfOffendingAgent(PropertyOfOffendingAgent.ND);
 						} else {
 							//alr.setReactionType(cdsDt.AdverseReactionType.AR);
 							if (typeCode.equals("13")) {
-								alr.setPropertyOfOffendingAgent(cdsDt.PropertyOfOffendingAgent.DR);
+								alr.setPropertyOfOffendingAgent(PropertyOfOffendingAgent.DR);
 							} else {
-								alr.setPropertyOfOffendingAgent(cdsDt.PropertyOfOffendingAgent.UK);
+								alr.setPropertyOfOffendingAgent(PropertyOfOffendingAgent.UK);
 							}
 						}
 						aSummary = Util.addSummary(aSummary,"Property of Offending Agent",alr.getPropertyOfOffendingAgent().toString());
@@ -1294,13 +1301,13 @@ public class DemographicExportAction4 extends Action {
 
 					if (StringUtils.filled(severity)) {
 						if (severity.equals("1")) {
-							alr.setSeverity(cdsDt.AdverseReactionSeverity.MI);
+							alr.setSeverity(AdverseReactionSeverity.MI);
 						} else if (severity.equals("2")) {
-							alr.setSeverity(cdsDt.AdverseReactionSeverity.MO);
+							alr.setSeverity(AdverseReactionSeverity.MO);
 						} else if (severity.equals("3")) {
-							alr.setSeverity(cdsDt.AdverseReactionSeverity.LT);
+							alr.setSeverity(AdverseReactionSeverity.LT);
 						} else if (severity.equals("5")) {
-							alr.setSeverity(cdsDt.AdverseReactionSeverity.NO);
+							alr.setSeverity(AdverseReactionSeverity.NO);
 						}
 						if (alr.getSeverity()!=null)
 							aSummary = Util.addSummary(aSummary,"Adverse Reaction Severity",alr.getSeverity().toString());
@@ -1319,7 +1326,7 @@ public class DemographicExportAction4 extends Action {
 						aSummary = Util.addSummary(aSummary,"Start Date",partialDateDao.getDatePartial(allergy.getStartDate(), dateFormat));
 					}
 					if (allergy.getLifeStage() != null && "NICTA".contains(allergy.getLifeStage()) && allergy.getLifeStage().length()==1) {
-						alr.setLifeStage(cdsDt.LifeStage.Enum.forString(allergy.getLifeStage()));
+						alr.setLifeStage(LifeStage.Enum.forString(allergy.getLifeStage()));
 						aSummary = Util.addSummary(aSummary,"Life Stage at Onset", allergy.getLifeStageDesc());
 					}
 
@@ -1401,7 +1408,7 @@ public class DemographicExportAction4 extends Action {
 					if (StringUtils.filled((String)extraData.get("manufacture"))) immu.setManufacturer((String)extraData.get("manufacture"));
 					if (StringUtils.filled((String)extraData.get("lot"))) immu.setLotNumber((String)extraData.get("lot"));
 					if (StringUtils.filled((String)extraData.get("din"))) {
-						cdsDt.Code immuCode = immu.addNewImmunizationCode();
+						Code immuCode = immu.addNewImmunizationCode();
 						immuCode.setCodingSystem("DIN");
 						immuCode.setValue((String)extraData.get("din"));
 						imSummary = Util.addSummary(imSummary, "DIN", (String)extraData.get("din"));
@@ -1412,8 +1419,8 @@ public class DemographicExportAction4 extends Action {
 					if (StringUtils.filled((String)extraData.get("comments"))) immu.setNotes((String)extraData.get("comments"));
 
 					prevType = Util.getImmunizationType(prevType);
-					if (cdsDt.ImmunizationType.Enum.forString(prevType)!=null) {
-						immu.setImmunizationType(cdsDt.ImmunizationType.Enum.forString(prevType));
+					if (ImmunizationType.Enum.forString(prevType)!=null) {
+						immu.setImmunizationType(ImmunizationType.Enum.forString(prevType));
 					} else {
 						exportError.add("Error! No matching type for Immunization "+prevMap.get("type")+" for Patient "+demoNo+" ("+(cnt)+")");
 					}
@@ -1533,7 +1540,7 @@ public class DemographicExportAction4 extends Action {
 					if (StringUtils.filled(arr[p].getDosage())) {
 						String[] strength = arr[p].getDosage().split(" ");
 
-						cdsDt.DrugMeasure drugM = medi.addNewStrength();
+						DrugMeasure drugM = medi.addNewStrength();
 						if (Util.leadingNum(strength[0]).equals(strength[0])) {//amount & unit separated by space
 							drugM.setAmount(strength[0]);
 							if (strength.length>1) drugM.setUnitOfMeasure(strength[1]);
@@ -1689,7 +1696,7 @@ public class DemographicExportAction4 extends Action {
 
 					if (arr[p].getPatientCompliance()!=null) {
 						YnIndicator pc = medi.addNewPatientCompliance();
-						Enum patientCompliance = arr[p].getPatientCompliance() ? cdsDt.YnIndicatorsimple.Y : cdsDt.YnIndicatorsimple.N;
+						Enum patientCompliance = arr[p].getPatientCompliance() ? YnIndicatorsimple.Y : YnIndicatorsimple.N;
 						pc.setYnIndicatorsimple(patientCompliance);
 						mSummary = Util.addSummary(mSummary, "Patient Compliance", arr[p].getPatientCompliance().toString());
 					}
@@ -1860,7 +1867,7 @@ public class DemographicExportAction4 extends Action {
 					Provider p = (Provider)results.get(j)[1];
 					
 					Appointments aptm = patientRec.addNewAppointments();
-					cdsDt.DateFullOrPartial apDate = aptm.addNewAppointmentDate();
+					DateFullOrPartial apDate = aptm.addNewAppointmentDate();
 					apDate.setFullDate(Util.calDate(ap.getAppointmentDate()));
 					if (ap.getAppointmentDate()==null) {
 						exportError.add("Error! No Appointment Date ("+j+") for Patient "+demoNo);
@@ -1925,7 +1932,7 @@ public class DemographicExportAction4 extends Action {
 						try(InputStream in = Files.newInputStream(filePath.toPath())) {
 							
 							Reports rpr = patientRec.addNewReports();
-							rpr.setFormat(cdsDt.ReportFormat.TEXT);
+							rpr.setFormat(ReportFormat.TEXT);
 
 							binaryData = new byte[(int) filePath.length()];
 							int offset = 0, numRead = 0;
@@ -1951,7 +1958,7 @@ public class DemographicExportAction4 extends Action {
 							if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
 								String str = new String(binaryData);
 								rpr.addNewContent().setTextContent(str);
-								rpr.setFormat(cdsDt.ReportFormat.TEXT);
+								rpr.setFormat(ReportFormat.TEXT);
 								addOneEntry(REPORTTEXT);
 							} else {
 								// decide if document should be embedded or referenced
@@ -1959,11 +1966,11 @@ public class DemographicExportAction4 extends Action {
 							}
 							
 							String docClass = edoc.getDocClass();
-							if (cdsDt.ReportClass.Enum.forString(docClass)!=null) {
-								rpr.setClass1(cdsDt.ReportClass.Enum.forString(docClass));
+							if (ReportClass.Enum.forString(docClass)!=null) {
+								rpr.setClass1(ReportClass.Enum.forString(docClass));
 							} else {
 								exportError.add("Warning! No Known Class Type for Document \""+edoc.getFileName()+"\"");
-								rpr.setClass1(cdsDt.ReportClass.OTHER_LETTER);
+								rpr.setClass1(ReportClass.OTHER_LETTER);
 							}
 							String docSubClass = edoc.getDocSubClass();
 							if (StringUtils.filled(docSubClass)) {
@@ -2046,7 +2053,7 @@ public class DemographicExportAction4 extends Action {
 
 							if (reportAuthor!=null) {
 								if(StringUtils.filled(reportAuthor.get("firstname")) && StringUtils.filled(reportAuthor.get("lastname"))) {
-									cdsDt.PersonNameSimple author = rpr.addNewSourceAuthorPhysician().addNewAuthorName();
+									PersonNameSimple author = rpr.addNewSourceAuthorPhysician().addNewAuthorName();
 									if (StringUtils.filled(reportAuthor.get("firstname"))) author.setFirstName(reportAuthor.get("firstname"));
 									if (StringUtils.filled(reportAuthor.get("lastname"))) author.setLastName(reportAuthor.get("lastname"));
 								} else {
@@ -2063,10 +2070,10 @@ public class DemographicExportAction4 extends Action {
 
 							if (reportContent!=null) {
 								if (reportContent.get("textcontent")!=null) {
-									cdsDt.ReportContent content = rpr.addNewContent();
+									ReportContent content = rpr.addNewContent();
 									content.setTextContent((String)reportContent.get("textcontent"));
 								} else if (reportContent.get("media")!=null) {
-									cdsDt.ReportContent content = rpr.addNewContent();
+									ReportContent content = rpr.addNewContent();
 									content.setMedia((byte[])reportContent.get("media"));
 								}
 							}
@@ -2078,28 +2085,28 @@ public class DemographicExportAction4 extends Action {
 								//Format
 								if (reportStrings.get("format")!=null) {
 									if (reportStrings.get("format").equalsIgnoreCase("Text")) {
-										rpr.setFormat(cdsDt.ReportFormat.TEXT);
+										rpr.setFormat(ReportFormat.TEXT);
 									} else {
-										rpr.setFormat(cdsDt.ReportFormat.BINARY);
+										rpr.setFormat(ReportFormat.BINARY);
 									}
 								} else {
-									if (rpr.getContent().getMedia()!=null) rpr.setFormat(cdsDt.ReportFormat.BINARY);
-									else rpr.setFormat(cdsDt.ReportFormat.TEXT);
+									if (rpr.getContent().getMedia()!=null) rpr.setFormat(ReportFormat.BINARY);
+									else rpr.setFormat(ReportFormat.TEXT);
 									exportError.add("Error! No Format for HRM report! Patient "+demoNo+" ("+(i+1)+")");
 								}
 
 								//Class
 								if (reportStrings.get("class")!=null) {
-									rpr.setClass1(cdsDt.ReportClass.Enum.forString(formatHrmEnum(reportStrings.get("class"))));
+									rpr.setClass1(ReportClass.Enum.forString(formatHrmEnum(reportStrings.get("class"))));
 
 								} else {
-									rpr.setClass1(cdsDt.ReportClass.OTHER_LETTER);
+									rpr.setClass1(ReportClass.OTHER_LETTER);
 									exportError.add("Error! No Class for HRM report! Export as 'Other Letter'. Patient "+demoNo+" ("+(i+1)+")");
 								}
 
 								//Media
 								if (reportStrings.get("media")!=null) {
-									rpr.setMedia(cdsDt.ReportMedia.Enum.forString(formatHrmEnum(reportStrings.get("media"))));
+									rpr.setMedia(ReportMedia.Enum.forString(formatHrmEnum(reportStrings.get("media"))));
 								}
 
 								//Subclass
@@ -2225,34 +2232,34 @@ public class DemographicExportAction4 extends Action {
 				if (measList.size()>0) careElm = patientRec.addNewCareElements();
 				for (Measurements meas : measList) {
 					if (meas.getType().equals("HT")) { //Height in cm
-						cdsDt.Height height = careElm.addNewHeight();
+						Height height = careElm.addNewHeight();
 						height.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Height (id="+meas.getId()+") for Patient "+demoNo);
 						}
 						height.setHeight(meas.getDataField());
-						height.setHeightUnit(cdsDt.Height.HeightUnit.CM);
+						height.setHeightUnit(Height.HeightUnit.CM);
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().equalsIgnoreCase("in kg")) { //Weight in kg
-						cdsDt.Weight weight = careElm.addNewWeight();
+						Weight weight = careElm.addNewWeight();
 						weight.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Weight (id="+meas.getId()+") for Patient "+demoNo);
 						}
 						weight.setWeight(meas.getDataField());
-						weight.setWeightUnit(cdsDt.Weight.WeightUnit.KG);
+						weight.setWeightUnit(Weight.WeightUnit.KG);
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("WAIS") || meas.getType().equals("WC")) { //Waist Circumference in cm
-						cdsDt.WaistCircumference waist = careElm.addNewWaistCircumference();
+						WaistCircumference waist = careElm.addNewWaistCircumference();
 						waist.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Waist Circumference (id="+meas.getId()+") for Patient "+demoNo);
 						}
 						waist.setWaistCircumference(meas.getDataField());
-						waist.setWaistCircumferenceUnit(cdsDt.WaistCircumference.WaistCircumferenceUnit.CM);
+						waist.setWaistCircumferenceUnit(WaistCircumference.WaistCircumferenceUnit.CM);
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("BP")) { //Blood Pressure
-						cdsDt.BloodPressure bloodp = careElm.addNewBloodPressure();
+						BloodPressure bloodp = careElm.addNewBloodPressure();
 						bloodp.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Blood Pressure (id="+meas.getId()+") for Patient "+demoNo);
@@ -2260,10 +2267,10 @@ public class DemographicExportAction4 extends Action {
 						String[] sdbp = meas.getDataField().split("/");
 						bloodp.setSystolicBP(sdbp[0]);
 						bloodp.setDiastolicBP(sdbp[1]);
-						bloodp.setBPUnit(cdsDt.BloodPressure.BPUnit.MM_HG);
+						bloodp.setBPUnit(BloodPressure.BPUnit.MM_HG);
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("POSK")) { //Packs of Cigarettes per day
-						cdsDt.SmokingPacks smokp = careElm.addNewSmokingPacks();
+						SmokingPacks smokp = careElm.addNewSmokingPacks();
 						smokp.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Smoking Packs (id="+meas.getId()+") for Patient "+demoNo);
@@ -2275,7 +2282,7 @@ public class DemographicExportAction4 extends Action {
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("SKST")) { //Smoking Status
-						cdsDt.SmokingStatus smoks = careElm.addNewSmokingStatus();
+						SmokingStatus smoks = careElm.addNewSmokingStatus();
 						smoks.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Smoking Status (id="+meas.getId()+") for Patient "+demoNo);
@@ -2283,7 +2290,7 @@ public class DemographicExportAction4 extends Action {
 						smoks.setStatus(Util.yn(meas.getDataField()));
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("SMBG")) { //Self Monitoring Blood Glucose
-						cdsDt.SelfMonitoringBloodGlucose bloodg = careElm.addNewSelfMonitoringBloodGlucose();
+						SelfMonitoringBloodGlucose bloodg = careElm.addNewSelfMonitoringBloodGlucose();
 						bloodg.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Self-monitoring Blood Glucose (id="+meas.getId()+") for Patient "+demoNo);
@@ -2291,7 +2298,7 @@ public class DemographicExportAction4 extends Action {
 						bloodg.setSelfMonitoring(Util.yn(meas.getDataField()));
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("DMME")) { //Diabetes Education
-						cdsDt.DiabetesEducationalSelfManagement des = careElm.addNewDiabetesEducationalSelfManagement();
+						DiabetesEducationalSelfManagement des = careElm.addNewDiabetesEducationalSelfManagement();
 						des.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Educational Self-management (id="+meas.getId()+") for Patient "+demoNo);
@@ -2299,8 +2306,8 @@ public class DemographicExportAction4 extends Action {
 						des.setEducationalTrainingPerformed(Util.yn(meas.getDataField()));
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("SMCD")) { //Self Management Challenges
-						cdsDt.DiabetesSelfManagementChallenges dsc = careElm.addNewDiabetesSelfManagementChallenges();
-						dsc.setCodeValue(cdsDt.DiabetesSelfManagementChallenges.CodeValue.X_44941_3);
+						DiabetesSelfManagementChallenges dsc = careElm.addNewDiabetesSelfManagementChallenges();
+						dsc.setCodeValue(DiabetesSelfManagementChallenges.CodeValue.X_44941_3);
 						dsc.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Self-management Challenges (id="+meas.getId()+") for Patient "+demoNo);
@@ -2308,94 +2315,94 @@ public class DemographicExportAction4 extends Action {
 						dsc.setChallengesIdentified(Util.yn(meas.getDataField()));
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("MCCN")) { //Motivation Counseling Completed Nutrition
-						cdsDt.DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
+						DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
 						dmc.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Motivational Counselling on Nutrition (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dmc.setCounsellingPerformed(cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed.NUTRITION);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dmc.setCounsellingPerformed(DiabetesMotivationalCounselling.CounsellingPerformed.NUTRITION);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Counselling (Nutrition) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("MCCE")) { //Motivation Counseling Completed Exercise
-						cdsDt.DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
+						DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
 						dmc.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Motivational Counselling on Exercise (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dmc.setCounsellingPerformed(cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed.EXERCISE);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dmc.setCounsellingPerformed(DiabetesMotivationalCounselling.CounsellingPerformed.EXERCISE);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Counselling (Exercise) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("MCCS")) { //Motivation Counseling Completed Smoking Cessation
-						cdsDt.DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
+						DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
 						dmc.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Motivational Counselling on Smoking Cessation (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dmc.setCounsellingPerformed(cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed.SMOKING_CESSATION);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dmc.setCounsellingPerformed(DiabetesMotivationalCounselling.CounsellingPerformed.SMOKING_CESSATION);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Counselling (Smoking Cessation) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("MCCO")) { //Motivation Counseling Completed Other
-						cdsDt.DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
+						DiabetesMotivationalCounselling dmc = careElm.addNewDiabetesMotivationalCounselling();
 						dmc.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Motivational Counselling on Other Matters (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dmc.setCounsellingPerformed(cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed.OTHER);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dmc.setCounsellingPerformed(DiabetesMotivationalCounselling.CounsellingPerformed.OTHER);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Counselling (Other) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("EYEE")) { //Dilated Eye Exam
-						cdsDt.DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
+						DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
 						dcs.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Complication Screening on Eye Exam (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dcs.setExamCode(cdsDt.DiabetesComplicationScreening.ExamCode.X_32468_1);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dcs.setExamCode(DiabetesComplicationScreening.ExamCode.X_32468_1);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Complications Screening (Retinal Exam) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("FTE")) { //Foot Exam
-						cdsDt.DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
+						DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
 						dcs.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Complication Screening on Foot Exam (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dcs.setExamCode(cdsDt.DiabetesComplicationScreening.ExamCode.X_11397_7);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dcs.setExamCode(DiabetesComplicationScreening.ExamCode.X_11397_7);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Complications Screening (Foot Exam) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("FTLS")) { // Foot Exam Test Loss of Sensation (Neurological Exam)
-						cdsDt.DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
+						DiabetesComplicationScreening dcs = careElm.addNewDiabetesComplicationsScreening();
 						dcs.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Complication Screening on Neurological Exam (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dcs.setExamCode(cdsDt.DiabetesComplicationScreening.ExamCode.X_67536_3);
-						if (Util.yn(meas.getDataField())==cdsDt.YnIndicatorsimple.N) {
+						dcs.setExamCode(DiabetesComplicationScreening.ExamCode.X_67536_3);
+						if (Util.yn(meas.getDataField())== YnIndicatorsimple.N) {
 							exportError.add("Patient "+demoNo+" didn't do Diabetes Complications Screening (Neurological Exam) on "+UtilDateUtilities.DateToString(meas.getDateObserved(),"yyyy-MM-dd"));
 						}
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("CGSD")) { //Collaborative Goal Setting
-						cdsDt.DiabetesSelfManagementCollaborative dsco = careElm.addNewDiabetesSelfManagementCollaborative();
+						DiabetesSelfManagementCollaborative dsco = careElm.addNewDiabetesSelfManagementCollaborative();
 						dsco.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
 							exportError.add("Error! No Date for Diabetes Self-management Collaborative Goal Setting (id="+meas.getId()+") for Patient "+demoNo);
 						}
-						dsco.setCodeValue(cdsDt.DiabetesSelfManagementCollaborative.CodeValue.X_44943_9);
+						dsco.setCodeValue(DiabetesSelfManagementCollaborative.CodeValue.X_44943_9);
 						dsco.setDocumentedGoals(meas.getDataField());
 						addOneEntry(CAREELEMENTS);
 					} else if (meas.getType().equals("HYPE")) { //Hypoglycemic Episodes
 						if(StringUtils.isInteger(meas.getDataField().trim())) {
-							cdsDt.HypoglycemicEpisodes he = careElm.addNewHypoglycemicEpisodes();
+							HypoglycemicEpisodes he = careElm.addNewHypoglycemicEpisodes();
 							he.setDate(Util.calDate(meas.getDateObserved()));
 							if (meas.getDateObserved()==null) {
 								exportError.add("Error! No Date for Hypoglycemic Episodes (id="+meas.getId()+") for Patient "+demoNo);
@@ -2408,6 +2415,125 @@ public class DemographicExportAction4 extends Action {
 					}
 				}
 			}
+
+			/* get eForms
+			 * print eForms to eForm sub-directory of this temp directory
+			 * create a unique file name for each eForm with the demographic id.
+			 * add the eForm link into a NewCategory tag in the CDS
+			 *
+			 * x.id as id, x.formId as formId,
+			 * x.formName as formName,
+			 * x.subject as subject, x.demographicId as demographicId,
+			 * x.current as current, x.formDate as formDate,
+			 * x.formTime as formTime, x.providerNo as providerNo,
+			 * x.patientIndependent as patientIndependent,
+			 * x.roleType as roleType
+			 */
+			if(true) {
+				List<Map<String, Object>> eforms = eformManager.findCurrentByDemographicIdNoData(loggedInInfo, Integer.parseInt(demoNo));
+
+				if (!eforms.isEmpty()) {
+
+					/*
+					 * If not exists
+					 * add a new eform export directory into the temDir.
+					 */
+					Path eformDir = Paths.get(tmpDir, "eforms");
+					if (!Files.isDirectory(eformDir)) {
+						try {
+							Files.createDirectory(eformDir);
+						} catch (IOException e) {
+							logger.error("Failed to create eform export directory: " + eformDir, e);
+						}
+					}
+
+					/*
+					 * create a PDF from each eForm and collect the
+					 * new path for each PDF.
+					 */
+					List<Object[]> eformPDFList = new ArrayList<>(); // [eform, exportPath]
+
+					ExecutorService executor = Executors.newFixedThreadPool(
+							Math.min(eforms.size(), Runtime.getRuntime().availableProcessors() * 2));
+
+					List<Future<Object[]>> futures = new ArrayList<>();
+
+					for (Map<String, Object> eform : eforms) {
+						futures.add(executor.submit(() -> {
+							int fdid = (int) eform.get("id");
+							Path eformPDFPath = eformManager.createEformPDF(loggedInInfo, fdid);
+							Path exportPath = eformDir.resolve(eformPDFPath.getFileName());
+							Files.move(eformPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+							return new Object[]{eform, exportPath};
+						}));
+					}
+					executor.shutdown();
+
+					// check each thread for completion
+					for (Future<Object[]> future : futures) {
+						try {
+							eformPDFList.add(future.get());
+						} catch (ExecutionException e) {
+							logger.error("Failed to generate eForm PDF", e.getCause());
+						}
+					}
+
+					// new map for caching redundant provider db calls
+					Map<String, Provider> eformAuthorCache = new HashMap<>();
+
+					// map each eform into the CDS XML as a report
+					for (Object[] result : eformPDFList) {
+						Map<String, Object> eform = (Map<String, Object>) result[0];
+						Path exportPath = (Path) result[1];
+						int fdid = (int) eform.get("id");
+
+						Reports reports = patientRec.addNewReports();
+						reports.setFormat(ReportFormat.BINARY);
+						reports.setClass1(ReportClass.OTHER_LETTER);
+						reports.setSubClass((String) eform.get("formName"));
+						reports.setFileExtensionAndVersion("PDF");
+						reports.setMessageUniqueID(fdid + "");
+
+						String eformAuthorId = (String) eform.get("author");
+
+						eformAuthorCache.computeIfAbsent(eformAuthorId, id -> providerManager.getProvider(loggedInInfo, id));
+						Provider eformAuthor = eformAuthorCache.get(eformAuthorId);
+						if (eformAuthor != null) {
+							String eformAuthorFirstName = eformAuthor.getFirstName();
+							String eformAuthorLastName = eformAuthor.getLastName();
+
+							if (StringUtils.filled(eformAuthorFirstName) && StringUtils.filled(eformAuthorLastName)) {
+								PersonNameSimple author = reports.addNewSourceAuthorPhysician().addNewAuthorName();
+								author.setFirstName(eformAuthorFirstName);
+								author.setLastName(eformAuthorLastName);
+							} else {
+								if (StringUtils.filled(eformAuthorFirstName)) {
+									reports.addNewSourceAuthorPhysician().setAuthorFreeText(eformAuthorFirstName);
+								}
+								if (StringUtils.filled(eformAuthorLastName)) {
+									reports.addNewSourceAuthorPhysician().setAuthorFreeText(eformAuthorLastName);
+								}
+							}
+						}
+						try {
+							java.sql.Date eformRequestDate = (java.sql.Date) eform.get("formDate");
+							java.sql.Time eformRequestTime = (java.sql.Time) eform.get("formTime");
+							eformRequestDate.setTime(eformRequestTime.getTime());
+							if (eformRequestDate != null) {
+								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(eformRequestDate));
+							}
+						} catch (Exception e) {
+							logger.error("Failed to parse eForm request date and time: " + eform.get("formDate") + " " + eform.get("formTime"), e);
+						}
+
+						reports.setNotes((String) eform.get("subject"));
+						reports.setMedia(ReportMedia.HARDCOPY);
+
+						reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
+					}
+				}
+			}
+
 			exportNo++;
 
 
