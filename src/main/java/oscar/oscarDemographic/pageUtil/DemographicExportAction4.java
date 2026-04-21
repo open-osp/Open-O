@@ -3575,7 +3575,7 @@ public class DemographicExportAction4 extends Action {
 		}
 
 		//lab unit of measure
-		String measureData = StringUtils.noNull(labMea.get("measureData"));
+		String measureData = StringUtils.noNull(labMea.get("measureData")).replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", "");
 
 		/*
 		 * filters out any possible Base64 encoded binary data that should not be here
