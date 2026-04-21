@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.itextpdf.text.DocumentException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.ClinicDAO;
 import org.oscarehr.common.dao.ConsultDocsDao;
@@ -95,6 +96,7 @@ import org.oscarehr.common.model.Provider;
 import org.oscarehr.consultations.ConsultationRequestSearchFilter;
 import org.oscarehr.consultations.ConsultationRequestSearchFilter.SORTDIR;
 import org.oscarehr.consultations.ConsultationResponseSearchFilter;
+import org.oscarehr.documentManager.ConvertToEdoc;
 import org.oscarehr.hospitalReportManager.HRMUtil;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
@@ -679,6 +681,17 @@ public class ConsultationManagerImpl implements ConsultationManager {
 		return path;
 	}
 
+
+	public Path renderConsultationRequest( HttpServletRequest request, ConsultationRequestSearchResult consultRequest) throws PDFGenerationException {
+		String reqId = consultRequest.getId().toString();
+		if(! StringUtils.isEmpty(reqId) || !StringUtils.isNumeric(reqId) ) {
+			request.setAttribute("reqId", reqId);
+			return renderConsultationForm(request);
+		}
+
+		return null;
+	}
+
     @Override
 	public List<EctFormData.PatientForm> getAttachedForms(LoggedInInfo loggedInInfo, int consultRequestId, int demographicNo) {
 		List<ConsultDocs> attachedForms = getAttachedDocumentsByType(loggedInInfo, consultRequestId, ConsultDocs.DOCTYPE_FORM);
@@ -845,4 +858,5 @@ public class ConsultationManagerImpl implements ConsultationManager {
 
 		return extraMap;
 	}
+
 }

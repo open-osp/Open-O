@@ -157,7 +157,7 @@ public interface ConsultationManager {
 	public List<ProfessionalSpecialist> findByServiceId(LoggedInInfo loggedInInfo, Integer serviceId);
 	public List<ConsultDocs> getAttachedDocumentsByType(LoggedInInfo loggedInInfo, Integer consultRequestId, String docType);
 	public Path renderConsultationForm(HttpServletRequest request) throws PDFGenerationException;
-
+	Path renderConsultationRequest( HttpServletRequest request, ConsultationRequestSearchResult consultRequest)  throws PDFGenerationException;
 	public List<EctFormData.PatientForm> getAttachedForms(LoggedInInfo loggedInInfo, int consultRequestId, int demographicNo);
 
 	public List<EFormData> getAttachedEForms(String requestId);

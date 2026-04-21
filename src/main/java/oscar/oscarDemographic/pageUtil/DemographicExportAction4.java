@@ -68,6 +68,7 @@ import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.exception.PatientDirectiveException;
 import org.oscarehr.common.model.*;
+import org.oscarehr.consultations.ConsultationRequestSearchFilter;
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
@@ -86,6 +87,7 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.WebUtils;
+import org.oscarehr.ws.rest.to.model.ConsultationRequestSearchResult;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import oscar.OscarProperties;
@@ -2531,6 +2533,73 @@ public class DemographicExportAction4 extends Action {
 						reports.setMedia(ReportMedia.HARDCOPY);
 						reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
 					}
+				}
+			}
+
+			/*
+			 * Collect all patient consultation requests
+			 * Print to PDF file
+			 * Add to the Reports section of the CDS export document
+			 */
+			if(true) {
+
+				/*
+				 * If not exists
+				 * add a new eform export directory into the temDir.
+				 */
+				Path consultationRequestsDirectory = Paths.get(tmpDir, "consultationRequests");
+				if (!Files.isDirectory(consultationRequestsDirectory  )) {
+					try {
+						Files.createDirectory(consultationRequestsDirectory );
+					} catch (IOException e) {
+						logger.error("Failed to create consultation request export directory: " + consultationRequestsDirectory  , e);
+					}
+				}
+
+				List<Object[]> consoltationRequestPDFList = new ArrayList<>();
+
+				ConsultationRequestSearchFilter filter = new ConsultationRequestSearchFilter();
+				filter.setDemographicNo(Integer.parseInt(demoNo));
+				int consultationRequestCount = consultationManager.getConsultationCount(filter);
+				filter.setNumToReturn(consultationRequestCount);
+				List<ConsultationRequestSearchResult> consultRequestList = consultationManager.search(loggedInInfo, filter);
+				for(ConsultationRequestSearchResult consultRequest : consultRequestList) {
+					try {
+						Path consultationRequestPDFPath = consultationManager.renderConsultationRequest(request, consultRequest);
+						Path exportPath = consultationRequestsDirectory.resolve(consultationRequestPDFPath.getFileName());
+						Files.move(consultationRequestPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+						consoltationRequestPDFList.add(new Object[]{consultRequest, exportPath});
+					} catch (Exception e) {
+						logger.error("Failed to generate patient form PDF", e);
+						exportError.add("Failed to generate Consultation Request PDF ( not added to export): " + e.getCause());
+					}
+				}
+
+				for(Object[] result : consoltationRequestPDFList) {
+					ConsultationRequestSearchResult consultationRequest =  (ConsultationRequestSearchResult) result[0];
+					Path exportPath = (Path) result[1];
+
+					Reports reports = patientRec.addNewReports();
+					reports.setFormat(ReportFormat.BINARY);
+					reports.setClass1(ReportClass.CONSULTANT_REPORT);
+					reports.setSubClass(consultationRequest.getServiceName());
+					reports.setFileExtensionAndVersion("PDF");
+					reports.setMessageUniqueID(consultationRequest.getId()+"");
+
+					try {
+						Date formCreatedDate = consultationRequest.getReferralDate();
+						Date lastEditDate = consultationRequest.getLastFollowUp();
+						if (formCreatedDate != null) {
+							reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(formCreatedDate));
+						}
+						if (lastEditDate != null) {
+							reports.addNewEventDateTime().setFullDateTime(Util.calDateTZD(lastEditDate));
+						}
+					} catch (Exception e) {
+						logger.error("Failed to parse Consultation Request date and time: " + consultationRequest.getReferralDate() + " " + consultationRequest.getLastFollowUp(), e);
+					}
+					reports.setMedia(ReportMedia.HARDCOPY);
+					reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
 				}
 			}
 
