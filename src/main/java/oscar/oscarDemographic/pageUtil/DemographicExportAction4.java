@@ -78,10 +78,7 @@ import org.oscarehr.hospitalReportManager.model.HRMDocument;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
-import org.oscarehr.managers.DemographicManager;
-import org.oscarehr.managers.EformDataManager;
-import org.oscarehr.managers.ProviderManager2;
-import org.oscarehr.managers.SecurityInfoManager;
+import org.oscarehr.managers.*;
 import org.oscarehr.sharingcenter.DocumentType;
 import org.oscarehr.sharingcenter.dao.DemographicExportDao;
 import org.oscarehr.sharingcenter.model.DemographicExport;
@@ -96,6 +93,7 @@ import oscar.appt.ApptStatusData;
 import oscar.oscarClinic.ClinicData;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarDemographic.data.DemographicRelationship;
+import oscar.oscarEncounter.data.EctFormData;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarEncounter.oscarMeasurements.data.Measurements;
 import oscar.oscarLab.ca.all.parsers.Factory;
@@ -158,6 +156,8 @@ public class DemographicExportAction4 extends Action {
 	private static final DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
 	private static final EformDataManager eformManager = SpringUtils.getBean(EformDataManager.class);
 	private static final ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+	private static final ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
+	private static final FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
 
 	private static final String PATIENTID = "Patient";
 	private static final String ALERT = "Alert";
@@ -189,6 +189,9 @@ public class DemographicExportAction4 extends Action {
 	private static final OscarProperties oscarProperties = OscarProperties.getInstance();
 	private String tmpDir;
 
+
+	// new map for caching redundant provider db calls
+	private Map<String, Provider> providerCache = new HashMap<>();
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -2475,11 +2478,9 @@ public class DemographicExportAction4 extends Action {
 							eformPDFList.add(future.get());
 						} catch (ExecutionException e) {
 							logger.error("Failed to generate eForm PDF", e.getCause());
+							exportError.add("Failed to generate eForm PDF (eForm not added to export): " + e.getCause());
 						}
 					}
-
-					// new map for caching redundant provider db calls
-					Map<String, Provider> eformAuthorCache = new HashMap<>();
 
 					// map each eform into the CDS XML as a report
 					for (Object[] result : eformPDFList) {
@@ -2496,8 +2497,8 @@ public class DemographicExportAction4 extends Action {
 
 						String eformAuthorId = (String) eform.get("author");
 
-						eformAuthorCache.computeIfAbsent(eformAuthorId, id -> providerManager.getProvider(loggedInInfo, id));
-						Provider eformAuthor = eformAuthorCache.get(eformAuthorId);
+						providerCache.computeIfAbsent(eformAuthorId, id -> providerManager.getProvider(loggedInInfo, id));
+						Provider eformAuthor = providerCache.get(eformAuthorId);
 						if (eformAuthor != null) {
 							String eformAuthorFirstName = eformAuthor.getFirstName();
 							String eformAuthorLastName = eformAuthor.getLastName();
@@ -2528,9 +2529,75 @@ public class DemographicExportAction4 extends Action {
 
 						reports.setNotes((String) eform.get("subject"));
 						reports.setMedia(ReportMedia.HARDCOPY);
-
 						reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
 					}
+				}
+			}
+
+			/*
+			 * collect special patient Forms such as AR, and WCB
+			 * and export to PDF.
+			 */
+			if(true) {
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				List<EctFormData.PatientForm> patientForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demoNo), false, false);
+
+				/*
+				 * If not exists
+				 * add a new eform export directory into the temDir.
+				 */
+				Path patientFormDirectory = Paths.get(tmpDir, "patientForms");
+				if (!Files.isDirectory(patientFormDirectory )) {
+					try {
+						Files.createDirectory(patientFormDirectory );
+					} catch (IOException e) {
+						logger.error("Failed to create patientForms export directory: " + patientFormDirectory , e);
+					}
+				}
+
+				List<Object[]> patientFormPDFList = new ArrayList<>(); // [form, exportPath]
+
+				// HttpServletRequest is not thread-safe for concurrent forward() calls,
+				// so patient forms must be rendered sequentially.
+				for (EctFormData.PatientForm patientForm : patientForms) {
+					try {
+						Path formPDFPath = formsManager.renderForm(request, response, patientForm);
+						Path exportPath = patientFormDirectory.resolve(formPDFPath.getFileName());
+						Files.move(formPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+						patientFormPDFList.add(new Object[]{patientForm, exportPath});
+					} catch (Exception e) {
+						logger.error("Failed to generate patient form PDF", e);
+						exportError.add("Failed to generate Form PDF (Form not added to export): " + e.getCause());
+					}
+				}
+
+				// map each eform into the CDS XML as a report
+				for (Object[] result : patientFormPDFList) {
+					EctFormData.PatientForm patientForm = (EctFormData.PatientForm) result[0];
+					Path exportPath = (Path) result[1];
+					String patientFormId = patientForm.getFormId();
+
+					Reports reports = patientRec.addNewReports();
+					reports.setFormat(ReportFormat.BINARY);
+					reports.setClass1(ReportClass.OTHER_LETTER);
+					reports.setSubClass(patientForm.getFormName());
+					reports.setFileExtensionAndVersion("PDF");
+					reports.setMessageUniqueID(patientFormId);
+
+					try {
+						String formCreatedDate = patientForm.getCreated();
+						String lastEditDate = patientForm.getEdited();
+						if (! StringUtils.empty(formCreatedDate)) {
+							reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(simpleDateFormat.parse(formCreatedDate)));
+						}
+						if(! StringUtils.empty(lastEditDate)) {
+							reports.addNewEventDateTime().setFullDateTime(Util.calDateTZD(simpleDateFormat.parse(lastEditDate)));;
+						}
+					} catch (Exception e) {
+						logger.error("Failed to parse eForm request date and time: " + patientForm.getCreated() + " " + patientForm.getCreated(), e);
+					}
+					reports.setMedia(ReportMedia.HARDCOPY);
+					reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
 				}
 			}
 
