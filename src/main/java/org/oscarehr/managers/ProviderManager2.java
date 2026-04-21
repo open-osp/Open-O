@@ -71,10 +71,7 @@ public class ProviderManager2 {
 	}
 
 	public Provider getProvider(LoggedInInfo loggedInInfo, String providerNo) {
-
-		Provider result = providerDao.getProvider(providerNo);
-
-		return (result);
+		return providerDao.getProvider(providerNo);
 	}
 
 	public Provider getProviderIfActive(@SuppressWarnings("unused") LoggedInInfo loggedInInfo, String providerNo)

@@ -77,6 +77,14 @@ public interface EformDataManager{
      * This is a good method for getting just the list and status of eForms. It's a little lighter on the database.
      * 
      * Returns a map - not an entity
+     *
+     * x.id as id, x.formId as formId,
+     * x.formName as formName,
+     * x.subject as subject, x.demographicId as demographicId,
+     * x.current as current, x.formDate as formDate,
+     * x.formTime as formTime, x.providerNo as providerNo,
+     * x.patientIndependent as patientIndependent,
+     * x.roleType as roleType
      */
     public List<Map<String,Object>> findCurrentByDemographicIdNoData(LoggedInInfo loggedInInfo, Integer demographicId);
 
