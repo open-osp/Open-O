@@ -26,14 +26,17 @@
  */
 package org.oscarehr.managers;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.dao.EFormDao;
 import org.oscarehr.common.dao.EFormDao.EFormSortOrder;
@@ -47,11 +50,16 @@ import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.PDFGenerationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import org.oscarehr.documentManager.ConvertToEdoc;
 import org.oscarehr.documentManager.EDoc;
+import oscar.form.FrmRecord;
+import oscar.form.FrmRecordFactory;
 import oscar.form.util.FormTransportContainer;
+import oscar.form.util.LanguageUtil;
 import oscar.log.LogAction;
 import oscar.oscarEncounter.data.EctFormData;
 import oscar.oscarEncounter.data.EctFormData.PatientForm;
@@ -87,8 +95,11 @@ public class FormsManagerImpl implements FormsManager {
     @Autowired
     private SecurityInfoManager securityInfoManager;
 
+	@Autowired
+	private NioFileManager nioFileManager;
 
-    /**
+
+	/**
      * Finds all eforms based on the status.
      * 
      * @param status
@@ -239,7 +250,7 @@ public class FormsManagerImpl implements FormsManager {
 	 */
 	@Override
 	public Path renderForm(HttpServletRequest request, HttpServletResponse response, Integer formId, Integer demographicNo) throws PDFGenerationException {
-		EctFormData.PatientForm patientForm = null;
+		PatientForm patientForm = null;
 		List<EncounterForm> encounterFormList = getAllEncounterForms();
 		List<String> pdfReadyFormList = getPDFReadyFormNames();
 
@@ -276,7 +287,7 @@ public class FormsManagerImpl implements FormsManager {
 	 * @param request The HttpServletRequest containing the parameters.
 	 */
 	@Override
-	public Path renderForm(HttpServletRequest request, HttpServletResponse response, EctFormData.PatientForm form) throws PDFGenerationException {
+	public Path renderForm(HttpServletRequest request, HttpServletResponse response, PatientForm form) throws PDFGenerationException {
 		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 		if (loggedInInfo != null && loggedInInfo.getLoggedInProvider() == null) { loggedInInfo = LoggedInInfo.getLoggedInInfoFromRequest(request); }
 		if (!securityInfoManager.hasPrivilege(loggedInInfo, "_form", SecurityInfoManager.READ, null)) {
@@ -293,8 +304,94 @@ public class FormsManagerImpl implements FormsManager {
 		return path;
 	}
 
+	public Path renderFormAsPDFFromTemplate(HttpServletRequest request, HttpServletResponse response, PatientForm form) throws PDFGenerationException {
+		LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+		String formName = form.getFormName();
+
+		String formTableName = form.getTable();
+		String formId = form.getFormId();
+		String demographicNo = form.getDemoNo();
+		String formRecordName = formTableName.replace("form", "");
+		String fileName = formName + "_" + demographicNo + "_" + new Date().getTime() + ".pdf";
+
+		FrmRecord formRecord = new FrmRecordFactory().factory(formRecordName);
+		Path pdfPath = null;
+		switch (formRecordName) {
+			case "BCAR2020" : pdfPath = generateJasperForm(loggedInInfo, formRecord, "/oscar/form/bcar2020/", fileName, formId, demographicNo);
+			break;
+			case "Rourke2017" : pdfPath = generateJasperForm(loggedInInfo, formRecord, "/oscar/form/rourke2017/", fileName, formId, demographicNo);
+			break;
+			case "Rourke2020" : pdfPath = generateJasperForm(loggedInInfo, formRecord, "/oscar/form/rourke2020/", fileName, formId, demographicNo);
+			break;
+//			default : pdfPath = renderForm(request, response, form);
+			// = "/oscar/form/prop/";
+		}
+
+		return pdfPath;
+	}
+
+	/**
+	 * Generates a Jasper report PDF file by compiling, filling, and exporting .jrxml report templates.
+	 *
+	 * @param loggedInInfo The information about the currently logged-in user.
+	 * @param formRecord Details about the form record, used for fetching report data.
+	 * @param resourcePath The path to the directory containing the .jrxml templates and associated resources.
+	 * @param fileName The desired name of the generated PDF file.
+	 * @param formId The unique identifier of the form.
+	 * @param demographicNo The demographic number for which the form is being generated.
+	 * @return A {@code Path} object pointing to the generated PDF file, or {@code null} if an error occurs while listing or processing resources.
+	 * @throws RuntimeException If an exception occurs during report compilation, filling, or exporting.
+	 */
+	private Path generateJasperForm(LoggedInInfo loggedInInfo, FrmRecord formRecord, String resourcePath,
+	                                String fileName, String formId, String demographicNo) {
+
+		ClassLoader cl = getClass().getClassLoader();
+
+		// get a list of pages to print from the given resource path.
+		List<String> jrxmlFiles;
+		try {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			Resource[] resources = resolver.getResources("classpath*:" + resourcePath + "*.jrxml");
+			jrxmlFiles = Arrays.stream(resources)
+					.map(Resource::getFilename)
+					.filter(Objects::nonNull)
+					.sorted()
+					.collect(Collectors.toList());
+		} catch (IOException e) {
+			logger.error("Could not list jrxml resources at " + resourcePath, e);
+			return null;
+		}
+
+		try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+			List<JasperPrint> pages = new ArrayList<>();
+
+			for (String jrxmlFile : jrxmlFiles) {
+				String pageImage = resourcePath + jrxmlFile.replace(".jrxml", ".png");
+				String reportUri = resourcePath + jrxmlFile;
+
+				Properties recordData = formRecord.getFormRecord(loggedInInfo, Integer.parseInt(demographicNo), Integer.parseInt(formId));
+				recordData.setProperty("background_image", cl.getResource(pageImage).toString());
+				recordData.setProperty("s_languagePreferred", LanguageUtil.getLanguage(recordData.getProperty("s_languagePreferred", "")));
+
+				JasperReport report = JasperCompileManager.compileReport(cl.getResource(reportUri).toURI().getPath());
+				JasperPrint jasperPrint = JasperFillManager.fillReport(report, (Map) recordData, new JREmptyDataSource());
+
+				pages.add(jasperPrint);
+			}
+
+			JRPdfExporter exporter = new JRPdfExporter();
+			exporter.setExporterInput(SimpleExporterInput.getInstance(pages));
+			exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(os));
+			exporter.exportReport();
+
+			return nioFileManager.saveTempFile( fileName, os );
+		} catch (URISyntaxException | IOException | JRException | SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
     private FormTransportContainer getFormTransportContainer(HttpServletRequest request, HttpServletResponse response,
-            EctFormData.PatientForm form) throws PDFGenerationException {
+            PatientForm form) throws PDFGenerationException {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
         String formId = request.getParameter("formId") != null ? request.getParameter("formId") : form.getFormId();
         String formName = request.getParameter("formName") != null ? request.getParameter("formName")
