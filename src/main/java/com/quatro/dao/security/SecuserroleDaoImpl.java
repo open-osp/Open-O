@@ -68,7 +68,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public void saveAll(List list) {
         logger.debug("saving ALL Secuserrole instances");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             for (int i = 0; i < list.size(); i++) {
                 Secuserrole obj = (Secuserrole) list.get(i);
@@ -95,7 +96,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public void save(Secuserrole transientInstance) {
         logger.debug("saving Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             transientInstance.setLastUpdateDate(new Date());
             session.saveOrUpdate(transientInstance);
@@ -123,7 +125,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public void delete(Secuserrole persistentInstance) {
         logger.debug("deleting Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             session.delete(persistentInstance);
             logger.debug("delete successful");
@@ -136,51 +139,69 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
         // }
     }
 
-    @Override
-    public int deleteByOrgcd(String orgcd) {
-        logger.debug("deleting Secuserrole by orgcd");
-        try {
+	@Override
+	public int deleteByOrgcd(String orgcd) {
+		logger.debug("deleting Secuserrole by orgcd");
+		Session session = currentSession();
+		try {
+			@SuppressWarnings("unchecked")
+			List<Secuserrole> list = session.createQuery(
+							"from Secuserrole as model where model.orgcd = :orgcd")
+					.setParameter("orgcd", orgcd)
+					.list();
+			for (Secuserrole sur : list) {
+				session.delete(sur);
+			}
+			return list.size();
+		} catch (RuntimeException re) {
+			logger.error("delete failed", re);
+			throw re;
+		}
+	}
 
-            return getHibernateTemplate().bulkUpdate("delete Secuserrole as model where model.orgcd =?", orgcd);
+	@Override
+	public int deleteByProviderNo(String providerNo) {
+		logger.debug("deleting Secuserrole by providerNo");
+		Session session = currentSession();
+		try {
+			@SuppressWarnings("unchecked")
+			List<Secuserrole> list = session.createQuery(
+							"from Secuserrole as model where model.providerNo = :providerNo")
+					.setParameter("providerNo", providerNo)
+					.list();
+			for (Secuserrole sur : list) {
+				session.delete(sur);
+			}
+			return list.size();
+		} catch (RuntimeException re) {
+			logger.error("delete failed", re);
+			throw re;
+		}
+	}
 
-        } catch (RuntimeException re) {
-            logger.error("delete failed", re);
-            throw re;
-        }
-    }
-
-    @Override
-    public int deleteByProviderNo(String providerNo) {
-        logger.debug("deleting Secuserrole by providerNo");
-        try {
-
-            return getHibernateTemplate().bulkUpdate("delete Secuserrole as model where model.providerNo =?",
-                    providerNo);
-
-        } catch (RuntimeException re) {
-            logger.error("delete failed", re);
-            throw re;
-        }
-    }
-
-    @Override
-    public int deleteById(Integer id) {
-        logger.debug("deleting Secuserrole by ID");
-        try {
-
-            return getHibernateTemplate().bulkUpdate("delete Secuserrole as model where model.id =?", id);
-
-        } catch (RuntimeException re) {
-            logger.error("delete failed", re);
-            throw re;
-        }
-    }
+	@Override
+	public int deleteById(Integer id) {
+		logger.debug("deleting Secuserrole by ID");
+		Session session = currentSession();
+		try {
+			Secuserrole instance = session.get(Secuserrole.class, id);
+			if (instance == null) {
+				return 0;
+			}
+			session.delete(instance);
+			return 1;
+		} catch (RuntimeException re) {
+			logger.error("delete failed", re);
+			throw re;
+		}
+	}
 
     @Override
     public int update(Secuserrole instance) {
         logger.debug("Update Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             String queryString = "update Secuserrole as model set model.activeyn ='" + instance.getActiveyn()
                     + "' , lastUpdateDate=now() "
@@ -243,12 +264,13 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
         logger.debug("finding Secuserrole instance with property: " + propertyName
                 + ", value: " + value);
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             String queryString = "from Secuserrole as model where model."
-                    + propertyName + "= ?";
+                    + propertyName + "= ?1";
             Query queryObject = session.createQuery(queryString);
-            queryObject.setParameter(0, value);
+            queryObject.setParameter(1, value);
             return queryObject.list();
         } catch (RuntimeException re) {
             logger.error("find by property name failed", re);
@@ -321,12 +343,10 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
             String lname = staffForm.getLastName();
 
             if (fname != null && fname.length() > 0) {
-                fname = StringEscapeUtils.escapeSql(fname);
                 fname = fname.toLowerCase();
                 queryString = queryString + AND + "lower(a.providerFName) like '%" + fname + "%'";
             }
             if (lname != null && lname.length() > 0) {
-                lname = StringEscapeUtils.escapeSql(lname);
                 lname = lname.toLowerCase();
                 queryString = queryString + AND + "lower(a.providerLName) like '%" + lname + "%'";
             }
@@ -347,7 +367,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     @Override
     public List findAll() {
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         logger.debug("finding all Secuserrole instances");
         try {
             String queryString = "from Secuserrole";
@@ -366,7 +387,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public Secuserrole merge(Secuserrole detachedInstance) {
         logger.debug("merging Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             detachedInstance.setLastUpdateDate(new Date());
             Secuserrole result = (Secuserrole) session.merge(
@@ -386,7 +408,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public void attachDirty(Secuserrole instance) {
         logger.debug("attaching dirty Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             instance.setLastUpdateDate(new Date());
             session.saveOrUpdate(instance);
@@ -404,7 +427,8 @@ public class SecuserroleDaoImpl extends HibernateDaoSupport implements Secuserro
     public void attachClean(Secuserrole instance) {
         logger.debug("attaching clean Secuserrole instance");
         // Session session = getSession();
-        Session session = currentSession();;
+        Session session = currentSession();
+        ;
         try {
             session.lock(instance, LockMode.NONE);
             logger.debug("attach successful");

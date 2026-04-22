@@ -1213,7 +1213,7 @@ public class DemographicExportAction4 extends Action {
 						String code = dx.getCodingSystem().equalsIgnoreCase("icd9") ? Util.formatIcd9(dx.getDxresearchCode()) : dx.getDxresearchCode();
 						diagnosis.setStandardCode(code);
 
-						AbstractCodeSystemDao dao = (AbstractCodeSystemDao)SpringUtils.getBean(WordUtils.uncapitalize(dx.getCodingSystem()) + "Dao");
+						AbstractCodeSystemDao dao = (AbstractCodeSystemDao)SpringUtils.getBean(dx.getCodingSystem() + "Dao");
 						if(dao != null) {
 							 AbstractCodeSystemModel result = dao.findByCode(dx.getDxresearchCode());
 							 if(result != null) {
@@ -2168,7 +2168,8 @@ public class DemographicExportAction4 extends Action {
 							for(HRMDocumentToProvider hrmDocumentToProvider: hrmDocumentToProviderDao.findByHrmDocumentId(Integer.parseInt(hrmDocumentId))) {
 								if(hrmDocumentToProvider.getSignedOff() != null && hrmDocumentToProvider.getSignedOff() == 1) {
 									ReportReviewed reviewed = rpr.addNewReportReviewed();
-									Provider provider = providerDao.getProvider(hrmDocumentToProvider.getProviderNo());
+									providerCache.computeIfAbsent(hrmDocumentToProvider.getProviderNo(), id -> providerManager.getProvider(loggedInInfo, id));
+									Provider provider = providerCache.get(hrmDocumentToProvider.getProviderNo());
 									PersonNameSimple pns = reviewed.addNewName();
 									pns.setLastName(provider.getLastName());
 									pns.setFirstName(provider.getFirstName());
@@ -2570,7 +2571,7 @@ public class DemographicExportAction4 extends Action {
 						Files.move(consultationRequestPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
 						consoltationRequestPDFList.add(new Object[]{consultRequest, exportPath});
 					} catch (Exception e) {
-						logger.error("Failed to generate patient form PDF", e);
+						logger.error("Failed to generate Consultation Request form PDF", e);
 						exportError.add("Failed to generate Consultation Request PDF ( not added to export): " + e.getCause());
 					}
 				}
@@ -2630,10 +2631,12 @@ public class DemographicExportAction4 extends Action {
 				// so patient forms must be rendered sequentially.
 				for (EctFormData.PatientForm patientForm : patientForms) {
 					try {
-						Path formPDFPath = formsManager.renderForm(request, response, patientForm);
-						Path exportPath = patientFormDirectory.resolve(formPDFPath.getFileName());
-						Files.move(formPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
-						patientFormPDFList.add(new Object[]{patientForm, exportPath});
+						Path formPDFPath = formsManager.renderFormAsPDFFromTemplate(request, response, patientForm);
+						if (formPDFPath != null) {
+							Path exportPath = patientFormDirectory.resolve(formPDFPath.getFileName());
+							Files.move(formPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+							patientFormPDFList.add(new Object[]{patientForm, exportPath});
+						}
 					} catch (Exception e) {
 						logger.error("Failed to generate patient form PDF", e);
 						exportError.add("Failed to generate Form PDF (Form not added to export): " + e.getCause());
@@ -2686,7 +2689,7 @@ public class DemographicExportAction4 extends Action {
 				expFile += "_"+demoNo;
 				expFile += "_"+demographic.getDateOfBirth()+demographic.getMonthOfBirth()+demographic.getYearOfBirth();
 				files.add(new File(directory, expFile+".xml"));
-				dirs.add(getProviderName(demographic.getProviderNo()));
+				dirs.add(getProviderName(loggedInInfo, demographic.getProviderNo()));
 			}catch(Exception e){
 				logger.error("Error", e);
 			}
@@ -2735,9 +2738,7 @@ public class DemographicExportAction4 extends Action {
 		String zipName = files.get(0).getName().replace(".xml", ".zip");
 		if (setName!=null && !setName.isEmpty() && !setName.equals("-1")) zipName = "export_"+setName.replace(" ","")+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
 		if (providerNoMRP!=null && !providerNoMRP.isEmpty() && !providerNoMRP.equals("-1")) {
-			ProviderDao providerDao= SpringUtils.getBean(ProviderDao.class);
-			Provider p = providerDao.getProvider(providerNoMRP);
-			String name = p.getFirstName() + "_" + p.getLastName() + "_" + p.getOhipNo();
+			String name = getProviderName(loggedInInfo, providerNoMRP);
 			zipName = "export_"+name+"_"+UtilDateUtilities.getToday("yyyyMMddHHmmss")+".zip";
 		}
 
@@ -3703,19 +3704,17 @@ public class DemographicExportAction4 extends Action {
 		return dosageMultiple[0].trim();
 	}
 
-	private String getProviderName(String providerNo) {
+	private String getProviderName(LoggedInInfo loggedInInfo, String providerNo) {
 		if(StringUtils.isNullOrEmpty(providerNo)) {
 			return "";
 		}
-		ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
-
-		Provider p = providerDao.getProvider(providerNo);
-
-		if(p == null) {
+		providerCache.computeIfAbsent(providerNo, id -> providerManager.getProvider(loggedInInfo, id));
+		Provider provider = providerCache.get(providerNo);
+		if(provider == null) {
 			return "";
 		}
 
-		return p.getFirstName() + "_" + p.getLastName() + "_" + p.getOhipNo();
+		return provider.getFirstName() + "_" + provider.getLastName() + "_" + provider.getOhipNo();
 	}
 
 	public Boolean validateExport(File f) {

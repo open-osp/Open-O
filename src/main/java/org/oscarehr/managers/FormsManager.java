@@ -86,5 +86,6 @@ public interface FormsManager {
 	public Path renderForm(LoggedInInfo loggedInInfo, FormTransportContainer formTransportContainer);
 	public Path renderForm(HttpServletRequest request, HttpServletResponse response, EctFormData.PatientForm form) throws PDFGenerationException;
 	public PatientForm getFormById(LoggedInInfo loggedInInfo, Integer formId, Integer demographicNo);
+	Path renderFormAsPDFFromTemplate(HttpServletRequest request, HttpServletResponse response, EctFormData.PatientForm form) throws PDFGenerationException;
 }
 
