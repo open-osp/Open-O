@@ -1430,10 +1430,12 @@ public class DemographicExportAction4 extends Action {
 						exportError.add("Error! No matching type for Immunization "+prevMap.get("type")+" for Patient "+demoNo+" ("+(cnt)+")");
 					}
 
-					if (StringUtils.filled((String)extraData.get("name"))) immu.setImmunizationName((String)extraData.get("name"));
+					if (StringUtils.filled((String)extraData.get("name"))) {
+						immu.setImmunizationName((String)extraData.get("name"));
+					}
 					else
 					{
-						exportError.add("Error! No Name for Immunization "+prevType+" for Patient "+demoNo+" ("+(cnt)+")");
+						exportError.add("Warning! Name for immunization not defined "+prevType+" for Patient "+demoNo+" ("+(cnt)+")");
 						if (StringUtils.filled(prevType)) {
 							immu.setImmunizationName(prevType);
 							imSummary = Util.addSummary("Immunization Name",prevType);
@@ -1967,14 +1969,14 @@ public class DemographicExportAction4 extends Action {
 								addOneEntry(REPORTTEXT);
 							} else {
 								// decide if document should be embedded or referenced
-								handleEmbeddingBinaryDocuments(binaryData, rpr, edoc.getFilePath());
+								handleEmbeddingBinaryDocuments(binaryData, rpr, edoc.getDocId());
 							}
 							
 							String docClass = edoc.getDocClass();
 							if (ReportClass.Enum.forString(docClass)!=null) {
 								rpr.setClass1(ReportClass.Enum.forString(docClass));
 							} else {
-								exportError.add("Warning! No Known Class Type for Document \""+edoc.getFileName()+"\"");
+//								exportError.add("Warning! No Known Class Type for Document \""+edoc.getFileName()+"\"");
 								rpr.setClass1(ReportClass.OTHER_LETTER);
 							}
 							String docSubClass = edoc.getDocSubClass();
