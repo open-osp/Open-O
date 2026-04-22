@@ -26,7 +26,7 @@ import org.oscarehr.common.model.AbstractCodeSystemModel;
 import org.oscarehr.common.model.OscarCode;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("OscarCodeDao")
 public class OscarCodeDaoImpl extends AbstractDaoImpl<OscarCode> implements OscarCodeDao {
 
     public OscarCodeDaoImpl() {
@@ -54,6 +54,11 @@ public class OscarCodeDaoImpl extends AbstractDaoImpl<OscarCode> implements Osca
         List<OscarCode> results = q.getResultList();
 
         return results;
+    }
+
+    @Override
+    public List<OscarCode> searchCode(String term) {
+        return getOscarCode(term);
     }
 
     @Override
