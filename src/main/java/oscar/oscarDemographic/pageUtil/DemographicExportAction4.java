@@ -1855,10 +1855,11 @@ public class DemographicExportAction4 extends Action {
 									exportLabResult(labMeaValues, patientRec.addNewLaboratoryResults(), demoNo);
 								}
 
-							} else {
-								// log anomaly
-								exportError.add(String.format("Warning! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
 							}
+//							else {
+//								// log anomaly
+//								exportError.add(String.format("Warning! Lab Results accession number %s for demoNo %s did not contain results", accessionNumber, demoNo));
+//							}
 						}
 					}
 				}
