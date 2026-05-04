@@ -179,10 +179,15 @@
 <oscar:customInterface name="renal" section="diab"/>
 
 <style media="all">
+
+    html {
+        margin: 0;
+        overscroll-behavior: none;
+    }
+
     :root *:not(h1,h2,h3,h4) {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
         font-size: 12px;
-        overscroll-behavior: none;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }

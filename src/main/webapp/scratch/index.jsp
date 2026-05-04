@@ -309,6 +309,12 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/library/bootstrap/5.0.2/css/bootstrap.min.css" />
 
     <style>
+
+        html {
+            margin: 0;
+            overscroll-behavior: none;
+        }
+
         :root * {
             font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
         }
@@ -316,7 +322,6 @@
         :root * :not(h2):not(h4) {
             font-size: 12px;
             line-height: 1 !important;
-            overscroll-behavior: none;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }

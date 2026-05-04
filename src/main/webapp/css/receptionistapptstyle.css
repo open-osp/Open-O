@@ -49,15 +49,15 @@ tr#ivoryBar, table#monthScheduleNavigation tr td {
 	display:none;
 }
 
-* {
-	overscroll-behavior: none;
+html {
+    margin: 0;
+    overscroll-behavior: none;
 }
 
 body {
 	background-color:#486ebd;
 	margin:0;
 	padding:0;
-	overscroll-behavior: none;
 	height: 100%;
 	line-height: 1 !important;
 }

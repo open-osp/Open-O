@@ -198,10 +198,14 @@
 
 <style>
 
+    html {
+        margin: 0;
+        overscroll-behavior: none;
+    }
+
 	:root *:not(h2):not(h4):not(.input-group-btn .btn) {
 		font-family: Arial, "Helvetica Neue", Helvetica, sans-serif !important;
 		font-size: 12px;
-		overscroll-behavior: none;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		line-height: 1 !important;
