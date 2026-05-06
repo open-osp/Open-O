@@ -41,16 +41,14 @@
 <%@ page import="org.oscarehr.common.model.ScheduleDate" %>
 <%@ page import="org.oscarehr.common.dao.ProviderSiteDao" %>
 
-<%
+<%!
     UserPropertyDAO userPropertyDao = SpringUtils.getBean(UserPropertyDAO.class);
     ScheduleHolidayDao scheduleHolidayDao = SpringUtils.getBean(ScheduleHolidayDao.class);
     MyGroupDao myGroupDao = SpringUtils.getBean(MyGroupDao.class);
     ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     ScheduleDateDao scheduleDateDao = SpringUtils.getBean(ScheduleDateDao.class);
     ProviderSiteDao providerSiteDao = SpringUtils.getBean(ProviderSiteDao.class);
-%>
 
-<%!
     //multisite starts =====================
     private List<Site> sites;
     private boolean bMultisites = org.oscarehr.common.IsPropertiesOn.isMultisitesEnable();
@@ -83,7 +81,10 @@
 
 <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
+<script type="text/javascript" src="schedulePage.js.jsp"></script>
+
 <%
+    LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
     String curUser_no, curProvider_no, userfirstname, userlastname, mygroupno, n_t_w_w = "";
     curProvider_no = (String) session.getAttribute("user");
     String roleName$ = (String) session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -315,6 +316,7 @@
 <%@page import="org.oscarehr.common.model.Site" %>
 <%@page import="oscar.appt.JdbcApptImpl" %>
 <%@page import="oscar.appt.ApptUtil" %>
+<%@ page import="org.oscarehr.util.LoggedInInfo" %>
 <html:html lang="en">
     <body bgcolor="#EEEEFF" onLoad="refreshAllTabAlerts();">
 
@@ -325,7 +327,6 @@
         <script>
             jQuery.noConflict();
         </script>
-<%--        <oscar:customInterface section="monthview"/>--%>
 
         <link rel="stylesheet" href="<%=request.getContextPath()%>/library/bootstrap/3.0.0/css/bootstrap.min.css" type="text/css">
         <link rel="stylesheet" href="../css/receptionistapptstyle.css" type="text/css">
@@ -471,8 +472,8 @@
     </div>
 
     <table id="monthScheduleNavigation">
-        <tr BGCOLOR="whitesmoke">
-            <td width="33%">
+        <tr id="ivoryBar">
+            <td id="dateAndCalendar">
                 <a href="providercontrol.jsp?year=<%=year%>&month=<%=(month-1)%>&day=<%=(day)%>&displaymode=month&dboperation=searchappointmentmonth&providerview=<%=providerview%>">
                 <span class="glyphicon glyphicon-step-backward" title="<%=arrayMonthOfYear[((month+10)%12)]%>"></span>&nbsp;&nbsp;
                 </a>
@@ -492,11 +493,10 @@
                 | <span style="color:#333">Month</span>
 
             </td>
-            <TD ALIGN="center" width="33%"><B><%= arrayMonthOfYear[(month + 11) % 12] %>
-            </b></TD>
-            <td ALIGN="RIGHT">
-                <form method="post" name="jumptodate" action="providercontrol.jsp"
-                      style="display:inline;margin:0px;padding:0px;padding-right:10px;">
+            <TD class="title noprint"><strong><%= arrayMonthOfYear[(month + 11) % 12] %>
+            </strong></TD>
+            <td id="group">
+                <form method="post" name="jumptodate" action="providercontrol.jsp">
                     <INPUT TYPE="text" NAME="year"
                            VALUE="<%=strYear%>" WIDTH="4" HEIGHT="10" border="0" size="4"
                            maxlength="4">- <INPUT TYPE="text" NAME="month"
@@ -607,33 +607,33 @@
         </tr>
     </table>
 
-    <table style="margin-top: 69px;" BGCOLOR="#C0C0C0">
+    <table class="table table-condensed" id="monthScheduleTable" BGCOLOR="#C0C0C0">
         <tr>
             <td>
                 <table>
                     <tr>
-                        <td align="center" VALIGN="TOP" colspan="3" bgcolor="whitesmoke">
+                        <td align="center" bgcolor="whitesmoke">
                             <%
                                 DateInMonthTable aDate = new DateInMonthTable(year, month - 1, 1);
                                 int[][] dateGrid = aDate.getMonthDateGrid();
                             %>
 
-                            <table border="1" cellspacing="0" cellpadding="2" bgcolor="silver">
+                            <table class="table table-condensed" bgcolor="silver">
                                 <tr bgcolor="#FOFOFO" align="center">
-                                    <td width="14.2%"><font SIZE="2" color="red"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgSun"/></font></td>
-                                    <td width="14.3%"><font SIZE="2"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgMon"/></font></td>
-                                    <td width="14.3%"><font SIZE="2"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgTue"/></font></td>
-                                    <td width="14.3%"><font SIZE="2"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgWed"/></font></td>
-                                    <td width="14.3%"><font SIZE="2"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgThu"/></font></td>
-                                    <td width="14.3%"><font SIZE="2"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgFri"/></font></td>
-                                    <td width="14.2%"><font SIZE="2" color="green"><bean:message
-                                            key="provider.appointmentprovideradminmonth.msgSat"/></font></td>
+                                    <th width="14.2%"><font SIZE="2" color="red"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgSun"/></font></th>
+                                    <th width="14.3%"><font SIZE="2"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgMon"/></font></th>
+                                    <th width="14.3%"><font SIZE="2"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgTue"/></font></th>
+                                    <th width="14.3%"><font SIZE="2"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgWed"/></font></th>
+                                    <th width="14.3%"><font SIZE="2"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgThu"/></font></th>
+                                    <th width="14.3%"><font SIZE="2"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgFri"/></font></th>
+                                    <th width="14.2%"><font SIZE="2" color="green"><bean:message
+                                            key="provider.appointmentprovideradminmonth.msgSat"/></font></th>
                                 </tr>
                                 <% String caisi = "";%>
                                 <caisi:isModuleLoad moduleName="caisi">
@@ -694,7 +694,7 @@
                                                 }
 
                                 %>
-                                <td nowrap bgcolor="<%=bgcolor.toString()%>" valign="top">
+                                <td nowrap bgcolor="<%=bgcolor.toString()%>" >
                                     <a href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=MyDateFormat.getDigitalXX(dateGrid[i][j])%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName"))%>&displaymode=day&dboperation=searchappointmentday'>
                                     <span class='date'>&nbsp;<%=dateGrid[i][j] %> </span>
                                     <span size="-2" color="blue"><%=strHolidayName.toString()%>
@@ -739,8 +739,7 @@
 
                             </table>
                             <!--last month & next month -->
-                            <table width="98%" border="1" cellspacing="1" cellpadding="6"
-                                   bgcolor="#99cccc">
+                            <table class="table table-condensed" bgcolor="#99cccc">
                                 <tr bgcolor="#CCCCCC">
                                     <% now = new GregorianCalendar(year, (month - 2), day);
                                         year = now.get(Calendar.YEAR); //month should be the current main display date, not the real now date
@@ -758,54 +757,53 @@
                                         &nbsp; &nbsp;<%=year%>-<%=month%> &nbsp; &nbsp; &nbsp; &nbsp;
                                         &nbsp; &nbsp; &nbsp;<%=arrayMonthOfYear[((month + 11) % 12)]%>
                                     </b>
-                                        <table width="98%" border="1" cellspacing="1" cellpadding="6"
-                                               bgcolor="#EEE9BF">
+                                        <table bgcolor="#EEE9BF">
                                             <tr bgcolor="#FOFOFO">
 
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="blue"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgWeek"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="red"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgSun"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgMon"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgTue"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgWed"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgThu"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgFri"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="green"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgSat"/></font>
                                                     </div>
@@ -819,7 +817,7 @@
                                                         if (j == -1) {
                                             %>
                                             <td align='center' bgcolor='#FOFOFO'><font
-                                                    FACE='VERDANA,ARIAL,HELVETICA' SIZE='2'> <a
+                                                     SIZE='2'> <a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=dateGrid[i][j+1]==0?1:dateGrid[i][j+1]%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=week&dboperation=searchapptweek'>
                                                 <%=(i + 1)%>
                                             </font></td>
@@ -832,13 +830,13 @@
                                             %>
                                             <td align='center'><a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=MyDateFormat.getDigitalXX(day)%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=day&dboperation=searchappointmentday'>
-                                                <font FACE="VERDANA,ARIAL,HELVETICA" SIZE="2" color="red">
+                                                <font SIZE="2" color="red">
                                                     <div class='specialtxt'><%= dateGrid[i][j] %>
                                                     </div>
                                                 </font></a></td>
                                             <% } else {
                                             %>
-                                            <td align='center'><font FACE='VERDANA,ARIAL,HELVETICA'
+                                            <td align='center'><font
                                                                      SIZE='2' color='white'><a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=MyDateFormat.getDigitalXX(dateGrid[i][j])%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName"))%>&displaymode=day&dboperation=searchappointmentday'>
                                                 <%=dateGrid[i][j] %>
@@ -870,54 +868,53 @@
                                         <span class="glyphicon glyphicon-step-forward" title="Next Month: <%=arrayMonthOfYear[(month)%12]%>"></span>
                                         </a><br>
 
-                                        <table width="98%" border="1" cellspacing="1" cellpadding="6"
-                                               bgcolor="#EEE9BF">
+                                        <table class="table table-condensed" bgcolor="#EEE9BF">
                                             <tr bgcolor="#FOFOFO">
 
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="blue"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgWeek"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="red"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgSun"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgMon"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgTue"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgWed"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgThu"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgFri"/></font>
                                                     </div>
                                                 </td>
                                                 <td width="12.5%">
-                                                    <div align="center"><font FACE="VERDANA,ARIAL,HELVETICA"
+                                                    <div align="center"><font
                                                                               SIZE="2" color="green"><bean:message
                                                             key="provider.appointmentprovideradminmonth.msgSat"/></font>
                                                     </div>
@@ -931,7 +928,7 @@
                                                         if (j == -1) {
                                             %>
                                             <td align='center' bgcolor='#FOFOFO'><font
-                                                    FACE='VERDANA,ARIAL,HELVETICA' SIZE='2'> <a
+                                                     SIZE='2'> <a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=dateGrid[i][j+1]==0?1:dateGrid[i][j+1]%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=week&dboperation=searchapptweek'>
                                                 <%=(i + 1)%>
                                             </font></td>
@@ -944,13 +941,13 @@
                                             %>
                                             <td align='center'><a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=MyDateFormat.getDigitalXX(day)%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName") )%>&displaymode=day&dboperation=searchappointmentday'>
-                                                <font FACE="VERDANA,ARIAL,HELVETICA" SIZE="2" color="red">
+                                                <font SIZE="2" color="red">
                                                     <div class='specialtxt'><%= dateGrid[i][j] %>
                                                     </div>
                                                 </font></a></td>
                                             <% } else {
                                             %>
-                                            <td align='center'><font FACE='VERDANA,ARIAL,HELVETICA'
+                                            <td align='center'><font
                                                                      SIZE='2' color='white'><a
                                                     href='providercontrol.jsp?<%=caisi%>year=<%=year%>&month=<%=MyDateFormat.getDigitalXX(month)%>&day=<%=MyDateFormat.getDigitalXX(dateGrid[i][j])%>&view=<%=view==0?"0":("1&curProvider="+request.getParameter("curProvider")+"&curProviderName="+request.getParameter("curProviderName"))%>&displaymode=day&dboperation=searchappointmentday'>
                                                 <%=dateGrid[i][j] %>

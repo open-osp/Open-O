@@ -1,4 +1,5 @@
-<%--
+<%@ page import="org.oscarehr.common.IsPropertiesOn" %>
+<%@ page import="org.owasp.encoder.Encode" %><%--
 
     Copyright (c) 2001-2002. Department of Family Medicine, McMaster University. All Rights Reserved.
     This software is published under the GPL GNU General Public License.
@@ -26,17 +27,9 @@
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean" %>
 <%
 String newticklerwarningwindow=null;
-String ocanWarningWindow=null;
 String cbiReminderWindow=null;
 
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.isTicklerPlusEnable()){
-	newticklerwarningwindow = (String) session.getAttribute("newticklerwarningwindow");
-}
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("OCAN_warning_window") ) {
-    ocanWarningWindow = (String)session.getAttribute("ocanWarningWindow");
-}
-
-if (org.oscarehr.common.IsPropertiesOn.isCaisiEnable() && org.oscarehr.common.IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW") ) {
+    if (IsPropertiesOn.isCaisiEnable() && IsPropertiesOn.propertiesOn("CBI_REMINDER_WINDOW")) {
     cbiReminderWindow = (String)session.getAttribute("cbiReminderWindow");
 }
 
@@ -64,43 +57,104 @@ function getElementsByClass(searchClass,node,tag) {
         return classElements;
 }
 
-jQuery("document").ready(function(){
+document.addEventListener('DOMContentLoaded', function() {
     setDefaultReasonView();
-})
+});
 
 function setDefaultReasonView() {
-    console.log(localStorage);
-    let currentDefault = jQuery("#hideReason").val();
-    console.log("Show all reasons: " + currentDefault);
+    const hideReasonEl = document.getElementById("hideReason");
+    const currentDefault = hideReasonEl ? hideReasonEl.value : "false";
 
     // True to show the reason. Default is to hide.
-    if(currentDefault === "true") {
-        jQuery("span").removeClass("hideReason");
+    // Apply default tooltip state to all providers (before per-provider overrides)
+    const showReasonDefault = (currentDefault === "true");
+    if (showReasonDefault) {
+        // Remove hideReason class from all spans
+        document.querySelectorAll("span.hideReason").forEach(function(el) {
+            el.classList.remove("hideReason");
+        });
+    } else {
+        // If default is to hide, also hide reason from all tooltips initially
+        document.querySelectorAll(".appt-reason-tooltip").forEach(function(el) {
+            const titleShort = el.dataset.titleShort;
+            if (titleShort) {
+                el.setAttribute("title", titleShort);
+            }
+        });
     }
 
-    // toggle reason views for each of the provider preferences.
-    for( var i = 0; i < localStorage.length; i++ ) {
-        var key = localStorage.key(i);
-        var value = localStorage.getItem(key);
+    // Toggle reason views for each of the provider preferences.
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+
+        // Keys are stored as "reason_<providerNo>" but used as CSS selectors ".reason_<providerNo>"
+        if (key.startsWith("reason_")) {
+            const selector = "." + key;
+            const providerNo = key.substring(7); // Extract provider number from "reason_<providerNo>"
 
         // If true show the reason. If false hide the reason
+            document.querySelectorAll(selector).forEach(function(el) {
         if(value === "false") {
-            jQuery(key).addClass("hideReason");
+                    el.classList.add("hideReason");
         }
         if (value === "true"){
-            jQuery(key).removeClass("hideReason");
+                    el.classList.remove("hideReason");
+                }
+            });
+
+            // Update tooltips based on stored preference
+            const showReason = (value === "true");
+            updateTooltipsForProvider(providerNo, showReason);
         }
     }
 
-    jQuery(".hideReason").hide();
+    // Hide all elements with hideReason class
+    document.querySelectorAll(".hideReason").forEach(function(el) {
+        el.style.display = "none";
+    });
 }
 
-function toggleReason( providerNo ) { 
-	var id = ".reason_" + providerNo;
-    jQuery( id ).toggle();
-    var isVisible = jQuery( id ).is( ":visible" );
-    console.log("ID: " + id + " Is Visible: " + isVisible);
-    localStorage.setItem( id, isVisible);
+function toggleReason(event, providerNo) {
+    event.preventDefault();
+    const selector = ".reason_" + providerNo;
+    const elements = document.querySelectorAll(selector);
+    let isVisible = false;
+
+    elements.forEach(function(el) {
+        // Toggle visibility
+        if (el.style.display === "none" || el.classList.contains("hideReason")) {
+            el.style.display = "";
+            el.classList.remove("hideReason");
+            isVisible = true;
+        } else {
+            el.style.display = "none";
+            isVisible = false;
+}
+    });
+
+    const storageKey = "reason_" + providerNo;
+    localStorage.setItem(storageKey, isVisible);
+
+    // Update tooltips for this provider's appointments to respect privacy toggle
+    updateTooltipsForProvider(providerNo, isVisible);
+}
+
+/**
+ * Updates the tooltip (title attribute) for all appointments of a given provider
+ * to show or hide reason/notes based on the visibility flag.
+ *
+ * @param providerNo the provider number
+ * @param showReason true to show full tooltip with reason/notes, false to hide them
+ */
+function updateTooltipsForProvider(providerNo, showReason) {
+    const selector = ".appt-tooltip-provider-" + providerNo;
+    document.querySelectorAll(selector).forEach(function(el) {
+        const titleAttr = showReason ? el.dataset.titleFull : el.dataset.titleShort;
+        if (titleAttr) {
+            el.setAttribute("title", titleAttr);
+        }
+    });
 }
     
 
@@ -271,21 +325,17 @@ function onUpdatebill(url) {
 
 //popup a new tickler warning window
 function load() {
-	var ocan = "<%=ocanWarningWindow%>";
-	if(ocan!="null" && cbi!="") {
-		alert(ocan);
-	}
-	var cbi = "<%=cbiReminderWindow%>";
+var cbi = "<%=Encode.forHtmlAttribute(String.valueOf(cbiReminderWindow))%>";
 	if(cbi!="null" && cbi!="") {
 		alert(cbi);
 		<%request.getSession().setAttribute("cbiReminderWindow", "null");%>
 	}
 	
-	if ("<%=newticklerwarningwindow%>"=="enabled") {
+if ("<%=Encode.forHtml(String.valueOf(newticklerwarningwindow))%>"=="enabled") {
 		if (IsPopupBlocker()) {
 		    alert("You have a popup blocker, so you can not see the new tickler warning window. Please disable the pop blocker in your google bar, yahoo bar or IE ...");
 		} else{
-				var pu=window.open("../UnreadTickler.do",'viewUnreadTickler',"height=120,width=250,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=500,left=700");
+var pu=window.open("<%=request.getContextPath()%>/UnreadTickler.do",'viewUnreadTickler',"height=120,width=250,location=no,scrollbars=no,menubars=no,toolbars=no,resizable=yes,top=500,left=700");
 				if(window.focus)
 					pu.focus();
 			}
@@ -319,7 +369,7 @@ setTimeout("refreshTabAlerts('"+id+"')", 10);
 }
 
 function refreshTabAlerts(id) {
-    var url = "../provider/tabAlertsRefresh.jsp";
+var url = "<%= request.getContextPath() %>/provider/tabAlertsRefresh.jsp";
     var pars = "id=" + id;
     jQuery.ajax({
         url: url,

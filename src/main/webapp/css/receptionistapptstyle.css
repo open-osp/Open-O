@@ -28,7 +28,7 @@ table#firstTable tr {
 	justify-content: space-between;
 }
 
-tr#ivoryBar, table#monthScheduleNavigation tr td {
+tr#ivoryBar {
 	background-color: whitesmoke;
 	display: flex;
 	justify-content: space-between;
@@ -163,7 +163,7 @@ table#scheduleNavigation, table#monthScheduleNavigation {
 	/*! border-bottom: 1px solid #c0c0c0; */
 }
 
-table#scheduleNavigation tr td {
+table#scheduleNavigation tr td, table#monthScheduleNavigation tr td {
 	white-space: nowrap;
 	padding:3px 0;
 }
@@ -239,7 +239,7 @@ div.appt-container div.navigation-tag {
 	min-width:5%;
 }
 
-table#scheduleTable {
+table#scheduleTable, table#monthScheduleTable{
 	margin-top: 51px;
 }
 
