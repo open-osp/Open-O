@@ -30,7 +30,7 @@
 %>
 <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="w" reverse="<%=true%>">
 	<%authed=false; %>
-	<%response.sendRedirect("../securityError.jsp?type=_edoc");%>
+    <%response.sendRedirect(request.getContextPath() + "/securityError.jsp?type=_edoc");%>
 </security:oscarSec>
 <%
 	if(!authed) {
@@ -52,7 +52,9 @@ String userlastname = (String) session.getAttribute("userlastname");
 	import="java.util.*, oscar.*, oscar.util.*, oscar.oscarProvider.data.ProviderData, org.oscarehr.util.SpringUtils, org.oscarehr.common.dao.CtlDocClassDao"%>
 <%@ page import="org.oscarehr.documentManager.data.AddEditDocumentForm" %>
 <%@ page import="org.oscarehr.documentManager.EDocUtil" %>
-<%@ page import="org.oscarehr.documentManager.EDoc" %><%
+<%@ page import="org.oscarehr.documentManager.EDoc" %>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%
 String mode = "";
 if (request.getAttribute("mode") != null) {
     mode = (String) request.getAttribute("mode");
@@ -111,7 +113,7 @@ if (request.getAttribute("completedForm") != null) {
     formdata.setReviewerId(currentDoc.getReviewerId());
     formdata.setReviewDateTime(currentDoc.getReviewDateTime());
     formdata.setContentDateTime(UtilDateUtilities.DateToString(currentDoc.getContentDateTime(),EDocUtil.CONTENT_DATETIME_FORMAT));
-    formdata.setHtml(UtilMisc.htmlEscape(currentDoc.getHtml()));
+    formdata.setHtml(currentDoc.getHtml());
     lastUpdate = currentDoc.getDateTimeStamp();
     fileName = currentDoc.getFileName();
 } else {
@@ -132,7 +134,7 @@ String annotation_tableid = editDocumentNo;
 Long now = new Date().getTime();
 String annotation_attrib = "anno"+now;
 
-CtlDocClassDao docClassDao = (CtlDocClassDao)SpringUtils.getBean(CtlDocClassDao.classs);
+CtlDocClassDao docClassDao = SpringUtils.getBean(CtlDocClassDao.class);
 List<String> reportClasses = docClassDao.findUniqueReportClasses();
 ArrayList<String> subClasses = new ArrayList<String>();
 ArrayList<String> consultA = new ArrayList<String>();
@@ -165,15 +167,15 @@ for (String reportClass : reportClasses) {
 <script type="text/javascript" src="../share/javascript/scriptaculous.js"></script>
 
 <link rel="stylesheet" type="text/css"
-	href="../share/css/niftyCorners.css" />
+          href="<%= request.getContextPath() %>/share/css/niftyCorners.css"/>
 <link rel="stylesheet" type="text/css"
-	href="../share/css/OscarStandardLayout.css" />
+          href="<%= request.getContextPath() %>/share/css/OscarStandardLayout.css"/>
 <link rel="stylesheet" type="text/css" href="dms.css" />
 <link rel="stylesheet" type="text/css"
-	href="../share/css/niftyPrint.css" media="print" />
-<script type="text/javascript" src="../share/javascript/nifty.js"></script>
+          href="<%= request.getContextPath() %>/share/css/niftyPrint.css" media="print"/>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/javascript/nifty.js"></script>
 <link rel="stylesheet" type="text/css" media="all"
-	href="../share/calendar/calendar.css" title="win2k-cold-1" />
+          href="<%= request.getContextPath() %>/share/calendar/calendar.css" title="win2k-cold-1"/>
 <style type="text/css">
     .autocomplete_style {
         background: #fff;
@@ -193,7 +195,7 @@ for (String reportClass : reportClasses) {
     }
 </style>
 
-<script type="text/javascript" src="../share/calendar/calendar.js"></script>
+    <script type="text/javascript" src="<%= request.getContextPath() %>/share/calendar/calendar.js"></script>
 <script type="text/javascript"
 	src="../share/calendar/lang/<bean:message key="global.javascript.calendar"/>"></script>
 <script type="text/javascript" src="../share/calendar/calendar-setup.js"></script>
@@ -224,13 +226,13 @@ for (String reportClass : reportClasses) {
             function checkDefaultValue(object) {
               //selectBoxType = object.form.docType
               //var selectedType = selectBoxType.options[selectBoxType.selectedIndex].value;
-              if ((object.value == "<%= defaultDesc%>") || (object.value == "<%= defaultType%>")) {
+            if ((object.value == "<%=Encode.forJavaScript(String.valueOf(defaultDesc))%>") || (object.value == "<%=Encode.forJavaScript(String.valueOf(defaultType))%>")) {
                   object.value = "";
               }
             }
             function checkSel(sel){
               theForm = sel.form;
-              if ((theForm.docDesc.value == "") || (theForm.docDesc.value == "<%= defaultDesc%>")) {
+            if ((theForm.docDesc.value == "") || (theForm.docDesc.value == "<%=Encode.forJavaScript(String.valueOf(defaultDesc))%>")) {
                    theForm.docDesc.value = theForm.docType.value;
                    theForm.docDesc.focus();
                    theForm.docDesc.select();
@@ -244,7 +246,7 @@ for (String reportClass : reportClasses) {
 
             var docSubClassList = [
 <% for (int i=0; i<subClasses.size(); i++) { %>
-            "<%=subClasses.get(i)%>"<%=(i<subClasses.size()-1)?",":""%>
+            "<%=Encode.forJavaScript(String.valueOf(subClasses.get(i)))%>"<%=(i<subClasses.size()-1)?",":""%>
 <% } %>
             ];
             
@@ -259,28 +261,27 @@ function newDocType(){
 } 
 
         </script>
-<link rel="stylesheet" type="text/css" media="all" href="../share/css/extractedFromPages.css"  />
+    <link rel="stylesheet" type="text/css" media="all" href="<%= request.getContextPath() %>/share/css/extractedFromPages.css"/>
 </head>
 <body class="mainbody" onLoad="prepare();">
 <div class="maindiv">
 <div class="maindivheading">&nbsp;&nbsp;&nbsp; Edit Document</div>
 <%-- Lists linkhtmlerrors --%> <% for (Enumeration errorkeys = linkhtmlerrors.keys(); errorkeys.hasMoreElements();) {%>
-<font class="warning">Error: <bean:message
-	key="<%=(String) linkhtmlerrors.get(errorkeys.nextElement())%>" /></font><br />
-<% } %> <html:form action="/documentManager/addEditHtml" method="POST"
-	enctype="multipart/form-data" styleClass="form"
+    <font class="warning">Error: <bean:message key="<%=Encode.forHtmlAttribute(String.valueOf((String) linkhtmlerrors.get(errorkeys.nextElement())))%>"/></font><br/>
+    <% } %> <form action="${pageContext.request.contextPath}/documentManager/addEditHtml.do" method="POST"
+                       enctype="multipart/form-data" class="form"
 	onsubmit="return submitUpload(this);">
 	<input type="hidden" name="<csrf:tokenname/>" value="<csrf:tokenvalue/>"/>
 	<input type="hidden" name="function"
-		value="<%=formdata.getFunction()%>" size="20" />
+           value="<%=Encode.forHtmlAttribute(formdata.getFunction())%>" size="20"/>
 	<input type="hidden" name="functionId"
-		value="<%=formdata.getFunctionId()%>" size="20" />
-	<input type="hidden" name="functionid" value="<%=moduleid%>" size="20" />
-	<input type="hidden" name="mode" value="<%=mode%>" />
+           value="<%=Encode.forHtmlAttribute(formdata.getFunctionId())%>" size="20"/>
+    <input type="hidden" name="functionid" value="<%=Encode.forHtmlAttribute(moduleid)%>" size="20"/>
+    <input type="hidden" name="mode" value="<%=Encode.forHtmlAttribute(String.valueOf(mode))%>"/>
 	<input type="hidden" name="docCreator"
-		value="<%=formdata.getDocCreator()%>" />
-	<input type="hidden" name="reviewerId" value="<%=formdata.getReviewerId()%>" />
-	<input type="hidden" name="reviewDateTime" value="<%=formdata.getReviewDateTime()%>" />
+           value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getDocCreator()))%>"/>
+    <input type="hidden" name="reviewerId" value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getReviewerId()))%>"/>
+    <input type="hidden" name="reviewDateTime" value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getReviewDateTime()))%>"/>
 	<input type="hidden" name="reviewDoc" value="false" />
 	<input type="hidden" name="annotation_attrib" value="<%=annotation_attrib%>" />
 
@@ -288,11 +289,12 @@ function newDocType(){
 		<tr>
 			<td width="180px">Type:</td>
 				<td> 
-					<select id="docType" name="docType" style="width: 160" > 
+					<select id="docType" name="docType" style="width: 160px" >
 					<option value=""><bean:message key="dms.addDocument.formSelect" /></option> 
 					<% for (int i=0; i<doctypes.size(); i++) { 
 						String doctype = doctypes.get(i); %> 
-						<option value="<%= doctype%>" <%=(formdata.getDocType().equals(doctype))?" selected":""%>><%= doctype%></option> 
+                    <option value="<%=Encode.forHtmlAttribute(doctype)%>" <%=(formdata.getDocType().equals(doctype)) ? " selected" : ""%>><%=Encode.forHtmlContent(doctype)%>
+                    </option>
 					<%}%> 
 					</select> 
 					<input id="docTypeinput" type="button" size="20" onClick="newDocType();" value="<bean:message key="dms.documentEdit.formAddNewDocType"/> " /> 
@@ -310,7 +312,8 @@ for (String reportClass : reportClasses) {
         consultShown = true;
     }
 %>
-                                <option value="<%=reportClass%>" <%=reportClass.equals(formdata.getDocClass())?"selected":""%>><%=reportClass%></option>
+                <option value="<%=Encode.forHtmlAttribute(reportClass)%>" <%=reportClass.equals(formdata.getDocClass()) ? "selected" : ""%>><%=Encode.forHtmlContent(reportClass)%>
+                </option>
 <% } %>
                             </select>
                         </td>
@@ -325,11 +328,12 @@ for (String reportClass : reportClasses) {
 			<td>Description:</td>
 			<td><input <% if (linkhtmlerrors.containsKey("descmissing")) {%>
 				class="warning" <%}%> type="text" name="docDesc" size="30"
-				onfocus="checkDefaultValue(this)" value="<%=formdata.getDocDesc()%>"></td>
+                    onfocus="checkDefaultValue(this)" value="<%=Encode.forHtmlAttribute(formdata.getDocDesc())%>"></td>
 		</tr>
 		<tr>
 			<td>Added By:</td>
-			<td><%=EDocUtil.getProviderName(formdata.getDocCreator())%></td>
+            <td><%=Encode.forHtml(String.valueOf(EDocUtil.getProviderName(formdata.getDocCreator())))%>
+            </td>
 		</tr>
 		<tr>
 			<td>Responsible Provider:</td>
@@ -340,32 +344,36 @@ for (String reportClass : reportClasses) {
 			String selected = "";
 			if (formdata.getResponsibleId().equals(pd.get("providerNo"))) selected = "selected";
 			%>
-				<option value="<%=pd.get("providerNo")%>" <%=selected%>><%=pd.get("lastName")%>, <%=pd.get("firstName")%></option>
+                    <option value="<%=Encode.forHtmlAttribute(String.valueOf(pd.get("providerNo")))%>" <%=selected%>><%=Encode.forHtmlContent(String.valueOf(pd.get("lastName")))%>
+                        , <%=Encode.forHtmlContent(String.valueOf(pd.get("firstName")))%>
+                    </option>
 		<% } %>
 			    </select>
 			</td>
 		</tr>
 		<tr>
 			<td>Date Added/Updated:</td>
-			<td><%=lastUpdate%></td>
+            <td><%=Encode.forHtml(String.valueOf(lastUpdate))%>
+            </td>
 		</tr>
                 <tr>
-			<td><bean:message key="dms.addDocument.formContentAddedUpdated"/>:</td>
-			<td><%=formdata.getContentDateTime()%></td>
+            <td><bean:message key="dms.addDocument.formContentAddedUpdated"/>:</td>
+            <td><%=Encode.forHtml(String.valueOf(formdata.getContentDateTime()))%>
+            </td>
 		</tr>
 		<tr>
 			<td>Source Author:</td>
-			<td><input type="text" name="source" size="15" value="<%=formdata.getSource()%>"/></td>
+            <td><input type="text" name="source" size="15" value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getSource()))%>"/></td>
 		</tr>
 		<tr>
 			<td>Source Facility:</td>
-			<td><input type="text" name="sourceFacility" size="15" value="<%=formdata.getSourceFacility()%>"/></td>
+            <td><input type="text" name="sourceFacility" size="15" value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getSourceFacility()))%>"/></td>
 		</tr>
 		<tr>
 			<td>Observation Date <font class="comment">(yyyy/mm/dd):</font></td>
 			<td><input type="text" name="observationDate"
-				id="observationDate" value="<%=formdata.getObservationDate()%>"><a
-				id="obsdate"><img title="Calendar" src="../images/cal.gif"
+                       id="observationDate" value="<%=Encode.forHtmlAttribute(String.valueOf(formdata.getObservationDate()))%>"><a
+                    id="obsdate"><img title="Calendar" src="<%= request.getContextPath() %>/images/cal.gif"
 				alt="Calendar" border="0" /></a></td>
 		</tr>
 		<% if (module.equals("provider")) {%>
@@ -379,8 +387,8 @@ for (String reportClass : reportClasses) {
 		<tr>
 			<td colspan="2">
 			    <% if (formdata.getReviewerId()!=null && !formdata.getReviewerId().equals("")) { %>
-			    Reviewed: &nbsp; <%=EDocUtil.getProviderName(formdata.getReviewerId())%>
-			    &nbsp; [<%=formdata.getReviewDateTime()%>]
+                Reviewed: &nbsp; <%=Encode.forHtml(String.valueOf(EDocUtil.getProviderName(formdata.getReviewerId())))%>
+                &nbsp; [<%=Encode.forHtml(String.valueOf(formdata.getReviewDateTime()))%>]
 			    <% } else { %>
 			    <input type="button" value="Reviewed" title="Click to set Reviewed" onclick="reviewed(this);" />
 			    <% } %>
@@ -390,7 +398,7 @@ for (String reportClass : reportClasses) {
 		<tr>
 			<td colspan="2">
 			    <input type="button" value="Annotation"
-			    onclick="window.open('../annotation/annotation.jsp?atbname=<%=annotation_attrib%>&display=<%=annotation_display%>&table_id=<%=annotation_tableid%>&demo=<%=moduleid%>','anwin','width=400,height=500');" />
+                       onclick="window.open('<%= request.getContextPath() %>/annotation/annotation.jsp?atbname=<%=Encode.forJavaScript(String.valueOf(annotation_attrib))%>&display=<%=Encode.forJavaScript(String.valueOf(annotation_display))%>&table_id=<%=Encode.forJavaScript(String.valueOf(annotation_tableid))%>&demo=<%=Encode.forJavaScript(String.valueOf(moduleid))%>','anwin','width=400,height=500');"/>
 			</td>
 		</tr>
 		<tr>
@@ -399,7 +407,8 @@ for (String reportClass : reportClasses) {
 		<tr>
 			<td colspan="2">
 			    <textarea name="html" <% if (linkhtmlerrors.containsKey("uploaderror")) {%>
-				class="warning" <%}%> wrap="off" style="width: 98%; height: 200px;"><%=formdata.getHtml()%>
+				class="warning" <%}%> wrap="soft" style="width: 98%; height: 200px;">
+                    <%=Encode.forHtml(String.valueOf(formdata.getHtml()))%>
 			    </textarea>
 			</td>
 		</tr>
@@ -408,7 +417,8 @@ for (String reportClass : reportClasses) {
 	<div><input type="submit" name="Submit" value="Submit"><input
 		type="button" value="Cancel" onclick="window.close();"></div>
 	</center>
-</html:form> <script type="text/javascript">
+</form>
+    <script type="text/javascript">
                Calendar.setup( { inputField : "observationDate", ifFormat : "%Y/%m/%d", showsTime :false, button : "obsdate", singleClick : true, step : 1 } );
            </script></div>
 </body>
