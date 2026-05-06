@@ -2513,17 +2513,17 @@
 
     document.getElementById("inboxLink").addEventListener("mouseup", function(event) {
         if(event.altKey) {
-            document.getElementById("inboxLink").setAttribute("onclick", newInboxLinkClickEvent);
+            document.getElementById("inboxLink").setAttribute("onclick", originalInboxLinkClickEvent );
         } else {
-            document.getElementById("inboxLink").setAttribute("onclick", originalInboxLinkClickEvent);
+            document.getElementById("inboxLink").setAttribute("onclick", newInboxLinkClickEvent);
         }
     });
 
     document.getElementById("unclaimedLabLink").addEventListener("mouseup", function(event) {
         if(event.altKey) {
-            document.getElementById("unclaimedLabLink").setAttribute("onclick", newUnclaimedLabLinkClickEvent);
-        } else {
             document.getElementById("unclaimedLabLink").setAttribute("onclick", originalUnclaimedLabLinkClickEvent);
+        } else {
+            document.getElementById("unclaimedLabLink").setAttribute("onclick", newUnclaimedLabLinkClickEvent );
         }
     });
 </script>
