@@ -253,8 +253,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
             RxDrugData drugData = new RxDrugData();
 
             try {
-                allergyWarnings = drugData.getAllergyWarnings(atcCode, allergies);
-
+                allergyWarnings = drugData.getAllergyWarnings(loggedInInfo, rxSessionBean.getDemographicNo(), atcCode, allergies);
 
                 Allergy highestSeverityAllergy = null;
 
