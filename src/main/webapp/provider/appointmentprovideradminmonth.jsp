@@ -490,8 +490,6 @@
                         OnMouseOver="window.status='<bean:message key="provider.appointmentProviderAdminDay.viewDaySched"/>' ; return true"><bean:message
                         key="global.today"/></a>
 
-                | <span style="color:#333">Month</span>
-
             </td>
             <TD class="title noprint"><strong><%= arrayMonthOfYear[(month + 11) % 12] %>
             </strong></TD>
