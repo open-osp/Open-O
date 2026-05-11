@@ -432,7 +432,7 @@
 			<div class="form-group">
 				<label for="html">Link</label>
 				<div class="input-group">
-					<input type="text" id="html" name="html" class="form-control"
+					<input type="url" id="html" name="html" class="form-control" placeholder="https://www.example.com"
 					       value="<%=formdata.getHtml()%>" onfocus="checkDefaultValue(this)">
 					<input type="hidden" name="docCreator"
 					       value="<%=formdata.getDocCreator()%>">

@@ -99,14 +99,28 @@ public class AddEditHtmlAction extends Action {
              return mapping.findForward("failed");
         }
         if (fm.getMode().equals("addLink")) {
-            //the 'html' variable is the url
-            //checks for http://
-            String html = fm.getHtml();
-            if (html.indexOf("http://") == -1) {
+            String html = fm.getHtml().trim();
+            if (!html.startsWith("http://") && !html.startsWith("https://")) {
                 html = "http://" + html;
             }
+            try {
+                java.net.URL url = new java.net.URL(html);
+                String protocol = url.getProtocol();
+                if (!protocol.equals("http") && !protocol.equals("https")) {
+                    throw new java.net.MalformedURLException("Only http and https URLs are allowed");
+                }
+            } catch (java.net.MalformedURLException e) {
+                errors.put("urlinvalid", "dms.error.urlInvalid");
+                request.setAttribute("linkhtmlerrors", errors);
+                request.setAttribute("completedForm", fm);
+                request.setAttribute("function", request.getParameter("function"));
+                request.setAttribute("functionid", request.getParameter("functionid"));
+                return mapping.findForward("failed");
+            }
+
+            String safeUrl = html.replace("'", "%27");
             html = "<script type=\"text/javascript\" language=\"Javascript\">\n" +
-                    "window.location='" + html + "'\n" +
+                    "window.location='" + safeUrl + "'\n" +
                     "</script>";
             fm.setDocDesc(fm.getDocDesc() + " (link)");
             fm.setHtml(html);
