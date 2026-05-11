@@ -67,6 +67,8 @@
 <%@page import="org.oscarehr.managers.EmailManager"%>
 <%@page import="org.oscarehr.managers.EmailComposeManager"%>
 <%@page import="org.oscarehr.managers.SecurityInfoManager"%>
+<%@ page import="org.owasp.encoder.Encode" %>
+<%@ page import="oscar.util.StringUtils" %>
 
 <%
     String roleName2$ = (String)session.getAttribute("userrole") + "," + (String) session.getAttribute("user");
@@ -390,23 +392,24 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 		<%
 			String cursorStyle = (note.isCpp()) ? "cursor: pointer;" : "";
 		%>
-		<div id="<%=noteIdAttribute%>" 
-			 style="display: <%= noteDisplay %>; <%= cursorStyle %>" 
-			 class="<%=noteClassAttribute%>">
+    <div id="<%=Encode.forHtmlAttribute(String.valueOf(noteIdAttribute))%>"
+			 style="display: <%=Encode.forHtmlAttribute(String.valueOf(noteDisplay))%>; <%=Encode.forHtmlAttribute(String.valueOf(cursorStyle))%>"
+         class="<%=Encode.forHtmlAttribute(String.valueOf(noteClassAttribute))%>">
 			 
-			<input type="hidden" id="signed<%=globalNoteId%>" value="<%=note.isSigned()%>" />
-			<input type="hidden" id="full<%=globalNoteId%>" value="<%=fulltxt || (note.getNoteId() !=null && note.getNoteId().equals(savedId))%>" />
-			<input type="hidden" id="bgColour<%=globalNoteId%>" value="<%=bgColour%>" /> 
-			<input type="hidden" id="editWarn<%=globalNoteId%>" value="<%=editWarn%>" />
+        <input type="hidden" id="signed<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" value="<%=Encode.forHtmlAttribute(String.valueOf(note.isSigned()))%>"/>
+        <input type="hidden" id="full<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"
+               value="<%=Encode.forHtmlAttribute(String.valueOf(fulltxt || (note.getNoteId() !=null && note.getNoteId().equals(savedId))))%>"/>
+        <input type="hidden" id="bgColour<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" value="<%=Encode.forHtmlAttribute(String.valueOf(bgColour))%>"/>
+        <input type="hidden" id="editWarn<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" value="<%=Encode.forHtmlAttribute(String.valueOf(editWarn))%>"/>
 			<%
 			if (note.isEmailNote()) {
 			%>
-				<input type="hidden" id="emailNote<%=globalNoteId%>" value="true" /> 
+				<input type="hidden" id="emailNote<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" value="true" />
 			<%
 			}
 			%>
 
-	  		<div id="n<%=globalNoteId%>" class="note-contents">
+        <div id="n<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" class="note-contents">
 			<%
 				//display last saved note for editing
 				if (note.getNoteId()!=null && !"".equals(note.getNoteId()) && note.getNoteId().intValue() == savedId )
@@ -414,7 +417,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					found = true;
 					%>
 						<script>
-							savedNoteId=<%=note.getNoteId()%>;
+                savedNoteId =<%=Encode.forJavaScript(String.valueOf(note.getNoteId()))%>;
 						</script>
 						<%
  						if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {
@@ -427,9 +430,12 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			        <div class='tool-button print-button'>
 						<img title="<bean:message key="oscarEncounter.print.title"/>" id='print<%=globalNoteId%>' alt="<bean:message key="oscarEncounter.togglePrintNote.title"/>" onclick="togglePrint(<%=globalNoteId%>, event)" style='float: right; margin-right: 5px;' src='<%=ctx %>/oscarEncounter/graphics/printer.png' />
 			        </div>
-				    <textarea tabindex="7" cols="84" rows="10" class="txtArea boxsizingBorder <%= note.isSigned() ? "" : "unsigned-textarea"%>" wrap="soft" style="line-height: 1.1em;" name="caseNote_note" id="caseNote_note<%=savedId%>"><%=cform.getCaseNote_note()%></textarea>
+            <textarea tabindex="7" cols="84" rows="10"
+                      class="txtArea boxsizingBorder <%= note.isSigned() ? "" : "unsigned-textarea"%>" wrap="soft"
+                      style="line-height: 1.1em;" name="caseNote_note"
+                      id="caseNote_note<%=Encode.forHtmlAttribute(String.valueOf(savedId))%>"><%=Encode.forHtml(String.valueOf(cform.getCaseNote_note()))%></textarea>
 						
-						<div class="sig <%= note.isSigned() ? "" : "note-unsigned"%>" id="sig<%=globalNoteId%>">
+            <div class="sig <%= note.isSigned() ? "" : "note-unsigned"%>" id="sig<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>">
 							<%@ include file="noteIssueList.jsp"%>
 						</div>
 
@@ -544,8 +550,10 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 	       		            {
 	               		        String url="popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/oscarRx/StaticScript2.jsp?demographicNo=" + rx.getDemographicNo() + "&regionalIdentifier="+rx.getRegionalIdentifier()+"&cn="+response.encodeURL(rx.getCustomName())+"');";
 		                        %>
-			                <div class="view-links" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
-		                        	<a class="links" title="<%=rx.getSpecial()%>" id="view<%=globalNoteId%>" href="javascript:void(0);" onclick="<%=url%>" style="float: right; margin-right: 5px; "> <bean:message key="oscarEncounter.view.rxView" /> </a>
+            <div class="view-links"
+                 style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
+                <a class="links" title="<%=Encode.forHtmlAttribute(String.valueOf(rx.getSpecial()))%>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" href="javascript:void(0);"
+                   onclick="<%=Encode.forJavaScript(String.valueOf(url))%>" style="float: right; margin-right: 5px; "> <bean:message key="oscarEncounter.view.rxView"/> </a>
 			                </div>
 				    <%
 	                        }
@@ -560,10 +568,11 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+                String encodedDispDocNo = Encode.forUriComponent(dispDocNo);
+                url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + encodedDispDocNo +"');";
 							url = url + "return false;";
 
-							String editUrl = "window.open('/oscar/annotation/annotation.jsp?display=Documents&amp;table_id=" + dispDocNo + "&amp;demo=" + demographicNo + "','anwin','width=400,height=500');";
+							String editUrl = "window.open('/oscar/annotation/annotation.jsp?display=Documents&amp;table_id=" + encodedDispDocNo + "&amp;demo=" + demographicNo + "','anwin','width=400,height=500');";
 
 							if (note.getRemoteFacilityId()==null) // only allow editing for local notes
 							{
@@ -578,8 +587,10 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 								}
 							}
 			 				%>
-			                <div class="view-links" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
-								<a class="links" title="<bean:message key="oscarEncounter.view.docView"/>" id="view<%=globalNoteId%>" href="javascript:void(0)" onclick="<%=url%>" style="float: right;"> <bean:message key="oscarEncounter.view" /> </a>
+            <div class="view-links"
+                 style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
+                <a class="links" title="<bean:message key="oscarEncounter.view.docView"/>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"
+                   href="javascript:void(0)" onclick="<%=Encode.forJavaScript(String.valueOf(url))%>" style="float: right; "><bean:message key="oscarEncounter.view"/> </a>
 			                </div>
 				    <%
 			 			}
@@ -591,12 +602,15 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String winName = "docs" + demographicNo;
 							int hash = Math.abs(winName.hashCode());
 
-							url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + dispDocNo + "&providerNo=" + provNo + "');";
+                String encodedDispDocNo = Encode.forUriComponent(dispDocNo);
+                url = "popupPage(1000,1200,'" + hash + "', '" + request.getContextPath() + "/documentManager/showDocument.jsp?inWindow=true&segmentID=" + encodedDispDocNo +"');";
 							url = url + "return false;";
 						 	%>
-			                <div class="view-links" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
-							 	<a class="links" title="<bean:message key="oscarEncounter.view.docView"/>" id="view<%=globalNoteId%>" href="javascript:void(0);" onclick="<%=url%>" >
-							 		<bean:message key="oscarEncounter.view" />
+            <div class="view-links"
+                 style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
+                <a class="links" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view.docView"/>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"
+                   href="javascript:void(0);" onclick="<%=Encode.forJavaScript(String.valueOf(url))%>">
+                    <bean:message key="oscarEncounter.view"/>
 								</a>
 			                </div>
 							<%
@@ -637,7 +651,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							String url = "popupPage(700,800,'"
 											+hash+"started"+"','"
 											+request.getContextPath()
-											+ StringEscapeUtils.escapeHtml("/form/forwardshortcutname.do?formname=" + formEntry.getNote())
+                        + Encode.forHtml("/form/forwardshortcutname.do?formname=" + formEntry.getNote())
 											+ "&demographic_no=" + demographicNo
 											+ "&formId=" + formEntry.getNoteId()
 											+"'); return false;";
@@ -671,12 +685,12 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 						<%}
 						%>
 
-							<div id="wrapper<%=globalNoteId%>" style="<%=(note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""%>">
+							<div id="wrapper<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
 							<%-- render the note contents here --%>
-			  				<div id="txt<%=globalNoteId%>" name="<%=(note.isCpp()||note.isEmailNote())?"expandableReadonlyNoteText":""%>">
+			  				<div id="txt<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" name="<%=(note.isCpp()||note.isEmailNote())?"expandableReadonlyNoteText":""%>">
 
-		  						<%=noteStr%>
-							</div> <!-- end of txt<%=globalNoteId%> -->
+                    <%=Encode.forHtml(String.valueOf(noteStr))%>
+                </div> <!-- end of txt<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
 		  						<%
 		  							if (note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())
 		  							{
@@ -696,27 +710,29 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 															{
 																if(globalNoteId.contains("EFORM")){
 																	%>
-																	 <a style="color:#ddddff;" href="javascript:void(0)" onclick="return showHistory('<%=globalNoteId.replace("EFORM","")%>', event);"><%=rev%></a>
+                    <a style="color:#ddddff;" href="javascript:void(0)"
+                       onclick="return showHistory('<%=Encode.forJavaScript(String.valueOf(globalNoteId.replace("EFORM","")))%>', event);"><%=Encode.forHtml(String.valueOf(rev))%>
+                    </a>
 																	<%
 																}else{
 																	%>
-																	 <a style="color:#ddddff;" href="javascript:void(0)" onclick="return showHistory('<%=globalNoteId%>', event);"><%=rev%></a>
-																	<%
-																}
-															}
-															else
-															{
+                    <a style="color:#ddddff;" href="javascript:void(0)"
+                       onclick="return showHistory('<%=Encode.forJavaScript(String.valueOf(globalNoteId))%>', event);"><%=Encode.forHtml(String.valueOf(rev))%>
+                    </a>
+                    <%
+                        }
+                    } else {
 																%>
 																	N/A
 																<%
 															}
 														}
 													%>
-											</div> <!-- end of observation<%=globalNoteId%> -->
+                </div> <!-- end of observation<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
 		  								<%
 		  							}
 		  						%>
-			  				</div> <!-- end of wrapper<%=globalNoteId%> -->
+            </div> <!-- end of wrapper<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
 						<%
 
 			 			if (!note.isEmailNote() && largeNote(noteStr))
@@ -738,18 +754,19 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<%
 							}
 						%>						
-							<div id="sig<%=globalNoteId%>" class="sig" style="<%=note.isEmailNote()?(bgColour):""%>">
-								<div id="sumary<%=globalNoteId%>" style="<%=note.isEmailNote()?"color: #FFF !important":""%>">
-									<div id="observation<%=globalNoteId%>" style="float: right; margin-right: 3px;">
-											<bean:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
-											<span id="obs<%=globalNoteId%>"><%=DateUtils.getDate(note.getObservationDate(), dateFormat, request.getLocale())%></span>&nbsp;
+							<div id="sig<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" class="sig" style="<%=Encode.forHtmlAttribute(String.valueOf(note.isEmailNote()?(bgColour):""))%>">
+								<div id="sumary<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" style="<%=note.isEmailNote()?"color: #FFF !important":""%>">
+                    <div id="observation<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" style="float: right; margin-right: 3px;">
+                        <fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.encounterDate.title"/>:&nbsp;
+                        <span id="obs<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"><%=Encode.forHtml(String.valueOf(DateUtils.getDate(note.getObservationDate(), dateFormat, request.getLocale())))%></span>&nbsp;
 											<%if (!note.isEmailNote()) {%>
 												<bean:message key="oscarEncounter.noteRev.title" />
 												<%
 													if (rev!=null)
 													{
 														%>
-															<a href="javascript:void(0)" onclick="return showHistory('<%=globalNoteId%>', event);"><%=rev%></a>
+                        <a href="javascript:void(0)" onclick="return showHistory('<%=Encode.forJavaScript(String.valueOf(globalNoteId))%>', event);"><%=Encode.forHtml(String.valueOf(rev))%>
+                        </a>
 														<%
 													}
 													else
@@ -828,7 +845,8 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 															for (String issueDescription : issueDescriptions)
 															{
 																%>
-																	<li><%=issueDescription.trim()%></li>
+                            <li><%=Encode.forHtml(String.valueOf(issueDescription.trim()))%>
+                            </li>
 																<%
 															}
 														%>
@@ -845,15 +863,16 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 										Email Note
 									</div>
 									<%}%>
-								</div> <!-- end of div summary<%=globalNoteId%> -->
-							</div> <!-- end of div sig<%=globalNoteId%> -->
+                </div> <!-- end of div summary<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
+            </div> <!-- end of div sig<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
 						<%
 						} // end of if (!note.isDocument() && !note.isCpp() && !note.isEformData() && !note.isEncounterForm() && !note.isInvoice())
 					}
 				}
 				%>
-			</div><!-- end of div n<%=globalNoteId%> -->
-		</div><!-- end of div <%=noteIdAttribute%> -->
+        </div><!-- end of div n<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
+    </div>
+    <!-- end of div <%=Encode.forHtml(String.valueOf(noteIdAttribute))%> -->
 		
 <%--		<% if (request.getAttribute("moreNotes") != null && ((Boolean) request.getAttribute("moreNotes"))) { %>--%>
 <%--		<script type="text/javascript">--%>
@@ -873,7 +892,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			}
 			else if (!fulltxt && !note.isDocument() && !note.isEformData() && !note.isEncounterForm() && !note.isRxAnnotation() && !note.isInvoice() && !note.isEmailNote())
 			{
-				%><script> Element.observe('n<%=note.getNoteId()%>', 'click', fullView); </script><%
+				%><script> Element.observe('n<%=Encode.forJavaScript(String.valueOf(note.getNoteId()))%>', 'click', fullView); </script><%
 				unLockedNotes.add(note.getNoteId());
 			}
 		}
@@ -940,7 +959,9 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 	else if( casemgmtNoteLock.isLockedBySameUser() && !casemgmtNoteLock.getSessionId().equals(request.getRequestedSessionId()) ) {
     	//note is locked by same user so offer to unlock note and view locked note in progress    	    
 %>
-		var viewEditedNote = confirm("You have started to edit this note in another window at <%=casemgmtNoteLock.getIpAddress()%>.\nDo you wish to continue?");
+    // override this non-funtional feature to confirm edit always.
+		let viewEditedNote = true;
+            // confirm("You have started to edit this note in another window at <%=casemgmtNoteLock.getIpAddress()%>.\nDo you wish to continue?");
 		if( viewEditedNote ) {	
 			doscroll();
 			var params = "method=updateNoteLock&demographicNo=" + demographicNo;
@@ -975,7 +996,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
     		var staleIds = new Array();
 
         	jQuery("img[id^='quitImg']").each(function(){
-				if (jQuery(this).attr('src').indexOf('/oscarEncounter/graphics/triangle_down.gif')!=-1) {
+				if (jQuery(this).attr('src').indexOf('/oscarEncounter/graphics/triangle_down.gif')!==-1) {
 					var iid = jQuery(this).attr('id');
 					jQuery(this).trigger('click');
 					staleIds.push(iid);
@@ -995,7 +1016,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
    
    <%if (!bean.oscarMsg.equals(""))
 			{%>
-        $(caseNote).value +="\n\n<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(bean.oscarMsg)%>";
+    $(caseNote).value += "\n\n<%=Encode.forJavaScript(bean.oscarMsg)%>";
    <%bean.reason = "";
 				bean.oscarMsg = "";
 			}
@@ -1004,19 +1025,24 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			{
 				String noteBody = request.getParameter("noteBody");
 				noteBody = noteBody.replaceAll("<br>|<BR>", "\n");%>
-        $(caseNote).value +="\n\n<%=org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(noteBody)%>";
+    $(caseNote).value += "\n\n<%=Encode.forJavaScript(noteBody)%>";
    <%}
 
 			if (found != true)
 			{%>
-        document.forms["caseManagementEntryForm"].newNoteIdx.value = <%=savedId%>;
+    document.forms["caseManagementEntryForm"].newNoteIdx.value = <%=Encode.forJavaScript(String.valueOf(savedId))%>;
    <%}
 			else
 			{%>
         document.forms["caseManagementEntryForm"].note_edit.value = "existing";
     <%}%>
     setupNotes();
-    Element.observe(caseNote, "keyup", monitorCaseNote);
+	jQuery('#' + caseNote).on('keyup', monitorCaseNote);
+	jQuery('#' + caseNote).on('paste', function(e) {
+		// Let the paste happen first, then resize
+		setTimeout(adjustCaseNote, 0);
+	});
+
     Element.observe(caseNote, 'click', getActiveText);
     <%Integer num;
 			Iterator<Integer> iterator = lockedNotes.iterator();
@@ -1045,17 +1071,17 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			for (int j = 0; j < bean.templateNames.size(); j++)
 			{
 				String encounterTmp = bean.templateNames.get(j);
-				encounterTmp = oscar.util.StringUtils.maxLenString(encounterTmp, MaxLen, TruncLen, ellipses);
-				encounterTmp = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(encounterTmp);%>
-     autoCompleted["<%=encounterTmp%>"] = "ajaxInsertTemplate('<%=encounterTmp%>')";
-     autoCompList.push("<%=encounterTmp%>");
-     itemColours["<%=encounterTmp%>"] = "99CCCC";
+				encounterTmp = StringUtils.maxLenString(encounterTmp, MaxLen, TruncLen, ellipses);
+				encounterTmp = Encode.forJavaScript(encounterTmp);%>
+    autoCompleted["<%=Encode.forJavaScript(String.valueOf(encounterTmp))%>"] = "ajaxInsertTemplate('<%=Encode.forJavaScript(String.valueOf(encounterTmp))%>')";
+    autoCompList.push("<%=Encode.forJavaScript(String.valueOf(encounterTmp))%>");
+    itemColours["<%=Encode.forJavaScript(String.valueOf(encounterTmp))%>"] = "99CCCC";
    <%}%>
    //set default event for assigning issues
    //we do this here so we can change event listener when changing diagnosis
    var obj = { };
    makeIssue = "makeIssue";
-   defaultDiv = "sig<%=savedId%>";
+    defaultDiv = "sig<%=Encode.forJavaScript(String.valueOf(savedId))%>";
    changeIssueFunc;  //set in changeDiagnosis function above
    addIssueFunc = updateIssues.bindAsEventListener(obj, makeIssue, defaultDiv);
    Element.observe('asgnIssues', 'click', addIssueFunc);
@@ -1068,10 +1094,10 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
    //start timer for autosave
    setTimer();
 
-    reason = "<%=insertReason(request)%>";    //function defined bottom of file
+    reason = "<%=Encode.forJavaScript(String.valueOf(insertReason(request)))%>";    //function defined bottom of file
 
     if(typeof messagesLoaded == 'function') {
- 	     messagesLoaded('<%=savedId%>');
+        messagesLoaded('<%=Encode.forJavaScript(String.valueOf(savedId))%>');
  	 }
     <%
 	if (OscarProperties.getInstance().getBooleanProperty("note_program_ui_enabled", "true")) {
@@ -1117,7 +1143,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 			encounterText = "\n[" + apptDate + " .: " + reason + "]\n";
 		}
 
-		encounterText = org.apache.commons.lang.StringEscapeUtils.escapeJavaScript(encounterText);
+        encounterText = Encode.forJavaScript(encounterText);
 		return encounterText;
 	}
 

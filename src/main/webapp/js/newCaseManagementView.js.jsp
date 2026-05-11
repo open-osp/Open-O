@@ -1901,7 +1901,8 @@ function editNote(e) {
 
     var noteLockStatus = NoteisLocked(nId);
     if(noteLockStatus == "user") {
-    	var viewEditedNote = confirm("You have started to edit this note in another window.\nDo you wish to continue?");
+    	let viewEditedNote = true;
+            // confirm("You have started to edit this note in another window.\nDo you wish to continue?");
     	if( viewEditedNote ) {    	
     		var parent = $(caseNote).parentNode.id;
     		var oldNoteId = parent.substr(1);	    		
