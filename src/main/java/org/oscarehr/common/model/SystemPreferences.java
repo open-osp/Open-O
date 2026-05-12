@@ -39,7 +39,7 @@ public class SystemPreferences extends AbstractModel<Integer>
     public enum ECHART_PREFERENCE_KEYS {echart_hide_timer}
     public enum MASTER_FILE_PREFERENCE_KEYS {display_former_name, redirect_for_contact}
     public enum GENERAL_SETTINGS_KEYS {invoice_custom_clinic_info, invoice_use_custom_clinic_info}
-    public enum LAB_DISPLAY_PREFERENCE_KEYS {code_show_hide_column, inboxDateSearchType}
+    public enum LAB_DISPLAY_PREFERENCE_KEYS {code_show_hide_column, inboxDateSearchType, lab_pdf_max_size}
     public enum EFORM_SETTINGS {rtl_template_document_type, patient_intake_eform, patient_intake_letter_eform}
     public enum  REFERRAL_SOURCE_PREFERENCE_KEYS {enable_referral_source}
     public enum DOCUMENT_SETTINGS_KEYS {document_description_typeahead, inbox_use_fax_dropdown }

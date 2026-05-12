@@ -95,7 +95,7 @@ String demographicID = request.getParameter("demographicId");
 String showAllstr = request.getParameter("all");
 
 String showLatest = request.getParameter("showLatest");
-
+boolean embedPdf = true;
 List<String> allLicenseNames = new ArrayList<String>();
 String lastLicenseNo = null, currentLicenseNo = null;
 
@@ -1891,14 +1891,15 @@ for(int mcount=0; mcount<multiID.length; mcount++){
 											
 											<%
 												// for Excelleris Embedded Content - ie: PDF, RTF, etc...
-												if((handler.getMsgType().equals("ExcellerisON") || handler.getMsgType().equals("PATHL7")) && handler.getOBXValueType(j,k).equals("ED")) {
+												if(handler.isEmbeddedContent()) {
 													String legacy = "";
 													if(handler.getMsgType().equals("PATHL7") && ((PATHL7Handler)handler).isLegacy(j,k) ) {
 														legacy ="&legacy=true";
 													}
 												
 												%>	
-													 <td align="<%=align%>"><a href="<%=request.getContextPath() %>/lab/DownloadEmbeddedDocumentFromLab.do?labNo=<%= Encode.forHtmlAttribute(segmentID) %>&segment=<%=j%>&group=<%=k%><%=legacy%>">PDF Report</a></td>
+													 <td align="<%=align%>">
+                                                         <a href="<%=request.getContextPath() %>/lab/DownloadEmbeddedDocumentFromLab.do?labNo=<%= Encode.forHtmlAttribute(segmentID) %>&segment=<%=j%>&group=<%=k%><%=legacy%>">Download PDF</a></td>
 													 <%
 												} else {
 											%>
@@ -1950,8 +1951,26 @@ for(int mcount=0; mcount<multiID.length; mcount++){
                                             	<td><%= !currentLicenseNo.equals(lastLicenseNo)?currentLicenseNo:""%></td>
                                             <% } %>
                                        </tr>
-
-										<%}
+                                        <%
+                                            if(embedPdf){
+                                                if(handler.isEmbeddedContent()){
+                                                String legacy = "";
+                                                if(handler.getMsgType().equals("PATHL7") && ((PATHL7Handler)handler).isLegacy(j,k) ) {
+                                                    legacy ="&legacy=true";
+                                                }
+                                        %>
+                                            <tr>
+                                                <td colspan="8">
+                                                    <object data="<%=request.getContextPath() %>/lab/DisplayEmbeddedDocumentFromLab.do?labNo=<%=segmentID%>&segment=<%=j%>&group=<%=k%><%=legacy%>"
+                                                            width="100%" height="600px" type="application/pdf" style="text-align: center">
+                                                        <i>OSCAR Message: </i>Could not display preview (the file is too large or has errors)<br>Please use the download link above
+                                                    </object>
+                                                </td>
+                                            </tr>
+                                        <%
+                                                }
+                                            }
+                                   		}
 
                                         for (l=0; l < handler.getOBXCommentCount(j, k); l++){%>
                                         <tr bgcolor="<%=(linenum % 2 == 1 ? highlight : "")%>" class="NormalRes">
