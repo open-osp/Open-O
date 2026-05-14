@@ -237,7 +237,7 @@
                             <security:oscarSec roleName="<%=roleName$%>" objectName="_edoc" rights="r">
                                 <li>
                                     <a HREF="#"
-                                       onclick="popup('700', '1024', '<%= request.getContextPath() %>/documentManager/documentReport.jsp?function=providers&functionid=<%=Encode.forJavaScript(String.valueOf(curUser_no))%>&curUser=<%=Encode.forJavaScript(String.valueOf(curUser_no))%>', 'edocView');"
+                                       onclick="popup('700', '1024', '<%= request.getContextPath() %>/documentManager/documentReport.jsp?function=provider&functionid=<%=Encode.forUriComponent(curUser_no)%>&curUser=<%=Encode.forUriComponent(curUser_no)%>', 'edocView');"
                                        TITLE='<bean:message key="provider.appointmentProviderAdminDay.viewEdoc"/>'><bean:message
                                             key="global.edoc"/></a>
                                 </li>
