@@ -329,7 +329,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 				}
 			}
 
-			noteStr = StringEscapeUtils.escapeHtml(noteStr);
+            noteStr = Encode.forHtml(noteStr);
 			// for remote notes, the full text is always shown.
 			fulltxt = fullTxtFormat.get(pos) || note.getRemoteFacilityId()!=null;
 			--pos;
@@ -447,7 +447,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 					if (false)
 					{
 					%>
-						<div id="txt<%=globalNoteId%>">
+						<div id="txt<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>">
 							<bean:message key="oscarEncounter.Index.msgLocked" /> <%=DateUtils.getDate(note.getUpdateDate(), dateFormat, request.getLocale()) + " " + note.getProviderName()%>
 						</div>
 					<%
@@ -480,7 +480,8 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 						{
 					 	%>
 						 	<div style="background-color:#ffcccc; text-align:right">
-						 		<bean:message key="oscarEncounter.noteFrom.label" />&nbsp;<%=note.getLocation()%>,<%=note.getProviderName()%>
+                <bean:message key="oscarEncounter.noteFrom.label"/>&nbsp;<%=Encode.forHtml(String.valueOf(note.getLocation()))%>
+                ,<%=Encode.forHtml(String.valueOf(note.getProviderName()))%>
 						 	</div>
 						<%
 						}
@@ -489,7 +490,8 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 						{
 					 	%>
 						 	<div style="background-color:#33FFCC; text-align:right">
-						 		Group Note - Editable note in this <a  href="javascript:void(0)" onClick="popupPage(700,1000,'Master1','<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=note.getLocation() %>&displaymode=edit&dboperation=search_detail');return false;">client</a>
+                Group Note - Editable note in this <a href="javascript:void(0)"
+                                                      onClick="popupPage(700,1000,'Master1','<%=request.getContextPath()%>/demographic/demographiccontrol.jsp?demographic_no=<%=Encode.forJavaScript(String.valueOf(note.getLocation()))%>&displaymode=edit&dboperation=search_detail');return false;">client</a>
 						 	</div>
 						<%
 						}
@@ -688,9 +690,8 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 							<div id="wrapper<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
 							<%-- render the note contents here --%>
 			  				<div id="txt<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" name="<%=(note.isCpp()||note.isEmailNote())?"expandableReadonlyNoteText":""%>">
-
-                    <%=Encode.forHtml(String.valueOf(noteStr))%>
-                </div> <!-- end of txt<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
+                                <%=noteStr%> <%-- noteStr is already HTML encoded. Do not double encode --%>
+                            </div> <!-- end of txt<%=Encode.forHtml(String.valueOf(globalNoteId))%> -->
 		  						<%
 		  							if (note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())
 		  							{
@@ -845,7 +846,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 															for (String issueDescription : issueDescriptions)
 															{
 																%>
-                            <li><%=Encode.forHtml(String.valueOf(issueDescription.trim()))%>
+                            <li><%=Encode.forHtml(issueDescription.trim())%>
                             </li>
 																<%
 															}
