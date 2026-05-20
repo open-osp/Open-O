@@ -982,12 +982,6 @@
                     case <bean:message key="global.edocShortcut"/> :
                         popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=curUser_no%>&curUser=<%=curUser_no%>', 'edocView');
                         return false;  //run code for e'D'oc
-                    case <bean:message key="global.resourcesShortcut"/> :
-                        popupOscarRx(550, 687, '<%=resourcebaseurl%>');
-                        return false; // code for R'e'sources
-                    case <bean:message key="global.helpShortcut"/> :
-                        popupOscarRx(600, 750, '<%=resourcebaseurl%>');
-                        return false;  //run code for 'H'elp
                     case <bean:message key="global.ticklerShortcut"/> : {
                         <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
                         popupOscarRx(700, 1024, '../tickler/ticklerMain.jsp', '<bean:message key="global.tickler"/>') //run code for t'I'ckler
