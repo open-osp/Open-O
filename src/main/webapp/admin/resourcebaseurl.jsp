@@ -23,10 +23,11 @@
     Ontario, Canada
 
 --%>
-<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*" errorPage="../appointment/errorpage.jsp"%>
+<%@ page import="java.util.*, java.sql.*, oscar.*, java.text.*, java.lang.*,java.net.*" %>
 <%@ page import="org.oscarehr.util.SpringUtils" %>
 <%@ page import="org.oscarehr.common.model.UserProperty" %>
 <%@ page import="org.oscarehr.common.dao.UserPropertyDAO" %>
+<%@ page import="org.owasp.encoder.Encode" %>
 
 <%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
@@ -139,17 +140,18 @@
  <%}%>
 
 <!-- Help Link - Website -->
-<div class="row well" id="websiteDiv" style="background-color:">
-	<div class="span1" style="background-color:">
+<div class="row well" id="websiteDiv" >
+	<div class="span1" >
 		<input type="radio" name="helpOption" class="helpOption" value="website" <%=checkedWebsite%>>
 	</div><!-- span2 -->
 	
-	<div class="span8" style="background-color:"> 
+	<div class="span8" >
 		<form method="post" name="baseurl" id="websiteForm" action="resourcebaseurl.jsp" class="form-inline">
 		
 		<h4>Website</h4>
 		<!--<bean:message key="admin.resourcebaseurl.formBaseUrl" /><br>-->
-		<input type="text" name="resource_baseurl" style="width:100%;margin-bottom:10px" placeholder="<bean:message key="admin.resourcebaseurl.formBaseUrlExample" />" value="<%if(resource_baseurl_value!=null){ out.print(resource_baseurl_value);}%>">
+		<input type="url" name="resource_baseurl" style="width:100%;margin-bottom:10px" placeholder="https://www.example.com"
+               value="<%if(resource_baseurl_value!=null){ out.print(resource_baseurl_value);}%>">
 		<div class="span8">
 			<input type="submit" class="btn pull-right" name="websiteSave" id="websiteSave" value="<bean:message key="admin.resourcebaseurl.btnSave"/>">
 		</div>
@@ -162,15 +164,17 @@
 
 <!-- Help Link - Details -->
 <div class="row well" id="detailsDiv">
-	<div class="span1" style="background-color:">
+	<div class="span1" >
 		<input type="radio" name="helpOption" class="helpOption" value="details" <%=checkedDetails%>>
 	</div><!-- span2 -->
 	
-	<div class="span8" style="background-color:"> 
+	<div class="span8" >
 	<form method="post" name="baseurl" id="detailsForm" action="resourcebaseurl.jsp">
 	<h4>Details</h4>
-		<textarea class="textarea" name="resource_helpHtml" id="resource_helpHtml" placeholder="Enter text ..." style="width:100%;height:160px"><%if(resource_helpHtml_value!=null){ out.print(resource_helpHtml_value);}%></textarea>
-		<div class="span8" style="padding-left:0px;padding-right:0px;">
+		<textarea class="textarea" name="resource_helpHtml" id="resource_helpHtml" placeholder="Enter text ..." style="width:100%;height:160px">
+            <%if(resource_helpHtml_value!=null){
+        out.print(Encode.forHtml(resource_helpHtml_value));}%></textarea>
+		<div class="span8" style="padding-left:0;padding-right:0;">
 			<div class="span6" id="chars"><div class='alert alert-plain'>Character Limit = 2000</div></div>
 			<input type="submit" class="btn pull-right" name="detailsSave" id="detailsSave"  value="<bean:message key="admin.resourcebaseurl.btnSave"/>">
 		</div>

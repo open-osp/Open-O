@@ -228,18 +228,6 @@
 
 <%
     String prov = oscarVariables.getProperty("billregion", "").trim().toUpperCase();
-    String resourcebaseurl = oscarVariables.getProperty("resource_base_url");
-
-    UserProperty rbu = userPropertyDao.getProp("resource_baseurl");
-    if (rbu != null) {
-        resourcebaseurl = rbu.getValue();
-    }
-
-    String resourcehelpHtml = "";
-    UserProperty rbuHtml = userPropertyDao.getProp("resource_helpHtml");
-    if (rbuHtml != null) {
-        resourcehelpHtml = rbuHtml.getValue();
-    }
 
     GregorianCalendar now = new GregorianCalendar();
     int curYear = now.get(Calendar.YEAR); //curYear should be the real now date

@@ -60,13 +60,19 @@
     boolean isMobileOptimized = session.getAttribute("mobileOptimized") != null;
     Properties oscarVariables = OscarProperties.getInstance();
     String prov= (oscarVariables.getProperty("billregion","")).trim().toUpperCase();
-    String resourcebaseurl =  oscarVariables.getProperty("resource_base_url");
     String curUser_no = (String) session.getAttribute("user");
 
     String resourcehelpHtml = "";
+    String resourcebaseurl =  oscarVariables.getProperty("resource_base_url");
+
     UserProperty rbuHtml = userPropertyDao.getProp("resource_helpHtml");
     if(rbuHtml != null) {
         resourcehelpHtml = rbuHtml.getValue();
+    }
+
+    UserProperty rbu = userPropertyDao.getProp("resource_baseurl");
+    if (rbu != null) {
+        resourcebaseurl = rbu.getValue();
     }
 
     String userfirstname = loggedInInfo.getLoggedInProvider().getFirstName();
@@ -106,17 +112,17 @@
                     </a>
                 </li>
 
-                <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">
-                    <security:oscarSec roleName="<%=roleName$%>" objectName="_resource" rights="r">
-                        <li>
-                            <a href="#" ONCLICK="popupPage2('<%=Encode.forJavaScript(String.valueOf(resourcebaseurl))%>');return false;"
-                               title="<bean:message key="provider.appointmentProviderAdminDay.viewResources"/>"
-                               onmouseover="window.status='<bean:message
-                                       key="provider.appointmentProviderAdminDay.viewResources"/>';return true"><bean:message
-                                    key="oscarEncounter.Index.clinicalResources"/></a>
-                        </li>
-                    </security:oscarSec>
-                </caisi:isModuleLoad>
+<%--                <caisi:isModuleLoad moduleName="TORONTO_RFQ" reverse="true">--%>
+<%--                    <security:oscarSec roleName="<%=roleName$%>" objectName="_resource" rights="r">--%>
+<%--                        <li>--%>
+<%--                            <a href="#" ONCLICK="popupPage2('<%=Encode.forJavaScript(String.valueOf(resourcebaseurl))%>');return false;"--%>
+<%--                               title="<bean:message key="provider.appointmentProviderAdminDay.viewResources"/>"--%>
+<%--                               onmouseover="window.status='<bean:message--%>
+<%--                                       key="provider.appointmentProviderAdminDay.viewResources"/>';return true"><bean:message--%>
+<%--                                    key="oscarEncounter.Index.clinicalResources"/></a>--%>
+<%--                        </li>--%>
+<%--                    </security:oscarSec>--%>
+<%--                </caisi:isModuleLoad>--%>
 
                 <%
                     if (isMobileOptimized) {
@@ -320,18 +326,19 @@
 
                         </security:oscarSec>
                         <li id="helpLink">
-                            <%if(resourcehelpHtml==""){ %>
-                            <a href="javascript:void(0)" onClick ="popupPage(600,750,'<%=Encode.forJavaScript(String.valueOf(resourcebaseurl))%>')"><bean:message key="global.help"/></a>
+                            <% if(resourcehelpHtml.isEmpty()){ %>
+                                <a href="javascript:void(0)" onClick ="popupPage(600,750,'<%=resourcebaseurl%>')"><bean:message key="global.help"/></a>
                             <%}else{%>
                             <div id="help-link">
-                                <a href="javascript:void(0)" onclick="document.getElementById('helpHtml').style.display='block';document.getElementById('helpHtml').style.right='0px';"><bean:message key="global.help"/></a>
+                                <a href="javascript:void(0)" onclick="document.getElementById('helpHtml').style.display='block';document.getElementById('helpHtml').style.right='0px';">
+                                    <bean:message key="global.help"/>
+                                </a>
 
                                 <div id="helpHtml">
                                     <div class="help-title">Help</div>
 
                                     <div class="help-body">
-
-                                        <%=Encode.forHtml(String.valueOf(resourcehelpHtml))%>
+                                        <%=Encode.forHtml(resourcehelpHtml)%>
                                     </div>
                                     <a href="javascript:void(0)" class="help-close" onclick="document.getElementById('helpHtml').style.right='-280px';document.getElementById('helpHtml').style.display='none'">(X)</a>
                                 </div>
@@ -429,5 +436,3 @@
         }).dialog("open");
     }
 </script>
-
-

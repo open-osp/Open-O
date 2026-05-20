@@ -145,14 +145,10 @@
     Map<Integer, LookupListItem> reasonCodesMap = new HashMap<>();
     OscarProperties oscarVariables = OscarProperties.getInstance();
     AppManager appManager = SpringUtils.getBean(AppManager.class);
-    String resourcehelpHtml = "";
-    UserProperty rbuHtml = userPropertyDao.getProp("resource_helpHtml");
+
     PreventionManager providerPreventionManager = SpringUtils.getBean(PreventionManager.class);
 %>
 <%
-    if(rbuHtml != null){
-        resourcehelpHtml = rbuHtml.getValue();
-    }
     LookupList reasonCodes = lookupListManager.findLookupListByName(loggedInInfo1, "reasonCode");
     for (LookupListItem lli : reasonCodes.getItems()) {
         reasonCodesMap.put(lli.getId(), lli);
@@ -360,13 +356,6 @@
 
     // List of statuses that are excluded from the schedule appointment count for each provider
     List<String> noCountStatus = Arrays.asList("C","CS","CV","N","NS","NV");
-
-    String resourcebaseurl = oscarVariables.getProperty("resource_base_url");
-
-    UserProperty rbu = userPropertyDao.getProp("resource_baseurl");
-    if (rbu != null) {
-        resourcebaseurl = rbu.getValue();
-    }
 
     boolean isWeekView = false;
     String provNum = request.getParameter("provider_no");
@@ -2054,12 +2043,12 @@
                     case <bean:message key="global.edocShortcut"/> :
                         popupOscarRx('700', '1024', '../documentManager/documentReport.jsp?function=provider&functionid=<%=loggedInInfo1.getLoggedInProviderNo()%>&curUser=<%=loggedInInfo1.getLoggedInProviderNo()%>', 'edocView');
                         return false;  //run code for e'D'oc
-                    case <bean:message key="global.resourcesShortcut"/> :
-                        popupOscarRx(550, 687, '<%=resourcebaseurl%>');
-                        return false; // code for R'e'sources
-                    case <bean:message key="global.helpShortcut"/> :
-                        popupOscarRx(600, 750, '<%=resourcebaseurl%>');
-                        return false;  //run code for 'H'elp
+                    <%--case <bean:message key="global.resourcesShortcut"/> :--%>
+                    <%--    popupOscarRx(550, 687, '<%=resourcebaseurl%>');--%>
+                    <%--    return false; // code for R'e'sources--%>
+                    <%--case <bean:message key="global.helpShortcut"/> :--%>
+                    <%--    popupOscarRx(600, 750, '<%=resourcebaseurl%>');--%>
+                    <%--    return false;  //run code for 'H'elp--%>
                     case <bean:message key="global.ticklerShortcut"/> : {
                         <caisi:isModuleLoad moduleName="ticklerplus" reverse="true">
                         popupOscarRx(700, 1024, '../tickler/ticklerMain.jsp', '<bean:message key="global.tickler"/>') //run code for t'I'ckler
