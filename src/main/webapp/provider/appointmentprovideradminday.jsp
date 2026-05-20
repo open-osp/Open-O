@@ -1316,8 +1316,12 @@
                                                     <c:out value='<%=curProviderName[nProvider]  + " (" + appointmentCount + ") " %>' />
                                                 </a>
                                                 <oscar:oscarPropertiesCheck value="yes" property="TOGGLE_REASON_BY_PROVIDER" defaultVal="yes">
-                                                    <a id="expandReason" href="#" onclick="return toggleReason('<%=curProvider_no[nProvider]%>');"
-                                                       title="<bean:message key="provider.appointmentProviderAdminDay.expandreason"/>">*</a>
+                                                    <a href="javascript:void(0)"
+                                                       class="expand-reason-btn"
+                                                       data-provider="<%=Encode.forHtmlAttribute(String.valueOf(curProvider_no[nProvider]))%>"
+                                                       onclick="toggleReason(event, '<%=Encode.forJavaScript(String.valueOf(curProvider_no[nProvider]))%>');"
+                                                       title="<bean:message key='provider.appointmentProviderAdminDay.expandreason'/>"
+                                                    >*</a>
                                                 </oscar:oscarPropertiesCheck>
 
                                                     <% } %>
