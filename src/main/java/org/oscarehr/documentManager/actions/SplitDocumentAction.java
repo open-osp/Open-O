@@ -47,8 +47,6 @@ import org.oscarehr.common.model.ProviderLabRoutingModel;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import org.oscarehr.documentManager.EDoc;
 import org.oscarehr.documentManager.EDocUtil;
@@ -127,9 +125,7 @@ public class SplitDocumentAction extends DispatchAction {
 				newPdf.close();
 
 
-				WebApplicationContext ctx = WebApplicationContextUtils.getRequiredWebApplicationContext(request.getSession().getServletContext());
-				ProviderInboxRoutingDao providerInboxRoutingDao = (ProviderInboxRoutingDao) ctx.getBean("queueDocumentLinkDao");
-				//providerInboxRoutingDao.addToProviderInbox("0", Integer.parseInt(newDocNo), "DOC");
+				ProviderInboxRoutingDao providerInboxRoutingDao = SpringUtils.getBean(ProviderInboxRoutingDao.class);
 
 				List<ProviderInboxItem> routeList = providerInboxRoutingDao.getProvidersWithRoutingForDocument("DOC", Integer.parseInt(docNum));
 				for (ProviderInboxItem i : routeList) {
@@ -138,7 +134,7 @@ public class SplitDocumentAction extends DispatchAction {
 
 				providerInboxRoutingDao.addToProviderInbox(providerNo, Integer.parseInt(newDocNo), "DOC");
 
-				QueueDocumentLinkDao queueDocumentLinkDAO = (QueueDocumentLinkDao) ctx.getBean("queueDocumentLinkDao");
+				QueueDocumentLinkDao queueDocumentLinkDAO = SpringUtils.getBean(QueueDocumentLinkDao.class);
 				Integer did= Integer.parseInt(newDocNo.trim());
 				queueDocumentLinkDAO.addActiveQueueDocumentLink(Integer.parseInt(queueId), did);
 
@@ -150,7 +146,7 @@ public class SplitDocumentAction extends DispatchAction {
 							   result.get(0).getProviderNo(),"DOC");
 				}
 
-				PatientLabRoutingDao patientLabRoutingDao = (PatientLabRoutingDao) SpringUtils.getBean(PatientLabRoutingDao.class);
+				PatientLabRoutingDao patientLabRoutingDao = SpringUtils.getBean(PatientLabRoutingDao.class);
 				List<PatientLabRouting> result2 = patientLabRoutingDao.findDocByDemographic(Integer.parseInt(docNum));
 
 				if (!result2.isEmpty()) {
