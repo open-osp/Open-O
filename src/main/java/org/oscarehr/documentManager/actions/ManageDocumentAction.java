@@ -404,6 +404,10 @@ public class ManageDocumentAction extends DispatchAction {
 
 	private static String getDocumentCacheDir() {
 		if (DOCUMENT_CACHE_DIR != null && !DOCUMENT_CACHE_DIR.isEmpty()) {
+			File cacheDir = new File(DOCUMENT_CACHE_DIR);
+			if (!cacheDir.exists()) {
+				cacheDir.mkdirs();
+			}
 			return DOCUMENT_CACHE_DIR;
 		}
 		return getDocumentCacheDir(DOCUMENT_DIR).getAbsolutePath();
@@ -449,23 +453,27 @@ public class ManageDocumentAction extends DispatchAction {
 		Path pdfPath = Paths.get(DOCUMENT_DIR, d.getDocfilename());
 		Path pngFile = Paths.get(getDocumentCacheDir(), d.getDocfilename() + "_" + pageNum + ".png");
 
-		try (ByteArrayOutputStream baos = new ByteArrayOutputStream()){
-			PDFParser parser = new PDFParser(new RandomAccessFile(pdfPath.toFile(), "rw"), new ScratchFile(MemoryUsageSetting.setupTempFileOnly()));
+		try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		     RandomAccessFile raf = new RandomAccessFile(pdfPath.toFile(), "r")) {
+			PDFParser parser = new PDFParser(raf, new ScratchFile(MemoryUsageSetting.setupTempFileOnly()));
 			parser.parse();
-			PDDocument pdf = parser.getPDDocument();
+			try (PDDocument pdf = parser.getPDDocument()) {
+				PDFRenderer rend = new PDFRenderer(pdf);
+				//Page index starts at 0, subtracts 1 to account for that
+				BufferedImage image = rend.renderImageWithDPI(pageNum - 1, 90, ImageType.RGB);
 
-			PDFRenderer rend = new PDFRenderer(pdf);
-			//Page index starts at 0, subtracts 1 to account for that
-			BufferedImage image = rend.renderImageWithDPI(pageNum - 1, 90, ImageType.RGB);
+				if (image == null) {
+					log.error("PDF renderer returned null image for file " + d.getDocfilename() + " page " + pageNum);
+					return null;
+				}
 
-			// write cache file
-			ImageIO.write(image, "png", pngFile.toFile());
-			ImageIO.write(image, "png", baos);
+				// write cache file
+				ImageIO.write(image, "png", pngFile.toFile());
+				ImageIO.write(image, "png", baos);
+				image.flush();
 
-			pdf.close();
-			image.flush();
-
-			return baos.toByteArray();
+				return baos.toByteArray();
+			}
 		} catch (Exception e) {
 			log.error("Error decoding pdf file " + d.getDocfilename(), e);
 			return null;
@@ -1179,6 +1187,10 @@ public class ManageDocumentAction extends DispatchAction {
     }
 
 	private HttpServletResponse setResponse(HttpServletResponse response, byte[] pdfBytes) {
+		if (pdfBytes == null) {
+			log.error("setResponse called with null byte array, cannot write PDF response");
+			return response;
+		}
 		try (ServletOutputStream outs = response.getOutputStream();
 				ByteArrayInputStream fileInputStream = new ByteArrayInputStream(pdfBytes)) {
 			org.apache.commons.io.IOUtils.copy(fileInputStream, outs);
