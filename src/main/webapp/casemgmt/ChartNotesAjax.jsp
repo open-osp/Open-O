@@ -550,12 +550,12 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
 
 		                    if(rx!=null)
 	       		            {
-	               		        String url="popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/oscarRx/StaticScript2.jsp?demographicNo=" + rx.getDemographicNo() + "&regionalIdentifier="+rx.getRegionalIdentifier()+"&cn="+response.encodeURL(rx.getCustomName())+"');";
+	               		        String url="popupPage(700,800,'" + hash + "', '" + request.getContextPath() + "/oscarRx/StaticScript2.jsp?demographicNo=" + rx.getDemographicNo() + "&regionalIdentifier="+Encode.forUriComponent(rx.getRegionalIdentifier())+"&cn="+Encode.forUriComponent(rx.getCustomName())+"');";
 		                        %>
             <div class="view-links"
                  style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
                 <a class="links" title="<%=Encode.forHtmlAttribute(String.valueOf(rx.getSpecial()))%>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>" href="javascript:void(0);"
-                   onclick="<%=Encode.forJavaScript(String.valueOf(url))%>" style="float: right; margin-right: 5px; "> <bean:message key="oscarEncounter.view.rxView"/> </a>
+                   onclick="<%=url%>" style="float: right; margin-right: 5px; "> <bean:message key="oscarEncounter.view.rxView"/> </a>
 			                </div>
 				    <%
 	                        }
@@ -592,7 +592,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
             <div class="view-links"
                  style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
                 <a class="links" title="<bean:message key="oscarEncounter.view.docView"/>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"
-                   href="javascript:void(0)" onclick="<%=Encode.forJavaScript(String.valueOf(url))%>" style="float: right; "><bean:message key="oscarEncounter.view"/> </a>
+                   href="javascript:void(0)" onclick="<%=url%>" style="float: right; "><bean:message key="oscarEncounter.view"/> </a>
 			                </div>
 				    <%
 			 			}
@@ -611,7 +611,7 @@ CasemgmtNoteLock casemgmtNoteLock = (CasemgmtNoteLock)session.getAttribute("case
             <div class="view-links"
                  style="<%=Encode.forHtmlAttribute(String.valueOf((note.isDocument()||note.isCpp()||note.isEformData()||note.isEncounterForm()||note.isInvoice())?(bgColour):""))%>">
                 <a class="links" title="<fmt:setBundle basename="oscarResources"/><fmt:message key="oscarEncounter.view.docView"/>" id="view<%=Encode.forHtmlAttribute(String.valueOf(globalNoteId))%>"
-                   href="javascript:void(0);" onclick="<%=Encode.forJavaScript(String.valueOf(url))%>">
+                   href="javascript:void(0);" onclick="<%=String.valueOf(url)%>">
                     <bean:message key="oscarEncounter.view"/>
 								</a>
 			                </div>
