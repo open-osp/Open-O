@@ -44,8 +44,8 @@ public class VigilanceProvider implements AllergyCheckProvider {
     }
 
     @Override
-    public List<Allergy> checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugAtcCode, List<Allergy> currentAllergies) throws Exception {
-        VigilanceQueryResponse response = vigilanceAllergyCheckService.checkAllergies(loggedInInfo, demographicNo, drugAtcCode);
+    public List<Allergy> checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode, List<Allergy> currentAllergies) throws Exception {
+        VigilanceQueryResponse response = vigilanceAllergyCheckService.checkAllergies(loggedInInfo, demographicNo, drugDinCode);
         return VigilanceAllergyMapper.mapToMatchingAllergies(currentAllergies, response);
     }
 }

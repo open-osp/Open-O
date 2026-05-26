@@ -458,7 +458,7 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
            </div><div>
            			           
             <fmt:setBundle basename="oscarResources"/><fmt:message key="WriteScript.msgProtocolReference"/>:
-           <input type="text" id="protocol_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>"  name="protocol_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>" value="<%=Encode.forHtmlAttribute(String.valueOf(protocol))%>" />          
+           <input type="text" id="protocol_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>"  name="protocol_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>" value="<%=Encode.forHtmlAttribute(String.valueOf(protocol))%>" />
 
            <%--  OMD Revalidation: field not required currently. Commented out as this may be used again in the future. 
           <label style="">Prior Rx Protocol:</label>
@@ -814,7 +814,7 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
                 };
             }();
 
-            checkAllergy('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getAtcCode()))%>');
+            checkAllergy('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getAtcCode()))%>', '<%=rx.getRegionalIdentifier()%>');
             checkIfInactive('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getRegionalIdentifier()))%>');
 
             var isDiscontinuedLatest = <%=isDiscontinuedLatest%>;

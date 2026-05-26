@@ -23,15 +23,14 @@
 package ca.openosp.openo.integration.vigilance.service;
 
 import ca.openosp.openo.commn.model.Demographic;
-import ca.openosp.openo.integration.vigilance.client.VigilanceClient;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.managers.DemographicManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.openosp.openo.utility.LoggedInInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,72 +55,63 @@ public class VigilanceAllergyCheckService {
      *
      * @param loggedInInfo the currently logged in user info
      * @param demographicNo the internal identifier of the patient
-     * @param drugAtcCode the ATC code of the target drug
+     * @param drugDinCode the ATC code of the target drug
      * @return the response from Vigilance API containing analysis results
      */
-    public VigilanceQueryResponse checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugAtcCode) {
+    public VigilanceQueryResponse checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
         // 1. Resolve Patient Profile
         Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
         if (demographic == null) {
             throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
         }
 
-        VigilanceQueryRequest request = assembleRequest(demographic, drugAtcCode);
+        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
 
         // 2. Call Vigilance API via Service layer
         return vigilanceService.queryAnalysis(request);
     }
 
-    private VigilanceQueryRequest assembleRequest(Demographic demographic, String drugAtcCode) {
-        VigilanceQueryRequest request = new VigilanceQueryRequest();
+    /**
+     * Performs an allergy check with HTML viewer content for a patient and a specific drug (ATC code).
+     *
+     * @param loggedInInfo the currently logged in user info
+     * @param demographicNo the internal identifier of the patient
+     * @param drugDinCode the ATC code of the target drug
+     * @return combined response with analysis results and HTML viewer content
+     */
+    public VigilanceQueryViewerResponse checkAllergiesWithViewer(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
+        // 1. Resolve Patient Profile
+        Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
+        if (demographic == null) {
+            throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
+        }
 
-        // Assemble Query settings
-        VigilanceQueryRequest.Query query = new VigilanceQueryRequest.Query();
-        VigilanceQueryRequest.ServiceInfo serviceInfo = new VigilanceQueryRequest.ServiceInfo();
-        serviceInfo.setId("analysis");
-        serviceInfo.setUserType(2);
-        serviceInfo.setAnalysisMode(0);
-        query.setService(serviceInfo);
+        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
 
-        VigilanceQueryRequest.Config config = new VigilanceQueryRequest.Config();
-        List<String> zones = new ArrayList<>();
-        zones.add("ON"); // Default to Ontario zone as per Postman collection
-        config.setZone(zones);
-        query.setConfig(config);
+        // 2. Call Vigilance API via Service layer for both analysis and viewer
+        return vigilanceService.queryViewerWithAllergies(request);
+    }
 
-        request.setQuery(query);
+    private VigilanceQueryRequest assembleRequest(Demographic demographic, String drugDinCode) {
+        VigilanceQueryRequest.ServiceInfo serviceInfo = new VigilanceQueryRequest.ServiceInfo("analysis", 2, 0);
+        VigilanceQueryRequest.Config config = new VigilanceQueryRequest.Config(List.of("ON"));
+        VigilanceQueryRequest.Query query = new VigilanceQueryRequest.Query(serviceInfo, config);
 
-        // Assemble Patient Profile
-        VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile();
-        VigilanceQueryRequest.Patient patient = new VigilanceQueryRequest.Patient();
-        patient.setFirstName(demographic.getFirstName());
-        patient.setLastName(demographic.getLastName());
-        patient.setGender(demographic.getGender());
-        
-        VigilanceQueryRequest.Age age = new VigilanceQueryRequest.Age();
-        age.setYears(demographic.getAgeInYears());
-        patient.setAge(age);
+        VigilanceQueryRequest.Age age = new VigilanceQueryRequest.Age(demographic.getAgeInYears());
+        VigilanceQueryRequest.Patient patient = new VigilanceQueryRequest.Patient(
+            demographic.getFirstName(),
+            demographic.getLastName(),
+            demographic.getGender(),
+            age,
+            70.0
+        );
 
-        // TODO: Implement actual weight retrieval from vitals/measurements system
-        // Using a default value of 70kg for now as per the technical implementation plan's mandatory requirements
-        patient.setWeightKg(70.0); 
-        
-        profile.setPatient(patient);
+        VigilanceQueryRequest.Product product = new VigilanceQueryRequest.Product(drugDinCode, "din");
+        VigilanceQueryRequest.Medication medication = new VigilanceQueryRequest.Medication(List.of(product));
+        VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile(patient, List.of(medication));
 
-        // Assemble Medication list
-        List<VigilanceQueryRequest.Medication> medications = new ArrayList<>();
-        VigilanceQueryRequest.Medication medication = new VigilanceQueryRequest.Medication();
-        List<VigilanceQueryRequest.Product> products = new ArrayList<>();
-        VigilanceQueryRequest.Product product = new VigilanceQueryRequest.Product();
-        product.setCode(drugAtcCode);
-        product.setFmt("atc");
-        products.add(product);
-        medication.setProduct(products);
-        medications.add(medication);
-        profile.setMedications(medications);
+        VigilanceQueryRequest.Institution institution = new VigilanceQueryRequest.Institution(0);
 
-        request.setProfile(profile);
-
-        return request;
+        return new VigilanceQueryRequest(query, profile, institution);
     }
 }

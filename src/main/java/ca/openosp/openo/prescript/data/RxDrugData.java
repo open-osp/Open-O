@@ -854,10 +854,10 @@ public class RxDrugData {
         return getAllergyWarnings(null, null, atcCode, allergies);
     }*/
 
-    public Allergy[] getAllergyWarnings(LoggedInInfo loggedInInfo, Integer demographicNo, String atcCode, Allergy[] allergies) throws Exception {
+    public Allergy[] getAllergyWarnings(LoggedInInfo loggedInInfo, Integer demographicNo, String dinAtcCode, Allergy[] allergies) throws Exception {
         if (loggedInInfo == null || demographicNo == null) {
             // Fallback to legacy DrugRef logic if session info is missing
-            return getLegacyAllergyWarnings(atcCode, allergies);
+            return getLegacyAllergyWarnings(dinAtcCode, allergies);
         }
 
         try {
@@ -867,11 +867,11 @@ public class RxDrugData {
             List<Allergy> currentAllergies = new ArrayList<>();
             Collections.addAll(currentAllergies, allergies);
             
-            List<Allergy> warnings = coordinator.performAllergyCheck(loggedInInfo, demographicNo, atcCode, currentAllergies);
+            List<Allergy> warnings = coordinator.performAllergyCheck(loggedInInfo, demographicNo, dinAtcCode, currentAllergies);
             return warnings.toArray(new Allergy[0]);
         } catch (Exception e) {
             MiscUtils.getLogger().error("Vigilance check failed, falling back to legacy DrugRef", e);
-            return getLegacyAllergyWarnings(atcCode, allergies);
+            return getLegacyAllergyWarnings(dinAtcCode, allergies);
         }
     }
 

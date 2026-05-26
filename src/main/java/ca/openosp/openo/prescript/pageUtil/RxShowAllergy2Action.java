@@ -34,6 +34,10 @@ import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.commn.model.UserProperty;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
+import ca.openosp.openo.integration.vigilance.service.AllergyCheckCoordinator;
+import ca.openosp.openo.integration.vigilance.service.VigilanceAllergyCheckService;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.prescript.data.RxDrugData;
 import ca.openosp.openo.prescript.data.RxPatientData;
@@ -54,7 +58,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Struts 2 action for displaying and managing patient allergies.
@@ -80,6 +87,8 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
     private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
     private SystemPreferencesDao systemPreferencesDao = (SystemPreferencesDao) SpringUtils.getBean(SystemPreferencesDao.class);
+    private VigilanceAllergyCheckService vigilanceAllergyCheckService = SpringUtils.getBean(VigilanceAllergyCheckService.class);
+    private AllergyCheckCoordinator allergyCheckCoordinator = SpringUtils.getBean(AllergyCheckCoordinator.class);
 
     /**
      * Handles allergy reordering and redirects to the allergies display page.
@@ -144,8 +153,12 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
         String dispatchResult = switch (method != null ? method : "") {
             case "reorder" -> reorder();
-            case "allergyData" -> {
-                getAllergyData(loggedInInfo);
+//            case "allergyData" -> {
+//                getAllergyData(loggedInInfo);
+//                yield null;
+//            }
+            case "viewerHtmlData" -> {
+                getAllViewerHtmlData(loggedInInfo);
                 yield null;
             }
             default -> null;
@@ -233,6 +246,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
         boolean rxShowAllAllergyWarnings = systemPreferencesDao.isReadBooleanPreference(SystemPreferences.RX_PREFERENCE_KEYS.rx_show_highest_allergy_warning);
 
         String atcCode = request.getParameter("atcCode");
+        String dinCode = request.getParameter("dinCode");
         String id = request.getParameter("id");
         String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
         if (disabled.equals("false")) {
@@ -257,7 +271,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
             RxDrugData drugData = new RxDrugData();
 
             try {
-                allergyWarnings = drugData.getAllergyWarnings(loggedInInfo, rxSessionBean.getDemographicNo(), atcCode, allergies);
+                allergyWarnings = drugData.getAllergyWarnings(loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode, allergies);
 
                 Allergy highestSeverityAllergy = null;
 
@@ -298,6 +312,99 @@ public final class RxShowAllergy2Action extends ActionSupport {
                 MiscUtils.getLogger().error("Error in getAllergyData", e);
             }
         }
+    }
+
+    /**
+     * Retrieves allergy warnings and HTML viewer content for a patient, combining results from both
+     * the Vigilance query analysis and query viewer endpoints. Outputs the resulting data in JSON format.
+     */
+    private void getAllViewerHtmlData(LoggedInInfo loggedInInfo) throws IOException {
+        String atcCode = request.getParameter("atcCode");
+        String dinCode = request.getParameter("dinCode");
+        String id = request.getParameter("id");
+        String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
+
+        if (disabled.equals("false")) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+            Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, rxSessionBean.getDemographicNo()).getActiveAllergies();
+
+            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
+                try {
+                    ArrayList<Allergy> remoteAllergies = RemoteDrugAllergyHelper.getRemoteAllergiesAsAllergyItems(loggedInInfo, rxSessionBean.getDemographicNo());
+                    Collections.addAll(remoteAllergies, allergies);
+                    allergies = remoteAllergies.toArray(new Allergy[0]);
+                } catch (Exception e) {
+                    MiscUtils.getLogger().error("error getting remote allergies", e);
+                }
+            }
+
+            ObjectNode result = objectMapper.createObjectNode();
+            result.put("id", id);
+            ArrayNode allergyResultArray = objectMapper.createArrayNode();
+
+            try {
+                VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
+                        loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
+
+                String analysisJson = viewerResponse.analysisJson();
+                if (analysisJson != null && !analysisJson.isEmpty()) {
+                    VigilanceQueryResponse response = objectMapper.readValue(analysisJson, VigilanceQueryResponse.class);
+                    List<VigilanceQueryResponse.Product> medications = new ArrayList<>();
+                    if (response.profile() != null && response.profile().medications() != null) {
+                        for (VigilanceQueryResponse.MedicationEntry entry : response.profile().medications()) {
+                            if (entry.product() != null) {
+                                medications.addAll(entry.product());
+                            }
+                        }
+                    }
+
+                    Map<String, Integer> intensityMap = extractIntensityMap(response.profileIntensity());
+                    List<String> flaggedCodes = medications.stream()
+                            .filter(med -> med.detail() != null && med.code() != null)
+                            .filter(med -> {
+                                Integer intensity = intensityMap.get(med.code());
+                                return intensity != null && intensity > 0;
+                            })
+                            .map(VigilanceQueryResponse.Product::code)
+                            .collect(Collectors.toList());
+
+                    if (!flaggedCodes.isEmpty() && allergies != null) {
+                        for (Allergy allergy : allergies) {
+                            String allergyCode = allergy.getAtc();
+                            if (allergyCode != null && !allergyCode.isEmpty() && flaggedCodes.contains(allergyCode)) {
+                                ObjectNode allergyResult = objectMapper.createObjectNode();
+                                allergyResult.put("DESCRIPTION", StringUtils.trimToEmpty(allergy.getDescription()));
+                                allergyResult.put("reaction", StringUtils.trimToEmpty(allergy.getReaction()));
+                                allergyResult.put("severity", StringUtils.trimToEmpty(allergy.getSeverityOfReactionDesc()));
+                                allergyResultArray.add(allergyResult);
+                            }
+                        }
+                    }
+                }
+
+                String viewerHtml = viewerResponse.viewerHtml();
+                if (viewerHtml != null && !viewerHtml.isEmpty()) {
+                    result.put("viewerHtml", viewerHtml);
+                }
+
+            } catch (Exception e) {
+                MiscUtils.getLogger().error("Error in getAllViewerHtmlData", e);
+            }
+
+            result.set("results", allergyResultArray);
+            response.setContentType("application/json");
+            response.getOutputStream().write(result.toString().getBytes());
+        }
+    }
+
+    private static Map<String, Integer> extractIntensityMap(VigilanceQueryResponse.ProfileIntensity profileIntensity) {
+        if (profileIntensity == null || profileIntensity.detail() == null) {
+            return Map.of();
+        }
+        return profileIntensity.detail().stream()
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**

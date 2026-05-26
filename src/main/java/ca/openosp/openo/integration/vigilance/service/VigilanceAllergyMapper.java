@@ -26,6 +26,7 @@ import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -41,37 +42,54 @@ public class VigilanceAllergyMapper {
      * @return a subset of the original allergies that match the Vigilance findings
      */
     public static List<Allergy> mapToMatchingAllergies(List<Allergy> patientAllergies, VigilanceQueryResponse response) {
-        if (response == null || response.getAlerts() == null || patientAllergies == null) {
+        if (response == null || patientAllergies == null) {
             return new ArrayList<>();
         }
 
-        // 1. Filter for alerts where type == "allergyCross"
-        List<VigilanceQueryResponse.Alert> crossAllergyAlerts = response.getAlerts().stream()
-                .filter(alert -> "allergyCross".equalsIgnoreCase(alert.getType()))
-                .collect(Collectors.toList());
-
-        if (crossAllergyAlerts.isEmpty()) {
+        List<VigilanceQueryResponse.ProfileSideEffect> sideEffects = response.profileSideEffects();
+        if (sideEffects == null || sideEffects.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // 2. Collect all ATC codes identified as risks by Vigilance
-        List<String> vigilanceAtcCodes = new ArrayList<>();
-        for (VigilanceQueryResponse.Alert alert : crossAllergyAlerts) {
-            if (alert.getBasis() != null && alert.getBasis().getRxProblems() != null) {
-                for (VigilanceQueryResponse.RxProblem problem : alert.getBasis().getRxProblems()) {
-                    if (problem.getAtc() != null && !problem.getAtc().isEmpty()) {
-                        vigilanceAtcCodes.add(problem.getAtc());
-                    }
+        List<VigilanceQueryResponse.Product> medications = new ArrayList<>();
+        if (response.profile() != null && response.profile().medications() != null) {
+            for (VigilanceQueryResponse.MedicationEntry entry : response.profile().medications()) {
+                if (entry.product() != null) {
+                    medications.addAll(entry.product());
                 }
             }
         }
 
-        // 3. Match against patient's allergies based on ATC code (Forbidden to use description strings)
+        Map<String, Integer> intensityMap = extractIntensityMap(response.profileIntensity());
+
+        List<String> flaggedCodes = medications.stream()
+                .filter(med -> med.detail() != null && med.code() != null)
+                .filter(med -> {
+                    Integer intensity = intensityMap.get(med.code());
+                    return intensity != null && intensity > 0;
+                })
+                .map(VigilanceQueryResponse.Product::code)
+                .collect(Collectors.toList());
+
+        if (flaggedCodes.isEmpty()) {
+            return new ArrayList<>();
+        }
+
         return patientAllergies.stream()
                 .filter(allergy -> {
-                    String patientAtc = allergy.getAtc();
-                    return patientAtc != null && !patientAtc.isEmpty() && vigilanceAtcCodes.contains(patientAtc);
+                    String allergyCode = allergy.getAtc();
+                    return allergyCode != null && !allergyCode.isEmpty() && flaggedCodes.contains(allergyCode);
                 })
                 .collect(Collectors.toList());
+    }
+
+    private static Map<String, Integer> extractIntensityMap(VigilanceQueryResponse.ProfileIntensity profileIntensity) {
+        if (profileIntensity == null || profileIntensity.detail() == null) {
+            return Map.of();
+        }
+
+        return profileIntensity.detail().stream()
+                .flatMap(map -> map.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

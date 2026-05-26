@@ -27,10 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Response object for a Vigilance query analysis.
- * Contains the full analysis result including summary, profile data, side effects, and more.
+ * Combined response object for query viewer that includes both allergy warnings and HTML content.
  */
-public record VigilanceQueryResponse(
+public record VigilanceQueryViewerResponse(
         @JsonProperty("summary") Summary summary,
         @JsonProperty("profileGen") Map<String, ProfileGenEntry> profileGen,
         @JsonProperty("profileSideEffects") List<ProfileSideEffect> profileSideEffects,
@@ -39,7 +38,9 @@ public record VigilanceQueryResponse(
         @JsonProperty("dictionary") Dictionary dictionary,
         @JsonProperty("query") QueryResponse query,
         @JsonProperty("profile") Profile profile,
-        @JsonProperty("institution") Institution institution) implements VigilanceResponse {
+        @JsonProperty("institution") Institution institution,
+        @JsonProperty("viewerHtml") String viewerHtml,
+        @JsonProperty("analysisJson") String analysisJson) implements VigilanceResponse {
 
     public record Summary(
             @JsonProperty("dateTime") String dateTime,

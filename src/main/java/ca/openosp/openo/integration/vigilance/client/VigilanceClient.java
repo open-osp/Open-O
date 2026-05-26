@@ -35,6 +35,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -71,14 +72,69 @@ public class VigilanceClient {
      * Sends a POST request to the specified service endpoint with a request body serialized as JSON.
      * The request is sent as application/x-www-form-urlencoded with the JSON body in the 'intrant' field.
      *
-     * @param <T> the type of the response, must extend VigilanceResponse
      * @param serviceEndPoint the endpoint path to call
      * @param requestBody the object to be serialized as JSON and sent
      * @param responseType the class of the expected response
      * @return the deserialized response object
      * @throws VigilanceIntegrationException if serialization fails or the API returns an error
      */
-    public <T extends VigilanceResponse> T postForObject(String serviceEndPoint, VigilanceRequest requestBody, Class<T> responseType) {
+    @SuppressWarnings("unchecked")
+    public <T> T postForObject(String serviceEndPoint, VigilanceRequest requestBody, Class<T> responseType) {
+        try {
+            String jsonBody = objectMapper.writeValueAsString(requestBody);
+            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+            formData.add("intrant", jsonBody);
+
+            String jsonResponse = this.vigilanceWebClient.post()
+                    .uri(UriComponentsBuilder.fromHttpUrl(baseUrl)
+                            .path(serviceEndPoint)
+                            .build()
+                            .toUri()
+                    )
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .bodyValue(formData)
+                    .retrieve()
+                    .onStatus(HttpStatus::isError, response ->
+                        response.bodyToMono(String.class)
+                                .flatMap(body -> reactor.core.publisher.Mono.error(
+                                        new VigilanceIntegrationException("Vigilance API error: " + response.statusCode() + " - " + body)))
+                    )
+                    .bodyToMono(String.class)
+                    .block();
+
+            return objectMapper.readValue(jsonResponse, responseType);
+        } catch (IOException e) {
+            throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
+        } catch (Exception e) {
+            if (e instanceof VigilanceIntegrationException) throw e;
+            throw new VigilanceIntegrationException("Unexpected error during Vigilance API call", e);
+        }
+    }
+
+    /**
+     * Sends a POST request to the specified service endpoint.
+     *
+     * @param serviceEndPoint the endpoint path to call
+     * @return the response body as a string
+     */
+    public String post(String serviceEndPoint) {
+        return this.vigilanceWebClient.post()
+                .uri(UriComponentsBuilder.fromHttpUrl(baseUrl).path(serviceEndPoint).build().toUri())
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    /**
+     * Sends a POST request to the specified service endpoint and returns the raw response body as a string.
+     * Useful for endpoints that return non-JSON content (e.g., HTML).
+     *
+     * @param serviceEndPoint the endpoint path to call
+     * @param requestBody the object to be serialized as JSON and sent
+     * @return the raw response body as a string
+     * @throws VigilanceIntegrationException if serialization fails or the API returns an error
+     */
+    public String postForHtml(String serviceEndPoint, VigilanceRequest requestBody) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -98,28 +154,14 @@ public class VigilanceClient {
                                 .flatMap(body -> reactor.core.publisher.Mono.error(
                                         new VigilanceIntegrationException("Vigilance API error: " + response.statusCode() + " - " + body)))
                     )
-                    .bodyToMono(responseType)
+                    .bodyToMono(String.class)
                     .block();
         } catch (IOException e) {
-            throw new VigilanceIntegrationException("Failed to serialize request body", e);
+            throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
         } catch (Exception e) {
             if (e instanceof VigilanceIntegrationException) throw e;
             throw new VigilanceIntegrationException("Unexpected error during Vigilance API call", e);
         }
-    }
-
-    /**
-     * Sends a simple POST request to the specified service endpoint.
-     *
-     * @param serviceEndPoint the endpoint path to call
-     * @return the response body as a string
-     */
-    public String post(String serviceEndPoint) {
-        return this.vigilanceWebClient.post()
-                .uri(UriComponentsBuilder.fromHttpUrl(baseUrl).path(serviceEndPoint).build().toUri())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
     }
 
     /**

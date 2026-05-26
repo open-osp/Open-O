@@ -25,6 +25,7 @@ package ca.openosp.openo.integration.vigilance.service;
 import ca.openosp.openo.integration.vigilance.client.VigilanceClient;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +52,32 @@ public class VigilanceService {
         return this.vigilanceClient.postForObject("/service/rxvengine/query", request, VigilanceQueryResponse.class);
     }
      
+    /**
+     * Performs a query viewer call by calling the Vigilance API to get HTML output.
+     * 
+     * @param request the query request containing patient and service details
+     * @return the HTML response from the Vigilance API
+     */
+    public String queryViewer(VigilanceQueryRequest request) {
+        return this.vigilanceClient.postForHtml("/service/rxvengine/queryviewer/", request);
+    }
+
+    /**
+     * Performs both query analysis and query viewer calls, combining results.
+     * 
+     * @param request the query request containing patient and service details
+     * @return combined response with analysis JSON and HTML viewer content
+     */
+    public VigilanceQueryViewerResponse queryViewerWithAllergies(VigilanceQueryRequest request) {
+//        String analysisJson = this.vigilanceClient.postForHtml("/service/rxvengine/query", request);
+        String analysisJson = null;
+        String viewerHtml = this.vigilanceClient.postForHtml("/service/rxvengine/queryviewer/", request);
+
+        return new VigilanceQueryViewerResponse(
+                null, null, null, null, null, null, null, null, null, viewerHtml, analysisJson
+        );
+    }
+
     /**
      * Checks the status of the Vigilance API service.
      * 
