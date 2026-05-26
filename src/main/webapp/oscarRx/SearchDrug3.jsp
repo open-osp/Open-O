@@ -1819,45 +1819,186 @@
     return false;
   }
 
-  function checkAllergy(id, atcCode) {
-    const url = ctx + "/oscarRx/showAllergy.do"
-    const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
+  function checkAllergy(id, atcCode, dinCode) {
+    fetchViewerHtml(id, atcCode, dinCode);
+
+    /* const url = ctx + "/oscarRx/showAllergy.do"
+     const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
+
+   new Ajax.Request(url, {
+       method: 'post', postBody: data,
+       requestHeaders: {'Accept': 'application/json'},
+       onSuccess: function (transport) {
+         try {
+           let json = JSON.parse(transport.responseText);
+           if (json != null && json.results && json.results.length > 0) {
+             let allergy = json.results[0];
+             let element = document.getElementById('alleg_' + json.id);
+             if (element) {
+               element.innerHTML = '';
+               let allergyLabel = document.createElement('label');
+               allergyLabel.style.color = 'red';
+               allergyLabel.textContent = ' Allergy: ';
+               let allergyText = document.createTextNode(allergy.DESCRIPTION || 'Unknown');
+               let reactionLabel = document.createElement('label');
+               reactionLabel.style.color = 'red';
+               reactionLabel.textContent = ' Reaction: ';
+               let reactionText = document.createTextNode(allergy.reaction || 'Unknown');
+               element.appendChild(allergyLabel);
+               element.appendChild(allergyText);
+               element.appendChild(reactionLabel);
+               element.appendChild(reactionText);
+               document.getElementById('alleg_tbl_' + json.id).style.display = 'block';
+             }
+           }
+
+           if (json != null && json.viewerHtml) {
+             addWarningIcon(json.id, json.viewerHtml);
+           }
+
+
+         } catch (e) {
+           console.error('Failed to parse allergy data');
+         }
+       },
+       onFailure: function (transport) {
+         console.error('Allergy check failed with status: ' + (transport.status || 'unknown'));
+       }
+     });*/
+  }
+
+  function fetchViewerHtml(id, atcCode, dinCode) {
+    const url = ctx + "/oscarRx/showAllergy.do";
+    const data = "method=viewerHtmlData&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
       method: 'post', postBody: data,
       requestHeaders: {'Accept': 'application/json'},
       onSuccess: function (transport) {
         try {
           let json = JSON.parse(transport.responseText);
-          if (json != null && json.results && json.results.length > 0) {
-            // Pick the first allergy warning found
-            let allergy = json.results[0];
-            let element = document.getElementById('alleg_' + json.id);
-            if (element) {
-              // Create structured elements instead of HTML string
-              element.innerHTML = '';
-              let allergyLabel = document.createElement('label');
-              allergyLabel.style.color = 'red';
-              allergyLabel.textContent = ' Allergy: ';
-              let allergyText = document.createTextNode(allergy.DESCRIPTION || 'Unknown');
-              let reactionLabel = document.createElement('label');
-              reactionLabel.style.color = 'red';
-              reactionLabel.textContent = ' Reaction: ';
-              let reactionText = document.createTextNode(allergy.reaction || 'Unknown');
-              element.appendChild(allergyLabel);
-              element.appendChild(allergyText);
-              element.appendChild(reactionLabel);
-              element.appendChild(reactionText);
-              document.getElementById('alleg_tbl_' + json.id).style.display = 'block';
-            }
+          if (json != null && json.viewerHtml) {
+            addWarningIcon(json.id, json.viewerHtml);
           }
         } catch (e) {
-          console.error('Failed to parse allergy data');
+          console.error('Failed to parse viewer HTML data');
         }
       },
       onFailure: function (transport) {
-        console.error('Allergy check failed with status: ' + (transport.status || 'unknown'));
+        console.error('Viewer HTML fetch failed with status: ' + (transport.status || 'unknown'));
       }
     });
+  }
+
+  function addWarningIcon(id, viewerHtml) {
+    console.log('[addWarningIcon] id:', id);
+
+    let existingIcon = document.getElementById('warning_icon_' + id);
+    if (existingIcon) {
+      console.log('[addWarningIcon] icon already exists');
+      return;
+    }
+
+    let allegTbl = document.getElementById('alleg_tbl_' + id);
+    if (!allegTbl) {
+      console.warn('[addWarningIcon] alleg_tbl_' + id + ' not found in DOM');
+      return;
+    }
+
+    console.log('[addWarningIcon] alleg_tbl found, current display:', allegTbl.style.display);
+    allegTbl.style.display = 'block';
+
+    let iconContainer = document.createElement('div');
+    iconContainer.style.cssText = 'float:right; margin-top:5px;';
+
+    let iconImg = document.createElement('img');
+    iconImg.id = 'warning_icon_' + id;
+    iconImg.src = ctx + '/images/warning-icon.png';
+    iconImg.style.cssText = 'cursor:pointer; width:20px; height:20px; vertical-align:middle;';
+    iconImg.title = 'View detailed warning information';
+    iconImg.alt = 'Warning';
+
+    iconImg.onclick = function() {
+      openWarningModal(id, viewerHtml);
+    };
+
+    iconContainer.appendChild(iconImg);
+    allegTbl.insertBefore(iconContainer, allegTbl.firstChild);
+    console.log('[addWarningIcon] icon inserted, verifying:', document.getElementById('warning_icon_' + id) ? 'found' : 'NOT found');
+  }
+
+  function openWarningModal(id, viewerHtml) {
+    if (!viewerHtml || viewerHtml.trim() === '') return;
+
+    let overlay = document.getElementById('warningModalOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'warningModalOverlay';
+      overlay.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000;';
+      document.body.appendChild(overlay);
+
+      let modal = document.createElement('div');
+      modal.id = 'warningModal';
+      modal.style.cssText = 'display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:80%; max-width:900px; max-height:80vh; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:10001; overflow:hidden;';
+
+      let modalHeader = document.createElement('div');
+      modalHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#f5f5f5; border-bottom:1px solid #ddd; flex-shrink:0;';
+
+      let modalTitle = document.createElement('span');
+      modalTitle.textContent = 'Drug Warning Details';
+      modalTitle.style.cssText = 'font-weight:bold; font-size:16px;';
+
+      let closeBtn = document.createElement('button');
+      closeBtn.innerHTML = '&times;';
+      closeBtn.style.cssText = 'background:none; border:none; font-size:24px; cursor:pointer; color:#666; padding:0 8px;';
+      closeBtn.onclick = function() {
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
+      };
+
+      modalHeader.appendChild(modalTitle);
+      modalHeader.appendChild(closeBtn);
+
+      let modalBody = document.createElement('div');
+      modalBody.id = 'warningModalBody';
+      modalBody.style.cssText = 'flex:1; overflow:hidden; position:relative; min-height:300px;';
+
+      modal.appendChild(modalHeader);
+      modal.appendChild(modalBody);
+      document.body.appendChild(modal);
+
+      overlay.onclick = function(e) {
+        if (e.target === overlay) {
+          overlay.style.display = 'none';
+          modal.style.display = 'none';
+        }
+      };
+    }
+
+    let modalBody = document.getElementById('warningModalBody');
+    if (modalBody) {
+      let iframe = modalBody.querySelector('iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.style.cssText = 'width:100%; height:100%; border:none;';
+        iframe.sandbox = 'allow-scripts allow-same-origin';
+        modalBody.innerHTML = '';
+        modalBody.appendChild(iframe);
+      }
+      viewerHtml = '<meta http-equiv="Access-Control-Allow-Origin" content="*">' +
+                   '<meta http-equiv="Content-Security-Policy" content="default-src * \'unsafe-inline\' \'unsafe-eval\'; script-src * \'unsafe-inline\' \'unsafe-eval\'; style-src * \'unsafe-inline\'; img-src * data: blob:; font-src * data:; connect-src *;">' +
+                   viewerHtml;
+
+      let blob = new Blob([viewerHtml], {type: 'text/html'});
+      let url = URL.createObjectURL(blob);
+      iframe.src = url;
+    }
+
+    document.getElementById('warningModalOverlay').style.display = 'block';
+    let modal = document.getElementById('warningModal');
+    if (modal) {
+      modal.style.display = 'flex';
+      modal.style.flexDirection = 'column';
+    }
   }
 
   function checkIfInactive(id, dinNumber) {

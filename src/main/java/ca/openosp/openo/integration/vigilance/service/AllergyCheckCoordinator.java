@@ -62,10 +62,10 @@ public class AllergyCheckCoordinator {
      * @return a subset of original allergies triggering warnings
      * @throws AllergyCheckUnavailableException if both primary and fallback providers fail
      */
-    public List<Allergy> performAllergyCheck(LoggedInInfo loggedInInfo, Integer demographicNo, String drugAtcCode, List<Allergy> currentAllergies) {
+    public List<Allergy> performAllergyCheck(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode, List<Allergy> currentAllergies) {
         if (isVigilanceEnabled) {
             try {
-                return executeWithRetry(loggedInInfo, demographicNo, drugAtcCode, currentAllergies, 2);
+                return executeWithRetry(loggedInInfo, demographicNo, drugDinCode, currentAllergies, 2);
             } catch (Exception e) {
                 logger.warn("Vigilance provider failed. Falling back to DrugRef. Error: {}", e.getMessage());
             }
@@ -73,18 +73,18 @@ public class AllergyCheckCoordinator {
 
         // Default or Fallback path
         try {
-            return drugRefProvider.checkAllergies(loggedInInfo, demographicNo, drugAtcCode, currentAllergies);
+            return drugRefProvider.checkAllergies(loggedInInfo, demographicNo, drugDinCode, currentAllergies);
         } catch (Exception e) {
             logger.error("Terminal failure: Both Vigilance and DrugRef providers are unavailable.");
             throw new AllergyCheckUnavailableException("Allergy check service is currently unavailable. Please verify manually.");
         }
     }
 
-    private List<Allergy> executeWithRetry(LoggedInInfo loggedInInfo, Integer demographicNo, String drugAtcCode, List<Allergy> currentAllergies, int maxRetries) throws Exception {
+    private List<Allergy> executeWithRetry(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode, List<Allergy> currentAllergies, int maxRetries) throws Exception {
         int attempts = 0;
         while (true) {
             try {
-                return vigilanceProvider.checkAllergies(loggedInInfo, demographicNo, drugAtcCode, currentAllergies);
+                return vigilanceProvider.checkAllergies(loggedInInfo, demographicNo, drugDinCode, currentAllergies);
             } catch (Exception e) {
                 attempts++;
                 if (attempts > maxRetries) {
