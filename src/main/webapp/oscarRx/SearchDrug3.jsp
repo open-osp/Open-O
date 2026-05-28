@@ -2121,78 +2121,22 @@
   }
 
   function openWarningModal(id, viewerHtml) {
-    if (!viewerHtml || viewerHtml.trim() === '') return;
-
-    let overlay = document.getElementById('warningModalOverlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'warningModalOverlay';
-      overlay.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000;';
-      document.body.appendChild(overlay);
-
-      let modal = document.createElement('div');
-      modal.id = 'warningModal';
-      modal.style.cssText = 'display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:80%; max-width:900px; max-height:80vh; background:#fff; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:10001; overflow:hidden;';
-
-      let modalHeader = document.createElement('div');
-      modalHeader.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#f5f5f5; border-bottom:1px solid #ddd; flex-shrink:0;';
-
-      let modalTitle = document.createElement('span');
-      modalTitle.textContent = 'Drug Warning Details';
-      modalTitle.style.cssText = 'font-weight:bold; font-size:16px;';
-
-      let closeBtn = document.createElement('button');
-      closeBtn.innerHTML = '&times;';
-      closeBtn.style.cssText = 'background:none; border:none; font-size:24px; cursor:pointer; color:#666; padding:0 8px;';
-      closeBtn.onclick = function() {
-        overlay.style.display = 'none';
-        modal.style.display = 'none';
-      };
-
-      modalHeader.appendChild(modalTitle);
-      modalHeader.appendChild(closeBtn);
-
-      let modalBody = document.createElement('div');
-      modalBody.id = 'warningModalBody';
-      modalBody.style.cssText = 'flex:1; overflow:hidden; position:relative; min-height:300px;';
-
-      modal.appendChild(modalHeader);
-      modal.appendChild(modalBody);
-      document.body.appendChild(modal);
-
-      overlay.onclick = function(e) {
-        if (e.target === overlay) {
-          overlay.style.display = 'none';
-          modal.style.display = 'none';
-        }
-      };
+    if (!viewerHtml || viewerHtml.trim() === '') {
+      return;
     }
 
-    let modalBody = document.getElementById('warningModalBody');
-    if (modalBody) {
-      let iframe = modalBody.querySelector('iframe');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.style.cssText = 'width:100%; height:100%; border:none;';
-        iframe.sandbox = 'allow-scripts allow-same-origin';
-        modalBody.innerHTML = '';
-        modalBody.appendChild(iframe);
-      }
-      viewerHtml = '<meta http-equiv="Access-Control-Allow-Origin" content="*">' +
-                   '<meta http-equiv="Content-Security-Policy" content="default-src * \'unsafe-inline\' \'unsafe-eval\'; script-src * \'unsafe-inline\' \'unsafe-eval\'; style-src * \'unsafe-inline\'; img-src * data: blob:; font-src * data:; connect-src *;">' +
-                   viewerHtml;
+    const newWin = window.open(
+            '',
+            'warningModal_' + id,
+            'width=1000,height=700,scrollbars=yes,resizable=yes'
+    );
 
-      let blob = new Blob([viewerHtml], {type: 'text/html'});
-      let url = URL.createObjectURL(blob);
-      iframe.src = url;
-    }
+    if (!newWin) return;
 
-    document.getElementById('warningModalOverlay').style.display = 'block';
-    let modal = document.getElementById('warningModal');
-    if (modal) {
-      modal.style.display = 'flex';
-      modal.style.flexDirection = 'column';
-    }
+    newWin.document.open();
+
+    newWin.document.write(viewerHtml); 
+    newWin.document.close();
   }
 
   function checkIfInactive(id, dinNumber) {
