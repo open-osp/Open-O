@@ -51,16 +51,6 @@ public class VigilanceService {
     public VigilanceQueryResponse queryAnalysis(VigilanceQueryRequest request) {
         return this.vigilanceClient.postForObject("/service/rxvengine/query", request, VigilanceQueryResponse.class);
     }
-     
-    /**
-     * Performs a query viewer call by calling the Vigilance API to get HTML output.
-     * 
-     * @param request the query request containing patient and service details
-     * @return the HTML response from the Vigilance API
-     */
-    public String queryViewer(VigilanceQueryRequest request) {
-        return this.vigilanceClient.postForHtml("/service/rxvengine/queryviewer/", request);
-    }
 
     /**
      * Performs both query analysis and query viewer calls, combining results.
@@ -69,13 +59,9 @@ public class VigilanceService {
      * @return combined response with analysis JSON and HTML viewer content
      */
     public VigilanceQueryViewerResponse queryViewerWithAllergies(VigilanceQueryRequest request) {
-//        String analysisJson = this.vigilanceClient.postForHtml("/service/rxvengine/query", request);
-        String analysisJson = null;
         String viewerHtml = this.vigilanceClient.postForHtml("/service/rxvengine/queryviewer/", request);
 
-        return new VigilanceQueryViewerResponse(
-                null, null, null, null, null, null, null, null, null, viewerHtml, analysisJson
-        );
+        return new VigilanceQueryViewerResponse(viewerHtml);
     }
 
     /**
