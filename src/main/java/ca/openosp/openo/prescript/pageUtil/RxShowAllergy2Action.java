@@ -343,42 +343,6 @@ public final class RxShowAllergy2Action extends ActionSupport {
             try {
                 VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
                         loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
-                
-                String analysisJson = viewerResponse.analysisJson();
-                if (analysisJson != null && !analysisJson.isEmpty()) {
-                    VigilanceQueryResponse response = objectMapper.readValue(analysisJson, VigilanceQueryResponse.class);
-                    List<VigilanceQueryResponse.Product> medications = new ArrayList<>();
-                    if (response.profile() != null && response.profile().medications() != null) {
-                        for (VigilanceQueryResponse.MedicationEntry entry : response.profile().medications()) {
-                            if (entry.product() != null) {
-                                medications.addAll(entry.product());
-                            }
-                        }
-                    }
-
-                    Map<String, Integer> intensityMap = extractIntensityMap(response.profileIntensity());
-                    List<String> flaggedCodes = medications.stream()
-                            .filter(med -> med.detail() != null && med.code() != null)
-                            .filter(med -> {
-                                Integer intensity = intensityMap.get(med.code());
-                                return intensity != null && intensity > 0;
-                            })
-                            .map(VigilanceQueryResponse.Product::code)
-                            .collect(Collectors.toList());
-
-                    if (!flaggedCodes.isEmpty() && allergies != null) {
-                        for (Allergy allergy : allergies) {
-                            String allergyCode = allergy.getAtc();
-                            if (allergyCode != null && !allergyCode.isEmpty() && flaggedCodes.contains(allergyCode)) {
-                                ObjectNode allergyResult = objectMapper.createObjectNode();
-                                allergyResult.put("DESCRIPTION", StringUtils.trimToEmpty(allergy.getDescription()));
-                                allergyResult.put("reaction", StringUtils.trimToEmpty(allergy.getReaction()));
-                                allergyResult.put("severity", StringUtils.trimToEmpty(allergy.getSeverityOfReactionDesc()));
-                                allergyResultArray.add(allergyResult);
-                            }
-                        }
-                    }
-                }
 
                 String viewerHtml = viewerResponse.viewerHtml();
                 if (viewerHtml != null && !viewerHtml.isEmpty()) {
