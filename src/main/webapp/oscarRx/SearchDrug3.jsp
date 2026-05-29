@@ -1063,6 +1063,25 @@
     .rightColumnAdjust {
       padding-left: 10px;
     }
+
+    .shimmer {
+      display: inline-block;
+      line-height: 1.4;
+      padding-bottom: 2px;
+      overflow: visible;
+      font-weight: 600;
+      background: linear-gradient(90deg, #6c757d 45%, #dfdfdf 50%, #6c757d 55%);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 2s linear infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 100% 0; }
+      to { background-position: 0% 0; }
+    }
   </style>
 
   <title>Medications</title>
@@ -2062,6 +2081,12 @@
   }
 
   function fetchViewerHtml(id, atcCode, dinCode) {
+    let allegSpan = document.getElementById('alleg_vigilance_div' + id);
+    if (allegSpan) {
+      allegSpan.style.display = 'flex';
+      allegSpan.innerHTML = '<span class="shimmer">Checking for allergies...</span>';
+    }
+
     const url = ctx + "/oscarRx/showAllergy.do";
     const data = "method=viewerHtmlData&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
@@ -2070,15 +2095,27 @@
       onSuccess: function (transport) {
         try {
           let json = JSON.parse(transport.responseText);
+          let allegSpan = document.getElementById('alleg_vigilance_div' + id);
+          if (allegSpan) {
+            allegSpan.innerHTML = '';
+          }
           if (json != null && json.viewerHtml) {
             addWarningIcon(json.id, json.viewerHtml);
           }
         } catch (e) {
           console.error('Failed to parse viewer HTML data');
+          let allegSpan = document.getElementById('alleg_vigilance_div' + id);
+          if (allegSpan) {
+            allegSpan.innerHTML = '';
+          }
         }
       },
       onFailure: function (transport) {
         console.error('Viewer HTML fetch failed with status: ' + (transport.status || 'unknown'));
+        let allegSpan = document.getElementById('alleg_vigilance_div' + id);
+        if (allegSpan) {
+          allegSpan.innerHTML = '';
+        }
       }
     });
   }
@@ -2092,17 +2129,16 @@
       return;
     }
 
-    let allegTbl = document.getElementById('alleg_tbl_' + id);
+    let allegTbl = document.getElementById('alleg_vigilance_div' + id);
     if (!allegTbl) {
-      console.warn('[addWarningIcon] alleg_tbl_' + id + ' not found in DOM');
+      console.warn('[addWarningIcon] alleg_vigilance_div' + id + ' not found in DOM');
       return;
     }
 
-    console.log('[addWarningIcon] alleg_tbl found, current display:', allegTbl.style.display);
-    allegTbl.style.display = 'block';
+    allegTbl.style.display = 'flex';
 
     let iconContainer = document.createElement('div');
-    iconContainer.style.cssText = 'float:right; margin-top:5px;';
+    iconContainer.style.cssText = 'float:left; margin-top:5px;';
 
     let iconImg = document.createElement('img');
     iconImg.id = 'warning_icon_' + id;

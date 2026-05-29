@@ -247,10 +247,11 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
         <label style="width:101px;flex-shrink:0;" title="<%=Encode.forHtmlAttribute(ATC)%>" >Name:</label>
         <input type="hidden" name="atcCode" value="<%=Encode.forHtmlAttribute(ATCcode)%>" />
         <input tabindex="-1" type="text" id="drugName_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>"  name="drugName_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>"  size="30" <%if("0".equals(gcnCode)){%> onkeyup="saveCustomName(this);" value="<%=Encode.forHtmlAttribute(drugName)%>"<%} else{%> value="<%=Encode.forHtmlAttribute(drugName)%>"  onchange="changeDrugName('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(drugName)%>');" <%}%> TITLE="<%=Encode.forHtmlAttribute(drugName)%>"/>&nbsp;<span id="inactive_<%=Encode.forJavaScript(String.valueOf(rand))%>" style="color:red;"></span>
+
+        <div id="alleg_vigilance_div<%=rand%>" style="display: none;"></div>
     </div>
 
 	<!-- Allergy Alert Table-->
-
 	<table style="margin-top:5px; margin-bottom:5px; border-collapse: collapse; display: none; width:100%;" id="alleg_tbl_<%=Encode.forHtmlAttribute(String.valueOf(rand))%>">
 		<tr>
 			<td style="background-color:#CCCCCC;height:10px;width:100%;">
