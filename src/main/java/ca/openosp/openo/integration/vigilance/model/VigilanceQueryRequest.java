@@ -49,7 +49,7 @@ public record VigilanceQueryRequest(Query query, Profile profile, Institution in
     /**
      * Patient profile information including demographics and current medications.
      */
-    public record Profile(Patient patient, List<Medication> medications) {}
+    public record Profile(Patient patient, List<Medication> medications, List<Diagnose> diagnoses, List<RxProblem> rxProblems) {}
 
     /**
      * Type of institution making the request.
@@ -75,4 +75,9 @@ public record VigilanceQueryRequest(Query query, Profile profile, Institution in
      * Specific medication product details.
      */
     public record Product(String code, String fmt) {}
+
+    public record Diagnose(String code) {}
+
+    public record RxProblem(String code, String fmt, int prob) {}
+
 }

@@ -1906,7 +1906,7 @@
             allegSpan.innerHTML = '';
           }
           if (json != null && json.viewerHtml) {
-            addWarningIcon(json.id, json.viewerHtml);
+            addWarningIcon(json.id, json.viewerHtml, json.token);
           }
         } catch (e) {
           console.error('Failed to parse viewer HTML data');
@@ -1926,7 +1926,7 @@
     });
   }
 
-  function addWarningIcon(id, viewerHtml) {
+  function addWarningIcon(id, viewerHtml, token) {
     console.log('[addWarningIcon] id:', id);
 
     let existingIcon = document.getElementById('warning_icon_' + id);
@@ -1954,7 +1954,7 @@
     iconImg.alt = 'Warning';
 
     iconImg.onclick = function() {
-      openWarningModal(id, viewerHtml);
+      openWarningModal(id, viewerHtml, token);
     };
 
     iconContainer.appendChild(iconImg);
@@ -1962,23 +1962,50 @@
     console.log('[addWarningIcon] icon inserted, verifying:', document.getElementById('warning_icon_' + id) ? 'found' : 'NOT found');
   }
 
-  function openWarningModal(id, viewerHtml) {
+  function openWarningModal(id, viewerHtml, token) {
     if (!viewerHtml || viewerHtml.trim() === '') {
       return;
     }
 
+    const safeId = String(id).replace(/[^a-zA-Z0-9_-]/g, '');
     const newWin = window.open(
             '',
-            'warningModal_' + id,
+            `warningModal_${safeId}`,
             'width=1000,height=700,scrollbars=yes,resizable=yes'
     );
 
-    if (!newWin) return;
+    if (!newWin) {
+      return;
+    }
 
-    newWin.document.open();
+    const doc = newWin.document;
 
-    newWin.document.write(viewerHtml); 
-    newWin.document.close();
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Warning</title></head><body></body></html>');
+    doc.close();
+
+    const form = doc.createElement('form');
+    form.method = 'post';
+    form.id = 'myForm';
+    form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
+
+    const tokenInput = doc.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'token';
+
+    tokenInput.value = token;
+
+    const textarea = doc.createElement('textarea');
+    textarea.name = 'intrant';
+    textarea.value = viewerHtml;
+
+    form.appendChild(tokenInput);
+    form.appendChild(textarea);
+    doc.body.appendChild(form);
+
+    newWin.opener = null;
+
+    form.submit();
   }
 
   function checkIfInactive(id, dinNumber) {

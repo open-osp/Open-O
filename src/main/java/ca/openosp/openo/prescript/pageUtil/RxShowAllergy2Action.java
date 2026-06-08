@@ -44,6 +44,7 @@ import ca.openosp.openo.prescript.data.RxPatientData;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
+import ca.openosp.openo.webserv.oauth2.OpenOOAuth2ClientProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -341,12 +342,20 @@ public final class RxShowAllergy2Action extends ActionSupport {
             ArrayNode allergyResultArray = objectMapper.createArrayNode();
 
             try {
-                VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
+//                VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
+//                        loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
+//
+//                String viewerHtml = viewerResponse.viewerHtml();
+//                if (viewerHtml != null && !viewerHtml.isEmpty()) {
+//                    result.put("viewerHtml", viewerHtml);
+//                }
+
+                String viewerHtml = vigilanceAllergyCheckService.checkAllergies(
                         loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
 
-                String viewerHtml = viewerResponse.viewerHtml();
-                if (viewerHtml != null && !viewerHtml.isEmpty()) {
+                if (!viewerHtml.isEmpty()) {
                     result.put("viewerHtml", viewerHtml);
+                    result.put("token", OpenOOAuth2ClientProvider.TOKEN);
                 }
 
             } catch (Exception e) {

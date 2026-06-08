@@ -24,7 +24,6 @@ package ca.openosp.openo.integration.vigilance.service;
 
 import ca.openosp.openo.integration.vigilance.client.VigilanceClient;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
-import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,8 +47,8 @@ public class VigilanceService {
      * @param request the query request containing patient and service details
      * @return the response from the Vigilance API containing the analysis result
      */
-    public VigilanceQueryResponse queryAnalysis(VigilanceQueryRequest request) {
-        return this.vigilanceClient.postForObject("/service/rxvengine/query", request, VigilanceQueryResponse.class);
+    public String queryAnalysis(VigilanceQueryRequest request) {
+        return this.vigilanceClient.postForObject("/service/rxvengine/query", request);
     }
 
     /**
