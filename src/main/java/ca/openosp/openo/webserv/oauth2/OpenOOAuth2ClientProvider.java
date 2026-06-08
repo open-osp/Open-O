@@ -131,6 +131,7 @@ public abstract class OpenOOAuth2ClientProvider {
     private final String clientId;
     private final String clientSecret;
     private final String tokenUri;
+    public static String TOKEN;
 
     /**
      * Constructs the provider with core OAuth2 credentials.
@@ -312,6 +313,7 @@ public abstract class OpenOOAuth2ClientProvider {
             ClientRequest newRequest = ClientRequest.from(request).headers(headers -> {
                 if (authorizedClient != null) {
                     headers.setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
+                    TOKEN = authorizedClient.getAccessToken().getTokenValue();
                 }
             }).build();
 

@@ -24,7 +24,6 @@ package ca.openosp.openo.integration.vigilance.client;
 
 import ca.openosp.openo.integration.vigilance.exception.VigilanceIntegrationException;
 import ca.openosp.openo.integration.vigilance.model.VigilanceRequest;
-import ca.openosp.openo.integration.vigilance.model.VigilanceResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +34,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -74,12 +72,11 @@ public class VigilanceClient {
      *
      * @param serviceEndPoint the endpoint path to call
      * @param requestBody the object to be serialized as JSON and sent
-     * @param responseType the class of the expected response
      * @return the deserialized response object
      * @throws VigilanceIntegrationException if serialization fails or the API returns an error
      */
     @SuppressWarnings("unchecked")
-    public <T> T postForObject(String serviceEndPoint, VigilanceRequest requestBody, Class<T> responseType) {
+    public String postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -102,7 +99,7 @@ public class VigilanceClient {
                     .bodyToMono(String.class)
                     .block();
 
-            return objectMapper.readValue(jsonResponse, responseType);
+            return jsonResponse;
         } catch (IOException e) {
             throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
         } catch (Exception e) {

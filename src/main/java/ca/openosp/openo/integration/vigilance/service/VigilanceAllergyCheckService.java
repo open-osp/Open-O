@@ -22,16 +22,19 @@
 
 package ca.openosp.openo.integration.vigilance.service;
 
+import ca.openosp.openo.commn.dao.MeasurementDao;
 import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Measurement;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
-import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.managers.DemographicManager;
+import ca.openosp.openo.utility.LoggedInInfo;
+import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ca.openosp.openo.utility.LoggedInInfo;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Orchestrator service for performing allergy checks via the Vigilance API.
@@ -41,12 +44,15 @@ import java.util.List;
 public class VigilanceAllergyCheckService {
 
     private final DemographicManager demographicManager;
+    private final MeasurementDao measurementDao;
     private final VigilanceService vigilanceService;
 
     @Autowired
     public VigilanceAllergyCheckService(DemographicManager demographicManager,
+                                        MeasurementDao measurementDao,
                                       VigilanceService vigilanceService) {
         this.demographicManager = demographicManager;
+        this.measurementDao = measurementDao;
         this.vigilanceService = vigilanceService;
     }
 
@@ -58,9 +64,9 @@ public class VigilanceAllergyCheckService {
      * @param drugDinCode the ATC code of the target drug
      * @return the response from Vigilance API containing analysis results
      */
-    public VigilanceQueryResponse checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
+    public String checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
         // 1. Resolve Patient Profile
-        Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
+        Demographic demographic = this.demographicManager.getDemographic(loggedInInfo, demographicNo);
         if (demographic == null) {
             throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
         }
@@ -81,7 +87,7 @@ public class VigilanceAllergyCheckService {
      */
     public VigilanceQueryViewerResponse checkAllergiesWithViewer(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
         // 1. Resolve Patient Profile
-        Demographic demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
+        Demographic demographic = this.demographicManager.getDemographic(loggedInInfo, demographicNo);
         if (demographic == null) {
             throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
         }
@@ -98,17 +104,33 @@ public class VigilanceAllergyCheckService {
         VigilanceQueryRequest.Query query = new VigilanceQueryRequest.Query(serviceInfo, config);
 
         VigilanceQueryRequest.Age age = new VigilanceQueryRequest.Age(demographic.getAgeInYears());
+        double wt = 0;
+        Measurement measurement = this.measurementDao.findLastEntered(demographic.getDemographicNo(), "WT");
+        if (Objects.nonNull(measurement)) {
+            try {
+                wt = Double.parseDouble(measurement.getDataField());
+            } catch (NumberFormatException e) {
+                MiscUtils.getLogger().warn("Unable to parse weight measurement: " + measurement.getDataField());
+            }
+        }
         VigilanceQueryRequest.Patient patient = new VigilanceQueryRequest.Patient(
             demographic.getFirstName(),
             demographic.getLastName(),
             demographic.getGender(),
             age,
-            70.0
+                wt
         );
 
         VigilanceQueryRequest.Product product = new VigilanceQueryRequest.Product(drugDinCode, "din");
         VigilanceQueryRequest.Medication medication = new VigilanceQueryRequest.Medication(List.of(product));
-        VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile(patient, List.of(medication));
+
+
+        VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile(
+                patient,
+                List.of(medication),
+                List.of(),
+                List.of()
+        );
 
         VigilanceQueryRequest.Institution institution = new VigilanceQueryRequest.Institution(0);
 
