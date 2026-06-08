@@ -56,8 +56,9 @@
             <c:forEach var="labResult" items="${labDocs}" varStatus="loopStatus">
                 <tr id="labdoc_${labResult.segmentID}" class="${!labResult.isMatchedToPatient() ? 'table-warning' : (labResult.resultStatus == 'A' ? 'table-danger' : '')}">
                     <td>
-                        <c:set var="disabled" value="${!labResult.matchedToPatient && labResult.labType != 'DOC' ? 'disabled' : ''}"/>
-                        <input type="checkbox" name="flaggedLabs" value="${labResult.segmentID}:${labResult.labType}" ${disabled}>
+<%--                        <c:set var="disabled" value="${!labResult.matchedToPatient && labResult.labType != 'DOC' ? 'disabled' : ''}"/>--%>
+                        <input type="checkbox" name="flaggedLabs" value="${labResult.segmentID}:${labResult.labType}" >
+<%--                            ${disabled}>--%>
                     </td>
                     <td>
                         <c:set var="labRead" value="${labResult.hasRead(sessionScope.user) ? '' : '*'}"/>
