@@ -22,8 +22,10 @@
 
 package ca.openosp.openo.integration.vigilance.service;
 
+import ca.openosp.openo.casemgmt.service.CaseManagementManager;
 import ca.openosp.openo.commn.dao.MeasurementDao;
 import ca.openosp.openo.commn.model.Demographic;
+import ca.openosp.openo.commn.model.Drug;
 import ca.openosp.openo.commn.model.Measurement;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
@@ -33,6 +35,7 @@ import ca.openosp.openo.utility.MiscUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,14 +48,17 @@ public class VigilanceAllergyCheckService {
 
     private final DemographicManager demographicManager;
     private final MeasurementDao measurementDao;
+    private final CaseManagementManager caseManagementManager;
     private final VigilanceService vigilanceService;
 
     @Autowired
     public VigilanceAllergyCheckService(DemographicManager demographicManager,
                                         MeasurementDao measurementDao,
+                                        CaseManagementManager caseManagementManager,
                                       VigilanceService vigilanceService) {
         this.demographicManager = demographicManager;
         this.measurementDao = measurementDao;
+        this.caseManagementManager = caseManagementManager;
         this.vigilanceService = vigilanceService;
     }
 
@@ -71,7 +77,9 @@ public class VigilanceAllergyCheckService {
             throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
         }
 
-        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
+        List<Drug> prescriptionDrugs = this.caseManagementManager.getCurrentPrescriptions(demographicNo);
+
+        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode, prescriptionDrugs);
 
         // 2. Call Vigilance API via Service layer
         return vigilanceService.queryAnalysis(request);
@@ -92,13 +100,13 @@ public class VigilanceAllergyCheckService {
             throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
         }
 
-        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
+//        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
 
         // 2. Call Vigilance API via Service layer for both analysis and viewer
-        return vigilanceService.queryViewerWithAllergies(request);
+        return null;
     }
 
-    private VigilanceQueryRequest assembleRequest(Demographic demographic, String drugDinCode) {
+    private VigilanceQueryRequest assembleRequest(Demographic demographic, String drugDinCode, List<Drug> prescriptionDrugs) {
         VigilanceQueryRequest.ServiceInfo serviceInfo = new VigilanceQueryRequest.ServiceInfo("analysis", 2, 0);
         VigilanceQueryRequest.Config config = new VigilanceQueryRequest.Config(List.of("ON"));
         VigilanceQueryRequest.Query query = new VigilanceQueryRequest.Query(serviceInfo, config);
@@ -124,10 +132,19 @@ public class VigilanceAllergyCheckService {
         VigilanceQueryRequest.Product product = new VigilanceQueryRequest.Product(drugDinCode, "din");
         VigilanceQueryRequest.Medication medication = new VigilanceQueryRequest.Medication(List.of(product));
 
+        List<VigilanceQueryRequest.Medication> medications = new ArrayList<>();
+        medications.add(medication);
+
+        for (Drug d : prescriptionDrugs) {
+            medications.add(new VigilanceQueryRequest.Medication(
+                    List.of(new VigilanceQueryRequest.Product(d.getRegionalIdentifier(), "din"))
+            ));
+        }
+
 
         VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile(
                 patient,
-                List.of(medication),
+                medications,
                 List.of(),
                 List.of()
         );
