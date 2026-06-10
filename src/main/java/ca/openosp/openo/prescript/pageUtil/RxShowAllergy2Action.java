@@ -57,11 +57,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -154,12 +150,12 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
         String dispatchResult = switch (method != null ? method : "") {
             case "reorder" -> reorder();
-//            case "allergyData" -> {
-//                getAllergyData(loggedInInfo);
-//                yield null;
-//            }
-            case "viewerHtmlData" -> {
-                getAllViewerHtmlData(loggedInInfo);
+            case "allergyData" -> {
+                getAllergyData(loggedInInfo);
+                yield null;
+            }
+            case "doProfileAnalysis" -> {
+                doProfileAnalysis(loggedInInfo);
                 yield null;
             }
             default -> null;
@@ -269,7 +265,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
             RxDrugData drugData = new RxDrugData();
 
             try {
-                allergyWarnings = drugData.getAllergyWarnings(loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode, allergies);
+                allergyWarnings = drugData.getAllergyWarnings(null, null, Objects.nonNull(dinCode) ? dinCode : atcCode, allergies);
 
                 Allergy highestSeverityAllergy = null;
 
@@ -316,7 +312,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
      * Retrieves allergy warnings and HTML viewer content for a patient, combining results from both
      * the Vigilance query analysis and query viewer endpoints. Outputs the resulting data in JSON format.
      */
-    private void getAllViewerHtmlData(LoggedInInfo loggedInInfo) throws IOException {
+    private void doProfileAnalysis(LoggedInInfo loggedInInfo) throws IOException {
         String atcCode = request.getParameter("atcCode");
         String dinCode = request.getParameter("dinCode");
         String id = request.getParameter("id");
@@ -325,21 +321,9 @@ public final class RxShowAllergy2Action extends ActionSupport {
         if (disabled.equals("false")) {
             ObjectMapper objectMapper = new ObjectMapper();
             RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-            Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, rxSessionBean.getDemographicNo()).getActiveAllergies();
-
-            if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
-                try {
-                    ArrayList<Allergy> remoteAllergies = RemoteDrugAllergyHelper.getRemoteAllergiesAsAllergyItems(loggedInInfo, rxSessionBean.getDemographicNo());
-                    Collections.addAll(remoteAllergies, allergies);
-                    allergies = remoteAllergies.toArray(new Allergy[0]);
-                } catch (Exception e) {
-                    MiscUtils.getLogger().error("error getting remote allergies", e);
-                }
-            }
 
             ObjectNode result = objectMapper.createObjectNode();
             result.put("id", id);
-            ArrayNode allergyResultArray = objectMapper.createArrayNode();
 
             try {
 //                VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
@@ -350,19 +334,21 @@ public final class RxShowAllergy2Action extends ActionSupport {
 //                    result.put("viewerHtml", viewerHtml);
 //                }
 
-                String viewerHtml = vigilanceAllergyCheckService.checkAllergies(
-                        loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
+                VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
+                        loggedInInfo, rxSessionBean.getDemographicNo(), List.of(rxSessionBean.getStash()));
+
+                String viewerHtml = queryViewerResponse.rawResponse();
 
                 if (!viewerHtml.isEmpty()) {
                     result.put("viewerHtml", viewerHtml);
                     result.put("token", OpenOOAuth2ClientProvider.TOKEN);
+                    result.put("showAlert", !queryViewerResponse.vigilanceQueryResponse().summary().displayIcon().startsWith("alert0"));
                 }
 
             } catch (Exception e) {
-                MiscUtils.getLogger().error("Error in getAllViewerHtmlData", e);
+                MiscUtils.getLogger().error("Error in doProfileAnalysis", e);
             }
 
-            result.set("results", allergyResultArray);
             response.setContentType("application/json");
             response.getOutputStream().write(result.toString().getBytes());
         }

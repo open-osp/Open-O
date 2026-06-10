@@ -30,14 +30,17 @@ import ca.openosp.openo.commn.model.Measurement;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.managers.DemographicManager;
+import ca.openosp.openo.prescript.data.RxPrescriptionData;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * Orchestrator service for performing allergy checks via the Vigilance API.
@@ -67,10 +70,10 @@ public class VigilanceAllergyCheckService {
      *
      * @param loggedInInfo the currently logged in user info
      * @param demographicNo the internal identifier of the patient
-     * @param drugDinCode the ATC code of the target drug
+     * @param stashDrugs the ATC code of the target drug
      * @return the response from Vigilance API containing analysis results
      */
-    public String checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
+    public VigilanceQueryViewerResponse checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, List<RxPrescriptionData.Prescription> stashDrugs) {
         // 1. Resolve Patient Profile
         Demographic demographic = this.demographicManager.getDemographic(loggedInInfo, demographicNo);
         if (demographic == null) {
@@ -79,7 +82,7 @@ public class VigilanceAllergyCheckService {
 
         List<Drug> prescriptionDrugs = this.caseManagementManager.getCurrentPrescriptions(demographicNo);
 
-        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode, prescriptionDrugs);
+        VigilanceQueryRequest request = assembleRequest(demographic, stashDrugs, prescriptionDrugs);
 
         // 2. Call Vigilance API via Service layer
         return vigilanceService.queryAnalysis(request);
@@ -106,7 +109,7 @@ public class VigilanceAllergyCheckService {
         return null;
     }
 
-    private VigilanceQueryRequest assembleRequest(Demographic demographic, String drugDinCode, List<Drug> prescriptionDrugs) {
+    private VigilanceQueryRequest assembleRequest(Demographic demographic, List<RxPrescriptionData.Prescription> stagedDrugs, List<Drug> prescriptionDrugs) {
         VigilanceQueryRequest.ServiceInfo serviceInfo = new VigilanceQueryRequest.ServiceInfo("analysis", 2, 0);
         VigilanceQueryRequest.Config config = new VigilanceQueryRequest.Config(List.of("ON"));
         VigilanceQueryRequest.Query query = new VigilanceQueryRequest.Query(serviceInfo, config);
@@ -126,21 +129,19 @@ public class VigilanceAllergyCheckService {
             demographic.getLastName(),
             demographic.getGender(),
             age,
-                wt
+            wt
         );
 
-        VigilanceQueryRequest.Product product = new VigilanceQueryRequest.Product(drugDinCode, "din");
-        VigilanceQueryRequest.Medication medication = new VigilanceQueryRequest.Medication(List.of(product));
-
-        List<VigilanceQueryRequest.Medication> medications = new ArrayList<>();
-        medications.add(medication);
-
-        for (Drug d : prescriptionDrugs) {
-            medications.add(new VigilanceQueryRequest.Medication(
-                    List.of(new VigilanceQueryRequest.Product(d.getRegionalIdentifier(), "din"))
-            ));
-        }
-
+        List<VigilanceQueryRequest.Medication> medications = Stream.concat(
+                stagedDrugs.stream()
+                        .map(stagedDrug -> getProductObject(stagedDrug.getRegionalIdentifier())),
+                prescriptionDrugs.stream()
+                        .filter(d -> !d.isArchived())
+                        .filter(Drug::isCurrent)
+                        .filter(d -> StringUtils.isNotBlank(d.getRegionalIdentifier()) && !"0".equals(d.getRegionalIdentifier()))
+                        .filter(d -> !"0".equals(d.getGcnSeqNo()))
+                        .map(d -> getProductObject(d.getRegionalIdentifier()))
+        ).toList();
 
         VigilanceQueryRequest.Profile profile = new VigilanceQueryRequest.Profile(
                 patient,
@@ -152,5 +153,11 @@ public class VigilanceAllergyCheckService {
         VigilanceQueryRequest.Institution institution = new VigilanceQueryRequest.Institution(0);
 
         return new VigilanceQueryRequest(query, profile, institution);
+    }
+
+    private static VigilanceQueryRequest.Medication getProductObject(String drugDinCode) {
+        return new VigilanceQueryRequest.Medication(List.of(
+                new VigilanceQueryRequest.Product(drugDinCode, drugDinCode.contains("##") ? "generx" : "din")
+        ));
     }
 }

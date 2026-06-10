@@ -23,6 +23,8 @@
 package ca.openosp.openo.integration.vigilance.client;
 
 import ca.openosp.openo.integration.vigilance.exception.VigilanceIntegrationException;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,7 +78,7 @@ public class VigilanceClient {
      * @throws VigilanceIntegrationException if serialization fails or the API returns an error
      */
     @SuppressWarnings("unchecked")
-    public String postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
+    public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -99,7 +101,8 @@ public class VigilanceClient {
                     .bodyToMono(String.class)
                     .block();
 
-            return jsonResponse;
+            VigilanceQueryResponse parsed = objectMapper.readValue(jsonResponse, VigilanceQueryResponse.class);
+            return new VigilanceQueryViewerResponse(jsonResponse, parsed);
         } catch (IOException e) {
             throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
         } catch (Exception e) {
