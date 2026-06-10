@@ -22,6 +22,7 @@
 
 package ca.openosp.openo.integration.vigilance.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Map;
  * Response object for a Vigilance query analysis.
  * Contains the full analysis result including summary, profile data, side effects, and more.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record VigilanceQueryResponse(
         @JsonProperty("summary") Summary summary,
         @JsonProperty("profileGen") Map<String, ProfileGenEntry> profileGen,
@@ -41,6 +43,7 @@ public record VigilanceQueryResponse(
         @JsonProperty("profile") Profile profile,
         @JsonProperty("institution") Institution institution) implements VigilanceResponse {
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Summary(
             @JsonProperty("dateTime") String dateTime,
             @JsonProperty("version") Version version,
@@ -49,10 +52,12 @@ public record VigilanceQueryResponse(
             @JsonProperty("displayIcon") String displayIcon,
             @JsonProperty("analysisLimits") AnalysisLimits analysisLimits) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Version(
             @JsonProperty("engine") String engine,
             @JsonProperty("data") String data) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record PreprocessChange(
             @JsonProperty("id") String id,
             @JsonProperty("target") String target,
@@ -60,21 +65,26 @@ public record VigilanceQueryResponse(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record AnalysisLimits(
             @JsonProperty("medications") MedicationLimit medications) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record MedicationLimit(
             @JsonProperty("limited") Integer limited) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Source(
             @JsonProperty("p") Integer p,
             @JsonProperty("c") Integer c,
             @JsonProperty("i") Integer i,
             @JsonProperty("impact") String impact) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileGenEntry(
             @JsonProperty("source") List<Source> source) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileSideEffect(
             @JsonProperty("id") String id,
             @JsonProperty("n") Integer n,
@@ -82,42 +92,52 @@ public record VigilanceQueryResponse(
             @JsonProperty("en") String en,
             @JsonProperty("source") List<Source> source) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileIntensity(
             @JsonProperty("profile") Integer profile,
             @JsonProperty("detail") List<Map<String, Integer>> detail) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileCytochrome(
             @JsonProperty("id") String id,
             @JsonProperty("source") List<Source> source) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Dictionary(
             @JsonProperty("text") TextDictionary text) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record TextDictionary(
             @JsonProperty("al_limited") BilingualText al_limited,
             @JsonProperty("limited") BilingualText limited) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record BilingualText(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record QueryResponse(
             @JsonProperty("config") QueryConfig config,
             @JsonProperty("service") ServiceInfo service) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record QueryConfig(
             @JsonProperty("zone") List<String> zone) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ServiceInfo(
             @JsonProperty("id") String id,
             @JsonProperty("userType") Integer userType,
             @JsonProperty("analysisMode") Integer analysisMode) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Profile(
             @JsonProperty("patient") Patient patient,
             @JsonProperty("medications") List<MedicationEntry> medications,
             @JsonProperty("diagnoses") List<Diagnosis> diagnoses) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Patient(
             @JsonProperty("firstName") String firstName,
             @JsonProperty("lastName") String lastName,
@@ -125,12 +145,15 @@ public record VigilanceQueryResponse(
             @JsonProperty("weightKg") Integer weightKg,
             @JsonProperty("race") Integer race) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Age(
             @JsonProperty("years") Integer years) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record MedicationEntry(
             @JsonProperty("product") List<Product> product) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Product(
             @JsonProperty("code") String code,
             @JsonProperty("fmt") String fmt,
@@ -138,6 +161,7 @@ public record VigilanceQueryResponse(
             @JsonProperty("analysisLimits") AnalysisLimitsEntry analysisLimits,
             @JsonProperty("detail") ProductDetail detail) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record DisplayNames(
             @JsonProperty("usual") BilingualText usual,
             @JsonProperty("usualAndForm") BilingualText usualAndForm,
@@ -149,10 +173,12 @@ public record VigilanceQueryResponse(
             @JsonProperty("form") BilingualText form,
             @JsonProperty("strength") BilingualText strength) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record AnalysisLimitsEntry(
             @JsonProperty("value") String value,
             @JsonProperty("note") String note) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProductDetail(
             @JsonProperty("name") BilingualText name,
             @JsonProperty("strength") BilingualText strength,
@@ -167,21 +193,25 @@ public record VigilanceQueryResponse(
             @JsonProperty("monograph") Monograph monograph,
             @JsonProperty("comparativeChart") ComparativeChart comparativeChart) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Ingredient(
             @JsonProperty("gen") String gen,
             @JsonProperty("genName") BilingualText genName,
             @JsonProperty("analysisLimits") AnalysisLimitsEntry analysisLimits) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Coverage(
             @JsonProperty("covered") String covered,
             @JsonProperty("supply") Integer supply) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Monograph(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en,
             @JsonProperty("title") BilingualText title,
             @JsonProperty("a") String a) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ComparativeChart(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en,
@@ -189,17 +219,20 @@ public record VigilanceQueryResponse(
             @JsonProperty("a") String a,
             @JsonProperty("q") BilingualText q) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Diagnosis(
             @JsonProperty("code") String code,
             @JsonProperty("active") Integer active,
             @JsonProperty("displayNames") BilingualText displayNames,
             @JsonProperty("detail") DiagnosisDetail detail) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record DiagnosisDetail(
             @JsonProperty("name") BilingualText name,
             @JsonProperty("link") DiagnosisLink link,
             @JsonProperty("documentsDiagnosis") List<DocumentDiagnosis> documentsDiagnosis) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record DiagnosisLink(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en,
@@ -207,10 +240,12 @@ public record VigilanceQueryResponse(
             @JsonProperty("a") String a,
             @JsonProperty("q") BilingualText q) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record DocumentDiagnosis(
             @JsonProperty("link") DiagnosisLink link,
             @JsonProperty("category") String category) {}
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Institution(
             @JsonProperty("type") Integer type) {}
 }

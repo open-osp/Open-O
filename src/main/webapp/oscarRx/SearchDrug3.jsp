@@ -2034,11 +2034,9 @@
 
   function checkAllergy(id, atcCode, dinCode) {
     fetchViewerHtml(id, atcCode, dinCode);
-
-    /* const url = ctx + "/oscarRx/showAllergy.do"
-     const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
-
-   new Ajax.Request(url, {
+    const url = ctx + "/oscarRx/showAllergy.do"
+    const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
+    new Ajax.Request(url, {
        method: 'post', postBody: data,
        requestHeaders: {'Accept': 'application/json'},
        onSuccess: function (transport) {
@@ -2064,12 +2062,6 @@
                document.getElementById('alleg_tbl_' + json.id).style.display = 'block';
              }
            }
-
-           if (json != null && json.viewerHtml) {
-             addWarningIcon(json.id, json.viewerHtml);
-           }
-
-
          } catch (e) {
            console.error('Failed to parse allergy data');
          }
@@ -2077,18 +2069,18 @@
        onFailure: function (transport) {
          console.error('Allergy check failed with status: ' + (transport.status || 'unknown'));
        }
-     });*/
+     });
   }
 
   function fetchViewerHtml(id, atcCode, dinCode) {
     let allegSpan = document.getElementById('alleg_vigilance_div' + id);
     if (allegSpan) {
       allegSpan.style.display = 'flex';
-      allegSpan.innerHTML = '<span class="shimmer">Checking for allergies...</span>';
+      allegSpan.innerHTML = '<span class="shimmer">Checking drug allergies...</span>';
     }
 
     const url = ctx + "/oscarRx/showAllergy.do";
-    const data = "method=viewerHtmlData&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
+    const data = "method=doProfileAnalysis&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
       method: 'post', postBody: data,
       requestHeaders: {'Accept': 'application/json'},
@@ -2099,7 +2091,7 @@
           if (allegSpan) {
             allegSpan.innerHTML = '';
           }
-          if (json != null && json.viewerHtml) {
+          if (json != null && json.viewerHtml && json.showAlert == true) {
             addWarningIcon(json.id, json.viewerHtml, json.token);
           }
         } catch (e) {
