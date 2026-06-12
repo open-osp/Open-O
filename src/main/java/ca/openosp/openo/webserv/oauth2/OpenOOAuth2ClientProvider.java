@@ -22,7 +22,6 @@
 
 package ca.openosp.openo.webserv.oauth2;
 
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient;
@@ -131,7 +130,35 @@ public abstract class OpenOOAuth2ClientProvider {
     private final String clientId;
     private final String clientSecret;
     private final String tokenUri;
-    public static String TOKEN;
+
+    /**
+     * ThreadLocal to store the access token for use by postForObject.
+     * This captures the token from WebClient's OAuth2 filter context.
+     */
+    private static final ThreadLocal<String> CURRENT_TOKEN = new ThreadLocal<>();
+
+    /**
+     * Sets the access token in ThreadLocal storage.
+     * @param token the access token to store
+     */
+    public static void setAccessToken(String token) {
+        CURRENT_TOKEN.set(token);
+    }
+
+    /**
+     * Gets the access token from ThreadLocal storage.
+     * @return the stored access token, or null if not present
+     */
+    public static String getAccessToken() {
+        return CURRENT_TOKEN.get();
+    }
+
+    /**
+     * Clears the access token from ThreadLocal storage.
+     */
+    public static void clearAccessToken() {
+        CURRENT_TOKEN.remove();
+    }
 
     /**
      * Constructs the provider with core OAuth2 credentials.
@@ -266,7 +293,7 @@ public abstract class OpenOOAuth2ClientProvider {
      *
      * @return a configured {@link DefaultClientCredentialsTokenResponseClient}
      */
-    private @NonNull DefaultClientCredentialsTokenResponseClient getClientCredentialsTokenResponseClient() {
+    private DefaultClientCredentialsTokenResponseClient getClientCredentialsTokenResponseClient() {
         DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
         OAuth2ClientCredentialsGrantRequestEntityConverter requestEntityConverter = new OAuth2ClientCredentialsGrantRequestEntityConverter();
 
@@ -289,7 +316,7 @@ public abstract class OpenOOAuth2ClientProvider {
      * @param tokenResponseClient the client responsible for executing the token request
      * @return a configured {@link OAuth2AuthorizedClientProvider}
      */
-    private @NonNull OAuth2AuthorizedClientProvider getAuthorizedClientProvider(DefaultClientCredentialsTokenResponseClient tokenResponseClient) {
+    private OAuth2AuthorizedClientProvider getAuthorizedClientProvider(DefaultClientCredentialsTokenResponseClient tokenResponseClient) {
         return OAuth2AuthorizedClientProviderBuilder.builder()
                 .clientCredentials(configurer -> configurer.accessTokenResponseClient(tokenResponseClient))
                 .build();
@@ -301,7 +328,7 @@ public abstract class OpenOOAuth2ClientProvider {
      * @param authorizedClientManager the manager responsible for authorizing the client
      * @return the filter function
      */
-    private @NonNull ExchangeFilterFunction getExchangeFilterFunction(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager) {
+    private ExchangeFilterFunction getExchangeFilterFunction(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager) {
         return (request, next) -> {
             OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
                     .withClientRegistrationId(getRegistrationId())
@@ -313,7 +340,7 @@ public abstract class OpenOOAuth2ClientProvider {
             ClientRequest newRequest = ClientRequest.from(request).headers(headers -> {
                 if (authorizedClient != null) {
                     headers.setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
-                    TOKEN = authorizedClient.getAccessToken().getTokenValue();
+                    setAccessToken(authorizedClient.getAccessToken().getTokenValue());
                 }
             }).build();
 
@@ -326,7 +353,7 @@ public abstract class OpenOOAuth2ClientProvider {
      *
      * @return the client registration details
      */
-    private @NonNull ClientRegistration getClientRegistration() {
+    private ClientRegistration getClientRegistration() {
         return ClientRegistration
                 .withRegistrationId(getRegistrationId())
                 .tokenUri(this.tokenUri)

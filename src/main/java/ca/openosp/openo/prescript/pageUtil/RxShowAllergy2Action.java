@@ -329,13 +329,6 @@ public final class RxShowAllergy2Action extends ActionSupport {
             result.put("id", id);
 
             try {
-//                VigilanceQueryViewerResponse viewerResponse = vigilanceAllergyCheckService.checkAllergiesWithViewer(
-//                        loggedInInfo, rxSessionBean.getDemographicNo(), Objects.nonNull(dinCode) ? dinCode : atcCode);
-//
-//                String viewerHtml = viewerResponse.viewerHtml();
-//                if (viewerHtml != null && !viewerHtml.isEmpty()) {
-//                    result.put("viewerHtml", viewerHtml);
-//                }
 
                 VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
                         loggedInInfo, rxSessionBean.getDemographicNo(), List.of(rxSessionBean.getStash()));
@@ -344,7 +337,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
                 if (!viewerHtml.isEmpty()) {
                     result.put("viewerHtml", viewerHtml);
-                    result.put("token", OpenOOAuth2ClientProvider.TOKEN);
+                    result.put("token", queryViewerResponse.token());
                     result.put("showAlert", !queryViewerResponse.vigilanceQueryResponse().summary().displayIcon().startsWith("alert0"));
                 }
 
