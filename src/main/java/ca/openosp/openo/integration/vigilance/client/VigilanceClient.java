@@ -26,6 +26,7 @@ import ca.openosp.openo.integration.vigilance.exception.VigilanceIntegrationExce
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceRequest;
+import ca.openosp.openo.webserv.oauth2.OpenOOAuth2ClientProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,7 +79,7 @@ public class VigilanceClient {
      * @throws VigilanceIntegrationException if serialization fails or the API returns an error
      */
     @SuppressWarnings("unchecked")
-    public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
+    public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody, boolean needToken) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
             MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -102,13 +103,30 @@ public class VigilanceClient {
                     .block();
 
             VigilanceQueryResponse parsed = objectMapper.readValue(jsonResponse, VigilanceQueryResponse.class);
-            return new VigilanceQueryViewerResponse(jsonResponse, parsed);
+
+            String token = null;
+            if (needToken) {
+                token = OpenOOAuth2ClientProvider.getAccessToken();
+            }
+
+            return new VigilanceQueryViewerResponse(jsonResponse, parsed, token);
         } catch (IOException e) {
             throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
         } catch (Exception e) {
             if (e instanceof VigilanceIntegrationException) throw e;
             throw new VigilanceIntegrationException("Unexpected error during Vigilance API call", e);
+        } finally {
+            if (needToken) {
+                OpenOOAuth2ClientProvider.clearAccessToken();
+            }
         }
+    }
+
+    /**
+     * Sends a POST request without token embedding (backward compatible).
+     */
+    public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
+        return postForObject(serviceEndPoint, requestBody, false);
     }
 
     /**

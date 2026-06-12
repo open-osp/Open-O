@@ -48,7 +48,7 @@ public class VigilanceService {
      * @return the response from the Vigilance API containing the analysis result
      */
     public VigilanceQueryViewerResponse queryAnalysis(VigilanceQueryRequest request) {
-        return this.vigilanceClient.postForObject("/service/rxvengine/query", request);
+        return this.vigilanceClient.postForObject("/service/rxvengine/query", request, true);
     }
 
     /**
@@ -60,7 +60,7 @@ public class VigilanceService {
     public VigilanceQueryViewerResponse queryViewerWithAllergies(VigilanceQueryRequest request) {
         String viewerHtml = this.vigilanceClient.postForHtml("/service/rxvengine/queryviewer/", request);
 
-        return new VigilanceQueryViewerResponse(viewerHtml, null);
+        return new VigilanceQueryViewerResponse(viewerHtml, null, null);
     }
 
     /**
