@@ -815,7 +815,7 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
                 };
             }();
 
-            checkAllergy('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getAtcCode()))%>', '<%=rx.getRegionalIdentifier()%>');
+            checkAllergy('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getAtcCode()))%>');
             checkIfInactive('<%=Encode.forJavaScript(String.valueOf(rand))%>','<%=Encode.forJavaScript(String.valueOf(rx.getRegionalIdentifier()))%>');
 
             var isDiscontinuedLatest = <%=isDiscontinuedLatest%>;
