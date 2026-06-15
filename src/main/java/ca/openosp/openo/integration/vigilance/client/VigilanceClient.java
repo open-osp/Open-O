@@ -26,6 +26,7 @@ import ca.openosp.openo.integration.vigilance.exception.VigilanceIntegrationExce
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceRequest;
+import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResponse;
 import ca.openosp.openo.webserv.oauth2.OpenOOAuth2ClientProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -74,11 +75,10 @@ public class VigilanceClient {
      * The request is sent as application/x-www-form-urlencoded with the JSON body in the 'intrant' field.
      *
      * @param serviceEndPoint the endpoint path to call
-     * @param requestBody the object to be serialized as JSON and sent
+     * @param requestBody     the object to be serialized as JSON and sent
      * @return the deserialized response object
      * @throws VigilanceIntegrationException if serialization fails or the API returns an error
      */
-    @SuppressWarnings("unchecked")
     public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody, boolean needToken) {
         try {
             String jsonBody = objectMapper.writeValueAsString(requestBody);
@@ -95,9 +95,9 @@ public class VigilanceClient {
                     .bodyValue(formData)
                     .retrieve()
                     .onStatus(HttpStatus::isError, response ->
-                        response.bodyToMono(String.class)
-                                .flatMap(body -> reactor.core.publisher.Mono.error(
-                                        new VigilanceIntegrationException("Vigilance API error: " + response.statusCode() + " - " + body)))
+                            response.bodyToMono(String.class)
+                                    .flatMap(body -> reactor.core.publisher.Mono.error(
+                                            new VigilanceIntegrationException("Vigilance API error: " + response.statusCode() + " - " + body)))
                     )
                     .bodyToMono(String.class)
                     .block();
@@ -123,13 +123,6 @@ public class VigilanceClient {
     }
 
     /**
-     * Sends a POST request without token embedding (backward compatible).
-     */
-    public VigilanceQueryViewerResponse postForObject(String serviceEndPoint, VigilanceRequest requestBody) {
-        return postForObject(serviceEndPoint, requestBody, false);
-    }
-
-    /**
      * Sends a POST request to the specified service endpoint.
      *
      * @param serviceEndPoint the endpoint path to call
@@ -144,49 +137,10 @@ public class VigilanceClient {
     }
 
     /**
-     * Sends a POST request to the specified service endpoint and returns the raw response body as a string.
-     * Useful for endpoints that return non-JSON content (e.g., HTML).
-     *
-     * @param serviceEndPoint the endpoint path to call
-     * @param requestBody the object to be serialized as JSON and sent
-     * @return the raw response body as a string
-     * @throws VigilanceIntegrationException if serialization fails or the API returns an error
-     */
-    public String postForHtml(String serviceEndPoint, VigilanceRequest requestBody) {
-        try {
-            String jsonBody = objectMapper.writeValueAsString(requestBody);
-            MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-            formData.add("intrant", jsonBody);
-
-            return this.vigilanceWebClient.post()
-                    .uri(UriComponentsBuilder.fromHttpUrl(baseUrl)
-                            .path(serviceEndPoint)
-                            .build()
-                            .toUri()
-                    )
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .bodyValue(formData)
-                    .retrieve()
-                    .onStatus(HttpStatus::isError, response ->
-                        response.bodyToMono(String.class)
-                                .flatMap(body -> reactor.core.publisher.Mono.error(
-                                        new VigilanceIntegrationException("Vigilance API error: " + response.statusCode() + " - " + body)))
-                    )
-                    .bodyToMono(String.class)
-                    .block();
-        } catch (IOException e) {
-            throw new VigilanceIntegrationException("Failed to process Vigilance API request", e);
-        } catch (Exception e) {
-            if (e instanceof VigilanceIntegrationException) throw e;
-            throw new VigilanceIntegrationException("Unexpected error during Vigilance API call", e);
-        }
-    }
-
-    /**
      * Makes a GET request to the status API endpoint.
      * Status API uses a different host than other Vigilance services.
      */
-    public String getStatus() {
+    public VigilanceStatusResponse getStatus() {
         return this.vigilanceWebClient.get()
                 .uri(UriComponentsBuilder.fromHttpUrl(statusBaseUrl)
                         .path(statusEndpoint)
@@ -195,12 +149,12 @@ public class VigilanceClient {
                 )
                 .retrieve()
                 .onStatus(HttpStatus::isError, response ->
-                    response.bodyToMono(String.class)
-                            .flatMap(body -> reactor.core.publisher.Mono.error(
-                                    new VigilanceIntegrationException("Vigilance Status API error: " + response.statusCode() + " - " + body)
-                            ))
+                        response.bodyToMono(String.class)
+                                .flatMap(body -> reactor.core.publisher.Mono.error(
+                                        new VigilanceIntegrationException("Vigilance Status API error: " + response.statusCode() + " - " + body)
+                                ))
                 )
-                .bodyToMono(String.class)
+                .bodyToMono(VigilanceStatusResponse.class)
                 .block();
     }
 }
