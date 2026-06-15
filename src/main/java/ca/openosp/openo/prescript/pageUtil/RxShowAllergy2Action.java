@@ -34,17 +34,17 @@ import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.commn.model.UserProperty;
-import ca.openosp.openo.integration.vigilance.model.VigilanceQueryResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResponse;
 import ca.openosp.openo.integration.vigilance.service.AllergyCheckCoordinator;
 import ca.openosp.openo.integration.vigilance.service.VigilanceAllergyCheckService;
+import ca.openosp.openo.integration.vigilance.service.VigilanceService;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.prescript.data.RxDrugData;
 import ca.openosp.openo.prescript.data.RxPatientData;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.SpringUtils;
-import ca.openosp.openo.webserv.oauth2.OpenOOAuth2ClientProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -58,7 +58,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Struts 2 action for displaying and managing patient allergies.
@@ -86,6 +85,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
     private SystemPreferencesDao systemPreferencesDao = (SystemPreferencesDao) SpringUtils.getBean(SystemPreferencesDao.class);
     private VigilanceAllergyCheckService vigilanceAllergyCheckService = SpringUtils.getBean(VigilanceAllergyCheckService.class);
     private AllergyCheckCoordinator allergyCheckCoordinator = SpringUtils.getBean(AllergyCheckCoordinator.class);
+    private VigilanceService vigilanceService = SpringUtils.getBean(VigilanceService.class);
 
     /**
      * Handles allergy reordering and redirects to the allergies display page.
@@ -154,8 +154,12 @@ public final class RxShowAllergy2Action extends ActionSupport {
                 getAllergyData(loggedInInfo);
                 yield null;
             }
-            case "doProfileAnalysis" -> {
-                doProfileAnalysis(loggedInInfo);
+            case "performAllergyCheck" -> {
+                performAllergyCheck(loggedInInfo);
+                yield null;
+            }
+            case "vigilanceStatus" -> {
+                vigilanceStatus();
                 yield null;
             }
             default -> null;
@@ -250,6 +254,10 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
             ObjectMapper objectMapper = new ObjectMapper();
             RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+            if (rxSessionBean == null) {
+                MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
+                return;
+            }
             Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, rxSessionBean.getDemographicNo()).getActiveAllergies();
 
             if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
@@ -311,52 +319,108 @@ public final class RxShowAllergy2Action extends ActionSupport {
         }
     }
 
+   private void vigilanceStatus() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+
+        // On fresh boot, cache is empty — do an initial check to populate it
+        if (!vigilanceService.hasValidEntry()) {
+            try {
+                vigilanceService.statusCheck();  // fetches from API, populates cache
+            } catch (Exception e) {
+                MiscUtils.getLogger().error("Initial Vigilance status check failed", e);
+            }
+        }
+
+        try {
+            VigilanceStatusResponse status = vigilanceService.getStatusIfUp();
+            if (status != null) {
+                result.put("vigilanceUp", true);
+            } else {
+                result.put("vigilanceUp", false);
+                result.put("message", "Drug analysis service is currently unavailable. Prescriptions will be saved but you won't receive allergy/interaction warnings from Vigilance.");
+            }
+        } catch (Exception e) {
+            MiscUtils.getLogger().error("Error checking Vigilance status", e);
+            result.put("vigilanceUp", false);
+            result.put("message", "Drug analysis service is currently unavailable. Prescriptions will be saved but you won't receive allergy/interaction warnings from Vigilance.");
+        }
+
+        response.setContentType("application/json");
+        response.getOutputStream().write(result.toString().getBytes());
+    }
+
     /**
-     * Retrieves allergy warnings and HTML viewer content for a patient, combining results from both
-     * the Vigilance query analysis and query viewer endpoints. Outputs the resulting data in JSON format.
+     * Performs allergy profile analysis using Vigilance services for a patient.
+     * <p>
+     * This method:
+     * <ul>
+     * <li>Checks if allergy warnings are disabled via system preference</li>
+     * <li>Retrieves patient's stash from RxSessionBean for Vigilance query</li>
+     * <li>Fetches allergy analysis results from Vigilance service</li>
+     * <li>Extracts HTML viewer content, token, and alert status</li>
+     * <li>Determines if an alert should be shown based on displayIcon field</li>
+     * <li>Outputs the analysis results in JSON format</li>
+     * </ul>
+     * <p>
+     * The method checks for alert conditions by examining the displayIcon field
+     * in the Vigilance response summary. If displayIcon starts with "alert0",
+     * an alert is flagged in the response.
+     *
+     * @param loggedInInfo LoggedInInfo object containing user session details and security information
+     * @throws IOException if JSON response cannot be written to servlet output stream
      */
-    private void doProfileAnalysis(LoggedInInfo loggedInInfo) throws IOException {
-        String atcCode = request.getParameter("atcCode");
-        String dinCode = request.getParameter("dinCode");
+    private void performAllergyCheck(LoggedInInfo loggedInInfo) throws IOException {
         String id = request.getParameter("id");
         String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
 
         if (disabled.equals("false")) {
             ObjectMapper objectMapper = new ObjectMapper();
             RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+            if (rxSessionBean == null) {
+                MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
+                return;
+            }
 
             ObjectNode result = objectMapper.createObjectNode();
             result.put("id", id);
 
             try {
-
                 VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
                         loggedInInfo, rxSessionBean.getDemographicNo(), List.of(rxSessionBean.getStash()));
 
-                String viewerHtml = queryViewerResponse.rawResponse();
-
-                if (!viewerHtml.isEmpty()) {
-                    result.put("viewerHtml", viewerHtml);
+                String rawVigilanceResponse = queryViewerResponse.rawResponse();
+                if (!rawVigilanceResponse.isEmpty()) {
+                    result.put("rawVigilanceResponse", rawVigilanceResponse);
                     result.put("token", queryViewerResponse.token());
-                    result.put("showAlert", !queryViewerResponse.vigilanceQueryResponse().summary().displayIcon().startsWith("alert0"));
+                    boolean showAlert = false;
+                    String displayIconValue = null;
+                    try {
+                        if (Objects.nonNull(queryViewerResponse.vigilanceQueryResponse()) &&
+                            Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary()) &&
+                            Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary().displayIcon())) {
+                            displayIconValue = queryViewerResponse.vigilanceQueryResponse().summary().displayIcon();
+                            if (!displayIconValue.startsWith("alert0")) {
+                                showAlert = true;
+                            }
+                        }
+                    } catch (Exception e) {
+                        MiscUtils.getLogger().warn("Failed to extract displayIcon", e);
+                    }
+                    result.put("showAlert", showAlert);
+                    if (displayIconValue != null) {
+                        result.put("displayIcon", displayIconValue);
+                    }
                 }
 
             } catch (Exception e) {
-                MiscUtils.getLogger().error("Error in doProfileAnalysis", e);
+                MiscUtils.getLogger().error("Error in performAllergyCheck", e);
+                result.put("error", "Failed to process allergy analysis");
             }
 
             response.setContentType("application/json");
             response.getOutputStream().write(result.toString().getBytes());
         }
-    }
-
-    private static Map<String, Integer> extractIntensityMap(VigilanceQueryResponse.ProfileIntensity profileIntensity) {
-        if (profileIntensity == null || profileIntensity.detail() == null) {
-            return Map.of();
-        }
-        return profileIntensity.detail().stream()
-                .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     /**
