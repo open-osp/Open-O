@@ -2124,7 +2124,7 @@
             allegSpan.innerHTML = '';
           }
           hideAllergyBanner();
-          if (json != null && json.rawVigilanceResponse && json.showAlert === true) {
+          if (json != null && json.rawVigilanceResponse && json.showAlert === true && json.warningLevel !== 4) {
             showAllergyBanner(json.rawVigilanceResponse, json.token, json.displayIcon);
           }
         } catch (e) {

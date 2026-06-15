@@ -382,32 +382,59 @@ public final class RxShowAllergy2Action extends ActionSupport {
             ObjectNode result = objectMapper.createObjectNode();
             result.put("id", id);
 
+            UserPropertyDAO userPropDao = SpringUtils.getBean(UserPropertyDAO.class);
+            String providerNo = loggedInInfo.getLoggedInProviderNo();
+            UserProperty warningLevelProp = userPropDao.getProp(providerNo, "rxInteractionWarningLevel");
+            int providerPreferedWarningLevel = 0;
+            if (warningLevelProp != null && warningLevelProp.getValue() != null && !warningLevelProp.getValue().isEmpty()) {
+                try {
+                    providerPreferedWarningLevel = Integer.parseInt(warningLevelProp.getValue());
+                } catch (NumberFormatException e) {
+                    MiscUtils.getLogger().warn("Invalid rxInteractionWarningLevel value: " + warningLevelProp.getValue());
+                }
+            }
+            result.put("providerPreferedWarningLevel", providerPreferedWarningLevel);
+
             try {
                 VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
                         loggedInInfo, rxSessionBean.getDemographicNo(), List.of(rxSessionBean.getStash()));
 
                 String rawVigilanceResponse = queryViewerResponse.rawResponse();
-                if (!rawVigilanceResponse.isEmpty()) {
-                    result.put("rawVigilanceResponse", rawVigilanceResponse);
-                    result.put("token", queryViewerResponse.token());
-                    boolean showAlert = false;
-                    String displayIconValue = null;
-                    try {
-                        if (Objects.nonNull(queryViewerResponse.vigilanceQueryResponse()) &&
-                            Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary()) &&
-                            Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary().displayIcon())) {
-                            displayIconValue = queryViewerResponse.vigilanceQueryResponse().summary().displayIcon();
-                            if (!displayIconValue.startsWith("alert0")) {
-                                showAlert = true;
+                boolean hasRawResponse = !rawVigilanceResponse.isEmpty();
+                boolean showAlert = false;
+                String displayIconValue = null;
+                try {
+                    if (Objects.nonNull(queryViewerResponse.vigilanceQueryResponse()) &&
+                        Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary()) &&
+                        Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary().displayIcon())) {
+                        displayIconValue = queryViewerResponse.vigilanceQueryResponse().summary().displayIcon();
+                        if (!displayIconValue.startsWith("alert0")) {
+                            showAlert = true;
+
+                            if (providerPreferedWarningLevel >= 4) {
+                                showAlert = false;
+                                displayIconValue = null;
+                            } else if ("alert3".equals(displayIconValue)) {
+                                if (providerPreferedWarningLevel >= 2) {
+                                    showAlert = false;
+                                }
+                            } else if ("alert2".equals(displayIconValue)) {
+                                if (providerPreferedWarningLevel == 3) {
+                                    showAlert = false;
+                                }
                             }
                         }
-                    } catch (Exception e) {
-                        MiscUtils.getLogger().warn("Failed to extract displayIcon", e);
                     }
-                    result.put("showAlert", showAlert);
-                    if (displayIconValue != null) {
-                        result.put("displayIcon", displayIconValue);
-                    }
+                } catch (Exception e) {
+                    MiscUtils.getLogger().warn("Failed to extract displayIcon", e);
+                }
+                result.put("showAlert", showAlert);
+                if (displayIconValue != null) {
+                    result.put("displayIcon", displayIconValue);
+                }
+                if (showAlert && hasRawResponse) {
+                    result.put("rawVigilanceResponse", rawVigilanceResponse);
+                    result.put("token", queryViewerResponse.token());
                 }
 
             } catch (Exception e) {
