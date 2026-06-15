@@ -27,17 +27,22 @@ import ca.openosp.openo.commn.dao.MeasurementDao;
 import ca.openosp.openo.commn.model.Demographic;
 import ca.openosp.openo.commn.model.Drug;
 import ca.openosp.openo.commn.model.Measurement;
+import ca.openosp.openo.integration.vigilance.exception.VigilanceIntegrationException;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryRequest;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
+import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResponse;
 import ca.openosp.openo.managers.DemographicManager;
 import ca.openosp.openo.prescript.data.RxPrescriptionData;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
-import java.util.ArrayList;
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -48,6 +53,8 @@ import java.util.stream.Stream;
  */
 @Service
 public class VigilanceAllergyCheckService {
+
+    private static final Logger log = LoggerFactory.getLogger(VigilanceAllergyCheckService.class);
 
     private final DemographicManager demographicManager;
     private final MeasurementDao measurementDao;
@@ -67,6 +74,8 @@ public class VigilanceAllergyCheckService {
 
     /**
      * Performs an allergy check for a patient and a specific drug (ATC code).
+     * Checks cached status first, then calls the Vigilance API.
+     * On failure, attempts to determine if the service is down and updates cache accordingly.
      *
      * @param loggedInInfo the currently logged in user info
      * @param demographicNo the internal identifier of the patient
@@ -84,29 +93,43 @@ public class VigilanceAllergyCheckService {
 
         VigilanceQueryRequest request = assembleRequest(demographic, stashDrugs, prescriptionDrugs);
 
-        // 2. Call Vigilance API via Service layer
-        return vigilanceService.queryAnalysis(request);
-    }
-
-    /**
-     * Performs an allergy check with HTML viewer content for a patient and a specific drug (ATC code).
-     *
-     * @param loggedInInfo the currently logged in user info
-     * @param demographicNo the internal identifier of the patient
-     * @param drugDinCode the ATC code of the target drug
-     * @return combined response with analysis results and HTML viewer content
-     */
-    public VigilanceQueryViewerResponse checkAllergiesWithViewer(LoggedInInfo loggedInInfo, Integer demographicNo, String drugDinCode) {
-        // 1. Resolve Patient Profile
-        Demographic demographic = this.demographicManager.getDemographic(loggedInInfo, demographicNo);
-        if (demographic == null) {
-            throw new IllegalArgumentException("Patient not found for demographicNo: " + demographicNo);
+        // 2. Pre-flight status check - skip if cache is healthy
+        VigilanceStatusResponse cachedStatus = vigilanceService.getStatusIfUp();
+        if (cachedStatus != null) {
+            log.debug("Vigilance status confirmed from cache, proceeding with queryAnalysis");
+        } else {
+            log.warn("Vigilance status not available in cache or unhealthy - proceeding with queryAnalysis anyway");
         }
 
-//        VigilanceQueryRequest request = assembleRequest(demographic, drugDinCode);
+        // 3. Call Vigilance API via Service layer with error handling
+        try {
+            return vigilanceService.queryAnalysis(request);
+        } catch (VigilanceIntegrationException e) {
+            handleQueryFailure(e);
+            throw e;
+        }
+    }
 
-        // 2. Call Vigilance API via Service layer for both analysis and viewer
-        return null;
+    private void handleQueryFailure(VigilanceIntegrationException exception) {
+        String message = exception.getMessage();
+        boolean isServiceDown = false;
+
+        if (exception.getCause() instanceof ConnectException || 
+            exception.getCause() instanceof WebClientRequestException) {
+            isServiceDown = true;
+            log.error("Vigilance appears to be unreachable: {}", exception.getMessage());
+        } else if (message != null && message.contains("5")) {
+            isServiceDown = true;
+            log.error("Vigilance returned server error: {}", message);
+        }
+
+        if (isServiceDown) {
+            try {
+                vigilanceService.statusCheck();
+            } catch (Exception statusEx) {
+                log.debug("Status check also failed, cache already updated with down state");
+            }
+        }
     }
 
     private VigilanceQueryRequest assembleRequest(Demographic demographic, List<RxPrescriptionData.Prescription> stagedDrugs, List<Drug> prescriptionDrugs) {
