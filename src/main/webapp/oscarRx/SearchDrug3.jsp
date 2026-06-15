@@ -818,6 +818,77 @@
     }
 
   </script>
+
+  <%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
+  <fmt:setBundle basename="oscarResources"/>
+  <c:set var="vigilanceAllergyDesc"><fmt:message key="SearchDrug.allergyWarningDescription"/></c:set>
+  <script type="text/javascript">
+    const VIGILANCE_ALERT_CONFIG = {
+      'alert1': { severity: 'High', colorClass: 'alert-level-3', iconColor: '#842029' },
+      'alert2': { severity: 'Moderate', colorClass: 'alert-level-2', iconColor: '#994a00' },
+      'alert3': { severity: 'Low', colorClass: 'alert-level-1', iconColor: '#664d03' }
+    };
+
+    const VIGILANCE_ALERT_ICONS = {
+      'alert1': `<svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="#842029" stroke-width="2.5" aria-hidden="true">
+        <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+      </svg>`,
+      'alert2': `<svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="#994a00" stroke-width="2" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>`,
+      'alert3': `<svg class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="#664d03" stroke-width="2" aria-hidden="true">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>`
+    };
+
+    const VIGILANCE_DESCRIPTIONS = {
+      'alert1': 'Avoid this medication. The risk of serious problems outweighs any potential benefit.',
+      'alert2': 'If possible, avoid involved medication. If not, adjust therapy to prevent potential problems.',
+      'alert3': 'Evaluate specific risk based on the clinical situation. Adjust therapy or monitor as needed.'
+    };
+
+    function applyAlertLevel(displayIcon) {
+      let banner = document.getElementById('allergyWarningBanner');
+      if (!banner || !displayIcon) return;
+
+      const config = VIGILANCE_ALERT_CONFIG[displayIcon];
+      if (!config) return;
+
+      banner.classList.remove('alert-level-1', 'alert-level-2', 'alert-level-3');
+      banner.classList.add(config.colorClass);
+
+      let iconContainer = document.getElementById('bannerIcon');
+      if (iconContainer && VIGILANCE_ALERT_ICONS[displayIcon]) {
+        iconContainer.outerHTML = VIGILANCE_ALERT_ICONS[displayIcon];
+      }
+
+      let severityLabel = document.getElementById('severityLabel');
+      if (severityLabel) {
+        severityLabel.textContent = config.severity;
+        severityLabel.style.display = 'inline-block';
+      }
+
+      let bannerDesc = document.getElementById('bannerDesc');
+      if (bannerDesc && VIGILANCE_DESCRIPTIONS[displayIcon]) {
+        bannerDesc.textContent = VIGILANCE_DESCRIPTIONS[displayIcon];
+      }
+
+      const borderColors = {
+        'alert1': '#dc3545',
+        'alert2': '#fd7e14',
+        'alert3': '#ffc107'
+      };
+
+      if (borderColors[displayIcon]) {
+        banner.style.borderLeftColor = borderColors[displayIcon];
+        banner.style.backgroundColor = displayIcon === 'alert1' ? '#f8d7da' :
+                                        displayIcon === 'alert2' ? '#ffe5cc' : '#fff3cd';
+      }
+    }
+  </script>
+
   <style media="screen">
 
     #Layer1 {
@@ -952,6 +1023,133 @@
       display: none;
     }
 
+    #allergyWarningBanner {
+      display: none;
+      margin-bottom: 8px;
+      margin-top: 8px;
+      padding: 12px 16px;
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 4px;
+      color: #664d03;
+      cursor: pointer;
+      position: sticky;
+      top: 10px;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    #allergyWarningBanner:hover {
+      background-color: #ffecb3;
+    }
+
+    #allergyWarningBanner:focus {
+      outline: 2px solid #ffc107;
+      outline-offset: 2px;
+    }
+
+    @keyframes bannerPulse {
+      0% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+      50% { box-shadow: 0 2px 16px rgba(255, 193, 7, 0.3); }
+      100% { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+    }
+
+    #allergyWarningBanner.pulse-animation {
+      animation: bannerPulse 1s ease-in-out 3;
+    }
+
+    @keyframes checkingPulse {
+      0% { opacity: 0.5; border-left-color: rgba(255, 193, 7, 0.4); }
+      50% { opacity: 1; border-left-color: #ffc107; box-shadow: 0 0 12px rgba(255, 193, 7, 0.25); }
+      100% { opacity: 0.5; border-left-color: rgba(255, 193, 7, 0.4); }
+    }
+
+    #allergyWarningBanner.checking {
+      animation: checkingPulse 1.5s ease-in-out infinite;
+      pointer-events: none;
+      cursor: wait;
+    }
+
+    #allergyWarningBanner .warning-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    #allergyWarningBanner .warning-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    #allergyWarningBanner .warning-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      line-height: 1.4;
+    }
+
+    #allergyWarningBanner strong {
+      font-size: 14px;
+      color: #664d03;
+    }
+
+    #allergyWarningBanner .warning-desc {
+      font-size: 13px;
+      color: #5c4a02;
+    }
+
+    #allergyWarningBanner .warning-cta {
+      font-size: 12px;
+      color: #8b6f03;
+      font-style: italic;
+    }
+
+    #allergyWarningBanner .severity-label {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    #allergyWarningBanner.alert-level-2 .severity-label {
+      background-color: #fd7e14;
+      color: white;
+    }
+
+    #allergyWarningBanner.alert-level-3 .severity-label {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    #allergyWarningBanner.alert-level-2 strong {
+      color: #994a00;
+    }
+
+    #allergyWarningBanner.alert-level-2 .warning-desc {
+      color: #7a3b00;
+    }
+
+    #allergyWarningBanner.alert-level-2 .warning-cta {
+      color: #6d3300;
+    }
+
+    #allergyWarningBanner.alert-level-3 strong {
+      color: #842029;
+    }
+
+    #allergyWarningBanner.alert-level-3 .warning-desc {
+      color: #711a22;
+    }
+
+    #allergyWarningBanner.alert-level-3 .warning-cta {
+      color: #65181f;
+    }
+
     #previewForm {
       display: none;
     }
@@ -1070,7 +1268,7 @@
       padding-bottom: 2px;
       overflow: visible;
       font-weight: 600;
-      background: linear-gradient(90deg, #6c757d 45%, #dfdfdf 50%, #6c757d 55%);
+      background: linear-gradient(90deg, #6C757C 40%, #000 50%, #6c757d 60%);
       background-size: 300% 100%;
       -webkit-background-clip: text;
       background-clip: text;
@@ -1092,6 +1290,7 @@
       iterateStash();
       checkReRxLongTerm();
       load();
+      checkVigilanceStatus();
     });
   </script>
 </head>
@@ -1149,9 +1348,29 @@
 
                       <div id="prescriptionStageSet">
 
+                         <div id="vigilanceStatusBanner" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; margin-top: 8px;">
+                           <strong><fmt:message key="SearchDrug.vigilanceWarningTitle"/></strong>
+                           <span id="vigilanceStatusMessage"></span>
+                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="dismissVigilanceBanner()"></button>
+                         </div>
+
                         <div id="interactingDrugErrorMsg"></div>
 
-                        <div id="rxText"></div>
+                        <div id="allergyWarningBanner" class="alert alert-warning" role="status" aria-live="polite" onclick="openAllergyWarningModal()" tabindex="0">
+                             <div class="warning-content">
+                               <svg id="bannerIcon" class="warning-icon" viewBox="0 0 24 24" fill="none" stroke="#664d03" stroke-width="2" aria-hidden="true">
+                                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                                 <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                               </svg>
+                               <div class="warning-body">
+                                 <strong><span id="bannerTitle"><fmt:message key="SearchDrug.allergyWarningTitle"/></span> <span id="severityLabel" class="severity-label" style="display: none;"></span></strong>
+                                 <span class="warning-desc" id="bannerDesc"><fmt:message key="SearchDrug.allergyWarningDescription"/></span>
+                                 <span class="warning-cta"><fmt:message key="SearchDrug.allergyWarningCta"/></span>
+                               </div>
+                             </div>
+                           </div>
+
+                         <div id="rxText"></div>
                         <%-- Prescriptions are staged here via the prescribe.jsp widget --%>
 
                         <input type="hidden" id="deleteOnCloseRxBox" value="false"/>
@@ -1913,6 +2132,7 @@
       }
     });
     $('rxText').innerHTML = "";//make pending prescriptions disappear.
+    hideAllergyBanner();
     renderRxStage();
     $("searchString").focus();
   }
@@ -1969,6 +2189,8 @@
       if (!response.ok) {
         console.error('Failed to remove drug from stash (HTTP ' + response.status + ')');
       }
+      // updateCurrentInteractions();
+      hideAllergyBanner();
       document.getElementById("set_" + randomId)?.remove();
       document.getElementById("prescriptionMoreLessLink_" + randomId)?.remove();
       document.getElementById("deleteMedicationFromPrescription_" + randomId)?.remove();
@@ -2032,8 +2254,8 @@
     return false;
   }
 
-  function checkAllergy(id, atcCode, dinCode) {
-    fetchViewerHtml(id, atcCode, dinCode);
+  function checkAllergy(id, atcCode) {
+    performAllergyCheck(id);
     const url = ctx + "/oscarRx/showAllergy.do"
     const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
@@ -2072,15 +2294,20 @@
      });
   }
 
-  function fetchViewerHtml(id, atcCode, dinCode) {
+  function performAllergyCheck(id) {
     let allegSpan = document.getElementById('alleg_vigilance_div' + id);
     if (allegSpan) {
       allegSpan.style.display = 'flex';
       allegSpan.innerHTML = '<span class="shimmer">Checking drug allergies...</span>';
     }
 
+    let banner = document.getElementById('allergyWarningBanner');
+    if (banner) {
+      banner.classList.add('checking');
+    }
+
     const url = ctx + "/oscarRx/showAllergy.do";
-    const data = "method=doProfileAnalysis&atcCode=" + encodeURIComponent(atcCode) + "&dinCode=" + dinCode + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
+    const data = "method=performAllergyCheck&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
       method: 'post', postBody: data,
       requestHeaders: {'Accept': 'application/json'},
@@ -2091,14 +2318,19 @@
           if (allegSpan) {
             allegSpan.innerHTML = '';
           }
-          if (json != null && json.viewerHtml && json.showAlert == true) {
-            addWarningIcon(json.id, json.viewerHtml, json.token);
+          hideAllergyBanner();
+          if (json != null && json.rawVigilanceResponse && json.showAlert === true) {
+            showAllergyBanner(json.rawVigilanceResponse, json.token, json.displayIcon);
           }
         } catch (e) {
           console.error('Failed to parse viewer HTML data');
           let allegSpan = document.getElementById('alleg_vigilance_div' + id);
           if (allegSpan) {
             allegSpan.innerHTML = '';
+          }
+        } finally {
+          if (banner) {
+            banner.classList.remove('checking');
           }
         }
       },
@@ -2108,52 +2340,51 @@
         if (allegSpan) {
           allegSpan.innerHTML = '';
         }
+        if (banner) {
+          banner.classList.remove('checking');
+        }
       }
     });
   }
 
-  function addWarningIcon(id, viewerHtml, token) {
-    console.log('[addWarningIcon] id:', id);
+  function showAllergyBanner(rawVigilanceResponse, token, displayIcon) {
+    let banner = document.getElementById('allergyWarningBanner');
+    if (!banner) return;
 
-    let existingIcon = document.getElementById('warning_icon_' + id);
-    if (existingIcon) {
-      console.log('[addWarningIcon] icon already exists');
-      return;
-    }
+    banner._vigilanceResponse = rawVigilanceResponse;
+    banner._token = token;
 
-    let allegTbl = document.getElementById('alleg_vigilance_div' + id);
-    if (!allegTbl) {
-      console.warn('[addWarningIcon] alleg_vigilance_div' + id + ' not found in DOM');
-      return;
-    }
+    applyAlertLevel(displayIcon);
 
-    allegTbl.style.display = 'flex';
-
-    let iconContainer = document.createElement('div');
-    iconContainer.style.cssText = 'float:left; margin-top:5px;';
-
-    let iconImg = document.createElement('img');
-    iconImg.id = 'warning_icon_' + id;
-    iconImg.src = ctx + '/images/warning-icon.png';
-    iconImg.style.cssText = 'cursor:pointer; width:20px; height:20px; vertical-align:middle;';
-    iconImg.title = 'View detailed warning information';
-    iconImg.alt = 'Warning';
-
-    iconImg.onclick = function() {
-      openWarningModal(id, viewerHtml, token);
-    };
-
-    iconContainer.appendChild(iconImg);
-    allegTbl.insertBefore(iconContainer, allegTbl.firstChild);
-    console.log('[addWarningIcon] icon inserted, verifying:', document.getElementById('warning_icon_' + id) ? 'found' : 'NOT found');
+    banner.style.display = 'block';
+    banner.classList.add('pulse-animation');
+    setTimeout(() => {
+      banner.classList.remove('pulse-animation');
+    }, 3000);
+    banner.focus();
   }
 
-  function openWarningModal(id, viewerHtml, token) {
-    if (!viewerHtml || viewerHtml.trim() === '') {
+  function hideAllergyBanner() {
+    let banner = document.getElementById('allergyWarningBanner');
+    if (banner) {
+      banner.style.display = 'none';
+      delete banner._vigilanceResponse;
+      delete banner._token;
+    }
+  }
+
+  function openAllergyWarningModal() {
+    let banner = document.getElementById('allergyWarningBanner');
+    if (!banner || !banner._vigilanceResponse) return;
+    openWarningModal(null, banner._vigilanceResponse, banner._token);
+  }
+
+  function openWarningModal(id, rawVigilanceResponse, token) {
+    if (!rawVigilanceResponse || rawVigilanceResponse.trim() === '') {
       return;
     }
 
-    const safeId = String(id).replace(/[^a-zA-Z0-9_-]/g, '');
+    const safeId = (id != null && String(id).trim() !== '') ? String(id).replace(/[^a-zA-Z0-9_-]/g, '') : 'allergy';
     const newWin = window.open(
             '',
             `warningModal_${safeId}`,
@@ -2183,7 +2414,7 @@
 
     const textarea = doc.createElement('textarea');
     textarea.name = 'intrant';
-    textarea.value = viewerHtml;
+    textarea.value = rawVigilanceResponse;
 
     form.appendChild(tokenInput);
     form.appendChild(textarea);
@@ -2526,7 +2757,7 @@
       let ran_number = generateSecureRandomId();
       jQuery.post(url, { demographicNo: '<%=Encode.forJavaScript(String.valueOf(demoNo))%>', rand: ran_number })
         .done(function (responseText) {
-          
+
           // .html() replaces the container content and evaluates inline scripts,
           // which triggers the DataTable init for the first section's table.
           jQuery('#' + id).html(responseText);
@@ -3713,6 +3944,47 @@ if (OscarProperties.getInstance().isPropertyActive("rx_strict_med_term")) {
 	    %>
       });
     });
+
+    function checkVigilanceStatus() {
+      const url = ctx + "/oscarRx/showAllergy.do?method=vigilanceStatus&rand=" + generateSecureRandomId();
+      new Ajax.Request(url, {
+        method: 'get',
+        requestHeaders: {'Accept': 'application/json'},
+        onSuccess: function (transport) {
+          try {
+            let json = JSON.parse(transport.responseText);
+            if (json && !json.vigilanceUp) {
+              showVigilanceBanner(json.message);
+            }
+          } catch (e) {
+            console.error('Failed to parse Vigilance status response:', e);
+          }
+        },
+        onFailure: function () {
+          showVigilanceBanner();
+        }
+      });
+    }
+
+    function showVigilanceBanner(message) {
+      let banner = document.getElementById('vigilanceStatusBanner');
+      if (banner) {
+        banner.style.display = 'block';
+        let msgEl = document.getElementById('vigilanceStatusMessage');
+        if (msgEl && message) {
+          msgEl.textContent = ' ' + message;
+        } else if (msgEl) {
+          msgEl.textContent = ' Drug analysis service is currently unavailable. Prescriptions will be saved but you won\'t receive allergy/interaction warnings from Vigilance.';
+        }
+      }
+    }
+
+    function dismissVigilanceBanner() {
+      let banner = document.getElementById('vigilanceStatusBanner');
+      if (banner) {
+        banner.style.display = 'none';
+      }
+    }
 
     function updateShortTerm(rand, val) {
       if (val) {
