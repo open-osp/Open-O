@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Singleton class for managing OpenO EMR system properties and configuration.
@@ -71,6 +73,7 @@ public class OscarProperties extends Properties {
     private static final long serialVersionUID = -5965807410049845132L;
     private static OscarProperties oscarProperties = new OscarProperties();
     private static final Set<String> activeMarkers = new HashSet<String>(Arrays.asList(new String[]{"true", "yes", "on"}));
+    private static final Pattern ENV_VAR_PATTERN = Pattern.compile("\\$\\{([^}:]+)(?::([^}]*))?\\}");
 
     /**
      * Blacklisted namespace patterns for property values that should be ignored.
@@ -132,6 +135,9 @@ public class OscarProperties extends Properties {
             return getDefaultValue(key);
         }
 
+        // Resolve ${ENV_VAR:default} placeholders against environment variables
+        value = resolveEnvPlaceholders(value);
+
         // Check if the value contains a blacklisted namespace
         if (isValueBlacklisted(value)) {
             String warning = new StringBuilder()
@@ -144,6 +150,16 @@ public class OscarProperties extends Properties {
             return getDefaultValue(key);
         }
 
+        return value;
+    }
+
+    @Override
+    public String getProperty(String key, String defaultValue) {
+        String value = super.getProperty(key);
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        value = resolveEnvPlaceholders(value);
         return value;
     }
 
@@ -175,6 +191,46 @@ public class OscarProperties extends Properties {
      */
     private String getDefaultValue(String key) {
         return PROPERTY_DEFAULTS.get(key);
+    }
+
+    /**
+     * Resolves ${ENV_VAR:default} placeholders in property values by looking up
+     * the corresponding environment variable. Only resolves keys containing a dot (.)
+     * or underscore (_) to avoid interfering with template variables like ${DATE}.
+     * If the env var is not set, uses the default value (or empty string if no default).
+     */
+    private String resolveEnvPlaceholders(String value) {
+        if (value == null || !value.contains("${")) {
+            return value;
+        }
+
+        Matcher matcher = ENV_VAR_PATTERN.matcher(value);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String envVarName = matcher.group(1);
+            String defaultValue = matcher.group(2); // null if no ":" specified
+
+            // Only resolve keys containing a dot or underscore to avoid interfering
+            // with template variables like ${DATE}, ${USERSIGNATURE} in ECHART_SIGN_LINE
+            if (!envVarName.contains(".") && !envVarName.contains("_")) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(0)));
+                continue;
+            }
+
+            String envValue = System.getenv(envVarName);
+            if (envValue != null && !envValue.isEmpty()) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(envValue));
+            } else if (defaultValue != null) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(defaultValue));
+            } else {
+                // No env var and no default - leave placeholder as-is
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group(0)));
+            }
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString();
     }
 
     /* Do not use this constructor. Use getInstance instead */

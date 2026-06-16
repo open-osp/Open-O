@@ -47,8 +47,8 @@ public class VigilanceStatusCache {
 
     private final AtomicReference<CacheEntry> cache = new AtomicReference<>();
 
-    @Value("${vigilance.status.cache.ttl.hours:1}")
-    private long ttlHours;
+    @Value("${vigilance.status.cache.ttl.minutes:60}")
+    private long ttlMinutes;
 
     @Value("${vigilance.status.down.ttl.minutes:5}")
     private long downTtlMinutes;
@@ -80,7 +80,7 @@ public class VigilanceStatusCache {
      */
     public void putHealthy(VigilanceStatusResponse statusResponse) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(ttlHours * 3600);
+        Instant expiresAt = now.plusSeconds(ttlMinutes * 60);
         cache.set(new CacheEntry(statusResponse, expiresAt));
         log.info("Vigilance status cached as healthy (expires at {})", expiresAt);
     }
