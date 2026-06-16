@@ -1089,7 +1089,7 @@ public class MSPReconcile {
 			boolean excludeMSP, boolean excludePrivate, boolean exludeICBC, String type) {
 		BillSearch billSearch = new BillSearch();
 		HashMap<String, Vector<String>> rejDetails = null;
-		boolean skipBill = false;
+		List<MSPBill> allBills = new ArrayList<>();
 		String criteriaQry = createCriteriaString(account, payeeNo, providerNo, startDate, endDate, excludeWCB, excludeMSP, excludePrivate, exludeICBC, type, "");
 		Properties c12 = new Properties();
 		String orderByClause = "order by billingstatus";
@@ -1111,130 +1111,132 @@ public class MSPReconcile {
 		billSearch.count = 0;
 		billSearch.justBillingMaster = new ArrayList<String>();
 
-		ResultSet rs = null;
 		MiscUtils.getLogger().debug("p=" + p);
-		try {
-
-			rs = DBHandler.GetSQL(p);
-
-			while (rs.next()) {
-				MSPBill b = new MSPBill();
-				b.billingtype = rs.getString("b.billingtype");
-				b.billing_no = rs.getString("billing_no");
-				b.demoNo = rs.getString("demographic_no");
-				b.billingUnit = rs.getString("billing_unit");
-				b.demoName = rs.getString("demographic_name");
-				b.apptDate = rs.getString("update_date");
-				b.reason = rs.getString("billingstatus");
-				b.serviceEndTime = rs.getString("service_end_time");
-				b.serviceStartTime = rs.getString("service_start_time");
-				b.serviceToDate = rs.getString("service_to_day");
-				b.status = b.reason;
-				b.billMasterNo = rs.getString("billingmaster_no");
-				String expStr = getS00String(b.billMasterNo);
-				b.expString = "".equals(expStr) ? expStr : "(" + expStr + ")";
-				b.reason = this.getStatusDesc(b.reason);
-				b.amount = rs.getString("bill_amount");
-				b.code = rs.getString("billing_code");
-				b.dx1 = rs.getString("dx_code1");	
-				b.serviceDate = rs.getString("service_date").equals("") ? "00000000" : rs.getString("service_date");
-				b.mvaCode = rs.getString("mva_claim_code");
-				b.hin = rs.getString("phn");
-				b.serviceLocation = rs.getString("service_location");
-				b.demoDOB = rs.getString("dob");
-				b.demoSex = rs.getString("oin_sex_code");
-				b.apptDoctorNo = rs.getString("apptProvider_no");
-				b.accountNo = rs.getString("b.provider_no");
-				b.updateDate = rs.getString("update_date");
-				oscar.entities.Provider accountProvider = this.getProvider(b.accountNo, 0);
-				b.accountName = accountProvider.getFullName();
-				b.payeeName = accountProvider.getInitials();			
-				b.providerFirstName = rs.getString("first_name");
-				b.providerLastName = rs.getString("last_name");			
-				b.provName = this.getProvider(b.apptDoctorNo, 1).getInitials();
-
-				// WCB SECTION ---------------------------------------------------------
-				if (b.isWCB()) {
-					String wcbQry = "select bill_amount,w_feeitem,w_icd9 from wcb where billing_no = '" + b.billing_no + "'";
-					String[] wcbRow = SqlUtils.getRow(wcbQry);
-					if (wcbRow != null) {
-						b.amount = wcbRow[0];
-						b.code = wcbRow[1];
-						b.dx1 = wcbRow[2];
-					}
-				}
-				// REJECTED SECTION ---------------------------------------------------------
-				if (type.equals(REP_REJ)) {
-					if (rejDetails.containsKey(b.billMasterNo)) {
-						Vector<String> dets = rejDetails.get(b.billMasterNo);
-						String[] exps = new String[7];
-						for (int i = 0; i < exps.length; i++) {
-							exps[i] = dets.get(i);
-						}
-						b.expString = this.createCorrectionsString(exps);
-						Hashtable<String, String> explCodes = new Hashtable<String, String>();
-						for (int i = 0; i < exps.length; i++) {
-							String code = exps[i];
-							String desc = this.getC12Description(code);
-							explCodes.put(code, desc);
-						}
-						b.explanations = explCodes;
-						b.rejectionDate = dets.get(7);
-						if (b.rejectionDate == null || b.rejectionDate.equals("")) {
-							b.rejectionDate = "00000000";
-						}
-					}
-
-					ResultSet rsDemo = DBHandler.GetSQL("select phone,phone2 from demographic where demographic_no = " + b.demoNo);
-					if (rsDemo.next()) {
-						b.demoPhone = rsDemo.getString("phone");
-						b.demoPhone2 = rsDemo.getString("phone2");
-					}
-				}
-
-				else if (MSPReconcile.REP_INVOICE.equals(type)) {
-					double dblAmtOwing = this.getAmountOwing(b.billMasterNo, b.amount, b.billingtype);
-					b.amtOwing = String.valueOf(dblAmtOwing);
-					//append the explanatory code to end of reason field
-					String expString = c12.getProperty(b.billing_no) != null ? c12.getProperty(b.billing_no) : "";
-					b.reason += " " + expString;
-					if ("E".equals(b.status)) {
-						b.adjustmentCode = b.expString;
-					} else {
-						b.adjustmentCode = "";
-					}
-				}
-
-				// AR SECTION ---------------------------------------------------------
-				/**
-				 * If the report is of type AR and it was paid with an explanation or is private
-				 * we need to get the difference between what was billed and what was paid
-				 **/
-				if (type.equals(MSPReconcile.REP_ACCOUNT_REC)) {
-					double dblAmtOwing = this.getAmountOwing(b.billMasterNo, b.amount, b.billingtype);
-					b.amtOwing = String.valueOf(dblAmtOwing);
-					skipBill = new Double(b.amtOwing).doubleValue() == 0.0;
-				}
-
-				if (!skipBill) {
-					billSearch.justBillingMaster.add(b.billMasterNo);
-					billSearch.list.add(b);
-					billSearch.count++;
-				} else {
-					skipBill = false;
-				}
-			}
-		} catch (Exception e) {
-			MiscUtils.getLogger().error("Error", e);
-		} finally {
+		try (ResultSet rs = DBHandler.GetSQL(p)) {
 			try {
-				if (rs != null) {
-					rs.close();
+
+				while (rs.next()) {
+					MSPBill b = new MSPBill();
+					b.billingtype = rs.getString("b.billingtype");
+					b.billing_no = rs.getString("billing_no");
+					b.demoNo = rs.getString("demographic_no");
+					b.billingUnit = rs.getString("billing_unit");
+					b.demoName = rs.getString("demographic_name");
+					b.apptDate = rs.getString("update_date");
+					b.reason = rs.getString("billingstatus");
+					b.serviceEndTime = rs.getString("service_end_time");
+					b.serviceStartTime = rs.getString("service_start_time");
+					b.serviceToDate = rs.getString("service_to_day");
+					b.status = b.reason;
+					b.billMasterNo = rs.getString("billingmaster_no");
+					String expStr = getS00String(b.billMasterNo);
+					b.expString = "".equals(expStr) ? expStr : "(" + expStr + ")";
+					b.reason = this.getStatusDesc(b.reason);
+					b.amount = rs.getString("bill_amount");
+					b.code = rs.getString("billing_code");
+					b.dx1 = rs.getString("dx_code1");
+					b.serviceDate = rs.getString("service_date").equals("") ? "00000000" : rs.getString("service_date");
+					b.mvaCode = rs.getString("mva_claim_code");
+					b.hin = rs.getString("phn");
+					b.serviceLocation = rs.getString("service_location");
+					b.demoDOB = rs.getString("dob");
+					b.demoSex = rs.getString("oin_sex_code");
+					b.apptDoctorNo = rs.getString("apptProvider_no");
+					b.accountNo = rs.getString("b.provider_no");
+					b.updateDate = rs.getString("update_date");
+					Provider accountProvider = this.getProvider(b.accountNo, 0);
+					b.accountName = accountProvider.getFullName();
+					b.payeeName = accountProvider.getInitials();
+					b.providerFirstName = rs.getString("first_name");
+					b.providerLastName = rs.getString("last_name");
+					b.provName = this.getProvider(b.apptDoctorNo, 1).getInitials();
+
+					// WCB SECTION ---------------------------------------------------------
+					if (b.isWCB()) {
+						String wcbQry = "select bill_amount,w_feeitem,w_icd9 from wcb where billing_no = '" + b.billing_no + "'";
+						String[] wcbRow = SqlUtils.getRow(wcbQry);
+						if (wcbRow != null) {
+							b.amount = wcbRow[0];
+							b.code = wcbRow[1];
+							b.dx1 = wcbRow[2];
+						}
+					}
+					// REJECTED SECTION ---------------------------------------------------------
+					if (type.equals(REP_REJ)) {
+						if (rejDetails.containsKey(b.billMasterNo)) {
+							Vector<String> dets = rejDetails.get(b.billMasterNo);
+							String[] exps = new String[7];
+							for (int i = 0; i < exps.length; i++) {
+								exps[i] = dets.get(i);
+							}
+							b.expString = this.createCorrectionsString(exps);
+							Hashtable<String, String> explCodes = new Hashtable<String, String>();
+							for (int i = 0; i < exps.length; i++) {
+								String code = exps[i];
+								String desc = this.getC12Description(code);
+								explCodes.put(code, desc);
+							}
+							b.explanations = explCodes;
+							b.rejectionDate = dets.get(7);
+							if (b.rejectionDate == null || b.rejectionDate.equals("")) {
+								b.rejectionDate = "00000000";
+							}
+						}
+
+						ResultSet rsDemo = DBHandler.GetSQL("select phone,phone2 from demographic where demographic_no = " + b.demoNo);
+						if (rsDemo.next()) {
+							b.demoPhone = rsDemo.getString("phone");
+							b.demoPhone2 = rsDemo.getString("phone2");
+						}
+					} else if (MSPReconcile.REP_INVOICE.equals(type)) {
+						//append the explanatory code to end of reason field
+						String expString = c12.getProperty(b.billing_no) != null ? c12.getProperty(b.billing_no) : "";
+						b.reason += " " + expString;
+						if ("E".equals(b.status)) {
+							b.adjustmentCode = b.expString;
+						} else {
+							b.adjustmentCode = "";
+						}
+					}
+
+					allBills.add(b);
 				}
-			} catch (SQLException ex1) {
-				MiscUtils.getLogger().error("Error", ex1);
+			} catch (Exception e) {
+				MiscUtils.getLogger().error("Error", e);
+			}
+		} catch (SQLException ex1) {
+			MiscUtils.getLogger().error("Error", ex1);
+		}
+
+		Map<Integer, Double> historyMap = Collections.emptyMap();
+		if (REP_INVOICE.equals(type) || REP_ACCOUNT_REC.equals(type)) {
+			List<Integer> bmns = new ArrayList<>();
+			for (MSPBill b : allBills) {
+				Integer bmn = ConversionUtils.fromIntString(b.billMasterNo);
+				if (bmn != null) bmns.add(bmn);
+			}
+			BillingHistoryDao histDao = SpringUtils.getBean(BillingHistoryDao.class);
+			historyMap = histDao.getTotalPaidByBillingMasterNos(bmns, false);
+		}
+
+		for (MSPBill b : allBills) {
+			boolean skipBill = false;
+			if (REP_INVOICE.equals(type)) {
+				double dblAmtOwing = this.getAmountOwing(b.billMasterNo, b.amount, b.billingtype, historyMap);
+				b.amtOwing = String.valueOf(dblAmtOwing);
+			}
+			if (REP_ACCOUNT_REC.equals(type)) {
+				double dblAmtOwing = this.getAmountOwing(b.billMasterNo, b.amount, b.billingtype, historyMap);
+				b.amtOwing = String.valueOf(dblAmtOwing);
+				skipBill = new Double(b.amtOwing).doubleValue() == 0.0;
+			}
+			if (!skipBill) {
+				billSearch.justBillingMaster.add(b.billMasterNo);
+				billSearch.list.add(b);
+				billSearch.count++;
 			}
 		}
+
 		return billSearch;
 	}
 
@@ -1246,6 +1248,33 @@ public class MSPReconcile {
 	 * @param amountBilled String - The total amount of the bill
 	 * @return String
 	 */
+	public double getAmountOwing(String billingMasterNo, String amountBilled, String billingType, Map<Integer, Double> prefetchedHistory) {
+		amountBilled = (amountBilled != null && !amountBilled.equals("")) ? amountBilled : "0.0";
+		double dbltBilled = new Double(amountBilled).doubleValue();
+		Integer key = ConversionUtils.fromIntString(billingMasterNo);
+		double totalPaidFromHistory = (key != null && prefetchedHistory.containsKey(key)) ? prefetchedHistory.get(key) : 0.0;
+		double totalPaidFromS00 = 0.0;
+		if (!MSPReconcile.BILLTYPE_PRI.equalsIgnoreCase(billingType)) {
+			TeleplanS00Dao dao = SpringUtils.getBean(TeleplanS00Dao.class);
+			for (TeleplanS00 s : dao.findByOfficeNumber(forwardZero(billingMasterNo, 7))) {
+				if ("HS".equals(s.getExp1())) {
+					totalPaidFromS00 = Double.parseDouble(amountBilled);
+					log.debug("Bill has HS setting the totalPaid to amountBilled  " + amountBilled);
+					break;
+				}
+				String paidAmount = s.getPaidAmount();
+				paidAmount = MSPReconcile.convCurValue(paidAmount);
+				totalPaidFromS00 += new Double(paidAmount).doubleValue();
+				log.debug("paidAmount " + paidAmount);
+			}
+		}
+		log.debug("amtPaid = totalPaidFromHistory + totalPaidFromS00; " + totalPaidFromHistory + "+" + totalPaidFromS00);
+		double amtPaid = totalPaidFromHistory + totalPaidFromS00;
+		log.debug("amtPaid " + amtPaid);
+		double dblAmountOwing = amtPaid < 0 ? dbltBilled + amtPaid : dbltBilled - amtPaid;
+		return UtilMisc.toCurrencyDouble(dblAmountOwing);
+	}
+
 	public double getAmountOwing(String billingMasterNo, String amountBilled, String billingType) {
 
 		amountBilled = (amountBilled != null && !amountBilled.equals("")) ? amountBilled : "0.0";

@@ -23,7 +23,11 @@
  */
 package org.oscarehr.billing.CA.BC.dao;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Query;
 
@@ -85,6 +89,28 @@ public class BillingHistoryDao extends AbstractDaoImpl<BillingHistory> {
 		return query.getResultList();
     }
 	
+	@SuppressWarnings("unchecked")
+	public Map<Integer, Double> getTotalPaidByBillingMasterNos(Collection<Integer> bmns, boolean ignoreIA) {
+		if (bmns == null || bmns.isEmpty()) {
+			return Collections.emptyMap();
+		}
+		String hql = "SELECT bh.billingMasterNo, SUM(bh.amountReceived) FROM BillingHistory bh " +
+				"WHERE bh.billingMasterNo IN :bmns";
+		if (ignoreIA) {
+			hql += " AND bh.paymentTypeId <> " + MSPReconcile.PAYTYPE_IA;
+		}
+		hql += " GROUP BY bh.billingMasterNo";
+		Query query = entityManager.createQuery(hql);
+		query.setParameter("bmns", bmns);
+		Map<Integer, Double> result = new HashMap<>();
+		for (Object[] row : (List<Object[]>) query.getResultList()) {
+			Integer key = (Integer) row[0];
+			String sumStr = row[1] == null ? null : String.valueOf(row[1]);
+			result.put(key, sumStr == null ? 0.0 : Double.valueOf(sumStr));
+		}
+		return result;
+	}
+
 	public Double getTotalPaidFromHistory(Integer bmn, boolean ignoreIA) {
 	    String historyQry = "SELECT SUM(bh.amountReceived) FROM BillingHistory bh where bh.billingMasterNo = :bmn";
 		if (ignoreIA) {
