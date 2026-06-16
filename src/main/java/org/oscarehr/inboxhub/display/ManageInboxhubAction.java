@@ -18,6 +18,8 @@
  */
 package org.oscarehr.inboxhub.display;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +41,10 @@ import oscar.oscarMDS.data.CategoryData;
 
 public class ManageInboxhubAction extends DispatchAction {
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+	private enum DisplayMode {
+		LIST, VIEW
+	}
 
     public ActionForward undefined(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         MiscUtils.getLogger().error("Undefined action attempted for ManageInboxhubAction");
@@ -76,7 +82,7 @@ public class ManageInboxhubAction extends DispatchAction {
             return mapping.findForward("unauthorized");
         }
 
-        fetchLabData(form, request);
+        fetchLabData(form, request, DisplayMode.LIST);
         return mapping.findForward("displayList");
     }
 
@@ -86,11 +92,11 @@ public class ManageInboxhubAction extends DispatchAction {
             return mapping.findForward("unauthorized");
         }
 
-        fetchLabData(form, request);
+        fetchLabData(form, request, DisplayMode.VIEW);
         return mapping.findForward("displayView");
     }
 
-    private void fetchLabData(ActionForm form, HttpServletRequest request) {
+    private void fetchLabData(ActionForm form, HttpServletRequest request, DisplayMode display) {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
 
         String page = request.getParameter("page");
@@ -101,14 +107,16 @@ public class ManageInboxhubAction extends DispatchAction {
         InboxhubQuery query = (InboxhubQuery) form;
         query.setPage(Integer.parseInt(page));
         query.setPageSize(Integer.parseInt(pageSize));
+		query.setViewMode(!display.equals(DisplayMode.VIEW));
 
         LabDataController labDataController = new LabDataController();
         labDataController.sanitizeInboxFormQuery(loggedInInfo, query, demographicFilter, typeFilter);
         ArrayList<LabResultData> labDocs = labDataController.getLabData(loggedInInfo, query);
         if (labDocs.size() > 0) {
             String providerNo = request.getSession().getAttribute("user").toString();
-            ArrayList<String> labLinks = labDataController.getLabLink(labDocs, query, request.getContextPath(), providerNo);
-            request.setAttribute("labLinks", labLinks);
+	        ArrayList<String> labLinks;
+	        labLinks = labDataController.getLabLink(labDocs, query, request.getContextPath(), providerNo);
+	        request.setAttribute("labLinks", labLinks);
         }
 
         request.setAttribute("page", page);
