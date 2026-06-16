@@ -21,6 +21,8 @@ package org.oscarehr.inboxhub.inboxdata;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.log4j.Logger;
 import org.oscarehr.common.dao.InboxResultsDao;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.inboxhub.query.InboxhubQuery;
@@ -29,6 +31,7 @@ import org.oscarehr.inboxhub.query.InboxhubQuery.StatusFilter;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import org.owasp.encoder.Encode;
 import oscar.oscarLab.ca.on.CommonLabResultData;
 import oscar.oscarLab.ca.on.HRMResultsData;
 import oscar.oscarLab.ca.on.LabResultData;
@@ -36,6 +39,9 @@ import oscar.oscarMDS.data.CategoryData;
 import oscar.oscarMDS.data.ProviderData;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
@@ -56,6 +62,7 @@ public class LabDataController {
 
     private boolean providerSearch;
     private boolean patientSearch;
+	private static final Logger logger = Logger.getLogger(LabDataController.class.getName());
 
     public LabDataController() {
         providerSearch = true;
@@ -81,58 +88,60 @@ public class LabDataController {
     public ArrayList<String> getLabLink(ArrayList<LabResultData> results, InboxhubQuery query, String contextPath, String providerNo) {
         ArrayList<String> labLinks = new ArrayList<String>();
         for (int i = 0; i < results.size(); i++) {
-            StringBuilder url = new StringBuilder(contextPath);
+	        URIBuilder uriBuilder = new URIBuilder();
             LabResultData labResult = results.get(i);
             //Setting inbox item type:
             if (labResult.isMDS()) {
-                url.append("/SegmentDisplay.jsp?");
+	            uriBuilder.setPath(contextPath + "/SegmentDisplay.jsp");
             }
             else if (labResult.isCML()) {
-                url.append("/lab/CA/ON/CMLDisplay.jsp?");
+	            uriBuilder.setPath(contextPath + "/lab/CA/ON/CMLDisplay.jsp");
             }
             else if (labResult.isHL7TEXT()) {
                 String categoryType = labResult.getDiscipline();
                 if ("REF_I12".equals(categoryType)) {
-                    url.append("/oscarEncounter/ViewRequest.do?");
+	                uriBuilder.setPath(contextPath + "/oscarEncounter/ViewRequest.do");
                 }
-                else if (!categoryType.isEmpty() && categoryType.startsWith("ORU_R01:")) {
-                    url.append("/lab/CA/ALL/viewOruR01.jsp?");
+                else if (categoryType.startsWith("ORU_R01:")) {
+	                uriBuilder.setPath(contextPath + "/lab/CA/ALL/viewOruR01.jsp");
                 }
                 else {
-                    url.append("/lab/CA/ALL/labDisplay.jsp?inWindow=true");
-                    url.append("&showLatest=true");
+	                uriBuilder.setPath(contextPath + "/lab/CA/ALL/labDisplay.jsp");
+					uriBuilder.addParameter("inWindow", query.getViewMode().toString());
+	                uriBuilder.addParameter("showLatest", "true");
                 }
             }
             else if(labResult.isDocument()) {
-                url.append("/documentManager/showDocument.jsp?inWindow=true");
+	            uriBuilder.setPath(contextPath + "/documentManager/showDocument.jsp");
+	            uriBuilder.addParameter("inWindow", query.getViewMode().toString());
             }
             else if(labResult.isHRM()) {
-                url.append("/hospitalReportManager/Display.do?");
+	            uriBuilder.setPath(contextPath + "/hospitalReportManager/Display.do");
+
                 StringBuilder duplicateLabIds=new StringBuilder();
                 for (Integer duplicateLabId : labResult.getDuplicateLabIds())
                 {
                     if (duplicateLabIds.length()>0) duplicateLabIds.append(',');
                     duplicateLabIds.append(duplicateLabId);
                 }
-                url.append("duplicateLabIds=");
-                url.append(encodeURL(duplicateLabIds.toString()));
-                url.append("&id=");
-                url.append(encodeURL(labResult.getSegmentID()));
+
+	            uriBuilder.addParameter("duplicateLabIds", encodeURL(duplicateLabIds.toString()));
+	            uriBuilder.addParameter("id", encodeURL(labResult.getSegmentID()));
             }
             else {
-                url.append("/lab/CA/BC/labDisplay.jsp?");
+	            uriBuilder.setPath(contextPath + "/lab/CA/BC/labDisplay.jsp");
             }
-            url.append("&segmentID=");
-            url.append(encodeURL(labResult.getSegmentID()));
-            url.append("&providerNo=");
-            url.append(encodeURL(providerNo));
-            url.append("&searchProviderNo=");
-            url.append(encodeURL(query.getSearchProviderNo()));
-            url.append("&status=");
-            url.append(encodeURL(labResult.resultStatus));
-            url.append("&demoName=");
-            url.append(encodeURL(labResult.getPatientName()));
-            labLinks.add(url.toString());
+
+	        uriBuilder.addParameter("segmentID", encodeURL(labResult.getSegmentID()));
+	        uriBuilder.addParameter("providerNo", encodeURL(providerNo));
+	        uriBuilder.addParameter("searchProviderNo", encodeURL(query.getSearchProviderNo()));
+	        uriBuilder.addParameter("status", encodeURL(labResult.resultStatus));
+	        uriBuilder.addParameter("demoName", encodeURL(labResult.getPatientName()));
+	        try {
+		        labLinks.add(uriBuilder.build().toString());
+	        } catch (URISyntaxException e) {
+		       logger.error("Error building URI for lab link " + uriBuilder, e);
+	        }
         }
         return labLinks;
     }
@@ -149,7 +158,7 @@ public class LabDataController {
         try {
             categoryData.populateCountsAndPatients();
         } catch (SQLException e) {
-            MiscUtils.getLogger().error(e);
+            logger.error(e);
         }
         return categoryData;
     }
@@ -275,13 +284,10 @@ public class LabDataController {
     }
 
     private String encodeURL(String url) {
-        String encodedUrl = "";
-        try {
-            encodedUrl = URLEncoder.encode(url, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException e) {
-            MiscUtils.getLogger().error(e);
-        }
-        return encodedUrl;
+		if(url == null || url.isEmpty()) {
+			return "";
+		}
+		return Encode.forUriComponent(url);
     }
 
     private List<LabResultData> filterOldLabVersions(List<LabResultData> labs) {
