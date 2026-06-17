@@ -133,7 +133,7 @@
 
 		$(document).ready(function(){
 			// create the provider name array
-			var providers = new Array();
+			let providers = [];
 
 
 			$("input:checkbox").on("change", function(){
@@ -175,10 +175,12 @@
 			});
 
 			
-			$("span.provider-name").each(function(){
+			$("div#local-contacts div.contact-entry span.provider-name").each(function(){
 				var provider = {value:this.id, label:$(this).text().trim()}
 				providers.push(provider);
 			});
+
+			console.log(providers);
 			
 			$(".search-provider").autocomplete({
 		      	source: providers,
@@ -320,7 +322,7 @@
 							<div class="input-append">
 								<div class="autocomplete">							
 									<input type='text' placeholder="Last, First" id="${ group.key.id }" class="search-provider" /> 
-									<input type='hidden' id="add-member-id-${ group.key.id }" value="" />
+									<input type='hidden' id="add-member-id-${ group.key.id }" />
 									<button id="add-${ group.key.id }" class="btn add-member-btn">Add Contact</button>	
 								</div>						
 							</div>
