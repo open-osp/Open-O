@@ -36,7 +36,6 @@ import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.commn.model.UserProperty;
 import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
 import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResponse;
-import ca.openosp.openo.integration.vigilance.service.AllergyCheckCoordinator;
 import ca.openosp.openo.integration.vigilance.service.VigilanceAllergyCheckService;
 import ca.openosp.openo.integration.vigilance.service.VigilanceService;
 import ca.openosp.openo.managers.SecurityInfoManager;
@@ -83,9 +82,8 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
     private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
     private SystemPreferencesDao systemPreferencesDao = (SystemPreferencesDao) SpringUtils.getBean(SystemPreferencesDao.class);
-    private VigilanceAllergyCheckService vigilanceAllergyCheckService = SpringUtils.getBean(VigilanceAllergyCheckService.class);
-    private AllergyCheckCoordinator allergyCheckCoordinator = SpringUtils.getBean(AllergyCheckCoordinator.class);
-    private VigilanceService vigilanceService = SpringUtils.getBean(VigilanceService.class);
+    private final VigilanceAllergyCheckService vigilanceAllergyCheckService = SpringUtils.getBean(VigilanceAllergyCheckService.class);
+    private final VigilanceService vigilanceService = SpringUtils.getBean(VigilanceService.class);
 
     /**
      * Handles allergy reordering and redirects to the allergies display page.
@@ -247,17 +245,12 @@ public final class RxShowAllergy2Action extends ActionSupport {
         boolean rxShowAllAllergyWarnings = systemPreferencesDao.isReadBooleanPreference(SystemPreferences.RX_PREFERENCE_KEYS.rx_show_highest_allergy_warning);
 
         String atcCode = request.getParameter("atcCode");
-        String dinCode = request.getParameter("dinCode");
         String id = request.getParameter("id");
         String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
         if (disabled.equals("false")) {
 
             ObjectMapper objectMapper = new ObjectMapper();
             RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-            if (rxSessionBean == null) {
-                MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
-                return;
-            }
             Allergy[] allergies = RxPatientData.getPatient(loggedInInfo, rxSessionBean.getDemographicNo()).getActiveAllergies();
 
             if (loggedInInfo.getCurrentFacility().isIntegratorEnabled()) {
@@ -276,7 +269,8 @@ public final class RxShowAllergy2Action extends ActionSupport {
             RxDrugData drugData = new RxDrugData();
 
             try {
-                allergyWarnings = drugData.getAllergyWarnings(null, null, Objects.nonNull(dinCode) ? dinCode : atcCode, allergies);
+                allergyWarnings = drugData.getAllergyWarnings(atcCode, allergies);
+
 
                 Allergy highestSeverityAllergy = null;
 

@@ -28,13 +28,15 @@ package ca.openosp.openo.prescript.data;
 
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.prescript.util.RxDrugRef;
-import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
-import ca.openosp.openo.utility.SpringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class RxDrugData {
 
@@ -845,37 +847,10 @@ public class RxDrugData {
      * @throws Exception
      */
     public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allerg) throws Exception {
-        return getAllergyWarnings(null, null, atcCode, allerg);
+        return getAllergyWarnings(atcCode, allerg, null);
     }
 
-/*    public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allergies, List<Allergy> missing) throws Exception {
-        // This method is kept for backward compatibility with the 3-param signature.
-        // It will fallback to DrugRef as it lacks necessary info for Vigilance.
-        return getAllergyWarnings(null, null, atcCode, allergies);
-    }*/
-
-    public Allergy[] getAllergyWarnings(LoggedInInfo loggedInInfo, Integer demographicNo, String dinAtcCode, Allergy[] allergies) throws Exception {
-        if (loggedInInfo == null || demographicNo == null) {
-            // Fallback to legacy DrugRef logic if session info is missing
-            return getLegacyAllergyWarnings(dinAtcCode, allergies);
-        }
-
-        try {
-            ca.openosp.openo.integration.vigilance.service.AllergyCheckCoordinator coordinator =
-                    SpringUtils.getBean(ca.openosp.openo.integration.vigilance.service.AllergyCheckCoordinator.class);
-            
-            List<Allergy> currentAllergies = new ArrayList<>();
-            Collections.addAll(currentAllergies, allergies);
-            
-            List<Allergy> warnings = coordinator.performAllergyCheck(loggedInInfo, demographicNo, dinAtcCode, currentAllergies);
-            return warnings.toArray(new Allergy[0]);
-        } catch (Exception e) {
-            MiscUtils.getLogger().error("Vigilance check failed, falling back to legacy DrugRef", e);
-            return getLegacyAllergyWarnings(dinAtcCode, allergies);
-        }
-    }
-
-    private Allergy[] getLegacyAllergyWarnings(String atcCode, Allergy[] allergies) throws Exception {
+    public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allergies, List<Allergy> missing) throws Exception {
         List<Map<String, String>> allergyDataList = new ArrayList<>();
         for (int i = 0; i < allergies.length; i++) {
             Allergy allergy = allergies[i];
@@ -895,56 +870,6 @@ public class RxDrugData {
         RxDrugRef drugRef = new RxDrugRef();
         Vector<Map<String, String>> allergyDataVector = new Vector<>(allergyDataList);
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> response = drugRef.getAlergyWarnings(atcCode, allergyDataVector);
-
-        Allergy[] actualAllergies = {};
-        List<Allergy> foundWarnings = new ArrayList<>();
-        if (response != null && !response.isEmpty()) {
-            Map<String, Object> warningData = response.getFirst();
-            if (warningData != null) {
-                List<String> warningIndices = (List<String>) warningData.get("warnings");
-                if (warningIndices != null) {
-                    for (String indexStr : warningIndices) {
-                        int index = Integer.parseInt(indexStr);
-                        foundWarnings.add(allergies[index]);
-                        MiscUtils.getLogger().debug(indexStr);
-                    }
-                }
-            }
-        }
-        actualAllergies  =  (Allergy[]) foundWarnings.toArray(actualAllergies);
-
-        return actualAllergies;
-    }
-
-    public Allergy[] getAllergyWarnings(String atcCode, Allergy[] allergies, List<Allergy> missing) throws Exception {
-        // We need the current user and patient info to call the coordinator
-        // Since RxDrugData doesn't have loggedInInfo, we might need to change the signature or get it from context
-        // However, looking at existing calls   , this method is often called by a bean that has access to LoggedInInfo.
-        // For now, let's assume we can get the current demographicNo and loggedInInfo if needed.
-        // But wait, the coordinator needs: (LoggedInInfo, Integer demographicNo, String drugAtcCode, List<Allergy> currentAllergies)
-        
-        // Since I cannot change the signature of this method easily without breaking other calls, 
-        // and RxDrugData is a legacy class, let's see if we can retrieve these from some context or pass them.
-        // Actually, looking at the original implementation:
-        RxDrugRef drugRef = new RxDrugRef();
-        Vector<Map<String, String>> allergyDataList = new Vector<>();
-        for (int i = 0; i < allergies.length; i++) {
-            Allergy allergy = allergies[i];
-            Map<String, String> allergyMap = new Hashtable<>();
-            allergyMap.put("id", String.valueOf(i));
-            allergyMap.put("description", allergy.getDescription());
-            allergyMap.put("type", String.valueOf(allergy.getTypeCode()));
-
-            if (allergy.getRegionalIdentifier() != null) {
-                allergyMap.put("uuid", allergy.getRegionalIdentifier());
-            }
-
-            allergyMap.put("ATC", allergy.getAtc());
-            allergyDataList.add(allergyMap);
-        }
-
-        Vector<Map<String, String>> allergyDataVector = new Vector<>(allergyDataList);
         List<Map<String, Object>> response = drugRef.getAlergyWarnings(atcCode, allergyDataVector);
 
         Allergy[] actualAllergies = {};
