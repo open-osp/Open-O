@@ -34,11 +34,10 @@ import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.commn.model.UserProperty;
-import ca.openosp.openo.integration.vigilance.model.VigilanceQueryViewerResponse;
-import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResponse;
-import ca.openosp.openo.integration.vigilance.service.VigilanceAllergyCheckService;
-import ca.openosp.openo.integration.vigilance.service.VigilanceService;
+import ca.openosp.openo.integration.vigilance.model.VigilanceAnalysisResult;
+import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResult;
 import ca.openosp.openo.managers.SecurityInfoManager;
+import ca.openosp.openo.integration.vigilance.service.VigilanceManager;
 import ca.openosp.openo.prescript.data.RxDrugData;
 import ca.openosp.openo.prescript.data.RxPatientData;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -82,8 +81,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
     private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
     private SystemPreferencesDao systemPreferencesDao = (SystemPreferencesDao) SpringUtils.getBean(SystemPreferencesDao.class);
-    private final VigilanceAllergyCheckService vigilanceAllergyCheckService = SpringUtils.getBean(VigilanceAllergyCheckService.class);
-    private final VigilanceService vigilanceService = SpringUtils.getBean(VigilanceService.class);
+    private final VigilanceManager vigilanceManager = SpringUtils.getBean(VigilanceManager.class);
 
     /**
      * Handles allergy reordering and redirects to the allergies display page.
@@ -313,135 +311,102 @@ public final class RxShowAllergy2Action extends ActionSupport {
         }
     }
 
-   private void vigilanceStatus() throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode result = objectMapper.createObjectNode();
+    /**
+     * Retrieves the current status of the Vigilance integration service and returns it as JSON.
+     * <p>
+     * Queries the VigilanceManager for its operational status and outputs a JSON response
+     * containing whether the service is up ("vigilanceUp") and an optional status message.
+     * <p>
+     * Expected response JSON structure:
+     * <ul>
+     * <li>"vigilanceUp" - boolean indicating if the Vigilance service is operational</li>
+     * <li>"message" - optional status message from the Vigilance service</li>
+     * </ul>
+     * <p>
+     * Content-Type: application/json
+     *
+     * @throws IOException if writing the JSON response fails
+     */
+    private void vigilanceStatus() throws IOException {
+        VigilanceStatusResult result = vigilanceManager.getStatus();
 
-        // On fresh boot, cache is empty — do an initial check to populate it
-        if (!vigilanceService.hasValidEntry()) {
-            try {
-                vigilanceService.statusCheck();  // fetches from API, populates cache
-            } catch (Exception e) {
-                MiscUtils.getLogger().error("Initial Vigilance status check failed", e);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonResult = objectMapper.createObjectNode();
+        if (result != null) {
+            jsonResult.put("vigilanceUp", result.vigilanceUp());
+            if (result.message() != null) {
+                jsonResult.put("message", result.message());
             }
         }
 
-        try {
-            VigilanceStatusResponse status = vigilanceService.getStatusIfUp();
-            if (status != null) {
-                result.put("vigilanceUp", true);
-            } else {
-                result.put("vigilanceUp", false);
-                result.put("message", "Drug analysis service is currently unavailable. Prescriptions will be saved but you won't receive allergy/interaction warnings from Vigilance.");
+        response.setContentType("application/json");
+        response.getOutputStream().write(jsonResult.toString().getBytes());
+    }
+
+    /**
+     * Performs an allergy analysis check using the Vigilance service and returns results as JSON.
+     * <p>
+     * Retrieves the RxSessionBean from the session, then calls VigilanceManager to analyze
+     * potential allergies based on the patient's demographic and stash list. Handles expired
+     * sessions gracefully by returning an empty result with just the request ID.
+     * <p>
+     * Expected request parameters:
+     * <ul>
+     * <li>id - String identifier to echo back in the response</li>
+     * </ul>
+     * <p>
+     * Expected response JSON structure:
+     * <ul>
+     * <li>"id" - echoed request identifier</li>
+     * <li>"providerPreferredWarningLevel" - the provider's preferred warning level</li>
+     * <li>"showAlert" - boolean indicating whether to display an alert</li>
+     * <li>"displayIcon" - optional icon to display for the warning</li>
+     * <li>"rawVigilanceResponse" - optional raw response from Vigilance service</li>
+     * <li>"token" - optional token associated with the analysis</li>
+     * </ul>
+     * <p>
+     * Content-Type: application/json
+     *
+     * @param loggedInInfo the logged-in user's security and session information
+     * @throws IOException if writing the JSON response fails
+     */
+    private void performAllergyCheck(LoggedInInfo loggedInInfo) throws IOException {
+        String id = request.getParameter("id");
+
+        RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+        if (rxSessionBean == null) {
+            MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode result = objectMapper.createObjectNode();
+            result.put("id", id);
+            response.setContentType("application/json");
+            response.getOutputStream().write(result.toString().getBytes());
+            return;
+        }
+
+        VigilanceAnalysisResult analysisResult = vigilanceManager.analyzeAllergy(
+                loggedInInfo, rxSessionBean.getDemographicNo(), rxSessionBean.getStashList());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+        result.put("id", id);
+
+        if (analysisResult != null) {
+            result.put("providerPreferredWarningLevel", analysisResult.providerPreferredWarningLevel());
+            result.put("showAlert", analysisResult.showAlert());
+            if (analysisResult.displayIcon() != null) {
+                result.put("displayIcon", analysisResult.displayIcon());
             }
-        } catch (Exception e) {
-            MiscUtils.getLogger().error("Error checking Vigilance status", e);
-            result.put("vigilanceUp", false);
-            result.put("message", "Drug analysis service is currently unavailable. Prescriptions will be saved but you won't receive allergy/interaction warnings from Vigilance.");
+            if (analysisResult.rawVigilanceResponse() != null) {
+                result.put("rawVigilanceResponse", analysisResult.rawVigilanceResponse());
+            }
+            if (analysisResult.token() != null) {
+                result.put("token", analysisResult.token());
+            }
         }
 
         response.setContentType("application/json");
         response.getOutputStream().write(result.toString().getBytes());
-    }
-
-    /**
-     * Performs allergy profile analysis using Vigilance services for a patient.
-     * <p>
-     * This method:
-     * <ul>
-     * <li>Checks if allergy warnings are disabled via system preference</li>
-     * <li>Retrieves patient's stash from RxSessionBean for Vigilance query</li>
-     * <li>Fetches allergy analysis results from Vigilance service</li>
-     * <li>Extracts HTML viewer content, token, and alert status</li>
-     * <li>Determines if an alert should be shown based on displayIcon field</li>
-     * <li>Outputs the analysis results in JSON format</li>
-     * </ul>
-     * <p>
-     * The method checks for alert conditions by examining the displayIcon field
-     * in the Vigilance response summary. If displayIcon starts with "alert0",
-     * an alert is flagged in the response.
-     *
-     * @param loggedInInfo LoggedInInfo object containing user session details and security information
-     * @throws IOException if JSON response cannot be written to servlet output stream
-     */
-    private void performAllergyCheck(LoggedInInfo loggedInInfo) throws IOException {
-        String id = request.getParameter("id");
-        String disabled = ca.openosp.OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
-
-        if (disabled.equals("false")) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
-            if (rxSessionBean == null) {
-                MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
-                return;
-            }
-
-            ObjectNode result = objectMapper.createObjectNode();
-            result.put("id", id);
-
-            UserPropertyDAO userPropDao = SpringUtils.getBean(UserPropertyDAO.class);
-            String providerNo = loggedInInfo.getLoggedInProviderNo();
-            UserProperty warningLevelProp = userPropDao.getProp(providerNo, "rxInteractionWarningLevel");
-            int providerPreferedWarningLevel = 0;
-            if (warningLevelProp != null && warningLevelProp.getValue() != null && !warningLevelProp.getValue().isEmpty()) {
-                try {
-                    providerPreferedWarningLevel = Integer.parseInt(warningLevelProp.getValue());
-                } catch (NumberFormatException e) {
-                    MiscUtils.getLogger().warn("Invalid rxInteractionWarningLevel value: " + warningLevelProp.getValue());
-                }
-            }
-            result.put("providerPreferedWarningLevel", providerPreferedWarningLevel);
-
-            try {
-                VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
-                        loggedInInfo, rxSessionBean.getDemographicNo(), List.of(rxSessionBean.getStash()));
-
-                String rawVigilanceResponse = queryViewerResponse.rawResponse();
-                boolean hasRawResponse = !rawVigilanceResponse.isEmpty();
-                boolean showAlert = false;
-                String displayIconValue = null;
-                try {
-                    if (Objects.nonNull(queryViewerResponse.vigilanceQueryResponse()) &&
-                        Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary()) &&
-                        Objects.nonNull(queryViewerResponse.vigilanceQueryResponse().summary().displayIcon())) {
-                        displayIconValue = queryViewerResponse.vigilanceQueryResponse().summary().displayIcon();
-                        if (!displayIconValue.startsWith("alert0")) {
-                            showAlert = true;
-
-                            if (providerPreferedWarningLevel >= 4) {
-                                showAlert = false;
-                                displayIconValue = null;
-                            } else if ("alert3".equals(displayIconValue)) {
-                                if (providerPreferedWarningLevel >= 2) {
-                                    showAlert = false;
-                                }
-                            } else if ("alert2".equals(displayIconValue)) {
-                                if (providerPreferedWarningLevel == 3) {
-                                    showAlert = false;
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    MiscUtils.getLogger().warn("Failed to extract displayIcon", e);
-                }
-                result.put("showAlert", showAlert);
-                if (displayIconValue != null) {
-                    result.put("displayIcon", displayIconValue);
-                }
-                if (showAlert && hasRawResponse) {
-                    result.put("rawVigilanceResponse", rawVigilanceResponse);
-                    result.put("token", queryViewerResponse.token());
-                }
-
-            } catch (Exception e) {
-                MiscUtils.getLogger().error("Error in performAllergyCheck", e);
-                result.put("error", "Failed to process allergy analysis");
-            }
-
-            response.setContentType("application/json");
-            response.getOutputStream().write(result.toString().getBytes());
-        }
     }
 
     /**
