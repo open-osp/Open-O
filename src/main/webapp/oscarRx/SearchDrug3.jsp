@@ -1346,13 +1346,13 @@
                   <tr id="prescriptionStageRow">
                     <td>
 
-                      <div id="prescriptionStageSet">
-
-                         <div id="vigilanceStatusBanner" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; margin-top: 8px;">
-                           <strong><fmt:message key="SearchDrug.vigilanceWarningTitle"/></strong>
-                           <span id="vigilanceStatusMessage"></span>
-                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="dismissVigilanceBanner()"></button>
+                      <div id="vigilanceStatusBanner" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; margin-top: 8px;">
+                            <strong><fmt:message key="SearchDrug.vigilanceWarningTitle"/></strong>
+                            <span id="vigilanceStatusMessage"></span>
+                             <button type="button" class="btn-close" aria-label="Close" onclick="dismissVigilanceBanner()"></button>
                          </div>
+
+                      <div id="prescriptionStageSet">
 
                         <div id="interactingDrugErrorMsg"></div>
 
@@ -3970,6 +3970,7 @@ if (OscarProperties.getInstance().isPropertyActive("rx_strict_med_term")) {
       let banner = document.getElementById('vigilanceStatusBanner');
       if (banner) {
         banner.style.display = 'block';
+        banner.style.opacity = '1';
         let msgEl = document.getElementById('vigilanceStatusMessage');
         if (msgEl && message) {
           msgEl.textContent = ' ' + message;

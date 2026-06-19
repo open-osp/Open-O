@@ -58,16 +58,20 @@ public class VigilanceClient {
     private String statusEndpoint;
 
     private final WebClient vigilanceWebClient;
+    private final WebClient vigilanceStatusWebClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Constructs a new VigilanceClient.
      *
      * @param vigilanceWebClient the OAuth2-configured WebClient for Vigilance API calls
+     * @param vigilanceStatusWebClient the plain WebClient for unauthenticated endpoints
      */
     public VigilanceClient(
-            @Qualifier("vigilanceWebClient") WebClient vigilanceWebClient) {
+            @Qualifier("vigilanceWebClient") WebClient vigilanceWebClient,
+            @Qualifier("vigilanceStatusWebClient") WebClient vigilanceStatusWebClient) {
         this.vigilanceWebClient = vigilanceWebClient;
+        this.vigilanceStatusWebClient = vigilanceStatusWebClient;
     }
 
     /**
@@ -141,20 +145,25 @@ public class VigilanceClient {
      * Status API uses a different host than other Vigilance services.
      */
     public VigilanceStatusResponse getStatus() {
-        return this.vigilanceWebClient.get()
-                .uri(UriComponentsBuilder.fromHttpUrl(statusBaseUrl)
-                        .path(statusEndpoint)
-                        .build()
-                        .toUri()
-                )
-                .retrieve()
-                .onStatus(HttpStatus::isError, response ->
-                        response.bodyToMono(String.class)
-                                .flatMap(body -> reactor.core.publisher.Mono.error(
-                                        new VigilanceIntegrationException("Vigilance Status API error: " + response.statusCode() + " - " + body)
-                                ))
-                )
-                .bodyToMono(VigilanceStatusResponse.class)
-                .block();
+        try {
+            return this.vigilanceStatusWebClient.get()
+                    .uri(UriComponentsBuilder.fromHttpUrl(statusBaseUrl)
+                            .path(statusEndpoint)
+                            .build()
+                            .toUri()
+                    )
+                    .retrieve()
+                    .onStatus(HttpStatus::isError, response ->
+                            response.bodyToMono(String.class)
+                                    .flatMap(body -> reactor.core.publisher.Mono.error(
+                                            new VigilanceIntegrationException("Vigilance Status API error: " + response.statusCode() + " - " + body)
+                                    ))
+                    )
+                    .bodyToMono(VigilanceStatusResponse.class)
+                    .block();
+        } catch (Exception e) {
+            if (e instanceof VigilanceIntegrationException) throw e;
+            throw new VigilanceIntegrationException("Vigilance Status API call failed", e);
+        }
     }
 }
