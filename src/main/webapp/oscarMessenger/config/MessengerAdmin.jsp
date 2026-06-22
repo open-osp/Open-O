@@ -131,6 +131,15 @@
 			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
 		}
 
+		/*
+		 * Check if the given group has the given member.
+		 */
+		function inGroup(group, member){
+			return $("div#group-member-list-" + group + " span").is(function(){
+				return this.id === member;
+			});
+		}
+
 		$(document).ready(function(){
 			// create the provider name array
 			let providers = [];
@@ -155,6 +164,7 @@
 				{
 					addMember(memberId, groupId)
 					$(".search-provider").val('');
+					this.prop( "disabled", true );
 				}
 			});
 
@@ -180,17 +190,22 @@
 				providers.push(provider);
 			});
 
-			console.log(providers);
-			
 			$(".search-provider").autocomplete({
 		      	source: providers,
-		        focus: function( event, ui ) {
-		            $( this ).val( ui.item.label );
-		            return false;
-		        },
+		        // focus: function( event, ui ) {
+		        //     $( this ).val( ui.item.label );
+		        //     return false;
+		        // },
 				select: function( event, ui ) {
-				    $( this ).val( ui.item.label );
-				    $( "#add-member-id-" + this.id ).val( ui.item.value );
+					this.setCustomValidity("");
+					if(inGroup(this.id, ui.item.value)) {
+						$("#autocomplete-error").show();
+					} else {
+						$("#autocomplete-error").hide();
+						$( this ).val( ui.item.label );
+						$( "#add-member-id-" + this.id ).val( ui.item.value );
+						$( "#add-" + this.id ).prop( "disabled", false );
+                    }
 				    return false;
 		        }
 		    });
@@ -308,10 +323,10 @@
 									<label class="checkbox">								
 										<i class="icon-trash group-member" onclick="removeGroupMember('${ member.id.compositeId }', '${ group.key.id }')"
 											title="Remove Contact" id="${ member.id.compositeId }-${ group.key.id }" ></i>
-										<span class="provider-name" >
+										<span class="provider-name" id="${ member.id.compositeId }" >
 											<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />
 										</span>
-										<span class="muted">
+										<span class="muted" >
 											<c:out value="${ member.providerType }" />
 										</span>
 									</label>
@@ -323,8 +338,11 @@
 								<div class="autocomplete">							
 									<input type='text' placeholder="Last, First" id="${ group.key.id }" class="search-provider" /> 
 									<input type='hidden' id="add-member-id-${ group.key.id }" />
-									<button id="add-${ group.key.id }" class="btn add-member-btn">Add Contact</button>	
-								</div>						
+									<button id="add-${ group.key.id }" class="btn add-member-btn" disabled>Add Contact</button>
+								</div>
+                                <div id="autocomplete-error" class="alert-info" style="display:none;">
+                                        Provider is already in this group.
+                                </div>
 							</div>
 						</div>
 						<div class="row-fluid" style="background-color:white;">
