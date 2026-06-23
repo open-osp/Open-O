@@ -72,6 +72,7 @@
 
 <%
   String rx_enhance = OscarProperties.getInstance().getProperty("rx_enhance");
+  boolean vigilanceEnabled = OscarProperties.getInstance().getBooleanProperty("vigilance.enabled", "true");
   RxPatientData.Patient patient = (RxPatientData.Patient) request.getSession().getAttribute("Patient");
 
   if (rx_enhance != null && rx_enhance.equals("true")) {
@@ -226,6 +227,7 @@
 
   <script type="text/javascript">
     const ctx = '${ ctx }';
+    const VIGILANCE_ENABLED = <%= vigilanceEnabled %>;
   </script>
   <script type="text/javascript" src="${ ctx }/library/jquery/jquery-3.6.4.min.js"></script>
   <script type="text/javascript" src="${ ctx }/library/jquery/jquery-ui-1.12.1.min.js"></script>
@@ -1290,7 +1292,9 @@
       iterateStash();
       checkReRxLongTerm();
       load();
-      checkVigilanceStatus();
+      if (VIGILANCE_ENABLED) {
+        checkVigilanceStatus();
+      }
     });
   </script>
 </head>
@@ -1346,11 +1350,13 @@
                   <tr id="prescriptionStageRow">
                     <td>
 
+                      <% if (vigilanceEnabled) { %>
                       <div id="vigilanceStatusBanner" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none; margin-top: 8px;">
                             <strong><fmt:message key="SearchDrug.vigilanceWarningTitle"/></strong>
                             <span id="vigilanceStatusMessage"></span>
                              <button type="button" class="btn-close" aria-label="Close" onclick="dismissVigilanceBanner()"></button>
-                         </div>
+                          </div>
+                      <% } %>
 
                       <div id="prescriptionStageSet">
 
@@ -2295,6 +2301,7 @@
   }
 
   function performAllergyCheck(id) {
+    if (!VIGILANCE_ENABLED) return;
     let allegSpan = document.getElementById('alleg_vigilance_div' + id);
     if (allegSpan) {
       allegSpan.style.display = 'flex';
@@ -2380,6 +2387,7 @@
   }
 
   function openWarningModal(id, rawVigilanceResponse, token) {
+    if (!VIGILANCE_ENABLED) return;
     if (!rawVigilanceResponse || rawVigilanceResponse.trim() === '') {
       return;
     }

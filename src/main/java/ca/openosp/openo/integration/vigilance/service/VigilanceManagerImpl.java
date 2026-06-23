@@ -134,6 +134,10 @@ public class VigilanceManagerImpl implements VigilanceManager {
     }
 
     private boolean isAllergyWarningsDisabled() {
+        boolean vigilanceEnabled = OscarProperties.getInstance().getBooleanProperty("vigilance.enabled", "true");
+        if (!vigilanceEnabled) {
+            return true;
+        }
         String disabled = OscarProperties.getInstance().getProperty("rx3.disable_allergy_warnings", "false");
         return "true".equals(disabled);
     }

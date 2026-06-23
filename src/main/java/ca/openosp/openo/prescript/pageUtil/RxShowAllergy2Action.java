@@ -337,6 +337,8 @@ public final class RxShowAllergy2Action extends ActionSupport {
             if (result.message() != null) {
                 jsonResult.put("message", result.message());
             }
+        } else {
+            jsonResult.put("vigilanceUp", true);
         }
 
         response.setContentType("application/json");
@@ -403,6 +405,8 @@ public final class RxShowAllergy2Action extends ActionSupport {
             if (analysisResult.token() != null) {
                 result.put("token", analysisResult.token());
             }
+        } else {
+            result.put("showAlert", false);
         }
 
         response.setContentType("application/json");
