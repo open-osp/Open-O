@@ -110,25 +110,32 @@ public class OscarChartPrinter {
     private PreventionDao preventionDao = (PreventionDao)SpringUtils.getBean(PreventionDao.class);
     private DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
-    
 
-	public OscarChartPrinter(HttpServletRequest request, OutputStream os) throws DocumentException,IOException {
-		this.request = request;
-		this.os = os;
-
+	public OscarChartPrinter(OutputStream os) throws DocumentException, IOException {
 		document = new Document();
 		// writer = PdfWriterFactory.newInstance(document, os, FontSettings.HELVETICA_10PT);
-		
-	    writer = PdfWriter.getInstance(document,os);
+
+		writer = PdfWriter.getInstance(document, os);
 		writer.setPageEvent(new EndPage());
 		document.setPageSize(PageSize.LETTER);
 		document.open();
 		//Create the font we are going to print to
-        bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-        font = new Font(bf, FONTSIZE, Font.NORMAL);
-        boldFont = new Font(bf,FONTSIZE,Font.BOLD);
+		bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+		font = new Font(bf, FONTSIZE, Font.NORMAL);
+		boldFont = new Font(bf,FONTSIZE,Font.BOLD);
 	}
 
+	public OscarChartPrinter(HttpServletRequest request, OutputStream os) throws DocumentException,IOException {
+		this(os);
+		this.request = request;
+		this.os = os;
+	}
+
+	public OscarChartPrinter(Demographic demographic, OutputStream os) throws DocumentException, IOException {
+		this(os);
+		this.demographic = demographic;
+		this.os = os;
+	}
 
     public HttpServletRequest getRequest() {
     	return request;
@@ -178,12 +185,14 @@ public class OscarChartPrinter {
 
     	//set up document title and header
         ResourceBundle propResource = ResourceBundle.getBundle("oscarResources");
-        String title = propResource.getString("oscarEncounter.pdfPrint.title") + " " + (String)request.getAttribute("demoName") + "\n";
-        String gender = propResource.getString("oscarEncounter.pdfPrint.gender") + " " + (String)request.getAttribute("demoSex") + "\n";
-        String dob = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + (String)request.getAttribute("demoDOB") + "\n";
-        String age = propResource.getString("oscarEncounter.pdfPrint.age") + " " + (String)request.getAttribute("demoAge") + "\n";
-        String mrp = propResource.getString("oscarEncounter.pdfPrint.mrp") + " " + (String)request.getAttribute("mrp") + "\n";
-        String[] info = new String[] { title, gender, dob, age, mrp };
+        String title = propResource.getString("oscarEncounter.pdfPrint.title") + " " + (this.request != null ? (String) request.getAttribute("demoName") : demographic.getFormattedName()) + "\n";
+        String gender = propResource.getString("oscarEncounter.pdfPrint.gender") + " " + (this.request != null ? (String)  request.getAttribute("demoSex") : demographic.getSex()) + "\n";
+        String dob = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + (this.request != null ? (String)  request.getAttribute("demoDOB") : demographic.getFormattedDob()) + "\n";
+        String age = propResource.getString("oscarEncounter.pdfPrint.age") + " " + (this.request != null ? (String)  request.getAttribute("demoAge") : demographic.getAge()) + "\n";
+        String mrp = propResource.getString("oscarEncounter.pdfPrint.mrp") + " " + (this.request != null ? (String)  request.getAttribute("mrp") : demographic.getMrp()) + "\n";
+
+
+		String[] info = new String[] { title, gender, dob, age, mrp };
 
         ClinicData clinicData = new ClinicData();
         clinicData.refreshClinicData();
@@ -442,7 +451,8 @@ public class OscarChartPrinter {
 	        table.addCell(generalCellForApptHistory(timeFormatter.format(appt.getStartTime())));
 	        table.addCell(generalCellForApptHistory(timeFormatter.format(appt.getEndTime())));
 	        table.addCell(generalCellForApptHistory(appt.getReason()));
-	        table.addCell(generalCellForApptHistory(providerDao.getProvider(appt.getProviderNo()).getFormattedName()));
+	        Provider apptProvider = providerDao.getProvider(appt.getProviderNo());
+	        table.addCell(generalCellForApptHistory(apptProvider != null ? apptProvider.getFormattedName() : appt.getProviderNo()));
 	        table.addCell(generalCellForApptHistory(appt.getNotes()));
         }
 
@@ -469,9 +479,6 @@ public class OscarChartPrinter {
         document.add(p);
         newPage = false;
         this.printNotes(notes,true);
-
-
-        cb.endText();
 
     }
 

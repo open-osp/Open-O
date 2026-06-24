@@ -46,8 +46,6 @@ import org.oscarehr.documentManager.ConvertToEdoc.DocumentType;
  */
 public class FormTransportContainer {
 
-	private HttpServletResponseWrapper responseWrapper;
-
 	private HttpServletRequestWrapper requestWrapper;
 	private final static DocumentType documentType = DocumentType.form;
 	private final String HTML;
@@ -66,17 +64,17 @@ public class FormTransportContainer {
 	public FormTransportContainer( HttpServletResponse response, 
 			HttpServletRequest request, final String formPath ) throws ServletException, IOException {
 
-		responseWrapper = new HttpServletResponseWrapper(response) {
+		HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper(response) {
 			private final StringWriter stringWriter = new StringWriter();
 
 			@Override
 			public PrintWriter getWriter() throws IOException {
-			    return new PrintWriter(stringWriter);
+				return new PrintWriter(stringWriter);
 			}
 
 			@Override
 			public String toString() {
-			    return stringWriter.toString();
+				return stringWriter.toString();
 			}
 
 		};
@@ -85,7 +83,7 @@ public class FormTransportContainer {
 			FORM_FORWARD_PATH = formPath;
 		}
 
-		request.getRequestDispatcher( FORM_FORWARD_PATH ).forward( request, responseWrapper );
+		request.getRequestDispatcher( FORM_FORWARD_PATH ).forward( request, responseWrapper);
 
 		this.HTML = responseWrapper.toString();
 		this.loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession( request );		

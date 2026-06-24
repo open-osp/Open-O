@@ -291,6 +291,7 @@ if (!userRole.toLowerCase().contains("admin")) { %>
 	<html:select style="width: 189px" property="template">
 		<html:option value="<%=(new Integer(DemographicExportAction4.CMS4)).toString() %>">EMR DM 5.0</html:option>
 		<html:option value="<%=(new Integer(DemographicExportAction4.E2E)).toString() %>">E2E</html:option>
+        <html:option value="<%=(new Integer(DemographicExportAction4.PDF)).toString() %>">PDF</html:option>
 	</html:select>
 	   
 <br>
