@@ -267,19 +267,13 @@
      @SuppressWarnings("unchecked")
      @Override
      public List<Hl7TextInfo> findByLabIdList(List<Integer> labIds) {
-         
-         StringBuilder stringBuilder = new StringBuilder();
-         for(Integer labId : labIds) {
-             stringBuilder.append("'" + labId + "'");
+         if (labIds == null || labIds.isEmpty()) {
+             return Collections.emptyList();
          }
- 
-         String sql = "SELECT x FROM " + modelClass.getName() + " x WHERE x.labNumber IN ("+ stringBuilder.toString() +") ORDER BY x.labNumber DESC";
+         String sql = "SELECT x FROM " + modelClass.getName() + " x WHERE x.labNumber IN :labIds ORDER BY x.labNumber DESC";
          Query query = entityManager.createQuery(sql);
-         List<Hl7TextInfo> resultList = query.getResultList();
-         if(resultList == null) {
-             resultList = Collections.emptyList();
-         }
-         return resultList;
+         query.setParameter("labIds", labIds);
+         return query.getResultList();
      }
  
      @Override
