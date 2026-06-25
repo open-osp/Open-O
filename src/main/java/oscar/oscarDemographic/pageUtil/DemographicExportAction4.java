@@ -101,9 +101,11 @@ import oscar.oscarDemographic.data.DemographicRelationship;
 import oscar.oscarEncounter.data.EctFormData;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarEncounter.oscarMeasurements.data.Measurements;
+import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.parsers.MessageHandler;
 import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
+import oscar.oscarLab.ca.on.LabResultData;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
 import oscar.oscarReport.data.DemographicSets;
@@ -167,6 +169,7 @@ public class DemographicExportAction4 extends Action {
 	private static final AllergyManager allergyManager = SpringUtils.getBean(AllergyManager.class);
 	private static final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 	private static final CaseManagementNoteDAO caseManagementNoteDao = SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private static final LabManager labManager = SpringUtils.getBean(LabManager.class);
 
 	static String[] cppIssues = {"MedHistory","OMeds","SocHistory","FamHistory","Reminders","Concerns","RiskFactors"};
 	private static final String PATIENTID = "Patient";
@@ -291,6 +294,9 @@ public class DemographicExportAction4 extends Action {
 		 * Code written under deadline pressure. Please help clean.
 		 */
 		case PDF:
+
+			exportError = new ArrayList<String>();
+
 			if (!new File(tmpDir).mkdir() || !Util.checkDir(tmpDir)) {
 				logger.debug("Error! Cannot write to TMP_DIR - Check oscar.properties or dir permissions. (" + tmpDir + ")");
 			} else {
@@ -319,6 +325,8 @@ public class DemographicExportAction4 extends Action {
 					eformToPDF(loggedInInfo, demographic);
 					consultRequestToPDF(loggedInInfo, demographic, request);
 					formsToPDF(loggedInInfo, demographic, request, response);
+					copyPDFDocuments(loggedInInfo, demographic);
+					labsToPDF(loggedInInfo, demographic);
 				}
 			}
 			break;
@@ -3809,6 +3817,77 @@ public class DemographicExportAction4 extends Action {
 		}
 	}
 
+	private LinkedHashMap<String, Hl7TextInfo> labsToPDF(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+
+		List<Hl7TextInfo> labResults = labManager.getHl7TextInfo(loggedInInfo, demographic.getDemographicNo());
+		LinkedHashMap<String, Hl7TextInfo> accessionMap = new LinkedHashMap<>();
+		for (Hl7TextInfo hl7TextInfo : labResults) {
+			if (hl7TextInfo.getAccessionNumber() == null || hl7TextInfo.getAccessionNumber().equals("")) {
+				accessionMap.put("noAccessionNum", hl7TextInfo);
+			} else {
+				if (!accessionMap.containsKey(hl7TextInfo.getAccessionNumber())) accessionMap.put(hl7TextInfo.getAccessionNumber(), hl7TextInfo);
+			}
+		}
+
+		for (Hl7TextInfo result : accessionMap.values()) {
+
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path labDirectory = Paths.get(directory, "labs");
+			if (!Files.isDirectory(labDirectory)) {
+				try {
+					Files.createDirectory(labDirectory);
+				} catch (IOException e) {
+					logger.error("Failed to create documents export directory: " + labDirectory  , e);
+				}
+			}
+
+			try (OutputStream fos = Files.newOutputStream(Paths.get(labDirectory.toString(), demographic.getLastName() + "_" + demographic.getFirstName() + "_" + demographic.getHin() + "_" + demographic.getDemographicNo() + "_" + demographic.getFormattedDob() + "_" + result.getAccessionNumber() + ".pdf"))) {
+				LabPDFCreator pdfCreator = new LabPDFCreator(fos, result.getId() +"", loggedInInfo.getLoggedInProviderNo());
+				try {
+					pdfCreator.printPdf();
+				} catch (com.lowagie.text.DocumentException | IOException documentException) {
+					throw new com.lowagie.text.DocumentException(documentException);
+				}
+			}
+		}
+
+		return accessionMap;
+	}
+
+	private List<EDoc> copyPDFDocuments(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+		ArrayList<EDoc> edoc_list = EDocUtil.listDemoDocs(loggedInInfo, demographic.getDemographicNo()+"");
+		for(EDoc edoc : edoc_list) {
+			// fetch document, copy to new document directory
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path documentDirectory = Paths.get(directory, "documents");
+			if (!Files.isDirectory(documentDirectory)) {
+				try {
+					Files.createDirectory(documentDirectory);
+				} catch (IOException e) {
+					logger.error("Failed to create documents export directory: " + documentDirectory  , e);
+				}
+			}
+
+			if (edoc.getFilePath() == null) {
+				exportError.add("Error! Document file path does not exist! " + edoc.getFileName());
+			} else {
+				Path filePath = Paths.get(edoc.getFilePath());
+				if (Files.exists(filePath)) {
+					Files.copy(filePath, documentDirectory.resolve(filePath.getFileName()));
+				} else {
+					exportError.add("Error! Document \""+filePath.getFileName()+"\" does not exist!");
+				}
+			}
+		}
+		return edoc_list;
+	}
+
 	private List<Object[]> consultRequestToPDF(LoggedInInfo loggedInInfo, Demographic demographic, HttpServletRequest request) {
 		/*
 		 * If not exists
@@ -3992,10 +4071,7 @@ public class DemographicExportAction4 extends Action {
 			if(patientFolderPath != null) {
 				directory = patientFolderPath.toString();
 			}
-			Path echartDir = Paths.get(directory, "echart");
-			if (!Files.isDirectory(echartDir)) {
-				Files.createDirectory(echartDir);
-			}
+			Path echartDir = Paths.get(directory);
 			Path exportPath = echartDir.resolve(demographic.getDemographicNo() + "_echart.pdf");
 			Files.write(exportPath, pdfBytes);
 
