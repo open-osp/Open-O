@@ -43,6 +43,9 @@ public record VigilanceQueryResponse(
         @JsonProperty("profile") Profile profile,
         @JsonProperty("institution") Institution institution) implements VigilanceResponse {
 
+    /**
+     * Analysis summary with version info, service status, and display icon.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Summary(
             @JsonProperty("dateTime") String dateTime,
@@ -52,11 +55,17 @@ public record VigilanceQueryResponse(
             @JsonProperty("displayIcon") String displayIcon,
             @JsonProperty("analysisLimits") AnalysisLimits analysisLimits) {}
 
+    /**
+     * Engine and data version information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Version(
             @JsonProperty("engine") String engine,
             @JsonProperty("data") String data) {}
 
+    /**
+     * A preprocessing change with bilingual descriptions.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record PreprocessChange(
             @JsonProperty("id") String id,
@@ -65,14 +74,23 @@ public record VigilanceQueryResponse(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en) {}
 
+    /**
+     * Medication analysis limits configuration.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record AnalysisLimits(
             @JsonProperty("medications") MedicationLimit medications) {}
 
+    /**
+     * Limit information for medication analysis.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MedicationLimit(
             @JsonProperty("limited") Integer limited) {}
 
+    /**
+     * Source with priority, count, and impact data.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Source(
             @JsonProperty("p") Integer p,
@@ -80,10 +98,16 @@ public record VigilanceQueryResponse(
             @JsonProperty("i") Integer i,
             @JsonProperty("impact") String impact) {}
 
+    /**
+     * Profile generation entry containing source information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileGenEntry(
             @JsonProperty("source") List<Source> source) {}
 
+    /**
+     * Side effect with frequency count and supporting sources.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileSideEffect(
             @JsonProperty("id") String id,
@@ -92,51 +116,81 @@ public record VigilanceQueryResponse(
             @JsonProperty("en") String en,
             @JsonProperty("source") List<Source> source) {}
 
+    /**
+     * Profile intensity with overall profile level and detailed breakdown.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileIntensity(
             @JsonProperty("profile") Integer profile,
             @JsonProperty("detail") List<Map<String, Integer>> detail) {}
 
+    /**
+     * Cytochrome profile with source information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfileCytochrome(
             @JsonProperty("id") String id,
             @JsonProperty("source") List<Source> source) {}
 
+    /**
+     * Dictionary containing text-based lookup data.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Dictionary(
             @JsonProperty("text") TextDictionary text) {}
 
+    /**
+     * Text dictionary with bilingual limited alert entries.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record TextDictionary(
             @JsonProperty("al_limited") BilingualText al_limited,
             @JsonProperty("limited") BilingualText limited) {}
 
+    /**
+     * French/English bilingual text pair.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record BilingualText(
             @JsonProperty("fr") String fr,
             @JsonProperty("en") String en) {}
 
+    /**
+     * Query response containing configuration and service info.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record QueryResponse(
             @JsonProperty("config") QueryConfig config,
             @JsonProperty("service") ServiceInfo service) {}
 
+    /**
+     * Query configuration specifying the zone.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record QueryConfig(
             @JsonProperty("zone") List<String> zone) {}
 
+    /**
+     * Information about the specific Vigilance service.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ServiceInfo(
             @JsonProperty("id") String id,
             @JsonProperty("userType") Integer userType,
             @JsonProperty("analysisMode") Integer analysisMode) {}
 
+    /**
+     * Profile containing patient, medication, and diagnosis data.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Profile(
             @JsonProperty("patient") Patient patient,
             @JsonProperty("medications") List<MedicationEntry> medications,
             @JsonProperty("diagnoses") List<Diagnosis> diagnoses) {}
 
+    /**
+     * Patient demographic information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Patient(
             @JsonProperty("firstName") String firstName,
@@ -145,14 +199,23 @@ public record VigilanceQueryResponse(
             @JsonProperty("weightKg") Integer weightKg,
             @JsonProperty("race") Integer race) {}
 
+    /**
+     * Patient's age information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Age(
             @JsonProperty("years") Integer years) {}
 
+    /**
+     * Medication entry containing product information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MedicationEntry(
             @JsonProperty("product") List<Product> product) {}
 
+    /**
+     * Product with code, format, display names, and detailed information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Product(
             @JsonProperty("code") String code,
@@ -161,6 +224,9 @@ public record VigilanceQueryResponse(
             @JsonProperty("analysisLimits") AnalysisLimitsEntry analysisLimits,
             @JsonProperty("detail") ProductDetail detail) {}
 
+    /**
+     * Display names with various bilingual format combinations.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record DisplayNames(
             @JsonProperty("usual") BilingualText usual,
@@ -173,11 +239,17 @@ public record VigilanceQueryResponse(
             @JsonProperty("form") BilingualText form,
             @JsonProperty("strength") BilingualText strength) {}
 
+    /**
+     * Analysis limits entry with value and note.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record AnalysisLimitsEntry(
             @JsonProperty("value") String value,
             @JsonProperty("note") String note) {}
 
+    /**
+     * Detailed product information including ingredients, coverage, and monograph data.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProductDetail(
             @JsonProperty("name") BilingualText name,
@@ -193,17 +265,26 @@ public record VigilanceQueryResponse(
             @JsonProperty("monograph") Monograph monograph,
             @JsonProperty("comparativeChart") ComparativeChart comparativeChart) {}
 
+    /**
+     * Drug ingredient with generic name and analysis limits.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Ingredient(
             @JsonProperty("gen") String gen,
             @JsonProperty("genName") BilingualText genName,
             @JsonProperty("analysisLimits") AnalysisLimitsEntry analysisLimits) {}
 
+    /**
+     * Coverage information for a product.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Coverage(
             @JsonProperty("covered") String covered,
             @JsonProperty("supply") Integer supply) {}
 
+    /**
+     * Bilingual drug monograph data.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Monograph(
             @JsonProperty("fr") String fr,
@@ -211,6 +292,9 @@ public record VigilanceQueryResponse(
             @JsonProperty("title") BilingualText title,
             @JsonProperty("a") String a) {}
 
+    /**
+     * Comparative analysis chart with Q&A in French and English.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record ComparativeChart(
             @JsonProperty("fr") String fr,
@@ -219,6 +303,9 @@ public record VigilanceQueryResponse(
             @JsonProperty("a") String a,
             @JsonProperty("q") BilingualText q) {}
 
+    /**
+     * Diagnosis code with display names and detailed information.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Diagnosis(
             @JsonProperty("code") String code,
@@ -226,12 +313,18 @@ public record VigilanceQueryResponse(
             @JsonProperty("displayNames") BilingualText displayNames,
             @JsonProperty("detail") DiagnosisDetail detail) {}
 
+    /**
+     * Detailed diagnosis information with links and associated documents.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record DiagnosisDetail(
             @JsonProperty("name") BilingualText name,
             @JsonProperty("link") DiagnosisLink link,
             @JsonProperty("documentsDiagnosis") List<DocumentDiagnosis> documentsDiagnosis) {}
 
+    /**
+     * Diagnostic reference link with title and content in French and English.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record DiagnosisLink(
             @JsonProperty("fr") String fr,
@@ -240,11 +333,17 @@ public record VigilanceQueryResponse(
             @JsonProperty("a") String a,
             @JsonProperty("q") BilingualText q) {}
 
+    /**
+     * Document associated with a diagnosis, including link and category.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record DocumentDiagnosis(
             @JsonProperty("link") DiagnosisLink link,
             @JsonProperty("category") String category) {}
 
+    /**
+     * Institution type making the request.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Institution(
             @JsonProperty("type") Integer type) {}

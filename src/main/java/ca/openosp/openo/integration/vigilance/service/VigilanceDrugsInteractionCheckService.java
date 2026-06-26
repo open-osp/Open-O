@@ -48,24 +48,27 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
- * Orchestrator service for performing allergy checks via the Vigilance API.
+ * Orchestrator service for performing drug interaction checks via the Vigilance API.
  * This service bridges OpenO's business logic with the low-level VigilanceClient.
  */
 @Service
-public class VigilanceAllergyCheckService {
+public class VigilanceDrugsInteractionCheckService {
 
-    private static final Logger log = LoggerFactory.getLogger(VigilanceAllergyCheckService.class);
+    private static final Logger log = LoggerFactory.getLogger(VigilanceDrugsInteractionCheckService.class);
 
     private final DemographicManager demographicManager;
     private final MeasurementDao measurementDao;
     private final CaseManagementManager caseManagementManager;
     private final VigilanceService vigilanceService;
 
+    /**
+     * Creates a new drug interaction check service with required dependencies.
+     */
     @Autowired
-    public VigilanceAllergyCheckService(DemographicManager demographicManager,
-                                        MeasurementDao measurementDao,
-                                        CaseManagementManager caseManagementManager,
-                                      VigilanceService vigilanceService) {
+    public VigilanceDrugsInteractionCheckService(DemographicManager demographicManager,
+                                                 MeasurementDao measurementDao,
+                                                 CaseManagementManager caseManagementManager,
+                                                 VigilanceService vigilanceService) {
         this.demographicManager = demographicManager;
         this.measurementDao = measurementDao;
         this.caseManagementManager = caseManagementManager;
@@ -73,16 +76,16 @@ public class VigilanceAllergyCheckService {
     }
 
     /**
-     * Performs an allergy check for a patient and a specific drug (ATC code).
+     * Performs an interaction check for a patient and prescribed-prescribing drugs.
      * Checks cached status first, then calls the Vigilance API.
      * On failure, attempts to determine if the service is down and updates cache accordingly.
      *
      * @param loggedInInfo the currently logged in user info
      * @param demographicNo the internal identifier of the patient
-     * @param stashDrugs the ATC code of the target drug
+     * @param stashDrugs the list of prescriptions to analyze
      * @return the response from Vigilance API containing analysis results
      */
-    public VigilanceQueryViewerResponse checkAllergies(LoggedInInfo loggedInInfo, Integer demographicNo, List<RxPrescriptionData.Prescription> stashDrugs) {
+    public VigilanceQueryViewerResponse checkDrugsInteraction(LoggedInInfo loggedInInfo, Integer demographicNo, List<RxPrescriptionData.Prescription> stashDrugs) {
         // 1. Resolve Patient Profile
         Demographic demographic = this.demographicManager.getDemographic(loggedInInfo, demographicNo);
         if (demographic == null) {

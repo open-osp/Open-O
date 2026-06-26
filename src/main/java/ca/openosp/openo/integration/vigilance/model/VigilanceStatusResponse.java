@@ -27,11 +27,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
 import java.util.List;
 
+/**
+ * Response object for Vigilance API status checking.
+ * Contains the next scheduled update time and product-level health status.
+ */
 public record VigilanceStatusResponse(
         @JsonProperty("next_update_at") OffsetDateTime nextUpdateAt,
         List<Product> products
 ) implements VigilanceResponse {
 
+    /**
+     * Product health status with nested zone information.
+     */
     public record Product(
             String name,
             String status,
@@ -39,6 +46,9 @@ public record VigilanceStatusResponse(
     ) implements VigilanceResponse {
     }
 
+    /**
+     * Zone-level health status within a product.
+     */
     public record Zone(
             String id,
             String status

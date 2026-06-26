@@ -386,7 +386,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
             return;
         }
 
-        VigilanceAnalysisResult analysisResult = vigilanceManager.analyzeAllergy(
+        VigilanceAnalysisResult analysisResult = vigilanceManager.analyzeDrugsInteraction(
                 loggedInInfo, rxSessionBean.getDemographicNo(), rxSessionBean.getStashList());
 
         ObjectMapper objectMapper = new ObjectMapper();

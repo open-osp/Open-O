@@ -23,7 +23,8 @@
 package ca.openosp.openo.integration.vigilance.model;
 
 /**
- * Combined response object for query viewer that includes both allergy warnings and HTML content.
+ * Combined response object for query viewer that includes both raw analysis response and
+ * parsed object along with the token.
  */
 public record VigilanceQueryViewerResponse(
         String rawResponse,

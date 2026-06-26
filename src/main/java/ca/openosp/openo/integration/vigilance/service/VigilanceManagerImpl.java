@@ -17,27 +17,42 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Implementation of VigilanceManager for drug analysis operations.
+ * <p>
+ * Orchestrates drug interaction checks via the Vigilance API,
+ * applying provider-specific warning level preferences.
+ */
 @Service
 public class VigilanceManagerImpl implements VigilanceManager {
 
-    private static final String VIGILANCE_DOWN_MESSAGE = "Drug analysis service is currently unavailable. Prescriptions will be saved but you won't receive allergy/interaction warnings from Vigilance.";
+    private static final String VIGILANCE_DOWN_MESSAGE = "Drug interaction analysis service is currently unavailable. Prescriptions will be saved but you won't receive interaction warnings from Vigilance.";
 
     private final VigilanceService vigilanceService;
-    private final VigilanceAllergyCheckService vigilanceAllergyCheckService;
+    private final VigilanceDrugsInteractionCheckService vigilanceDrugsInteractionCheckService;
     private final UserPropertyDAO userPropertyDAO;
 
+    /**
+     * Creates a new manager with the required services.
+     */
     @Autowired
     public VigilanceManagerImpl(VigilanceService vigilanceService,
-                                VigilanceAllergyCheckService vigilanceAllergyCheckService,
+                                VigilanceDrugsInteractionCheckService vigilanceDrugsInteractionCheckService,
                                 UserPropertyDAO userPropertyDAO) {
         this.vigilanceService = vigilanceService;
-        this.vigilanceAllergyCheckService = vigilanceAllergyCheckService;
+        this.vigilanceDrugsInteractionCheckService = vigilanceDrugsInteractionCheckService;
         this.userPropertyDAO = userPropertyDAO;
     }
 
+    /**
+     * Returns the current status of the Vigilance drug analysis service.
+     * Returns null if allergy/interaction warnings are disabled for this provider.
+     *
+     * @return status result indicating service health, or null if warnings are disabled
+     */
     @Override
     public VigilanceStatusResult getStatus() {
-        if (isAllergyWarningsDisabled()) {
+        if (isAllergyInteractionWarningsDisabled()) {
             return null;
         }
 
@@ -62,16 +77,25 @@ public class VigilanceManagerImpl implements VigilanceManager {
         }
     }
 
+    /**
+     * Performs an drug interaction analysis for a patient's prescriptions.
+     * Applies provider-specific warning level preferences to filter results.
+     *
+     * @param loggedInInfo the currently logged in user info
+     * @param demographicNo the internal identifier of the patient
+     * @param stash the list of prescriptions to analyze
+     * @return analysis result with alert status and display icon, or null if warnings are disabled
+     */
     @Override
-    public VigilanceAnalysisResult analyzeAllergy(LoggedInInfo loggedInInfo, int demographicNo, List<RxPrescriptionData.Prescription> stash) {
-        if (isAllergyWarningsDisabled()) {
+    public VigilanceAnalysisResult analyzeDrugsInteraction(LoggedInInfo loggedInInfo, int demographicNo, List<RxPrescriptionData.Prescription> stash) {
+        if (isAllergyInteractionWarningsDisabled()) {
             return null;
         }
 
         int providerPreferredWarningLevel = getProviderWarningLevel(loggedInInfo.getLoggedInProviderNo());
 
         try {
-            VigilanceQueryViewerResponse queryViewerResponse = vigilanceAllergyCheckService.checkAllergies(
+            VigilanceQueryViewerResponse queryViewerResponse = vigilanceDrugsInteractionCheckService.checkDrugsInteraction(
                     loggedInInfo, demographicNo, stash);
 
             String rawVigilanceResponse = queryViewerResponse.rawResponse();
@@ -122,7 +146,7 @@ public class VigilanceManagerImpl implements VigilanceManager {
             );
 
         } catch (Exception e) {
-            MiscUtils.getLogger().error("Error in analyzeAllergy", e);
+            MiscUtils.getLogger().error("Error in analyzeDrugsInteraction", e);
             return new VigilanceAnalysisResult(
                     providerPreferredWarningLevel,
                     false,
@@ -133,7 +157,7 @@ public class VigilanceManagerImpl implements VigilanceManager {
         }
     }
 
-    private boolean isAllergyWarningsDisabled() {
+    private boolean isAllergyInteractionWarningsDisabled() {
         boolean vigilanceEnabled = OscarProperties.getInstance().getBooleanProperty("vigilance.enabled", "true");
         if (!vigilanceEnabled) {
             return true;

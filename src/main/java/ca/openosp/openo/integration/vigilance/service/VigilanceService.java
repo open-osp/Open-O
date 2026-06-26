@@ -43,6 +43,9 @@ public class VigilanceService {
     private final VigilanceClient vigilanceClient;
     private final VigilanceStatusCache statusCache;
 
+    /**
+     * Creates a new service with the Vigilance client and status cache.
+     */
     @Autowired
     public VigilanceService(VigilanceClient vigilanceClient, VigilanceStatusCache statusCache) {
         this.vigilanceClient = vigilanceClient;

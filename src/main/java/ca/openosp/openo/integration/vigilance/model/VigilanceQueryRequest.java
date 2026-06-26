@@ -76,8 +76,15 @@ public record VigilanceQueryRequest(Query query, Profile profile, Institution in
      */
     public record Product(String code, String fmt) {}
 
+    /**
+     * Represents a clinical diagnosis associated with the patient profile.
+     */
     public record Diagnose(String code) {}
 
+    /**
+     * Represents a medication-related problem or issue reported by Vigilance for a
+     * prescription or drug exposure.
+     */
     public record RxProblem(String code, String fmt, int prob) {}
 
 }

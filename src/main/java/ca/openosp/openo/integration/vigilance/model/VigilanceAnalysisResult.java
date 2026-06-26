@@ -23,7 +23,7 @@
 package ca.openosp.openo.integration.vigilance.model;
 
 /**
- * Result of a Vigilance allergy/interaction analysis, enriched with OpenO provider preferences.
+ * Result of a Vigilance interaction analysis, enriched with OpenO provider preferences.
  */
 public record VigilanceAnalysisResult(
         int providerPreferredWarningLevel,

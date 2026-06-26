@@ -26,10 +26,21 @@ package ca.openosp.openo.integration.vigilance.exception;
  * Exception thrown when an integration error occurs with the Vigilance API.
  */
 public class VigilanceIntegrationException extends RuntimeException {
+    /**
+     * Creates an exception with the specified detail message.
+     *
+     * @param message the detail message
+     */
     public VigilanceIntegrationException(String message) {
         super(message);
     }
 
+    /**
+     * Creates an exception with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause the cause of this exception
+     */
     public VigilanceIntegrationException(String message, Throwable cause) {
         super(message, cause);
     }
