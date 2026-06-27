@@ -2534,9 +2534,11 @@ public class DemographicExportAction4 extends Action {
 						try {
 							java.sql.Date eformRequestDate = (java.sql.Date) eform.get("formDate");
 							java.sql.Time eformRequestTime = (java.sql.Time) eform.get("formTime");
-							eformRequestDate.setTime(eformRequestTime.getTime());
 							if (eformRequestDate != null) {
-								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(eformRequestDate));
+								long combinedMillis = eformRequestDate.getTime() +
+										(eformRequestTime != null ? eformRequestTime.getTime() : 0L);
+								java.util.Date combined = new java.util.Date(combinedMillis);
+								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(combined));
 							}
 						} catch (Exception e) {
 							logger.error("Failed to parse eForm request date and time: " + eform.get("formDate") + " " + eform.get("formTime"), e);
