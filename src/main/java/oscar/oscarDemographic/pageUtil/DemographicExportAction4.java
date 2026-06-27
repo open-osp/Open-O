@@ -2305,7 +2305,7 @@ public class DemographicExportAction4 extends Action {
 						height.setHeight(meas.getDataField());
 						height.setHeightUnit(Height.HeightUnit.CM);
 						addOneEntry(CAREELEMENTS);
-					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().equalsIgnoreCase("in kg")) { //Weight in kg
+					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().startsWith("in kg")) { //Weight in kg
 						Weight weight = careElm.addNewWeight();
 						weight.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
