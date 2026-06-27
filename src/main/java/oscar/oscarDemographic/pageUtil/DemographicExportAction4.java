@@ -3532,7 +3532,7 @@ public class DemographicExportAction4 extends Action {
 		/*
 		 * filters out any possible Base64 encoded binary data that should not be here
 		 */
-		if (StringUtils.filled(measureData) && !Base64.isBase64(measureData)) {
+		if (StringUtils.filled(measureData)) {
 			LaboratoryResults.Result result = labResults.addNewResult();
 
 			if (measureData.length()>120) {
@@ -3545,15 +3545,17 @@ public class DemographicExportAction4 extends Action {
 				result.setValue(measureData);
 			}
 
-			measureData = labMea.get("unit");
+			measureData = StringUtils.noNull(labMea.get("unit")).replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", "");
 
 			if (StringUtils.filled(measureData)) {
 				result.setUnitOfMeasure(measureData);
 			}
+		} else {
+			exportError.add("Error! No Measure Data for Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);
 		}
 
 		//lab accession number
-		String accessionNo = StringUtils.noNull(labMea.get("accession"));
+		String accessionNo = StringUtils.noNull(labMea.get("accession").replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", ""));
 		if (StringUtils.filled(accessionNo)) {
 			labResults.setAccessionNumber(accessionNo);
 		}
