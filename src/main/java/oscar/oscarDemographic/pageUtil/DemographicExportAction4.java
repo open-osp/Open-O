@@ -2305,7 +2305,7 @@ public class DemographicExportAction4 extends Action {
 						height.setHeight(meas.getDataField());
 						height.setHeightUnit(Height.HeightUnit.CM);
 						addOneEntry(CAREELEMENTS);
-					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().equalsIgnoreCase("in kg")) { //Weight in kg
+					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().startsWith("in kg")) { //Weight in kg
 						Weight weight = careElm.addNewWeight();
 						weight.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
@@ -2534,9 +2534,11 @@ public class DemographicExportAction4 extends Action {
 						try {
 							java.sql.Date eformRequestDate = (java.sql.Date) eform.get("formDate");
 							java.sql.Time eformRequestTime = (java.sql.Time) eform.get("formTime");
-							eformRequestDate.setTime(eformRequestTime.getTime());
 							if (eformRequestDate != null) {
-								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(eformRequestDate));
+								long combinedMillis = eformRequestDate.getTime() +
+										(eformRequestTime != null ? eformRequestTime.getTime() : 0L);
+								java.util.Date combined = new java.util.Date(combinedMillis);
+								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(combined));
 							}
 						} catch (Exception e) {
 							logger.error("Failed to parse eForm request date and time: " + eform.get("formDate") + " " + eform.get("formTime"), e);
@@ -3532,7 +3534,7 @@ public class DemographicExportAction4 extends Action {
 		/*
 		 * filters out any possible Base64 encoded binary data that should not be here
 		 */
-		if (StringUtils.filled(measureData) && !Base64.isBase64(measureData)) {
+		if (StringUtils.filled(measureData)) {
 			LaboratoryResults.Result result = labResults.addNewResult();
 
 			if (measureData.length()>120) {
@@ -3545,15 +3547,17 @@ public class DemographicExportAction4 extends Action {
 				result.setValue(measureData);
 			}
 
-			measureData = labMea.get("unit");
+			measureData = StringUtils.noNull(labMea.get("unit")).replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", "");
 
 			if (StringUtils.filled(measureData)) {
 				result.setUnitOfMeasure(measureData);
 			}
+		} else {
+			exportError.add("Error! No Measure Data for Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);
 		}
 
 		//lab accession number
-		String accessionNo = StringUtils.noNull(labMea.get("accession"));
+		String accessionNo = StringUtils.noNull(labMea.get("accession").replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", ""));
 		if (StringUtils.filled(accessionNo)) {
 			labResults.setAccessionNumber(accessionNo);
 		}
