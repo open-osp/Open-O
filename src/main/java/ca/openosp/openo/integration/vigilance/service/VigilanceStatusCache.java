@@ -149,14 +149,17 @@ public class VigilanceStatusCache {
     }
 
     /**
-     * Checks if the cache has any entry (healthy or down), regardless of validity.
-     * This is used to distinguish between "never checked yet" vs "cache says unhealthy".
+     * Checks if the cache has a valid (non-expired) entry.
+     * This is used to determine whether a fresh status check is needed.
      *
-     * @return true if there's a cached entry, false if cache is empty
+     * @return true if there's a valid cached entry, false if cache is empty or expired
      */
     public boolean hasValidEntry() {
         CacheEntry entry = cache.get();
-        return entry != null;
+        if (entry == null) {
+            return false;
+        }
+        return !Instant.now().isAfter(entry.expiresAt);
     }
 
     private record CacheEntry(VigilanceStatusResponse statusResponse, Instant expiresAt) {
