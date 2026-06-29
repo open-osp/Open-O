@@ -2383,19 +2383,19 @@
   function openAllergyWarningModal() {
     let banner = document.getElementById('allergyWarningBanner');
     if (!banner || !banner._vigilanceResponse) return;
-    openWarningModal(null, banner._vigilanceResponse, banner._token);
+    openWarningModal(banner._vigilanceResponse, banner._token);
   }
 
-  function openWarningModal(id, rawVigilanceResponse, token) {
+  function openWarningModal(rawVigilanceResponse, token) {
     if (!VIGILANCE_ENABLED) return;
     if (!rawVigilanceResponse || rawVigilanceResponse.trim() === '') {
       return;
     }
 
-    const safeId = (id != null && String(id).trim() !== '') ? String(id).replace(/[^a-zA-Z0-9_-]/g, '') : 'allergy';
+    const winName = 'vigilanceWarningModal';
     const newWin = window.open(
             '',
-            `warningModal_${safeId}`,
+            winName,
             'width=1000,height=700,scrollbars=yes,resizable=yes'
     );
 
@@ -2404,29 +2404,34 @@
     }
 
     const doc = newWin.document;
+    doc.title = 'Vigilance Analysis';
 
-    doc.open();
-    doc.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Warning</title></head><body></body></html>');
-    doc.close();
+    const iframe = doc.createElement('iframe');
+    iframe.id = 'vigFrame';
+    iframe.name = 'vigFrame';
+    iframe.style.cssText = 'width:100%;height:100%;border:none;position:absolute;top:0;left:0;';
+    doc.body.appendChild(iframe);
 
-    const form = doc.createElement('form');
+    const frameDoc = iframe.contentDocument || iframe.contentWindow.document;
+    frameDoc.body.style.display = 'none';
+
+    const form = frameDoc.createElement('form');
     form.method = 'post';
-    form.id = 'myForm';
+    form.target = 'vigFrame';
     form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
 
-    const tokenInput = doc.createElement('input');
+    const tokenInput = frameDoc.createElement('input');
     tokenInput.type = 'hidden';
     tokenInput.name = 'token';
-
     tokenInput.value = token;
 
-    const textarea = doc.createElement('textarea');
+    const textarea = frameDoc.createElement('textarea');
     textarea.name = 'intrant';
     textarea.value = rawVigilanceResponse;
 
     form.appendChild(tokenInput);
     form.appendChild(textarea);
-    doc.body.appendChild(form);
+    frameDoc.body.appendChild(form);
 
     newWin.opener = null;
 
