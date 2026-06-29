@@ -846,8 +846,8 @@
     };
 
     const VIGILANCE_DESCRIPTIONS = {
-      'alert1': 'Avoid this medication. The risk of serious problems outweighs any potential benefit.',
-      'alert2': 'If possible, avoid involved medication. If not, adjust therapy to prevent potential problems.',
+      'alert1': 'This medication carries a high risk of serious adverse effects that may outweigh potential benefits.',
+      'alert2': 'There is potential for significant interaction or risk with added medications.',
       'alert3': 'Evaluate specific risk based on the clinical situation. Adjust therapy or monitor as needed.'
     };
 
@@ -1396,8 +1396,8 @@
                             </div>
 
                           <div id="alertLevelHelper" class="alert-level-helper">
-                              To adjust your alert level threshold, visit your
-                              <a href="${pageContext.request.contextPath}/provider/providerpreference.jsp" target="_blank">My Preferences</a>.
+                              To adjust your alert level threshold, visit
+                              <a href="${pageContext.request.contextPath}/provider/providerpreference.jsp" target="_blank">Preferences</a>.
                           </div>
 
                           <div id="rxText"></div>
@@ -2288,7 +2288,7 @@
   }
 
   function checkAllergy(id, atcCode) {
-    performAllergyCheck(id);
+    performDrugsInteractionChecks(id);
     const url = ctx + "/oscarRx/showAllergy.do"
     const data = "method=allergyData&atcCode=" + encodeURIComponent(atcCode) + "&id=" + encodeURIComponent(id) + "&rand=" + generateSecureRandomId();
     new Ajax.Request(url, {
@@ -2327,7 +2327,7 @@
      });
   }
 
-  function performAllergyCheck(id) {
+  function performDrugsInteractionChecks(id) {
     if (!VIGILANCE_ENABLED) return;
     let allegSpan = document.getElementById('alleg_vigilance_div' + id);
     if (allegSpan) {
@@ -2425,7 +2425,7 @@
     }
     remainingCards.forEach(function(card) {
       let id = card.id.replace('set_', '');
-      performAllergyCheck(id);
+      performDrugsInteractionChecks(id);
     });
   }
 
