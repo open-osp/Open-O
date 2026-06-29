@@ -2195,8 +2195,11 @@
       if (!response.ok) {
         console.error('Failed to remove drug from stash (HTTP ' + response.status + ')');
       }
-      // updateCurrentInteractions();
-      hideAllergyBanner();
+      if (VIGILANCE_ENABLED) {
+        recheckStashAlerts();
+      } else {
+        hideAllergyBanner();
+      }
       document.getElementById("set_" + randomId)?.remove();
       document.getElementById("prescriptionMoreLessLink_" + randomId)?.remove();
       document.getElementById("deleteMedicationFromPrescription_" + randomId)?.remove();
@@ -2378,6 +2381,18 @@
       delete banner._vigilanceResponse;
       delete banner._token;
     }
+  }
+
+  function recheckStashAlerts() {
+    let remainingCards = document.querySelectorAll('#rxText [id^="set_"]');
+    if (remainingCards.length === 0) {
+      hideAllergyBanner();
+      return;
+    }
+    remainingCards.forEach(function(card) {
+      let id = card.id.replace('set_', '');
+      performAllergyCheck(id);
+    });
   }
 
   function openAllergyWarningModal() {
