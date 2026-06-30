@@ -2332,7 +2332,7 @@
     let allegSpan = document.getElementById('alleg_vigilance_div' + id);
     if (allegSpan) {
       allegSpan.style.display = 'flex';
-      allegSpan.innerHTML = '<span class="shimmer">Checking drug allergies...</span>';
+      allegSpan.innerHTML = '<span class="shimmer">Checking drug interactions...</span>';
     }
 
     let banner = document.getElementById('allergyWarningBanner');
