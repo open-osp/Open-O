@@ -353,6 +353,8 @@
   <script type="text/javascript" src="${ctx}/oscarRx/js/rxSessionInterceptor.js"></script>
 
   <script type="text/javascript">
+
+    let vigilanceWindowRef = null;
     let selectedReRxIDs = [];
 
     function saveLinks(randNumber) {
@@ -2442,49 +2444,80 @@
     }
 
     const winName = 'vigilanceWarningModal';
-    const newWin = window.open(
-            '',
-            winName,
-            'width=1000,height=700,scrollbars=yes,resizable=yes'
-    );
+    let isNewWindow = false;
 
-    if (!newWin) {
-      return;
+    // 1. Open or locate the popup window cleanly using about:blank (prevents auto-closing)
+    if (!vigilanceWindowRef || vigilanceWindowRef.closed) {
+      vigilanceWindowRef = window.open(
+              'about:blank',
+              winName,
+              'width=1000,height=700,scrollbars=yes,resizable=yes'
+      );
+      isNewWindow = true;
     }
 
-    const doc = newWin.document;
-    doc.title = 'Vigilance Analysis';
+    if (!vigilanceWindowRef) return;
 
-    const iframe = doc.createElement('iframe');
-    iframe.id = 'vigFrame';
-    iframe.name = 'vigFrame';
-    iframe.style.cssText = 'width:100%;height:100%;border:none;position:absolute;top:0;left:0;';
-    doc.body.appendChild(iframe);
+    // 2. Safely capture the window document
+    const popupDoc = vigilanceWindowRef.document;
 
-    const frameDoc = iframe.contentDocument || iframe.contentWindow.document;
-    frameDoc.body.style.display = 'none';
+    // 3. Build/re-use the inner iframe structure manually inside the popup
+    let iframeEl = popupDoc.getElementById('vigFrame');
 
-    const form = frameDoc.createElement('form');
-    form.method = 'post';
-    form.target = 'vigFrame';
-    form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
+    if (!iframeEl) {
+      // First-time configuration: Clear everything and initialize the layout
+      popupDoc.title = 'Vigilance Analysis';
+      popupDoc.body.innerHTML = '';
+      popupDoc.body.style.cssText = 'margin:0;padding:0;overflow:hidden;';
 
-    const tokenInput = frameDoc.createElement('input');
-    tokenInput.type = 'hidden';
-    tokenInput.name = 'token';
-    tokenInput.value = token;
+      iframeEl = popupDoc.createElement('iframe');
+      iframeEl.id = 'vigFrame';
+      iframeEl.name = 'vigFrame';
+      iframeEl.style.cssText = 'width:100vw;height:100vh;border:none;position:absolute;top:0;left:0;';
+      popupDoc.body.appendChild(iframeEl);
+    } else {
+      // Reuse path optimization: Wipe out any old content inside the iframe
+      iframeEl.src = 'about:blank';
+    }
 
-    const textarea = frameDoc.createElement('textarea');
-    textarea.name = 'intrant';
-    textarea.value = rawVigilanceResponse;
+    // 4. Submit the cross-origin form data safely into the targeted iframe
+    // A small timeout ensures the target container DOM is registered before form submission
+    setTimeout(() => {
+      try {
+        const frameDoc = iframeEl.contentDocument || iframeEl.contentWindow.document;
 
-    form.appendChild(tokenInput);
-    form.appendChild(textarea);
-    frameDoc.body.appendChild(form);
+        // Clear any lingering remnants inside the iframe document
+        frameDoc.body.innerHTML = '';
 
-    newWin.opener = null;
+        const form = frameDoc.createElement('form');
+        form.method = 'post';
+        form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
+        form.target = 'vigFrame'; // Point form directly to its own frame container layout
+        form.style.display = 'none';
 
-    form.submit();
+        const tokenInput = frameDoc.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token';
+        tokenInput.value = token;
+
+        const textarea = frameDoc.createElement('textarea');
+        textarea.name = 'intrant';
+        textarea.value = rawVigilanceResponse;
+
+        form.appendChild(tokenInput);
+        form.appendChild(textarea);
+        frameDoc.body.appendChild(form);
+
+        // Execute the payload request inside the frame environment
+        form.submit();
+
+        // Focus the single managed popup tab
+        vigilanceWindowRef.focus();
+
+      } catch (err) {
+        console.error("Failed to inject form context during reuse lifecycle:", err);
+      }
+    }, isNewWindow ? 100 : 20);
   }
 
   function checkIfInactive(id, dinNumber) {
