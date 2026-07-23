@@ -2437,87 +2437,50 @@
     openInteractionWarningModal(banner._vigilanceResponse, banner._token);
   }
 
-  function openInteractionWarningModal(rawVigilanceResponse, token) {
-    if (!VIGILANCE_ENABLED) return;
-    if (!rawVigilanceResponse || rawVigilanceResponse.trim() === '') {
-      return;
+  function openInteractionWarningModal(rawVigilanceResponse, token, demographicNumber) {
+    // 1. Validate inputs and feature flags
+    if (typeof VIGILANCE_ENABLED !== 'undefined' && !VIGILANCE_ENABLED) return;
+    if (!rawVigilanceResponse || rawVigilanceResponse.trim() === '') return;
+
+    // 2. Ensure demographicNumber is valid for a window name (alphanumeric)
+    const safeDemoNum = String(demographicNumber || 'default').replace(/[^a-zA-Z0-9_]/g, '');
+
+    // Create a unique window name based on the demographic number
+    const winName = `vigilanceWarningModal_${safeDemoNum}`;
+
+    // 3. Open or locate the popup window.
+    // Passing '' as the URL prevents overriding an already loading POST request if reused.
+    const popup = window.open('', winName, 'width=1000,height=700,scrollbars=yes,resizable=yes');
+
+    // 4. Create a temporary hidden form in the *CURRENT* (parent) document
+    const form = document.createElement('form');
+    form.method = 'post';
+    form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
+    form.target = winName; // Point the form submission natively to the popup window
+    form.style.display = 'none';
+
+    // 5. Add payload inputs
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'token';
+    tokenInput.value = token;
+
+    const textarea = document.createElement('textarea');
+    textarea.name = 'intrant';
+    textarea.value = rawVigilanceResponse;
+
+    form.appendChild(tokenInput);
+    form.appendChild(textarea);
+
+    // 6. Append to current body, submit to the popup, and immediately clean up
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+    // 7. Bring the targeted popup to the front
+    if (popup) {
+      popup.focus();
     }
-
-    const winName = 'vigilanceWarningModal';
-    let isNewWindow = false;
-
-    // 1. Open or locate the popup window cleanly using about:blank (prevents auto-closing)
-    if (!vigilanceWindowRef || vigilanceWindowRef.closed) {
-      vigilanceWindowRef = window.open(
-              'about:blank',
-              winName,
-              'width=1000,height=700,scrollbars=yes,resizable=yes'
-      );
-      isNewWindow = true;
-    }
-
-    if (!vigilanceWindowRef) return;
-
-    // 2. Safely capture the window document
-    const popupDoc = vigilanceWindowRef.document;
-
-    // 3. Build/re-use the inner iframe structure manually inside the popup
-    let iframeEl = popupDoc.getElementById('vigFrame');
-
-    if (!iframeEl) {
-      // First-time configuration: Clear everything and initialize the layout
-      popupDoc.title = 'Vigilance Analysis';
-      popupDoc.body.innerHTML = '';
-      popupDoc.body.style.cssText = 'margin:0;padding:0;overflow:hidden;';
-
-      iframeEl = popupDoc.createElement('iframe');
-      iframeEl.id = 'vigFrame';
-      iframeEl.name = 'vigFrame';
-      iframeEl.style.cssText = 'width:100vw;height:100vh;border:none;position:absolute;top:0;left:0;';
-      popupDoc.body.appendChild(iframeEl);
-    } else {
-      // Reuse path optimization: Wipe out any old content inside the iframe
-      iframeEl.src = 'about:blank';
-    }
-
-    // 4. Submit the cross-origin form data safely into the targeted iframe
-    // A small timeout ensures the target container DOM is registered before form submission
-    setTimeout(() => {
-      try {
-        const frameDoc = iframeEl.contentDocument || iframeEl.contentWindow.document;
-
-        // Clear any lingering remnants inside the iframe document
-        frameDoc.body.innerHTML = '';
-
-        const form = frameDoc.createElement('form');
-        form.method = 'post';
-        form.action = 'https://rx.int.vigilance.ca/module/perspectives/perspectives-ndx.html';
-        form.target = 'vigFrame'; // Point form directly to its own frame container layout
-        form.style.display = 'none';
-
-        const tokenInput = frameDoc.createElement('input');
-        tokenInput.type = 'hidden';
-        tokenInput.name = 'token';
-        tokenInput.value = token;
-
-        const textarea = frameDoc.createElement('textarea');
-        textarea.name = 'intrant';
-        textarea.value = rawVigilanceResponse;
-
-        form.appendChild(tokenInput);
-        form.appendChild(textarea);
-        frameDoc.body.appendChild(form);
-
-        // Execute the payload request inside the frame environment
-        form.submit();
-
-        // Focus the single managed popup tab
-        vigilanceWindowRef.focus();
-
-      } catch (err) {
-        console.error("Failed to inject form context during reuse lifecycle:", err);
-      }
-    }, isNewWindow ? 100 : 20);
   }
 
   function checkIfInactive(id, dinNumber) {
