@@ -121,14 +121,14 @@
 			}
 		}
 		
-		function createGroup(groupName) {
+		function createGroup(groupName, callback) {
 			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
+			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
 		}
 		
-		function deleteGroup(groupId) {
+		function deleteGroup(groupId, callback) {
 			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
+			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
 		}
 
 		/*
@@ -144,7 +144,6 @@
 			// create the provider name array
 			let providers = [];
 
-
 			$("input:checkbox").on("change", function(){
 				if(this.checked)
 				{
@@ -156,7 +155,7 @@
 				}
 			});
 
-			$(".add-member-btn").on("click", function(){
+			$("#manageGroups").on("click", ".add-member-btn", function(){
 				var groupId = this.id;
 				groupId = groupId.replace("add-", '');
 				var memberId = $("#add-member-id-" + groupId).val();
@@ -164,23 +163,26 @@
 				{
 					addMember(memberId, groupId)
 					$(".search-provider").val('');
-					this.prop( "disabled", true );
+					$(this).prop( "disabled", true );
 				}
 			});
 
-			$("#add-group-btn").on("click", function(){
+			$("#manageGroups").on("click", "#add-group-btn", function(){
 				var groupName = $("#new-group-name").val();
 				if(groupName){
-					createGroup(groupName);
+					createGroup(groupName, function() {
+						bindProviderAutocomplete();
+						$("#manageGroups ul.nav-tabs li:nth-last-child(2) a").tab("show");
+					});
 				}
 			});
 
-			$(".delete-group-btn").on("click", function(){
+			$("#manageGroups").on("click", ".delete-group-btn", function(){
 				var groupId = this.id;
 				if(groupId)
 				{
 					groupId = groupId.replace("delete-", '');
-					deleteGroup(groupId);
+					deleteGroup(groupId, bindProviderAutocomplete);
 				}
 			});
 
@@ -190,25 +192,24 @@
 				providers.push(provider);
 			});
 
-			$(".search-provider").autocomplete({
-		      	source: providers,
-		        // focus: function( event, ui ) {
-		        //     $( this ).val( ui.item.label );
-		        //     return false;
-		        // },
-				select: function( event, ui ) {
-					this.setCustomValidity("");
-					if(inGroup(this.id, ui.item.value)) {
-						$("#autocomplete-error").show();
-					} else {
-						$("#autocomplete-error").hide();
-						$( this ).val( ui.item.label );
-						$( "#add-member-id-" + this.id ).val( ui.item.value );
-						$( "#add-" + this.id ).prop( "disabled", false );
-                    }
-				    return false;
-		        }
-		    });
+			function bindProviderAutocomplete() {
+				$(".search-provider").not(".ui-autocomplete-input").autocomplete({
+			      	source: providers,
+					select: function( event, ui ) {
+						this.setCustomValidity("");
+						if(inGroup(this.id, ui.item.value)) {
+							$("#autocomplete-error").show();
+						} else {
+							$("#autocomplete-error").hide();
+							$( this ).val( ui.item.label );
+							$( "#add-member-id-" + this.id ).val( ui.item.value );
+							$( "#add-" + this.id ).prop( "disabled", false );
+	                    }
+					    return false;
+			        }
+			    });
+			}
+			bindProviderAutocomplete();
 		});
 	</script>
 	
