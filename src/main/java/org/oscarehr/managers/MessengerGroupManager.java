@@ -398,7 +398,11 @@ public class MessengerGroupManager {
 		List<Provider> localProviders = providerManager.getProviders(loggedInInfo, Boolean.TRUE);
 		
 		for(Provider provider : localProviders) {
-			if(! provider.getProviderNo().equals("-1")
+			/*
+			 * A negative provider number usually indicates the provider is not active.
+			 * -1 indicates a system account
+			 */
+			if(! provider.getProviderNo().startsWith("-")
 				&& provider.getLastName() != null 
 				&& ! provider.getLastName().isEmpty())
 			{

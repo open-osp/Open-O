@@ -50,8 +50,8 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
      */
     @Override
     public List<GroupMembers> findRemoteByGroupId(int groupId) {
-        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId > 0 AND x.groupId=?");
-        q.setParameter(0, groupId);
+        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId > 0 AND x.groupId=:groupId");
+        q.setParameter("groupId", groupId);
 
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = q.getResultList();
@@ -67,8 +67,8 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
      */
     @Override
     public List<GroupMembers> findLocalByGroupId(int groupId) {
-        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId = 0 AND x.groupId=?");
-        q.setParameter(0, groupId);
+        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId = 0 AND x.groupId=:groupId");
+        q.setParameter("groupId", groupId);
 
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = q.getResultList();
@@ -78,8 +78,8 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
 
     @Override
     public List<GroupMembers> findByGroupId(int groupId) {
-        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.groupId=?");
-        q.setParameter(0, groupId);
+        Query q = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.groupId=:groupId");
+        q.setParameter("groupId", groupId);
 
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = q.getResultList();
@@ -102,9 +102,9 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
     @Override
     public List<GroupMembers> findByProviderNumberAndFacilityId(String providerNo, Integer facilityId) {
         Query query = entityManager
-                .createQuery("SELECT x FROM GroupMembers x WHERE x.providerNo LIKE ? AND x.facilityId=?");
-        query.setParameter(0, providerNo);
-        query.setParameter(1, facilityId);
+                .createQuery("SELECT x FROM GroupMembers x WHERE x.providerNo LIKE :providerNo AND x.facilityId=:facilityId");
+        query.setParameter("providerNo", providerNo);
+        query.setParameter("facilityId", facilityId);
 
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = query.getResultList();
@@ -118,9 +118,9 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
 
     @Override
     public List<GroupMembers> findGroupMember(String providerNo, int groupId) {
-        Query query = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.providerNo LIKE ? AND x.groupId = ?");
-        query.setParameter(1, providerNo);
-        query.setParameter(2, groupId);
+        Query query = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.providerNo LIKE :providerNo AND x.groupId = :groupId");
+        query.setParameter("providerNo", providerNo);
+        query.setParameter("groupId", groupId);
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = query.getResultList();
         if(results == null) {
@@ -131,8 +131,8 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
 
     @Override
     public List<GroupMembers> findByFacilityId(Integer facilityId) {
-        Query query = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId=?");
-        query.setParameter(0, facilityId);
+        Query query = entityManager.createQuery("SELECT x FROM GroupMembers x WHERE x.facilityId=:facilityId");
+        query.setParameter("facilityId", facilityId);
 
         @SuppressWarnings("unchecked")
         List<GroupMembers> results = query.getResultList();
@@ -147,10 +147,10 @@ public class GroupMembersDaoImpl extends AbstractDaoImpl<GroupMembers> implement
     @Override
     public GroupMembers findByIdentity(ContactIdentifier contactIdentifier) {
         Query query = entityManager.createQuery("SELECT x FROM GroupMembers x " +
-                "WHERE x.facilityId=? AND x.providerNo=? AND x.groupId=?");
-        query.setParameter(1, contactIdentifier.getFacilityId());
-        query.setParameter(2, contactIdentifier.getContactId());
-        query.setParameter(3, contactIdentifier.getGroupId());
+                "WHERE x.facilityId=:facilityId AND x.providerNo=:providerNo AND x.groupId=:groupId");
+        query.setParameter("facilityId", contactIdentifier.getFacilityId());
+        query.setParameter("providerNo", contactIdentifier.getContactId());
+        query.setParameter("groupId", contactIdentifier.getGroupId());
         return super.getSingleResultOrNull(query);
     }
 

@@ -119,7 +119,8 @@ public class MsgMessengerAdminAction extends DispatchAction {
 			parentId = "0";
 		}
 		
-		messengerGroupManager.addGroup(loggedInInfo, groupName, Integer.parseInt(parentId));
+		int groupId = messengerGroupManager.addGroup(loggedInInfo, groupName, Integer.parseInt(parentId));
+		request.setAttribute("groupId", groupId);
 		fetch(mapping, form, request, response);
 	}
 

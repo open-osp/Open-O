@@ -121,20 +121,32 @@
 			}
 		}
 		
-		function createGroup(groupName) {
-			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
+		function createGroup(groupName, callback) {
+			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName)
+				.success(function() {
+					$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+				});
 		}
 		
-		function deleteGroup(groupId) {
-			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups');
+		function deleteGroup(groupId, callback) {
+			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId)
+				.success(function() {
+					$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+				});
+		}
+
+		/*
+		 * Check if the given group has the given member.
+		 */
+		function inGroup(group, member){
+			return $("div#group-member-list-" + group + " span").is(function(){
+				return this.id === member;
+			});
 		}
 
 		$(document).ready(function(){
 			// create the provider name array
-			var providers = new Array();
-
+			let providers = [];
 
 			$("input:checkbox").on("change", function(){
 				if(this.checked)
@@ -147,7 +159,7 @@
 				}
 			});
 
-			$(".add-member-btn").on("click", function(){
+			$("#manageGroups").on("click", ".add-member-btn", function(){
 				var groupId = this.id;
 				groupId = groupId.replace("add-", '');
 				var memberId = $("#add-member-id-" + groupId).val();
@@ -155,43 +167,55 @@
 				{
 					addMember(memberId, groupId)
 					$(".search-provider").val('');
+					$(this).prop( "disabled", true );
 				}
 			});
 
-			$("#add-group-btn").on("click", function(){
+			$("#manageGroups").on("click", "#add-group-btn", function(){
 				var groupName = $("#new-group-name").val();
 				if(groupName){
-					createGroup(groupName);
+					createGroup(groupName, function() {
+						bindProviderAutocomplete();
+						$("#manageGroups ul.nav-tabs li:nth-last-child(2) a").tab("show");
+					});
 				}
 			});
 
-			$(".delete-group-btn").on("click", function(){
+			$("#manageGroups").on("click", ".delete-group-btn", function(){
 				var groupId = this.id;
 				if(groupId)
 				{
 					groupId = groupId.replace("delete-", '');
-					deleteGroup(groupId);
+					deleteGroup(groupId, bindProviderAutocomplete);
 				}
 			});
 
 			
-			$("span.provider-name").each(function(){
+			$("div#local-contacts div.contact-entry span.provider-name").each(function(){
 				var provider = {value:this.id, label:$(this).text().trim()}
 				providers.push(provider);
 			});
-			
-			$(".search-provider").autocomplete({
-		      	source: providers,
-		        focus: function( event, ui ) {
-		            $( this ).val( ui.item.label );
-		            return false;
-		        },
-				select: function( event, ui ) {
-				    $( this ).val( ui.item.label );
-				    $( "#add-member-id-" + this.id ).val( ui.item.value );
-				    return false;
-		        }
-		    });
+
+			function bindProviderAutocomplete() {
+				$(".search-provider").not(".ui-autocomplete-input").autocomplete({
+			      	source: providers,
+					select: function( event, ui ) {
+						this.setCustomValidity("");
+						if(inGroup(this.id, ui.item.value)) {
+							$("#autocomplete-error-" + this.id).show();
+							$( "#add-member-id-" + this.id ).val("");
+							$( "#"+this.id ).val("");
+						} else {
+							$("#autocomplete-error-" + this.id).hide();
+							$( this ).val( ui.item.label );
+							$( "#add-member-id-" + this.id ).val( ui.item.value );
+							$( "#add-" + this.id ).prop( "disabled", false );
+	                    }
+					    return false;
+			        }
+			    });
+			}
+			bindProviderAutocomplete();
 		});
 	</script>
 	
@@ -306,10 +330,10 @@
 									<label class="checkbox">								
 										<i class="icon-trash group-member" onclick="removeGroupMember('${ member.id.compositeId }', '${ group.key.id }')"
 											title="Remove Contact" id="${ member.id.compositeId }-${ group.key.id }" ></i>
-										<span class="provider-name" >
+										<span class="provider-name" id="${ member.id.compositeId }" >
 											<c:out value="${ member.lastName }" />, <c:out value="${ member.firstName }" />
 										</span>
-										<span class="muted">
+										<span class="muted" >
 											<c:out value="${ member.providerType }" />
 										</span>
 									</label>
@@ -320,10 +344,13 @@
 							<div class="input-append">
 								<div class="autocomplete">							
 									<input type='text' placeholder="Last, First" id="${ group.key.id }" class="search-provider" /> 
-									<input type='hidden' id="add-member-id-${ group.key.id }" value="" />
-									<button id="add-${ group.key.id }" class="btn add-member-btn">Add Contact</button>	
-								</div>						
+									<input type='hidden' id="add-member-id-${ group.key.id }" />
+									<button id="add-${ group.key.id }" class="btn add-member-btn" disabled>Add Contact</button>
+								</div>
 							</div>
+                            <div id="autocomplete-error-${ group.key.id }" style="display:none;" class="alert alert-info" >
+                                Provider is already in this group.
+                            </div>
 						</div>
 						<div class="row-fluid" style="background-color:white;">
 							<button id="delete-${ group.key.id }" class="btn delete-group-btn pull-right">Delete Group</button>	
