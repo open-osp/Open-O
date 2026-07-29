@@ -122,13 +122,17 @@
 		}
 		
 		function createGroup(groupName, callback) {
-			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+			$.post(ctx + "/oscarMessenger.do?method=create&groupName=" + groupName)
+				.success(function() {
+					$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+				});
 		}
 		
 		function deleteGroup(groupId, callback) {
-			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId);
-			$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+			$.post(ctx + "/oscarMessenger.do?method=remove&group=" + groupId)
+				.success(function() {
+					$('#manageGroups').load(ctx + '/oscarMessenger.do?method=fetch #manageGroups', callback);
+				});
 		}
 
 		/*
@@ -198,9 +202,11 @@
 					select: function( event, ui ) {
 						this.setCustomValidity("");
 						if(inGroup(this.id, ui.item.value)) {
-							$("#autocomplete-error").show();
+							$("#autocomplete-error-" + this.id).show();
+							$( "#add-member-id-" + this.id ).val("");
+							$( "#"+this.id ).val("");
 						} else {
-							$("#autocomplete-error").hide();
+							$("#autocomplete-error-" + this.id).hide();
 							$( this ).val( ui.item.label );
 							$( "#add-member-id-" + this.id ).val( ui.item.value );
 							$( "#add-" + this.id ).prop( "disabled", false );
@@ -341,10 +347,10 @@
 									<input type='hidden' id="add-member-id-${ group.key.id }" />
 									<button id="add-${ group.key.id }" class="btn add-member-btn" disabled>Add Contact</button>
 								</div>
-                                <div id="autocomplete-error" class="alert-info" style="display:none;">
-                                        Provider is already in this group.
-                                </div>
 							</div>
+                            <div id="autocomplete-error-${ group.key.id }" style="display:none;" class="alert alert-info" >
+                                Provider is already in this group.
+                            </div>
 						</div>
 						<div class="row-fluid" style="background-color:white;">
 							<button id="delete-${ group.key.id }" class="btn delete-group-btn pull-right">Delete Group</button>	
