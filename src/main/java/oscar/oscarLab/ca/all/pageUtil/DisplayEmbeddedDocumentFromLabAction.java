@@ -2,7 +2,9 @@ package oscar.oscarLab.ca.all.pageUtil;
 
 import com.twelvemonkeys.lang.StringUtil;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DownloadAction;
 import org.oscarehr.common.dao.SystemPreferencesDao;
@@ -11,6 +13,7 @@ import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
+import org.owasp.encoder.Encode;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.parsers.MessageHandler;
 import oscar.oscarLab.ca.all.parsers.PATHL7Handler;
@@ -23,16 +26,24 @@ import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DisplayEmbeddedDocumentFromLabAction extends DownloadAction {
+public class DisplayEmbeddedDocumentFromLabAction extends Action {
 
-    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
-    @Override
-    protected StreamInfo getStreamInfo(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        String labNo = httpServletRequest.getParameter("labNo");
+	public ActionForward execute(ActionMapping mapping, ActionForm form,
+	                             HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+
+		getStreamInfo(mapping, form, request, response);
+
+		return null;
+	}
+
+    private void getStreamInfo(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        String labNo = Encode.forUriComponent(httpServletRequest.getParameter("labNo"));
         String segment = httpServletRequest.getParameter("segment");
         String group = httpServletRequest.getParameter("group");
-        String legacy = httpServletRequest.getParameter("legacy");
+        boolean legacy = Boolean.parseBoolean(httpServletRequest.getParameter("legacy"));
 
         SystemPreferencesDao systemPreferencesDao = SpringUtils.getBean(SystemPreferencesDao.class);
 
@@ -43,7 +54,7 @@ public class DisplayEmbeddedDocumentFromLabAction extends DownloadAction {
         MessageHandler handler = Factory.getHandler(labNo);
 
         String result;
-        if("true".equals(legacy)) {
+        if(legacy) {
             result = ((PATHL7Handler)handler).getLegacyOBXResult(Integer.parseInt(segment), Integer.parseInt(group));
         } else {
             result = handler.getOBXResult(Integer.parseInt(segment), Integer.parseInt(group));
@@ -87,6 +98,5 @@ public class DisplayEmbeddedDocumentFromLabAction extends DownloadAction {
                 MiscUtils.getLogger().error("Error loading pdf", e);
             }
         }
-        return null;
     } 
 }

@@ -278,7 +278,7 @@ function setupNotes(){
     //need to set focus after rounded is called
     adjustCaseNote();
     const $caseNoteElement = jQuery("#" + caseNote);
-    setCaretPosition($caseNoteElement, $caseNoteElement.val().length);
+    setCaretPosition($(caseNote), $caseNoteElement.val().length);
 
     $caseNoteElement.focus();
 }

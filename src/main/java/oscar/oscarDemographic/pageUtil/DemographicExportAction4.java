@@ -47,6 +47,7 @@ import cds.RiskFactorsDocument.RiskFactors;
 import cdsDt.*;
 import cdsDt.ResidualInformation.DataElement;
 import cdsDt.YnIndicatorsimple.Enum;
+import com.itextpdf.text.DocumentException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -60,10 +61,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.xmlbeans.XmlOptions;
 import org.oscarehr.PMmodule.dao.ProviderDao;
+import org.oscarehr.casemgmt.dao.CaseManagementNoteDAO;
 import org.oscarehr.casemgmt.model.CaseManagementIssue;
 import org.oscarehr.casemgmt.model.CaseManagementNote;
 import org.oscarehr.casemgmt.model.CaseManagementNoteExt;
 import org.oscarehr.casemgmt.model.CaseManagementNoteLink;
+import org.oscarehr.casemgmt.print.OscarChartPrinter;
 import org.oscarehr.casemgmt.service.CaseManagementManager;
 import org.oscarehr.common.dao.*;
 import org.oscarehr.common.exception.PatientDirectiveException;
@@ -98,9 +101,11 @@ import oscar.oscarDemographic.data.DemographicRelationship;
 import oscar.oscarEncounter.data.EctFormData;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarEncounter.oscarMeasurements.data.Measurements;
+import oscar.oscarLab.ca.all.pageUtil.LabPDFCreator;
 import oscar.oscarLab.ca.all.parsers.Factory;
 import oscar.oscarLab.ca.all.parsers.MessageHandler;
 import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
+import oscar.oscarLab.ca.on.LabResultData;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
 import oscar.oscarReport.data.DemographicSets;
@@ -113,6 +118,7 @@ import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
 
+import javax.mail.Folder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
@@ -160,7 +166,12 @@ public class DemographicExportAction4 extends Action {
 	private static final ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
 	private static final ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
 	private static final FormsManager formsManager = SpringUtils.getBean(FormsManager.class);
+	private static final AllergyManager allergyManager = SpringUtils.getBean(AllergyManager.class);
+	private static final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	private static final CaseManagementNoteDAO caseManagementNoteDao = SpringUtils.getBean(CaseManagementNoteDAO.class);
+	private static final LabManager labManager = SpringUtils.getBean(LabManager.class);
 
+	static String[] cppIssues = {"MedHistory","OMeds","SocHistory","FamHistory","Reminders","Concerns","RiskFactors"};
 	private static final String PATIENTID = "Patient";
 	private static final String ALERT = "Alert";
 	private static final String ALLERGY = "Allergy";
@@ -179,6 +190,7 @@ public class DemographicExportAction4 extends Action {
 	private static final String RISKFACTOR = "Risk";
 	public static final int CMS4 = 0;
 	public static final int E2E = 1;
+	public static final int PDF = 2;
 
 	private static final long MAX_EMBEDDED_DOCUMENT_SIZE_BYTES = 10 * 1024 * 1024; // 10MB limit
 	private static final boolean SKIP_EMBEDDING_LARGE_DOCUMENTS = true; // large doucments tend to exhaust memory.
@@ -190,7 +202,7 @@ public class DemographicExportAction4 extends Action {
 	private static final HashMap<String, Integer> entries = new HashMap<String, Integer>();
 	private static final OscarProperties oscarProperties = OscarProperties.getInstance();
 	private String tmpDir;
-
+	private Path patientFolderPath;
 
 	// new map for caching redundant provider db calls
 	private Map<String, Provider> providerCache = new HashMap<>();
@@ -276,6 +288,50 @@ public class DemographicExportAction4 extends Action {
 	}
 	
 	switch(template) {
+
+		/*
+		 * New PDF output method.
+		 * Code written under deadline pressure. Please help clean.
+		 */
+		case PDF:
+
+			exportError = new ArrayList<String>();
+
+			if (!new File(tmpDir).mkdir() || !Util.checkDir(tmpDir)) {
+				logger.debug("Error! Cannot write to TMP_DIR - Check oscar.properties or dir permissions. (" + tmpDir + ")");
+			} else {
+				for (String demoNo : list) {
+					if (StringUtils.empty(demoNo)) {
+						exportError.add("Error! No Demographic Number");
+						continue;
+					}
+					Demographic demographic = demographicManager.getDemographic(loggedInInfo, demoNo);
+					if (demographic == null) {
+						exportError.add("Error! No Demographic found for " + demoNo);
+						continue;
+					}
+
+					// patient folder
+					// create patient folder lastname_firstname_hin_dob_demographicNo
+					String patientFolderName = demographic.getLastName() + "_" +
+							demographic.getFirstName() + "_" +
+							demographic.getHin() + "_" +
+							demographic.getFormattedDob() + "_" +
+							demographic.getDemographicNo();
+					patientFolderPath = Paths.get(tmpDir, patientFolderName);
+					patientFolderPath.toFile().mkdir();
+
+					echartToPDF(loggedInInfo, demographic);
+					eformToPDF(loggedInInfo, demographic);
+					consultRequestToPDF(loggedInInfo, demographic, request);
+					formsToPDF(loggedInInfo, demographic, request, response);
+					copyPDFDocuments(loggedInInfo, demographic);
+					labsToPDF(loggedInInfo, demographic);
+				}
+			}
+			break;
+
+
 		case CMS4:
 	if (!new File(tmpDir).mkdir() || !Util.checkDir(tmpDir)) {
 		logger.debug("Error! Cannot write to TMP_DIR - Check oscar.properties or dir permissions. (" + tmpDir + ")");
@@ -1353,13 +1409,13 @@ public class DemographicExportAction4 extends Action {
 					//alr.setCategorySummaryLine(aSummary);
 				}
 			}
-			
+
 
 			// IMMUNIZATIONS & PASTHEALTH (Preventive tests)
 			ArrayList<Map<String,Object>> prevList = PreventionData.getPreventionData(loggedInInfo, Integer.valueOf(demoNo));
 			String phSummary, imSummary;
 			int cnt = 0;
-			
+
 			for (Map<String, Object> prevMap : prevList) {
 				HashMap<String,Object> extraData = new HashMap<String,Object>();
 				extraData.putAll(PreventionData.getPreventionById((String) prevMap.get("id")));
@@ -1369,23 +1425,23 @@ public class DemographicExportAction4 extends Action {
 					if (exPastHealth) {
 						phSummary = null;
 						PastHealth pHealth = patientRec.addNewPastHealth();
-						
+
 						String preventionDate = (String) prevMap.get("prevention_date");
 						if (UtilDateUtilities.StringToDate(preventionDate)!=null) {
 							pHealth.addNewProcedureDate().setFullDate(Util.calDate(preventionDate));
 							phSummary = Util.addSummary(phSummary, "Date", preventionDate);
 						}
-						
+
 						String description = prevType;
 						phSummary = Util.addSummary("Procedure", prevType);
-						
+
 						String refused = (String) prevMap.get("refused");
 						if (StringUtils.filled(refused) && !refused.equals("0")) {
 							if (refused.equals("1")) refused = "Refused";
 							if (refused.equals("2")) refused = "Ineligible";
 							description = Util.addLine(description, refused);
 						}
-						
+
 						String extra = (String)extraData.get("result");
 						if (StringUtils.filled(extra)) {
 							description = Util.addLine(description, "Result:", extra);
@@ -1397,7 +1453,7 @@ public class DemographicExportAction4 extends Action {
 							phSummary = Util.addSummary(phSummary, "Reason", extra);
 						}
 						pHealth.setPastHealthProblemDescriptionOrProcedures(description);
-						
+
 						extra = (String)extraData.get("comments");
 						if (StringUtils.filled(extra)) {
 							pHealth.setNotes(extra);
@@ -1768,7 +1824,7 @@ public class DemographicExportAction4 extends Action {
 
 			if (exLaboratoryResults) {
 				// LABORATORY RESULTS
-				
+
 				//get lab readings from hl7 tables
 				List<Object[]> infos = hl7TxtInfoDao.findByDemographicId(Integer.valueOf(demoNo));
 				for (Object[] info : infos) {
@@ -1777,17 +1833,17 @@ public class DemographicExportAction4 extends Action {
 					if (hl7TextMessage==null) {
 						continue;
 					}
-					
+
 					String hl7Body = new String(Base64.decodeBase64(hl7TextMessage.getBase64EncodedeMessage()));
 					if (!StringUtils.filled(hl7Body)) {
 						continue;
 					}
-					
+
 					MessageHandler messageHandler = Factory.getHandler(hl7TextMessage.getType(), hl7Body);
 					if (messageHandler==null) {
 						continue;
 					}
-					
+
 					for (int i=0; i<messageHandler.getOBRCount(); i++) {
 						for (int j=0; j<messageHandler.getOBXCount(i); j++) {
 							String result = messageHandler.getOBXResult(i, j);
@@ -1827,7 +1883,7 @@ public class DemographicExportAction4 extends Action {
 								} else {
 									labMeaValues.put("measureData", comments);
 								}
-								
+
 	                    		String range = labMeaValues.get("range");
 	                    		if( StringUtils.filled(range)) {
 	                    			String[] rangeLimits = range.split("-");
@@ -1873,7 +1929,7 @@ public class DemographicExportAction4 extends Action {
 				for (int j=0; j<results.size(); j++) {
 					ap = (Appointment)results.get(j)[0];
 					Provider p = (Provider)results.get(j)[1];
-					
+
 					Appointments aptm = patientRec.addNewAppointments();
 					DateFullOrPartial apDate = aptm.addNewAppointmentDate();
 					apDate.setFullDate(Util.calDate(ap.getAppointmentDate()));
@@ -1935,10 +1991,10 @@ public class DemographicExportAction4 extends Action {
 					if (!filePath.exists()) {
 						exportError.add("Error! Document \""+filePath.getName()+"\" does not exist!");
 					} else {
-						// no binary data, no file. 
+						// no binary data, no file.
 						byte[] binaryData;
 						try(InputStream in = Files.newInputStream(filePath.toPath())) {
-							
+
 							Reports rpr = patientRec.addNewReports();
 							rpr.setFormat(ReportFormat.TEXT);
 
@@ -1952,7 +2008,7 @@ public class DemographicExportAction4 extends Action {
 							if (offset < binaryData.length) {
 								throw new IOException("Could not completely read file " + filePath.getName());
 							}
-							
+
 							String contentType = Util.mimeToExt(edoc.getContentType());
 							if (StringUtils.empty(contentType)) {
 								contentType = cutExt(edoc.getFileName());
@@ -1962,7 +2018,7 @@ public class DemographicExportAction4 extends Action {
 								exportError.add("Warning! No File Extension or Version info for Document \""+edoc.getFileName()+"\" Defaulting to \"txt\"");
 							}
 							rpr.setFileExtensionAndVersion(contentType);
-	
+
 							if (edoc.getContentType()!=null && edoc.getContentType().startsWith("text")) {
 								String str = new String(binaryData);
 								rpr.addNewContent().setTextContent(str);
@@ -1972,7 +2028,7 @@ public class DemographicExportAction4 extends Action {
 								// decide if document should be embedded or referenced
 								handleEmbeddingBinaryDocuments(binaryData, rpr, edoc.getDocId());
 							}
-							
+
 							String docClass = edoc.getDocClass();
 							if (ReportClass.Enum.forString(docClass)!=null) {
 								rpr.setClass1(ReportClass.Enum.forString(docClass));
@@ -2005,14 +2061,14 @@ public class DemographicExportAction4 extends Action {
 								String ohipNo = StringUtils.noNull(edoc.getReviewerOhip());
 								if (ohipNo.length()<=6) reportReviewed.setReviewingOHIPPhysicianId(ohipNo);
 							}
-	
+
 							if (StringUtils.filled(edoc.getSource())) {
 								Util.writeNameSimple(rpr.addNewSourceAuthorPhysician().addNewAuthorName(), edoc.getSource());
 							}
 							if (StringUtils.filled(edoc.getSourceFacility())) rpr.setSourceFacility(edoc.getSourceFacility());
-	
+
 							if (edoc.getDocId()==null) continue;
-	
+
 							annotation = getNonDumpNote(CaseManagementNoteLink.DOCUMENT, Long.valueOf(edoc.getDocId()), null);
 							if (StringUtils.filled(annotation)) {
 								rpr.setNotes(annotation);
@@ -2249,7 +2305,7 @@ public class DemographicExportAction4 extends Action {
 						height.setHeight(meas.getDataField());
 						height.setHeightUnit(Height.HeightUnit.CM);
 						addOneEntry(CAREELEMENTS);
-					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().equalsIgnoreCase("in kg")) { //Weight in kg
+					} else if (meas.getType().equals("WT") && meas.getMeasuringInstruction().startsWith("in kg")) { //Weight in kg
 						Weight weight = careElm.addNewWeight();
 						weight.setDate(Util.calDate(meas.getDateObserved()));
 						if (meas.getDateObserved()==null) {
@@ -2439,54 +2495,7 @@ public class DemographicExportAction4 extends Action {
 			 * x.roleType as roleType
 			 */
 			if(true) {
-				List<Map<String, Object>> eforms = eformManager.findCurrentByDemographicIdNoData(loggedInInfo, Integer.parseInt(demoNo));
-
-				if (!eforms.isEmpty()) {
-
-					/*
-					 * If not exists
-					 * add a new eform export directory into the temDir.
-					 */
-					Path eformDir = Paths.get(tmpDir, "eforms");
-					if (!Files.isDirectory(eformDir)) {
-						try {
-							Files.createDirectory(eformDir);
-						} catch (IOException e) {
-							logger.error("Failed to create eform export directory: " + eformDir, e);
-						}
-					}
-
-					/*
-					 * create a PDF from each eForm and collect the
-					 * new path for each PDF.
-					 */
-					List<Object[]> eformPDFList = new ArrayList<>(); // [eform, exportPath]
-
-					ExecutorService executor = Executors.newFixedThreadPool(
-							Math.min(eforms.size(), Runtime.getRuntime().availableProcessors() * 2));
-
-					List<Future<Object[]>> futures = new ArrayList<>();
-
-					for (Map<String, Object> eform : eforms) {
-						futures.add(executor.submit(() -> {
-							int fdid = (int) eform.get("id");
-							Path eformPDFPath = eformManager.createEformPDF(loggedInInfo, fdid);
-							Path exportPath = eformDir.resolve(eformPDFPath.getFileName());
-							Files.move(eformPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
-							return new Object[]{eform, exportPath};
-						}));
-					}
-					executor.shutdown();
-
-					// check each thread for completion
-					for (Future<Object[]> future : futures) {
-						try {
-							eformPDFList.add(future.get());
-						} catch (ExecutionException e) {
-							logger.error("Failed to generate eForm PDF", e.getCause());
-							exportError.add("Failed to generate eForm PDF (eForm not added to export): " + e.getCause());
-						}
-					}
+					List<Object[]> eformPDFList = eformToPDF(loggedInInfo, demographic);
 
 					// map each eform into the CDS XML as a report
 					for (Object[] result : eformPDFList) {
@@ -2525,9 +2534,11 @@ public class DemographicExportAction4 extends Action {
 						try {
 							java.sql.Date eformRequestDate = (java.sql.Date) eform.get("formDate");
 							java.sql.Time eformRequestTime = (java.sql.Time) eform.get("formTime");
-							eformRequestDate.setTime(eformRequestTime.getTime());
 							if (eformRequestDate != null) {
-								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(eformRequestDate));
+								long combinedMillis = eformRequestDate.getTime() +
+										(eformRequestTime != null ? eformRequestTime.getTime() : 0L);
+								java.util.Date combined = new java.util.Date(combinedMillis);
+								reports.addNewSentDateTime().setFullDateTime(Util.calDateTZD(combined));
 							}
 						} catch (Exception e) {
 							logger.error("Failed to parse eForm request date and time: " + eform.get("formDate") + " " + eform.get("formTime"), e);
@@ -2537,7 +2548,7 @@ public class DemographicExportAction4 extends Action {
 						reports.setMedia(ReportMedia.HARDCOPY);
 						reports.setFilePath(Paths.get(tmpDir).relativize(exportPath).toString());
 					}
-				}
+
 			}
 
 			/*
@@ -2546,38 +2557,7 @@ public class DemographicExportAction4 extends Action {
 			 * Add to the Reports section of the CDS export document
 			 */
 			if(true) {
-
-				/*
-				 * If not exists
-				 * add a new eform export directory into the temDir.
-				 */
-				Path consultationRequestsDirectory = Paths.get(tmpDir, "consultationRequests");
-				if (!Files.isDirectory(consultationRequestsDirectory  )) {
-					try {
-						Files.createDirectory(consultationRequestsDirectory );
-					} catch (IOException e) {
-						logger.error("Failed to create consultation request export directory: " + consultationRequestsDirectory  , e);
-					}
-				}
-
-				List<Object[]> consoltationRequestPDFList = new ArrayList<>();
-
-				ConsultationRequestSearchFilter filter = new ConsultationRequestSearchFilter();
-				filter.setDemographicNo(Integer.parseInt(demoNo));
-				int consultationRequestCount = consultationManager.getConsultationCount(filter);
-				filter.setNumToReturn(consultationRequestCount);
-				List<ConsultationRequestSearchResult> consultRequestList = consultationManager.search(loggedInInfo, filter);
-				for(ConsultationRequestSearchResult consultRequest : consultRequestList) {
-					try {
-						Path consultationRequestPDFPath = consultationManager.renderConsultationRequest(request, consultRequest);
-						Path exportPath = consultationRequestsDirectory.resolve(consultationRequestPDFPath.getFileName());
-						Files.move(consultationRequestPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
-						consoltationRequestPDFList.add(new Object[]{consultRequest, exportPath});
-					} catch (Exception e) {
-						logger.error("Failed to generate Consultation Request form PDF", e);
-						exportError.add("Failed to generate Consultation Request PDF ( not added to export): " + e.getCause());
-					}
-				}
+				List<Object[]> consoltationRequestPDFList = consultRequestToPDF(loggedInInfo, demographic, request);
 
 				for(Object[] result : consoltationRequestPDFList) {
 					ConsultationRequestSearchResult consultationRequest =  (ConsultationRequestSearchResult) result[0];
@@ -2613,38 +2593,8 @@ public class DemographicExportAction4 extends Action {
 			 */
 			if(true) {
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-				List<EctFormData.PatientForm> patientForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, Integer.parseInt(demoNo), false, false);
 
-				/*
-				 * If not exists
-				 * add a new eform export directory into the temDir.
-				 */
-				Path patientFormDirectory = Paths.get(tmpDir, "patientForms");
-				if (!Files.isDirectory(patientFormDirectory )) {
-					try {
-						Files.createDirectory(patientFormDirectory );
-					} catch (IOException e) {
-						logger.error("Failed to create patientForms export directory: " + patientFormDirectory , e);
-					}
-				}
-
-				List<Object[]> patientFormPDFList = new ArrayList<>(); // [form, exportPath]
-
-				// HttpServletRequest is not thread-safe for concurrent forward() calls,
-				// so patient forms must be rendered sequentially.
-				for (EctFormData.PatientForm patientForm : patientForms) {
-					try {
-						Path formPDFPath = formsManager.renderFormAsPDFFromTemplate(request, response, patientForm);
-						if (formPDFPath != null) {
-							Path exportPath = patientFormDirectory.resolve(formPDFPath.getFileName());
-							Files.move(formPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
-							patientFormPDFList.add(new Object[]{patientForm, exportPath});
-						}
-					} catch (Exception e) {
-						logger.error("Failed to generate patient form PDF", e);
-						exportError.add("Failed to generate Form PDF (Form not added to export): " + e.getCause());
-					}
-				}
+				List<Object[]> patientFormPDFList = formsToPDF(loggedInInfo, demographic, request, response);
 
 				// map each eform into the CDS XML as a report
 				for (Object[] result : patientFormPDFList) {
@@ -2754,7 +2704,7 @@ public class DemographicExportAction4 extends Action {
 			//PGP encrypt zip file
 			PGPEncrypt pgp = new PGPEncrypt();
 			if (pgp.encrypt(zipName, tmpDir)) {
-				
+
 				// Sharing Center - Skip download if sharing with affinity domain
 				if (request.getParameter("SendToAffinityDomain") == null) {
 					Util.downloadFile(zipName+".pgp", tmpDir, response);
@@ -2764,7 +2714,7 @@ public class DemographicExportAction4 extends Action {
 					// Sharing Center - Change the forward (redirect) to the affinity domain export page
 					ffwd = "sendToAffinityDomain";
 				}
-				
+
 			} else {
 				request.getSession().setAttribute("pgp_ready", "No");
 			}
@@ -2785,24 +2735,24 @@ public class DemographicExportAction4 extends Action {
 				request.getSession().setAttribute("pgp_ready","No");
 				ffwd="fail";
 			}
-			
+
 
 
 		}
-		
+
 		// Sharing Center - Store the exported data for later retrieval while sending to the affinity domain
 		if (ffwd.equalsIgnoreCase("sendToAffinityDomain")) {
 			String exportFile = Util.fixDirName(tmpDir) + zipName;
-			
+
 			DemographicExportDao demographicExportDao = SpringUtils.getBean(DemographicExportDao.class);
 			DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
-			
+
 			DemographicExport demographicExport = new DemographicExport();
 			byte[] data = FileUtils.readFileToByteArray(new File(exportFile));
 			demographicExport.setDocument(data);
 			demographicExport.setDemographic(demographicManager.getDemographic(loggedInInfo, demographicNo));
 			demographicExport.setDocumentType(DocumentType.CDS.name());
-			
+
 			DemographicExport export = demographicExportDao.saveEntity(demographicExport);
 			documentExportId = export.getId();
 		}
@@ -3584,7 +3534,7 @@ public class DemographicExportAction4 extends Action {
 		/*
 		 * filters out any possible Base64 encoded binary data that should not be here
 		 */
-		if (StringUtils.filled(measureData) && !Base64.isBase64(measureData)) {
+		if (StringUtils.filled(measureData)) {
 			LaboratoryResults.Result result = labResults.addNewResult();
 
 			if (measureData.length()>120) {
@@ -3597,15 +3547,17 @@ public class DemographicExportAction4 extends Action {
 				result.setValue(measureData);
 			}
 
-			measureData = labMea.get("unit");
+			measureData = StringUtils.noNull(labMea.get("unit")).replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", "");
 
 			if (StringUtils.filled(measureData)) {
 				result.setUnitOfMeasure(measureData);
 			}
+		} else {
+			exportError.add("Error! No Measure Data for Lab Test "+labResults.getLabTestCode()+" for Patient "+demoNo);
 		}
 
 		//lab accession number
-		String accessionNo = StringUtils.noNull(labMea.get("accession"));
+		String accessionNo = StringUtils.noNull(labMea.get("accession").replaceAll("[^\\x09\\x0A\\x0D\\x20-\\uD7FF\\uE000-\\uFFFD]", ""));
 		if (StringUtils.filled(accessionNo)) {
 			labResults.setAccessionNumber(accessionNo);
 		}
@@ -3671,7 +3623,7 @@ public class DemographicExportAction4 extends Action {
 
 			String timestamp = labRoutingInfo.get("timestamp").toString();
 			String lab_provider_no = (String)labRoutingInfo.get("provider_no");
-			
+
 			// ProviderLabRoutingDao assigns UNCLAIMED_PROVIDER = "0"
 			if (UtilDateUtilities.StringToDate(timestamp,"yyyy-MM-dd HH:mm:ss")!=null &&
 					!"0".equals(lab_provider_no) && !"".equals(lab_provider_no)) {
@@ -3685,7 +3637,7 @@ public class DemographicExportAction4 extends Action {
 			}
 		}
 	}
-	
+
 	private Float getDosageValue(String dosage) {
 		String[] dosageBreak = getDosageMultiple1st(dosage).split(" ");
 
@@ -3869,6 +3821,296 @@ public class DemographicExportAction4 extends Action {
 		}
 	}
 
+	private LinkedHashMap<String, Hl7TextInfo> labsToPDF(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+
+		List<Hl7TextInfo> labResults = labManager.getHl7TextInfo(loggedInInfo, demographic.getDemographicNo());
+		LinkedHashMap<String, Hl7TextInfo> accessionMap = new LinkedHashMap<>();
+		for (Hl7TextInfo hl7TextInfo : labResults) {
+			if (hl7TextInfo.getAccessionNumber() == null || hl7TextInfo.getAccessionNumber().equals("")) {
+				accessionMap.put("noAccessionNum", hl7TextInfo);
+			} else {
+				if (!accessionMap.containsKey(hl7TextInfo.getAccessionNumber())) accessionMap.put(hl7TextInfo.getAccessionNumber(), hl7TextInfo);
+			}
+		}
+
+		for (Hl7TextInfo result : accessionMap.values()) {
+
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path labDirectory = Paths.get(directory, "labs");
+			if (!Files.isDirectory(labDirectory)) {
+				try {
+					Files.createDirectory(labDirectory);
+				} catch (IOException e) {
+					logger.error("Failed to create documents export directory: " + labDirectory  , e);
+				}
+			}
+
+			try (OutputStream fos = Files.newOutputStream(Paths.get(labDirectory.toString(), demographic.getLastName() + "_" + demographic.getFirstName() + "_" + demographic.getHin() + "_" + demographic.getDemographicNo() + "_" + demographic.getFormattedDob() + "_" + result.getAccessionNumber() + ".pdf"))) {
+				LabPDFCreator pdfCreator = new LabPDFCreator(fos, result.getId() +"", loggedInInfo.getLoggedInProviderNo());
+				try {
+					pdfCreator.printPdf();
+				} catch (com.lowagie.text.DocumentException | IOException documentException) {
+					throw new com.lowagie.text.DocumentException(documentException);
+				}
+			}
+		}
+
+		return accessionMap;
+	}
+
+	private List<EDoc> copyPDFDocuments(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+		ArrayList<EDoc> edoc_list = EDocUtil.listDemoDocs(loggedInInfo, demographic.getDemographicNo()+"");
+		for(EDoc edoc : edoc_list) {
+			// fetch document, copy to new document directory
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path documentDirectory = Paths.get(directory, "documents");
+			if (!Files.isDirectory(documentDirectory)) {
+				try {
+					Files.createDirectory(documentDirectory);
+				} catch (IOException e) {
+					logger.error("Failed to create documents export directory: " + documentDirectory  , e);
+				}
+			}
+
+			if (edoc.getFilePath() == null) {
+				exportError.add("Error! Document file path does not exist! " + edoc.getFileName());
+			} else {
+				Path filePath = Paths.get(edoc.getFilePath());
+				if (Files.exists(filePath)) {
+					Files.copy(filePath, documentDirectory.resolve(filePath.getFileName()));
+				} else {
+					exportError.add("Error! Document \""+filePath.getFileName()+"\" does not exist!");
+				}
+			}
+		}
+		return edoc_list;
+	}
+
+	private List<Object[]> consultRequestToPDF(LoggedInInfo loggedInInfo, Demographic demographic, HttpServletRequest request) {
+		/*
+		 * If not exists
+		 * add a new eform export directory into the temDir.
+		 */
+		String directory = tmpDir;
+		if(patientFolderPath != null) {
+			directory = patientFolderPath.toString();
+		}
+		Path consultationRequestsDirectory = Paths.get(directory, "consultationRequests");
+		if (!Files.isDirectory(consultationRequestsDirectory  )) {
+			try {
+				Files.createDirectory(consultationRequestsDirectory );
+			} catch (IOException e) {
+				logger.error("Failed to create consultation request export directory: " + consultationRequestsDirectory  , e);
+			}
+		}
+
+		List<Object[]> consoltationRequestPDFList = new ArrayList<>();
+
+		ConsultationRequestSearchFilter filter = new ConsultationRequestSearchFilter();
+		filter.setDemographicNo(demographic.getDemographicNo());
+		int consultationRequestCount = consultationManager.getConsultationCount(filter);
+		filter.setNumToReturn(consultationRequestCount);
+		List<ConsultationRequestSearchResult> consultRequestList = consultationManager.search(loggedInInfo, filter);
+		for(ConsultationRequestSearchResult consultRequest : consultRequestList) {
+			try {
+				Path consultationRequestPDFPath = consultationManager.renderConsultationRequest(request, consultRequest);
+				Path exportPath = consultationRequestsDirectory.resolve(consultationRequestPDFPath.getFileName());
+				Files.move(consultationRequestPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+				consoltationRequestPDFList.add(new Object[]{consultRequest, exportPath});
+			} catch (Exception e) {
+				logger.error("Failed to generate Consultation Request form PDF", e);
+				exportError.add("Failed to generate Consultation Request PDF ( not added to export): " + e.getCause());
+			}
+		}
+		return consoltationRequestPDFList;
+	}
+
+	private List<Object[]> eformToPDF(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+		List<Map<String, Object>> eforms = eformManager.findCurrentByDemographicIdNoData(loggedInInfo, demographic.getDemographicNo());
+		List<Object[]> eformPDFList = new ArrayList<>(); // [eform, exportPath]
+
+		if (!eforms.isEmpty()) {
+			/*
+			 * If not exists
+			 * add a new eform export directory into the temDir.
+			 */
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path eformDir = Paths.get(directory, "eforms");
+			if (!Files.isDirectory(eformDir)) {
+				try {
+					Files.createDirectory(eformDir);
+				} catch (IOException e) {
+					logger.error("Failed to create eform export directory: " + eformDir, e);
+				}
+			}
+
+			/*
+			 * create a PDF from each eForm and collect the
+			 * new path for each PDF.
+			 */
+			ExecutorService executor = Executors.newFixedThreadPool(
+					Math.min(eforms.size(), Runtime.getRuntime().availableProcessors() * 2));
+
+			List<Future<Object[]>> futures = new ArrayList<>();
+
+			for (Map<String, Object> eform : eforms) {
+				futures.add(executor.submit(() -> {
+					int fdid = (int) eform.get("id");
+					Path eformPDFPath = eformManager.createEformPDF(loggedInInfo, fdid);
+					Path exportPath = eformDir.resolve(eformPDFPath.getFileName());
+					Files.move(eformPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+					return new Object[]{eform, exportPath};
+				}));
+			}
+			executor.shutdown();
+
+			// check each thread for completion
+			for (Future<Object[]> future : futures) {
+				try {
+					eformPDFList.add(future.get());
+				} catch (ExecutionException | InterruptedException e) {
+					logger.error("Failed to generate eForm PDF", e.getCause());
+					exportError.add("Failed to generate eForm PDF (eForm not added to export): " + e.getCause());
+				}
+			}
+		}
+		return eformPDFList;
+	}
+
+	private List<Object[]> formsToPDF(LoggedInInfo loggedInInfo, Demographic demographic, HttpServletRequest request, HttpServletResponse response) {
+		List<EctFormData.PatientForm> patientForms = formsManager.getEncounterFormsbyDemographicNumber(loggedInInfo, demographic.getDemographicNo(), false, false);
+
+		/*
+		 * If not exists
+		 * add a new eform export directory into the temDir.
+		 */
+		String directory = tmpDir;
+		if(patientFolderPath != null) {
+			directory = patientFolderPath.toString();
+		}
+		Path patientFormDirectory = Paths.get(directory, "patientForms");
+		if (!Files.isDirectory(patientFormDirectory )) {
+			try {
+				Files.createDirectory(patientFormDirectory );
+			} catch (IOException e) {
+				logger.error("Failed to create patientForms export directory: " + patientFormDirectory , e);
+			}
+		}
+
+		List<Object[]> patientFormPDFList = new ArrayList<>(); // [form, exportPath]
+
+		// HttpServletRequest is not thread-safe for concurrent forward() calls,
+		// so patient forms must be rendered sequentially.
+		for (EctFormData.PatientForm patientForm : patientForms) {
+			try {
+				Path formPDFPath = formsManager.renderFormAsPDFFromTemplate(request, response, patientForm);
+				if (formPDFPath != null) {
+					Path exportPath = patientFormDirectory.resolve(formPDFPath.getFileName());
+					Files.move(formPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
+					patientFormPDFList.add(new Object[]{patientForm, exportPath});
+				}
+			} catch (Exception e) {
+				logger.error("Failed to generate patient form PDF", e);
+				exportError.add("Failed to generate Form PDF (Form not added to export): " + e.getCause());
+			}
+		}
+
+		return patientFormPDFList;
+	}
+
+	private void echartToPDF(LoggedInInfo loggedInInfo, Demographic demographic) throws IOException {
+		try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+			OscarChartPrinter printer = new OscarChartPrinter(demographic, baos);
+			int demographicNumber = demographic.getDemographicNo();
+			printer.setNewPage(true);
+			printer.printDocHeaderFooter();
+
+			printer.printMasterRecord();
+			printer.setNewPage(true);
+			printer.printAppointmentHistory();
+			printer.setNewPage(true);
+
+			printCppItem(loggedInInfo, printer,"Social History","SocHistory",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Medical History","MedHistory",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Ongoing Concerns","Concerns",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Reminders","Reminders",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Family History","FamHistory",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Risk Factors","RiskFactors",demographicNumber);
+			printCppItem(loggedInInfo, printer,"Other Medications","OMeds",demographicNumber);
+			printer.setNewPage(true);
+
+			List<Allergy> allergies = allergyManager.getActiveAllergies(loggedInInfo,demographic.getDemographicNo());
+			if(!allergies.isEmpty()) {
+				printer.printAllergies(allergies);
+			}
+			printer.printRx(String.valueOf(demographicNumber));
+
+			printer.printPreventions();
+			printer.printTicklers(loggedInInfo);
+			printer.printDiseaseRegistry();
+
+			printer.printCurrentAdmissions();
+			printer.printPastAdmissions();
+
+			printer.printCurrentIssues();
+
+			List<CaseManagementNote> notes = cmm.getNotes(demographicNumber+"");
+			notes = filterOutCpp(notes);
+			if(!notes.isEmpty()) {
+				printer.printNotes(notes, true);
+			}
+			printer.finish();
+
+			byte[] pdfBytes = baos.toByteArray();
+			String directory = tmpDir;
+			if(patientFolderPath != null) {
+				directory = patientFolderPath.toString();
+			}
+			Path echartDir = Paths.get(directory);
+			Path exportPath = echartDir.resolve(demographic.getDemographicNo() + "_echart.pdf");
+			Files.write(exportPath, pdfBytes);
+
+		} catch (DocumentException e) {
+			logger.error("Error while converting chart to PDF", e);
+		}
+
+	}
+
+	private List<CaseManagementNote> filterOutCpp(Collection<CaseManagementNote> notes) {
+		List<CaseManagementNote> filteredNotes = new ArrayList<CaseManagementNote>();
+		for(CaseManagementNote note:notes) {
+			boolean skip=false;
+			for(CaseManagementIssue issue:note.getIssues()) {
+				for(int x=0;x< cppIssues.length;x++) {
+					if(issue.getIssue().getCode().equals(cppIssues[x])) {
+						skip=true;
+					}
+				}
+			}
+			if(!skip) {
+				filteredNotes.add(note);
+			}
+		}
+		return filteredNotes;
+	}
+
+	private void printCppItem(LoggedInInfo loggedInInfo, OscarChartPrinter printer, String header, String issueCode, int demographicNo) throws DocumentException {
+//		Collection<CaseManagementNote> notes = cmm.getNotes(loggedInInfo, demographicNo, new String[] {issueCode});
+		Collection<CaseManagementNote> notes = caseManagementNoteDao.findNotesByDemographicAndIssueCode(demographicNo, new String[] {issueCode});
+		if(!notes.isEmpty()) {
+			printer.printCPPItem(header, notes);
+			printer.printBlankLine();
+		}
+	}
 
 	private boolean isBase64(String input) {
 		if (input == null || input.isEmpty()) {
