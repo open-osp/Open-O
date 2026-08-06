@@ -66,13 +66,13 @@ public class EctDisplayEFormAction extends EctDisplayAction {
 		 	}
 		      
 	        //set lefthand module heading and link
-	        String winName = "eForm" + bean.demographicNo;
+	        String winName = "EformManager" + bean.demographicNo;
 	        String url = "popupPage(500,950,'" + winName + "', '" + request.getContextPath() + "/eform/efmpatientformlist.jsp?demographic_no="+bean.demographicNo+"&apptProvider="+bean.getCurProviderNo()+"&appointment="+bean.appointmentNo+"&parentAjaxId=" + cmd + "')";
 	        Dao.setLeftHeading(messages.getMessage(request.getLocale(), "global.eForms"));
 	        Dao.setLeftURL(url);
 	        
 	        //set the right hand heading link
-	        winName = "AddeForm" + bean.demographicNo;
+	        winName = "EformManager" + bean.demographicNo;
 	        url = "popupPage(500,950,'"+winName+"','"+request.getContextPath()+"/eform/efmformslistadd.jsp?demographic_no="+bean.demographicNo+"&appointment="+bean.appointmentNo+"&parentAjaxId="+cmd+"'); return false;";
 	        Dao.setRightURL(url);        
 	        Dao.setRightHeadingID(cmd);  //no menu so set div id to unique id for this action      
@@ -101,7 +101,7 @@ public class EctDisplayEFormAction extends EctDisplayAction {
 			//logging calls, etc. This makes this result set huge. People can click on the eform tab and view the full
 			//history if they need to.
 			List<EFormData> eFormDatas=EFormUtil.listPatientEformsCurrent(new Integer(bean.demographicNo), true, 0, 100);
-			filterRoles(eFormDatas, roleName);
+			// filterRoles(eFormDatas, roleName);
 			//Collections.sort(eFormDatas, EFormData.FORM_DATE_COMPARATOR);
 			//Collections.reverse(eFormDatas);
 	
@@ -155,23 +155,23 @@ public class EctDisplayEFormAction extends EctDisplayAction {
         return cmd;
   }
   
-	public static List<EFormData> filterRoles(List<EFormData> eFormDatas, String roleName) {
-		ArrayList<EFormData> filteredResults = new ArrayList<EFormData>();
-
-		for (EFormData eFormData : eFormDatas) {
-			if (eFormData.getRoleType() != null && !eFormData.getRoleType().equals("")) {
-				// ojectName: "_admin,_admin.eform"
-				// roleName: "doctor,admin"
-				String objectName = "_eform." + eFormData.getRoleType();
-				Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-				if (!OscarRoleObjectPrivilege.checkPrivilege(roleName, (Properties) v.get(0), (Vector) v.get(1))) {
-					continue;
-				}
-			}
-			
-			filteredResults.add(eFormData);
-		}
-
-		return (filteredResults);
-	}
+//	public static List<EFormData> filterRoles(List<EFormData> eFormDatas, String roleName) {
+//		ArrayList<EFormData> filteredResults = new ArrayList<EFormData>();
+//
+//		for (EFormData eFormData : eFormDatas) {
+//			if (eFormData.getRoleType() != null && !eFormData.getRoleType().equals("")) {
+//				// ojectName: "_admin,_admin.eform"
+//				// roleName: "doctor,admin"
+//				String objectName = "_eform." + eFormData.getRoleType();
+//				Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+//				if (!OscarRoleObjectPrivilege.checkPrivilege(roleName, (Properties) v.get(0), (Vector) v.get(1))) {
+//					continue;
+//				}
+//			}
+//
+//			filteredResults.add(eFormData);
+//		}
+//
+//		return (filteredResults);
+//	}
 }

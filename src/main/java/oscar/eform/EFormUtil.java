@@ -296,16 +296,16 @@ public class EFormUtil {
 		try {
 			for (EFormData eFormData : allEformDatas) {
 				// filter eform by role type
-				String tempRole = StringUtils.trimToNull(eFormData.getRoleType());
-				if (userRoles != null && tempRole != null) {
-					// ojectName: "_admin,_admin.eform"
-					// roleName: "doctor,admin"
-					String objectName = "_eform." + tempRole;
-					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
-						continue;
-					}
-				}
+//				String tempRole = StringUtils.trimToNull(eFormData.getRoleType());
+//				if (userRoles != null && tempRole != null) {
+//					// ojectName: "_admin,_admin.eform"
+//					// roleName: "doctor,admin"
+//					String objectName = "_eform." + tempRole;
+//					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+//					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
+//						continue;
+//					}
+//				}
 				HashMap<String, Object> curht = new HashMap<String, Object>();
 				curht.put("fdid", eFormData.getId().toString());
 				curht.put("fid", eFormData.getFormId().toString());
@@ -368,16 +368,16 @@ public class EFormUtil {
 		try {
 			for (Map<String, Object> eFormData : allEformDatas) {
 				// filter eform by role type
-				String tempRole = StringUtils.trimToNull((String) eFormData.get("roleType"));
-				if (userRoles != null && tempRole != null) {
-					// ojectName: "_admin,_admin.eform"
-					// roleName: "doctor,admin"
-					String objectName = "_eform." + tempRole;
-					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
-						continue;
-					}
-				}
+//				String tempRole = StringUtils.trimToNull((String) eFormData.get("roleType"));
+//				if (userRoles != null && tempRole != null) {
+//					// ojectName: "_admin,_admin.eform"
+//					// roleName: "doctor,admin"
+//					String objectName = "_eform." + tempRole;
+//					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+//					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
+//						continue;
+//					}
+//				}
 				HashMap<String, Object> curht = new HashMap<String, Object>();
 				curht.put("fdid", String.valueOf(eFormData.get("id")));
 				curht.put("fid", String.valueOf(eFormData.get("formId")));
@@ -801,15 +801,15 @@ public class EFormUtil {
 		try {
 			while (rs.next()) {
 				// filter eform by role type
-				if (rsGetString(rs, "roleType") != null && !rsGetString(rs, "roleType").equals("") && !rsGetString(rs, "roleType").equals("null")) {
-					// ojectName: "_admin,_admin.eform"
-					// roleName: "doctor,admin"
-					String objectName = "_eform." + rsGetString(rs, "roleType");
-					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
-						continue;
-					}
-				}
+//				if (rsGetString(rs, "roleType") != null && !rsGetString(rs, "roleType").equals("") && !rsGetString(rs, "roleType").equals("null")) {
+//					// ojectName: "_admin,_admin.eform"
+//					// roleName: "doctor,admin"
+//					String objectName = "_eform." + rsGetString(rs, "roleType");
+//					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+//					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
+//						continue;
+//					}
+//				}
 				HashMap<String, String> curht = new HashMap<String, String>();
 				curht.put("fdid", oscar.Misc.getString(rs, "fdid"));
 				curht.put("fid", rsGetString(rs, "fid"));
@@ -1184,16 +1184,16 @@ public class EFormUtil {
 		try {
 			for (EFormData eFormData : allEformDatas) {
 				// filter eform by role type
-				String tempRole = StringUtils.trimToNull(eFormData.getRoleType());
-				if (userRoles != null && tempRole != null) {
-					// ojectName: "_admin,_admin.eform"
-					// roleName: "doctor,admin"
-					String objectName = "_eform." + tempRole;
-					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
-					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
-						continue;
-					}
-				}
+//				String tempRole = StringUtils.trimToNull(eFormData.getRoleType());
+//				if (userRoles != null && tempRole != null) {
+//					// ojectName: "_admin,_admin.eform"
+//					// roleName: "doctor,admin"
+//					String objectName = "_eform." + tempRole;
+//					Vector v = OscarRoleObjectPrivilege.getPrivilegeProp(objectName);
+//					if (!OscarRoleObjectPrivilege.checkPrivilege(userRoles, (Properties) v.get(0), (Vector) v.get(1))) {
+//						continue;
+//					}
+//				}
 				HashMap<String, Object> curht = new HashMap<String, Object>();
 				curht.put("fdid", eFormData.getId().toString());
 				curht.put("fid", eFormData.getFormId().toString());
