@@ -606,10 +606,13 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
  *
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
-.ui-autocomplete { position: absolute; cursor: default; }	
+ /* Scoped to #rxText (the staged-prescriptions widget container) so these rules
+    cannot leak onto the page-level drug-search dropdown (which jQuery UI
+    appends inside #searchDrugAutocompleteSet). */
+#rxText .ui-autocomplete { position: absolute; cursor: default; }	
 
 /* workarounds */
-* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+#rxText * html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
 
 /*
  * jQuery UI Menu 1.8.18
@@ -620,17 +623,17 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
  *
  * http://docs.jquery.com/UI/Menu#theming
  */
-.ui-menu {
+#rxText .ui-menu {
 	list-style:none;
 	padding: 2px;
 	margin: 0;
 	display:block;
 	float: left;
 }
-.ui-menu .ui-menu {
+#rxText .ui-menu .ui-menu {
 	margin-top: -3px;
 }
-.ui-menu .ui-menu-item {
+#rxText .ui-menu .ui-menu-item {
 	margin:0;
 	padding: 0;
 	zoom: 1;
@@ -638,24 +641,24 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
 	clear: left;
 	width: 100%;
 }
-.ui-menu .ui-menu-item a {
+#rxText .ui-menu .ui-menu-item a {
 	text-decoration:none;
 	display:block;
 	padding:.2em .4em;
 	line-height:1.5;
 	zoom:1;
 }
-.ui-menu .ui-menu-item a.ui-state-hover,
-.ui-menu .ui-menu-item a.ui-state-active {
+#rxText .ui-menu .ui-menu-item a.ui-state-hover,
+#rxText .ui-menu .ui-menu-item a.ui-state-active {
 	font-weight: normal;
 	margin: -1px;
 }
 
 
-	.ui-autocomplete-loading { 
+	#rxText .ui-autocomplete-loading { 
         background: white url('<%= request.getContextPath() %>/images/ui-anim_basic_16x16.gif') right center no-repeat;
 	} 
-	.ui-autocomplete {
+	#rxText .ui-autocomplete {
 		max-height: 200px;
 		overflow-y: auto;
 		overflow-x: hidden;
@@ -663,16 +666,16 @@ List<RxPrescriptionData.Prescription> listRxDrugs=(List)request.getAttribute("li
 			border:#ccc thin solid;
 	}
 
-	.ui-menu .ui-menu {
+	#rxText .ui-menu .ui-menu {
 	
 		background-color: whitesmoke;
 	}
 	
-	.ui-menu .ui-menu-item a {
+	#rxText .ui-menu .ui-menu-item a {
 		border-bottom:white thin solid;
 	}
-	.ui-menu .ui-menu-item a.ui-state-hover,
-	.ui-menu .ui-menu-item a.ui-state-active {
+	#rxText .ui-menu .ui-menu-item a.ui-state-hover,
+	#rxText .ui-menu .ui-menu-item a.ui-state-active {
 		background-color: yellow;
 	}
 
