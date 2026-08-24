@@ -22,7 +22,6 @@
 
 package ca.openosp.openo.webserv.oauth2;
 
-import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient;
@@ -39,6 +38,12 @@ import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
+
 /**
  * Abstract base provider for configuring a {@link WebClient} with the OAuth2 Client Credentials grant flow.
  * <p>
@@ -48,7 +53,12 @@ import org.springframework.web.reactive.function.client.WebClient;
  * </p>
  * <p>Subclasses should implement {@link #getCustomTokenParameters()} if the authorization server requires extra fields.</p>
  *
- * <h3>Usage Example:</h3>
+ * <p>This class also offers optional support for PKCE (Proof Key for Code Exchange) to facilitate public
+ * client scenarios. Subclasses can leverage {@link #generateCodeVerifier()} and
+ * {@link #computeCodeChallenge(String)} to create the verifier and challenge, and override
+ * {@link #getPkceTokenParameters()} to include the verifier during token exchange.</p>
+ *
+ * <h3>Usage Example (Client Credentials):</h3>
  * <pre>{@code
  * import org.springframework.beans.factory.annotation.Value;
  * import org.springframework.context.annotation.Bean;
@@ -94,6 +104,26 @@ import org.springframework.web.reactive.function.client.WebClient;
  *     }
  * }
  * }</pre>
+ *
+ * <h3>Example: PKCE Helper Usage (for subclasses using other flows):</h3>
+ * <pre>{@code
+ * // In a subclass handling authorization code flow:
+ * // 1. Generate and store verifier for this specific flow
+ * String verifier = generateCodeVerifier();
+ * // 2. Compute challenge to send with authorization request
+ * String challenge = computeCodeChallenge(verifier);
+ * // 3. Include challenge in authorization request (as code_challenge parameter)
+ * // 4. Store verifier securely (e.g., in HTTP session) for token exchange step
+ * // 5. Clear verifier after use (single-use)
+ * 
+ * @Override
+ * protected MultiValueMap<String, String> getPkceTokenParameters() {
+ *     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+ *     // 6. During token exchange, include the same verifier
+ *     params.add("code_verifier", verifier); 
+ *     return params;
+ * }
+ * }</pre>
  */
 public abstract class OpenOOAuth2ClientProvider {
 
@@ -102,13 +132,42 @@ public abstract class OpenOOAuth2ClientProvider {
     private final String tokenUri;
 
     /**
+     * ThreadLocal to store the access token for use by postForObject.
+     * This captures the token from WebClient's OAuth2 filter context.
+     */
+    private static final ThreadLocal<String> CURRENT_TOKEN = new ThreadLocal<>();
+
+    /**
+     * Sets the access token in ThreadLocal storage.
+     * @param token the access token to store
+     */
+    public static void setAccessToken(String token) {
+        CURRENT_TOKEN.set(token);
+    }
+
+    /**
+     * Gets the access token from ThreadLocal storage.
+     * @return the stored access token, or null if not present
+     */
+    public static String getAccessToken() {
+        return CURRENT_TOKEN.get();
+    }
+
+    /**
+     * Clears the access token from ThreadLocal storage.
+     */
+    public static void clearAccessToken() {
+        CURRENT_TOKEN.remove();
+    }
+
+    /**
      * Constructs the provider with core OAuth2 credentials.
      *
      * @param clientId     the OAuth2 client ID
      * @param clientSecret the OAuth2 client secret
      * @param tokenUri     the URI of the authorization server's token endpoint
      */
-    protected OpenOOAuth2ClientProvider(String clientId, String clientSecret, String tokenUri) {
+    public OpenOOAuth2ClientProvider(String clientId, String clientSecret, String tokenUri) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.tokenUri = tokenUri;
@@ -142,6 +201,50 @@ public abstract class OpenOOAuth2ClientProvider {
      */
     protected HttpHeaders getCustomTokenHeaders() {
         return new HttpHeaders(); // Default: empty
+    }
+
+    /**
+     * Generates a random code verifier for use with PKCE (Proof Key for Code Exchange).
+     * The verifier is a high-entropy cryptographically random string using the unreserved
+     * characters [A-Z][a-z][0-9] and "-._~", with a length of 43 characters.
+     *
+     * @return a code verifier suitable for PKCE
+     */
+    protected String generateCodeVerifier() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+        // Base64 URL safe without padding (RFC 7636)
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
+    /**
+     * Computes the code challenge from a code verifier using the S256 method.
+     *
+     * @param verifier the code verifier generated via {@link #generateCodeVerifier()}
+     * @return the BASE64URL-encoded SHA-256 hash of the verifier
+     */
+    protected String computeCodeChallenge(String verifier) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(verifier.getBytes(StandardCharsets.US_ASCII));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
+    }
+
+    /**
+     * Returns PKCE-specific parameters to be included in the access token request.
+     * This is relevant only for authorization code grants with PKCE. Subclasses
+     * using such flows should override this method to return a map containing
+     * at least the "code_verifier" parameter (the same verifier used to generate
+     * the challenge sent in the authorization request).
+     *
+     * @return a map of additional parameters for PKCE, defaults to an empty map
+     */
+    protected MultiValueMap<String, String> getPkceTokenParameters() {
+        return new LinkedMultiValueMap<>(); // Default: no PKCE parameters
     }
 
     /**
@@ -182,14 +285,26 @@ public abstract class OpenOOAuth2ClientProvider {
     /**
      * Configures the client credentials token response client.
      * This includes setting up custom parameter and header converters.
+     * <p>
+     * Note: PKCE parameters (if any) from {@link #getPkceTokenParameters()} are also included in the token request.
+     * This is harmless for Client Credentials (servers ignore unknown parameters) and may be useful
+     * for subclasses using non-standard grant types that expect PKCE parameters.
+     * </p>
      *
      * @return a configured {@link DefaultClientCredentialsTokenResponseClient}
      */
-    private @NonNull DefaultClientCredentialsTokenResponseClient getClientCredentialsTokenResponseClient() {
+    private DefaultClientCredentialsTokenResponseClient getClientCredentialsTokenResponseClient() {
         DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
         OAuth2ClientCredentialsGrantRequestEntityConverter requestEntityConverter = new OAuth2ClientCredentialsGrantRequestEntityConverter();
 
-        requestEntityConverter.addParametersConverter(grantRequest -> getCustomTokenParameters());
+        requestEntityConverter.addParametersConverter(grantRequest -> {
+            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>(getCustomTokenParameters());
+            MultiValueMap<String, String> pkceParameters = getPkceTokenParameters();
+            if (!pkceParameters.isEmpty()) {
+                parameters.addAll(pkceParameters);
+            }
+            return parameters;
+        });
         requestEntityConverter.addHeadersConverter(grantRequest -> getCustomTokenHeaders());
         tokenResponseClient.setRequestEntityConverter(requestEntityConverter);
         return tokenResponseClient;
@@ -201,7 +316,7 @@ public abstract class OpenOOAuth2ClientProvider {
      * @param tokenResponseClient the client responsible for executing the token request
      * @return a configured {@link OAuth2AuthorizedClientProvider}
      */
-    private @NonNull OAuth2AuthorizedClientProvider getAuthorizedClientProvider(DefaultClientCredentialsTokenResponseClient tokenResponseClient) {
+    private OAuth2AuthorizedClientProvider getAuthorizedClientProvider(DefaultClientCredentialsTokenResponseClient tokenResponseClient) {
         return OAuth2AuthorizedClientProviderBuilder.builder()
                 .clientCredentials(configurer -> configurer.accessTokenResponseClient(tokenResponseClient))
                 .build();
@@ -213,7 +328,7 @@ public abstract class OpenOOAuth2ClientProvider {
      * @param authorizedClientManager the manager responsible for authorizing the client
      * @return the filter function
      */
-    private @NonNull ExchangeFilterFunction getExchangeFilterFunction(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager) {
+    private ExchangeFilterFunction getExchangeFilterFunction(AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientManager) {
         return (request, next) -> {
             OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
                     .withClientRegistrationId(getRegistrationId())
@@ -225,6 +340,7 @@ public abstract class OpenOOAuth2ClientProvider {
             ClientRequest newRequest = ClientRequest.from(request).headers(headers -> {
                 if (authorizedClient != null) {
                     headers.setBearerAuth(authorizedClient.getAccessToken().getTokenValue());
+                    setAccessToken(authorizedClient.getAccessToken().getTokenValue());
                 }
             }).build();
 
@@ -237,7 +353,7 @@ public abstract class OpenOOAuth2ClientProvider {
      *
      * @return the client registration details
      */
-    private @NonNull ClientRegistration getClientRegistration() {
+    private ClientRegistration getClientRegistration() {
         return ClientRegistration
                 .withRegistrationId(getRegistrationId())
                 .tokenUri(this.tokenUri)

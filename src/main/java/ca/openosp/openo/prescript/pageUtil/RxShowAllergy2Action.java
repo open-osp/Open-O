@@ -34,7 +34,10 @@ import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.SystemPreferences;
 import ca.openosp.openo.commn.model.UserProperty;
+import ca.openosp.openo.integration.vigilance.model.VigilanceAnalysisResult;
+import ca.openosp.openo.integration.vigilance.model.VigilanceStatusResult;
 import ca.openosp.openo.managers.SecurityInfoManager;
+import ca.openosp.openo.integration.vigilance.service.VigilanceManager;
 import ca.openosp.openo.prescript.data.RxDrugData;
 import ca.openosp.openo.prescript.data.RxPatientData;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -52,9 +55,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Struts 2 action for displaying and managing patient allergies.
@@ -80,6 +81,7 @@ public final class RxShowAllergy2Action extends ActionSupport {
 
     private AllergyDao allergyDao = (AllergyDao) SpringUtils.getBean(AllergyDao.class);
     private SystemPreferencesDao systemPreferencesDao = (SystemPreferencesDao) SpringUtils.getBean(SystemPreferencesDao.class);
+    private final VigilanceManager vigilanceManager = SpringUtils.getBean(VigilanceManager.class);
 
     /**
      * Handles allergy reordering and redirects to the allergies display page.
@@ -146,6 +148,14 @@ public final class RxShowAllergy2Action extends ActionSupport {
             case "reorder" -> reorder();
             case "allergyData" -> {
                 getAllergyData(loggedInInfo);
+                yield null;
+            }
+            case "performAllergyCheck" -> {
+                performAllergyCheck(loggedInInfo);
+                yield null;
+            }
+            case "vigilanceStatus" -> {
+                vigilanceStatus();
                 yield null;
             }
             default -> null;
@@ -299,6 +309,108 @@ public final class RxShowAllergy2Action extends ActionSupport {
                 MiscUtils.getLogger().error("Error in getAllergyData", e);
             }
         }
+    }
+
+    /**
+     * Retrieves the current status of the Vigilance integration service and returns it as JSON.
+     * <p>
+     * Queries the VigilanceManager for its operational status and outputs a JSON response
+     * containing whether the service is up ("vigilanceUp") and an optional status message.
+     * <p>
+     * Expected response JSON structure:
+     * <ul>
+     * <li>"vigilanceUp" - boolean indicating if the Vigilance service is operational</li>
+     * <li>"message" - optional status message from the Vigilance service</li>
+     * </ul>
+     * <p>
+     * Content-Type: application/json
+     *
+     * @throws IOException if writing the JSON response fails
+     */
+    private void vigilanceStatus() throws IOException {
+        VigilanceStatusResult result = vigilanceManager.getStatus();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonResult = objectMapper.createObjectNode();
+        if (result != null) {
+            jsonResult.put("vigilanceUp", result.vigilanceUp());
+            if (result.message() != null) {
+                jsonResult.put("message", result.message());
+            }
+        } else {
+            jsonResult.put("vigilanceUp", true);
+        }
+
+        response.setContentType("application/json");
+        response.getOutputStream().write(jsonResult.toString().getBytes());
+    }
+
+    /**
+     * Performs an allergy analysis check using the Vigilance service and returns results as JSON.
+     * <p>
+     * Retrieves the RxSessionBean from the session, then calls VigilanceManager to analyze
+     * potential allergies based on the patient's demographic and stash list. Handles expired
+     * sessions gracefully by returning an empty result with just the request ID.
+     * <p>
+     * Expected request parameters:
+     * <ul>
+     * <li>id - String identifier to echo back in the response</li>
+     * </ul>
+     * <p>
+     * Expected response JSON structure:
+     * <ul>
+     * <li>"id" - echoed request identifier</li>
+     * <li>"providerPreferredWarningLevel" - the provider's preferred warning level</li>
+     * <li>"showAlert" - boolean indicating whether to display an alert</li>
+     * <li>"displayIcon" - optional icon to display for the warning</li>
+     * <li>"rawVigilanceResponse" - optional raw response from Vigilance service</li>
+     * <li>"token" - optional token associated with the analysis</li>
+     * </ul>
+     * <p>
+     * Content-Type: application/json
+     *
+     * @param loggedInInfo the logged-in user's security and session information
+     * @throws IOException if writing the JSON response fails
+     */
+    private void performAllergyCheck(LoggedInInfo loggedInInfo) throws IOException {
+        String id = request.getParameter("id");
+
+        RxSessionBean rxSessionBean = (RxSessionBean) request.getSession().getAttribute("RxSessionBean");
+        if (rxSessionBean == null) {
+            MiscUtils.getLogger().warn("RxSessionBean is null - session may have expired");
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode result = objectMapper.createObjectNode();
+            result.put("id", id);
+            response.setContentType("application/json");
+            response.getOutputStream().write(result.toString().getBytes());
+            return;
+        }
+
+        VigilanceAnalysisResult analysisResult = vigilanceManager.analyzeDrugsInteraction(
+                loggedInInfo, rxSessionBean.getDemographicNo(), rxSessionBean.getStashList());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode result = objectMapper.createObjectNode();
+        result.put("id", id);
+
+        if (analysisResult != null) {
+            result.put("providerPreferredWarningLevel", analysisResult.providerPreferredWarningLevel());
+            result.put("showAlert", analysisResult.showAlert());
+            if (analysisResult.displayIcon() != null) {
+                result.put("displayIcon", analysisResult.displayIcon());
+            }
+            if (analysisResult.rawVigilanceResponse() != null) {
+                result.put("rawVigilanceResponse", analysisResult.rawVigilanceResponse());
+            }
+            if (analysisResult.token() != null) {
+                result.put("token", analysisResult.token());
+            }
+        } else {
+            result.put("showAlert", false);
+        }
+
+        response.setContentType("application/json");
+        response.getOutputStream().write(result.toString().getBytes());
     }
 
     /**
