@@ -407,6 +407,71 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
     /**
+     * Result returned by importFromPath() for use by command-line callers.
+     */
+    public static class ImportResult {
+        public final List<String> warnings;
+        public final List<String[]> logs;
+        public final String importLogPath;
+
+        ImportResult(List<String> warnings, List<String[]> logs, String importLogPath) {
+            this.warnings = Collections.unmodifiableList(warnings);
+            this.logs = Collections.unmodifiableList(logs);
+            this.importLogPath = importLogPath;
+        }
+    }
+
+    /**
+     * Entry point for command-line import. Accepts a file-system path (XML file, ZIP file, or
+     * directory) instead of an HTTP multipart upload.
+     *
+     * @param loggedInInfo     authenticated provider context
+     * @param inputPath        path to an XML file, ZIP file, or directory of patient XML files
+     * @param providerNo       provider number performing the import
+     * @param programId        program ID to associate; pass "0" for the default
+     * @param matchProviderNames whether to match providers by name during import
+     * @param timeshiftInDays  shift appointment/note dates by this many days (0 = no shift)
+     */
+    public ImportResult importFromPath(LoggedInInfo loggedInInfo, Path inputPath,
+            String providerNo, String programId, boolean matchProviderNames,
+            int timeshiftInDays) throws Exception {
+
+        this.admProviderNo = providerNo;
+        this.matchProviderNames = matchProviderNames;
+        this.programId = programId;
+        validXmlFileList = new ArrayList<>();
+
+        // null is safe: CLI callers have no servlet context; usages of request in
+        // the CLI code path are guarded by null checks or in session-only branches.
+        HttpServletRequest mockRequest = null;
+
+        List<Provider> students = new ArrayList<>();
+        ArrayList<String> warnings = new ArrayList<>();
+        ArrayList<String[]> logs = new ArrayList<>();
+
+        String fileName = inputPath.getFileName().toString().toLowerCase();
+
+        if (Files.isRegularFile(inputPath) && fileName.endsWith(".xml")) {
+            processXmlFile(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+        } else if (Files.isRegularFile(inputPath) && fileName.endsWith(".zip")) {
+            Path rootDirectory = unzipFile(inputPath);
+            processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+        } else if (Files.isDirectory(inputPath)) {
+            processXmlFilesInDirectory(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+        } else {
+            throw new IllegalArgumentException("Input must be an .xml file, .zip file, or directory: " + inputPath);
+        }
+
+        for (Path validXmlFile : validXmlFileList) {
+            String[] logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
+            logs.add(logResult);
+        }
+
+        File importLog = makeImportLog(logs, inputPath.toAbsolutePath().getParent().toString());
+        return new ImportResult(warnings, logs, importLog.getPath());
+    }
+
+    /**
      * Search for all XML / CDS / CMS patient files in a given directory and process.
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
@@ -432,14 +497,14 @@ public class ImportDemographicDataAction4 extends Action {
                     else {
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
                         for (Path possibleXmlFile : possibleXmlFileList) {
-                            if (Files.exists(xmlFile)) {
-                                processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
-                            }
+                            processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
                         }
                     }
-                } else {
-                    warnings.add("Directory not found " + stream);
-                }
+                } else if (Files.isRegularFile(stream) && Files.exists(stream)){
+					processXmlFile(loggedInInfo, stream, warnings, logs, request, timeshiftInDays, students, courseId);
+                } else{
+			        warnings.add("Directory not found " + stream);
+		        }
             }
         } catch (Exception e) {
 	        throw new RuntimeException(e);
@@ -1499,7 +1564,7 @@ public class ImportDemographicDataAction4 extends Action {
                         	contactNote = "";
                         }
                 	} else {
-				        Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
+				        Facility facility = request != null ? (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY) : null;
 				        Integer facilityId = null;
 				        if (facility!=null) facilityId = facility.getId();
 
@@ -2673,9 +2738,9 @@ public class ImportDemographicDataAction4 extends Action {
                                 if (StringUtils.empty(docDesc)) docDesc = "ImportReport"+(i+1);
                                 
                                 if(b != null) {
-                                	FileOutputStream f = new FileOutputStream(docDir + docFileName);
-                                	f.write(b);
-                                	f.close();
+                                	try(FileOutputStream f = new FileOutputStream(docDir + docFileName)) {
+		                                f.write(b);
+	                                }
                                 } else {
                                 	 String tmpDir = currentDirectory;
                                              //oscarProperties.getProperty("TMP_DIR");
@@ -2689,7 +2754,11 @@ public class ImportDemographicDataAction4 extends Action {
                                      }
                                      
                                      //FileUtils.copyFile(new File(tmpDir + repR[i].getFilePath().substring(repR[i].getFilePath().lastIndexOf("\\")+1)), new File(docDir + docFileName));
-                                     FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
+                                     if(Files.exists(Paths.get(path3))) {
+	                                     FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
+                                     } else {
+                                    	 err_data.add("Error! Attached file not found ("+path3+")");
+                                     }
                                 }
 
                                 if (repR[i].getClass1()!=null) {
@@ -3209,7 +3278,7 @@ public class ImportDemographicDataAction4 extends Action {
             out.write(fillUp("", '-', tableWidth));
             out.newLine();
 
-            for (int i = 0; i < importNo; i++) {
+            for (int i = 0; i < demo.size(); i++) {
                 Integer id = entries.get(PATIENTID + i);
                 if (id == null) id = 0;
                 out.write(fillUp(id.toString(), ' ', column1.length()));
