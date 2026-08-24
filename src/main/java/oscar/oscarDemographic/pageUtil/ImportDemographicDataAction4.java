@@ -1366,8 +1366,8 @@ public class ImportDemographicDataAction4 extends Action {
 
             //to dumpsite: Extra demographic data
             if (StringUtils.filled(extra)) {
-	            extra = Util.addLine("imported.cms4.2011.06", extra);                
-                if (!"imported.cms4.2011.06".equals(extra)){
+	            extra = Util.addLine("imported.CDS.5", extra);                
+                if (!"imported.CDS.5".equals(extra)){
                     CaseManagementNote dmNote = prepareCMNote("2",null);
                     dmNote.setNote(extra);
                     saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
@@ -1614,7 +1614,7 @@ public class ImportDemographicDataAction4 extends Action {
                 addOneEntry(PERSONALHISTORY);
 
                 //to dumpsite
-                socialHist = Util.addLine("imported.cms4.2011.06", socialHist);
+                socialHist = Util.addLine("imported.CDS.5", socialHist);
                 Long hostNoteId = cmNote.getId();
                 cmNote = prepareCMNote("2",null);
                 cmNote.setNote( socialHist);
@@ -1654,7 +1654,7 @@ public class ImportDemographicDataAction4 extends Action {
                 saveLinkNote(hostNoteId, cmNote);
 
                 //to dumpsite
-                String dump = "imported.cms4.2011.06";
+                String dump = "imported.CDS.5";
                 /*
                 String summary = fHist[i].getCategorySummaryLine();
                 if (StringUtils.empty(summary)) {
@@ -1665,7 +1665,7 @@ public class ImportDemographicDataAction4 extends Action {
                 //String diagCode = getCode(fHist[i].getDiagnosisProcedureCode(),"Diagnosis/Procedure");
                 //dump = Util.addLine(dump, diagCode);
                 dump = Util.addLine(dump, getResidual(fHist[i].getResidualInfo()));
-                if (!"imported.cms4.2011.06".equals(dump)){
+                if (!"imported.CDS.5".equals(dump)){
                     cmNote = prepareCMNote("2",null);
                     cmNote.setNote(dump);
                     saveLinkNote(hostNoteId, cmNote);
@@ -1742,7 +1742,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 
                 //to dumpsite
-                String dump = "imported.cms4.2011.06";
+                String dump = "imported.CDS.5";
                 /*
                 String summary = pHealth[i].getCategorySummaryLine();
                 if (StringUtils.empty(summary)) {
@@ -1754,7 +1754,7 @@ public class ImportDemographicDataAction4 extends Action {
                 dump = Util.addLine(dump, diagCode);
                 dump = Util.addLine(dump, getResidual(pHealth[i].getResidualInfo()));
 
-                if (!"imported.cms4.2011.06".equals(dump)){
+                if (!"imported.CDS.5".equals(dump)){
                     cmNote = prepareCMNote("2",null);
                     cmNote.setNote(dump);
                     saveLinkNote(hostNoteId, cmNote);
@@ -1834,7 +1834,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 
                     //to dumpsite
-                    String dump = "imported.cms4.2011.06";
+                    String dump = "imported.CDS.5";
                     /*
                     String summary = probList[i].getCategorySummaryLine();
                     if (StringUtils.empty(summary)) {
@@ -1845,7 +1845,7 @@ public class ImportDemographicDataAction4 extends Action {
                     String diagCode = isICD9(probList[i].getDiagnosisCode()) || isICD9CM(probList[i].getDiagnosisCode()) || isICD10(probList[i].getDiagnosisCode())? null : getCode(probList[i].getDiagnosisCode(),"Diagnosis");
                     dump = Util.addLine(dump, diagCode);
                     dump = Util.addLine(dump, getResidual(probList[i].getResidualInfo()));
-                    if (!"imported.cms4.2011.06".equals(dump)){
+                    if (!"imported.CDS.5".equals(dump)){
                         cmNote = prepareCMNote("2",null);
                         cmNote.setNote(dump);
                         saveLinkNote(hostNoteId, cmNote);
@@ -1908,7 +1908,7 @@ public class ImportDemographicDataAction4 extends Action {
                     saveLinkNote(hostNoteId, cmNote);
 
                     //to dumpsite
-                    String dump = "imported.cms4.2011.06";
+                    String dump = "imported.CDS.5";
                     /*
                     String summary = rFactors[i].getCategorySummaryLine();
                     if (StringUtils.empty(summary)) {
@@ -1917,7 +1917,7 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, summary);
                     */
                     dump = Util.addLine(dump, getResidual(rFactors[i].getResidualInfo()));
-                    if (!"imported.cms4.2011.06".equals(dump)){
+                    if (!"imported.CDS.5".equals(dump)){
                         cmNote = prepareCMNote("2",null);
                         cmNote.setNote(dump);
                         saveLinkNote(hostNoteId, cmNote);
@@ -1983,7 +1983,7 @@ public class ImportDemographicDataAction4 extends Action {
                     saveLinkNote(hostNoteId, cmNote);
 
                     //to dumpsite
-                    String dump = "imported.cms4.2011.06";
+                    String dump = "imported.CDS.5";
                     /*
                     String summary = alerts[i].getCategorySummaryLine();
                     if (StringUtils.empty(summary)) {
@@ -1992,7 +1992,7 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, summary);
                     */
                     dump = Util.addLine(dump, getResidual(alerts[i].getResidualInfo()));
-                    if (!"imported.cms4.2011.06".equals(dump)){
+                    if (!"imported.CDS.5".equals(dump)){
                         cmNote = prepareCMNote("2",null);
                         cmNote.setNote(dump);
                         saveLinkNote(hostNoteId, cmNote);
@@ -2079,7 +2079,7 @@ public class ImportDemographicDataAction4 extends Action {
                     saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
 
                     //to dumpsite
-                    String dump = "imported.cms4.2011.06";
+                    String dump = "imported.CDS.5";
                     /*
                     String summary = aaReactArray[i].getCategorySummaryLine();
                     if (StringUtils.empty(summary)) {
@@ -2091,7 +2091,7 @@ public class ImportDemographicDataAction4 extends Action {
                     dump = Util.addLine(dump, getResidual(aaReactArray[i].getResidualInfo()));
                     if (aaReactArray[i].getReactionType() != null) dump = Util.addLine(dump, "Reaction Type=" + aaReactArray[i].getReactionType().toString()); //conditional added because some imports are missing this information and results in NPE                    
                 
-                    if (!"imported.cms4.2011.06".equals(dump)){
+                    if (!"imported.CDS.5".equals(dump)){
                         cmNote = prepareCMNote("2",null);
                         cmNote.setNote(dump);
                         saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
@@ -2354,11 +2354,11 @@ public class ImportDemographicDataAction4 extends Action {
                     saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long)drug.getId());
 
                     //to dumpsite
-                    String dump = "imported.cms4.2011.06";
+                    String dump = "imported.CDS.5";
                     dump = Util.addLine(dump, getResidual(medArray[i].getResidualInfo()));
                     dump = Util.addLine(dump, "Prescription Id: ", medArray[i].getPrescriptionIdentifier());
                     
-                    if (!"imported.cms4.2011.06".equals(dump)){
+                    if (!"imported.CDS.5".equals(dump)){
                         cmNote = prepareCMNote("2",null);
                         cmNote.setNote(dump);
                         saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long)drug.getId());
@@ -2463,7 +2463,7 @@ public class ImportDemographicDataAction4 extends Action {
 
                     //to dumpsite: Extra immunization data
                     if (StringUtils.filled(immExtra) && preventionId>=0) {
-        	            immExtra = Util.addLine("imported.cms4.2011.06", immExtra);
+        	            immExtra = Util.addLine("imported.CDS.5", immExtra);
         	            CaseManagementNote imNote = prepareCMNote("2",null);
         	            imNote.setNote(immExtra);
         	            saveLinkNote(imNote, CaseManagementNoteLink.PREVENTIONS, Long.valueOf(preventionId));
@@ -2567,7 +2567,7 @@ public class ImportDemographicDataAction4 extends Action {
                     addOneEntry(APPOINTMENT);
                     
                     if(failedToMapStatus) {
-	                	String dump = Util.addLine("imported.cms4.2011.06", "Appointment Status:",apptStatus);
+	                	String dump = Util.addLine("imported.CDS.5", "Appointment Status:",apptStatus);
 	    	            CaseManagementNote imNote = prepareCMNote("2",null);
 	    	            imNote.setNote(dump);
 	    	            saveLinkNote(imNote, CaseManagementNoteLink.APPOINTMENT, Long.valueOf(appt.getId()));
@@ -2843,7 +2843,7 @@ public class ImportDemographicDataAction4 extends Action {
                 	            }
                                 //to dumpsite: Extra report data
                                 if (StringUtils.filled(reportExtra)) {
-                    	            reportExtra = Util.addLine("imported.cms4.2011.06", reportExtra);
+                    	            reportExtra = Util.addLine("imported.CDS.5", reportExtra);
                     	            CaseManagementNote rpNote = prepareCMNote("2",null);
                     	            rpNote.setNote(reportExtra);
                     	            saveLinkNote(rpNote, CaseManagementNoteLink.DOCUMENT, Long.valueOf(docNum));
@@ -3036,7 +3036,7 @@ public class ImportDemographicDataAction4 extends Action {
                 	}
                 }
                 if (StringUtils.filled(extraCategoryData)) {
-    	            extra = Util.addLine("imported.cms4.2011.06", extra);
+    	            extra = Util.addLine("imported.CDS.5", extra);
     	            CaseManagementNote dmNote = prepareCMNote("2",null);
     	            dmNote.setNote(extra);
     	            saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
@@ -3142,7 +3142,7 @@ public class ImportDemographicDataAction4 extends Action {
                     		headNote.setCreate_date(createDate);
                     		headNote.setUpdate_date(createDate);
                     		headNote.setObservation_date(observeDate);
-                    		headNote.setNote("imported.cms4.2011.06"+uuid);
+                    		headNote.setNote("imported.CDS.5"+uuid);
                     		caseManagementManager.saveNoteSimple(headNote);
                         }
                     }
@@ -3154,7 +3154,7 @@ public class ImportDemographicDataAction4 extends Action {
                     //to dumpsite
                     String noteType = cNotes[i].getNoteType();
                     if (StringUtils.filled(noteType)) {
-                    	noteType = Util.addLine("imported.cms4.2011.06", "Note Type: ", noteType);
+                    	noteType = Util.addLine("imported.CDS.5", "Note Type: ", noteType);
                     }
 
                     CaseManagementNote dumpNote = prepareCMNote("2",null);
