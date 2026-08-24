@@ -40,6 +40,7 @@ import java.time.Duration;
  * and a specialized WebClient bean for Vigilance API calls.
  */
 @Configuration
+@ConditionalOnVigilanceEnabled
 public class VigilanceOAuth2ClientProvider extends OpenOOAuth2ClientProvider {
 
     private final String userId;

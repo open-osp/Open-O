@@ -32,10 +32,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ca.openosp.openo.integration.vigilance.config.ConditionalOnVigilanceEnabled;
+
 /**
  * Service for interacting with the Vigilance API.
  */
 @Service
+@ConditionalOnVigilanceEnabled
 public class VigilanceService {
 
     private static final Logger log = LoggerFactory.getLogger(VigilanceService.class);

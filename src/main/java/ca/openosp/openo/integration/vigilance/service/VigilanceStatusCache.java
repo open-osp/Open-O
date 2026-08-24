@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import ca.openosp.openo.integration.vigilance.config.ConditionalOnVigilanceEnabled;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -40,6 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * a configurable TTL window.
  */
 @Component
+@ConditionalOnVigilanceEnabled
 public class VigilanceStatusCache {
 
     private static final Logger log = LoggerFactory.getLogger(VigilanceStatusCache.class);

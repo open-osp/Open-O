@@ -34,6 +34,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+
+import ca.openosp.openo.integration.vigilance.config.ConditionalOnVigilanceEnabled;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -46,6 +48,7 @@ import java.io.IOException;
  * Provides methods to send requests and retrieve status information from the Vigilance API.
  */
 @Component
+@ConditionalOnVigilanceEnabled
 public class VigilanceClient {
 
     @Value("${vigilance.base.url:}")
