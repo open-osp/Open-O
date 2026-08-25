@@ -316,8 +316,8 @@
                             <td colspan="2" id="additNotes">${requestScope.comment}</td>
                         </tr>
 
-                        <input type="hidden" name="rx" value="${requestScope.strRx}"/>
-                        <input type="hidden" name="rx_no_newlines" id="rx_no_newlines" value="${requestScope.strRxNoNewLines}"/>
+                        <input type="hidden" name="rx" value="<%= Encode.forHtmlAttribute(request.getAttribute("strRx") != null ? request.getAttribute("strRx").toString() : "") %>"/>
+                        <input type="hidden" name="rx_no_newlines" id="rx_no_newlines" value="<%= Encode.forHtmlAttribute(request.getAttribute("strRxNoNewLines") != null ? request.getAttribute("strRxNoNewLines").toString() : "") %>"/>
                         <input type="hidden" name="additNotes" value="${requestScope.comment}"/>
                         </tbody>
                     </table>

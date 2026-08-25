@@ -34,6 +34,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil.EctViewConsultationRequestsUtil;
+import ca.openosp.openo.consultation.dto.ConsultationListDTO;
 import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.model.UserProperty;
 import ca.openosp.openo.utility.LoggedInInfo;
@@ -42,6 +43,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import ca.openosp.openo.util.DateUtils;
 import ca.openosp.openo.util.StringUtils;
+import org.owasp.encoder.Encode;
 
 
 /**
@@ -135,9 +137,26 @@ public class EctDisplayConsult2Action extends EctDisplayAction {
                 }
                 url = "popupPage(700,960,'" + winName + "','" + request.getContextPath() + "/oscarEncounter/ViewRequest.do?de=" + bean.demographicNo + "&requestId=" + theRequests.ids.get(idx) + "'); return false;";
                 
-                item.setLinkTitle(service + "(" + specialist + ") " + serviceDateStr);
-                service = StringUtils.maxLenString(service, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
-                item.setTitle(service);
+                //label as "Service - Specialist", omitting any missing part or the "N/A" placeholder
+                boolean hasService = service != null && !service.trim().isEmpty();
+                String trimmedSpecialist = specialist == null ? "" : specialist.trim();
+                boolean hasSpecialist = !trimmedSpecialist.isEmpty()
+                        && !ConsultationListDTO.NOT_APPLICABLE.equals(trimmedSpecialist);
+                String referralLabel = "";
+                if (hasService && hasSpecialist) {
+                    referralLabel = service + " - " + trimmedSpecialist;
+                } else if (hasSpecialist) {
+                    referralLabel = trimmedSpecialist;
+                } else if (hasService) {
+                    referralLabel = service;
+                }
+
+                //date alone when no label, to avoid a leading space in the tooltip
+                String linkTitle = referralLabel.isEmpty() ? serviceDateStr : referralLabel + " " + serviceDateStr;
+                //encode both sinks (the JSP writes them unescaped). the tooltip stays full length;
+                //only the visible title is capped, before encoding so the cap can't split an entity
+                item.setLinkTitle(Encode.forHtmlAttribute(linkTitle));
+                item.setTitle(Encode.forHtml(StringUtils.maxLenString(referralLabel, MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES)));
                 item.setURL(url);
                 item.setDate(date);
                 Dao.addItem(item);
