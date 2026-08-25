@@ -1822,7 +1822,7 @@ function updateDocument(eleId) {
                 }
 
                 if (typeof _in_window !== 'undefined' && _in_window) {
-                    if (typeof self.opener.removeReport !== 'undefined') {
+                    if (self.opener && typeof self.opener.removeReport !== 'undefined') {
                         self.opener.removeReport(num);
                         success = true;
                     }
@@ -1922,7 +1922,7 @@ function updateStatus(formid) {//acknowledge
 					// Hide the parent <div> of the iframe only for new inbox previews loaded in an iframe
 					jQuery(window.frameElement).closest('.document-card.card').slideUp();
 				} else if (typeof _in_window !== 'undefined' && _in_window) {
-                    if (typeof self.opener.removeReport !== 'undefined') {
+                    if (self.opener && typeof self.opener.removeReport !== 'undefined') {
 						/**
 						 * When a user acknowledges any lab version, it automatically files away older versions
 						 * as well as the acknowledged version. This function removes those versions from the
@@ -1968,7 +1968,7 @@ function fileDoc(docId) {
                             updateDocStatusInQueue(docId);
 
                             if (typeof _in_window !== 'undefined' && _in_window) {
-                                if (typeof self.opener.removeReport !== 'undefined') {
+                                if (self.opener && typeof self.opener.removeReport !== 'undefined') {
                                     self.opener.removeReport(docId);
                                 }
 

@@ -436,12 +436,12 @@ function remotePrint() {
 		}
 
 		/*
-		 * for situations when the eForm does not contain dirty form
-		 * detection; save it everytime.
+		 * either the eForm has no dirty form detection, or dirty form
+		 * detection did not flag a change; confirm before saving.
 		 */
-		else if(typeof needToConfirm === 'undefined') {
+		else if(confirm("You haven't manually edited this document, would you like to save a copy to the patient's chart regardless?")) {
 			remoteSave();
-	}
+		}
 }
 
 function hailMary() {

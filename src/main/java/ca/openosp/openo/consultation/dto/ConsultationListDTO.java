@@ -24,7 +24,7 @@ public class ConsultationListDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String NOT_APPLICABLE = "N/A";
+    public static final String NOT_APPLICABLE = "N/A";
 
     private Integer id;
     private String status;

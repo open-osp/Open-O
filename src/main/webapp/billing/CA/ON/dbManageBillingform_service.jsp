@@ -42,15 +42,32 @@
         group[j] = request.getParameter("group" + j);
 
         for (int i = 0; i < 20; i++) {
-            if (request.getParameter("group" + j + "_service" + i).length() != 0) {
+            String field = "group" + j + "_service" + i;
+            String serviceCode = request.getParameter(field);
+            serviceCode = (serviceCode == null) ? "" : serviceCode.trim();
+
+            if (!serviceCode.isEmpty()) {
+                // Any invalid order (blank, non-numeric, negative, or out of int range) falls back to the row position so it can't crash the page.
+                String orderParam = request.getParameter(field + "_order");
+                orderParam = (orderParam == null) ? "" : orderParam.trim();
+                int serviceOrder;
+                try {
+                    serviceOrder = Integer.parseInt(orderParam);
+                    if (serviceOrder < 0) {
+                        serviceOrder = i;
+                    }
+                } catch (NumberFormatException e) {
+                    serviceOrder = i;
+                }
+
                 CtlBillingService cbs = new CtlBillingService();
                 cbs.setServiceTypeName(type);
                 cbs.setServiceType(typeid);
-                cbs.setServiceCode(request.getParameter("group" + j + "_service" + i));
+                cbs.setServiceCode(serviceCode);
                 cbs.setServiceGroupName(group[j]);
                 cbs.setServiceGroup("Group" + j);
                 cbs.setStatus("A");
-                cbs.setServiceOrder(Integer.parseInt(request.getParameter("group" + j + "_service" + i + "_order")));
+                cbs.setServiceOrder(serviceOrder);
                 ctlBillingServiceDao.persist(cbs);
             }
         }

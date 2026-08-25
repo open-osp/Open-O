@@ -1514,25 +1514,43 @@ public class ProviderProperty2Action extends ActionSupport {
             propValue = prop.getValue();
         }
 
-        boolean checked;
-        if (propValue.equalsIgnoreCase("yes"))
-            checked = true;
-        else
-            checked = false;
-
-        prop.setChecked(checked);
+        boolean disableComment = propValue.equalsIgnoreCase("yes");
+        prop.setChecked(disableComment);
         request.setAttribute("labAckComment", prop);
-        request.setAttribute("providertitle", "provider.setAckComment.title");
-        request.setAttribute("providermsgPrefs", "provider.setAckComment.msgPrefs");
-        request.setAttribute("providermsgProvider", "provider.setAckComment.msgProfileView");
-        request.setAttribute("providermsgEdit", "provider.setAckComment.msgEdit");
-        request.setAttribute("providerbtnSubmit", "provider.setAckComment.btnSubmit");
-        request.setAttribute("providermsgSuccess", "provider.setAckComment.msgSuccess_selected");
-        request.setAttribute("method", "saveCommentLab");
+        request.setAttribute("disableComment", disableComment);
+
+        boolean offerFileForOthers = providerManager2.isHl7OfferFileForOthers(loggedInInfo, providerNo);
+        boolean allowOthersFileForYou = providerManager2.isHl7AllowOthersFileForYou(loggedInInfo, providerNo);
+        request.setAttribute("offerFileForOthers", offerFileForOthers);
+        request.setAttribute("allowOthersFileForYou", allowOthersFileForYou);
 
         this.setLabAckCommentProperty(prop);
 
         return "genAckCommentLab";
+    }
+
+    public String setDisableAckCommentPref() {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", SecurityInfoManager.WRITE, null)) {
+            throw new RuntimeException("missing required security object _lab");
+        }
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String value = request.getParameter("value");
+
+        UserProperty prop = this.userPropertyDAO.getProp(providerNo, UserProperty.LAB_ACK_COMMENT);
+        if (prop == null) {
+            prop = new UserProperty();
+            prop.setName(UserProperty.LAB_ACK_COMMENT);
+            prop.setProviderNo(providerNo);
+        }
+        boolean enabled = "true".equals(value);
+        prop.setValue(enabled ? "yes" : "no");
+        this.userPropertyDAO.saveProp(prop);
+
+        Map<String, Object> json = new HashMap<>();
+        json.put("status", enabled);
+        writeJsonResponse(response, json);
+        return null;
     }
 
     public String saveCommentLab() {
@@ -2670,6 +2688,7 @@ public class ProviderProperty2Action extends ActionSupport {
         methodMap.put("saveEDocBrowserInMasterFile", this::saveEDocBrowserInMasterFile);
         methodMap.put("viewCommentLab", this::viewCommentLab);
         methodMap.put("saveCommentLab", this::saveCommentLab);
+        methodMap.put("setDisableAckCommentPref", this::setDisableAckCommentPref);
         methodMap.put("viewLabRecall", this::viewLabRecall);
         methodMap.put("saveLabRecallPrefs", this::saveLabRecallPrefs);
         methodMap.put("viewTicklerTaskAssignee", this::viewTicklerTaskAssignee);

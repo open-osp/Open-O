@@ -316,7 +316,7 @@
                         [-1, 10, 20, 50, 100, 200],
                         ['All', 10, 20, 50, 100, 200]
                     ],
-                    order: [[6, 'dsc']],
+                    order: [[6, 'desc']],
                     "language": {
                         "url": "<%=request.getContextPath() %>/library/DataTables/i18n/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.i18nLanguagecode"/>.json"
                     }

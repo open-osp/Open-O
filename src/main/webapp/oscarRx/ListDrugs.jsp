@@ -418,16 +418,18 @@
 <script type="text/javascript">
 
     window.drugListTableConfig = window.drugListTableConfig || {
-      bStateSave: true,
-      fnStateSave: function (oSettings, oData) {
-        localStorage.setItem('drugListTable', JSON.stringify(oData));
-      },
-      fnStateLoad: function () {
-        return JSON.parse(localStorage.getItem('drugListTable'));
+      // Default page length: the user's saved choice, or "All" (-1) when they've never changed it.
+      // A getter (not a static value) because this config object is created once but reused every
+      // time the table is rebuilt, so the length must be re-read from storage on each init.
+      get pageLength() { return parseInt(localStorage.getItem('drugListPageLength')) || -1; },
+      // Persist the choice whenever the user changes the dropdown (tickler uses the same approach).
+      initComplete: function (settings) {
+        jQuery(settings.nTable).on('length.dt', function (e, s, len) {
+          localStorage.setItem('drugListPageLength', len);
+        });
       },
       searching: true,
-      // "aLengthMenu": [[25, 50, 75, -1], [25, 50, 75, "All"]],
-      // "iDisplayLength": 50,
+      lengthMenu: [[25, 50, 75, 100, -1], [25, 50, 75, 100, "All"]],
       columns: [
         {}, //entered date
         {}, //start date

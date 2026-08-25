@@ -684,7 +684,7 @@
                             <!--li><label class="radio inline"><input type="radio" name="statusType" value="N" <%=statusType.equals("N")?"checked":""%>>Do Not Bill</label>
                                     <label class="radio inline"><input type="radio" name="statusType" value="W" <%=statusType.equals("W")?"checked":""%>>WCB</label>-->
                             <label class="radio inline"><input type="radio" name="statusType"
-                                                               value="B" <%=statusType.equals("B")?"checked":""%>>Submmitted
+                                                               value="B" <%=statusType.equals("B")?"checked":""%>>Submitted
                                 OHIP</label>
                             <label class="radio inline"><input type="radio" name="statusType"
                                                                value="S" <%=statusType.equals("S")?"checked":""%>>Settled/Paid</label>
