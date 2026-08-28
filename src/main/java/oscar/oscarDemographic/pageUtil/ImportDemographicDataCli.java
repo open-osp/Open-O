@@ -19,9 +19,13 @@
 package oscar.oscarDemographic.pageUtil;
 
 import oscar.OscarProperties;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.oscarehr.PMmodule.dao.ProviderDao;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.util.MiscUtils;
 import org.oscarehr.util.SpringUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -48,10 +52,19 @@ import java.nio.file.Paths;
  *   --timeshift <days>    Shift appointment/note dates by N days (default: 0)
  *   --no-match-providers  Disable provider name matching (default: matching enabled)
  *   --help                Print this help and exit
+ *
+ * Progress and diagnostics go through log4j2. log4j2.xml defaults the root level to
+ * ${env:LOG_VERBOSITY:-error}, so this class raises its own logger to INFO unless
+ * LOG_VERBOSITY says otherwise — set LOG_VERBOSITY=debug for a chattier run, or
+ * LOG_VERBOSITY=error to silence everything but failures.
  */
 public class ImportDemographicDataCli {
 
+    private static final Logger logger = MiscUtils.getLogger();
+
     public static void main(String[] args) throws Exception {
+        configureLogging();
+
         String inputPathStr = null;
         String providerNo = null;
         String programId = "0";
@@ -79,21 +92,21 @@ public class ImportDemographicDataCli {
                     printUsage();
                     return;
                 default:
-                    System.err.println("Unknown argument: " + args[i]);
+                    logger.error("Unknown argument: {}", args[i]);
                     printUsage();
                     System.exit(1);
             }
         }
 
         if (inputPathStr == null || providerNo == null) {
-            System.err.println("Error: --input and --provider are required.");
+            logger.error("--input and --provider are required.");
             printUsage();
             System.exit(1);
         }
 
         Path inputPath = Paths.get(inputPathStr).toAbsolutePath();
         if (!Files.exists(inputPath)) {
-            System.err.println("Error: input path does not exist: " + inputPath);
+            logger.error("Input path does not exist: {}", inputPath);
             System.exit(1);
         }
 
@@ -109,7 +122,7 @@ public class ImportDemographicDataCli {
         ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
         Provider provider = providerDao.getProvider(providerNo);
         if (provider == null) {
-            System.err.println("Error: provider not found: " + providerNo);
+            logger.error("Provider not found: {}", providerNo);
             ctx.close();
             System.exit(1);
         }
@@ -118,24 +131,33 @@ public class ImportDemographicDataCli {
         loggedInInfo.setLoggedInProvider(provider);
         loggedInInfo.setInitiatingCode(ImportDemographicDataCli.class.getName());
 
-        System.out.printf("Importing %s (provider=%s program=%s timeshift=%d matchProviders=%b)%n",
+        logger.info("Importing {} (provider={} program={} timeshift={} matchProviders={})",
                 inputPath, providerNo, programId, timeshiftInDays, matchProviderNames);
 
         ImportDemographicDataAction4 action = new ImportDemographicDataAction4();
         ImportDemographicDataAction4.ImportResult result = action.importFromPath(
                 loggedInInfo, inputPath, providerNo, programId, matchProviderNames, timeshiftInDays);
 
-        if (!result.warnings.isEmpty()) {
-            System.out.println("\n=== WARNINGS ===");
-            for (String warning : result.warnings) {
-                System.out.println("  " + warning);
-            }
+        for (String warning : result.warnings) {
+            logger.warn(warning);
         }
 
-        System.out.println("\nImport log written to: " + result.importLogPath);
-        System.out.println("Done.");
+        logger.info("Import log written to: {}", result.importLogPath);
+        logger.info("Done. {} warning(s).", result.warnings.size());
 
         ctx.close();
+    }
+
+    /**
+     * The shared log4j2.xml pins the root level to ${env:LOG_VERBOSITY:-error}, which would drop
+     * this CLI's progress output. Raise our own logger to INFO when the operator hasn't asked for
+     * a specific verbosity.
+     */
+    private static void configureLogging() {
+        if (System.getenv("LOG_VERBOSITY") != null) {
+            return;
+        }
+        Configurator.setLevel(logger.getName(), Level.INFO);
     }
 
     private static void loadOscarProperties() {
@@ -148,18 +170,21 @@ public class ImportDemographicDataCli {
         // user added to -cp) and merge it into the singleton so Spring gets the right DB URL.
         URL url = ImportDemographicDataCli.class.getResource("/oscar-0-SNAPSHOT.properties");
         if (url == null) {
-            System.err.println("WARNING: oscar.properties not found on classpath and -Doscar_override_properties not set.");
-            System.err.println("         Spring will use dev defaults (oscar_mcmaster.properties) — DB connection will likely fail.");
-            System.err.println("         Fix: add the directory containing oscar.properties to -cp, or pass -Doscar_override_properties=/path/to/oscar.properties");
+            logger.warn("oscar.properties not found on classpath and -Doscar_override_properties not set. "
+                    + "Spring will use dev defaults (oscar_mcmaster.properties) — DB connection will likely fail. "
+                    + "Fix: add the directory containing oscar.properties to -cp, or pass "
+                    + "-Doscar_override_properties=/path/to/oscar.properties");
             return;
         }
         try (InputStream is = url.openStream()) {
             OscarProperties.getInstance().load(is);
         } catch (IOException e) {
-            System.err.println("Warning: could not load " + url + ": " + e.getMessage());
+            logger.warn("Could not load {}", url, e);
         }
     }
 
+    // Help text stays on stdout: it is the program's interface, not a log record, and the
+    // console layout (timestamp + level + class + file:line) would prefix every line of it.
     private static void printUsage() {
         System.out.println("Usage: ImportDemographicDataCli [options]");
         System.out.println();
