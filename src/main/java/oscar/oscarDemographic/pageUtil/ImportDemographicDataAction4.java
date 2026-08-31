@@ -28,6 +28,7 @@ package oscar.oscarDemographic.pageUtil;
 import java.awt.Color;
 import java.io.*;
 
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -38,11 +39,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -90,7 +95,6 @@ import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.dao.PharmacyInfoDao;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
-import org.oscarehr.common.model.AbstractModel;
 import org.oscarehr.common.model.Admission;
 import org.oscarehr.common.model.Allergy;
 import org.oscarehr.common.model.Appointment;
@@ -129,19 +133,11 @@ import org.oscarehr.util.SpringUtils;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.Varies;
 import ca.uhn.hl7v2.model.v23.datatype.CX;
-import ca.uhn.hl7v2.model.v23.datatype.ID;
-import ca.uhn.hl7v2.model.v23.datatype.ST;
 import ca.uhn.hl7v2.model.v23.datatype.XTN;
-import ca.uhn.hl7v2.model.v23.group.ORU_R01_ORDER_OBSERVATION;
-import ca.uhn.hl7v2.model.v23.message.ORU_R01;
 import ca.uhn.hl7v2.model.v23.segment.MSH;
-import ca.uhn.hl7v2.model.v23.segment.NTE;
-import ca.uhn.hl7v2.model.v23.segment.OBR;
-import ca.uhn.hl7v2.model.v23.segment.OBX;
 import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.util.Terser;
+
 import cds.AlertsAndSpecialNeedsDocument.AlertsAndSpecialNeeds;
 import cds.AllergiesAndAdverseReactionsDocument.AllergiesAndAdverseReactions;
 import cds.AppointmentsDocument.Appointments;
@@ -177,8 +173,7 @@ import cdsDt.PersonNamePartTypeCode;
 import cdsDt.PersonNameSimple;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
-import cdsDt.YIndicator;
-import org.oscarehr.ws.LabUploadWs;
+import org.w3c.dom.Document;
 import oscar.OscarProperties;
 import org.oscarehr.documentManager.EDocUtil;
 import oscar.oscarDemographic.data.DemographicAddResult;
@@ -189,7 +184,6 @@ import oscar.oscarLab.FileUploadCheck;
 import oscar.oscarLab.LabRequestReportLink;
 import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
-import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
 import oscar.oscarLab.ca.all.upload.handlers.CMLHandler;
 import oscar.oscarLab.ca.all.upload.handlers.ExcellerisOntarioHandler;
 import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
@@ -244,26 +238,26 @@ public class ImportDemographicDataAction4 extends Action {
     OscarProperties oscarProperties = OscarProperties.getInstance();
     List<String> importErrors = new ArrayList<String>();
 
-    ProgramManager programManager = (ProgramManager) SpringUtils.getBean(ProgramManager.class);
-    AdmissionManager admissionManager = (AdmissionManager) SpringUtils.getBean(AdmissionManager.class);
-    AdmissionDao admissionDao = (AdmissionDao) SpringUtils.getBean(AdmissionDao.class);
-    CaseManagementManager caseManagementManager = (CaseManagementManager) SpringUtils.getBean(CaseManagementManager.class);
-    DrugDao drugDao = (DrugDao) SpringUtils.getBean(DrugDao.class);
-    DrugReasonDao drugReasonDao = (DrugReasonDao) SpringUtils.getBean(DrugReasonDao.class);
-    DemographicArchiveDao demoArchiveDao = (DemographicArchiveDao) SpringUtils.getBean(DemographicArchiveDao.class);
-    ProviderDataDao providerDataDao = (ProviderDataDao) SpringUtils.getBean(ProviderDataDao.class);
-    PartialDateDao partialDateDao = (PartialDateDao) SpringUtils.getBean(PartialDateDao.class);
-    DemographicExtDao demographicExtDao = (DemographicExtDao) SpringUtils.getBean(DemographicExtDao.class);
-    OscarAppointmentDao appointmentDao = (OscarAppointmentDao)SpringUtils.getBean(OscarAppointmentDao.class);
+    ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
+    AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
+    AdmissionDao admissionDao = SpringUtils.getBean(AdmissionDao.class);
+    CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
+    DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
+    DrugReasonDao drugReasonDao = SpringUtils.getBean(DrugReasonDao.class);
+    DemographicArchiveDao demoArchiveDao = SpringUtils.getBean(DemographicArchiveDao.class);
+    ProviderDataDao providerDataDao = SpringUtils.getBean(ProviderDataDao.class);
+    PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
+    DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
+    OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
     PatientLabRoutingDao patientLabRoutingDao  = SpringUtils.getBean(PatientLabRoutingDao.class); 
     ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
     MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
-    DemographicContactDao contactDao = (DemographicContactDao) SpringUtils.getBean(DemographicContactDao.class);
+    DemographicContactDao contactDao = SpringUtils.getBean(DemographicContactDao.class);
 
     private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 
-    private LabUploadWs labUpload = new LabUploadWs();
+//    private LabUploadWs labUpload = new LabUploadWs();
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception  {
@@ -287,10 +281,7 @@ public class ImportDemographicDataAction4 extends Action {
         admProviderNo = (String) request.getSession().getAttribute("user");
         programId = new EctProgram(request.getSession()).getProgram(admProviderNo);
         matchProviderNames = frm.getMatchProviderNames();
-        ArrayList<String> warnings = new ArrayList<>();
-        ArrayList<String[]> logs = new ArrayList<>();
         validXmlFileList = new ArrayList<>();
-        String[] logResult;
 
         /*
          * get filename, filetype, and input stream of the import; then
@@ -299,7 +290,7 @@ public class ImportDemographicDataAction4 extends Action {
          */
         FormFile imp = frm.getImportFile();
         String filename = imp.getFileName();
-        String filetype = imp.getContentType();
+//        String filetype = imp.getContentType();
         Path directory;
         try(InputStream inputStream = imp.getInputStream();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
@@ -322,7 +313,7 @@ public class ImportDemographicDataAction4 extends Action {
         logger.debug("import to course id "  + frm.getCourseId() + " using timeshift value " + frm.getTimeshiftInDays());
         List<Provider> students = new ArrayList<Provider>();
         int courseId = 0;
-        if(frm.getCourseId()!=null && frm.getCourseId().length()>0) {
+        if(frm.getCourseId()!=null && !frm.getCourseId().isEmpty()) {
             courseId = Integer.parseInt(frm.getCourseId());
             if(courseId>0) {
                 logger.info("need to apply this import to a learning environment");
@@ -350,51 +341,17 @@ public class ImportDemographicDataAction4 extends Action {
          *
          */
 
-        // if the saved temporary file is an XML import of a single patient file, then go straight to processing
-        if(filetype.contains("xml") && Files.exists(directory) && Files.isRegularFile(directory)) {
-            processXmlFile(loggedInInfo, directory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
-        }
+	    ImportResult importResult = importFromPath(loggedInInfo, directory, loggedInInfo.getLoggedInProviderNo(), programId, matchProviderNames, frm.getTimeshiftInDays());
 
-        //TODO if the saved temporary file is a zip file then go on to unzip and process the directory tree.
-        // more checks and standards needed.
-        else if(filetype.contains("zip") && Files.exists(directory)) {
-            // unzip into parent directory
-            Path rootDirectory = unzipFile(directory);
-            // process starting at parent directory.
-            processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
-        }
-
-        // if the saved temporary file is a directory tree; then search for and process the xml file in each directory
-        else if(Files.exists(directory)) {
-            processXmlFilesInDirectory(loggedInInfo, directory, warnings, logs, request, frm.getTimeshiftInDays(), students, courseId);
-        }
-
-        //TODO is it possible that the uploaded file is an batch file of XML files? If so, then a process is needed to
-        // parse the xml batch file into individual XML patient files.
-
-
-        // use the completed valid xml list to run through the contact imports.
-        for(Path validXmlFile : validXmlFileList) {
-            logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, request, frm.getTimeshiftInDays(), students, courseId);
-            logs.add(logResult);
-        }
-
-        /*
-         * a new import log gets generated into the root of the temporary directory.
-         * It gets offered as a download to the end user.
-         * TODO this log should be stored so that it can be retrieved later by the end user.
-         */
-        File importLog = makeImportLog(logs, directory.getParent().toString());
-	
         //channel warnings and importlog to browser
-        request.setAttribute("warnings", warnings);
-        request.setAttribute("importlog", importLog.getPath());
+        request.setAttribute("warnings", importResult.getWarnings());
+        request.setAttribute("importlog", importResult.getImportLogPath());
         resetProviderBean(request);
-        generateResponse(response, warnings, importLog.getPath());
+        generateResponse(response, importResult.getWarnings(), importResult.getImportLogPath());
         return mapping.findForward("success");
     }
 
-    private void generateResponse(HttpServletResponse response, ArrayList<String> warnings, String importLog) {
+    private void generateResponse(HttpServletResponse response, List<String> warnings, String importLog) {
 		JSONObject json = new JSONObject();
 		response.setContentType("text/javascript");
 		try {
@@ -405,21 +362,6 @@ public class ImportDemographicDataAction4 extends Action {
 			logger.error("An error occurred while writing JSON response to the output stream", e);
 		}
 	}
-
-    /**
-     * Result returned by importFromPath() for use by command-line callers.
-     */
-    public static class ImportResult {
-        public final List<String> warnings;
-        public final List<String[]> logs;
-        public final String importLogPath;
-
-        ImportResult(List<String> warnings, List<String[]> logs, String importLogPath) {
-            this.warnings = Collections.unmodifiableList(warnings);
-            this.logs = Collections.unmodifiableList(logs);
-            this.importLogPath = importLogPath;
-        }
-    }
 
     /**
      * Entry point for command-line import. Accepts a file-system path (XML file, ZIP file, or
@@ -467,7 +409,11 @@ public class ImportDemographicDataAction4 extends Action {
             logs.add(logResult);
         }
 
-        File importLog = makeImportLog(logs, inputPath.toAbsolutePath().getParent().toString());
+	    /*
+	     * a new import log gets generated into the root of the temporary directory.
+	     * It gets offered as a download to the end user.
+	     */
+        File importLog = makeImportLog(logs, Paths.get(OscarProperties.getInstance().getProperty("BASE_DOCUMENT_DIR")).toAbsolutePath().toString());
         return new ImportResult(warnings, logs, importLog.getPath());
     }
 
@@ -517,12 +463,16 @@ public class ImportDemographicDataAction4 extends Action {
      * TODO disk capacity should be evaluated first.
      */
     private Path unzipFile(Path zipFilePath) throws IOException {
-        Path directoryPath = zipFilePath.getParent();
+        Path directoryPath = zipFilePath.toAbsolutePath().normalize().getParent();
         byte[] buffer = new byte[1024];
-        try(ZipInputStream zis = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath.toString())))) {
+        try(ZipInputStream zis = new ZipInputStream(Files.newInputStream(zipFilePath))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
-                File newFile = Paths.get(directoryPath.toString(), zipEntry.getName()).toFile();
+                Path entryPath = directoryPath.resolve(zipEntry.getName()).normalize();
+                if (!entryPath.startsWith(directoryPath)) {
+                    throw new IOException("Invalid ZIP entry outside extraction directory: " + zipEntry.getName());
+                }
+                File newFile = entryPath.toFile();
                 if (zipEntry.isDirectory()) {
                     if (!newFile.isDirectory() && !newFile.mkdirs()) {
                         throw new IOException("Failed to create directory " + newFile);
@@ -651,7 +601,7 @@ public class ImportDemographicDataAction4 extends Action {
             String[] result = importXML(loggedInInfo, xmlFile,warnings,request,timeShiftInDays,student,p,courseId, cleanFile);
             logs.addAll(convertLog(result));
         }
-        return logs.toArray(new String[logs.size()]);
+        return logs.toArray(new String[0]);
     }
 
     private List<String> convertLog(String[] logs) {
@@ -672,20 +622,18 @@ public class ImportDemographicDataAction4 extends Action {
         File xmlF = new File(xmlFile);
         OmdCdsDocument.OmdCds omdCds=null;
         try {
-        	XmlOptions opts = new XmlOptions(); 
-        	List c = new ArrayList();
-        	
-        	opts.setErrorListener(c);
+        	XmlOptions opts = new XmlOptions();
+        	opts.setErrorListener(new ArrayList());
         	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType()); 
         	omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
 
         	omdCds.validate(opts);
         	
            
-        } catch (IOException ex) {logger.error("Error", ex);
-        } catch (XmlException ex) {logger.error("Error", ex);
+        } catch (IOException | XmlException ex) {
+			logger.error("Error", ex);
         }
-        PatientRecord patientRec = omdCds.getPatientRecord();
+	    PatientRecord patientRec = omdCds.getPatientRecord();
 
         //DEMOGRAPHICS
         Demographics demo = patientRec.getDemographics();
@@ -889,7 +837,7 @@ public class ImportDemographicDataAction4 extends Action {
     }
 
 
-    private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId, boolean cleanFile) throws SQLException, Exception {
+    private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId, boolean cleanFile) throws Exception {
         ArrayList<String> err_demo = new ArrayList<String>(); //errors: duplicate demographics
         ArrayList<String> err_data = new ArrayList<String>(); //errors: discrete data
         ArrayList<String> err_summ = new ArrayList<String>(); //errors: summary
@@ -897,28 +845,43 @@ public class ImportDemographicDataAction4 extends Action {
         ArrayList<String> err_note = new ArrayList<String>(); //non-errors: notes
         importErrors = new ArrayList<String>();
 
-        String docDir = oscarProperties.getProperty("DOCUMENT_DIR");
+        String docDir = oscarProperties.getDocumentDirectory();
         docDir = Util.fixDirName(docDir);
         if (!Util.checkDir(docDir)) {
                 logger.debug("Error! Cannot write to DOCUMENT_DIR - Check oscar.properties or dir permissions.");
         }
 
+		// build patient record and validate
         File xmlF = new File(xmlFile);
-        PatientRecord patientRec = null;
+        PatientRecord patientRec;
         try {
-        	XmlOptions opts = new XmlOptions(); 
-        	List c = new ArrayList();
-        	
-        	opts.setErrorListener(c);
+
+	        Document xmlDoc = validateImport(xmlF, err_data);
+			if (xmlDoc == null) {
+				/*
+				 * invalid xml, log and continue anyway.
+				 * Some validation could be too picky
+				 */
+				packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
+			}
+
+	        XmlOptions opts = new XmlOptions();
+        	opts.setErrorListener( new ArrayList());
         	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
-            OmdCdsDocument.OmdCds omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
+            OmdCdsDocument.OmdCds omdCds = OmdCdsDocument.Factory.parse(xmlDoc,opts).getOmdCds();
         	omdCds.validate(opts);
             patientRec = omdCds.getPatientRecord();
-        } catch (IOException ex) {logger.error("Error", ex);
-        } catch (XmlException ex) {logger.error("Error", ex);
+        } catch (Exception ex) {
+			logger.error("Error parsing XML file {}", xmlF, ex);
+	        err_othe.add("XML file could not be parsed: " + xmlF.getName() + ": " + ex.getMessage());
+			/*
+			 * any exception resulting from failure to parse XML file. Return and continue to the next file.
+			 * This file will be skipped and the next file will be processed.
+			 */
+			return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
         }
 
-        //DEMOGRAPHICS
+	    //DEMOGRAPHICS
         Demographics demo = patientRec.getDemographics();
         cdsDt.PersonNameStandard.LegalName legalName = demo.getNames().getLegalName();
         String lastName="", firstName="";
@@ -1009,14 +972,18 @@ public class ImportDemographicDataAction4 extends Action {
             hc_renew_date = getCalDate(healthCard.getExpirydate());
         }
 
-        //Check duplicate
+        //TODO use the existing demographic data to complete the rest of the import.
         DemographicData dd = new DemographicData();
         ArrayList<Demographic> demodup = null;
-        if (StringUtils.filled(hin)) demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
-        else demodup = dd.getDemographicWithLastFirstDOB(loggedInInfo, lastName, firstName, birthDate);
-        if (demodup.size()>0) {
+        if (StringUtils.filled(hin)) {
+			demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
+        }
+        else {
+			demodup = dd.getDemographicWithLastFirstDOB(loggedInInfo, lastName, firstName, birthDate);
+        }
+        if (! demodup.isEmpty()) {
             err_data.clear();
-            err_demo.add("Error! Patient "+patientName+" already exist! Not imported.");
+            err_demo.add("Warning! Patient "+patientName+" already exist! Not imported.");
             return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
         }
 
@@ -1262,80 +1229,9 @@ public class ImportDemographicDataAction4 extends Action {
             demographicNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, firstName, lastName, phone, workPhone, email);
             demographic = dd.getDemographic(loggedInInfo, demographicNo);
         }
-/*
-        if (demographic!=null && StringUtils.nullSafeEqualsIgnoreCase(demographic.getPatientStatus(), "Contact-only")) {
-        	//found contact-only demo, replace!
-        	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            demographic.setTitle(title);
-            demographic.setMiddleNames(middleNames);
-            demographic.setAddress(address);
-            demographic.setCity(city);
-            demographic.setProvince(province);
-            demographic.setPostal(postalCode);
-            demographic.setYearOfBirth(year_of_birth);
-            demographic.setMonthOfBirth(month_of_birth);
-            demographic.setDateOfBirth(date_of_birth);
-            demographic.setHin(hin);
-            demographic.setVer(versionCode);
-            demographic.setRosterStatus(rosterStatus);
-            demographic.setRosterEnrolledTo(rosterEnrolledTo);
-            
-            Date dDate;
-            try {
-            	dDate = formatter.parse(rosterDate);
-            }
-            catch( Exception e ) {
-            	dDate = null;
-            }
-            
-            demographic.setRosterDate(dDate);
-            
-            
-            try {
-            	dDate = formatter.parse(termDate);
-            }
-            catch( Exception e ) {
-            	dDate = null;
-            }
-            
-            demographic.setRosterTerminationDate(dDate);
-            demographic.setRosterTerminationReason(termReason);
-            demographic.setPatientStatus(patient_status);
-            
-            try {
-            	dDate = formatter.parse(psDate);
-            }
-            catch( Exception e ) {
-            	dDate = null;
-            }
-            
-            demographic.setPatientStatusDate(dDate);
-            demographic.setChartNo(chart_no);
-            demographic.setOfficialLanguage(official_lang);
-            demographic.setSpokenLanguage(spoken_lang);
-            demographic.setFamilyDoctor(primaryPhysician);
-            demographic.setSex(sex);
-            demographic.setHcType(hc_type);
-            
-            try {
-            	dDate = formatter.parse(hc_renew_date);
-            }
-            catch( Exception e ) {
-            	dDate = null;
-            }
-            
-            demographic.setHcRenewDate(dDate);
-            demographic.setSin(sin);
-            dd.setDemographic(loggedInInfo, demographic);
-            err_note.add("Replaced Contact-only patient "+patientName+" (Demo no="+demographicNo+")");
 
-        } else { //add patient!
-*/
-            demoRes = dd.addDemographic(loggedInInfo, title, lastName, firstName, middleNames, address, city, province, postalCode, residentialAddress, residentialCity, residentialProvince, residentialPostalCode, homePhone, workPhone, year_of_birth, month_of_birth, date_of_birth, hin, versionCode, rosterStatus, rosterDate, termDate, termReason, rosterEnrolledTo, patient_status, psDate, ""/*date_joined*/, chart_no, official_lang, spoken_lang, primaryPhysician, sex, ""/*end_date*/, ""/*eff_date*/, ""/*pcn_indicator*/, hc_type, hc_renew_date, ""/*family_doctor*/, email, ""/*pin*/, ""/*alias*/, ""/*previousAddress*/, ""/*children*/, ""/*sourceOfIncome*/, ""/*citizenship*/, sin);
-            demographicNo = demoRes.getId();
-/*        }
-
- */
+        demoRes = dd.addDemographic(loggedInInfo, title, lastName, firstName, middleNames, address, city, province, postalCode, residentialAddress, residentialCity, residentialProvince, residentialPostalCode, homePhone, workPhone, year_of_birth, month_of_birth, date_of_birth, hin, versionCode, rosterStatus, rosterDate, termDate, termReason, rosterEnrolledTo, patient_status, psDate, ""/*date_joined*/, chart_no, official_lang, spoken_lang, primaryPhysician, sex, ""/*end_date*/, ""/*eff_date*/, ""/*pcn_indicator*/, hc_type, hc_renew_date, ""/*family_doctor*/, email, ""/*pin*/, ""/*alias*/, ""/*previousAddress*/, ""/*children*/, ""/*sourceOfIncome*/, ""/*citizenship*/, sin);
+        demographicNo = demoRes.getId();
 
         if (StringUtils.filled(demographicNo))
         {
@@ -2109,8 +2005,7 @@ public class ImportDemographicDataAction4 extends Action {
                     String writtenDateFormat = dateFPGetPartial(medArray[i].getPrescriptionWrittenDate());
 
                     drug.setRxDate(dateFPtoDate(medArray[i].getStartDate(), timeShiftInDays));
-                    
-                    
+
                     if (medArray[i].getStartDate()==null) drug.setRxDate(drug.getWrittenDate());
 
                     duration = medArray[i].getDuration();
@@ -2307,20 +2202,20 @@ public class ImportDemographicDataAction4 extends Action {
                     drug.setPosition(0);
                
                     //use drugref to add more info to the record
-                    if(!StringUtils.isNullOrEmpty(drug.getRegionalIdentifier())) {
-                    	try {
-	                    	RxDrugData rxDrugData = new RxDrugData();
-	                    	DrugMonograph dm = rxDrugData.getDrugByDIN(drug.getRegionalIdentifier());
-	                    	if(dm != null) {
-	                    		drug.setAtc(dm.getAtc());
-	                    		if(dm.drugCode != null) {
-	                    			drug.setGcnSeqNo(Integer.parseInt(dm.drugCode));
-	                    		}
-	                    	}
-                    	}catch(Exception e) {
-                    		logger.warn("Error looking up DIN");
-                    	}
-                    }
+//                    if(!StringUtils.isNullOrEmpty(drug.getRegionalIdentifier())) {
+//                    	try {
+//	                    	RxDrugData rxDrugData = new RxDrugData();
+//	                    	DrugMonograph dm = rxDrugData.getDrugByDIN(drug.getRegionalIdentifier());
+//	                    	if(dm != null) {
+//	                    		drug.setAtc(dm.getAtc());
+//	                    		if(dm.drugCode != null) {
+//	                    			drug.setGcnSeqNo(Integer.parseInt(dm.drugCode));
+//	                    		}
+//	                    	}
+//                    	}catch(Exception e) {
+//                    		logger.warn("Error looking up DIN");
+//                    	}
+//                    }
                     
                     
                     drugDao.persist(drug);
@@ -4371,29 +4266,23 @@ public class ImportDemographicDataAction4 extends Action {
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
                 String observationMsg = hl7CreateFile.generateHL7(Arrays.asList(reportResults));
-				
-		        InputStream formFileIs=null;
-		        InputStream localFileIs=null;
-		        
+
 		        Integer labNo = null;
-		        try{
+		        try (InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))){
 		            String type = hl7CreateFile.LAB_TYPE;
-		            
-		            InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8));
 		            String filePath = Utilities.saveFile(stream, filename);
-		            File file = new File(filePath);
-		            
-		            localFileIs = new FileInputStream(filePath);
-		            
-		            int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getName(),localFileIs,admProviderNo);            
+		            Path file = Paths.get(filePath);
+			            int checkFileUploadedSuccessfully;
+			            try (InputStream fileInputStream = Files.newInputStream(file)) {
+			                checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), fileInputStream, admProviderNo);
+			            }
 		            
 		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
                         logger.debug("filePath" + filePath);
                         logger.debug("Type :" + type);
                         MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
-                        if (msgHandler != null) {
-                            logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
-                        }
+
+						logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
 
                         if (msgHandler instanceof CMLHandler && ((CMLHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((CMLHandler) msgHandler).getLastLabNo();
@@ -4423,12 +4312,7 @@ public class ImportDemographicDataAction4 extends Action {
 		            logger.error("Error: ",e);
                     importErrors.add("Error adding lab");
 		        }
-		        finally {
-		        	IOUtils.closeQuietly(formFileIs);
-		        	IOUtils.closeQuietly(localFileIs);
-		        }
-		        
-		        
+
 		        if(labNo != null) {
                     Hl7textResultsData.populateMeasurementsTable(labNo.toString(), demographicNo);
 
@@ -4674,5 +4558,67 @@ public class ImportDemographicDataAction4 extends Action {
 		}
 		
 		return ret;
+	}
+
+	public Document validateImport(File f, ArrayList<String> err_data) {
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		Document doc;
+		try {
+			URL url = getClass().getResource("/omdDataMigration/EMR_Data_Migration_Schema.xsd");
+			if (url == null) {
+				throw new IOException("Import schema is missing from the classpath");
+			}
+			String constant = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+			SchemaFactory xsdFactory = SchemaFactory.newInstance(constant);
+			Schema schema = xsdFactory.newSchema(url);
+			DocumentBuilder builder;
+			factory.setSchema(schema);
+			// Use parser features rather than ACCESS_EXTERNAL_* attributes. The latter are
+			// not implemented by the older XML parser bundled with some supported runtimes.
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			builder = factory.newDocumentBuilder();
+			doc = builder.parse(f);
+		} catch (Exception e) {
+			doc = null;
+			err_data.add("XML file is not valid: " + f.getName() + ": " + e.getMessage());
+			logger.error("In file '{}': {}", f.getName(), e);
+
+		}
+		return doc;
+	}
+
+
+	/**
+	 * Helper class
+	 * Result returned by importFromPath() for use by command-line callers.
+	 */
+	public static class ImportResult {
+		public final List<String> warnings;
+		public final List<String[]> logs;
+		public final String importLogPath;
+
+		ImportResult(List<String> warnings, List<String[]> logs, String importLogPath) {
+			this.warnings = Collections.unmodifiableList(warnings);
+			this.logs = Collections.unmodifiableList(logs);
+			this.importLogPath = importLogPath;
+		}
+
+		public List<String> getWarnings() {
+			return warnings;
+		}
+
+		public List<String[]> getLogs() {
+			return logs;
+		}
+
+		public String getImportLogPath() {
+			return importLogPath;
+		}
 	}
 }

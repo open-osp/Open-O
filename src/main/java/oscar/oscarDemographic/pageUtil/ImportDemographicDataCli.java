@@ -54,9 +54,9 @@ import java.nio.file.Paths;
  *   --help                Print this help and exit
  *
  * Progress and diagnostics go through log4j2. log4j2.xml defaults the root level to
- * ${env:LOG_VERBOSITY:-error}, so this class raises its own logger to INFO unless
- * LOG_VERBOSITY says otherwise — set LOG_VERBOSITY=debug for a chattier run, or
- * LOG_VERBOSITY=error to silence everything but failures.
+ * ${env:LOG_VERBOSITY:-error}, so this class raises its own logger to INFO and quiets the
+ * java.util.logging stack that Spring's bootstrap chatter arrives on. Set LOG_VERBOSITY to
+ * hand logging config back to the shared setup and see everything both stacks emit.
  */
 public class ImportDemographicDataCli {
 
@@ -104,9 +104,15 @@ public class ImportDemographicDataCli {
             System.exit(1);
         }
 
-        Path inputPath = Paths.get(inputPathStr).toAbsolutePath();
+        Path inputPath = Paths.get(inputPathStr).toAbsolutePath().normalize();
         if (!Files.exists(inputPath)) {
             logger.error("Input path does not exist: {}", inputPath);
+            System.exit(1);
+        }
+        try {
+            inputPath = inputPath.toRealPath();
+        } catch (IOException e) {
+            logger.error("Input path cannot be resolved: {}", inputPath, e);
             System.exit(1);
         }
 
@@ -115,7 +121,10 @@ public class ImportDemographicDataCli {
         loadOscarProperties();
 
         // Bootstrap Spring — oscar.properties must be on the classpath.
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext();
+        ctx.getEnvironment().setActiveProfiles("cli");
+        ctx.setConfigLocation("classpath:applicationContext.xml");
+        ctx.refresh();
         SpringUtils.setBeanFactory(ctx);
 
         // Load the provider performing the import.
@@ -149,15 +158,38 @@ public class ImportDemographicDataCli {
     }
 
     /**
-     * The shared log4j2.xml pins the root level to ${env:LOG_VERBOSITY:-error}, which would drop
-     * this CLI's progress output. Raise our own logger to INFO when the operator hasn't asked for
-     * a specific verbosity.
+     * Two unrelated logging stacks are in play, so both need a nudge:
+     *
+     * 1. This class logs through log4j2, but the shared log4j2.xml pins the root level to
+     *    ${env:LOG_VERBOSITY:-error}, which would drop our progress output. Raise our own
+     *    logger to INFO.
+     * 2. Spring/CXF/Hibernate log through commons-logging, which lands in java.util.logging
+     *    because slf4j-jdk14 is the SLF4J binding on this classpath. JUL's default root level
+     *    is INFO, which is where the "Loading XML bean definitions from ..." bootstrap chatter
+     *    comes from. Lift the JUL root to WARNING so warnings and errors still surface.
+     *
+     * Both are skipped when LOG_VERBOSITY is set, so an operator asking for a specific
+     * verbosity gets it — including the third-party bootstrap detail.
      */
     private static void configureLogging() {
         if (System.getenv("LOG_VERBOSITY") != null) {
             return;
         }
         Configurator.setLevel(logger.getName(), Level.INFO);
+        quietJulBootstrapNoise();
+    }
+
+    private static void quietJulBootstrapNoise() {
+        java.util.logging.Logger julRoot = java.util.logging.LogManager.getLogManager().getLogger("");
+        if (julRoot == null) {
+            return;
+        }
+        julRoot.setLevel(java.util.logging.Level.WARNING);
+        // Handlers filter independently of the logger, so raise them too — otherwise a handler
+        // left at a finer level would still emit anything a child logger chose to publish.
+        for (java.util.logging.Handler handler : julRoot.getHandlers()) {
+            handler.setLevel(java.util.logging.Level.WARNING);
+        }
     }
 
     private static void loadOscarProperties() {
@@ -168,7 +200,11 @@ public class ImportDemographicDataCli {
         }
         // Otherwise, look for oscar.properties on the classpath (e.g. from the config dir the
         // user added to -cp) and merge it into the singleton so Spring gets the right DB URL.
-        URL url = ImportDemographicDataCli.class.getResource("/oscar-0-SNAPSHOT.properties");
+        URL url = findProperties("oscar.properties");
+        if (url == null) {
+            // Keep compatibility with the build-produced name used by older launch scripts.
+            url = findProperties("oscar-0-SNAPSHOT.properties");
+        }
         if (url == null) {
             logger.warn("oscar.properties not found on classpath and -Doscar_override_properties not set. "
                     + "Spring will use dev defaults (oscar_mcmaster.properties) — DB connection will likely fail. "
@@ -181,6 +217,10 @@ public class ImportDemographicDataCli {
         } catch (IOException e) {
             logger.warn("Could not load {}", url, e);
         }
+    }
+
+    private static URL findProperties(String fileName) {
+        return ImportDemographicDataCli.class.getResource("/" + fileName);
     }
 
     // Help text stays on stdout: it is the program's interface, not a log record, and the
