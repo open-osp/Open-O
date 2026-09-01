@@ -52,6 +52,7 @@ import javax.xml.validation.SchemaFactory;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.logging.log4j.Logger;
@@ -2943,10 +2944,12 @@ public class ImportDemographicDataAction4 extends Action {
                 for (int i=0; i<cNotes.length; i++) {
                     //encounter note
                     String encounter = cNotes[i].getMyClinicalNotesContent();
-                    if (StringUtils.empty(encounter)) {
+	                encounter = cleanEncounterText(encounter);
+
+					if (StringUtils.empty(encounter)) {
+						// when a note is empty, skip it
                     	err_data.add("Empty clinical note ("+(i+1)+")");
-                    	//continue;
-                    	encounter = org.apache.commons.lang.StringUtils.trimToEmpty(encounter);
+                    	continue;
                     }
                     
 
@@ -3038,9 +3041,11 @@ public class ImportDemographicDataAction4 extends Action {
                     		headNote.setUpdate_date(createDate);
                     		headNote.setObservation_date(observeDate);
                     		headNote.setNote("imported.CDS.5"+uuid);
+							headNote.setArchived(Boolean.TRUE);
                     		caseManagementManager.saveNoteSimple(headNote);
                         }
                     }
+
                     if (p_total==0) {
                         err_note.add("Clinical notes have no author; assigned to \"doctor oscardoc\" ("+(i+1)+")");
                     	caseManagementManager.saveNoteSimple(cmNote);
@@ -3093,6 +3098,29 @@ public class ImportDemographicDataAction4 extends Action {
     	}
     	return contentType;
     }
+
+    /**
+     * Converts the XHTML commonly embedded in imported clinical notes to plain text.
+     * Block boundaries are retained as line breaks before the remaining markup is removed.
+     */
+    private String cleanEncounterText(String encounter) {
+        String text = org.apache.commons.lang.StringUtils.trimToEmpty(encounter);
+        if (text.isEmpty()) {
+            return text;
+        }
+
+        text = text.replaceAll("(?i)<\\s*br\\b[^>]*>", "\n")
+                .replaceAll("(?i)</\\s*(div|p|li|tr|h[1-6])\\s*>", "\n")
+                .replaceAll("(?s)<[^>]*>", "");
+
+        // Decode entities after removing markup so the stored note is readable plain text.
+        return StringEscapeUtils.unescapeHtml(text)
+                .replace("\r\n", "\n")
+                .replace('\r', '\n')
+                .replaceAll("[ \\t]*\\n[ \\t]*", "\n")
+                .trim();
+    }
+
 	private File makeImportLog(ArrayList<String[]> demo, String dir) throws IOException {
 		String[][] keyword = new String[2][16];
 		keyword[0][0] = PATIENTID;
