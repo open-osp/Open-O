@@ -2001,23 +2001,44 @@ public class ImportDemographicDataAction4 extends Action {
                 for (int i=0; i<medArray.length; i++) {
                 	String duration, quantity, dosage, special;
                     Drug drug = new Drug();
-                    drug.setCreateDate(new Date());
+
                     drug.setWrittenDate(dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
                     String writtenDateFormat = dateFPGetPartial(medArray[i].getPrescriptionWrittenDate());
 
                     drug.setRxDate(dateFPtoDate(medArray[i].getStartDate(), timeShiftInDays));
 
-                    if (medArray[i].getStartDate()==null) drug.setRxDate(drug.getWrittenDate());
+	                drug.setCreateDate(drug.getWrittenDate());
+
+                    if (drug.getRxDate()==null) {
+						drug.setRxDate(drug.getWrittenDate());
+                    }
+
+	                drug.setDuration("");
+	                drug.setDurUnit("");
 
                     duration = medArray[i].getDuration();
                     if (StringUtils.filled(duration)) {
                     	duration = duration.trim();
-                    	if (duration.endsWith("days")) duration = Util.leadingNum(duration);
+
+						drug.setDurUnit("D");
+
+	                    if (duration.endsWith("months")) {
+		                    drug.setDurUnit("M");
+	                    }
+	                    if (duration.endsWith("weeks")) {
+		                    drug.setDurUnit("W");
+	                    }
+	                    if (duration.endsWith("years")) {
+		                    drug.setDurUnit("Y");
+	                    }
+	                    duration = Util.leadingNum(duration);
                     	if (NumberUtils.isDigits(duration)) {
                     		drug.setDuration(duration);
-    	                    drug.setDurUnit("D");
                     	}
-                    	else err_data.add("Error! Invalid Duration ["+medArray[i].getDuration()+"] for Medications");
+                    	else {
+							err_data.add("Error! Invalid Duration ["+medArray[i].getDuration()+"] for Medications");
+							duration = "";
+	                    }
                     }
 
                     quantity = medArray[i].getQuantity();
@@ -2031,8 +2052,20 @@ public class ImportDemographicDataAction4 extends Action {
 
                     Calendar endDate = Calendar.getInstance();
                     endDate.setTime(drug.getRxDate());
-                    if (StringUtils.filled(duration))
-                    	endDate.add(Calendar.DAY_OF_YEAR, Integer.valueOf(duration)+timeShiftInDays);
+                    if (StringUtils.filled(duration)) {
+						switch(drug.getDurUnit()) {
+							case "W" : endDate.add(Calendar.DAY_OF_YEAR, (Integer.parseInt(duration) * 7 + timeShiftInDays));
+							break;
+							case "M" : endDate.add(Calendar.MONTH, Integer.parseInt(duration));
+								endDate.add(Calendar.DAY_OF_YEAR, timeShiftInDays);
+							break;
+							case "Y" : endDate.add(Calendar.YEAR, Integer.parseInt(duration));
+								endDate.add(Calendar.DAY_OF_YEAR, timeShiftInDays);
+								break;
+							default : endDate.add(Calendar.DAY_OF_YEAR, (Integer.parseInt(duration) + timeShiftInDays));
+							break;
+						}
+                    }
                     drug.setEndDate(endDate.getTime());
 
                     String freq = StringUtils.noNull(medArray[i].getFrequency());
@@ -2054,13 +2087,24 @@ public class ImportDemographicDataAction4 extends Action {
                     drug.setPastMed(getYN(medArray[i].getPastMedications()).equals("Yes"));
                     drug.setPatientCompliance(getBoolean(medArray[i].getPatientCompliance()));
                     
-                    if (NumberUtils.isDigits(medArray[i].getNumberOfRefills())) drug.setRepeat(Integer.valueOf(medArray[i].getNumberOfRefills()));
+                    if (NumberUtils.isDigits(medArray[i].getNumberOfRefills())) {
+						drug.setRepeat(Integer.valueOf(medArray[i].getNumberOfRefills()));
+                    }
                     duration = medArray[i].getRefillDuration();
                     if (StringUtils.filled(duration)) {
+
                     	duration = duration.trim();
-                    	if (duration.endsWith("days")) duration = Util.leadingNum(duration);
-                    	if (NumberUtils.isDigits(duration)) drug.setRefillDuration(Integer.valueOf(duration));
-                    	else err_data.add("Error! Invalid Refill Duration ["+medArray[i].getRefillDuration()+"] for Medications");
+
+						// we can only accommodate days
+                    	if (duration.endsWith("days")) {
+							duration = Util.leadingNum(duration);
+	                    }
+                    	if (NumberUtils.isDigits(duration)) {
+							drug.setRefillDuration(Integer.parseInt(duration));
+	                    }
+                    	else {
+							err_data.add("Error! Invalid Refill Duration ["+medArray[i].getRefillDuration()+"] for Medications");
+	                    }
                     }
 
                     quantity = medArray[i].getRefillQuantity();
@@ -2175,7 +2219,7 @@ public class ImportDemographicDataAction4 extends Action {
                     special = addSpaced(special, drug.getFreqCode());
 
                     if (drug.getDuration()!=null) {
-                    	special = addSpaced(special, "for "+drug.getDuration()+" days");
+                    	special = addSpaced(special, "for " + drug.getDuration() + " " + drug.getDurUnit());
                     }
                     drug.setSpecial(special);   
                     
@@ -2201,24 +2245,7 @@ public class ImportDemographicDataAction4 extends Action {
                     }
                     
                     drug.setPosition(0);
-               
-                    //use drugref to add more info to the record
-//                    if(!StringUtils.isNullOrEmpty(drug.getRegionalIdentifier())) {
-//                    	try {
-//	                    	RxDrugData rxDrugData = new RxDrugData();
-//	                    	DrugMonograph dm = rxDrugData.getDrugByDIN(drug.getRegionalIdentifier());
-//	                    	if(dm != null) {
-//	                    		drug.setAtc(dm.getAtc());
-//	                    		if(dm.drugCode != null) {
-//	                    			drug.setGcnSeqNo(Integer.parseInt(dm.drugCode));
-//	                    		}
-//	                    	}
-//                    	}catch(Exception e) {
-//                    		logger.warn("Error looking up DIN");
-//                    	}
-//                    }
-                    
-                    
+
                     drugDao.persist(drug);
                              
                     if (!StringUtils.isNullOrEmpty( dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()))) partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE, dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()));
@@ -2230,7 +2257,7 @@ public class ImportDemographicDataAction4 extends Action {
                     if (medArray[i].getProblemCode()!=null) {
                     	DrugReason drugReason = new DrugReason();
                     	drugReason.setCodingSystem("icd9"); //a guess here
-                        drugReason.setCode(medArray[i].getProblemCode());
+                        drugReason.setCode(medArray[i].getProblemCode().replaceAll("\\.", ""));
                         drugReason.setDemographicNo(Integer.valueOf(demographicNo));
                         drugReason.setDrugId(drug.getId());
                         drugReason.setProviderNo(drug.getProviderNo());
