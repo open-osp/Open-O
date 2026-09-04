@@ -4381,21 +4381,6 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 	
 	/*
-	 * Get a new array of only the results which have a matching accessing number
-	 */
-	private LaboratoryResults[] filterByAccession(LaboratoryResults[] labResultArr, String accession) {
-		List<LaboratoryResults> filteredList = new ArrayList<LaboratoryResults>();
-		
-		for(LaboratoryResults result: labResultArr) {
-			if(accession.equals(result.getAccessionNumber())) {
-				filteredList.add(result);
-			}
-		}
-		return filteredList.toArray(new LaboratoryResults[filteredList.size()]);
-	}
-	
-	
-	/*
     String[] _accession = new String[labResultArr.length]; //accessionNumber
     String[] _coll_date = new String[labResultArr.length]; //collectionDateTime
     String[] _title	    = new String[labResultArr.length]; //same as _testName
@@ -4424,27 +4409,25 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
     private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
-		Set<String> accessionsDone = new HashSet<>();
+		Map<String, List<LaboratoryResults>> groupedResults = new LinkedHashMap<>();
+		for (LaboratoryResults result : labResultArr) {
+			String accession = result.getAccessionNumber();
+			if (StringUtils.filled(accession)) {
+				groupedResults.computeIfAbsent(accession, key -> new ArrayList<>()).add(result);
+			} else {
+				groupedResults.put(UUID.randomUUID().toString(), Collections.singletonList(result));
+			}
+		}
+
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 
-		for(LaboratoryResults labResult: labResultArr) {
-			if(StringUtils.filled(labResult.getAccessionNumber()) && accessionsDone.contains(labResult.getAccessionNumber())) {
-				continue;
-			}
+		for (List<LaboratoryResults> reportResults : groupedResults.values()) {
+			LaboratoryResults labResult = reportResults.get(0);
 			int labNo = 0;
 			try {
-				//find others with same accession number
-				LaboratoryResults[] reportResults;
-				if (StringUtils.filled(labResult.getAccessionNumber())) {
-                    reportResults = filterByAccession(labResultArr,labResult.getAccessionNumber());
-                    accessionsDone.add(labResult.getAccessionNumber());
-                } else {
-				    reportResults = new LaboratoryResults[] {labResult};
-                }
-
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
-                String observationMsg = hl7CreateFile.generateHL7(Arrays.asList(reportResults));
+                String observationMsg = hl7CreateFile.generateHL7(reportResults);
 
 		        try (InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))){
 		            String type = hl7CreateFile.LAB_TYPE;
@@ -4513,8 +4496,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 					// lab values into measurements
                     List<MeasurementsExt> measurementsExtsToSave = new ArrayList<>();
-			        for(int x=0;x<reportResults.length;x++) {
-	                	LaboratoryResults result = reportResults[x];
+			        for (LaboratoryResults result : reportResults) {
 	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
                         HashMap<String, MeasurementsExt> measurementsExtMap;
                         
