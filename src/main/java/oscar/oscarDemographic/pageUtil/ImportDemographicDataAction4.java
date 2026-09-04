@@ -4428,15 +4428,14 @@ public class ImportDemographicDataAction4 extends Action {
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
                 String observationMsg = hl7CreateFile.generateHL7(reportResults);
+		        byte[] hl7Bytes = observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8);
 
-		        try (InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))){
+		        try (InputStream saveStream = new ByteArrayInputStream(hl7Bytes);
+		             InputStream uploadStream = new ByteArrayInputStream(hl7Bytes)) {
 		            String type = hl7CreateFile.LAB_TYPE;
-		            String savedHL7Path = Utilities.saveFile(stream, filename);
+		            String savedHL7Path = Utilities.saveFile(saveStream, filename);
 		            Path file = Paths.get(savedHL7Path);
-		            int checkFileUploadedSuccessfully;
-		            try (InputStream fileInputStream = Files.newInputStream(file)) {
-		                checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), fileInputStream, admProviderNo);
-		            }
+		            int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), uploadStream, admProviderNo);
 		            
 		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
                         logger.debug("savedHL7Path" + savedHL7Path);
