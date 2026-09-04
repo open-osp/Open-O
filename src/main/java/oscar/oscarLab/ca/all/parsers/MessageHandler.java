@@ -345,7 +345,7 @@ public interface MessageHandler {
      */
     public String audit();
 
-    public String getFillerOrderNumber();
+    public String getFillerOrderNumber() throws HL7Exception;
 
     public String getEncounterId();
 

@@ -4300,62 +4300,61 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
     private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
-		List<String> accessionsDone = new ArrayList<String>();
-		
+		Set<String> accessionsDone = new HashSet<>();
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
+
 		for(LaboratoryResults labResult: labResultArr) {
 			if(StringUtils.filled(labResult.getAccessionNumber()) && accessionsDone.contains(labResult.getAccessionNumber())) {
 				continue;
 			}
-			
+			int labNo = 0;
 			try {
 				//find others with same accession number
-				LaboratoryResults[] reportResults = null;
+				LaboratoryResults[] reportResults;
 				if (StringUtils.filled(labResult.getAccessionNumber())) {
                     reportResults = filterByAccession(labResultArr,labResult.getAccessionNumber());
                     accessionsDone.add(labResult.getAccessionNumber());
                 } else {
 				    reportResults = new LaboratoryResults[] {labResult};
                 }
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
+
 		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
                 String observationMsg = hl7CreateFile.generateHL7(Arrays.asList(reportResults));
 
-		        Integer labNo = null;
 		        try (InputStream stream = new ByteArrayInputStream(observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8))){
 		            String type = hl7CreateFile.LAB_TYPE;
-		            String filePath = Utilities.saveFile(stream, filename);
-		            Path file = Paths.get(filePath);
-			            int checkFileUploadedSuccessfully;
-			            try (InputStream fileInputStream = Files.newInputStream(file)) {
-			                checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), fileInputStream, admProviderNo);
-			            }
+		            String savedHL7Path = Utilities.saveFile(stream, filename);
+		            Path file = Paths.get(savedHL7Path);
+		            int checkFileUploadedSuccessfully;
+		            try (InputStream fileInputStream = Files.newInputStream(file)) {
+		                checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), fileInputStream, admProviderNo);
+		            }
 		            
 		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        logger.debug("filePath" + filePath);
+                        logger.debug("savedHL7Path" + savedHL7Path);
                         logger.debug("Type :" + type);
                         MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
 
 						logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
 
-                        if (msgHandler instanceof CMLHandler && ((CMLHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                        if (msgHandler instanceof CMLHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((CMLHandler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
-                        } else if (msgHandler instanceof GDMLHandler && ((GDMLHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                        } else if (msgHandler instanceof GDMLHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((GDMLHandler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
-                        } else if (msgHandler instanceof MDSHandler && ((MDSHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                        } else if (msgHandler instanceof MDSHandler &&  msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((MDSHandler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
-                        } else if (msgHandler instanceof ExcellerisOntarioHandler && ((ExcellerisOntarioHandler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                        } else if (msgHandler instanceof ExcellerisOntarioHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((ExcellerisOntarioHandler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
-                        } else if (msgHandler instanceof PATHL7Handler && ((PATHL7Handler) msgHandler).parse(loggedInInfo, getClass().getSimpleName(), filePath, checkFileUploadedSuccessfully, "") != null) {
+                        } else if (msgHandler instanceof PATHL7Handler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
                             labNo = ((PATHL7Handler) msgHandler).getLastLabNo();
                             logger.info("successfully added lab");
                             addOneEntry(LABS);
@@ -4368,47 +4367,32 @@ public class ImportDemographicDataAction4 extends Action {
                     importErrors.add("Error adding lab");
 		        }
 
-		        if(labNo != null) {
-                    Hl7textResultsData.populateMeasurementsTable(labNo.toString(), demographicNo);
+		        if(labNo > 0) {
 
-                    patientLabRoutingDao.persist(new PatientLabRouting(labNo, "HL7", Integer.parseInt(demographicNo)));
+					// add results to measurements table.
+                    Hl7textResultsData.populateMeasurementsTable(labNo + "", demographicNo);
+
+			        // associate lab in patient lab routing. should have been done when lab was parsed.
+//                    patientLabRoutingDao.persist(new PatientLabRouting(labNo, "HL7", Integer.parseInt(demographicNo)));
 		            
-		        	DateTimeFullOrPartial dt = labResult.getLabRequisitionDateTime();
-		        	if(dt == null) {
-		        		dt = labResult.getCollectionDateTime();
+		        	DateTimeFullOrPartial requisitionDateTime = labResult.getLabRequisitionDateTime();
+		        	if(requisitionDateTime == null) {
+		        		requisitionDateTime = labResult.getCollectionDateTime();
 		        	}
 		        	
-		        	LabRequestReportLink.save(null,null,dateFPtoString(dt,0),"labPatientPhysicianInfo",labNo.longValue());
+		        	LabRequestReportLink.save(null,null,dateFPtoString(requisitionDateTime,0),"labPatientPhysicianInfo", (long) labNo);
 
-                    List<ProviderLabRoutingModel> providerLabRoutingQueue = new ArrayList<>();
-                    
-                    if (StringUtils.filled(demographic.getProviderNo())) {
-                        providerLabRoutingQueue.add(new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", "", new Date(), "HL7"));
-                    }
-                    
-			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
-			        	Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
-                        
-			        	String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
-			        	
-                        String reviewerComment = "";
-			        	if (StringUtils.filled(labResult.getPhysiciansNotes())) {
-			        	    reviewerComment = labResult.getPhysiciansNotes();
-                        }
-                        
-			        	String status = StringUtils.filled(reviewer) ? "A" : "N";
-	                    reviewer = status.equals("A") ? reviewer : "0";
-	                 
-                        providerLabRoutingQueue.add(new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment, reviewDate, "HL7"));
+			        StringBuilder reviewerComment = new StringBuilder("");
+			        if (StringUtils.filled(labResult.getPhysiciansNotes())) {
+				        reviewerComment = new StringBuilder(labResult.getPhysiciansNotes());
 			        }
 
-                    providerLabRoutingDao.batchPersist(providerLabRoutingQueue);
-
+					// lab values into measurements
                     List<MeasurementsExt> measurementsExtsToSave = new ArrayList<>();
 			        for(int x=0;x<reportResults.length;x++) {
 	                	LaboratoryResults result = reportResults[x];
 	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
-                        HashMap<String, MeasurementsExt> measurementsExtMap = new HashMap<String, MeasurementsExt>();
+                        HashMap<String, MeasurementsExt> measurementsExtMap;
                         
                         if (measId != null) {
                            measurementsExtMap = measurementsExtDao.getMeasurementsExtMapByMeasurementId(measId.intValue());
@@ -4417,19 +4401,20 @@ public class ImportDemographicDataAction4 extends Action {
                                 addMeasurementsExt(measId, "comments", result.getNotesFromLab(), measurementsExtsToSave);
                             }
 
+							/*
+							 * PhysiciansNotes are notes that are added to the lab
+							 * when the physician reviews the lab results.
+							 * Some notes are added to every single OBX line in an unstructured lab
+							 * result.
+							 */
                             String annotation = labResult.getPhysiciansNotes();
-                            if (StringUtils.filled(annotation)) {
-                                if (measurementsExtMap.get("other_id") == null) {
-                                    addMeasurementsExt(measId, "other_id", "0-0", measurementsExtsToSave);
-                                }
-                                CaseManagementNote cmNote = prepareCMNote("2",null);
-                                cmNote.setNote(annotation);
-                                saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
+                            if (StringUtils.filled(annotation) && ! reviewerComment.toString().contains(annotation)) {
+								reviewerComment.append(" ").append(annotation);
                             }
 
                             String olis_status = result.getTestResultStatus();
                             if (StringUtils.filled(olis_status)) {
-                                if(measId != null && measurementsExtMap.get("olis_status") == null) {
+                                if(measurementsExtMap.get("olis_status") == null) {
                                     addMeasurementsExt(measId, "olis_status", olis_status, measurementsExtsToSave);
                                 }
                             }
@@ -4470,19 +4455,68 @@ public class ImportDemographicDataAction4 extends Action {
 	                }
 			        
 			        measurementsExtDao.batchPersist(measurementsExtsToSave, 50);
-	                
-	                String labInfo = getLabDline(labResult, 0);
-	                if (StringUtils.filled(labInfo)) {
-	                    String dump = Util.addLine("imported.cms5.2017.06", labInfo);
-	                    CaseManagementNote cmNote = prepareCMNote("2",null);
-	                    cmNote.setNote(dump);
-	                    saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, labNo.longValue(), "0-0");
-	                }
+
+			        // enter physician review details into provider lab routing.
+			        Map<String, ProviderLabRoutingModel> providerLabRoutingQueue = new HashMap<>();
+
+			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
+				        Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
+
+				        String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
+
+				        String status = StringUtils.filled(reviewer) ? "A" : "N";
+				        reviewer = status.equals("A") ? reviewer : "0";
+
+				        /*
+				         * if the reviewer cannot be identified, use the MRP from the demographic
+				         * otherwise it's an unassigned - new - lab. Provider: 0, Status: new
+				         */
+				        if("0".equals(reviewer) && StringUtils.filled(demographic.getProviderNo())) {
+					        reviewer = demographic.getProviderNo();
+				        }
+
+				        providerLabRoutingQueue.put(reviewer, new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment.toString(), reviewDate, "HL7"));
+			        }
+
+			        // if there are no confirmed reviewers on this lab, use the MRP from the demographic
+			        if (providerLabRoutingQueue.isEmpty() && StringUtils.filled(demographic.getProviderNo())) {
+				        providerLabRoutingQueue.put(demographic.getProviderNo(), new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
+			        }
+
+			        // otherwise it's an unassigned - new - lab. Provider: 0, Status: new
+			        else if( providerLabRoutingQueue.isEmpty() ) {
+				        providerLabRoutingQueue.put("0", new ProviderLabRoutingModel("0", labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
+			        }
+
+			        providerLabRoutingDao.batchUpdate(new ArrayList<>(providerLabRoutingQueue.values()), "lab_no", 50);
+
 		        }
                   
 			} catch(Exception e) {
 				logger.error("error", e);
                 importErrors.add("Error processing lab data");
+			} finally {
+				/*
+				 * Dump a summary of the lab results into the encounternote table as
+				 * archived. Just in case the lab does not render properly.
+				 */
+				String labInfo = getLabDline(labResult, 0);
+				labInfo = cleanEncounterText(labInfo);
+				if (StringUtils.filled(labInfo)) {
+					String dump = Util.addHeading("imported.CDS.5", "Lab", labResult.getTestName());
+					dump = Util.addLine(dump, labInfo);
+					CaseManagementNote cmNote = prepareCMNote("2",null);
+					DateTimeFullOrPartial dateTime = labResult.getCollectionDateTime();
+					if(dateTime == null) {
+						dateTime = labResult.getLabRequisitionDateTime();
+					}
+					if(dateTime != null) {
+						cmNote.setObservation_date(dateTimeFPtoDate(dateTime, 0));
+					}
+					cmNote.setArchived(true);
+					cmNote.setNote(dump);
+					saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, (long) labNo);
+				}
 			}
 		}
 	}

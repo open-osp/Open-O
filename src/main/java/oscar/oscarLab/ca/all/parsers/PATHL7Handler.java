@@ -204,7 +204,7 @@ public class PATHL7Handler implements MessageHandler {
     public String getAccessionNum() {
         try {
 
-            String str = msg.getRESPONSE().getORDER_OBSERVATION(0).getORC().getFillerOrderNumber().getEntityIdentifier().getValue();
+            String str = getFillerOrderNumber();
 
             String accessionNum = getString(str);
 
@@ -214,12 +214,10 @@ public class PATHL7Handler implements MessageHandler {
             } else if (nums.length == 5) {
                 return nums[0] + "-" + nums[1] + "-" + nums[2];
             } else {
-
-
                 if (nums.length > 1)
                     return nums[0] + "-" + nums[1];
                 else
-                    return "";
+                    return accessionNum;
             }
         } catch (Exception e) {
             logger.error("Could not return accession number", e);
@@ -928,9 +926,10 @@ public class PATHL7Handler implements MessageHandler {
         }
     }
 
-    public String getFillerOrderNumber(){
-		return "";
-	}
+    public String getFillerOrderNumber() throws HL7Exception {
+		return  msg.getRESPONSE().getORDER_OBSERVATION(0).getORC().getFillerOrderNumber().getEntityIdentifier().getValue();
+    }
+
     public String getEncounterId(){
     	return "";
     }

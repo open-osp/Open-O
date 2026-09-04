@@ -9,9 +9,7 @@ import oscar.util.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class HL7CreateFile {
     private Demographic demographic;
@@ -23,7 +21,9 @@ public class HL7CreateFile {
     private static final SimpleDateFormat xmlTimezoneOffSetDateTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
     private static final SimpleDateFormat fullDateTime = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final SimpleDateFormat fullDate = new SimpleDateFormat("yyyyMMdd");
-    
+	private static final List<String> aliasForPathL7 = new ArrayList<>(
+			Arrays.asList("TRANSFHA", "FHAM", "LIFELABS", "EXCELLERIS", "BCB", "VPP-BCC", "SG", "CDC", "VPP-PHC", "VCH", "PATHL7", "VPP-CDC")
+	);
 
     public HL7CreateFile(Demographic demographic){
         this.demographic = demographic;
@@ -44,12 +44,13 @@ public class HL7CreateFile {
                     labType = StringUtils.noNull(firstLab.getLaboratoryName());
                 }
             }
-            if (labType.equalsIgnoreCase("LifeLabs") || labType.equalsIgnoreCase("MDS")) {
+
+	        if (aliasForPathL7.contains(labType.toUpperCase())) {
+		        LAB_TYPE = "PATHL7";
+            } else if(labType.equalsIgnoreCase("MDS")) {
                 LAB_TYPE = "MDS";
             } else if (labType.equalsIgnoreCase("Gamma") || labType.equalsIgnoreCase("GDML")) {
                 LAB_TYPE = "GDML";
-            } else if (labType.equalsIgnoreCase("PATHL7")) {
-                LAB_TYPE = "PATHL7";
             } else if (labType.equalsIgnoreCase("ExcellerisON")) {
                 LAB_TYPE = "ExcellerisON";
             }
@@ -148,8 +149,16 @@ public class HL7CreateFile {
         if (!LAB_TYPE.equals("GDML")) {
             orderObservation = "1";
         }
-        
-        return "OBR|" + orderObservation + "|101||" + lab.getLabTestCode() + "^" + lab.getTestNameReportedByLab() + "^0000^Imported Test Results|R|" + requisitionDate + "|" + collectionDate + "|||||||" + requisitionDate + "||||||||" + collectionDate + "||LAB|F|||";
+
+		String labTestCode = lab.getLabTestCode();
+		String testNameReportedByLab = lab.getTestNameReportedByLab();
+		if(! StringUtils.filled(labTestCode)) {
+			labTestCode = "000000";
+		}
+        if(StringUtils.filled(testNameReportedByLab)) {
+	        testNameReportedByLab = lab.getTestName();
+        }
+        return "OBR|" + orderObservation + "|101||" + labTestCode + "^" + testNameReportedByLab + "|R|" + requisitionDate + "|" + collectionDate + "|||||||" + requisitionDate + "||||||||" + collectionDate + "||LAB|F|||";
     }
     
     private String generateOBX(List<LaboratoryResultsDocument.LaboratoryResults> labs) {
@@ -212,7 +221,7 @@ public class HL7CreateFile {
             testResultStatus = "F";
         }
         
-        return "ORC|RE|" + lab.getAccessionNumber() + "|||" +testResultStatus+ "||||||||||" + collectionDate;
+        return "ORC|RE|" + lab.getAccessionNumber() + "|" + lab.getAccessionNumber() + "||" +testResultStatus+ "||||||||||" + collectionDate;
     }
 
     private String generatePID(Demographic demographic, LaboratoryResultsDocument.LaboratoryResults lab) {
