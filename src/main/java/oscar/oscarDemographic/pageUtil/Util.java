@@ -86,8 +86,8 @@ public class Util {
 	static public String addHeading(String baseStr, String label, String addStr) {
 		String newStr = StringUtils.noNull(baseStr);
 		newStr += " .: ";
-		newStr += StringUtils.filled(addStr) ? StringUtils.noNull(label).trim() + addStr : "";
-		return "[" + newStr + "]\n";
+		newStr += StringUtils.filled(addStr) ? StringUtils.noNull(label).trim() + ": " + addStr : "";
+		return "[" + newStr + "]";
 	}
 
     static public String addSummary(String label, String item) {
