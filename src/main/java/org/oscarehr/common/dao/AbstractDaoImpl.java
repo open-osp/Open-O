@@ -26,6 +26,9 @@
 
 package org.oscarehr.common.dao;
 
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +41,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.oscarehr.common.model.AbstractModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,6 +67,187 @@ public abstract class AbstractDaoImpl<T extends AbstractModel<?>> implements Abs
 	@Override
 	public void merge(AbstractModel<?> o) {
 		entityManager.merge(o);
+	}
+
+	@Override
+	public void batchMerge(List<T> oList) {
+		batchMerge(oList, 25);
+	}
+
+	@Override
+	public void batchMerge(List<T> oList, int batchSize) {
+		EntityManager batchEntityManager = null;
+		EntityTransaction transaction = null;
+		try {
+			batchEntityManager = entityManagerFactory.createEntityManager();
+			transaction = batchEntityManager.getTransaction();
+			transaction.begin();
+			int i = 0;
+			for (T entity : oList) {
+				batchEntityManager.merge(entity);
+				i++;
+				if (i > 0 && i % batchSize == 0) {
+					batchEntityManager.flush();
+					batchEntityManager.clear();
+					transaction.commit();
+					transaction.begin();
+				}
+			}
+			transaction.commit();
+		} catch (RuntimeException e) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw e;
+		} finally {
+			if (batchEntityManager != null) {
+				batchEntityManager.close();
+			}
+		}
+	}
+
+	@Override
+	public void batchUpdate(List<T> oList, String columnName) {
+		batchUpdate(oList, columnName, 25);
+	}
+
+	@Override
+	public void batchUpdate(List<T> oList, String columnName, int batchSize) {
+		if (oList == null || oList.isEmpty()) {
+			return;
+		}
+		int maxRetries = 3;
+		int attempt = 0;
+		while (attempt < maxRetries) {
+			attempt++;
+			try {
+				executeBatchUpdate(oList, columnName, batchSize);
+				break;
+			} catch (RuntimeException e) {
+				if (attempt >= maxRetries) {
+					throw e;
+				}
+				try {
+					Thread.sleep(50L * attempt);
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+					throw new RuntimeException("Batch update interrupted during retry", ie);
+				}
+			}
+		}
+	}
+
+	private void executeBatchUpdate(List<T> oList, String columnName, int batchSize) {
+		EntityManager batchEntityManager = null;
+		EntityTransaction transaction = null;
+		try {
+			batchEntityManager = entityManagerFactory.createEntityManager();
+			transaction = batchEntityManager.getTransaction();
+			transaction.begin();
+			int i = 0;
+			for (T incoming : oList) {
+				Object val = getPropertyValue(incoming, columnName);
+				String propName = getEntityPropertyName(incoming.getClass(), columnName);
+				Query query;
+				if (val != null) {
+					query = batchEntityManager.createQuery("FROM " + getModelClassName() + " WHERE " + propName + " = :param");
+					query.setParameter("param", val);
+				} else {
+					query = batchEntityManager.createQuery("FROM " + getModelClassName() + " WHERE " + propName + " IS NULL");
+				}
+				@SuppressWarnings("unchecked")
+				List<T> existingList = query.getResultList();
+				for (T existing : existingList) {
+					BeanUtils.copyProperties(incoming, existing, new String[] { "id" });
+					batchEntityManager.merge(existing);
+					i++;
+					if (i > 0 && i % batchSize == 0) {
+						batchEntityManager.flush();
+						batchEntityManager.clear();
+						transaction.commit();
+						transaction.begin();
+					}
+				}
+			}
+			if (transaction.isActive()) {
+				transaction.commit();
+			}
+		} catch (RuntimeException e) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw e;
+		} finally {
+			if (batchEntityManager != null && batchEntityManager.isOpen()) {
+				batchEntityManager.close();
+			}
+		}
+	}
+
+	private PropertyDescriptor findPropertyDescriptor(Class<?> clazz, String propertyName) {
+		PropertyDescriptor pd = BeanUtils.getPropertyDescriptor(clazz, propertyName);
+		if (pd != null && pd.getReadMethod() != null) {
+			return pd;
+		}
+		PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(clazz);
+		for (PropertyDescriptor descriptor : pds) {
+			if (descriptor.getReadMethod() != null) {
+				if (descriptor.getName().equalsIgnoreCase(propertyName)
+						|| descriptor.getName().equalsIgnoreCase(propertyName.replace("_", ""))) {
+					return descriptor;
+				}
+			}
+		}
+		return null;
+	}
+
+	private Object getPropertyValue(T model, String columnName) {
+		PropertyDescriptor pd = findPropertyDescriptor(model.getClass(), columnName);
+		if (pd != null && pd.getReadMethod() != null) {
+			try {
+				return pd.getReadMethod().invoke(model);
+			} catch (Exception e) {
+				throw new RuntimeException("Error reading property '" + pd.getName() + "' from " + model.getClass().getName(), e);
+			}
+		}
+		Field field = findField(model.getClass(), columnName);
+		if (field != null) {
+			try {
+				field.setAccessible(true);
+				return field.get(model);
+			} catch (Exception e) {
+				throw new RuntimeException("Error reading field '" + field.getName() + "' from " + model.getClass().getName(), e);
+			}
+		}
+		throw new IllegalArgumentException("Property or field '" + columnName + "' not found on " + model.getClass().getName());
+	}
+
+	private String getEntityPropertyName(Class<?> clazz, String columnName) {
+		PropertyDescriptor pd = findPropertyDescriptor(clazz, columnName);
+		if (pd != null) {
+			return pd.getName();
+		}
+		Field field = findField(clazz, columnName);
+		if (field != null) {
+			return field.getName();
+		}
+		return columnName;
+	}
+
+	private Field findField(Class<?> clazz, String fieldName) {
+		Class<?> current = clazz;
+		while (current != null && current != Object.class) {
+			Field[] fields = current.getDeclaredFields();
+			for (Field f : fields) {
+				if (f.getName().equals(fieldName)
+						|| f.getName().equalsIgnoreCase(fieldName)
+						|| f.getName().equalsIgnoreCase(fieldName.replace("_", ""))) {
+					return f;
+				}
+			}
+			current = current.getSuperclass();
+		}
+		return null;
 	}
 
 	/**

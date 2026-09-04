@@ -71,5 +71,30 @@ public class ProviderLabRoutingDaoTest extends DaoTestFixtures {
 	public void testFindByLabNoTypeAndStatus() {
 		assertNotNull(dao.findByLabNoTypeAndStatus(100, "BCP", "STS"));
 	}
+
+	@Test
+	public void testBatchUpdate() {
+		ProviderLabRoutingModel r1 = new ProviderLabRoutingModel();
+		r1.setLabNo(200);
+		r1.setLabType("HL7");
+		r1.setProviderNo("9999");
+		r1.setStatus("N");
+		r1.setComment("Initial");
+		r1.setTimestamp(new java.util.Date());
+		dao.persist(r1);
+
+		ProviderLabRoutingModel updateModel = new ProviderLabRoutingModel();
+		updateModel.setLabNo(200);
+		updateModel.setStatus("A");
+		updateModel.setComment("Updated via batch");
+		updateModel.setTimestamp(new java.util.Date());
+
+		dao.batchUpdate(java.util.Collections.singletonList(updateModel), "lab_no", 25);
+
+		ProviderLabRoutingModel updated = dao.findByLabNoAndLabType(200, "HL7");
+		org.junit.Assert.assertNotNull(updated);
+		org.junit.Assert.assertEquals("A", updated.getStatus());
+		org.junit.Assert.assertEquals("Updated via batch", updated.getComment());
+	}
 	
 }

@@ -35,6 +35,14 @@ public interface AbstractDao<T extends AbstractModel<?>> {
 
     void merge(AbstractModel<?> o);
 
+    void batchMerge(List<T> oList);
+
+    void batchMerge(List<T> oList, int batchSize);
+
+    void batchUpdate(List<T> oList, String columnName);
+
+    void batchUpdate(List<T> oList, String columnName, int batchSize);
+
     void persist(AbstractModel<?> o);
 
     void batchPersist(List<T> oList);
