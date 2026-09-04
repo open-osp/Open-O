@@ -451,14 +451,30 @@ public class DemographicData {
 	}
 
 	public void addDemographiccust(String demoNo, String content) {
-		DemographicCust demographicCust = new DemographicCust();
-		demographicCust.setId(Integer.parseInt(demoNo));
-		demographicCust.setAlert("");
-		demographicCust.setMidwife("");
-		demographicCust.setNurse("");
-		demographicCust.setResident("");
-		demographicCust.setNotes("<unotes>" + content + "</unotes>");
-		demographicCustDao.persist(demographicCust);
+		// get any existing demographic cust to avoid constraint violations
+		DemographicCust demographicCust = demographicCustDao.find(Integer.parseInt(demoNo));
+		if(demographicCust != null) {
+			String currentNotes = demographicCust.getNotes();
+
+			if(currentNotes != null && !currentNotes.isEmpty() && !currentNotes.endsWith("</unotes>")) {
+				currentNotes = currentNotes.replace("</unotes>", "\n" + content + "</unotes>");
+				demographicCust.setNotes(currentNotes);
+			}
+
+			else if(currentNotes == null || currentNotes.isEmpty()) {
+				demographicCust.setNotes("<unotes>" + content + "</unotes>");
+			}
+			demographicCustDao.merge(demographicCust);
+		} else {
+			demographicCust = new DemographicCust();
+			demographicCust.setId(Integer.parseInt(demoNo));
+			demographicCust.setAlert("");
+			demographicCust.setMidwife("");
+			demographicCust.setNurse("");
+			demographicCust.setResident("");
+			demographicCust.setNotes("<unotes>" + content + "</unotes>");
+			demographicCustDao.persist(demographicCust);
+		}
 	}
 
 }
