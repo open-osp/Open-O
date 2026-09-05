@@ -22,7 +22,8 @@ public class HL7CreateFile {
     private static final SimpleDateFormat fullDateTime = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final SimpleDateFormat fullDate = new SimpleDateFormat("yyyyMMdd");
 	private static final List<String> aliasForPathL7 = new ArrayList<>(
-			Arrays.asList("TRANSFHA", "FHAM", "LIFELABS", "EXCELLERIS", "BCB", "VPP-BCC", "SG", "CDC", "VPP-PHC", "VCH", "PATHL7", "VPP-CDC", "VPP-BCCA", "VPP-VCH")
+			Arrays.asList("TRANSFHA", "FHAM", "LIFELABS", "EXCELLERIS", "BCB", "VPP-BCC",
+					"SG", "CDC", "VPP-PHC", "VCH", "PATHL7", "VPP-CDC", "VPP-BCCA", "VPP-VCH")
 	);
 
     public HL7CreateFile(Demographic demographic){
