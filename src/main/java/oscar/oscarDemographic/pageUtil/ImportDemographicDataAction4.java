@@ -507,7 +507,10 @@ public class ImportDemographicDataAction4 extends Action {
      */
     private void processXmlFile(LoggedInInfo loggedInInfo, Path xmlFile, ArrayList<String> warnings, ArrayList<String[]> logs, HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws Exception {
         String[] logResult = importXML(loggedInInfo, xmlFile.toString(), warnings, request, timeshiftInDays, students, courseId, false);
-        validXmlFileList.add(xmlFile);
+	    importNo++;
+	    demographic = null;
+	    demographicNo = null;
+		validXmlFileList.add(xmlFile);
         logs.add(logResult);
     }
 
@@ -863,7 +866,7 @@ public class ImportDemographicDataAction4 extends Action {
 			}
 
 	        XmlOptions opts = new XmlOptions();
-        	opts.setErrorListener( new ArrayList());
+        	opts.setErrorListener( new ArrayList<>());
         	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
             OmdCdsDocument.OmdCds omdCds = OmdCdsDocument.Factory.parse(xmlDoc,opts).getOmdCds();
         	omdCds.validate(opts);
@@ -897,7 +900,7 @@ public class ImportDemographicDataAction4 extends Action {
             	}
             }
         } else {
-            err_data.add("Error! No Legal Name");
+            warnings.add("Warning No Legal Name");
         }
 
         //other names
@@ -1667,7 +1670,7 @@ public class ImportDemographicDataAction4 extends Action {
 
                 cmNote.setNote(medicalHist);
                 caseManagementManager.saveNoteSimple(cmNote);
-                addOneEntry(FAMILYHISTORY);
+                addOneEntry(PASTHEALTH);
 
                 //annotation
                 Long hostNoteId = cmNote.getId();
@@ -3284,13 +3287,17 @@ public class ImportDemographicDataAction4 extends Action {
             out.newLine();
 
             //general log data
-            if (importNo == 0) importNo = 1;
+            if (importNo == 0) {
+				importNo = 1;
+            }
             for (int i = 0; i < importNo; i++) {
                 for (int j = 0; j < keyword[0].length; j++) {
                     String category = keyword[0][j].trim();
                     if (category.contains("Report")) category = keyword[1][j].trim();
                     Integer occurs = entries.get(category + i);
-                    if (occurs == null) occurs = 0;
+                    if (occurs == null) {
+						occurs = 0;
+                    }
                     out.write(fillUp(occurs.toString(), ' ', keyword[1][j].length()));
                     out.write(" |");
                 }
@@ -3312,7 +3319,9 @@ public class ImportDemographicDataAction4 extends Action {
 
             for (int i = 0; i < demo.size(); i++) {
                 Integer id = entries.get(PATIENTID + i);
-                if (id == null) id = 0;
+                if (id == null) {
+					id = 0;
+                }
                 out.write(fillUp(id.toString(), ' ', column1.length()));
                 out.write(" |");
                 String[] info = demo.get(i);
@@ -4599,7 +4608,7 @@ public class ImportDemographicDataAction4 extends Action {
                   
 			} catch(Exception e) {
 				logger.error("error", e);
-                importErrors.add("Error processing lab data");
+                importErrors.add("Error processing lab data" + e.getMessage());
 			} finally {
 				/*
 				 * Dump a summary of the lab results into the encounternote table as
