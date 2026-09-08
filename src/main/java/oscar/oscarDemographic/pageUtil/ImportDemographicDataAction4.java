@@ -402,8 +402,7 @@ public class ImportDemographicDataAction4 extends Action {
         }
 
         for (Path validXmlFile : validXmlFileList) {
-            String[] logResult = importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
-            logs.add(logResult);
+            importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
         }
 
 	    /*
@@ -577,8 +576,8 @@ public class ImportDemographicDataAction4 extends Action {
     	}
     	request.getSession().setAttribute("providerBean", providerBean);
     }
-    private String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId) throws SQLException, Exception {
-    	return importContacts(loggedInInfo, xmlFile,warnings,request,timeShiftInDays,null,null,0);
+    private void importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId) throws SQLException, Exception {
+    	importContacts(loggedInInfo, xmlFile,warnings,request,timeShiftInDays,null,null,0);
     }
     
     private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays,List<Provider> students, int courseId, boolean cleanFile) throws SQLException, Exception {
@@ -610,7 +609,7 @@ public class ImportDemographicDataAction4 extends Action {
     	return tmp;
     }
 
-    private String[] importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId) throws SQLException, Exception {
+    private void importContacts(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId) throws SQLException, Exception {
     	DemographicData dd = new DemographicData();
     	 
     	String docDir = oscarProperties.getProperty("DOCUMENT_DIR");
@@ -632,6 +631,7 @@ public class ImportDemographicDataAction4 extends Action {
            
         } catch (IOException | XmlException ex) {
 			logger.error("Error", ex);
+			warnings.add("Error parsing XML file: " + xmlFile);
         }
 	    PatientRecord patientRec = omdCds.getPatientRecord();
 
@@ -666,21 +666,25 @@ public class ImportDemographicDataAction4 extends Action {
 
         //Check duplicate
         ArrayList<Demographic> demodup = null;
-        if (StringUtils.filled(hin)) demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
-        else demodup = dd.getDemographicWithLastFirstDOB(loggedInInfo, lastName, firstName, birthDate);
-        if (demodup.size() == 0) {
+        if (StringUtils.filled(hin)) {
+			demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
+        }
+        else {
+			demodup = dd.getDemographicWithLastFirstDOB(loggedInInfo, lastName, firstName, birthDate);
+        }
+        if (demodup.isEmpty()) {
             logger.info("patient to add contact to not found");
-            return null;
+			warnings.add("Patient contact not found: " + lastName + ", " + firstName + " (" + birthDate + ")");
+            return;
         }
         if(demodup.size()>1) {
         	logger.info("found multiple patients to add contact to");
-        	return null;
+			warnings.add("Multiple patients found for contact: " + lastName + ", " + firstName + " (" + birthDate + ")");
+        	return;
         }
         
         Demographic patient = demodup.get(0);
 
-        
-        
         Demographics.Contact[] contt = demo.getContactArray();
         for (int i=0; i<contt.length; i++) {
             HashMap<String,String> contactName = getPersonName(contt[i].getName());
@@ -777,7 +781,7 @@ public class ImportDemographicDataAction4 extends Action {
             	} else {
             		//this contact was NOT found in the DB, so we will create an external contact
             		logger.info("need to create external contact for " + cLastName + "," + cFirstName);
-            		
+            		warnings.add("External contact not found. Creating new contact information " + cLastName + ", " + cFirstName);
             		// String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
                     
             		Contact c = new Contact();
@@ -812,28 +816,8 @@ public class ImportDemographicDataAction4 extends Action {
 	                	sdm = "";
 	                	contactNote = "";
 	                }
-/*
-            		Facility facility = (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY);
-			        Integer facilityId = null;
-			        if (facility!=null) facilityId = facility.getId();
-
-			        for (int j=0; j<rel.length; j++) {
-			        	if (rel[j]==null) continue;
-
-						DemographicRelationship demoRel = new DemographicRelationship();
-						demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
-
-                    	//clear emc, sdm, contactNote after 1st save
-                    	emc = "";
-                    	sdm = "";
-                    	contactNote = "";
-			        }
-            	}
-*/            	
             }     
        }
-       
-        return null;
     }
 
 
