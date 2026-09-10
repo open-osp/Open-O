@@ -2169,16 +2169,12 @@ public class ImportDemographicDataAction4 extends Action {
                     }
 
                     drug.setETreatmentType(medArray[i].getTreatmentType());
-                    //no need: DrugReason drugReason = new DrugReason();
-                    
-                    drug.setRxStatus(medArray[i].getPrescriptionStatus());
 
                     String nosub = medArray[i].getSubstitutionNotAllowed();
-                    if (nosub!=null && "Y".equals(nosub)) drug.setNoSubs(nosub.equalsIgnoreCase("Y"));
+                    if ("Y".equalsIgnoreCase(nosub)) drug.setNoSubs(nosub.equalsIgnoreCase("Y"));
 
                     String non_auth = medArray[i].getNonAuthoritativeIndicator();
-                    if (non_auth!=null && "Y".equals(non_auth)) drug.setNonAuthoritative(non_auth.equalsIgnoreCase("Y"));
-                  //  else  err_data.add("Error! No non-authoritative indicator for Medications & Treatments ("+(i+1)+")");
+                    if ("Y".equalsIgnoreCase(non_auth)) drug.setNonAuthoritative(non_auth.equalsIgnoreCase("Y"));
 
                    drug.setDispenseInterval(medArray[i].getDispenseInterval() != null ?medArray[i].getDispenseInterval() : "" );
                   //  else err_data.add("Error! Invalid Dispense Interval for Medications & Treatments ("+(i+1)+")");
@@ -2202,7 +2198,17 @@ public class ImportDemographicDataAction4 extends Action {
                     if ("table".equalsIgnoreCase(drug.getUnit()) || "tablet".equalsIgnoreCase(drug.getUnit())) drug.setUnit("tab");
 
                     drug.setDemographicId(Integer.valueOf(demographicNo));
-                    drug.setArchived(false);
+
+	                drug.setArchived(false);
+					String rxStatus = medArray[i].getPrescriptionStatus();
+					if(StringUtils.filled(rxStatus)) {
+						drug.setRxStatus(rxStatus);
+						drug.setArchived(! "active".equalsIgnoreCase(rxStatus) || ! "a".equalsIgnoreCase(rxStatus));
+						if(drug.isArchived()) {
+							drug.setArchivedReason(rxStatus);
+							drug.setArchivedDate(new Date());
+						}
+					}
 
                     boolean custom=false;
                     if(!StringUtils.isNullOrEmpty(medArray[i].getDrugIdentificationNumber())) {
