@@ -125,4 +125,9 @@ public class PDFHandler  implements MessageHandler{
 		
         return "success";
     }
+
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
 }

@@ -47,7 +47,13 @@ public class OLISHL7Handler implements MessageHandler {
 	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, String ipAddr) {
 		return parse(loggedInInfo, serviceName,fileName,fileId, false);
 	}
-	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, boolean routeToCurrentProvider) {		
+
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
+	public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName, int fileId, boolean routeToCurrentProvider) {
 		int i = 0;
 		String lastTimeStampAccessed = null;
 		RouteReportResults results = new RouteReportResults();

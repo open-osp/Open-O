@@ -81,4 +81,9 @@ public class CLSHandler implements MessageHandler {
 
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 }

@@ -437,4 +437,9 @@ public class EaapsHandler extends DefaultGenericHandler implements oscar.oscarLa
 		return "success";
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 }

@@ -56,8 +56,13 @@ public class PFHTHandler implements MessageHandler {
 
 	    }
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
 
-	    // recheck the abnormal status of the last 'n' labs
+
+	// recheck the abnormal status of the last 'n' labs
 	    private void updateLabStatus(int n) {
 
 	    	Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);

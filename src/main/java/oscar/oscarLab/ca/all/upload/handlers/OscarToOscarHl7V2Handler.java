@@ -66,4 +66,9 @@ public class OscarToOscarHl7V2Handler implements MessageHandler {
 	        throw(new RuntimeException(e));
         }
     }
+
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
 }

@@ -60,6 +60,11 @@ public class MEDVUEHandler implements MessageHandler {
 
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 	// recheck the abnormal status of the last 'n' labs
 	private void updateLabStatus(int n) {
 

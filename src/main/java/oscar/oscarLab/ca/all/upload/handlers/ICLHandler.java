@@ -61,6 +61,11 @@ public class ICLHandler implements MessageHandler {
 
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 	// recheck the abnormal status of the last 'n' labs
 	private void updateLabStatus(final int abnormalLabsCountToBeRechecked) {
 		Hl7TextInfoDao dao = SpringUtils.getBean(Hl7TextInfoDao.class);

@@ -49,6 +49,13 @@ public interface MessageHandler {
      *  If any exceptions are encountered the method should return 'null'
      *  otherwise it should return the String "success"
      */
-    public String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName,int fileId, String ipAddr);
+    String parse(LoggedInInfo loggedInInfo, String serviceName, String fileName,int fileId, String ipAddr);
+
+	/**
+	 * Retrieves the last lab number that was processed or stored.
+	 *
+	 * @return the last lab number as an Integer, or null if no lab number is available or retrievable.
+	 */
+	Integer getLastLabNo();
     
 }

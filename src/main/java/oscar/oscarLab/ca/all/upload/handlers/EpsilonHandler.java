@@ -84,4 +84,9 @@ public class EpsilonHandler implements MessageHandler {
 			return null;
 		}
     }
+
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
 }

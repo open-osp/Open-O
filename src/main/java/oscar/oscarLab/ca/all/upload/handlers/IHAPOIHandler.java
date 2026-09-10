@@ -120,6 +120,11 @@ public class IHAPOIHandler implements MessageHandler {
 
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 	public Map<String, String> parse(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		return textOrXml(is);
 	}

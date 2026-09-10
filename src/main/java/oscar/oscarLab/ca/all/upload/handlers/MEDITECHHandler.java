@@ -96,6 +96,11 @@ public class MEDITECHHandler implements MessageHandler {
 
 	}
 
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 	public List<String> parse(InputStream is) throws ParserConfigurationException, SAXException, IOException {
 		return textOrXml(is);
 	}

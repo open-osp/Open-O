@@ -182,7 +182,12 @@ public class IHAHandler extends DefaultGenericHandler implements MessageHandler 
         return(result);
     }
 
-    /*
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
+	/*
      *  Return the message as an xml document if it is in the xml format
      */
     private Document getXML(String fileName){

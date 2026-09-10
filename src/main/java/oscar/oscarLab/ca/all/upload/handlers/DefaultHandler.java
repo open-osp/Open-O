@@ -47,11 +47,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import oscar.oscarLab.ca.all.upload.MessageUploader;
+import oscar.oscarLab.ca.all.upload.RouteReportResults;
 import oscar.oscarLab.ca.all.util.Utilities;
 
 public class DefaultHandler implements MessageHandler {
-    Logger logger = org.oscarehr.util.MiscUtils.getLogger();
-    String hl7Type = null;
+    private final Logger logger = org.oscarehr.util.MiscUtils.getLogger();
+    private static final String hl7Type = "Default";
+
+	private Integer labNo = null;
+
+	public Integer getLastLabNo() {
+		return labNo;
+	}
 
     String getHl7Type(){
         return hl7Type;
@@ -67,20 +74,23 @@ public class DefaultHandler implements MessageHandler {
         if(xmlDoc != null){
             String hl7Body = null;
             int msgCount = 0;
+	        RouteReportResults routeResults;
             try{
                 NodeList allNodes = xmlDoc.getElementsByTagNameNS("*","*");
                 for (int i=1; i<allNodes.getLength(); i++){
                     hl7Body = allNodes.item(i).getFirstChild().getTextContent();
                     
                     if (hl7Body != null && hl7Body.indexOf("\nPID|") > 0){
+	                    routeResults = new RouteReportResults();
                         msgCount++;
                         logger.debug("using xml HL7 Type "+getHl7Type());
-                        MessageUploader.routeReport(loggedInInfo, serviceName, getHl7Type(), hl7Body,fileId);
+                        MessageUploader.routeReport(loggedInInfo, serviceName, getHl7Type(), hl7Body,fileId, routeResults);
+						labNo = routeResults.segmentId;
                     }
                 }
             }catch(Exception e){
             	MessageUploader.clean(fileId);
-                logger.error("ERROR:", e);
+	            logger.error("Error while parsing file: {}", fileName, e);
                 return null;
             }
         }else{
@@ -94,16 +104,16 @@ public class DefaultHandler implements MessageHandler {
                 }
             }catch(Exception e){
             	MessageUploader.clean(fileId);
-                logger.error("ERROR:", e);
+	            logger.error("Error while parsing file: {}", fileName, e);
                 return null;
             }
         }
         return("success");
     }
-    
-    
-    
-    /*
+
+
+
+	/*
      *  Return the message as an xml document if it is in the xml format
      */
     private Document getXML(String fileName){

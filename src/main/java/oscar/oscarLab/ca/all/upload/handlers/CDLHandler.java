@@ -75,7 +75,12 @@ public class CDLHandler implements MessageHandler {
 		return ("success");
 
 	}
-	
+
+	@Override
+	public Integer getLastLabNo() {
+		return 0;
+	}
+
 	private boolean isDuplicate(LoggedInInfo loggedInInfo, String msg) {
 		//OLIS requirements - need to see if this is a duplicate
 		oscar.oscarLab.ca.all.parsers.MessageHandler h = Factory.getHandler("CDL", msg);
