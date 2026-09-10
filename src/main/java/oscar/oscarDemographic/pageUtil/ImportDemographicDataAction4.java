@@ -936,7 +936,7 @@ public class ImportDemographicDataAction4 extends Action {
         if (StringUtils.empty(sex)) {
             err_data.add("Error! No Gender");
         }
-        String birthDate = getCalDate(demo.getDateOfBirth(), timeShiftInDays);
+        String birthDate = Util.getCalDate(demo.getDateOfBirth(), timeShiftInDays);
         if (StringUtils.empty(birthDate)) {
             birthDate = null;
             err_data.add("Error! No Date Of Birth");
@@ -953,7 +953,7 @@ public class ImportDemographicDataAction4 extends Action {
                 err_data.add("Error! No Province Code for health card");
             }
             versionCode = StringUtils.noNull(healthCard.getVersion());
-            hc_renew_date = getCalDate(healthCard.getExpirydate());
+            hc_renew_date = Util.getCalDate(healthCard.getExpirydate());
         }
 
         //TODO use the existing demographic data to complete the rest of the import.
@@ -1006,8 +1006,8 @@ public class ImportDemographicDataAction4 extends Action {
             roster_status[i] = enrolments[i].getEnrollmentStatus()!=null ? enrolments[i].getEnrollmentStatus().toString() : "";
             if	(roster_status[i].equals("1")) roster_status[i] = "RO";
             else if (roster_status[i].equals("0")) roster_status[i] = "NR";
-            roster_date[i] = getCalDate(enrolments[i].getEnrollmentDate(), timeShiftInDays);
-            term_date[i] = getCalDate(enrolments[i].getEnrollmentTerminationDate(), timeShiftInDays);
+            roster_date[i] = Util.getCalDate(enrolments[i].getEnrollmentDate(), timeShiftInDays);
+            term_date[i] = Util.getCalDate(enrolments[i].getEnrollmentTerminationDate(), timeShiftInDays);
             if (enrolments[i].getTerminationReason()!=null)
             	term_reason[i] = enrolments[i].getTerminationReason().toString();
             if(enrolments[i].getEnrolledToPhysician() != null) {
@@ -1069,7 +1069,7 @@ public class ImportDemographicDataAction4 extends Action {
 
         String dNote = StringUtils.noNull(demo.getNoteAboutPatient());
         String uvID = demo.getUniqueVendorIdSequence();
-        String psDate = getCalDate(demo.getPersonStatusDate(), timeShiftInDays);
+        String psDate = Util.getCalDate(demo.getPersonStatusDate(), timeShiftInDays);
         String extra = null;
 
         if (StringUtils.filled(lastNameQualifier)) {
@@ -1581,8 +1581,8 @@ public class ImportDemographicDataAction4 extends Action {
                 cme.setNoteId(hostNoteId);
                 if (fHist[i].getStartDate()!=null) {
                     cme.setKeyVal(CaseManagementNoteExt.STARTDATE);
-                    cme.setDateValue(dateFPtoDate(fHist[i].getStartDate(), timeShiftInDays));
-                    cme.setValue(dateFPGetPartial(fHist[i].getStartDate()));
+                    cme.setDateValue(Util.dateFPtoDate(fHist[i].getStartDate(), timeShiftInDays));
+                    cme.setValue(Util.dateFPGetPartial(fHist[i].getStartDate()));
                     caseManagementManager.saveNoteExt(cme);
                 }
                 //TODO refactor code. Entire process fails if exception thrown due to bad data. It would be better to handle the exception.
@@ -1681,20 +1681,20 @@ public class ImportDemographicDataAction4 extends Action {
                 cme.setNoteId(hostNoteId);
                 if (pHealth[i].getOnsetOrEventDate()!=null) {
                     cme.setKeyVal(CaseManagementNoteExt.STARTDATE);
-                    cme.setDateValue(dateFPtoDate(pHealth[i].getOnsetOrEventDate(), timeShiftInDays));
-                    cme.setValue(dateFPGetPartial(pHealth[i].getOnsetOrEventDate()));
+                    cme.setDateValue(Util.dateFPtoDate(pHealth[i].getOnsetOrEventDate(), timeShiftInDays));
+                    cme.setValue(Util.dateFPGetPartial(pHealth[i].getOnsetOrEventDate()));
                     caseManagementManager.saveNoteExt(cme);
                 }
                     if (pHealth[i].getProcedureDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.PROCEDUREDATE);
-                        cme.setDateValue(dateFPtoDate(pHealth[i].getProcedureDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(pHealth[i].getProcedureDate()));
+                        cme.setDateValue(Util.dateFPtoDate(pHealth[i].getProcedureDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(pHealth[i].getProcedureDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (pHealth[i].getResolvedDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.RESOLUTIONDATE);
-                        cme.setDateValue(dateFPtoDate(pHealth[i].getResolvedDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(pHealth[i].getResolvedDate()));
+                        cme.setDateValue(Util.dateFPtoDate(pHealth[i].getResolvedDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(pHealth[i].getResolvedDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (pHealth[i].getLifeStage()!=null) {
@@ -1784,14 +1784,14 @@ public class ImportDemographicDataAction4 extends Action {
                     }
                     if (probList[i].getOnsetDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.STARTDATE);
-                        cme.setDateValue(dateFPtoDate(probList[i].getOnsetDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(probList[i].getOnsetDate()));
+                        cme.setDateValue(Util.dateFPtoDate(probList[i].getOnsetDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(probList[i].getOnsetDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (probList[i].getResolutionDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.RESOLUTIONDATE);
-                        cme.setDateValue(dateFPtoDate(probList[i].getResolutionDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(probList[i].getResolutionDate()));
+                        cme.setDateValue(Util.dateFPtoDate(probList[i].getResolutionDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(probList[i].getResolutionDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (StringUtils.filled(probList[i].getProblemStatus())) {
@@ -1863,14 +1863,14 @@ public class ImportDemographicDataAction4 extends Action {
                     cme.setNoteId(hostNoteId);
                     if (rFactors[i].getStartDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.STARTDATE);
-                        cme.setDateValue(dateFPtoDate(rFactors[i].getStartDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(rFactors[i].getStartDate()));
+                        cme.setDateValue(Util.dateFPtoDate(rFactors[i].getStartDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(rFactors[i].getStartDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (rFactors[i].getEndDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.RESOLUTIONDATE);
-                        cme.setDateValue(dateFPtoDate(rFactors[i].getEndDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(rFactors[i].getEndDate()));
+                        cme.setDateValue(Util.dateFPtoDate(rFactors[i].getEndDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(rFactors[i].getEndDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (rFactors[i].getAgeOfOnset()!=null) {
@@ -1948,14 +1948,14 @@ public class ImportDemographicDataAction4 extends Action {
                     cme.setNoteId(hostNoteId);
                     if (alerts[i].getDateActive()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.STARTDATE);
-                        cme.setDateValue(dateFPtoDate(alerts[i].getDateActive(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(alerts[i].getDateActive()));
+                        cme.setDateValue(Util.dateFPtoDate(alerts[i].getDateActive(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(alerts[i].getDateActive()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                     if (alerts[i].getEndDate()!=null) {
                         cme.setKeyVal(CaseManagementNoteExt.RESOLUTIONDATE);
-                        cme.setDateValue(dateFPtoDate(alerts[i].getEndDate(), timeShiftInDays));
-                        cme.setValue(dateFPGetPartial(alerts[i].getEndDate()));
+                        cme.setDateValue(Util.dateFPtoDate(alerts[i].getEndDate(), timeShiftInDays));
+                        cme.setValue(Util.dateFPGetPartial(alerts[i].getEndDate()));
                         caseManagementManager.saveNoteExt(cme);
                     }
                 }
@@ -1971,14 +1971,14 @@ public class ImportDemographicDataAction4 extends Action {
                     
                     reaction = StringUtils.noNull(aaReactArray[i].getReaction());
                     description = StringUtils.noNull(aaReactArray[i].getOffendingAgentDescription());
-                    entryDate = dateFPtoString(aaReactArray[i].getRecordedDate(), timeShiftInDays);
-                    startDate = dateFPtoString(aaReactArray[i].getStartDate(), timeShiftInDays);
+                    entryDate = Util.dateFPtoString(aaReactArray[i].getRecordedDate(), timeShiftInDays);
+                    startDate = Util.dateFPtoString(aaReactArray[i].getStartDate(), timeShiftInDays);
                     if (aaReactArray[i].getLifeStage()!=null) lifeStage = aaReactArray[i].getLifeStage().toString();
 
                     if (StringUtils.empty(entryDate)) entryDate = null;
-                    else entryDateFormat = dateFPGetPartial(aaReactArray[i].getRecordedDate());
+                    else entryDateFormat = Util.dateFPGetPartial(aaReactArray[i].getRecordedDate());
                     if (StringUtils.empty(startDate)) startDate = null;
-                    else startDateFormat = dateFPGetPartial(aaReactArray[i].getStartDate());
+                    else startDateFormat = Util.dateFPGetPartial(aaReactArray[i].getStartDate());
 
                     if (aaReactArray[i].getCode()!=null) regionalId = StringUtils.noNull(aaReactArray[i].getCode().getCodeValue());
                   //  alg_extra = Util.addLine(alg_extra,"Offending Agent Description: ",aaReactArray[i].getOffendingAgentDescription());
@@ -2056,10 +2056,10 @@ public class ImportDemographicDataAction4 extends Action {
                 	String duration, quantity, dosage, special;
                     Drug drug = new Drug();
 
-                    drug.setWrittenDate(dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
-                    String writtenDateFormat = dateFPGetPartial(medArray[i].getPrescriptionWrittenDate());
+                    drug.setWrittenDate(Util.dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
+                    String writtenDateFormat = Util.dateFPGetPartial(medArray[i].getPrescriptionWrittenDate());
 
-                    drug.setRxDate(dateFPtoDate(medArray[i].getStartDate(), timeShiftInDays));
+                    drug.setRxDate(Util.dateFPtoDate(medArray[i].getStartDate(), timeShiftInDays));
 
 	                drug.setCreateDate(drug.getWrittenDate());
 
@@ -2310,8 +2310,8 @@ public class ImportDemographicDataAction4 extends Action {
 
                     drugDao.persist(drug);
                              
-                    if (!StringUtils.isNullOrEmpty( dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()))) partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE, dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()));
-                    if (!StringUtils.isNullOrEmpty( dateFPGetPartial(medArray[i].getStartDate()))) partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_STARTDATE, dateFPGetPartial(medArray[i].getStartDate()));
+                    if (!StringUtils.isNullOrEmpty( Util.dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()))) partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE, Util.dateFPGetPartial(medArray[i].getPrescriptionWrittenDate()));
+                    if (!StringUtils.isNullOrEmpty( Util.dateFPGetPartial(medArray[i].getStartDate()))) partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_STARTDATE, Util.dateFPGetPartial(medArray[i].getStartDate()));
                       
                     addOneEntry(MEDICATION);
 
@@ -2336,7 +2336,7 @@ public class ImportDemographicDataAction4 extends Action {
 	                if(StringUtils.filled(medArray[i].getNotes())) {
 		                CaseManagementNote cmNote = prepareCMNote("1", null);
 		                String note = StringUtils.noNull(medArray[i].getNotes());
-						cmNote.setObservation_date(dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
+						cmNote.setObservation_date(Util.dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
 		                cmNote.setNote(note);
 		                saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long) drug.getId());
 	                }
@@ -2418,7 +2418,7 @@ public class ImportDemographicDataAction4 extends Action {
                     }
                     
 
-                    preventionDate = dateFPtoString(immuArray[i].getDate(), timeShiftInDays);
+                    preventionDate = Util.dateFPtoString(immuArray[i].getDate(), timeShiftInDays);
                     
                    
                     
@@ -2443,7 +2443,7 @@ public class ImportDemographicDataAction4 extends Action {
                     
                     Integer preventionId = PreventionData.insertPreventionData(admProviderNo, demographicNo, preventionDate, defaultProviderNo(), "", preventionType, refused, "", "", preventionExt,null,din);
                     
-                    if (!StringUtils.isNullOrEmpty( dateFPGetPartial(immuArray[i].getDate()))) partialDateDao.setPartialDate(PartialDate.PREVENTION, preventionId, PartialDate.PREVENTION_PREVENTIONDATE, dateFPGetPartial(immuArray[i].getDate()));
+                    if (!StringUtils.isNullOrEmpty( Util.dateFPGetPartial(immuArray[i].getDate()))) partialDateDao.setPartialDate(PartialDate.PREVENTION, preventionId, PartialDate.PREVENTION_PREVENTIONDATE, Util.dateFPGetPartial(immuArray[i].getDate()));
                     
                     
                     addOneEntry(IMMUNIZATION);
@@ -2456,7 +2456,7 @@ public class ImportDemographicDataAction4 extends Action {
         	            immExtra = Util.addHeading("imported.CDS.5", "Immunization Note" ,immExtra);
         	            CaseManagementNote imNote = prepareCMNote("1",null);
         	            imNote.setNote(immExtra);
-						imNote.setObservation_date(dateTimeFPtoDate(immuArray[i].getDate(), timeShiftInDays));
+						imNote.setObservation_date(Util.dateTimeFPtoDate(immuArray[i].getDate(), timeShiftInDays));
 						imNote.setSigned(Boolean.TRUE);
 						imNote.setArchived(true);
         	            saveLinkNote(imNote, CaseManagementNoteLink.PREVENTIONS, Long.valueOf(preventionId));
@@ -2480,14 +2480,14 @@ public class ImportDemographicDataAction4 extends Action {
                     String notes="", reason="", status="", startTime="", endTime="", apptProvider="";
                  
                     
-                    String apptDateStr = dateFPtoString(appArray[i].getAppointmentDate(), timeShiftInDays);
+                    String apptDateStr = Util.dateFPtoString(appArray[i].getAppointmentDate(), timeShiftInDays);
                     if (StringUtils.filled(apptDateStr)) {
                         appointmentDate = UtilDateUtilities.StringToDate(apptDateStr);
                     } else {
                         err_data.add("Error! No Appointment Date ("+(i+1)+")");
                     }
                     if (appArray[i].getAppointmentTime()!=null) {
-                        startTime = getCalTime(appArray[i].getAppointmentTime());
+                        startTime = Util.getCalTime(appArray[i].getAppointmentTime());
                         if (appArray[i].getDuration()!=null) {
                             Date d_startTime = appArray[i].getAppointmentTime().getTime();
                             Date d_endTime = new Date();
@@ -2590,13 +2590,13 @@ public class ImportDemographicDataAction4 extends Action {
                         hrmDoc.setReportFile(HRMfile);
                         if (repR[i].getSourceFacility()!=null) hrmDoc.setSourceFacility(repR[i].getSourceFacility());
                         if (repR[i].getReceivedDateTime()!=null) {
-                            hrmDoc.setTimeReceived(dateTimeFPtoDate(repR[i].getReceivedDateTime(), timeShiftInDays));
+                            hrmDoc.setTimeReceived(Util.dateTimeFPtoDate(repR[i].getReceivedDateTime(), timeShiftInDays));
                         } else {
                             hrmDoc.setTimeReceived(new Date());
                         }
                         if (repR[i].getHRMResultStatus()!=null) hrmDoc.setReportStatus(repR[i].getHRMResultStatus());
                         if (repR[i].getClass1()!=null) hrmDoc.setReportType(repR[i].getClass1().toString());
-                        if (repR[i].getEventDateTime()!=null) hrmDoc.setReportDate(dateTimeFPtoDate(repR[i].getEventDateTime(), timeShiftInDays));
+                        if (repR[i].getEventDateTime()!=null) hrmDoc.setReportDate(Util.dateTimeFPtoDate(repR[i].getEventDateTime(), timeShiftInDays));
                        
                         
                         hrmDoc.setSourceFacility(repR[i].getSourceFacility());
@@ -2632,7 +2632,7 @@ public class ImportDemographicDataAction4 extends Action {
                         	
                         	HashMap<String,String> reviewerName = getPersonName(reportReviewed.getName());
                         	String reviewer = writeProviderData(reviewerName.get("firstname"), reviewerName.get("lastname"), reportReviewed.getReviewingOHIPPhysicianId());
-                        	String reviewDateTime = dateFPtoString(reportReviewed.getDateTimeReportReviewed(), timeShiftInDays);
+                        	String reviewDateTime = Util.dateFPtoString(reportReviewed.getDateTimeReportReviewed(), timeShiftInDays);
                         	
                         	HRMDocumentToProvider hrmDocProvider = new HRMDocumentToProvider();
                         	hrmDocProvider.setHrmDocumentId(hrmDoc.getId());
@@ -2662,7 +2662,7 @@ public class ImportDemographicDataAction4 extends Action {
                             if (obr[j].getAccompanyingSubClass()!=null) hrmDocSc.setSubClass(obr[j].getAccompanyingSubClass());
                             if (obr[j].getAccompanyingDescription()!=null) hrmDocSc.setSubClassDescription(obr[j].getAccompanyingDescription());
                             if (obr[j].getAccompanyingMnemonic()!=null) hrmDocSc.setSubClassMnemonic(obr[j].getAccompanyingMnemonic());
-                            if (obr[j].getObservationDateTime()!=null) hrmDocSc.setSubClassDateTime(dateTimeFPtoDate(obr[j].getObservationDateTime(), timeShiftInDays));
+                            if (obr[j].getObservationDateTime()!=null) hrmDocSc.setSubClassDateTime(Util.dateTimeFPtoDate(obr[j].getObservationDateTime(), timeShiftInDays));
                             hrmDocSc.setHrmDocumentId(hrmDoc.getId());
                             hrmDocSc.setActive(j == 0 ? true: false);
                             hrmDocSubClassDao.persist(hrmDocSc);
@@ -2786,21 +2786,21 @@ public class ImportDemographicDataAction4 extends Action {
                                 if (reportReviewed.length>0) {
                                     HashMap<String,String> reviewerName = getPersonName(reportReviewed[0].getName());
                                     reviewer = writeProviderData(reviewerName.get("firstname"), reviewerName.get("lastname"), reportReviewed[0].getReviewingOHIPPhysicianId());
-                                    reviewDateTime = dateFPtoString(reportReviewed[0].getDateTimeReportReviewed(), timeShiftInDays);
+                                    reviewDateTime = Util.dateFPtoString(reportReviewed[0].getDateTimeReportReviewed(), timeShiftInDays);
                                 }
 
-                                observationDate = dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
+                                observationDate = Util.dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
                                 if (observationDate == null) {
-									observationDate = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+									observationDate = Util.dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
                                 }
                                 if ("".equals(observationDate)) {
-									observationDate = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+									observationDate = Util.dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
                                 }
 
-                                updateDateTime = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
-                                contentDateTime = dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
+                                updateDateTime = Util.dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+                                contentDateTime = Util.dateFPtoString(repR[i].getEventDateTime(), timeShiftInDays);
                                 
-                                String receivedDate = dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
+                                String receivedDate = Util.dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
                                 
                                 String responsibleId = admProviderNo;
                               //  DemographicDao dDao = SpringUtils.getBean(DemographicDao.class);
@@ -3060,7 +3060,7 @@ public class ImportDemographicDataAction4 extends Action {
 
                     //observation date
                     if (cNotes[i].getEventDateTime()!=null) {
-                    	observeDate = dateTimeFPtoDate(cNotes[i].getEventDateTime(),timeShiftInDays);
+                    	observeDate = Util.dateTimeFPtoDate(cNotes[i].getEventDateTime(),timeShiftInDays);
                     	createDate = observeDate;
                     }
 
@@ -3097,7 +3097,7 @@ public class ImportDemographicDataAction4 extends Action {
 								cmNote.setUpdate_date(new Date());
                             }
                             else {
-								cmNote.setUpdate_date(dateTimeFPtoDate(participatingProviders[p].getDateTimeNoteCreated(), timeShiftInDays));
+								cmNote.setUpdate_date(Util.dateTimeFPtoDate(participatingProviders[p].getDateTimeNoteCreated(), timeShiftInDays));
                             }
 
                             if (participatingProviders[p].getName()!=null) {
@@ -3120,7 +3120,7 @@ public class ImportDemographicDataAction4 extends Action {
 									cmNote.setUpdate_date(new Date());
                                 }
                                 else {
-									cmNote.setUpdate_date(dateTimeFPtoDate(noteReviewers[r].getDateTimeNoteReviewed(), timeShiftInDays));
+									cmNote.setUpdate_date(Util.dateTimeFPtoDate(noteReviewers[r].getDateTimeNoteReviewed(), timeShiftInDays));
                                 }
 
                                 HashMap<String,String> authorName = getPersonName(noteReviewers[r].getName());
@@ -3353,45 +3353,6 @@ public class ImportDemographicDataAction4 extends Action {
 		}
 		return filled;
 	}
-
-	String getCalDate(Calendar c) {
-		if (c==null) return "";
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-		return f.format(c.getTime());
-	}
-
-	String getCalDate(Calendar c, int timeShiftInDays) {
-		if (c==null) return "";
-
-		c.add(Calendar.DAY_OF_YEAR, timeShiftInDays);
-		return getCalDate(c);
-	}
-
-	String getCalDateTime(Calendar c) {
-		if (c==null) return "";
-
-		Calendar c1 = Calendar.getInstance();
-		c1.setTime(new Date());
-
-		//Cancel out timezone difference
-		int diff = c.getTimeZone().getRawOffset() - c1.getTimeZone().getRawOffset();
-		c.add(Calendar.MILLISECOND, diff);
-
-		//Cancel out daylight saving
-		diff = c.getTimeZone().useDaylightTime() && c.getTimeZone().inDaylightTime(c.getTime()) ? 1 : 0;
-		diff -= c1.getTimeZone().useDaylightTime() && c1.getTimeZone().inDaylightTime(c.getTime()) ? 1 : 0;
-		c.add(Calendar.HOUR, diff);
-
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		return f.format(c.getTime());
-	}
-
-	String getCalTime(Calendar c) {
-		if (c==null) return "";
-		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-		return f.format(c.getTime());
-	}
-
 	
 	Map<String,List<JSONObject>> map = null;
 	
@@ -3486,108 +3447,6 @@ public class ImportDemographicDataAction4 extends Action {
 		return "OT"; //Other
 	}
 
-    private String dateFPtoString(cdsDt.DateTimeFullOrPartial dtfp, int timeshiftInDays) {
-		try {
-            if (dtfp == null) {
-                return "";
-            }
-            if (dtfp.getFullDateTime() != null) {
-                dtfp.getFullDateTime().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDateTime(dtfp.getFullDateTime());
-            }
-            if (dtfp.getFullDate() != null) {
-                dtfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dtfp.getFullDate());
-            } else if (dtfp.getYearMonth() != null) {
-                dtfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dtfp.getYearMonth());
-            } else if (dtfp.getYearOnly() != null) {
-                dtfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dtfp.getYearOnly());
-            } else {
-                return "";
-            }
-        } catch(Exception e) {
-            // cannot depend on export source sending well formatted dates.
-            logger.warn("Invalid date. Returning empty value " + dtfp);
-            return "";
-        }
-    }
-
-    private String dateFPtoString(cdsDt.DateFullOrPartial dfp, int timeshiftInDays) {
-        try {
-            if (dfp==null) return "";
-
-            if (dfp.getFullDate()!=null)  {
-                dfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dfp.getFullDate());
-            }
-            else if (dfp.getYearMonth()!=null) {
-                dfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dfp.getYearMonth());
-            }
-            else if (dfp.getYearOnly()!=null)
-            {
-                dfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
-                return getCalDate(dfp.getYearOnly());
-            }
-            else {
-                return "";
-            }
-        } catch(Exception e) {
-            // cannot depend on export source sending well formatted dates.
-            logger.warn("Invalid date. Returning empty value " + dfp);
-            return "";
-        }
-    }
-
-    String dateFPGetPartial(cdsDt.DateFullOrPartial dfp) {
-        try {
-            if (dfp==null) return "";
-
-            if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
-            else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
-            else return "";
-        } catch(Exception e) {
-            // cannot depend on export source sending well formatted dates.
-            logger.warn("Invalid date. Returning empty value " + dfp);
-            return "";
-        }
-    }
-
-    String dateFPGetPartial(cdsDt.DateTimeFullOrPartial dfp) {
-        try {
-            if (dfp==null) return "";
-
-            if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
-            else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
-            else return "";
-        } catch(Exception e) {
-            // cannot depend on export source sending well formatted dates.
-            logger.warn("Invalid date. Returning empty value " + dfp);
-            return "";
-        }
-    }
-
-    Date dateTimeFPtoDate(cdsDt.DateTimeFullOrPartial dtfp, int timeShiftInDays) {
-		String sdate = dateFPtoString(dtfp,timeShiftInDays);
-		Date dDate = UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd HH:mm:ss");
-		if (dDate==null)
-			dDate = UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd");
-		if (dDate==null)
-			dDate = UtilDateUtilities.StringToDate(sdate, "HH:mm:ss");
-
-		return dDate;
-    }
-
-    Date dateFPtoDate(cdsDt.DateFullOrPartial dfp, int timeShiftInDays) {
-            String sdate = dateFPtoString(dfp,timeShiftInDays);
-            return UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd");
-    }
-
-    String dateOnly(String d) {
-            return UtilDateUtilities.DateToString(UtilDateUtilities.StringToDate(d),"yyyy-MM-dd");
-    }
 
     HashMap<String, String> getPersonName(cdsDt.PersonNameSimple person) {
             HashMap<String,String> name = new HashMap<String,String>();
@@ -4131,12 +3990,12 @@ public class ImportDemographicDataAction4 extends Action {
 			appendIfNotNull(s,"ReferenceRangeText", ref.getReferenceRangeText());
 		}
 
-		appendIfNotNull(s,"LabRequisitionDateTime",dateFPtoString(labRes.getLabRequisitionDateTime(), timeShiftInDays));
-		appendIfNotNull(s,"CollectionDateTime",dateFPtoString( labRes.getCollectionDateTime(), timeShiftInDays));
+		appendIfNotNull(s,"LabRequisitionDateTime",Util.dateFPtoString(labRes.getLabRequisitionDateTime(), timeShiftInDays));
+		appendIfNotNull(s,"CollectionDateTime",Util.dateFPtoString( labRes.getCollectionDateTime(), timeShiftInDays));
 
                 LaboratoryResults.ResultReviewer[] resultReviewers = labRes.getResultReviewerArray();
                 if (resultReviewers.length>0) {
-                    appendIfNotNull(s,"DateTimeResultReviewed",dateFPtoString(resultReviewers[0].getDateTimeResultReviewed(), timeShiftInDays));
+                    appendIfNotNull(s,"DateTimeResultReviewed",Util.dateFPtoString(resultReviewers[0].getDateTimeResultReviewed(), timeShiftInDays));
                     appendIfNotNull(s,"OHIP ID :", resultReviewers[0].getOHIPPhysicianId());
                     cdsDt.PersonNameSimple reviewerName = resultReviewers[0].getName();
                     if (reviewerName!=null) {

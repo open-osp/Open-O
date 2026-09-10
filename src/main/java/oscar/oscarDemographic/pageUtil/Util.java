@@ -40,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -662,4 +663,160 @@ public class Util {
     	
     	return s;
     }
+
+	public static String dateFPtoString(cdsDt.DateTimeFullOrPartial dtfp, int timeshiftInDays) {
+		try {
+			if (dtfp == null) {
+				return "";
+			}
+			if (dtfp.getFullDateTime() != null) {
+				dtfp.getFullDateTime().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDateTime(dtfp.getFullDateTime());
+			}
+			if (dtfp.getFullDate() != null) {
+				dtfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dtfp.getFullDate());
+			} else if (dtfp.getYearMonth() != null) {
+				dtfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dtfp.getYearMonth());
+			} else if (dtfp.getYearOnly() != null) {
+				dtfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dtfp.getYearOnly());
+			} else {
+				return "";
+			}
+		} catch(Exception e) {
+			// cannot depend on export source sending well formatted dates.
+			logger.warn("Invalid date. Returning empty value " + dtfp);
+			return "";
+		}
+	}
+
+	public static String dateFPtoString(cdsDt.DateFullOrPartial dfp, int timeshiftInDays) {
+		try {
+			if (dfp==null) return "";
+
+			if (dfp.getFullDate()!=null)  {
+				dfp.getFullDate().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dfp.getFullDate());
+			}
+			else if (dfp.getYearMonth()!=null) {
+				dfp.getYearMonth().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dfp.getYearMonth());
+			}
+			else if (dfp.getYearOnly()!=null)
+			{
+				dfp.getYearOnly().add(Calendar.DAY_OF_YEAR, timeshiftInDays);
+				return getCalDate(dfp.getYearOnly());
+			}
+			else {
+				return "";
+			}
+		} catch(Exception e) {
+			// cannot depend on export source sending well formatted dates.
+			logger.warn("Invalid date. Returning empty value " + dfp);
+			return "";
+		}
+	}
+
+	public static String dateFPGetPartial(cdsDt.DateFullOrPartial dfp) {
+		try {
+			if (dfp==null) return "";
+
+			if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
+			else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
+			else return "";
+		} catch(Exception e) {
+			// cannot depend on export source sending well formatted dates.
+			logger.warn("Invalid date. Returning empty value " + dfp);
+			return "";
+		}
+	}
+
+	public static String dateFPGetPartial(cdsDt.DateTimeFullOrPartial dfp) {
+		try {
+			if (dfp==null) return "";
+
+			if (dfp.getYearMonth()!=null) return PartialDate.YEARMONTH;
+			else if (dfp.getYearOnly()!=null) return PartialDate.YEARONLY;
+			else return "";
+		} catch(Exception e) {
+			// cannot depend on export source sending well formatted dates.
+			logger.warn("Invalid date. Returning empty value " + dfp);
+			return "";
+		}
+	}
+
+	public static Date dateTimeFPtoDate(cdsDt.DateTimeFullOrPartial dtfp, int timeShiftInDays) {
+		String sdate = dateFPtoString(dtfp,timeShiftInDays);
+		Date dDate = UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd HH:mm:ss");
+		if (dDate==null)
+			dDate = UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd");
+		if (dDate==null)
+			dDate = UtilDateUtilities.StringToDate(sdate, "HH:mm:ss");
+
+		return dDate;
+	}
+
+	public static Date dateFPtoDate(cdsDt.DateFullOrPartial dfp, int timeShiftInDays) {
+		String sdate = dateFPtoString(dfp,timeShiftInDays);
+		return UtilDateUtilities.StringToDate(sdate, "yyyy-MM-dd");
+	}
+
+	public static String dateOnly(String d) {
+		return UtilDateUtilities.DateToString(UtilDateUtilities.StringToDate(d),"yyyy-MM-dd");
+	}
+
+
+	public static String getCalDate(Calendar c) {
+		if (c==null) return "";
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		return f.format(c.getTime());
+	}
+
+	public static String getCalDate(Calendar c, int timeShiftInDays) {
+		if (c==null) return "";
+
+		c.add(Calendar.DAY_OF_YEAR, timeShiftInDays);
+		return getCalDate(c);
+	}
+
+	public static String getCalDateTime(Calendar c) {
+		if (c==null) return "";
+
+		Calendar c1 = Calendar.getInstance();
+		c1.setTime(new Date());
+
+		//Cancel out timezone difference
+		int diff = c.getTimeZone().getRawOffset() - c1.getTimeZone().getRawOffset();
+		c.add(Calendar.MILLISECOND, diff);
+
+		//Cancel out daylight saving
+		diff = c.getTimeZone().useDaylightTime() && c.getTimeZone().inDaylightTime(c.getTime()) ? 1 : 0;
+		diff -= c1.getTimeZone().useDaylightTime() && c1.getTimeZone().inDaylightTime(c.getTime()) ? 1 : 0;
+		c.add(Calendar.HOUR, diff);
+
+		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return f.format(c.getTime());
+	}
+
+	public static String getCalTime(Calendar c) {
+		if (c==null) return "";
+		SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
+		return f.format(c.getTime());
+	}
+
+	public static String calculateAccessionFromFillerOrder(String fillerOrderNumber) {
+		String[] nums = fillerOrderNumber.split("-");
+		if (nums.length == 3) {
+			return nums[0];
+		} else if (nums.length == 5) {
+			return nums[0] + "-" + nums[1] + "-" + nums[2];
+		} else {
+			if (nums.length > 1)
+				return nums[0] + "-" + nums[1];
+			else
+				return fillerOrderNumber;
+		}
+	}
 }
