@@ -744,4 +744,8 @@ public class ProviderManager2 {
 		LogAction.addLogSynchronous(loggedInInfo, "ProviderManager.updateProvider, providerNo=" + provider.getProviderNo(), null);
 
 	}
+
+	public List<Provider> getProvidersByOHIP(String ohipNo) {
+		return providerDao.getBillableProvidersByOHIPNo(ohipNo);
+	}
 }
