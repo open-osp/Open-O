@@ -34,6 +34,8 @@
 package oscar.oscarLab.ca.all.upload.handlers;
 
 import java.io.FileInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,7 +68,7 @@ public class PATHL7Handler implements MessageHandler {
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			doc = docBuilder.parse(new FileInputStream(fileName));
+			doc = docBuilder.parse(Files.newInputStream(Paths.get(fileName)));
 		} catch (Exception e) {
 			logger.error("Could not parse PATHL7 message", e);
 		}

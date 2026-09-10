@@ -60,8 +60,8 @@ public final class HandlerClassFactory {
         String msgType;
         String msgHandler = "";
         
-        if (type == null || type.equals("")) {
-            logger.debug("Type not specified using Default Handler");
+        if (type == null || type.isEmpty()) {
+            logger.info("Lab type not specified, using Default Handler");
             return( new DefaultHandler());
         }
         try(InputStream is = HandlerClassFactory.class.getClassLoader().getResourceAsStream("oscar/oscarLab/ca/all/upload/message_config.xml")){
