@@ -162,8 +162,12 @@ public class DefaultGenericHandler implements MessageHandler {
 
     }
 
+	/**
+	 * An empty type always triggers a generic handler
+	 * The database will not accept null values.
+	 */
     public String getMsgType(){
-        return(null);
+        return "";
     }
 
     public String getMsgDate(){

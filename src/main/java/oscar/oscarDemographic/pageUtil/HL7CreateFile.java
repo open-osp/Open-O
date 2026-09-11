@@ -4,16 +4,29 @@ import cds.LaboratoryResultsDocument;
 import cdsDt.DateTimeFullOrPartial;
 import org.apache.logging.log4j.Logger;
 import org.oscarehr.common.model.Demographic;
+import org.oscarehr.common.model.Provider;
+import org.oscarehr.common.model.ProviderLabRoutingModel;
+import org.oscarehr.managers.ProviderManager2;
 import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.SpringUtils;
 import oscar.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * The HL7CreateFile class is responsible for generating HL7 formatted messages
+ * based on demographic information and laboratory results data from OMD CDS XML import files. It provides
+ * methods for constructing various HL7 segments such as MSH, PID, OBR, OBX,
+ * and custom segments like ZFR, ZMC, ZMN, and ZRG, which are specific to the
+ * application's requirements.
+ */
 public class HL7CreateFile {
-    private Demographic demographic;
-    String LAB_TYPE = "CML";
+    private final Demographic demographic;
+	private final ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
+    private String LAB_TYPE = "";
     Integer resultCount = 1;
     private static final Logger logger = MiscUtils.getLogger();
     private static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -23,11 +36,14 @@ public class HL7CreateFile {
     private static final SimpleDateFormat fullDate = new SimpleDateFormat("yyyyMMdd");
 	private static final List<String> aliasForPathL7 = new ArrayList<>(
 			Arrays.asList("TRANSFHA", "FHAM", "LIFELABS", "EXCELLERIS", "BCB", "VPP-BCC",
-					"SG", "CDC", "VPP-PHC", "VCH", "PATHL7", "VPP-CDC", "VPP-BCCA", "VPP-VCH")
+					"SG", "CDC", "VPP-PHC", "VCH", "PATHL7", "VPP-CDC", "VPP-BCCA", "VPP-VCH", "PHC")
 	);
+	private Map<String, ProviderLabRoutingModel> providerLabRoutingQueue;
+	private final StringBuilder reviewerComment;
 
     public HL7CreateFile(Demographic demographic){
         this.demographic = demographic;
+	    this.reviewerComment = new StringBuilder();
     }
     
     public String generateHL7(List<LaboratoryResultsDocument.LaboratoryResults> labs) {
@@ -35,22 +51,37 @@ public class HL7CreateFile {
         
         if (labs != null && !labs.isEmpty()) {
             resultCount = labs.size();
-            LaboratoryResultsDocument.LaboratoryResults firstLab = labs.get(0);
 
-            String labType = "";
-            if (StringUtils.filled(firstLab.getLaboratoryName())) {
-                if (firstLab.getLaboratoryName().split("\\^").length > 1) {
-                    labType = StringUtils.noNull(firstLab.getLaboratoryName().split("\\^")[1]);
-                } else {
-                    labType = StringUtils.noNull(firstLab.getLaboratoryName());
-                }
+			// the first lab in the list will contain the correct header information for the remaining
+	        // messages in the batch
+            LaboratoryResultsDocument.LaboratoryResults firstLab = labs.get(0);
+            String labType = firstLab.getLaboratoryName();
+
+	        // if no lab identifier in the first result, then try the next lab in the list - if there is one.
+            if (! StringUtils.filled(labType) && labs.size() > 1 && labs.get(1) != null) {
+	            firstLab = labs.get(1);
+	            labType = firstLab.getLaboratoryName();
             }
 
-	        if (aliasForPathL7.contains(labType.toUpperCase())) {
+			// if the lab type is split
+	        if(labType.contains("^")) {
+	            labType = labType.split("\\^")[0];
+		        if(! StringUtils.filled(labType)) {
+			        labType = labType.split("\\^")[1];
+		        }
+	        }
+
+			if(labType == null) {
+				labType = "";
+			}
+
+	        labType = labType.trim().toUpperCase();
+
+	        if (aliasForPathL7.contains(labType)) {
 		        LAB_TYPE = "PATHL7";
-            } else if(labType.equalsIgnoreCase("MDS")) {
+            } else if(labType.equals("MDS")) {
                 LAB_TYPE = "MDS";
-            } else if (labType.equalsIgnoreCase("Gamma") || labType.equalsIgnoreCase("GDML")) {
+            } else if (labType.equalsIgnoreCase("Gamma") || labType.equals("GDML")) {
                 LAB_TYPE = "GDML";
             } else if (labType.equalsIgnoreCase("ExcellerisON")) {
                 LAB_TYPE = "ExcellerisON";
@@ -82,15 +113,83 @@ public class HL7CreateFile {
             }
             
             hl7.append(generateOBR(firstLab)).append("\n");
+
+			/* extract OBX segments from the entire batch of labs.
+	         * also generates the NTE segments (laboratory comments) and the
+	         * ProviderLabRoutingModel for routing labs to the provider
+	         */
             hl7.append(generateOBX(labs));
 
-            if (LAB_TYPE.equals("PATHL7") || LAB_TYPE.equals("ExcellerisON")) {
+            if (LAB_TYPE.equalsIgnoreCase("PATHL7") || LAB_TYPE.equalsIgnoreCase("ExcellerisON")
+		            || LAB_TYPE.equalsIgnoreCase("default")) {
                 addXMLWrapper(hl7);
             }
         }
         
         return hl7.toString();
     }
+
+
+	public Map<String, ProviderLabRoutingModel> getProviderLabRoutingQueue() {
+		if(providerLabRoutingQueue == null) {
+			providerLabRoutingQueue = new HashMap<>();
+		}
+		return providerLabRoutingQueue;
+	}
+
+	private void acknowldegeLab(LaboratoryResultsDocument.LaboratoryResults lab) {
+
+		/*
+		 * PhysiciansNotes are notes that are added to the lab
+		 * when the physician reviews the lab results.
+		 * Some notes are added to every single OBX line in an unstructured lab
+		 * result.
+		 */
+		String annotation = lab.getPhysiciansNotes();
+		if (StringUtils.filled(annotation) && ! reviewerComment.toString().contains(annotation)) {
+			reviewerComment.append(" ").append(lab.getPhysiciansNotes());
+		}
+
+		/*
+		 * Extract the reviewers from the lab result.
+		 * These are the providers that have reviewed and acknowledged the lab result
+		 */
+		Set<String> currentReviewer = null;
+		for(LaboratoryResultsDocument.LaboratoryResults.ResultReviewer resultReviewer : lab.getResultReviewerArray()) {
+			if(currentReviewer == null) {
+				currentReviewer = new HashSet<>();
+			}
+
+			Date reviewDate = Util.dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
+			String reviewerId = resultReviewer.getOHIPPhysicianId();
+			Provider provider = null;
+
+			if(reviewerId != null && ! currentReviewer.contains(reviewerId)) {
+
+				String reviewer = "";
+
+				List<Provider> providerList = providerManager.getProvidersByOHIP(reviewerId);
+
+				// use MRP if no results.
+				if(providerList != null && ! providerList.isEmpty()) {
+					provider = providerList.get(0);
+				}
+
+				if(provider != null) {
+					reviewer = provider.getProviderNo();
+				}
+
+				currentReviewer.add(reviewerId);
+
+
+				String status = StringUtils.filled(reviewer) ? "A" : "N";
+				reviewer = status.equals("A") ? reviewer : "0";
+
+				// reviewers are created without a lab number as this is not known until the lab is created
+				getProviderLabRoutingQueue().put(reviewer, new ProviderLabRoutingModel(reviewer, null, status, reviewerComment.toString(), reviewDate, "HL7"));
+			}
+		}
+	}
 
 
     private String generateMSH(LaboratoryResultsDocument.LaboratoryResults lab) {
@@ -145,7 +244,7 @@ public class HL7CreateFile {
         DateTimeFullOrPartial collectDate = lab.getCollectionDateTime();
         String requisitionDate = getDateTime(reqDate != null ? reqDate : collectDate);
         String collectionDate = getDateTime(collectDate != null ? collectDate : reqDate);
-        String orderObservation = "";
+        String orderObservation = "1";
         
         if (!LAB_TYPE.equals("GDML")) {
             orderObservation = "1";
@@ -200,7 +299,7 @@ public class HL7CreateFile {
                 }
             }
             
-            obxNo += 1;
+            obxNo++;
             String labTest = lab.getLabTestCode() + "^" + lab.getTestNameReportedByLab() + "^" + lab.getTestName();
             
             if (isFinal(testResultStatus)) {
@@ -209,7 +308,12 @@ public class HL7CreateFile {
             
             String obxSegment = "OBX|" + obxNo + "|" + valueType + "|" + labTest+ "|Imported Test Results|" + result+ "|" +unit+ "|" + referenceRange + "|" + resultNormalAbnormalFlag+ "|||" + testResultStatus + "|||" + collectionDate;
             obx.append(obxSegment).append("\n");
+
+			// also generates the NTE segments (laboratory comments)
             obx.append(generateNTE(lab));
+
+			// creates a list of acknowledging providers on the lab report
+			acknowldegeLab(lab);
         }
 
         return obx.toString();
@@ -363,7 +467,7 @@ public class HL7CreateFile {
             }
     
             // Convert the first few bytes to a string and compare with the PDF signature
-            String header = new String(decodedBytes, 0, pdfSignature.length(), "UTF-8");
+            String header = new String(decodedBytes, 0, pdfSignature.length(), StandardCharsets.UTF_8);
             return pdfSignature.equals(header);
     
         } catch (IllegalArgumentException e) {
@@ -391,4 +495,8 @@ public class HL7CreateFile {
         hl7Message.setLength(0); // Clear the original content
         hl7Message.append(xmlBuilder); // Replace it with the XML-wrapped content
     }
+
+	public String getLabType() {
+		return LAB_TYPE;
+	}
 }

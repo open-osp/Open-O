@@ -46,7 +46,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import cdsDt.*;
@@ -62,6 +61,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
+import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.jettison.json.JSONException;
@@ -170,6 +170,10 @@ import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import oscar.OscarProperties;
 import org.oscarehr.documentManager.EDocUtil;
 import oscar.oscarDemographic.data.DemographicAddResult;
@@ -253,8 +257,8 @@ public class ImportDemographicDataAction4 extends Action {
     DemographicContactDao contactDao = SpringUtils.getBean(DemographicContactDao.class);
 
     private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
-
-//    private LabUploadWs labUpload = new LabUploadWs();
+	private static volatile DocumentBuilderFactory importFactory;
+	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception  {
@@ -418,7 +422,7 @@ public class ImportDemographicDataAction4 extends Action {
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
                                             HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws IOException {
-        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory)) {
+        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory, "*.{xml, XML, cds, CMS, CDS}")) {
             for (Path stream : directoryStream) {
 
                 if (Files.isDirectory(stream)) {
@@ -622,11 +626,11 @@ public class ImportDemographicDataAction4 extends Action {
         OmdCdsDocument.OmdCds omdCds=null;
         try {
         	XmlOptions opts = new XmlOptions();
-        	opts.setErrorListener(new ArrayList());
+//        	opts.setErrorListener(new ArrayList());
         	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType()); 
         	omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
 
-        	omdCds.validate(opts);
+//        	omdCds.validate(opts);
         	
            
         } catch (IOException | XmlException ex) {
@@ -656,7 +660,7 @@ public class ImportDemographicDataAction4 extends Action {
             patientName = lastName+","+firstName;
         }
         
-        String birthDate = getCalDate(demo.getDateOfBirth(), timeShiftInDays);
+        String birthDate = Util.getCalDate(demo.getDateOfBirth(), timeShiftInDays);
         String sex = demo.getGender()!=null ? demo.getGender().toString() : "";
         String hin = null;
         cdsDt.HealthCard healthCard = demo.getHealthCard();
@@ -837,24 +841,12 @@ public class ImportDemographicDataAction4 extends Action {
 
 		// build patient record and validate
         File xmlF = new File(xmlFile);
-        PatientRecord patientRec;
+
+	    logger.info("Importing XML file: {}", xmlF.getName());
+
+	    OmdCdsDocument.OmdCds omdCdsDocument;
         try {
-
-	        Document xmlDoc = validateImport(xmlF, err_data);
-			if (xmlDoc == null) {
-				/*
-				 * invalid xml, log and continue anyway.
-				 * Some validation could be too picky
-				 */
-				packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
-			}
-
-	        XmlOptions opts = new XmlOptions();
-        	opts.setErrorListener( new ArrayList<>());
-        	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
-            OmdCdsDocument.OmdCds omdCds = OmdCdsDocument.Factory.parse(xmlDoc,opts).getOmdCds();
-        	omdCds.validate(opts);
-            patientRec = omdCds.getPatientRecord();
+	       omdCdsDocument = validateImport(xmlF, err_data);
         } catch (Exception ex) {
 			logger.error("Error parsing XML file {}", xmlF, ex);
 	        err_othe.add("XML file could not be parsed: " + xmlF.getName() + ": " + ex.getMessage());
@@ -864,6 +856,8 @@ public class ImportDemographicDataAction4 extends Action {
 			 */
 			return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
         }
+
+	    PatientRecord patientRec = omdCdsDocument.getPatientRecord();
 
 	    //DEMOGRAPHICS
         Demographics demo = patientRec.getDemographics();
@@ -4269,219 +4263,208 @@ public class ImportDemographicDataAction4 extends Action {
     private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
 		Map<String, List<LaboratoryResults>> groupedResults = new LinkedHashMap<>();
 		for (LaboratoryResults result : labResultArr) {
-			String accession = result.getAccessionNumber();
-			if (StringUtils.filled(accession)) {
+			String fillerOrderNumber = result.getAccessionNumber();
+			if (StringUtils.filled(fillerOrderNumber)) {
+				String accession = Util.calculateAccessionFromFillerOrder(fillerOrderNumber);
 				groupedResults.computeIfAbsent(accession, key -> new ArrayList<>()).add(result);
 			} else {
 				groupedResults.put(UUID.randomUUID().toString(), Collections.singletonList(result));
 			}
 		}
 
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
-
 		for (List<LaboratoryResults> reportResults : groupedResults.values()) {
-			LaboratoryResults labResult = reportResults.get(0);
-			int labNo = 0;
+//			LaboratoryResults labResult = reportResults.get(0);
 			try {
-		        String filename = "Lab." + sdf.format(new Date()) + ".import.hl7";
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
                 String observationMsg = hl7CreateFile.generateHL7(reportResults);
-		        byte[] hl7Bytes = observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8);
+				String type = hl7CreateFile.getLabType();
+				int labNo = saveAndParseLab(loggedInInfo, observationMsg.replace("\r", "\r\n").getBytes(StandardCharsets.UTF_8), type);
+				if(labNo > 0) {
+					Map<String, ProviderLabRoutingModel> providerLabRoutingQueue = hl7CreateFile.getProviderLabRoutingQueue();
+					providerLabRoutingQueue.forEach((reviewer, providerLabRoutingModel) -> {
+						providerLabRoutingModel.setLabNo(labNo);
+					});
+					providerLabRoutingDao.batchUpdate(new ArrayList<>(providerLabRoutingQueue.values()), "lab_no", 50);
 
-		        try (InputStream saveStream = new ByteArrayInputStream(hl7Bytes);
-		             InputStream uploadStream = new ByteArrayInputStream(hl7Bytes)) {
-		            String type = hl7CreateFile.LAB_TYPE;
-		            String savedHL7Path = Utilities.saveFile(saveStream, filename);
-		            Path file = Paths.get(savedHL7Path);
-		            int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), uploadStream, admProviderNo);
-		            
-		            if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-                        logger.debug("savedHL7Path" + savedHL7Path);
-                        logger.debug("Type :" + type);
-                        MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
+				}
+//		        	DateTimeFullOrPartial requisitionDateTime = labResult.getLabRequisitionDateTime();
+//		        	if(requisitionDateTime == null) {
+//		        		requisitionDateTime = labResult.getCollectionDateTime();
+//		        	}
+//
 
-						logger.debug("MESSAGE HANDLER " + msgHandler.getClass().getName());
-
-                        if (msgHandler instanceof CMLHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
-                            labNo = ((CMLHandler) msgHandler).getLastLabNo();
-                            logger.info("successfully added lab");
-                            addOneEntry(LABS);
-                        } else if (msgHandler instanceof GDMLHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
-                            labNo = ((GDMLHandler) msgHandler).getLastLabNo();
-                            logger.info("successfully added lab");
-                            addOneEntry(LABS);
-                        } else if (msgHandler instanceof MDSHandler &&  msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
-                            labNo = ((MDSHandler) msgHandler).getLastLabNo();
-                            logger.info("successfully added lab");
-                            addOneEntry(LABS);
-                        } else if (msgHandler instanceof ExcellerisOntarioHandler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
-                            labNo = ((ExcellerisOntarioHandler) msgHandler).getLastLabNo();
-                            logger.info("successfully added lab");
-                            addOneEntry(LABS);
-                        } else if (msgHandler instanceof PATHL7Handler && msgHandler.parse(loggedInInfo, getClass().getSimpleName(), savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
-                            labNo = ((PATHL7Handler) msgHandler).getLastLabNo();
-                            logger.info("successfully added lab");
-                            addOneEntry(LABS);
-                        } else {
-                            importErrors.add("Unregcognized lab facility: " + type);
-                        }
-                    }
-		        } catch(Exception e){
-		            logger.error("Error: ",e);
-                    importErrors.add("Error adding lab");
-		        }
-
-		        if(labNo > 0) {
-
-					// add results to measurements table.
-                    Hl7textResultsData.populateMeasurementsTable(labNo + "", demographicNo);
-
-			        // associate lab in patient lab routing. should have been done when lab was parsed.
-//                    patientLabRoutingDao.persist(new PatientLabRouting(labNo, "HL7", Integer.parseInt(demographicNo)));
-		            
-		        	DateTimeFullOrPartial requisitionDateTime = labResult.getLabRequisitionDateTime();
-		        	if(requisitionDateTime == null) {
-		        		requisitionDateTime = labResult.getCollectionDateTime();
-		        	}
-		        	
-		        	LabRequestReportLink.save(null,null,dateFPtoString(requisitionDateTime,0),"labPatientPhysicianInfo", (long) labNo);
-
-			        StringBuilder reviewerComment = new StringBuilder("");
-			        if (StringUtils.filled(labResult.getPhysiciansNotes())) {
-				        reviewerComment = new StringBuilder(labResult.getPhysiciansNotes());
-			        }
-
-					// lab values into measurements
-                    List<MeasurementsExt> measurementsExtsToSave = new ArrayList<>();
-			        for (LaboratoryResults result : reportResults) {
-	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
-                        HashMap<String, MeasurementsExt> measurementsExtMap;
-                        
-                        if (measId != null) {
-                           measurementsExtMap = measurementsExtDao.getMeasurementsExtMapByMeasurementId(measId.intValue());
-
-                            if(StringUtils.filled(result.getNotesFromLab()) && measurementsExtMap.get("comments") == null) {
-                                addMeasurementsExt(measId, "comments", result.getNotesFromLab(), measurementsExtsToSave);
-                            }
-
+//
+//			        for (LaboratoryResults result : reportResults) {
+//
+//
+//
+//	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
+//                        HashMap<String, MeasurementsExt> measurementsExtMap;
+//
+//                        if (measId != null) {
+//                           measurementsExtMap = measurementsExtDao.getMeasurementsExtMapByMeasurementId(measId.intValue());
+//
+//                            if(StringUtils.filled(result.getNotesFromLab()) && measurementsExtMap.get("comments") == null) {
+//                                addMeasurementsExt(measId, "comments", result.getNotesFromLab(), measurementsExtsToSave);
+//                            }
+//
 							/*
 							 * PhysiciansNotes are notes that are added to the lab
 							 * when the physician reviews the lab results.
 							 * Some notes are added to every single OBX line in an unstructured lab
 							 * result.
 							 */
-                            String annotation = labResult.getPhysiciansNotes();
-                            if (StringUtils.filled(annotation) && ! reviewerComment.toString().contains(annotation)) {
-								reviewerComment.append(" ").append(annotation);
-                            }
-
-                            String olis_status = result.getTestResultStatus();
-                            if (StringUtils.filled(olis_status)) {
-                                if(measurementsExtMap.get("olis_status") == null) {
-                                    addMeasurementsExt(measId, "olis_status", olis_status, measurementsExtsToSave);
-                                }
-                            }
-
-                            if (result.getBlockedTestResult() != null && "Y".equals(result.getBlockedTestResult().toString()) && measurementsExtMap.get("reportBlocked") == null) {
-                                addMeasurementsExt(measId, "reportBlocked", "Y", measurementsExtsToSave);
-                            }
-
-                            if (result.isSetTestName() && measurementsExtMap.get("name_internal") == null) {
-                                addMeasurementsExt(measId, "name_internal", result.getTestName(), measurementsExtsToSave);
-                            }
-
-                            if(result.isSetReferenceRange()) {
-                                if (StringUtils.filled(result.getReferenceRange().getReferenceRangeText()) && measurementsExtMap.get("range") == null) {
-                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getReferenceRangeText(), measurementsExtsToSave);
-                                }
-
-                                if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit())
-                                        && measurementsExtMap.get("range") == null && measurementsExtMap.get("minimum") == null && measurementsExtMap.get("maximum") == null) {
-                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-                                    addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
-                                    addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-                                } else {
-                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && measurementsExtMap.get("minimum") == null) {
-                                        addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
-                                    }
-
-                                    if (StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("maximum") == null) {
-                                        addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-                                    }
-
-                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("range") == null) {
-                                        addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-                                    }
-                                }
-                            }
-                        }
-	                }
-			        
-			        measurementsExtDao.batchPersist(measurementsExtsToSave, 50);
+//					        StringBuilder reviewerComment = new StringBuilder();
+//					        if (StringUtils.filled(labResult.getPhysiciansNotes())) {
+//						        reviewerComment = new StringBuilder(labResult.getPhysiciansNotes());
+//					        }
+//                            String annotation = labResult.getPhysiciansNotes();
+//                            if (StringUtils.filled(annotation) && ! reviewerComment.toString().contains(annotation)) {
+//								reviewerComment.append(" ").append(annotation);
+//                            }
+//
+//                            String olis_status = result.getTestResultStatus();
+//                            if (StringUtils.filled(olis_status)) {
+//                                if(measurementsExtMap.get("olis_status") == null) {
+//                                    addMeasurementsExt(measId, "olis_status", olis_status, measurementsExtsToSave);
+//                                }
+//                            }
+//
+//                            if (result.getBlockedTestResult() != null && "Y".equals(result.getBlockedTestResult().toString()) && measurementsExtMap.get("reportBlocked") == null) {
+//                                addMeasurementsExt(measId, "reportBlocked", "Y", measurementsExtsToSave);
+//                            }
+//
+//                            if (result.isSetTestName() && measurementsExtMap.get("name_internal") == null) {
+//                                addMeasurementsExt(measId, "name_internal", result.getTestName(), measurementsExtsToSave);
+//                            }
+//
+//                            if(result.isSetReferenceRange()) {
+//                                if (StringUtils.filled(result.getReferenceRange().getReferenceRangeText()) && measurementsExtMap.get("range") == null) {
+//                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getReferenceRangeText(), measurementsExtsToSave);
+//                                }
+//
+//                                if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit())
+//                                        && measurementsExtMap.get("range") == null && measurementsExtMap.get("minimum") == null && measurementsExtMap.get("maximum") == null) {
+//                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+//                                    addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
+//                                    addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+//                                } else {
+//                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && measurementsExtMap.get("minimum") == null) {
+//                                        addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
+//                                    }
+//
+//                                    if (StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("maximum") == null) {
+//                                        addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+//                                    }
+//
+//                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("range") == null) {
+//                                        addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
+//                                    }
+//                                }
+//                            }
+//                        }
+//	                }
+//
 
 			        // enter physician review details into provider lab routing.
-			        Map<String, ProviderLabRoutingModel> providerLabRoutingQueue = new HashMap<>();
+//			        Map<String, ProviderLabRoutingModel> providerLabRoutingQueue = new HashMap<>();
 
-			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
-				        Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
+//			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
+//				        Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
+//
+//				        String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
+//
+//				        String status = StringUtils.filled(reviewer) ? "A" : "N";
+//				        reviewer = status.equals("A") ? reviewer : "0";
+//
+//				        /*
+//				         * if the reviewer cannot be identified, use the MRP from the demographic
+//				         * otherwise it's an unassigned - new - lab. Provider: 0, Status: new
+//				         */
+//				        if("0".equals(reviewer) && StringUtils.filled(demographic.getProviderNo())) {
+//					        reviewer = demographic.getProviderNo();
+//				        }
+//
+//				        providerLabRoutingQueue.put(reviewer, new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment.toString(), reviewDate, "HL7"));
+//			        }
+//
+//			        // if there are no confirmed reviewers on this lab, use the MRP from the demographic
+//			        if (providerLabRoutingQueue.isEmpty() && StringUtils.filled(demographic.getProviderNo())) {
+//				        providerLabRoutingQueue.put(demographic.getProviderNo(), new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
+//			        }
+//
+//			        // otherwise it's an unassigned - new - lab. Provider: 0, Status: new
+//			        else if( providerLabRoutingQueue.isEmpty() ) {
+//				        providerLabRoutingQueue.put("0", new ProviderLabRoutingModel("0", labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
+//			        }
 
-				        String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
 
-				        String status = StringUtils.filled(reviewer) ? "A" : "N";
-				        reviewer = status.equals("A") ? reviewer : "0";
 
-				        /*
-				         * if the reviewer cannot be identified, use the MRP from the demographic
-				         * otherwise it's an unassigned - new - lab. Provider: 0, Status: new
-				         */
-				        if("0".equals(reviewer) && StringUtils.filled(demographic.getProviderNo())) {
-					        reviewer = demographic.getProviderNo();
-				        }
-
-				        providerLabRoutingQueue.put(reviewer, new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment.toString(), reviewDate, "HL7"));
-			        }
-
-			        // if there are no confirmed reviewers on this lab, use the MRP from the demographic
-			        if (providerLabRoutingQueue.isEmpty() && StringUtils.filled(demographic.getProviderNo())) {
-				        providerLabRoutingQueue.put(demographic.getProviderNo(), new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
-			        }
-
-			        // otherwise it's an unassigned - new - lab. Provider: 0, Status: new
-			        else if( providerLabRoutingQueue.isEmpty() ) {
-				        providerLabRoutingQueue.put("0", new ProviderLabRoutingModel("0", labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
-			        }
-
-			        providerLabRoutingDao.batchUpdate(new ArrayList<>(providerLabRoutingQueue.values()), "lab_no", 50);
-
-		        }
-                  
+//		        }
+//
 			} catch(Exception e) {
 				logger.error("error", e);
                 importErrors.add("Error processing lab data" + e.getMessage());
-			} finally {
-				/*
-				 * Dump a summary of the lab results into the encounternote table as
-				 * archived. Just in case the lab does not render properly.
-				 */
-				String labInfo = getLabDline(labResult, 0);
-				labInfo = cleanEncounterText(labInfo);
-				if (StringUtils.filled(labInfo)) {
-					String dump = Util.addHeading("imported.CDS.5", "Lab", labResult.getTestName());
-					dump = Util.addLine(dump, labInfo);
-					CaseManagementNote cmNote = prepareCMNote("2",null);
-					DateTimeFullOrPartial dateTime = labResult.getCollectionDateTime();
-					if(dateTime == null) {
-						dateTime = labResult.getLabRequisitionDateTime();
-					}
-					if(dateTime != null) {
-						cmNote.setObservation_date(dateTimeFPtoDate(dateTime, 0));
-					}
-					cmNote.setArchived(true);
-					cmNote.setNote(dump);
-					saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, (long) labNo);
+			}
+//			finally {
+//				/*
+//				 * Dump a summary of the lab results into the encounternote table as
+//				 * archived. Just in case the lab does not render properly.
+//				 */
+//				String labInfo = getLabDline(labResult, 0);
+//				labInfo = cleanEncounterText(labInfo);
+//				if (StringUtils.filled(labInfo)) {
+//					String dump = Util.addHeading("imported.CDS.5", "Lab", labResult.getTestName());
+//					dump = Util.addLine(dump, labInfo);
+//					CaseManagementNote cmNote = prepareCMNote("2",null);
+//					DateTimeFullOrPartial dateTime = labResult.getCollectionDateTime();
+//					if(dateTime == null) {
+//						dateTime = labResult.getLabRequisitionDateTime();
+//					}
+//					if(dateTime != null) {
+//						cmNote.setObservation_date(dateTimeFPtoDate(dateTime, 0));
+//					}
+//					cmNote.setArchived(true);
+//					cmNote.setNote(dump);
+//					saveLinkNote(cmNote, CaseManagementNoteLink.LABTEST, (long) labNo);
+//				}
+//			}
+		}
+	}
+
+	/**
+	 * Saves and parses an HL7 lab file.
+	 * Save the HL7 text to the file system and then
+	 * parse the lab results into the database.
+	 * This process also extracts all of the mapped measurements into the measurement table.
+	 *
+	 * @param loggedInInfo The logged-in user information required to process the lab.
+	 * @param hl7Bytes The HL7 data in byte array format to be saved and parsed.
+	 * @param type The type of the handler to be used for parsing the HL7 file.
+	 * @return The last lab number if the parsing and saving operation is successful, or 0 if the operation fails.
+	 * @throws IOException If an I/O error occurs while saving the HL7 file or handling streams.
+	 */
+	private int saveAndParseLab(LoggedInInfo loggedInInfo, byte[] hl7Bytes, String type) throws IOException {
+		try (InputStream saveStream = new ByteArrayInputStream(hl7Bytes);
+		     InputStream uploadStream = new ByteArrayInputStream(hl7Bytes)) {
+			String savedHL7Path = Utilities.saveFile(saveStream, "Lab." + sdf.format(new Date()) + ".import.hl7");
+			Path file = Paths.get(savedHL7Path);
+			int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), uploadStream, admProviderNo);
+
+			if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
+				logger.debug("savedHL7Path: " + savedHL7Path);
+				logger.info("Saving lab type:" + type);
+				MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
+
+				logger.info("Using message handler: " + msgHandler.getClass().getName());
+
+				if (msgHandler.parse(loggedInInfo, "imported.CDS.5", savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
+					addOneEntry(LABS);
+					return msgHandler.getLastLabNo();
 				}
 			}
 		}
+		return 0;
 	}
 	
 	//"Confirmed, Cancelled, No-Show, No-Cancellation Allowed and other descriptors possible"
@@ -4612,37 +4595,139 @@ public class ImportDemographicDataAction4 extends Action {
 		return ret;
 	}
 
-	public Document validateImport(File f, ArrayList<String> err_data) {
+	public OmdCdsDocument.OmdCds validateImport(File f, ArrayList<String> err_data) throws Exception {
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true);
-		Document doc;
-		try {
-			URL url = getClass().getResource("/omdDataMigration/EMR_Data_Migration_Schema.xsd");
-			if (url == null) {
-				throw new IOException("Import schema is missing from the classpath");
-			}
-			String constant = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-			SchemaFactory xsdFactory = SchemaFactory.newInstance(constant);
-			Schema schema = xsdFactory.newSchema(url);
-			DocumentBuilder builder;
-			factory.setSchema(schema);
-			// Use parser features rather than ACCESS_EXTERNAL_* attributes. The latter are
-			// not implemented by the older XML parser bundled with some supported runtimes.
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-			builder = factory.newDocumentBuilder();
-			doc = builder.parse(f);
-		} catch (Exception e) {
-			doc = null;
-			err_data.add("XML file is not valid: " + f.getName() + ": " + e.getMessage());
-			logger.error("In file '{}': {}", f.getName(), e);
+		ImportValidationHandler validationHandler = new ImportValidationHandler(f.getName());
+		DocumentBuilder builder = getImportFactory().newDocumentBuilder();
+		/*
+		 * Without an explicit error handler the parser sends schema violations to its
+		 * own default handler, which prints them to stderr and carries on. Only
+		 * well-formedness (fatal) errors would ever reach the catch block below, so
+		 * every schema violation would be lost.
+		 */
+		builder.setErrorHandler(validationHandler);
+		XmlOptions opts = new XmlOptions();
+		opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
+		OmdCdsDocument.OmdCds doc = OmdCdsDocument.Factory.parse(builder.parse(f), opts).getOmdCds();
 
+		/*
+		 * Schema violations do not stop the parse, so report whatever was collected
+		 * regardless of whether a document came back.
+		 */
+		if (validationHandler.hasMessages()) {
+			String validationMessage = String.format("XML file %s failed schema validation: %d error(s), %d warning(s)",
+					f.getName(), validationHandler.getErrorCount(), validationHandler.getWarningCount());
+			logger.info(validationMessage);
+			err_data.add(validationMessage);
+			err_data.addAll(validationHandler.getMessages());
 		}
 		return doc;
+	}
+
+	/**
+	 * Retrieves a thread-safe instance of a pre-configured DocumentBuilderFactory
+	 * specifically designed for importing XML data. The factory enforces secure
+	 * XML processing and validates XML documents against a predefined schema to
+	 * ensure structural integrity and prevent external entity attacks.
+	 *
+	 * @return A configured instance of DocumentBuilderFactory for XML parsing.
+	 * @throws Exception If the schema is missing or an error occurs while configuring the factory.
+	 */
+	private static DocumentBuilderFactory getImportFactory() throws Exception {
+		DocumentBuilderFactory factory = importFactory;
+		if (factory == null) {
+			synchronized (ImportDemographicDataAction4.class) {
+				factory = importFactory;
+				if (factory == null) {
+					URL url = ImportDemographicDataAction4.class.getResource(
+							"/omdDataMigration/EMR_Data_Migration_Schema.xsd");
+					if (url == null) {
+						throw new IOException("Import schema is missing from the classpath");
+					}
+					SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+					factory = DocumentBuilderFactory.newInstance();
+					factory.setNamespaceAware(true);
+					factory.setSchema(xsdFactory.newSchema(url));
+					// Use parser features rather than ACCESS_EXTERNAL_* attributes. The latter are
+					// not implemented by the older XML parser bundled with some supported runtimes.
+					factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+					factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+					factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+					factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+					factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+					importFactory = factory;
+				}
+			}
+		}
+		return factory;
+	}
+
+	/**
+	 * Helper class
+	 * Collects the schema validation problems the parser reports while reading an
+	 * import file, so they can be written to the import log instead of being
+	 * discarded by the parser's default error handler.
+	 */
+	private static class ImportValidationHandler implements ErrorHandler {
+
+		/** Cap on messages handed back to the import log; the full set is always logged. */
+		private static final int MAX_REPORTED = 50;
+
+		private final String fileName;
+		private final List<String> messages = new ArrayList<String>();
+		private int errorCount = 0;
+		private int warningCount = 0;
+
+		ImportValidationHandler(String fileName) {
+			this.fileName = fileName;
+		}
+
+		@Override
+		public void warning(SAXParseException e) {
+			warningCount++;
+			collect("warning", e);
+		}
+
+		@Override
+		public void error(SAXParseException e) {
+			errorCount++;
+			collect("error", e);
+		}
+
+		@Override
+		public void fatalError(SAXParseException e) throws SAXException {
+			errorCount++;
+			collect("fatal error", e);
+			// the document is not well formed - nothing useful can be parsed from here on
+			throw e;
+		}
+
+		private void collect(String severity, SAXParseException e) {
+			String message = String.format("%s at line %d, column %d: %s",
+					severity, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
+			logger.warn("Validation {} in file '{}': {}", severity, fileName, message);
+			if (messages.size() < MAX_REPORTED) {
+				messages.add(message);
+			} else if (messages.size() == MAX_REPORTED) {
+				messages.add("... remaining validation messages suppressed, see the server log for the full list");
+			}
+		}
+
+		boolean hasMessages() {
+			return !messages.isEmpty();
+		}
+
+		List<String> getMessages() {
+			return messages;
+		}
+
+		int getErrorCount() {
+			return errorCount;
+		}
+
+		int getWarningCount() {
+			return warningCount;
+		}
 	}
 
 

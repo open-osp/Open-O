@@ -66,15 +66,15 @@ import oscar.util.UtilDateUtilities;
 public final class MessageUploader {
 
 	private static final Logger logger = MiscUtils.getLogger();
-	private static PatientLabRoutingDao patientLabRoutingDao = SpringUtils.getBean(PatientLabRoutingDao.class);
-	private static ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
-	private static RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
-	private static Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
-	private static Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
-	private static MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
-	private static MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
-	private static FileUploadCheckDao fileUploadCheckDao = SpringUtils.getBean(FileUploadCheckDao.class);
-	private static DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
+	private static final PatientLabRoutingDao patientLabRoutingDao = SpringUtils.getBean(PatientLabRoutingDao.class);
+	private static final ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
+	private static final RecycleBinDao recycleBinDao = SpringUtils.getBean(RecycleBinDao.class);
+	private static final Hl7TextInfoDao hl7TextInfoDao = (Hl7TextInfoDao) SpringUtils.getBean(Hl7TextInfoDao.class);
+	private static final Hl7TextMessageDao hl7TextMessageDao = (Hl7TextMessageDao) SpringUtils.getBean(Hl7TextMessageDao.class);
+	private static final MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
+	private static final MeasurementDao measurementDao = SpringUtils.getBean(MeasurementDao.class);
+	private static final FileUploadCheckDao fileUploadCheckDao = SpringUtils.getBean(FileUploadCheckDao.class);
+	private static final DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
 
 	private MessageUploader() {
 		// there's no reason to instantiate a class with no fields.
