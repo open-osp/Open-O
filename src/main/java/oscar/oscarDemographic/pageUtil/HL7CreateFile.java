@@ -12,7 +12,6 @@ import org.oscarehr.util.SpringUtils;
 import oscar.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -205,7 +204,7 @@ public class HL7CreateFile {
         }
         String labNameType = LAB_TYPE + "|" + labName;
         DateTimeFullOrPartial labDateString = lab.getLabRequisitionDateTime() != null ? lab.getLabRequisitionDateTime() : lab.getCollectionDateTime();
-        String requisitionDate = getDateTime(labDateString);
+        String requisitionDate = Util.dateFPtoString(labDateString, 0);
         String version = "2.3";
         if (LAB_TYPE.equals("MDS")) {
             labNameType = labName + "|" + LAB_TYPE;
@@ -231,7 +230,7 @@ public class HL7CreateFile {
                 StringBuilder nteSegment = new StringBuilder();
                 for (int n = 0; n < noteParts.length; n++) {
                     int noteNum = (n + 1);
-                    nteSegment.append("NTE|" + noteNum+ "|L|" + noteParts[n]).append("\n");
+                    nteSegment.append("NTE|").append(noteNum).append("|L|").append(noteParts[n]).append("\n");
                 }
 
                 nte.append(nteSegment.toString());
@@ -244,8 +243,8 @@ public class HL7CreateFile {
     private String generateOBR(LaboratoryResultsDocument.LaboratoryResults lab) {
         DateTimeFullOrPartial reqDate = lab.getLabRequisitionDateTime();
         DateTimeFullOrPartial collectDate = lab.getCollectionDateTime();
-        String requisitionDate = getDateTime(reqDate != null ? reqDate : collectDate);
-        String collectionDate = getDateTime(collectDate != null ? collectDate : reqDate);
+        String requisitionDate = Util.dateFPtoString(reqDate != null ? reqDate : collectDate, 0);
+        String collectionDate = Util.dateFPtoString(collectDate != null ? collectDate : reqDate, 0);
         String orderObservation = "1";
         
         if (!LAB_TYPE.equals("GDML")) {
@@ -281,7 +280,7 @@ public class HL7CreateFile {
 
                 unit = StringUtils.noNull(lab.getResult().getUnitOfMeasure());
             }
-            String collectionDate = getDateTime(lab.getCollectionDateTime());
+            String collectionDate =  Util.dateFPtoString(lab.getCollectionDateTime(), 0);
             String referenceRange = "";
             String resultNormalAbnormalFlag = "";
             String testResultStatus = StringUtils.noNull(lab.getTestResultStatus());
@@ -322,7 +321,7 @@ public class HL7CreateFile {
     }
 
     private String generateORC(LaboratoryResultsDocument.LaboratoryResults lab) {
-        String collectionDate = getDateTime(lab.getCollectionDateTime());
+        String collectionDate =  Util.dateFPtoString(lab.getCollectionDateTime(), 0);
         String testResultStatus = StringUtils.noNull(lab.getTestResultStatus());
         if (isFinal(testResultStatus)) {
             testResultStatus = "F";
@@ -366,7 +365,8 @@ public class HL7CreateFile {
                 StringBuilder zmcSegment = new StringBuilder();
                 for (int n = 0; n < noteParts.length; n++) {
                     int noteNum = (n + 1);
-                    zmcSegment.append("ZMC|" + zmcNo + "." + (n + 1) + "|" + lab.getLabTestCode() + "||" + noteParts.length+ "|Y|" + noteParts[n]).append("\n");
+                    zmcSegment.append("ZMC|").append(zmcNo).append(".").append(n + 1).append("|").append(lab.getLabTestCode())
+		                    .append("||").append(noteParts.length).append("|Y|").append(noteParts[n]).append("\n");
                 }
                 
                 zmc.append(zmcSegment.toString());
@@ -416,34 +416,34 @@ public class HL7CreateFile {
         return zrg.toString();
     }
 
-    /**
-     * Attempts to parse a Date object from the provided DateTimeFullOrPartial
-     * @param dateObj The provided DateTimeFullOrPartial object
-     * @return A parsed date string of the DateTimeFullOrPartial or if not parsable it takes the current Date()
-     */
-    private String getDateTime(DateTimeFullOrPartial dateObj) {
-        Date date = null;
-        if (dateObj != null) {
-            SimpleDateFormat[] formats = { inputFormat, xmlTimezoneOffSetDateTime, inputDateOnlyFormat };
-            for (SimpleDateFormat format : formats) {
-                try {
-                    if (dateObj.isSetFullDate()) {
-                        date = format.parse(dateObj.getFullDate().toString() + " 00:00:00");
-                    } else if (dateObj.isSetFullDateTime()) {
-                        date = format.parse(dateObj.getFullDateTime().toString());
-                    }
-                } catch (ParseException e) { /* Do nothing */ }
-                if (date != null) {
-                    break;
-                }
-            }
-        }
-        if (date == null) {
-            date = new Date();
-        }
-        
-        return fullDateTime.format(date);
-    }
+//    /**
+//     * Attempts to parse a Date object from the provided DateTimeFullOrPartial
+//     * @param dateObj The provided DateTimeFullOrPartial object
+//     * @return A parsed date string of the DateTimeFullOrPartial or if not parsable it takes the current Date()
+//     */
+//    private String getDateTime(DateTimeFullOrPartial dateObj) {
+//        Date date = null;
+//        if (dateObj != null) {
+//            SimpleDateFormat[] formats = { inputFormat, xmlTimezoneOffSetDateTime, inputDateOnlyFormat };
+//            for (SimpleDateFormat format : formats) {
+//                try {
+//                    if (dateObj.isSetFullDate()) {
+//                        date = format.parse(dateObj.getFullDate().toString() + " 00:00:00");
+//                    } else if (dateObj.isSetFullDateTime()) {
+//                        date = format.parse(dateObj.getFullDateTime().toString());
+//                    }
+//                } catch (ParseException e) { /* Do nothing */ }
+//                if (date != null) {
+//                    break;
+//                }
+//            }
+//        }
+//        if (date == null) {
+//            date = new Date();
+//        }
+//
+//        return fullDateTime.format(date);
+//    }
     
     private boolean isFinal(String testResultStatus) {
         testResultStatus = StringUtils.noNull(testResultStatus);
