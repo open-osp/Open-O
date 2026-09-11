@@ -2199,7 +2199,7 @@ public class ImportDemographicDataAction4 extends Action {
 					String rxStatus = medArray[i].getPrescriptionStatus();
 					if(StringUtils.filled(rxStatus)) {
 						drug.setRxStatus(rxStatus);
-						drug.setArchived(! "active".equalsIgnoreCase(rxStatus) || ! "a".equalsIgnoreCase(rxStatus));
+						drug.setArchived(! ("active".equalsIgnoreCase(rxStatus) || "a".equalsIgnoreCase(rxStatus)));
 						if(drug.isArchived()) {
 							drug.setArchivedReason(rxStatus);
 							drug.setArchivedDate(new Date());
