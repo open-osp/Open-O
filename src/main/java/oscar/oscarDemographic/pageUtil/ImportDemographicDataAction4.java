@@ -2016,8 +2016,10 @@ public class ImportDemographicDataAction4 extends Action {
                     String note = StringUtils.noNull(aaReactArray[i].getNotes());
 					if(StringUtils.filled(note)) {
 						CaseManagementNote cmNote = prepareCMNote("1", null);
+						String heading = Util.addHeading("imported.CDS.5", "Allergy Note", description);
+						heading = Util.addLine(heading, note);
 						cmNote.setObservation_date(entryDateDate);
-						cmNote.setNote(note);
+						cmNote.setNote(heading);
 						saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
 					}
 
@@ -2329,7 +2331,8 @@ public class ImportDemographicDataAction4 extends Action {
                     //annotation
 	                if(StringUtils.filled(medArray[i].getNotes())) {
 		                CaseManagementNote cmNote = prepareCMNote("1", null);
-		                String note = StringUtils.noNull(medArray[i].getNotes());
+		                String note = Util.addHeading("imported.CDS.5", "Medication Note", drug.getBrandName());
+		                note = Util.addLine(note, StringUtils.noNull(medArray[i].getNotes()));
 						cmNote.setObservation_date(Util.dateTimeFPtoDate(medArray[i].getPrescriptionWrittenDate(), timeShiftInDays));
 		                cmNote.setNote(note);
 		                saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long) drug.getId());
@@ -2364,8 +2367,7 @@ public class ImportDemographicDataAction4 extends Action {
 
                     if (immuArray[i].getImmunizationType()!=null)
                         preventionType = Util.getPreventionType(immuArray[i].getImmunizationType().toString());
-//					if (preventionType==null)
-//                    	preventionType = mapPreventionTypeByCode(immuArray[i].getImmunizationCode());
+
                     if (preventionType==null) {
                     	preventionType = "OtherA";
                     	err_note.add("Cannot map Immunization Type, "+immuArray[i].getImmunizationName()+" mapped to Other Layout A");
@@ -2405,17 +2407,23 @@ public class ImportDemographicDataAction4 extends Action {
                         preventionExt.add(ht);
                     }
 
-                    if (StringUtils.filled(immuArray[i].getNotes())) {
+	                immExtra = Util.addLine(immExtra, "Notes: ", immuArray[i].getNotes());
+	                immExtra = Util.addLine(immExtra, getCode(immuArray[i].getImmunizationCode(),"Immunization Code"));
+	                immExtra = Util.addLine(immExtra, "Instructions: ", immuArray[i].getInstructions());
+	                immExtra = Util.addLine(immExtra, getResidual(immuArray[i].getResidualInfo()));
+
+	                if("".equals(tryToMapRoute(immuArray[i].getRoute()))) {
+		                immExtra = Util.addLine(immExtra, "Unmapped Route: ",immuArray[i].getRoute());
+	                }
+
+                    if (StringUtils.filled(immExtra)) {
                         Map<String,String> ht = new HashMap<String,String>();
-                        ht.put("comments", immuArray[i].getNotes());
+                        ht.put("comments", immExtra);
                         preventionExt.add(ht);
                     }
-                    
 
                     preventionDate = Util.dateFPtoString(immuArray[i].getDate(), timeShiftInDays);
-                    
-                   
-                    
+
                     refused = getYN(immuArray[i].getRefusedFlag()).equals("Yes") ? "1" : "0";
                     if (immuArray[i].getRefusedFlag()==null) err_data.add("Error! No Refused Flag for Immunizations ("+(i+1)+")");
 
@@ -2427,17 +2435,11 @@ public class ImportDemographicDataAction4 extends Action {
                          preventionExt.add(ht);
                     }
                     
-                    immExtra = Util.addLine(immExtra, getCode(immuArray[i].getImmunizationCode(),"Immunization Code"));
-                    immExtra = Util.addLine(immExtra, "Instructions: ", immuArray[i].getInstructions());
-                    immExtra = Util.addLine(immExtra, getResidual(immuArray[i].getResidualInfo()));
-
-                    if("".equals(tryToMapRoute(immuArray[i].getRoute()))) {
-                    	immExtra = Util.addLine(immExtra, "Unmapped Route: ",immuArray[i].getRoute());  
-                    }
-                    
                     Integer preventionId = PreventionData.insertPreventionData(admProviderNo, demographicNo, preventionDate, defaultProviderNo(), "", preventionType, refused, "", "", preventionExt,null,din);
                     
-                    if (!StringUtils.isNullOrEmpty( Util.dateFPGetPartial(immuArray[i].getDate()))) partialDateDao.setPartialDate(PartialDate.PREVENTION, preventionId, PartialDate.PREVENTION_PREVENTIONDATE, Util.dateFPGetPartial(immuArray[i].getDate()));
+                    if (!StringUtils.isNullOrEmpty( Util.dateFPGetPartial(immuArray[i].getDate()))) {
+						partialDateDao.setPartialDate(PartialDate.PREVENTION, preventionId, PartialDate.PREVENTION_PREVENTIONDATE, Util.dateFPGetPartial(immuArray[i].getDate()));
+                    }
                     
                     
                     addOneEntry(IMMUNIZATION);
@@ -2446,15 +2448,15 @@ public class ImportDemographicDataAction4 extends Action {
                      * to dumpsite: Extra immunization data
                      * back-up to encounter notes, just in case
                      */
-                    if (StringUtils.filled(immExtra) && preventionId>=0) {
-        	            immExtra = Util.addHeading("imported.CDS.5", "Immunization Note" ,immExtra);
-        	            CaseManagementNote imNote = prepareCMNote("1",null);
-        	            imNote.setNote(immExtra);
-						imNote.setObservation_date(Util.dateTimeFPtoDate(immuArray[i].getDate(), timeShiftInDays));
-						imNote.setSigned(Boolean.TRUE);
-						imNote.setArchived(true);
-        	            saveLinkNote(imNote, CaseManagementNoteLink.PREVENTIONS, Long.valueOf(preventionId));
-                    }
+//                    if (StringUtils.filled(immExtra) && preventionId>=0) {
+//        	            immExtra = Util.addHeading("imported.CDS.5", "Immunization Note" ,immExtra);
+//        	            CaseManagementNote imNote = prepareCMNote("1",null);
+//        	            imNote.setNote(immExtra);
+//						imNote.setObservation_date(Util.dateTimeFPtoDate(immuArray[i].getDate(), timeShiftInDays));
+//						imNote.setSigned(Boolean.TRUE);
+//						imNote.setArchived(true);
+//        	            saveLinkNote(imNote, CaseManagementNoteLink.PREVENTIONS, Long.valueOf(preventionId));
+//                    }
                 }
 
                 //LABORATORY RESULTS
