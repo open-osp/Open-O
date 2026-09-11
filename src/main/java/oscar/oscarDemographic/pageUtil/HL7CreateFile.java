@@ -26,7 +26,9 @@ import java.util.*;
 public class HL7CreateFile {
     private final Demographic demographic;
 	private final ProviderManager2 providerManager = SpringUtils.getBean(ProviderManager2.class);
-    private String LAB_TYPE = "";
+
+	// CML is considered the most generic ORU HL7 lab type
+    private String LAB_TYPE = "CML";
     Integer resultCount = 1;
     private static final Logger logger = MiscUtils.getLogger();
     private static final SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

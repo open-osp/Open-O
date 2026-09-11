@@ -4405,7 +4405,7 @@ public class ImportDemographicDataAction4 extends Action {
 //		        }
 //
 			} catch(Exception e) {
-				logger.error("error", e);
+				logger.error("Error processing lab data", e);
                 importErrors.add("Error processing lab data" + e.getMessage());
 			}
 //			finally {
