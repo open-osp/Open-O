@@ -171,7 +171,6 @@ public class HL7CreateFile {
 
 				List<Provider> providerList = providerManager.getProvidersByOHIP(reviewerId);
 
-				// use MRP if no results.
 				if(providerList != null && ! providerList.isEmpty()) {
 					provider = providerList.get(0);
 				}
@@ -415,36 +414,7 @@ public class HL7CreateFile {
 
         return zrg.toString();
     }
-
-//    /**
-//     * Attempts to parse a Date object from the provided DateTimeFullOrPartial
-//     * @param dateObj The provided DateTimeFullOrPartial object
-//     * @return A parsed date string of the DateTimeFullOrPartial or if not parsable it takes the current Date()
-//     */
-//    private String getDateTime(DateTimeFullOrPartial dateObj) {
-//        Date date = null;
-//        if (dateObj != null) {
-//            SimpleDateFormat[] formats = { inputFormat, xmlTimezoneOffSetDateTime, inputDateOnlyFormat };
-//            for (SimpleDateFormat format : formats) {
-//                try {
-//                    if (dateObj.isSetFullDate()) {
-//                        date = format.parse(dateObj.getFullDate().toString() + " 00:00:00");
-//                    } else if (dateObj.isSetFullDateTime()) {
-//                        date = format.parse(dateObj.getFullDateTime().toString());
-//                    }
-//                } catch (ParseException e) { /* Do nothing */ }
-//                if (date != null) {
-//                    break;
-//                }
-//            }
-//        }
-//        if (date == null) {
-//            date = new Date();
-//        }
-//
-//        return fullDateTime.format(date);
-//    }
-    
+	
     private boolean isFinal(String testResultStatus) {
         testResultStatus = StringUtils.noNull(testResultStatus);
         

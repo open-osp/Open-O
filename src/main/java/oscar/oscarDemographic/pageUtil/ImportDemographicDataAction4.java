@@ -61,7 +61,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.upload.FormFile;
-import org.apache.xmlbeans.XmlBeans;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.codehaus.jettison.json.JSONException;
@@ -93,7 +92,6 @@ import org.oscarehr.common.dao.DrugReasonDao;
 import org.oscarehr.common.dao.MeasurementsExtDao;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.PartialDateDao;
-import org.oscarehr.common.dao.PatientLabRoutingDao;
 import org.oscarehr.common.dao.PharmacyInfoDao;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
@@ -109,9 +107,7 @@ import org.oscarehr.common.model.DemographicPharmacy;
 import org.oscarehr.common.model.DocumentExtraReviewer;
 import org.oscarehr.common.model.Drug;
 import org.oscarehr.common.model.DrugReason;
-import org.oscarehr.common.model.MeasurementsExt;
 import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.PatientLabRouting;
 import org.oscarehr.common.model.PharmacyInfo;
 import org.oscarehr.common.model.Provider;
 import org.oscarehr.common.model.ProviderLabRoutingModel;
@@ -169,8 +165,6 @@ import cdsDt.DiabetesComplicationScreening.ExamCode;
 import cdsDt.DiabetesMotivationalCounselling.CounsellingPerformed;
 import cdsDt.PersonNameStandard.LegalName;
 import cdsDt.PersonNameStandard.OtherNames;
-import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -181,21 +175,11 @@ import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
 import oscar.oscarLab.FileUploadCheck;
-import oscar.oscarLab.LabRequestReportLink;
-import oscar.oscarLab.ca.all.Hl7textResultsData;
 import oscar.oscarLab.ca.all.upload.HandlerClassFactory;
-import oscar.oscarLab.ca.all.upload.ProviderLabRouting;
-import oscar.oscarLab.ca.all.upload.handlers.CMLHandler;
-import oscar.oscarLab.ca.all.upload.handlers.ExcellerisOntarioHandler;
-import oscar.oscarLab.ca.all.upload.handlers.GDMLHandler;
-import oscar.oscarLab.ca.all.upload.handlers.MDSHandler;
 import oscar.oscarLab.ca.all.upload.handlers.MessageHandler;
-import oscar.oscarLab.ca.all.upload.handlers.PATHL7Handler;
 import oscar.oscarLab.ca.all.util.Utilities;
 import oscar.oscarPrevention.PreventionData;
 import oscar.oscarProvider.data.ProviderData;
-import oscar.oscarRx.data.RxDrugData;
-import oscar.oscarRx.data.RxDrugData.DrugMonograph;
 import oscar.util.ConversionUtils;
 import oscar.util.StringUtils;
 import oscar.util.UtilDateUtilities;
@@ -206,7 +190,7 @@ import oscar.util.UtilDateUtilities;
  */
 public class ImportDemographicDataAction4 extends Action {
 
-    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private final SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
     	
     private static final Logger logger = MiscUtils.getLogger();
     private static final String PATIENTID = "Patient";
@@ -250,7 +234,6 @@ public class ImportDemographicDataAction4 extends Action {
     PartialDateDao partialDateDao = SpringUtils.getBean(PartialDateDao.class);
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
-    PatientLabRoutingDao patientLabRoutingDao  = SpringUtils.getBean(PatientLabRoutingDao.class); 
     ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
     MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
@@ -291,7 +274,6 @@ public class ImportDemographicDataAction4 extends Action {
          */
         FormFile imp = frm.getImportFile();
         String filename = imp.getFileName();
-//        String filetype = imp.getContentType();
         Path directory;
         try(InputStream inputStream = imp.getInputStream();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream())
@@ -532,46 +514,6 @@ public class ImportDemographicDataAction4 extends Action {
         return filteredFileList;
     }
 
-//    private void saveParts(String tmpDir,String ifile) throws Exception {
-//    	int len = 0;
-//    	byte[] buf = new byte[1024];
-//
-//        ZipInputStream in = new ZipInputStream(new FileInputStream(ifile));
-//        ZipEntry entry = in.getNextEntry();
-//        String entryDir = "";
-//
-//        while (entry!=null) {
-//            String entryName = entry.getName();
-//            if (entry.isDirectory())
-//            	entryDir = entryName;
-//            if (entryName.startsWith(entryDir))
-//            	entryName = entryName.substring(entryDir.length());
-//
-//            if(entryName.isEmpty()) {
-//            	entry = in.getNextEntry();
-//            	continue;
-//            }
-//
-//
-//            String ofile = tmpDir + entryDir +  entryName;
-//
-//            if (!matchFileExt(ofile, "xml")) {
-//                OutputStream out = null;
-//                try {
-//                	String path = ofile.substring(0,ofile.lastIndexOf(File.separator));
-//                	new File(path).mkdirs();
-//                    out = new FileOutputStream(ofile);
-//                    while ((len=in.read(buf)) > 0) out.write(buf,0,len);
-//                    out.close();
-//                } finally {
-//                	IOUtils.closeQuietly(out);
-//                }
-//            }
-//            entry = in.getNextEntry();
-//        }
-//        in.close();
-//    }
-    
     private void resetProviderBean(HttpServletRequest request) {
     	ProviderDao providerDao = SpringUtils.getBean(ProviderDao.class);
     	Properties providerBean = new Properties();
@@ -626,13 +568,8 @@ public class ImportDemographicDataAction4 extends Action {
         OmdCdsDocument.OmdCds omdCds=null;
         try {
         	XmlOptions opts = new XmlOptions();
-//        	opts.setErrorListener(new ArrayList());
         	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType()); 
         	omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
-
-//        	omdCds.validate(opts);
-        	
-           
         } catch (IOException | XmlException ex) {
 			logger.error("Error", ex);
 			warnings.add("Error parsing XML file: " + xmlFile);
@@ -1213,8 +1150,6 @@ public class ImportDemographicDataAction4 extends Action {
 
         if (StringUtils.filled(demographicNo))
         {
-            //TODO: Course - Admit to student program
-
             entries.put(PATIENTID+importNo, Integer.valueOf(demographicNo));
 
             if(admitTo == null) {
@@ -1243,16 +1178,6 @@ public class ImportDemographicDataAction4 extends Action {
 	        if (StringUtils.filled(extra)) {
 	            dd.addDemographiccust(demographicNo, extra);
             }
-
-            //to dumpsite: Extra demographic data
-//            if (StringUtils.filled(extra)) {
-//	            extra = Util.addHeading("imported.CDS.5: ", "Demographic data: ", extra);
-//                if (!"imported.CDS.5".equals(extra)){
-//                    CaseManagementNote dmNote = prepareCMNote("2",null);
-//                    dmNote.setNote(extra);
-//                    saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
-//                }
-//            }
 
             if (!workExt.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "wPhoneExt", workExt);
             if (!homeExt.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "hPhoneExt", homeExt);
@@ -1339,130 +1264,6 @@ public class ImportDemographicDataAction4 extends Action {
              	contactDao.persist(demoContact);
             }
 
-            //Demographic Contacts
-/*           
-            Demographics.Contact[] contt = demo.getContactArray();
-            for (int i=0; i<contt.length; i++) {
-                HashMap<String,String> contactName = getPersonName(contt[i].getName());
-                String cFirstName = StringUtils.noNull(contactName.get("firstname"));
-                String cLastName  = StringUtils.noNull(contactName.get("lastname"));
-                String cEmail = StringUtils.noNull(contt[i].getEmailAddress());
-
-                pn = contt[i].getPhoneNumberArray();
-                workPhone=""; workExt=""; homePhone=""; homeExt=""; cellPhone=""; ext="";
-                for (int j=0; j<pn.length; j++) {
-                    String phone = pn[j].getPhoneNumber();
-                    if (phone==null) {
-                        if (pn[j].getNumber()!=null) {
-                            if (pn[j].getAreaCode()!=null) phone = pn[j].getAreaCode()+"-"+pn[j].getNumber();
-                            else phone = pn[j].getNumber();
-                        }
-                    }
-                    if (phone!=null) {
-                        if (pn[j].getExtension()!=null) ext = pn[j].getExtension();
-                        else if (pn[j].getExchange()!=null) ext = pn[j].getExchange();
-
-                        if (pn[j].getPhoneNumberType()==cdsDt.PhoneNumberType.W) {
-                            workPhone = phone;
-                            workExt   = ext;
-                        } else if (pn[j].getPhoneNumberType()==cdsDt.PhoneNumberType.R) {
-                            homePhone = phone;
-                            homeExt   = ext;
-                        } else if (pn[j].getPhoneNumberType()==cdsDt.PhoneNumberType.C) {
-                            cellPhone = phone;
-                        }
-                    }
-                }
-
-                String contactNote = StringUtils.noNull(contt[i].getNote());
-                String cDemoNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, cFirstName, cLastName, homePhone, workPhone, cEmail);
-                String cPatient = cLastName+","+cFirstName;
-                if (StringUtils.empty(cDemoNo)) {   //add new demographic as contact
-                    psDate = UtilDateUtilities.DateToString(new Date(),"yyyy-MM-dd");
-                    demoRes = dd.addDemographic(loggedInInfo, "", cLastName, cFirstName,"" , "", "", "", "","","","","",
-                    			homePhone, workPhone, "", "", "", "", "", "", "", "", "",null,
-                    			"Contact-only", psDate, "", "", "", "", "",
-                    			"F", "", "", "", "", "", "",
-                    			cEmail, "", "", "", "", "", "", "");
-                	cDemoNo = demoRes.getId();
-                    err_note.add("Contact-only patient "+cPatient+" (Demo no="+cDemoNo+") created");
-
-                    if (!workExt.equals("")) demographicExtDao.addKey("", Integer.parseInt(cDemoNo), "wPhoneExt", workExt);
-                    if (!homeExt.equals("")) demographicExtDao.addKey("", Integer.parseInt(cDemoNo), "hPhoneExt", homeExt);
-                    if (!cellPhone.equals("")) demographicExtDao.addKey("", Integer.parseInt(cDemoNo), "demo_cell", cellPhone);
-                }
-                insertIntoAdmission(cDemoNo);
-
-                cdsDt.PurposeEnumOrPlainText[] contactPurposes = contt[i].getContactPurposeArray();
-                String sdm="", emc="", cPurpose=null;
-                String[] rel = new String[contactPurposes.length];
-
-                for (int j=0; j<contactPurposes.length; j++) {
-                    cPurpose = contactPurposes[j].getPurposeAsPlainText();
-                    if (cPurpose==null) cPurpose = contactPurposes[j].getPurposeAsEnum().toString();
-                    if (cPurpose!=null) cPurpose = cPurpose.trim();
-                    else continue;
-
-                    if (cPurpose.equals("EC") || cPurpose.equalsIgnoreCase("emergency contact"))
-                    	emc = "true";
-                    else if (cPurpose.equals("SDM") || cPurpose.equalsIgnoreCase("substitute decision maker"))
-                    	sdm = "true";
-                    else if (cPurpose.equals("NK")) rel[j] = "Next of Kin";
-                    else if (cPurpose.equals("AS")) rel[j] = "Administrative Staff";
-                    else if (cPurpose.equals("CG")) rel[j] = "Care Giver";
-                    else if (cPurpose.equals("PA")) rel[j] = "Power of Attorney";
-                    else if (cPurpose.equals("IN")) rel[j] = "Insurance";
-                    else if (cPurpose.equals("GT")) rel[j] = "Guarantor";
-                    else if (cPurpose.equals("O")) rel[j] = "Other";
-                    else {
-                        rel[j] = cPurpose;
-                    }
-                }
-
-                if (StringUtils.filled(cDemoNo)) {
-                	if (oscarProperties.isPropertyActive("NEW_CONTACTS_UI")) {
-                        for (int j=0; j<rel.length; j++) {
-                        	if (rel[j]==null) continue;
-
-                            DemographicContact demoContact = new DemographicContact();
-                            demoContact.setCreated(new Date());
-                            demoContact.setUpdateDate(new Date());
-                            demoContact.setDemographicNo(Integer.valueOf(demographicNo));
-                            demoContact.setContactId(cDemoNo);
-                            demoContact.setType(1); //should be "type" - display problem
-                            demoContact.setCategory("personal");
-                        	demoContact.setRole(rel[j]);
-                            demoContact.setEc(emc);
-                            demoContact.setSdm(sdm);
-                            demoContact.setNote(contactNote);
-                            demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-                        	contactDao.persist(demoContact);
-
-                        	//clear emc, sdm, contactNote after 1st save
-                        	emc = "";
-                        	sdm = "";
-                        	contactNote = "";
-                        }
-                	} else {
-				        Facility facility = request != null ? (Facility) request.getSession().getAttribute(SessionConstants.CURRENT_FACILITY) : null;
-				        Integer facilityId = null;
-				        if (facility!=null) facilityId = facility.getId();
-
-				        for (int j=0; j<rel.length; j++) {
-				        	if (rel[j]==null) continue;
-
-							DemographicRelationship demoRel = new DemographicRelationship();
-							demoRel.addDemographicRelationship(demographicNo, cDemoNo, rel[j], sdm.equals("true"), emc.equals("true"), contactNote, admProviderNo, facilityId);
-
-                        	//clear emc, sdm, contactNote after 1st save
-                        	emc = "";
-                        	sdm = "";
-                        	contactNote = "";
-				        }
-                	}
-                }
-            }
-*/
             Set<CaseManagementIssue> scmi = null;	//Declare a set for CaseManagementIssues
             //PERSONAL HISTORY
             PersonalHistory[] pHist = patientRec.getPersonalHistoryArray();
@@ -1498,12 +1299,6 @@ public class ImportDemographicDataAction4 extends Action {
                 caseManagementManager.saveNoteSimple(cmNote);
                 addOneEntry(PERSONALHISTORY);
 
-//                //to dumpsite
-//                socialHist = Util.addLine("imported.CDS.5 ", "Social History: ", socialHist);
-//                Long hostNoteId = cmNote.getId();
-//                cmNote = prepareCMNote("2",null);
-//                cmNote.setNote( socialHist);
-//                saveLinkNote(hostNoteId, cmNote);
             }
 
             //FAMILY HISTORY
@@ -1534,7 +1329,7 @@ public class ImportDemographicDataAction4 extends Action {
 	            if(residualInfo != null) {
 		            Date enteredDate = extractDateFromResidual(residualInfo);
 		            cmNote.setObservation_date(enteredDate);
-//		            familyHist += "\n" + getResidual(residualInfo);
+
 	            }
 
                 if (StringUtils.empty(familyHist)) {
@@ -1547,28 +1342,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                 //annotation
                 Long hostNoteId = cmNote.getId();
-//                cmNote = prepareCMNote("2",null);
-//                String note = StringUtils.noNull(fHist[i].getNotes());
-//                cmNote.setNote(note);
-//                saveLinkNote(hostNoteId, cmNote);
-
-                //to dumpsite
-//                String dump = "imported.CDS.5";
-                /*
-                String summary = fHist[i].getCategorySummaryLine();
-                if (StringUtils.empty(summary)) {
-                        err_summ.add("No Summary for Family History ("+(i+1)+")");
-                }
-                dump = Util.addLine(dump, summary);
-                */
-                //String diagCode = getCode(fHist[i].getDiagnosisProcedureCode(),"Diagnosis/Procedure");
-                //dump = Util.addLine(dump, diagCode);
-//                dump = Util.addLine(dump, " Family History: " , getResidual(fHist[i].getResidualInfo()));
-//                if (!"imported.CDS.5".equals(dump)){
-//                    cmNote = prepareCMNote("2",null);
-//                    cmNote.setNote(dump);
-//                    saveLinkNote(hostNoteId, cmNote);
-//                }
 
                 //extra fields
                 CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1638,7 +1411,6 @@ public class ImportDemographicDataAction4 extends Action {
 	            if(residualInfo != null) {
 		            Date enteredDate = extractDateFromResidual(residualInfo);
 		            cmNote.setObservation_date(enteredDate);
-//		            medicalHist += "\n" + getResidual(residualInfo);
 	            }
 
                 if (StringUtils.empty(medicalHist)) {
@@ -1652,23 +1424,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                 //annotation
                 Long hostNoteId = cmNote.getId();
-//                cmNote = prepareCMNote("2",null);
-//                String note = pHealth[i].getNotes();
-//                cmNote.setNote(note);
-//                saveLinkNote(hostNoteId, cmNote);
-
-
-                //to dumpsite
-//                String dump = "imported.CDS.5";
-//                String diagCode = isICD9(pHealth[i].getDiagnosisProcedureCode()) || isICD9CM(pHealth[i].getDiagnosisProcedureCode()) || isICD10(pHealth[i].getDiagnosisProcedureCode()) ? null : getCode(pHealth[i].getDiagnosisProcedureCode(),"Diagnosis/Procedure");
-//                dump = Util.addLine(dump, " Dx Code: ", diagCode);
-//                dump = Util.addLine(dump, " Medical History: ", getResidual(pHealth[i].getResidualInfo()));
-
-//                if (!"imported.CDS.5".equals(dump)){
-//                    cmNote = prepareCMNote("2",null);
-//                    cmNote.setNote(dump);
-//                    saveLinkNote(hostNoteId, cmNote);
-//                }
 
                 //extra fields
                 CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1737,7 +1492,6 @@ public class ImportDemographicDataAction4 extends Action {
 					if(residualInformation != null) {
 						Date enteredDate = extractDateFromResidual(residualInformation);
 						cmNote.setObservation_date(enteredDate);
-//						ongConcerns += "\n" + getResidual(residualInformation);
 					}
 
 	                if (StringUtils.empty(ongConcerns)) {
@@ -1750,22 +1504,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                     //annotation
                     Long hostNoteId = cmNote.getId();
-//                    cmNote = prepareCMNote("2",null);
-//                    String note = probList[i].getNotes();
-//                    cmNote.setNote(note);
-//                    saveLinkNote(hostNoteId, cmNote);
-
-
-                    //to dumpsite
-//                    String dump = "imported.CDS.5";
-//                    String diagCode = isICD9(probList[i].getDiagnosisCode()) || isICD9CM(probList[i].getDiagnosisCode()) || isICD10(probList[i].getDiagnosisCode())? null : getCode(probList[i].getDiagnosisCode(),"Diagnosis");
-//                    dump = Util.addLine(dump, " Dx Code: " ,diagCode);
-//                    dump = Util.addLine(dump, " Ongoing Concerns: ", getResidual(probList[i].getResidualInfo()));
-//                    if (!"imported.CDS.5".equals(dump)){
-//                        cmNote = prepareCMNote("2",null);
-//                        cmNote.setNote(dump);
-//                        saveLinkNote(hostNoteId, cmNote);
-//                    }
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1818,7 +1556,6 @@ public class ImportDemographicDataAction4 extends Action {
 					if(residualInformation != null) {
 						Date enteredDate = extractDateFromResidual(residualInformation);
 						cmNote.setObservation_date(enteredDate);
-//						riskFactors += "\n" + getResidual(residualInformation);
 					}
 
                     if (StringUtils.empty(riskFactors)) {
@@ -1831,26 +1568,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                     //annotation
                     Long hostNoteId = cmNote.getId();
-//                    cmNote = prepareCMNote("2",null);
-//                    String note = rFactors[i].getNotes();
-//                    cmNote.setNote(note);
-//                    saveLinkNote(hostNoteId, cmNote);
-
-                    //to dumpsite
-//                    String dump = "imported.CDS.5";
-                    /*
-                    String summary = rFactors[i].getCategorySummaryLine();
-                    if (StringUtils.empty(summary)) {
-                        err_summ.add("No Summary for Risk Factors ("+(i+1)+")");
-                    }
-                    dump = Util.addLine(dump, summary);
-                    */
-//                    dump = Util.addLine(dump, " Risk Factors: ", getResidual(rFactors[i].getResidualInfo()));
-//                    if (!"imported.CDS.5".equals(dump)){
-//                        cmNote = prepareCMNote("2",null);
-//                        cmNote.setNote(dump);
-//                        saveLinkNote(hostNoteId, cmNote);
-//                    }
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -1907,7 +1624,6 @@ public class ImportDemographicDataAction4 extends Action {
 	                if(residualInformation != null) {
 		                Date enteredDate = extractDateFromResidual(residualInformation);
 		                cmNote.setObservation_date(enteredDate);
-//		                reminders += "\n" + getResidual(residualInformation);
 	                }
 
                     cmNote.setNote(reminders);
@@ -1916,26 +1632,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                     //annotation
                     Long hostNoteId = cmNote.getId();
-//                    cmNote = prepareCMNote("2",null);
-//                    String note = alerts[i].getNotes();
-//                    cmNote.setNote(note);
-//                    saveLinkNote(hostNoteId, cmNote);
-
-                    //to dumpsite
-//                    String dump = "imported.CDS.5";
-                    /*
-                    String summary = alerts[i].getCategorySummaryLine();
-                    if (StringUtils.empty(summary)) {
-                            err_summ.add("No Summary for Alerts & Special Needs ("+(i+1)+")");
-                    }
-                    dump = Util.addLine(dump, summary);
-                    */
-//                    dump = Util.addLine(dump, " Alerts and Notes: ", getResidual(alerts[i].getResidualInfo()));
-//                    if (!"imported.CDS.5".equals(dump)){
-//                        cmNote = prepareCMNote("2",null);
-//                        cmNote.setNote(dump);
-//                        saveLinkNote(hostNoteId, cmNote);
-//                    }
 
                     //extra fields
                     CaseManagementNoteExt cme = new CaseManagementNoteExt();
@@ -2022,27 +1718,6 @@ public class ImportDemographicDataAction4 extends Action {
 						cmNote.setNote(heading);
 						saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
 					}
-
-                    //to dumpsite
-//                    String dump = "imported.CDS.5";
-                    /*
-                    String summary = aaReactArray[i].getCategorySummaryLine();
-                    if (StringUtils.empty(summary)) {
-                        err_summ.add("No Summary for Allergies & Adverse Reactions ("+(i+1)+")");
-                    }
-                    dump = Util.addLine(dump, summary);
-                    */
-//                    dump = Util.addLine(dump, " Allergy: ", alg_extra);
-//                    dump = Util.addLine(dump, " Allergy Residual: ", getResidual(aaReactArray[i].getResidualInfo()));
-//                    if (aaReactArray[i].getReactionType() != null) {
-//						dump = Util.addLine(dump, "Reaction Type=" + aaReactArray[i].getReactionType().toString()); //conditional added because some imports are missing this information and results in NPE
-//                    }
-//
-//                    if (!"imported.CDS.5".equals(dump)){
-//                        cmNote = prepareCMNote("2",null);
-//                        cmNote.setNote(dump);
-//                        saveLinkNote(cmNote, CaseManagementNoteLink.ALLERGIES, Long.valueOf(allergyId));
-//                    }
                 }
 
 
@@ -2173,7 +1848,6 @@ public class ImportDemographicDataAction4 extends Action {
                     if ("Y".equalsIgnoreCase(non_auth)) drug.setNonAuthoritative(non_auth.equalsIgnoreCase("Y"));
 
                    drug.setDispenseInterval(medArray[i].getDispenseInterval() != null ?medArray[i].getDispenseInterval() : "" );
-                  //  else err_data.add("Error! Invalid Dispense Interval for Medications & Treatments ("+(i+1)+")");
 
                     String protocolIdentifier = medArray[i].getProtocolIdentifier();
                     if(protocolIdentifier != null) {
@@ -2323,7 +1997,6 @@ public class ImportDemographicDataAction4 extends Action {
                         drugReason.setArchivedFlag(false);
                         drugReasonDao.persist(drugReason);
                     }
-                   
 
                     //partial date
                     partialDateDao.setPartialDate(PartialDate.DRUGS, drug.getId(), PartialDate.DRUGS_WRITTENDATE, writtenDateFormat);
@@ -2337,16 +2010,6 @@ public class ImportDemographicDataAction4 extends Action {
 		                cmNote.setNote(note);
 		                saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long) drug.getId());
 	                }
-                    //to dumpsite
-//                    String dump = "imported.CDS.5";
-//                    dump = Util.addLine(dump, " Prescription Residue: " ,getResidual(medArray[i].getResidualInfo()));
-//                    dump = Util.addLine(dump, " Prescription Id: ", medArray[i].getPrescriptionIdentifier());
-//
-//                    if (!"imported.CDS.5".equals(dump)){
-//                        cmNote = prepareCMNote("2",null);
-//                        cmNote.setNote(dump);
-//                        saveLinkNote(cmNote, CaseManagementNoteLink.DRUGS, (long)drug.getId());
-//                    }
                 }
 
 
@@ -2443,20 +2106,6 @@ public class ImportDemographicDataAction4 extends Action {
                     
                     
                     addOneEntry(IMMUNIZATION);
-
-                    /*
-                     * to dumpsite: Extra immunization data
-                     * back-up to encounter notes, just in case
-                     */
-//                    if (StringUtils.filled(immExtra) && preventionId>=0) {
-//        	            immExtra = Util.addHeading("imported.CDS.5", "Immunization Note" ,immExtra);
-//        	            CaseManagementNote imNote = prepareCMNote("1",null);
-//        	            imNote.setNote(immExtra);
-//						imNote.setObservation_date(Util.dateTimeFPtoDate(immuArray[i].getDate(), timeShiftInDays));
-//						imNote.setSigned(Boolean.TRUE);
-//						imNote.setArchived(true);
-//        	            saveLinkNote(imNote, CaseManagementNoteLink.PREVENTIONS, Long.valueOf(preventionId));
-//                    }
                 }
 
                 //LABORATORY RESULTS
@@ -2465,9 +2114,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                 //APPOINTMENTS
                 Appointments[] appArray = patientRec.getAppointmentsArray();
-                //   ApptStatusData asd = new ApptStatusData();
-             //   String[] allStatus = asd.getAllStatus();
-             //   String[] allTitle = asd.getAllTitle();
                 AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
                 List<AppointmentStatus> appointmentStatusList = appointmentStatusDao.findAll();                
 
@@ -2516,8 +2162,6 @@ public class ImportDemographicDataAction4 extends Action {
                     		AppointmentStatus tmp =  createNewAppointmentStatus(apptStatus);
                     		 
                          	status = tmp.getStatus();
-                         //	err_note.add("Cannot map appointment status ["+apptStatus+"]. Appointment Status set to [Imported]");
-                         //	failedToMapStatus=true;
                          }
                     }else {
                     	status = "t";
@@ -2553,14 +2197,6 @@ public class ImportDemographicDataAction4 extends Action {
                     appointmentDao.persist(appt);
                     
                     addOneEntry(APPOINTMENT);
-                    
-//                    if(failedToMapStatus) {
-//	                	String dump = Util.addHeading("imported.CDS.5", " Appointment Status: ",apptStatus);
-//	    	            CaseManagementNote imNote = prepareCMNote("2",null);
-//	    	            imNote.setNote(dump);
-//	    	            saveLinkNote(imNote, CaseManagementNoteLink.APPOINTMENT, Long.valueOf(appt.getId()));
-//                    }
-                    
                 }
 
                 //REPORTS RECEIVED
@@ -2607,11 +2243,7 @@ public class ImportDemographicDataAction4 extends Action {
                         
                         hrmDoc.setRecipientId("");
                         hrmDoc.setRecipientName("");
-                      
-                    //    hrmDoc.setHrmCategoryId(hrmCategoryId);
-                        
-                    //    hrmDoc.setSourceFacilityReportNo(repR[i].getSendingFacilityReport());
-                        
+
                         hrmDocDao.persist(hrmDoc);
 
                         if (repR[i].getNotes()!=null) {
@@ -2742,8 +2374,7 @@ public class ImportDemographicDataAction4 extends Action {
                                      if(path3.indexOf("\\") != -1) {
                                     	 path3 = path3.replace("\\", File.separator);
                                      }
-                                     
-                                     //FileUtils.copyFile(new File(tmpDir + repR[i].getFilePath().substring(repR[i].getFilePath().lastIndexOf("\\")+1)), new File(docDir + docFileName));
+
                                      if(Files.exists(Paths.get(path3))) {
 	                                     FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
                                      } else {
@@ -2799,8 +2430,6 @@ public class ImportDemographicDataAction4 extends Action {
                                 String receivedDate = Util.dateFPtoString(repR[i].getReceivedDateTime(), timeShiftInDays);
                                 
                                 String responsibleId = admProviderNo;
-                              //  DemographicDao dDao = SpringUtils.getBean(DemographicDao.class);
-                              //  Demographic demographic =dDao.getDemographic(demographicNo);
                                 if(demographic != null && !StringUtils.isNullOrEmpty(demographic.getProviderNo())) {
                                 	responsibleId = demographic.getProviderNo();
                                 }
@@ -2812,8 +2441,6 @@ public class ImportDemographicDataAction4 extends Action {
                                 if (binaryFormat) addOneEntry(REPORTBINARY);
                                 else addOneEntry(REPORTTEXT);
 
-
-                	 
                 	            if(repR[i].getReportReviewedArray() != null && repR[i].getReportReviewedArray().length>1) {
                 	            	DocumentExtraReviewerDao derDao = SpringUtils.getBean(DocumentExtraReviewerDao.class); 
                 	            	for(int x=1;x<repR[i].getReportReviewedArray().length;x++) {
@@ -3333,14 +2960,14 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
 
-	boolean matchFileExt(String filename, String ext) {
-		if (StringUtils.empty(filename) || StringUtils.empty(ext)) return false;
-		if (filename.length()<ext.length()+2) return false;
-		if (filename.charAt(filename.length()-ext.length()-1)!='.') return false;
-
-		if (filename.toLowerCase().substring(filename.length()-ext.length()).equals(ext.toLowerCase())) return true;
-		else return false;
-	}
+//	boolean matchFileExt(String filename, String ext) {
+//		if (StringUtils.empty(filename) || StringUtils.empty(ext)) return false;
+//		if (filename.length()<ext.length()+2) return false;
+//		if (filename.charAt(filename.length()-ext.length()-1)!='.') return false;
+//
+//		if (filename.toLowerCase().substring(filename.length()-ext.length()).equals(ext.toLowerCase())) return true;
+//		else return false;
+//	}
 
 	String fillUp(String filled, char c, int size) {
 		if (size>=filled.length()) {
@@ -3401,8 +3028,7 @@ public class ImportDemographicDataAction4 extends Action {
 		
 		if(csdc.length == 2) {
 			String country = csdc[0];
-		//	String province = csdc[1];
-			
+
 			List<JSONObject> divisions = 
 					map.get(country);
 			
@@ -3475,7 +3101,6 @@ public class ImportDemographicDataAction4 extends Action {
                 String codingSystem = StringUtils.noNull(diagCode.getStandardCodingSystem()).toLowerCase();
                 
                 return codingSystem.equals("icd-9");
-	//	return (codingSystem.contains("icd") && codingSystem.contains("9"));
         }
 
         boolean isICD9(cdsDt.Code diagCode) {
@@ -3483,7 +3108,6 @@ public class ImportDemographicDataAction4 extends Action {
 
                 String codingSystem = StringUtils.noNull(diagCode.getCodingSystem()).toLowerCase();
                 return codingSystem.equals("icd-9");
-                //return (codingSystem.contains("icd") && codingSystem.contains("9"));
         }
         
         
@@ -3515,7 +3139,6 @@ public class ImportDemographicDataAction4 extends Action {
             if (diagCode==null) return false;
 
             String codingSystem = StringUtils.noNull(diagCode.getCodingSystem()).toLowerCase();
-            //return (codingSystem.contains("icd") && codingSystem.contains("10"));
             return codingSystem.equals("icd-9-cm");
         }
     
@@ -3652,14 +3275,14 @@ public class ImportDemographicDataAction4 extends Action {
 		return ret;
 	}
     
-    void addMeasurementsExt(Long measurementId, String key, String val, List<MeasurementsExt> exts) {
-        if (measurementId != null && StringUtils.filled(key) && StringUtils.filled(val)) {
-            MeasurementsExt mx = new MeasurementsExt(measurementId.intValue());
-            mx.setKeyVal(key);
-            mx.setVal(StringUtils.noNull(val));
-            exts.add(mx);
-        }
-    }
+//    void addMeasurementsExt(Long measurementId, String key, String val, List<MeasurementsExt> exts) {
+//        if (measurementId != null && StringUtils.filled(key) && StringUtils.filled(val)) {
+//            MeasurementsExt mx = new MeasurementsExt(measurementId.intValue());
+//            mx.setKeyVal(key);
+//            mx.setVal(StringUtils.noNull(val));
+//            exts.add(mx);
+//        }
+//    }
 
 	ProviderData getProviderByNames(String firstName, String lastName, boolean matchAll) {
 		ProviderData pd = new ProviderData();
@@ -3723,29 +3346,29 @@ public class ImportDemographicDataAction4 extends Action {
 		return ret;
 	}
 
-	private boolean isCdsTextDataType(String dataType) {
-		if (StringUtils.empty(dataType)) return false;
+//	private boolean isCdsTextDataType(String dataType) {
+//		if (StringUtils.empty(dataType)) return false;
+//
+//		String normalized = dataType.trim().toLowerCase(Locale.ROOT);
+//		return "string".equals(normalized)
+//				|| "text".equals(normalized)
+//				|| normalized.matches("text(1|4|5|8|10|20|32k|50|60|75|120|200|250|1k|2000|32k|64k)?");
+//	}
 
-		String normalized = dataType.trim().toLowerCase(Locale.ROOT);
-		return "string".equals(normalized)
-				|| "text".equals(normalized)
-				|| normalized.matches("text(1|4|5|8|10|20|32k|50|60|75|120|200|250|1k|2000|32k|64k)?");
-	}
-
-	ArrayList<String> getUniques(String[] arr) {
-		ArrayList<String> uniques = new ArrayList<String>();
-		for (int i=0; i<arr.length; i++) {
-			boolean match = false;
-			for (String x : uniques) {
-				if (arr[i].equals(x)) {
-					match = true;
-					break;
-				}
-			}
-			if (!match) uniques.add(arr[i]);
-		}
-		return uniques;
-	}
+//	ArrayList<String> getUniques(String[] arr) {
+//		ArrayList<String> uniques = new ArrayList<String>();
+//		for (int i=0; i<arr.length; i++) {
+//			boolean match = false;
+//			for (String x : uniques) {
+//				if (arr[i].equals(x)) {
+//					match = true;
+//					break;
+//				}
+//			}
+//			if (!match) uniques.add(arr[i]);
+//		}
+//		return uniques;
+//	}
 
 	String getYN(cdsDt.YnIndicator yn) {
 		if (yn==null) return "";
@@ -3772,7 +3395,7 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
 	
-        Boolean getYN(cdsDt.YnIndicatorAndBlank yn) {
+	Boolean getYN(cdsDt.YnIndicatorAndBlank yn) {
 		if (yn==null) return null;
 
 		boolean ret = false;
@@ -3782,7 +3405,7 @@ public class ImportDemographicDataAction4 extends Action {
 			ret = true;
 		}
 		return ret;
-        }
+	}
 
 	String mapPreventionTypeByCode(cdsDt.Code imCode) {
 		if (imCode==null) return null;
@@ -3889,15 +3512,6 @@ public class ImportDemographicDataAction4 extends Action {
 			cml.setNoteId(cmn.getId()); //new note id
             cml.setOtherId(otherId);
 			caseManagementManager.saveNoteLink(cml);
-		}
-	}
-
-	void saveMeasurementsExt(Long measurementId, String key, String val) {
-		if (measurementId!=null && StringUtils.filled(key) && StringUtils.filled(val)) {
-			MeasurementsExt mx = new MeasurementsExt(measurementId.intValue());
-			mx.setKeyVal(key);
-			mx.setVal(StringUtils.noNull(val));
-			ImportExportMeasurements.saveMeasurementsExt(mx);
 		}
 	}
 
@@ -4028,7 +3642,7 @@ public class ImportDemographicDataAction4 extends Action {
     DemographicArchive archiveDemographic(org.oscarehr.common.model.Demographic d) {
     	DemographicArchive da = new DemographicArchive();
 
-    	da.setDemographicNo(Integer.valueOf(d.getDemographicNo()));
+    	da.setDemographicNo(d.getDemographicNo());
     	da.setFirstName(d.getFirstName());
     	da.setLastName(d.getLastName());
     	da.setTitle(d.getTitle());
@@ -4198,7 +3812,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 		msh.getSendingApplication().getHd1_NamespaceID().setValue(facility);
 		msh.getSendingFacility().getNamespaceID().setValue(facility);
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(dateOfMessage);
 		msh.getDateTimeOfMessage().getTimeOfAnEvent().setDateSecondPrecision(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH),cal.get(Calendar.HOUR_OF_DAY),cal.get(Calendar.MINUTE),cal.get(Calendar.SECOND));
@@ -4206,7 +3820,7 @@ public class ImportDemographicDataAction4 extends Action {
 		msh.getMessageType().getTriggerEvent().setValue(triggerEvent);
 		msh.getMessageControlID().setValue(messageControlId);
 		msh.getProcessingID().getProcessingID().setValue("P");
-		
+
 	}
 	
 	/*
@@ -4252,7 +3866,6 @@ public class ImportDemographicDataAction4 extends Action {
     String[] _req_date  = new String[labResultArr.length]; //getLabRequisitionDateTime (set to collectionDateTime if null)
     
 */
-
 	private Long findMeasurementId(Integer labNo, String testName) {
 		Integer measId = measurementsExtDao.getMeasurementIdByLabNoAndTestName(labNo.toString(), testName);
         if (measId != null) {
@@ -4263,6 +3876,10 @@ public class ImportDemographicDataAction4 extends Action {
 	}
 
     private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
+
+		/*
+		 * Batch the results into groups by accession number
+		 */
 		Map<String, List<LaboratoryResults>> groupedResults = new LinkedHashMap<>();
 		for (LaboratoryResults result : labResultArr) {
 			String fillerOrderNumber = result.getAccessionNumber();
@@ -4274,8 +3891,10 @@ public class ImportDemographicDataAction4 extends Action {
 			}
 		}
 
+		/*
+		 * Process each batch of results
+		 */
 		for (List<LaboratoryResults> reportResults : groupedResults.values()) {
-//			LaboratoryResults labResult = reportResults.get(0);
 			try {
                 HL7CreateFile hl7CreateFile = new HL7CreateFile(demographic);
                 String observationMsg = hl7CreateFile.generateHL7(reportResults);
@@ -4287,123 +3906,7 @@ public class ImportDemographicDataAction4 extends Action {
 						providerLabRoutingModel.setLabNo(labNo);
 					});
 					providerLabRoutingDao.batchUpdate(new ArrayList<>(providerLabRoutingQueue.values()), "lab_no", 50);
-
 				}
-//		        	DateTimeFullOrPartial requisitionDateTime = labResult.getLabRequisitionDateTime();
-//		        	if(requisitionDateTime == null) {
-//		        		requisitionDateTime = labResult.getCollectionDateTime();
-//		        	}
-//
-
-//
-//			        for (LaboratoryResults result : reportResults) {
-//
-//
-//
-//	                	Long measId = findMeasurementId(labNo, result.getTestNameReportedByLab());
-//                        HashMap<String, MeasurementsExt> measurementsExtMap;
-//
-//                        if (measId != null) {
-//                           measurementsExtMap = measurementsExtDao.getMeasurementsExtMapByMeasurementId(measId.intValue());
-//
-//                            if(StringUtils.filled(result.getNotesFromLab()) && measurementsExtMap.get("comments") == null) {
-//                                addMeasurementsExt(measId, "comments", result.getNotesFromLab(), measurementsExtsToSave);
-//                            }
-//
-							/*
-							 * PhysiciansNotes are notes that are added to the lab
-							 * when the physician reviews the lab results.
-							 * Some notes are added to every single OBX line in an unstructured lab
-							 * result.
-							 */
-//					        StringBuilder reviewerComment = new StringBuilder();
-//					        if (StringUtils.filled(labResult.getPhysiciansNotes())) {
-//						        reviewerComment = new StringBuilder(labResult.getPhysiciansNotes());
-//					        }
-//                            String annotation = labResult.getPhysiciansNotes();
-//                            if (StringUtils.filled(annotation) && ! reviewerComment.toString().contains(annotation)) {
-//								reviewerComment.append(" ").append(annotation);
-//                            }
-//
-//                            String olis_status = result.getTestResultStatus();
-//                            if (StringUtils.filled(olis_status)) {
-//                                if(measurementsExtMap.get("olis_status") == null) {
-//                                    addMeasurementsExt(measId, "olis_status", olis_status, measurementsExtsToSave);
-//                                }
-//                            }
-//
-//                            if (result.getBlockedTestResult() != null && "Y".equals(result.getBlockedTestResult().toString()) && measurementsExtMap.get("reportBlocked") == null) {
-//                                addMeasurementsExt(measId, "reportBlocked", "Y", measurementsExtsToSave);
-//                            }
-//
-//                            if (result.isSetTestName() && measurementsExtMap.get("name_internal") == null) {
-//                                addMeasurementsExt(measId, "name_internal", result.getTestName(), measurementsExtsToSave);
-//                            }
-//
-//                            if(result.isSetReferenceRange()) {
-//                                if (StringUtils.filled(result.getReferenceRange().getReferenceRangeText()) && measurementsExtMap.get("range") == null) {
-//                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getReferenceRangeText(), measurementsExtsToSave);
-//                                }
-//
-//                                if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit())
-//                                        && measurementsExtMap.get("range") == null && measurementsExtMap.get("minimum") == null && measurementsExtMap.get("maximum") == null) {
-//                                    addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-//                                    addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
-//                                    addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-//                                } else {
-//                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && measurementsExtMap.get("minimum") == null) {
-//                                        addMeasurementsExt(measId, "minimum", result.getReferenceRange().getLowLimit(), measurementsExtsToSave);
-//                                    }
-//
-//                                    if (StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("maximum") == null) {
-//                                        addMeasurementsExt(measId, "maximum", result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-//                                    }
-//
-//                                    if (StringUtils.filled(result.getReferenceRange().getLowLimit()) && StringUtils.filled(result.getReferenceRange().getHighLimit()) && measurementsExtMap.get("range") == null) {
-//                                        addMeasurementsExt(measId, "range", result.getReferenceRange().getLowLimit() + "-" + result.getReferenceRange().getHighLimit(), measurementsExtsToSave);
-//                                    }
-//                                }
-//                            }
-//                        }
-//	                }
-//
-
-			        // enter physician review details into provider lab routing.
-//			        Map<String, ProviderLabRoutingModel> providerLabRoutingQueue = new HashMap<>();
-
-//			        for(ResultReviewer resultReviewer : labResult.getResultReviewerArray()) {
-//				        Date reviewDate = dateTimeFPtoDate(resultReviewer.getDateTimeResultReviewed(),0);
-//
-//				        String reviewer = writeProviderData(resultReviewer.getName().getFirstName(),resultReviewer.getName().getLastName(),resultReviewer.getOHIPPhysicianId(), null);
-//
-//				        String status = StringUtils.filled(reviewer) ? "A" : "N";
-//				        reviewer = status.equals("A") ? reviewer : "0";
-//
-//				        /*
-//				         * if the reviewer cannot be identified, use the MRP from the demographic
-//				         * otherwise it's an unassigned - new - lab. Provider: 0, Status: new
-//				         */
-//				        if("0".equals(reviewer) && StringUtils.filled(demographic.getProviderNo())) {
-//					        reviewer = demographic.getProviderNo();
-//				        }
-//
-//				        providerLabRoutingQueue.put(reviewer, new ProviderLabRoutingModel(reviewer, labNo , status, reviewerComment.toString(), reviewDate, "HL7"));
-//			        }
-//
-//			        // if there are no confirmed reviewers on this lab, use the MRP from the demographic
-//			        if (providerLabRoutingQueue.isEmpty() && StringUtils.filled(demographic.getProviderNo())) {
-//				        providerLabRoutingQueue.put(demographic.getProviderNo(), new ProviderLabRoutingModel(demographic.getProviderNo(), labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
-//			        }
-//
-//			        // otherwise it's an unassigned - new - lab. Provider: 0, Status: new
-//			        else if( providerLabRoutingQueue.isEmpty() ) {
-//				        providerLabRoutingQueue.put("0", new ProviderLabRoutingModel("0", labNo , "N", reviewerComment.toString(), new Date(), "HL7"));
-//			        }
-
-
-
-//		        }
-//
 			} catch(Exception e) {
 				logger.error("Error processing lab data", e);
                 importErrors.add("Error processing lab data" + e.getMessage());
@@ -4412,6 +3915,8 @@ public class ImportDemographicDataAction4 extends Action {
 //				/*
 //				 * Dump a summary of the lab results into the encounternote table as
 //				 * archived. Just in case the lab does not render properly.
+//			     * preferred to leave this commented out until it's needed.
+//				 * the casenotes table gets too cluttered.
 //				 */
 //				String labInfo = getLabDline(labResult, 0);
 //				labInfo = cleanEncounterText(labInfo);
@@ -4446,7 +3951,7 @@ public class ImportDemographicDataAction4 extends Action {
 	 * @return The last lab number if the parsing and saving operation is successful, or 0 if the operation fails.
 	 * @throws IOException If an I/O error occurs while saving the HL7 file or handling streams.
 	 */
-	private int saveAndParseLab(LoggedInInfo loggedInInfo, byte[] hl7Bytes, String type) throws IOException {
+	private int saveAndParseLab(LoggedInInfo loggedInInfo, byte[] hl7Bytes, String type) throws Exception {
 		try (InputStream saveStream = new ByteArrayInputStream(hl7Bytes);
 		     InputStream uploadStream = new ByteArrayInputStream(hl7Bytes)) {
 			String savedHL7Path = Utilities.saveFile(saveStream, "Lab." + sdf.format(new Date()) + ".import.hl7");
@@ -4475,11 +3980,7 @@ public class ImportDemographicDataAction4 extends Action {
 		if(status.equals(as.getDescription())) {
 			return as.getStatus();
 		}
-/*		
-		if("Confirmed".equals(status) && "Here".equals(as.getDescription())) {
-			return as.getStatus();
-		}
-*/		
+
 		if("No-Show".equals(status) && "No Show".equals(as.getDescription())) {
 			return as.getStatus();
 		}
@@ -4502,12 +4003,8 @@ public class ImportDemographicDataAction4 extends Action {
 		 importedStatus.setDescription(description);
 		 importedStatus.setEditable(1);
 		 importedStatus.setIcon("5.gif");
-		
-		 
-		 
 		 importedStatus.setStatus(findStatus(usedStatusCodes));
 		 importedStatus.setColor(generateRandomColor());
-		 
 		 appointmentStatusDao.persist(importedStatus);
 		 
 		 return importedStatus;
@@ -4541,34 +4038,7 @@ public class ImportDemographicDataAction4 extends Action {
 	            (green.length() == 1? "0" + green : green) +
 	            (blue.length() == 1? "0" + blue : blue);        
 	}
-	
-//	protected String getImportStatus() {
-//		//create if necessary
-//		 AppointmentStatusDao appointmentStatusDao = SpringUtils.getBean(AppointmentStatusDao.class);
-//		 AppointmentStatus importedStatus = null;
-//		 for(AppointmentStatus as : appointmentStatusDao.findAll()) {
-//			 if(as.getDescription().equals("Imported")) {
-//				 importedStatus = as;
-//				 break;
-//			 }
-//		 }
-//		 if(importedStatus == null) {
-//			 importedStatus = new AppointmentStatus();
-//			 importedStatus.setActive(1);
-//			 importedStatus.setColor("#DDDDDD");
-//			 importedStatus.setDescription("Imported");
-//			 importedStatus.setEditable(1);
-//			 importedStatus.setIcon("5.gif");
-//			 if(appointmentStatusDao.findByStatus("i") == null) {
-//				 importedStatus.setStatus("i");
-//			 } else {
-//				 importedStatus.setStatus("I");
-//			 }
-//			 appointmentStatusDao.persist(importedStatus);
-//		 }
-//		return importedStatus.getStatus();
-//	}
-	
+
 	String tryToMapRoute(String route) {
 		String ret = "";
 		
