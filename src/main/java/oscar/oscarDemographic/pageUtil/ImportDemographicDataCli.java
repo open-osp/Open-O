@@ -144,17 +144,24 @@ public class ImportDemographicDataCli {
                 inputPath, providerNo, programId, timeshiftInDays, matchProviderNames);
 
         ImportDemographicDataAction4 action = new ImportDemographicDataAction4();
-        ImportDemographicDataAction4.ImportResult result = action.importFromPath(
-                loggedInInfo, inputPath, providerNo, programId, matchProviderNames, timeshiftInDays);
+	    ImportDemographicDataAction4.ImportResult result = null;
+		try {
+			result = action.importFromPath(
+					loggedInInfo, inputPath, providerNo, programId, matchProviderNames, timeshiftInDays);
+		} catch (Exception e) {
+			logger.error("Input path cannot be resolved: {}", inputPath, e);
+		} finally {
+			if(result != null) {
+				for (String warning : result.getWarnings()) {
+					logger.warn(warning);
+				}
 
-        for (String warning : result.warnings) {
-            logger.warn(warning);
-        }
-
-        logger.info("Import log written to: {}", result.importLogPath);
-        logger.info("Done. {} warning(s).", result.warnings.size());
-
-        ctx.close();
+				logger.info("Import log written to: {}", result.importLogPath);
+				logger.info("Done. {} warning(s).", result.warnings.size());
+			}
+			ctx.close();
+			System.exit(1);
+		}
     }
 
     /**

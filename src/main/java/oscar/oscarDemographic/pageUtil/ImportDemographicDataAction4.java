@@ -361,6 +361,7 @@ public class ImportDemographicDataAction4 extends Action {
             String providerNo, String programId, boolean matchProviderNames,
             int timeshiftInDays) throws Exception {
 
+		ImportResult importResult = null;
         this.admProviderNo = providerNo;
         this.matchProviderNames = matchProviderNames;
         this.programId = programId;
@@ -376,34 +377,40 @@ public class ImportDemographicDataAction4 extends Action {
 
         String fileName = inputPath.getFileName().toString().toLowerCase();
 
-        if (Files.isRegularFile(inputPath) && fileName.endsWith(".xml")) {
-            processXmlFile(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
-        } else if (Files.isRegularFile(inputPath) && fileName.endsWith(".zip")) {
-            Path rootDirectory = unzipFile(inputPath);
-            processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, mockRequest, timeshiftInDays, students, 0);
-        } else if (Files.isDirectory(inputPath)) {
-            processXmlFilesInDirectory(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
-        } else {
-            throw new IllegalArgumentException("Input must be an .xml file, .zip file, or directory: " + inputPath);
-        }
+		try {
+			if (Files.isRegularFile(inputPath) && fileName.endsWith(".xml")) {
+				processXmlFile(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+			} else if (Files.isRegularFile(inputPath) && fileName.endsWith(".zip")) {
+				Path rootDirectory = unzipFile(inputPath);
+				processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+			} else if (Files.isDirectory(inputPath)) {
+				processXmlFilesInDirectory(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+			} else {
+				throw new IllegalArgumentException("Input must be an .xml file, .zip file, or directory: " + inputPath);
+			}
 
-        for (Path validXmlFile : validXmlFileList) {
-            importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
-        }
-
-	    /*
-	     * a new import log gets generated into the root of the temporary directory.
-	     * It gets offered as a download to the end user.
-	     */
-        File importLog = makeImportLog(logs, Paths.get(OscarProperties.getInstance().getProperty("BASE_DOCUMENT_DIR")).toAbsolutePath().toString());
-        return new ImportResult(warnings, logs, importLog.getPath());
+			for (Path validXmlFile : validXmlFileList) {
+				importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
+			}
+		}
+		catch (Exception e) {
+			logger.error("Error processing input file: {}", inputPath, e);
+		} finally {
+			/*
+			 * a new import log gets generated into the root of the temporary directory.
+			 * It gets offered as a download to the end user.
+			 */
+			File importLog = makeImportLog(logs, Paths.get(OscarProperties.getInstance().getProperty("BASE_DOCUMENT_DIR")).toAbsolutePath().toString());
+			importResult = new ImportResult(warnings, logs, importLog.getPath());
+		}
+		return importResult;
     }
 
     /**
      * Search for all XML / CDS / CMS patient files in a given directory and process.
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
-                                            HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws IOException {
+                                            HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws Exception {
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory, "*.{xml, XML, cds, CMS, CDS}")) {
             for (Path stream : directoryStream) {
 
@@ -434,9 +441,8 @@ public class ImportDemographicDataAction4 extends Action {
 			        warnings.add("Directory not found " + stream);
 		        }
             }
-        } catch (Exception e) {
-	        throw new RuntimeException(e);
         }
+
     }
 
     /**
@@ -769,11 +775,14 @@ public class ImportDemographicDataAction4 extends Action {
         ArrayList<String> err_othe = new ArrayList<String>(); //errors: other categories
         ArrayList<String> err_note = new ArrayList<String>(); //non-errors: notes
         importErrors = new ArrayList<String>();
+	    patientName = null;
+		demographicNo = null;
 
         String docDir = oscarProperties.getDocumentDirectory();
         docDir = Util.fixDirName(docDir);
         if (!Util.checkDir(docDir)) {
-                logger.debug("Error! Cannot write to DOCUMENT_DIR - Check oscar.properties or dir permissions.");
+			warnings.add("Error! Cannot write to DOCUMENT_DIR - Check oscar.properties or dir permissions.");
+			logger.error("Error! Cannot write to DOCUMENT_DIR - Check oscar.properties or dir permissions.");
         }
 
 		// build patient record and validate
@@ -785,14 +794,23 @@ public class ImportDemographicDataAction4 extends Action {
         try {
 	       omdCdsDocument = validateImport(xmlF, err_data);
         } catch (Exception ex) {
-			logger.error("Error parsing XML file {}", xmlF, ex);
 	        err_othe.add("XML file could not be parsed: " + xmlF.getName() + ": " + ex.getMessage());
+			logger.error("Error parsing XML file {}", xmlF, ex);
 			/*
 			 * any exception resulting from failure to parse XML file. Return and continue to the next file.
 			 * This file will be skipped and the next file will be processed.
 			 */
 			return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
         }
+
+		/*
+		 *  This is an XML file that completely failed schema validation or
+		 *  is not a valid OMD CDS document.
+		 *  It can be skipped and the next file will be processed.
+		 */
+		if(omdCdsDocument == null) {
+			return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
+		}
 
 	    PatientRecord patientRec = omdCdsDocument.getPatientRecord();
 
@@ -3438,7 +3456,7 @@ public class ImportDemographicDataAction4 extends Action {
 			if (StringUtils.filled(demographicNo)) {
 				title = "Patient "+patientName+" (Demographic no="+demographicNo+")";
 			}
-			warnings.add(fillUp("---- "+title, '-', 100));
+			warnings.add(fillUp(title, '-', 100));
 		}
 		warnings.addAll(err_demo);
 		warnings.addAll(err_data);
@@ -4089,7 +4107,7 @@ public class ImportDemographicDataAction4 extends Action {
 		if (validationHandler.hasMessages()) {
 			String validationMessage = String.format("XML file %s failed schema validation: %d error(s), %d warning(s)",
 					f.getName(), validationHandler.getErrorCount(), validationHandler.getWarningCount());
-			logger.info(validationMessage);
+			logger.debug(validationMessage);
 			err_data.add(validationMessage);
 			err_data.addAll(validationHandler.getMessages());
 		}
