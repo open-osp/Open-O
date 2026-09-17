@@ -413,7 +413,11 @@ public class ImportDemographicDataAction4 extends Action {
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
                                             HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws Exception {
-        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory, "*.{xml, XML, cds, CMS, CDS}")) {
+
+	    // current parent directory could also contain attachments found in the same directory
+	    currentDirectory = fileDirectory.toString();
+
+		try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory, "*.{xml, XML, cds, CMS, CDS}")) {
             for (Path stream : directoryStream) {
 
                 if (Files.isDirectory(stream)) {
@@ -2401,6 +2405,7 @@ public class ImportDemographicDataAction4 extends Action {
 										Files.move(relativeFileUrl, Paths.get(docDir, docFileName));
 									} else {
 										err_data.add("Error! Attached file not found (" + relativeFileUrl + ")");
+										logger.error("Error! Attached file not found (" + relativeFileUrl + ")");
 									}
                                 }
 
