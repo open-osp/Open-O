@@ -287,6 +287,8 @@ public class ImportDemographicDataAction4 extends Action {
             }
 
             directory = nioFileManager.createTempFile(filename, byteArrayOutputStream);
+
+	        currentDirectory = directory.getParent().toString();
         }
 
         /*
@@ -2350,7 +2352,7 @@ public class ImportDemographicDataAction4 extends Action {
                             if (b==null && filePath == null) {
                                 err_othe.add("Error! No report file in xml ("+(i+1)+")");
                             } else {
-                                String docFileName = "ImportReport"+(i+1)+"-"+UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss");
+                                String docFileName = "cds5_imported_report_" + (i+1) + "_" + UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss") + "_" + patientRec.getDemographics().getUniqueVendorIdSequence();
                                 String docClass=null, docSubClass=null, contentType="", contentDateTime=null, observationDate=null, updateDateTime=null, docCreator=admProviderNo;
                                 String reviewer=null, reviewDateTime=null, source=null, sourceFacility=null, reportExtra=null;
                                 Integer docNum=null;
@@ -2361,7 +2363,7 @@ public class ImportDemographicDataAction4 extends Action {
                                     contentType = repR[i].getFileExtensionAndVersion();
                                     docFileName += Util.mimeToExt(contentType);
                                 } else {
-                                    if (binaryFormat) err_data.add("Error! No File Extension for Report ("+(i+1)+")");
+                                    if (binaryFormat) err_data.add("Warning! No File Extension for Report ("+(i+1)+")");
                                 }
                                 String docDesc = repR[i].getSubClass();
 
@@ -2374,7 +2376,7 @@ public class ImportDemographicDataAction4 extends Action {
                                 }                                
 
                                 if (StringUtils.empty(docDesc)) {
-									docDesc = "ImportReport"+(i+1);
+									docDesc = "cds5 Imported Report "+(i+1);
                                 }
                                 
                                 if(b != null) {
@@ -2382,22 +2384,24 @@ public class ImportDemographicDataAction4 extends Action {
 		                                f.write(b);
 	                                }
                                 } else {
-                                	 String tmpDir = currentDirectory;
-                                             //oscarProperties.getProperty("TMP_DIR");
-                                     tmpDir = Util.fixDirName(tmpDir);
-                                     String path3 = tmpDir + repR[i].getFilePath();
-                                     if(!path3.endsWith(contentType)) {
-                                    	 path3 = path3 + contentType;
-                                     }
-                                     if(path3.indexOf("\\") != -1) {
-                                    	 path3 = path3.replace("\\", File.separator);
-                                     }
+									 /* This document should be at a URL relative to the patient record
+	                                  * in the same root directory or a new subdirectory.
+	                                  * Path transversal is not allowed.
+	                                  * Null check should have been done on the filepath prior to this point
+                                      */
+                                    String fileName = repR[i].getFilePath();
+                                    if(contentType != null && ! fileName.endsWith(contentType)) {
+	                                    fileName = fileName + contentType.trim();
+                                    }
 
-                                     if(Files.exists(Paths.get(path3))) {
-	                                     FileUtils.copyFile(new File(path3), new File(docDir + docFileName));
-                                     } else {
-                                    	 err_data.add("Error! Attached file not found ("+path3+")");
-                                     }
+									Path relativeFileUrl = Paths.get(currentDirectory, fileName);
+
+									// moving files ensures all files are accounted for
+									if(Files.exists(relativeFileUrl)) {
+										Files.move(relativeFileUrl, Paths.get(docDir, docFileName));
+									} else {
+										err_data.add("Error! Attached file not found (" + relativeFileUrl + ")");
+									}
                                 }
 
                                 if (repR[i].getClass1()!=null) {
@@ -2820,26 +2824,27 @@ public class ImportDemographicDataAction4 extends Action {
 
 
     protected String mapContentType(String contentType) {
-    	
-    	if(".jpeg".equals(contentType) || ".jpg".equals(contentType)) {
-    		return "image/jpeg";
+
+    	if(contentType == null || contentType.isEmpty()) {
+    		return "application/octet-stream";
     	}
-    	if(".doc".equals(contentType)) {
-    		return "application/msword";
+
+    	switch(contentType.toLowerCase()) {
+    		case ".jpg":
+    			return "image/jpeg";
+    		case ".doc":
+    			return "application/msword";
+    		case ".pdf":
+    			return "application/pdf";
+    		case ".txt":
+    			return "text/plain";
+    		case ".html":
+    			return "text/html";
+    		case ".rtf":
+    			return "application/rtf";
+    		default:
+    			return "application/octet-stream";
     	}
-    	if(".pdf".equals(contentType)) {
-    		return "application/pdf";
-    	}
-    	if(".txt".equals(contentType)) {
-    		return "text/plain";
-    	}
-    	if(".html".equals(contentType)) {
-    		return "text/html";
-    	}
-    	if(".rtf".equals(contentType)) {
-    		return "application/rtf";
-    	}
-    	return contentType;
     }
 
     /**
@@ -2903,7 +2908,7 @@ public class ImportDemographicDataAction4 extends Action {
             if (keyword[0][i].length()<keyword[1][i].length()) keyword[0][i] = fillUp(keyword[0][i], ' ', keyword[1][i].length());
         }
 
-		File importLog = new File(dir, "ImportEvent-"+UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss")+".log");
+		File importLog = new File(dir, "CDS5_Import_Event_"+UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss")+".log");
 		try(BufferedWriter out = new BufferedWriter(new FileWriter(importLog))) {
             int tableWidth = 0;
             for (int i = 0; i < keyword.length; i++) {
