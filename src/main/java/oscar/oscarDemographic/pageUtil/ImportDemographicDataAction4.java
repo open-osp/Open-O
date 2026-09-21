@@ -30,10 +30,7 @@ import java.io.*;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -238,6 +235,10 @@ public class ImportDemographicDataAction4 extends Action {
     MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
     DemographicContactDao contactDao = SpringUtils.getBean(DemographicContactDao.class);
+	HRMDocumentDao hrmDocDao = SpringUtils.getBean(HRMDocumentDao.class);
+	HRMDocumentCommentDao hrmDocCommentDao = SpringUtils.getBean(HRMDocumentCommentDao.class);
+	HRMDocumentSubClassDao hrmDocSubClassDao = SpringUtils.getBean(HRMDocumentSubClassDao.class);
+	HRMDocumentToDemographicDao hrmDocToDemoDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
 
     private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 	private static volatile DocumentBuilderFactory importFactory;
@@ -2224,12 +2225,6 @@ public class ImportDemographicDataAction4 extends Action {
                 }
 
                 //REPORTS RECEIVED
-
-                HRMDocumentDao hrmDocDao = (HRMDocumentDao) SpringUtils.getBean(HRMDocumentDao.class);
-                HRMDocumentCommentDao hrmDocCommentDao = (HRMDocumentCommentDao) SpringUtils.getBean(HRMDocumentCommentDao.class);
-                HRMDocumentSubClassDao hrmDocSubClassDao = (HRMDocumentSubClassDao) SpringUtils.getBean(HRMDocumentSubClassDao.class);
-                HRMDocumentToDemographicDao hrmDocToDemoDao = (HRMDocumentToDemographicDao) SpringUtils.getBean(HRMDocumentToDemographicDao.class);
-
                 Reports[] repR = patientRec.getReportsArray();
                 List<Reports> HRMreports = new ArrayList<Reports>();
                 for (int i=0; i<repR.length; i++) {
@@ -2340,57 +2335,79 @@ public class ImportDemographicDataAction4 extends Action {
 
                 		hrmDocDao.merge(hrmDoc);
                     } else { //non-HRM reports
-                        boolean binaryFormat = false;
-                        if (repR[i].getFormat()!=null) {
-                            if (repR[i].getFormat().equals(cdsDt.ReportFormat.BINARY)) binaryFormat = true;
-                        } else {
-                            err_data.add("Error! No Report Format for Report ("+(i+1)+")");
-                        }
-                        cdsDt.ReportContent repCt = repR[i].getContent();
+                        boolean binaryFormat = cdsDt.ReportFormat.BINARY.equals(repR[i].getFormat());
+//                        if (repR[i].getFormat()!=null) {
+//                            if () binaryFormat = true;
+//                        } else {
+//                            err_data.add("Error! No Report Format for Report ("+(i+1)+")");
+//                        }
+
+	                    cdsDt.ReportContent repCt = repR[i].getContent();
                         String filePath = repR[i].getFilePath();
+
                         if (repCt!=null || filePath != null) {
                         	
-                            byte[] b = null;
-                            if (repCt != null && repCt.getMedia()!=null) b = repCt.getMedia();
-                            else if (repCt != null && repCt.getTextContent()!=null) b = repCt.getTextContent().getBytes();
-                            if (b==null && filePath == null) {
+                            byte[] mediaBytes = null;
+
+                            if (repCt != null && repCt.getMedia()!=null) {
+								mediaBytes = repCt.getMedia();
+                            } else if (repCt != null && repCt.getTextContent()!=null) {
+								mediaBytes = repCt.getTextContent().getBytes();
+                            }
+
+                            if (mediaBytes==null && filePath == null) {
                                 err_othe.add("Error! No report file in xml ("+(i+1)+")");
                             } else {
-                                String docFileName = "cds5_imported_report_" + (i+1) + "_" + UtilDateUtilities.getToday("yyyy-MM-dd.HH.mm.ss") + "_" + patientRec.getDemographics().getUniqueVendorIdSequence();
+                                String docFileName = "cds5_imported_report_" + (i+1) + "_" + new Date().getTime() + "_" + patientRec.getDemographics().getUniqueVendorIdSequence();
                                 String docClass=null, docSubClass=null, contentType="", contentDateTime=null, observationDate=null, updateDateTime=null, docCreator=admProviderNo;
                                 String reviewer=null, reviewDateTime=null, source=null, sourceFacility=null, reportExtra=null;
                                 Integer docNum=null;
                                 String docType = "";
-                                if(repR[i].getMedia() != null) docType = repR[i].getMedia().toString();
+
+                                if(repR[i].getMedia() != null) {
+									docType = repR[i].getMedia().toString();
+                                }
 
                                 if (StringUtils.filled(repR[i].getFileExtensionAndVersion())) {
                                     contentType = repR[i].getFileExtensionAndVersion();
                                     docFileName += Util.mimeToExt(contentType);
                                 } else {
-                                    if (binaryFormat) err_data.add("Warning! No File Extension for Report ("+(i+1)+")");
+                                    if (binaryFormat) {
+										err_data.add("Warning! No File Extension for Report ("+(i+1)+")");
+                                    }
                                 }
-                                String docDesc = repR[i].getSubClass();
+
+	                            String docDesc = repR[i].getSubClass();
 
                                 if (StringUtils.empty(docDesc)){ //improving the naming of documents where the document name is in the notes tag of the import                        
                                     String documentNotes = repR[i].getNotes();
 
                                     //setting docDesc assuming the format is usually in the form "Document Health Card created at Mon Mar 05 12:50:17 EST 2018 by Verona V." and naming docDesc = "Health Card" would be desirable in this situation
-                                    if (documentNotes != null && documentNotes.indexOf("created") > 1) docDesc = documentNotes.split("created")[0].trim(); 
-                                    if (docDesc != null && docDesc.indexOf("Document") == 0 && docDesc.split("Document").length >= 2) docDesc = docDesc.split("Document")[1].trim();
+                                    if (documentNotes != null && documentNotes.indexOf("created") > 1) {
+										docDesc = documentNotes.split("created")[0].trim();
+                                    }
+                                    if (docDesc != null && docDesc.indexOf("Document") == 0 && docDesc.split("Document").length >= 2) {
+										docDesc = docDesc.split("Document")[1].trim();
+                                    }
                                 }                                
 
                                 if (StringUtils.empty(docDesc)) {
 									docDesc = "cds5 Imported Report "+(i+1);
                                 }
-                                
-                                if(b != null) {
-                                	try(FileOutputStream f = new FileOutputStream(docDir + docFileName)) {
-		                                f.write(b);
-	                                }
+
+	                            final Path destinationPath = Paths.get(docDir, docFileName);
+	                            if(mediaBytes != null) {
+									/*
+									 * write the byte content to a file as determined by the file extension
+									 * this could be a text file, pdf, or image file that was contained in the report
+									 * tag as binary text.
+									 * Sadly, we cannot know if this data is plain text or binary.
+									 */
+									Files.write(destinationPath, mediaBytes, StandardOpenOption.CREATE_NEW);
                                 } else {
-									 /* This document should be at a URL relative to the patient record
+									 /* Otherwise this document should be at a URL relative to the patient record
 	                                  * in the same root directory or a new subdirectory.
-	                                  * Path transversal is not allowed.
+	                                  * Path traversal is not allowed.
 	                                  * Null check should have been done on the filepath prior to this point
                                       */
                                     String fileName = repR[i].getFilePath();
@@ -2402,7 +2419,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 									// moving files ensures all files are accounted for
 									if(Files.exists(relativeFileUrl)) {
-										Files.move(relativeFileUrl, Paths.get(docDir, docFileName));
+										Files.move(relativeFileUrl, destinationPath);
 									} else {
 										err_data.add("Error! Attached file not found (" + relativeFileUrl + ")");
 										logger.error("Error! Attached file not found (" + relativeFileUrl + ")");
@@ -2477,9 +2494,6 @@ public class ImportDemographicDataAction4 extends Action {
                 	            		der.setDocumentNo(docNum);
                 	            		
                                         String extraReviewer = writeProviderData(rr.getName().getFirstName(), rr.getName().getLastName(), rr.getReviewingOHIPPhysicianId());
-                                        //String extraReviewDateTime = dateFPtoString(rr.getDateTimeReportReviewed(), timeShiftInDays);
-
-                                        
                 	            		der.setReviewDateTime(rr.getDateTimeReportReviewed().getFullDate().getTime());
                 	            		der.setReviewerProviderNo(extraReviewer);
                 	            		
@@ -3609,46 +3623,46 @@ public class ImportDemographicDataAction4 extends Action {
 		admissionDao.saveAdmission(admission);
 	}
 
-	String getLabDline(LaboratoryResults labRes, int timeShiftInDays){
-		StringBuilder s = new StringBuilder();
-		appendIfNotNull(s,"LaboratoryName",labRes.getLaboratoryName());
-		appendIfNotNull(s,"TestNameReportedByLab", labRes.getTestNameReportedByLab());
-		appendIfNotNull(s,"LabTestCode",labRes.getLabTestCode());
-		appendIfNotNull(s,"TestName", labRes.getTestName());
-		appendIfNotNull(s,"AccessionNumber",labRes.getAccessionNumber());
-
-		if (labRes.getResult ()!=null) {
-			appendIfNotNull(s,"Value",labRes.getResult().getValue());
-			appendIfNotNull(s,"UnitOfMeasure",labRes.getResult().getUnitOfMeasure());
-		}
-		if (labRes.getReferenceRange()!=null) {
-			LaboratoryResults.ReferenceRange ref = labRes.getReferenceRange();
-			appendIfNotNull(s,"LowLimit",ref.getLowLimit());
-			appendIfNotNull(s,"HighLimit",ref.getHighLimit());
-			appendIfNotNull(s,"ReferenceRangeText", ref.getReferenceRangeText());
-		}
-
-		appendIfNotNull(s,"LabRequisitionDateTime",Util.dateFPtoString(labRes.getLabRequisitionDateTime(), timeShiftInDays));
-		appendIfNotNull(s,"CollectionDateTime",Util.dateFPtoString( labRes.getCollectionDateTime(), timeShiftInDays));
-
-                LaboratoryResults.ResultReviewer[] resultReviewers = labRes.getResultReviewerArray();
-                if (resultReviewers.length>0) {
-                    appendIfNotNull(s,"DateTimeResultReviewed",Util.dateFPtoString(resultReviewers[0].getDateTimeResultReviewed(), timeShiftInDays));
-                    appendIfNotNull(s,"OHIP ID :", resultReviewers[0].getOHIPPhysicianId());
-                    cdsDt.PersonNameSimple reviewerName = resultReviewers[0].getName();
-                    if (reviewerName!=null) {
-                        appendIfNotNull(s,"Reviewer First Name:", reviewerName.getFirstName());
-                        appendIfNotNull(s,"Reviewer Last Name:", reviewerName.getLastName());
-                    }
-                }
-
-		appendIfNotNull(s,"ResultNormalAbnormalFlag",""+labRes.getResultNormalAbnormalFlag());
-		appendIfNotNull(s,"TestResultsInformationreportedbytheLaboratory",labRes.getTestResultsInformationReportedByTheLab());
-		appendIfNotNull(s,"NotesFromLab",labRes.getNotesFromLab());
-		appendIfNotNull(s,"PhysiciansNotes",labRes.getPhysiciansNotes());
-
-		return s.toString();
-	}
+//	String getLabDline(LaboratoryResults labRes, int timeShiftInDays){
+//		StringBuilder s = new StringBuilder();
+//		appendIfNotNull(s,"LaboratoryName",labRes.getLaboratoryName());
+//		appendIfNotNull(s,"TestNameReportedByLab", labRes.getTestNameReportedByLab());
+//		appendIfNotNull(s,"LabTestCode",labRes.getLabTestCode());
+//		appendIfNotNull(s,"TestName", labRes.getTestName());
+//		appendIfNotNull(s,"AccessionNumber",labRes.getAccessionNumber());
+//
+//		if (labRes.getResult ()!=null) {
+//			appendIfNotNull(s,"Value",labRes.getResult().getValue());
+//			appendIfNotNull(s,"UnitOfMeasure",labRes.getResult().getUnitOfMeasure());
+//		}
+//		if (labRes.getReferenceRange()!=null) {
+//			LaboratoryResults.ReferenceRange ref = labRes.getReferenceRange();
+//			appendIfNotNull(s,"LowLimit",ref.getLowLimit());
+//			appendIfNotNull(s,"HighLimit",ref.getHighLimit());
+//			appendIfNotNull(s,"ReferenceRangeText", ref.getReferenceRangeText());
+//		}
+//
+//		appendIfNotNull(s,"LabRequisitionDateTime",Util.dateFPtoString(labRes.getLabRequisitionDateTime(), timeShiftInDays));
+//		appendIfNotNull(s,"CollectionDateTime",Util.dateFPtoString( labRes.getCollectionDateTime(), timeShiftInDays));
+//
+//                LaboratoryResults.ResultReviewer[] resultReviewers = labRes.getResultReviewerArray();
+//                if (resultReviewers.length>0) {
+//                    appendIfNotNull(s,"DateTimeResultReviewed",Util.dateFPtoString(resultReviewers[0].getDateTimeResultReviewed(), timeShiftInDays));
+//                    appendIfNotNull(s,"OHIP ID :", resultReviewers[0].getOHIPPhysicianId());
+//                    cdsDt.PersonNameSimple reviewerName = resultReviewers[0].getName();
+//                    if (reviewerName!=null) {
+//                        appendIfNotNull(s,"Reviewer First Name:", reviewerName.getFirstName());
+//                        appendIfNotNull(s,"Reviewer Last Name:", reviewerName.getLastName());
+//                    }
+//                }
+//
+//		appendIfNotNull(s,"ResultNormalAbnormalFlag",""+labRes.getResultNormalAbnormalFlag());
+//		appendIfNotNull(s,"TestResultsInformationreportedbytheLaboratory",labRes.getTestResultsInformationReportedByTheLab());
+//		appendIfNotNull(s,"NotesFromLab",labRes.getNotesFromLab());
+//		appendIfNotNull(s,"PhysiciansNotes",labRes.getPhysiciansNotes());
+//
+//		return s.toString();
+//	}
 
 	void appendIfNotNull(StringBuilder s, String name, String object){
 		if (object != null){
@@ -3894,14 +3908,14 @@ public class ImportDemographicDataAction4 extends Action {
     String[] _req_date  = new String[labResultArr.length]; //getLabRequisitionDateTime (set to collectionDateTime if null)
     
 */
-	private Long findMeasurementId(Integer labNo, String testName) {
-		Integer measId = measurementsExtDao.getMeasurementIdByLabNoAndTestName(labNo.toString(), testName);
-        if (measId != null) {
-		    return new Long(measId);
-        } else {
-            return null;
-        }
-	}
+//	private Long findMeasurementId(Integer labNo, String testName) {
+//		Integer measId = measurementsExtDao.getMeasurementIdByLabNoAndTestName(labNo.toString(), testName);
+//        if (measId != null) {
+//		    return new Long(measId);
+//        } else {
+//            return null;
+//        }
+//	}
 
     private void importLabs(LoggedInInfo loggedInInfo, LaboratoryResults[] labResultArr) {
 
