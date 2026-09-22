@@ -640,7 +640,8 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
 
         String queryString = "SELECT d.DemographicNo FROM Demographic d WHERE d.Hin = :hin"
                 + " AND d.YearOfBirth = :yearOfBirth AND d.MonthOfBirth = :monthOfBirth"
-                + " AND d.DateOfBirth = :dateOfBirth";
+                + " AND d.DateOfBirth = :dateOfBirth"
+		        + " ORDER BY d.lastUpdateDate desc";
 
         Query query = currentSession().createQuery(queryString);
         query.setParameter("hin", hin);
@@ -651,7 +652,7 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
 
         List<Integer> demographicNumbers = query.list();
 
-        return demographicNumbers.size() == 1 ? demographicNumbers.get(0) : null;
+        return demographicNumbers != null && ! demographicNumbers.isEmpty() ? demographicNumbers.get(0) : null;
     }
 
     @Override

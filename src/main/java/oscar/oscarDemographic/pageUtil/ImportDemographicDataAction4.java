@@ -92,22 +92,7 @@ import org.oscarehr.common.dao.PartialDateDao;
 import org.oscarehr.common.dao.PharmacyInfoDao;
 import org.oscarehr.common.dao.ProviderDataDao;
 import org.oscarehr.common.dao.ProviderLabRoutingDao;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.AppointmentStatus;
-import org.oscarehr.common.model.Contact;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicArchive;
-import org.oscarehr.common.model.DemographicContact;
-import org.oscarehr.common.model.DemographicPharmacy;
-import org.oscarehr.common.model.DocumentExtraReviewer;
-import org.oscarehr.common.model.Drug;
-import org.oscarehr.common.model.DrugReason;
-import org.oscarehr.common.model.PartialDate;
-import org.oscarehr.common.model.PharmacyInfo;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.ProviderLabRoutingModel;
+import org.oscarehr.common.model.*;
 import org.oscarehr.hospitalReportManager.HRMReport;
 import org.oscarehr.hospitalReportManager.HRMReportParser;
 import org.oscarehr.hospitalReportManager.dao.HRMDocumentCommentDao;
@@ -120,6 +105,7 @@ import org.oscarehr.hospitalReportManager.model.HRMDocumentComment;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentSubClass;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToDemographic;
 import org.oscarehr.hospitalReportManager.model.HRMDocumentToProvider;
+import org.oscarehr.managers.DemographicManager;
 import org.oscarehr.managers.NioFileManager;
 import org.oscarehr.managers.SecurityInfoManager;
 import org.oscarehr.util.LoggedInInfo;
@@ -167,7 +153,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import oscar.OscarProperties;
 import org.oscarehr.documentManager.EDocUtil;
-import oscar.oscarDemographic.data.DemographicAddResult;
 import oscar.oscarDemographic.data.DemographicData;
 import oscar.oscarEncounter.data.EctProgram;
 import oscar.oscarEncounter.oscarMeasurements.data.ImportExportMeasurements;
@@ -218,11 +203,11 @@ public class ImportDemographicDataAction4 extends Action {
     HashMap<String, Integer> entries = new HashMap<String, Integer>();
     Integer importNo = 0;
     OscarProperties oscarProperties = OscarProperties.getInstance();
-    List<String> importErrors = new ArrayList<String>();
+    List<String> importErrors;
 
+	DemographicManager demographicManager = SpringUtils.getBean(DemographicManager.class);
     ProgramManager programManager = SpringUtils.getBean(ProgramManager.class);
     AdmissionManager admissionManager = SpringUtils.getBean(AdmissionManager.class);
-    AdmissionDao admissionDao = SpringUtils.getBean(AdmissionDao.class);
     CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
     DrugDao drugDao = SpringUtils.getBean(DrugDao.class);
     DrugReasonDao drugReasonDao = SpringUtils.getBean(DrugReasonDao.class);
@@ -232,15 +217,17 @@ public class ImportDemographicDataAction4 extends Action {
     DemographicExtDao demographicExtDao = SpringUtils.getBean(DemographicExtDao.class);
     OscarAppointmentDao appointmentDao = SpringUtils.getBean(OscarAppointmentDao.class);
     ProviderLabRoutingDao providerLabRoutingDao = SpringUtils.getBean(ProviderLabRoutingDao.class);
-    MeasurementsExtDao measurementsExtDao = SpringUtils.getBean(MeasurementsExtDao.class);
     IssueDAO issueDao = SpringUtils.getBean(IssueDAO.class);
     DemographicContactDao contactDao = SpringUtils.getBean(DemographicContactDao.class);
 	HRMDocumentDao hrmDocDao = SpringUtils.getBean(HRMDocumentDao.class);
 	HRMDocumentCommentDao hrmDocCommentDao = SpringUtils.getBean(HRMDocumentCommentDao.class);
 	HRMDocumentSubClassDao hrmDocSubClassDao = SpringUtils.getBean(HRMDocumentSubClassDao.class);
 	HRMDocumentToDemographicDao hrmDocToDemoDao = SpringUtils.getBean(HRMDocumentToDemographicDao.class);
+	PharmacyInfoDao pharmacyInfoDao = SpringUtils.getBean(PharmacyInfoDao.class);
+	DemographicPharmacyDao demographicPharmacyDao = SpringUtils.getBean(DemographicPharmacyDao.class);
+	ContactDao contactDao1 = SpringUtils.getBean(ContactDao.class);
 
-    private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
+	private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 	private static volatile DocumentBuilderFactory importFactory;
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 
@@ -593,25 +580,19 @@ public class ImportDemographicDataAction4 extends Action {
         Demographics demo = patientRec.getDemographics();
         cdsDt.PersonNameStandard.LegalName legalName = demo.getNames().getLegalName();
         String lastName="", firstName="";
-        String lastNameQualifier=null, firstNameQualifier=null;
+
         if (legalName!=null) {
             if (legalName.getLastName()!=null) {
             	lastName = StringUtils.noNull(legalName.getLastName().getPart());
-            	if (legalName.getLastName().getPartQualifier()!=null) {
-            		lastNameQualifier = legalName.getLastName().getPartQualifier().toString();
-            	}
             }
             if (legalName.getFirstName()!=null) {
             	firstName = StringUtils.noNull(legalName.getFirstName().getPart());
-            	if (legalName.getFirstName().getPartQualifier()!=null) {
-            		firstNameQualifier = legalName.getFirstName().getPartQualifier().toString();
-            	}
             }
             patientName = lastName+","+firstName;
         }
         
         String birthDate = Util.getCalDate(demo.getDateOfBirth(), timeShiftInDays);
-        String sex = demo.getGender()!=null ? demo.getGender().toString() : "";
+//        String sex = demo.getGender()!=null ? demo.getGender().toString() : "";
         String hin = null;
         cdsDt.HealthCard healthCard = demo.getHealthCard();
         if (healthCard!=null) {
@@ -619,7 +600,7 @@ public class ImportDemographicDataAction4 extends Action {
         }
 
         //Check duplicate
-        ArrayList<Demographic> demodup = null;
+        ArrayList<Demographic> demodup;
         if (StringUtils.filled(hin)) {
 			demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
         }
@@ -774,7 +755,6 @@ public class ImportDemographicDataAction4 extends Action {
        }
     }
 
-
     private String[] importXML(LoggedInInfo loggedInInfo, String xmlFile, ArrayList<String> warnings, HttpServletRequest request, int timeShiftInDays, Provider student, Program admitTo, int courseId, boolean cleanFile) throws Exception {
         ArrayList<String> err_demo = new ArrayList<String>(); //errors: duplicate demographics
         ArrayList<String> err_data = new ArrayList<String>(); //errors: discrete data
@@ -784,6 +764,8 @@ public class ImportDemographicDataAction4 extends Action {
         importErrors = new ArrayList<String>();
 	    patientName = null;
 		demographicNo = null;
+	    Integer existingDemographicNo = null;
+	    Admission admission = null;
 
         String docDir = oscarProperties.getDocumentDirectory();
         docDir = Util.fixDirName(docDir);
@@ -795,7 +777,7 @@ public class ImportDemographicDataAction4 extends Action {
 		// build patient record and validate
         File xmlF = new File(xmlFile);
 
-	    logger.info("Importing XML file: {}", xmlF.getName());
+	    logger.error("Importing XML file: {}", xmlF.getName());
 
 	    OmdCdsDocument.OmdCds omdCdsDocument;
         try {
@@ -819,476 +801,165 @@ public class ImportDemographicDataAction4 extends Action {
 			return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
 		}
 
+
 	    PatientRecord patientRec = omdCdsDocument.getPatientRecord();
+	    Demographics demo = patientRec.getDemographics();
 
-	    //DEMOGRAPHICS
-        Demographics demo = patientRec.getDemographics();
-        cdsDt.PersonNameStandard.LegalName legalName = demo.getNames().getLegalName();
-        String lastName="", firstName="";
-        String lastNameQualifier=null, firstNameQualifier=null;
-        if (legalName!=null) {
-            if (legalName.getLastName()!=null) {
-            	lastName = StringUtils.noNull(legalName.getLastName().getPart());
-            	if (legalName.getLastName().getPartQualifier()!=null) {
-            		lastNameQualifier = legalName.getLastName().getPartQualifier().toString();
-            	}
+	    String uniqueSourceFileId = demo.getUniqueVendorIdSequence();
+
+	    cdsDt.HealthCard healthCard = demo.getHealthCard();
+		String hin = "";
+	    if (healthCard != null) {
+		    hin = StringUtils.noNull(healthCard.getNumber());
+		    if (hin.isEmpty()) {
+			    err_data.add("Error! No health card number");
+		    }
+	    }
+
+	    Calendar dateOfBirth = demo.getDateOfBirth();
+	    String year_of_birth = null;
+	    String month_of_birth = null;
+	    String date_of_birth = null;
+	    if (dateOfBirth != null) {
+		    year_of_birth = dateOfBirth.get(Calendar.YEAR) + "";
+		    month_of_birth = String.format("%02d", dateOfBirth.get(Calendar.MONTH) + 1);
+		    date_of_birth = String.format("%02d", dateOfBirth.get(Calendar.DAY_OF_MONTH));
+	    } else {
+		    err_data.add("Error! No Date Of Birth");
+	    }
+
+	    /*
+	     * Check the current database for existing demographic record.
+	     * Validate both HIN and DOB exactly. Missing data will result in a potential duplication.
+	     * Confirm the demographic record has not been imported earlier by this process.
+	     * If the patient already exists; update this existing record with the imported medical data.
+	     */
+	    if (StringUtils.filled(hin)) {
+		    existingDemographicNo = demographicManager.getDemographicNoByHinAndBirthDate(loggedInInfo, hin, year_of_birth, month_of_birth, date_of_birth);
+	    }
+
+	    if (existingDemographicNo != null && existingDemographicNo > 0){
+			admission = admissionManager.getCurrentAdmission(programId, existingDemographicNo);
+
+			// if the admission is null. That's a problem. An admission record is mandatory. The current patient record
+		    // is corrupted.
+			if (admission == null) {
+				logger.error("Error! Admission record for pre-existing patient {} is missing. Skipping import file: {}", hin, xmlF.getName());
+				err_demo.add("Error! Admission record for pre-existing patient " + hin + " is missing. Admission records are mandatory. Check system for errors. " +
+						"Skipping import file to avoid potential duplication: " + xmlF.getName());
+				return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
+			}
+
+		    /*
+		     * This demographic is pre-existing due to this transfer running previously.
+		     * Cross-check with the unique import id to confirm it's a pre-existing import.
+		     * Then skip it - otherwise a horrible duplication will occur.
+		     */
+		    String uniqueImportFileId = org.apache.commons.lang.StringUtils.substringBetween(admission.getAdmissionNotes(), "<uniqueImportFileId>", "</uniqueImportFileId>");
+			if(uniqueImportFileId == null) {
+				uniqueImportFileId = "";
+			}
+		    if (admission.isAdmissionFromTransfer() &&
+				    (uniqueImportFileId.equals(uniqueSourceFileId))) {
+			    logger.error("Warning! Patient hin {} already exists from previous import attempt! Confirm Admission records. Skipping import file: {}", hin, xmlF.getName());
+			    err_demo.add("Warning! Patient hin " + hin + " already exists from previous import attempt! Confirm Admission records. Skipping import file " + xmlF.getName());
+			    return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
+		    }
+
+		    /*
+		     * Duplicate chart exists; this current demographic file will be the target
+		     * for inserting medical data into.
+		     */
+		    demographicNo = existingDemographicNo +"";
+		    demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
+			logger.error("Warning! Patient hin {} already exists! Updating existing demographic record with file {}", hin, xmlF.getName());
+		    warnings.add("Warning! Patient hin " + hin + " already exists! Updating existing demographic record with file " + xmlF.getName());
+	    }
+
+		// null demographic at this point confirms this patient is new. Create and insert a new demographic profile.
+		if (demographic == null) {
+		    demographic = createDemographic(loggedInInfo, demo, hin, year_of_birth, month_of_birth, date_of_birth,
+				    err_data, warnings, timeShiftInDays);
+			demographicNo = demographic.getDemographicNo()+"";
+	    }
+
+	    patientName = demographic.getFormattedName();
+
+        if(demo.getPreferredPharmacy() != null) {
+            PreferredPharmacy pp = demo.getPreferredPharmacy();
+
+            PharmacyInfo pi = new PharmacyInfo();
+            pi.setName(pp.getName());
+            pi.setEmail(pp.getEmailAddress());
+            if(pp.getPhoneNumber() != null) {
+                pi.setPhone1(pp.getPhoneNumber().getPhoneNumber().replaceAll("\\-", ""));
             }
-            if (legalName.getFirstName()!=null) {
-            	firstName = StringUtils.noNull(legalName.getFirstName().getPart());
-            	if (legalName.getFirstName().getPartQualifier()!=null) {
-            		firstNameQualifier = legalName.getFirstName().getPartQualifier().toString();
-            	}
+            if(pp.getFaxNumber() != null) {
+                pi.setFax(pp.getFaxNumber().getPhoneNumber().replaceAll("\\-", ""));
             }
-        } else {
-            warnings.add("Warning No Legal Name");
-        }
+            if(pp.getAddress() != null) {
+                 cdsDt.AddressStructured addrStr = pp.getAddress().getStructured();
+                 if (addrStr!=null) {
+                        pi.setAddress((StringUtils.noNull(addrStr.getLine1()) + " " + StringUtils.noNull(addrStr.getLine2()) + " " + StringUtils.noNull(addrStr.getLine3())).trim());
+                        pi.setCity(StringUtils.noNull(addrStr.getCity()));
+                        pi.setProvince(getCountrySubDivCode(addrStr.getCountrySubdivisionCode()));
+                        cdsDt.PostalZipCode postalZip = addrStr.getPostalZipCode();
+                        if (postalZip!=null)  pi.setPostalCode(StringUtils.noNull(postalZip.getPostalCode()));
+                 }
 
-        //other names
-        String  otherNameTxt=null;
-
-        LegalName.OtherName[] legalOtherNames = new LegalName.OtherName[0];
-        if(legalName != null && legalName.getOtherNameArray() != null) {
-            legalOtherNames = legalName.getOtherNameArray();
-        }
-        String middleNames = "";
-        
-        for (LegalName.OtherName otherName : legalOtherNames) {
-            if(otherName.getPartQualifier() == PersonNamePartQualifierCode.CL && otherName.getPartType() == PersonNamePartTypeCode.GIV) {
-            	middleNames += (otherName.getPart() + " ");
             }
-        }
-        middleNames = middleNames.trim();
+            pi.setStatus('1');
+            pi.setNotes("");
+            pi.setServiceLocationIdentifier("");
+            pharmacyInfoDao.persist(pi);
 
-        OtherNames[] otherNames = demo.getNames().getOtherNamesArray();
-        for (OtherNames otherName : otherNames) {
-        	OtherNames.OtherName[] otherNames2 = otherName.getOtherNameArray();
-        	for (OtherNames.OtherName otherName2 : otherNames2) {
-        		if (otherNameTxt==null) {
-                    otherNameTxt = otherName2.getPart();
-                    // sometimes the legal first name is empty
-                    if(firstName.isEmpty()) {
-                        firstName = otherName2.getPart();
-                    }
-                }
-        		else {
-                    otherNameTxt += ", "+otherName2.getPart();
-                    // sometimes the legal last name is empty
-                    lastName = otherName2.getPart();
-                }
-        	}
-        	if (otherName.getNamePurpose()!=null) {
-        		otherNameTxt = Util.addLine(mapNamePurpose(otherName.getNamePurpose())+": ", otherNameTxt);
-        	}
-        }
-        otherNameTxt = Util.addLine("", otherNameTxt);
+            DemographicPharmacy dp = new DemographicPharmacy();
+            dp.setPharmacyId(pi.getId());
+            dp.setDemographicNo(Integer.parseInt(demographicNo));
+            dp.setAddDate(new Date());
+            dp.setPreferredOrder(1);
+            dp.setStatus("1");
 
-        String title = demo.getNames().getNamePrefix()!=null ? demo.getNames().getNamePrefix().toString() : "";
-        String suffix = demo.getNames().getLastNameSuffix()!=null ? demo.getNames().getLastNameSuffix().toString() : "";
-
-        patientName = lastName+","+firstName;
-
-        // GENDER
-        String sex = demo.getGender()!=null ? demo.getGender().toString() : "";
-        if (StringUtils.empty(sex)) {
-            err_data.add("Error! No Gender");
-        }
-        String birthDate = Util.getCalDate(demo.getDateOfBirth(), timeShiftInDays);
-        if (StringUtils.empty(birthDate)) {
-            birthDate = null;
-            err_data.add("Error! No Date Of Birth");
-        }
-        String versionCode="", hin="", hc_type="", hc_renew_date="";
-        cdsDt.HealthCard healthCard = demo.getHealthCard();
-        if (healthCard!=null) {
-            hin = StringUtils.noNull(healthCard.getNumber());
-            if (hin.equals("")) {
-                err_data.add("Error! No health card number");
-            }
-            hc_type = getProvinceCode(healthCard.getProvinceCode());
-            if (hc_type.equals("")) {
-                err_data.add("Error! No Province Code for health card");
-            }
-            versionCode = StringUtils.noNull(healthCard.getVersion());
-            hc_renew_date = Util.getCalDate(healthCard.getExpirydate());
+            demographicPharmacyDao.persist(dp);
         }
 
-        //TODO use the existing demographic data to complete the rest of the import.
-        DemographicData dd = new DemographicData();
-        ArrayList<Demographic> demodup = null;
-        if (StringUtils.filled(hin)) {
-			demodup = dd.getDemographicWithHIN(loggedInInfo, hin);
-        }
-        else {
-			demodup = dd.getDemographicWithLastFirstDOB(loggedInInfo, lastName, firstName, birthDate);
-        }
-        if (! demodup.isEmpty()) {
-            err_data.clear();
-            err_demo.add("Warning! Patient "+patientName+" already exist! Not imported.");
-            return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
-        }
+        if(demo.getReferredPhysician() != null) {
+            Contact c = new Contact();
+            c.setFirstName(demo.getReferredPhysician().getFirstName());
+            c.setLastName(demo.getReferredPhysician().getLastName());
+            contactDao1.persist(c);
 
-
-        String patient_status = null;
-        Demographics.PersonStatusCode personStatusCode = demo.getPersonStatusCode();
-        if (personStatusCode!=null) {
-            if (personStatusCode.getPersonStatusAsEnum()!=null) {
-                if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.A)) patient_status = "AC";
-                if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.I)) patient_status = "IN";
-                if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.D)) patient_status = "DE";
-            } else if (personStatusCode.getPersonStatusAsPlainText()!=null) {
-                patient_status = personStatusCode.getPersonStatusAsPlainText();
-            } else {
-                err_data.add("Error! No Person Status Code");
-            }
-        } else {
-            err_data.add("Error! No Person Status Code");
-        }       
-        
-        EnrolmentHistory[] enrolments =  new EnrolmentHistory[0];
-        if(demo.getEnrolment()!=null) {
-        	enrolments = demo.getEnrolment().getEnrolmentHistoryArray(); 
-        }
-        int enrolTotal = enrolments.length;
-        String[] roster_status=new String[enrolTotal],
-        		 roster_date=new String[enrolTotal],
-        		 term_date=new String[enrolTotal],
-        		 term_reason=new String[enrolTotal],
-        		 roster_enrolledTo = new String[enrolTotal];
-        		
-        String rosterInfo;
-        Calendar enrollDate, currentEnrollDate;
-
-        for (int i=0; i<enrolTotal; i++) {
-            roster_status[i] = enrolments[i].getEnrollmentStatus()!=null ? enrolments[i].getEnrollmentStatus().toString() : "";
-            if	(roster_status[i].equals("1")) roster_status[i] = "RO";
-            else if (roster_status[i].equals("0")) roster_status[i] = "NR";
-            roster_date[i] = Util.getCalDate(enrolments[i].getEnrollmentDate(), timeShiftInDays);
-            term_date[i] = Util.getCalDate(enrolments[i].getEnrollmentTerminationDate(), timeShiftInDays);
-            if (enrolments[i].getTerminationReason()!=null)
-            	term_reason[i] = enrolments[i].getTerminationReason().toString();
-            if(enrolments[i].getEnrolledToPhysician() != null) {
-            	EnrolledToPhysician enrolledToPhysician = enrolments[i].getEnrolledToPhysician();
-            	
-            	HashMap<String,String> personName = getPersonName(enrolledToPhysician.getName());
-                String personOHIP = enrolledToPhysician.getOHIPPhysicianId();
-                if (StringUtils.empty(personName.get("firstname"))) err_data.add("Error! No Enrolled To Physician first name");
-                if (StringUtils.empty(personName.get("lastname"))) err_data.add("Error! No Enrolled To Physician last name");
-                if (StringUtils.empty(personOHIP)) err_data.add("Error! No Enrolled To Physician OHIP billing number");
-               
-                roster_enrolledTo[i] = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, null);
-            }
-
-            //Sort enrolments by date
-            if (enrolments[i].getEnrollmentDate()!=null) currentEnrollDate = enrolments[i].getEnrollmentDate();
-            else if (enrolments[i].getEnrollmentTerminationDate()!=null) currentEnrollDate = enrolments[i].getEnrollmentTerminationDate();
-            else currentEnrollDate = null;
-
-            for (int j=i-1; j>=0; j--) {
-                if (enrolments[j].getEnrollmentDate()!=null) enrollDate = enrolments[j].getEnrollmentDate();
-                else if (enrolments[j].getEnrollmentTerminationDate()!=null) enrollDate = enrolments[j].getEnrollmentTerminationDate();
-                else break;
-
-                if (currentEnrollDate==null || currentEnrollDate.before(enrollDate)) {
-                    rosterInfo=roster_status[j]; roster_status[j]=roster_status[i]; roster_status[i]=rosterInfo;
-                    rosterInfo=roster_date[j];   roster_date[j]=roster_date[i];     roster_date[i]=rosterInfo;
-            		rosterInfo=term_date[j];     term_date[j]=term_date[i];         term_date[i]=rosterInfo;
-    				rosterInfo=term_reason[j];   term_reason[j]=term_reason[i];     term_reason[i]=rosterInfo;
-    				rosterInfo=roster_enrolledTo[j];	roster_enrolledTo[j]=roster_enrolledTo[i];	roster_enrolledTo[i]=rosterInfo;
-                }
-            }
+            DemographicContact demoContact = new DemographicContact();
+            demoContact.setCreated(new Date());
+            demoContact.setUpdateDate(new Date());
+            demoContact.setDemographicNo(Integer.parseInt(demographicNo));
+            demoContact.setContactId(c.getId().toString());
+            demoContact.setType(2); //should be "type" - display problem
+            demoContact.setCategory("professional");
+            demoContact.setRole("Referring Doctor");
+            demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
+            contactDao.persist(demoContact);
         }
 
-        String rosterStatus=null, rosterDate=null, termDate=null, termReason=null, rosterEnrolledTo=null;
-        if (enrolTotal>0) {
-        	rosterStatus=roster_status[enrolTotal-1];
-        	rosterDate=roster_date[enrolTotal-1];
-        	termDate=term_date[enrolTotal-1];
-        	termReason=term_reason[enrolTotal-1];
-        	rosterEnrolledTo = roster_enrolledTo[enrolTotal-1];
+        if(demo.getFamilyPhysician() != null) {
+            Contact c = new Contact();
+            c.setFirstName(demo.getFamilyPhysician().getFirstName());
+            c.setLastName(demo.getFamilyPhysician().getLastName());
+            contactDao.persist(c);
+
+            DemographicContact demoContact = new DemographicContact();
+            demoContact.setCreated(new Date());
+            demoContact.setUpdateDate(new Date());
+            demoContact.setDemographicNo(Integer.parseInt(demographicNo));
+            demoContact.setContactId(c.getId().toString());
+            demoContact.setType(2); //should be "type" - display problem
+            demoContact.setCategory("professional");
+            demoContact.setRole("Family Doctor");
+            demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
+            contactDao.persist(demoContact);
         }
 
-        String sin = StringUtils.noNull(demo.getSIN());
-
-        String chart_no = StringUtils.noNull(demo.getChartNumber());
-        String official_lang = null;
-        if (demo.getPreferredOfficialLanguage()!=null) {
-            official_lang = demo.getPreferredOfficialLanguage().toString();
-            official_lang = official_lang.equals("ENG") ? "English" : official_lang;
-            official_lang = official_lang.equals("FRE") ? "French" : official_lang;
-        }
-
-        String spoken_lang = null;
-        if (demo.getPreferredSpokenLanguage()!=null) {
-        	spoken_lang = Util.convertCodeToLanguage(demo.getPreferredSpokenLanguage());
-        	if (StringUtils.empty(spoken_lang)) err_data.add("Error! Cannot map spoken language code "+demo.getPreferredSpokenLanguage());
-        }
-
-        String dNote = StringUtils.noNull(demo.getNoteAboutPatient());
-        String uvID = demo.getUniqueVendorIdSequence();
-        String psDate = Util.getCalDate(demo.getPersonStatusDate(), timeShiftInDays);
-        String extra = null;
-
-        if (StringUtils.filled(lastNameQualifier)) {
-        	extra = Util.addLine(extra, "Lastname Qualifier: ", lastNameQualifier);
-        }
-
-        if (StringUtils.filled(firstNameQualifier)) {
-        	extra = Util.addLine(extra, "Firstname Qualifier: ", firstNameQualifier);
-        }
-
-        if (StringUtils.filled(otherNameTxt)) {
-            extra = Util.addLine(extra, "Other name: ", otherNameTxt);
-        }
-
-        if (StringUtils.filled(suffix)) {
-        	extra = Util.addLine(extra, "Lastname suffix: ", suffix);
-        }
-
-        if (StringUtils.filled(uvID)) {
-        	extra = Util.addLine(extra, "Unique Vendor ID: ", uvID);
-        } else {
-            err_data.add("Error! No Unique Vendor ID Sequence");
-        }
-
-        String address="", city="", province="", postalCode="";
-        String residentialAddress="", residentialCity="",residentialProvince="",residentialPostalCode="";
-		
-        if(demo.getAddressArray()!= null) {
-	        for (cdsDt.Address addr :demo.getAddressArray()) {
-	        	if(addr.getAddressType() == AddressType.M) {
-	                if (StringUtils.filled(addr.getFormatted())) {
-	                    address = addr.getFormatted();
-	                } else {
-	                    cdsDt.AddressStructured addrStr = addr.getStructured();
-	                    if (addrStr!=null) {
-	                        address = StringUtils.noNull(addrStr.getLine1()) + StringUtils.noNull(addrStr.getLine2()) + StringUtils.noNull(addrStr.getLine3());
-	                        city = StringUtils.noNull(addrStr.getCity());
-	                        province = getCountrySubDivCode(addrStr.getCountrySubdivisionCode());
-	                        cdsDt.PostalZipCode postalZip = addrStr.getPostalZipCode();
-	                        if (postalZip!=null) postalCode = StringUtils.noNull(postalZip.getPostalCode());
-	                    }
-	                }
-	        	} else {
-	        		
-	        		//there's an address we don't support
-	        		 if (StringUtils.filled(addr.getFormatted())) {
-		                    residentialAddress = addr.getFormatted();
-		                    extra = Util.addLine(extra, "Residential Address: ", residentialAddress);
-		                } else {
-		                    cdsDt.AddressStructured addrStr = addr.getStructured();
-		                    if (addrStr!=null) {
-		                        residentialAddress = StringUtils.noNull(addrStr.getLine1()) + StringUtils.noNull(addrStr.getLine2()) + StringUtils.noNull(addrStr.getLine3());
-		                        residentialCity = StringUtils.noNull(addrStr.getCity());
-		                        residentialProvince = getCountrySubDivCode(addrStr.getCountrySubdivisionCode());
-		                        cdsDt.PostalZipCode residentialPostalZip = addrStr.getPostalZipCode();
-		                        if (residentialPostalZip!=null)
-		                        	residentialPostalCode = StringUtils.noNull(residentialPostalZip.getPostalCode());
-		                        
-		                        extra = Util.addLine(extra, "Residential Address: ", residentialAddress);
-		                        extra = Util.addLine(extra, "Residential City: ", residentialCity);
-		                        extra = Util.addLine(extra, "Residential Province: ", residentialProvince);
-		                        extra = Util.addLine(extra, "Residential Postal Code: ", residentialPostalCode);
-		                        
-		                        
-		                    }
-		                
-		              }
-	        	}   	
-	        }
-        }
-        cdsDt.PhoneNumber[] pn = demo.getPhoneNumberArray();
-        String workPhone="", workExt="", homePhone="", homeExt="", cellPhone="", ext="", patientPhone="";
-        for (int i=0; i<pn.length; i++) {
-            String phone = pn[i].getPhoneNumber();
-            if (StringUtils.empty(phone)) {
-                if (StringUtils.filled(pn[i].getNumber())) {
-                    String areaCode = StringUtils.filled(pn[i].getAreaCode()) ? "("+pn[i].getAreaCode()+")" : "";
-                    phone = areaCode + pn[i].getNumber();
-                }
-            }
-            if (StringUtils.filled(phone)) {
-                if (StringUtils.filled(pn[i].getExtension())) ext = pn[i].getExtension();
-                else if (StringUtils.filled(pn[i].getExchange())) ext = pn[i].getExchange();
-
-                if (pn[i].getPhoneNumberType()==cdsDt.PhoneNumberType.W) {
-                    workPhone = phone;
-                    workExt   = ext;
-                } else if (pn[i].getPhoneNumberType()==cdsDt.PhoneNumberType.R) {
-                    homePhone = phone;
-                    homeExt   = ext;
-                } else if (pn[i].getPhoneNumberType()==cdsDt.PhoneNumberType.C) {
-                    cellPhone = phone;
-                }
-            }
-        }
-        if      (StringUtils.filled(homePhone)) patientPhone = homePhone+" "+homeExt;
-        else if (StringUtils.filled(workPhone)) patientPhone = workPhone+" "+workExt;
-        else if (StringUtils.filled(cellPhone)) patientPhone = cellPhone;
-        String email = StringUtils.noNull(demo.getEmail());
-
-        String primaryPhysician = "";
-        if(student == null){
-            Demographics.PrimaryPhysician demoPrimaryPhysician = demo.getPrimaryPhysician();
-            if (demoPrimaryPhysician!=null) {
-                HashMap<String,String> personName = getPersonName(demoPrimaryPhysician.getName());
-                String personOHIP = demoPrimaryPhysician.getOHIPPhysicianId();
-                if (StringUtils.empty(personName.get("firstname"))) err_data.add("Error! No Primary Physician first name");
-                if (StringUtils.empty(personName.get("lastname"))) err_data.add("Error! No Primary Physician last name");
-                if (StringUtils.empty(personOHIP)) err_data.add("Error! No Primary Physician OHIP billing number");
-                String personCPSO = demoPrimaryPhysician.getPrimaryPhysicianCPSO();
-                primaryPhysician = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, personCPSO);
-            }
-            if (StringUtils.empty(primaryPhysician)) {
-                primaryPhysician = defaultProviderNo();
-                err_data.add("Error! No Primary Physician; patient assigned to \"doctor oscardoc\"");
-            }
-        } else {
-            primaryPhysician = student.getProviderNo();
-        }
-
-        String year_of_birth = null;
-        String month_of_birth = null;
-        String date_of_birth = null;
-        if (birthDate!=null)
-        {
-            Date bDate = UtilDateUtilities.StringToDate(birthDate,"yyyy-MM-dd");
-            year_of_birth = UtilDateUtilities.DateToString(bDate,"yyyy");
-            month_of_birth = UtilDateUtilities.DateToString(bDate,"MM");
-            date_of_birth = UtilDateUtilities.DateToString(bDate,"dd");
-        }
-
-        DemographicAddResult demoRes = null;
-
-        //Check if Contact-only demographic exists
-        if(courseId == 0) {
-            // make the cell phone a home phone if home phone is not defined.
-            String phone = homePhone;
-            if(phone.isEmpty() || ! cellPhone.isEmpty()) {
-                phone = cellPhone;
-            }
-            demographicNo = dd.getDemoNoByNamePhoneEmail(loggedInInfo, firstName, lastName, phone, workPhone, email);
-            demographic = dd.getDemographic(loggedInInfo, demographicNo);
-        }
-
-        demoRes = dd.addDemographic(loggedInInfo, title, lastName, firstName, middleNames, address, city, province, postalCode, residentialAddress, residentialCity, residentialProvince, residentialPostalCode, homePhone, workPhone, year_of_birth, month_of_birth, date_of_birth, hin, versionCode, rosterStatus, rosterDate, termDate, termReason, rosterEnrolledTo, patient_status, psDate, ""/*date_joined*/, chart_no, official_lang, spoken_lang, primaryPhysician, sex, ""/*end_date*/, ""/*eff_date*/, ""/*pcn_indicator*/, hc_type, hc_renew_date, ""/*family_doctor*/, email, ""/*pin*/, ""/*alias*/, ""/*previousAddress*/, ""/*children*/, ""/*sourceOfIncome*/, ""/*citizenship*/, sin);
-        demographicNo = demoRes.getId();
-
-        if (StringUtils.filled(demographicNo))
-        {
-            entries.put(PATIENTID+importNo, Integer.valueOf(demographicNo));
-
-            if(admitTo == null) {
-                insertIntoAdmission(demographicNo);
-            } else {
-                admissionManager.processAdmission(Integer.valueOf(demographicNo), student.getProviderNo(), admitTo, "", "batch import");
-            }
-
-            //Put enrolment history into demographicArchive
-            demographic = dd.getDemographic(loggedInInfo, demographicNo);
-            for (int i=0; i<roster_status.length-1; i++) {
-            	DemographicArchive demographicArchive = archiveDemographic(demographic);
-            	demographicArchive.setRosterStatus(roster_status[i]);
-            	demographicArchive.setRosterDate(UtilDateUtilities.StringToDate(roster_date[i]));
-            	demographicArchive.setRosterTerminationDate(UtilDateUtilities.StringToDate(term_date[i]));
-            	demographicArchive.setRosterTerminationReason(term_reason[i]);
-            	demographicArchive.setRosterEnrolledTo(roster_enrolledTo[i]);
-            	demoArchiveDao.persist(demographicArchive);
-            }
-
-            //Patient notes
-            if (StringUtils.filled(dNote)) {
-				dd.addDemographiccust(demographicNo, dNote);
-            }
-
-	        if (StringUtils.filled(extra)) {
-	            dd.addDemographiccust(demographicNo, extra);
-            }
-
-            if (!workExt.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "wPhoneExt", workExt);
-            if (!homeExt.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "hPhoneExt", homeExt);
-            if (!cellPhone.equals("")) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "demo_cell", cellPhone);
-            if(courseId>0) demographicExtDao.addKey(primaryPhysician, Integer.parseInt(demographicNo), "course", String.valueOf(courseId));
-
-            PharmacyInfoDao pharmacyInfoDao = SpringUtils.getBean(PharmacyInfoDao.class);
-            DemographicPharmacyDao demographicPharmacyDao = SpringUtils.getBean(DemographicPharmacyDao.class);
-            
-            if(demo.getPreferredPharmacy() != null) {
-            	PreferredPharmacy pp = demo.getPreferredPharmacy();
-            	
-            	PharmacyInfo pi = new PharmacyInfo();
-            	pi.setName(pp.getName());
-            	pi.setEmail(pp.getEmailAddress());
-            	if(pp.getPhoneNumber() != null) {
-            		pi.setPhone1(pp.getPhoneNumber().getPhoneNumber().replaceAll("\\-", ""));
-            	}
-            	if(pp.getFaxNumber() != null) {
-            		pi.setFax(pp.getFaxNumber().getPhoneNumber().replaceAll("\\-", ""));
-            	}
-            	if(pp.getAddress() != null) {
-            		 cdsDt.AddressStructured addrStr = pp.getAddress().getStructured();
-	                 if (addrStr!=null) {
-	                	 	pi.setAddress((StringUtils.noNull(addrStr.getLine1()) + " " + StringUtils.noNull(addrStr.getLine2()) + " " + StringUtils.noNull(addrStr.getLine3())).trim());
-	                        pi.setCity(StringUtils.noNull(addrStr.getCity()));
-	                        pi.setProvince(getCountrySubDivCode(addrStr.getCountrySubdivisionCode()));
-	                        cdsDt.PostalZipCode postalZip = addrStr.getPostalZipCode();
-	                        if (postalZip!=null)  pi.setPostalCode(StringUtils.noNull(postalZip.getPostalCode()));
-	                 }
-	                  
-            	}
-            	pi.setStatus('1');
-            	pi.setNotes("");
-            	pi.setServiceLocationIdentifier("");
-            	pharmacyInfoDao.persist(pi);
-            	
-            	DemographicPharmacy dp = new DemographicPharmacy();
-            	dp.setPharmacyId(pi.getId());
-            	dp.setDemographicNo(Integer.parseInt(demographicNo));
-            	dp.setAddDate(new Date());
-            	dp.setPreferredOrder(1);
-            	dp.setStatus("1");
-            	
-            	demographicPharmacyDao.persist(dp);
-            }
-            
-            ContactDao contactDao1 = SpringUtils.getBean(ContactDao.class);
-            
-            if(demo.getReferredPhysician() != null) {      	
-            	Contact c = new Contact();
-            	c.setFirstName(demo.getReferredPhysician().getFirstName());
-            	c.setLastName(demo.getReferredPhysician().getLastName());
-            	contactDao1.persist(c);
-            	
-            	DemographicContact demoContact = new DemographicContact();
-                demoContact.setCreated(new Date());
-                demoContact.setUpdateDate(new Date());
-                demoContact.setDemographicNo(Integer.valueOf(demographicNo));
-                demoContact.setContactId(c.getId().toString());
-                demoContact.setType(2); //should be "type" - display problem
-                demoContact.setCategory("professional");
-             	demoContact.setRole("Referring Doctor");
-                demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-             	contactDao.persist(demoContact);
-             	
-            }
-            
-            if(demo.getFamilyPhysician() != null) {
-               	Contact c = new Contact();
-            	c.setFirstName(demo.getFamilyPhysician().getFirstName());
-            	c.setLastName(demo.getFamilyPhysician().getLastName());
-            	contactDao.persist(c);
-            	
-            	DemographicContact demoContact = new DemographicContact();
-                demoContact.setCreated(new Date());
-                demoContact.setUpdateDate(new Date());
-                demoContact.setDemographicNo(Integer.valueOf(demographicNo));
-                demoContact.setContactId(c.getId().toString());
-                demoContact.setType(2); //should be "type" - display problem
-                demoContact.setCategory("professional");
-             	demoContact.setRole("Family Doctor");
-                demoContact.setCreator(loggedInInfo.getLoggedInProviderNo());
-             	contactDao.persist(demoContact);
-            }
-
+		// MEDICAL DATA
             Set<CaseManagementIssue> scmi = null;	//Declare a set for CaseManagementIssues
             //PERSONAL HISTORY
             PersonalHistory[] pHist = patientRec.getPersonalHistoryArray();
@@ -1377,7 +1048,10 @@ public class ImportDemographicDataAction4 extends Action {
                     cme.setValue(Util.dateFPGetPartial(fHist[i].getStartDate()));
                     caseManagementManager.saveNoteExt(cme);
                 }
-                //TODO refactor code. Entire process fails if exception thrown due to bad data. It would be better to handle the exception.
+				/*
+				 * a bad age at onset fails when the incoming file is being passed through
+				 * validation.  The code will never get this far.
+				 */
                 if (fHist[i].getAgeAtOnset()!=null) {
                     cme.setKeyVal(CaseManagementNoteExt.AGEATONSET);
                     cme.setDateValue((Date)null);
@@ -2134,8 +1808,7 @@ public class ImportDemographicDataAction4 extends Action {
                 }
 
                 //LABORATORY RESULTS
-                importLabs(loggedInInfo,patientRec.getLaboratoryResultsArray());
-                
+                importLabs(loggedInInfo, patientRec.getLaboratoryResultsArray());
 
                 //APPOINTMENTS
                 Appointments[] appArray = patientRec.getAppointmentsArray();
@@ -2708,7 +2381,7 @@ public class ImportDemographicDataAction4 extends Action {
 	                saveLinkNote(dmNote, CaseManagementNoteLink.DEMOGRAPHIC, Long.valueOf(demographicNo));
                 }
 
-                //CLINICAL NOTES
+                // CLINICAL NOTES
                 ClinicalNotes[] cNotes = patientRec.getClinicalNotesArray();
                 Date observeDate = new Date(), createDate = new Date();
                 for (int i=0; i<cNotes.length; i++) {
@@ -2827,20 +2500,440 @@ public class ImportDemographicDataAction4 extends Action {
                     	caseManagementManager.saveNoteSimple(cmNote);
                     }
                 }
-                
-            }
-            if(demoRes != null) {
-                err_demo.addAll(demoRes.getWarningsCollection());
-            }
+
             if (cleanFile) {
             	Util.cleanFile(xmlFile);
             }
+
+			/*
+			 * Successful import.
+			 * Altering the admission record indicates this file has been imported
+			 * successfully - so don't do it again.
+	         */
+	        updateAdmission(Integer.parseInt(demographicNo), uniqueSourceFileId);
 
             err_summ.addAll(importErrors);
 
             return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
 	}
 
+	private Demographic createDemographic(LoggedInInfo loggedInInfo, Demographics demo,
+	                                 String hin, String birthYear, String birthMonth, String birthDay,
+	List<String> err_data, List<String> warnings,  int timeShiftInDays) {
+		//DEMOGRAPHICS
+		cdsDt.PersonNameStandard.LegalName legalName = demo.getNames().getLegalName();
+		String lastName = "", firstName = "";
+		String lastNameQualifier = null, firstNameQualifier = null;
+		if (legalName != null) {
+			if (legalName.getLastName() != null) {
+				lastName = StringUtils.noNull(legalName.getLastName().getPart());
+				if (legalName.getLastName().getPartQualifier() != null) {
+					lastNameQualifier = legalName.getLastName().getPartQualifier().toString();
+				}
+			}
+			if (legalName.getFirstName() != null) {
+				firstName = StringUtils.noNull(legalName.getFirstName().getPart());
+				if (legalName.getFirstName().getPartQualifier() != null) {
+					firstNameQualifier = legalName.getFirstName().getPartQualifier().toString();
+				}
+			}
+		} else {
+			warnings.add("Warning No Legal Name");
+		}
+
+		//other names
+		String otherNameTxt = null;
+
+		LegalName.OtherName[] legalOtherNames = new LegalName.OtherName[0];
+		if (legalName != null && legalName.getOtherNameArray() != null) {
+			legalOtherNames = legalName.getOtherNameArray();
+		}
+		StringBuilder middleNames = new StringBuilder();
+
+		for (LegalName.OtherName otherName : legalOtherNames) {
+			if (otherName.getPartQualifier() == PersonNamePartQualifierCode.CL && otherName.getPartType() == PersonNamePartTypeCode.GIV) {
+				middleNames.append(otherName.getPart()).append(" ");
+			}
+		}
+
+		OtherNames[] otherNames = demo.getNames().getOtherNamesArray();
+		for (OtherNames otherName : otherNames) {
+			OtherNames.OtherName[] otherNames2 = otherName.getOtherNameArray();
+			for (OtherNames.OtherName otherName2 : otherNames2) {
+				if (otherNameTxt == null) {
+					otherNameTxt = otherName2.getPart();
+					// sometimes the legal first name is empty
+					if (firstName.isEmpty()) {
+						firstName = otherName2.getPart();
+					}
+				} else {
+					otherNameTxt += ", " + otherName2.getPart();
+					// sometimes the legal last name is empty
+					lastName = otherName2.getPart();
+				}
+			}
+			if (otherName.getNamePurpose() != null) {
+				otherNameTxt = Util.addLine(mapNamePurpose(otherName.getNamePurpose()) + ": ", otherNameTxt);
+			}
+		}
+		otherNameTxt = Util.addLine("", otherNameTxt);
+
+		String title = demo.getNames().getNamePrefix() != null ? demo.getNames().getNamePrefix().toString() : "";
+		String suffix = demo.getNames().getLastNameSuffix() != null ? demo.getNames().getLastNameSuffix().toString() : "";
+		// GENDER
+		String sex = demo.getGender() != null ? demo.getGender().toString() : "";
+		if (StringUtils.empty(sex)) {
+			err_data.add("Error! No Gender");
+		}
+
+		String versionCode = "",  hc_type = "", hc_renew_date = "";
+		cdsDt.HealthCard healthCard = demo.getHealthCard();
+		if (healthCard != null) {
+			hc_type = getProvinceCode(healthCard.getProvinceCode());
+			if (hc_type.isEmpty()) {
+				err_data.add("Error! No Province Code for health card");
+			}
+			versionCode = StringUtils.noNull(healthCard.getVersion());
+			hc_renew_date = Util.getCalDate(healthCard.getExpirydate());
+		}
+
+
+		String patient_status = null;
+		Demographics.PersonStatusCode personStatusCode = demo.getPersonStatusCode();
+		if (personStatusCode != null) {
+			if (personStatusCode.getPersonStatusAsEnum() != null) {
+				if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.A)) patient_status = "AC";
+				if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.I)) patient_status = "IN";
+				if (personStatusCode.getPersonStatusAsEnum().equals(cdsDt.PersonStatus.D)) patient_status = "DE";
+			} else if (personStatusCode.getPersonStatusAsPlainText() != null) {
+				patient_status = personStatusCode.getPersonStatusAsPlainText();
+			} else {
+				err_data.add("Error! No Person Status Code");
+			}
+		} else {
+			err_data.add("Error! No Person Status Code");
+		}
+
+		EnrolmentHistory[] enrolments = new EnrolmentHistory[0];
+		if (demo.getEnrolment() != null) {
+			enrolments = demo.getEnrolment().getEnrolmentHistoryArray();
+		}
+		int enrolTotal = enrolments.length;
+		String[] roster_status = new String[enrolTotal],
+				roster_date = new String[enrolTotal],
+				term_date = new String[enrolTotal],
+				term_reason = new String[enrolTotal],
+				roster_enrolledTo = new String[enrolTotal];
+
+		String rosterInfo;
+		Calendar enrollDate, currentEnrollDate;
+
+		for (int i = 0; i < enrolTotal; i++) {
+			roster_status[i] = enrolments[i].getEnrollmentStatus() != null ? enrolments[i].getEnrollmentStatus().toString() : "";
+			if (roster_status[i].equals("1")) roster_status[i] = "RO";
+			else if (roster_status[i].equals("0")) roster_status[i] = "NR";
+			roster_date[i] = Util.getCalDate(enrolments[i].getEnrollmentDate(), timeShiftInDays);
+			term_date[i] = Util.getCalDate(enrolments[i].getEnrollmentTerminationDate(), timeShiftInDays);
+			if (enrolments[i].getTerminationReason() != null) {
+				term_reason[i] = enrolments[i].getTerminationReason().toString();
+			}
+			if (enrolments[i].getEnrolledToPhysician() != null) {
+				EnrolledToPhysician enrolledToPhysician = enrolments[i].getEnrolledToPhysician();
+
+				HashMap<String, String> personName = getPersonName(enrolledToPhysician.getName());
+				String personOHIP = enrolledToPhysician.getOHIPPhysicianId();
+				if (StringUtils.empty(personName.get("firstname")))
+					err_data.add("Error! No Enrolled To Physician first name");
+				if (StringUtils.empty(personName.get("lastname")))
+					err_data.add("Error! No Enrolled To Physician last name");
+				if (StringUtils.empty(personOHIP)) err_data.add("Error! No Enrolled To Physician OHIP billing number");
+
+				roster_enrolledTo[i] = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, null);
+			}
+
+			//Sort enrolments by date
+			if (enrolments[i].getEnrollmentDate() != null) {
+				currentEnrollDate = enrolments[i].getEnrollmentDate();
+			}
+			else if (enrolments[i].getEnrollmentTerminationDate() != null) {
+				currentEnrollDate = enrolments[i].getEnrollmentTerminationDate();
+			}
+			else {
+				currentEnrollDate = null;
+			}
+
+			for (int j = i - 1; j >= 0; j--) {
+				if (enrolments[j].getEnrollmentDate() != null) {
+					enrollDate = enrolments[j].getEnrollmentDate();
+				}
+				else if (enrolments[j].getEnrollmentTerminationDate() != null) {
+
+					enrollDate = enrolments[j].getEnrollmentTerminationDate();
+				}
+				else {
+					break;
+				}
+
+				if (currentEnrollDate == null || currentEnrollDate.before(enrollDate)) {
+					rosterInfo = roster_status[j];
+					roster_status[j] = roster_status[i];
+					roster_status[i] = rosterInfo;
+					rosterInfo = roster_date[j];
+					roster_date[j] = roster_date[i];
+					roster_date[i] = rosterInfo;
+					rosterInfo = term_date[j];
+					term_date[j] = term_date[i];
+					term_date[i] = rosterInfo;
+					rosterInfo = term_reason[j];
+					term_reason[j] = term_reason[i];
+					term_reason[i] = rosterInfo;
+					rosterInfo = roster_enrolledTo[j];
+					roster_enrolledTo[j] = roster_enrolledTo[i];
+					roster_enrolledTo[i] = rosterInfo;
+				}
+			}
+		}
+
+		String rosterStatus = null, rosterDate = null, termDate = null, termReason = null, rosterEnrolledTo = null;
+		if (enrolTotal > 0) {
+			rosterStatus = roster_status[enrolTotal - 1];
+			rosterDate = roster_date[enrolTotal - 1];
+			termDate = term_date[enrolTotal - 1];
+			termReason = term_reason[enrolTotal - 1];
+			rosterEnrolledTo = roster_enrolledTo[enrolTotal - 1];
+		}
+
+		String sin = StringUtils.noNull(demo.getSIN());
+
+		String chart_no = StringUtils.noNull(demo.getChartNumber());
+		String official_lang = null;
+		if (demo.getPreferredOfficialLanguage() != null) {
+			official_lang = demo.getPreferredOfficialLanguage().toString();
+			official_lang = official_lang.equals("ENG") ? "English" : official_lang;
+			official_lang = official_lang.equals("FRE") ? "French" : official_lang;
+		}
+
+		String spoken_lang = null;
+		if (demo.getPreferredSpokenLanguage() != null) {
+			spoken_lang = Util.convertCodeToLanguage(demo.getPreferredSpokenLanguage());
+			if (StringUtils.empty(spoken_lang)) {
+				err_data.add("Error! Cannot map spoken language code " + demo.getPreferredSpokenLanguage());
+			}
+		}
+
+		String dNote = StringUtils.noNull(demo.getNoteAboutPatient());
+		String uvID = demo.getUniqueVendorIdSequence();
+		String psDate = Util.getCalDate(demo.getPersonStatusDate(), timeShiftInDays);
+		String extra = null;
+
+		if (StringUtils.filled(lastNameQualifier)) {
+			extra = Util.addLine(extra, "Lastname Qualifier: ", lastNameQualifier);
+		}
+
+		if (StringUtils.filled(firstNameQualifier)) {
+			extra = Util.addLine(extra, "Firstname Qualifier: ", firstNameQualifier);
+		}
+
+		if (StringUtils.filled(otherNameTxt)) {
+			extra = Util.addLine(extra, "Other name: ", otherNameTxt);
+		}
+
+		if (StringUtils.filled(suffix)) {
+			extra = Util.addLine(extra, "Lastname suffix: ", suffix);
+		}
+
+		if (StringUtils.filled(uvID)) {
+			extra = Util.addLine(extra, "Unique Vendor ID: ", uvID);
+		} else {
+			err_data.add("Error! No Unique Vendor ID Sequence");
+		}
+
+		String address = "", city = "", province = "", postalCode = "";
+		String residentialAddress = "", residentialCity = "", residentialProvince = "", residentialPostalCode = "";
+
+		if (demo.getAddressArray() != null) {
+			for (cdsDt.Address addr : demo.getAddressArray()) {
+				if (addr.getAddressType() == AddressType.M) {
+					if (StringUtils.filled(addr.getFormatted())) {
+						address = addr.getFormatted();
+					} else {
+						cdsDt.AddressStructured addrStr = addr.getStructured();
+						if (addrStr != null) {
+							address = StringUtils.noNull(addrStr.getLine1()) + StringUtils.noNull(addrStr.getLine2()) + StringUtils.noNull(addrStr.getLine3());
+							city = StringUtils.noNull(addrStr.getCity());
+							province = getCountrySubDivCode(addrStr.getCountrySubdivisionCode());
+							cdsDt.PostalZipCode postalZip = addrStr.getPostalZipCode();
+							if (postalZip != null) postalCode = StringUtils.noNull(postalZip.getPostalCode());
+						}
+					}
+				} else {
+
+					//there's an address we don't support
+					if (StringUtils.filled(addr.getFormatted())) {
+						residentialAddress = addr.getFormatted();
+						extra = Util.addLine(extra, "Residential Address: ", residentialAddress);
+					} else {
+						cdsDt.AddressStructured addrStr = addr.getStructured();
+						if (addrStr != null) {
+							residentialAddress = StringUtils.noNull(addrStr.getLine1()) + StringUtils.noNull(addrStr.getLine2()) + StringUtils.noNull(addrStr.getLine3());
+							residentialCity = StringUtils.noNull(addrStr.getCity());
+							residentialProvince = getCountrySubDivCode(addrStr.getCountrySubdivisionCode());
+							cdsDt.PostalZipCode residentialPostalZip = addrStr.getPostalZipCode();
+							if (residentialPostalZip != null)
+								residentialPostalCode = StringUtils.noNull(residentialPostalZip.getPostalCode());
+
+							extra = Util.addLine(extra, "Residential Address: ", residentialAddress);
+							extra = Util.addLine(extra, "Residential City: ", residentialCity);
+							extra = Util.addLine(extra, "Residential Province: ", residentialProvince);
+							extra = Util.addLine(extra, "Residential Postal Code: ", residentialPostalCode);
+
+
+						}
+
+					}
+				}
+			}
+		}
+		cdsDt.PhoneNumber[] pn = demo.getPhoneNumberArray();
+		String workPhone = "", workExt = "", homePhone = "", homeExt = "", cellPhone = "", ext = "", patientPhone = "";
+		for (int i = 0; i < pn.length; i++) {
+			String phone = pn[i].getPhoneNumber();
+			if (StringUtils.empty(phone)) {
+				if (StringUtils.filled(pn[i].getNumber())) {
+					String areaCode = StringUtils.filled(pn[i].getAreaCode()) ? "(" + pn[i].getAreaCode() + ")" : "";
+					phone = areaCode + pn[i].getNumber();
+				}
+			}
+			if (StringUtils.filled(phone)) {
+				if (StringUtils.filled(pn[i].getExtension())) ext = pn[i].getExtension();
+				else if (StringUtils.filled(pn[i].getExchange())) ext = pn[i].getExchange();
+
+				if (pn[i].getPhoneNumberType() == cdsDt.PhoneNumberType.W) {
+					workPhone = phone;
+					workExt = ext;
+				} else if (pn[i].getPhoneNumberType() == cdsDt.PhoneNumberType.R) {
+					homePhone = phone;
+					homeExt = ext;
+				} else if (pn[i].getPhoneNumberType() == cdsDt.PhoneNumberType.C) {
+					cellPhone = phone;
+				}
+			}
+		}
+
+		String email = StringUtils.noNull(demo.getEmail());
+
+		String primaryPhysician = "";
+		Demographics.PrimaryPhysician demoPrimaryPhysician = demo.getPrimaryPhysician();
+		if (demoPrimaryPhysician != null) {
+			HashMap<String, String> personName = getPersonName(demoPrimaryPhysician.getName());
+			String personOHIP = demoPrimaryPhysician.getOHIPPhysicianId();
+			if (StringUtils.empty(personName.get("firstname")))
+				err_data.add("Error! No Primary Physician first name");
+			if (StringUtils.empty(personName.get("lastname")))
+				err_data.add("Error! No Primary Physician last name");
+			if (StringUtils.empty(personOHIP)) err_data.add("Error! No Primary Physician OHIP billing number");
+			String personCPSO = demoPrimaryPhysician.getPrimaryPhysicianCPSO();
+			primaryPhysician = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, personCPSO);
+		}
+		if (StringUtils.empty(primaryPhysician)) {
+			primaryPhysician = defaultProviderNo();
+			err_data.add("Error! No Primary Physician; patient assigned to \"doctor oscardoc\"");
+		}
+
+		// make the cell phone a home phone if home phone is not defined.
+		String phone = homePhone;
+		if (phone.isEmpty() || !cellPhone.isEmpty()) {
+			phone = cellPhone;
+		}
+
+		Demographic demographic = new Demographic();
+		demographic.setTitle(title);
+		demographic.setLastName(lastName);
+		demographic.setFirstName(firstName);
+		demographic.setMiddleNames(middleNames.toString());
+		demographic.setAddress(address);
+		demographic.setCity(city);
+		demographic.setProvince(province);
+		demographic.setPostal(postalCode);
+		demographic.setResidentialAddress(residentialAddress);
+		demographic.setResidentialCity(residentialCity);
+		demographic.setResidentialProvince(residentialProvince);
+		demographic.setResidentialPostal(residentialPostalCode);
+		demographic.setPhone(phone);
+		demographic.setPhone2(workPhone);
+		demographic.setYearOfBirth(birthYear);
+		demographic.setMonthOfBirth(birthMonth);
+		demographic.setDateOfBirth(birthDay);
+		demographic.setHin(hin);
+		demographic.setVer(versionCode);
+		demographic.setRosterStatus(rosterStatus);
+		demographic.setRosterDate(UtilDateUtilities.StringToDate(rosterDate));
+		demographic.setRosterTerminationDate(UtilDateUtilities.StringToDate(termDate));
+		demographic.setRosterTerminationReason(termReason);
+		demographic.setRosterEnrolledTo(rosterEnrolledTo);
+		demographic.setPatientStatus(patient_status);
+		demographic.setPatientStatusDate(UtilDateUtilities.StringToDate(psDate));
+		demographic.setChartNo(chart_no);
+		demographic.setOfficialLanguage(official_lang);
+		demographic.setSpokenLanguage(spoken_lang);
+		demographic.setProviderNo(primaryPhysician);
+		demographic.setSex(sex);
+		demographic.setPcnIndicator("");
+		demographic.setHcType(hc_type);
+		demographic.setHcRenewDate(UtilDateUtilities.StringToDate(hc_renew_date));
+		demographic.setFamilyDoctor("");
+		demographic.setEmail(email);
+		demographic.setAlias("");
+		demographic.setPreviousAddress("");
+		demographic.setChildren("");
+		demographic.setSourceOfIncome("");
+		demographic.setCitizenship("");
+		demographic.setSin(sin);
+		//not imported: date_joined, end_date, eff_date
+
+		demographicManager.addDemographic(loggedInInfo, demographic);
+		Integer demographicNo = demographic.getDemographicNo();
+
+		if (demographicNo != null && demographicNo > 0) {
+
+			//Put enrolment history into demographicArchive
+			for (int i = 0; i < roster_status.length - 1; i++) {
+				DemographicArchive demographicArchive = archiveDemographic(demographic);
+				demographicArchive.setRosterStatus(roster_status[i]);
+				demographicArchive.setRosterDate(UtilDateUtilities.StringToDate(roster_date[i]));
+				demographicArchive.setRosterTerminationDate(UtilDateUtilities.StringToDate(term_date[i]));
+				demographicArchive.setRosterTerminationReason(term_reason[i]);
+				demographicArchive.setRosterEnrolledTo(roster_enrolledTo[i]);
+				demoArchiveDao.persist(demographicArchive);
+			}
+
+			//Patient notes
+			if (StringUtils.filled(dNote)) {
+				DemographicCust demographicCust = new DemographicCust();
+				demographicCust.setNotes(dNote);
+				demographicCust.setId(demographicNo);
+				demographicManager.createUpdateDemographicCust(loggedInInfo, demographicCust);
+			}
+
+			if (StringUtils.filled(extra)) {
+				DemographicCust demographicCust = new DemographicCust();
+				demographicCust.setNotes(extra);
+				demographicCust.setId(demographicNo);
+				demographicManager.createUpdateDemographicCust(loggedInInfo, demographicCust);
+			}
+
+			if (!workExt.isEmpty())
+				demographicExtDao.addKey(primaryPhysician, demographicNo, "wPhoneExt", workExt);
+			if (!homeExt.isEmpty())
+				demographicExtDao.addKey(primaryPhysician, demographicNo, "hPhoneExt", homeExt);
+			if (!cellPhone.isEmpty())
+				demographicExtDao.addKey(primaryPhysician, demographicNo, "demo_cell", cellPhone);
+
+			entries.put(PATIENTID + importNo, demographicNo);
+			insertIntoAdmission(demographicNo+"", uvID);
+		}
+		return demographic;
+	}
 
     protected String mapContentType(String contentType) {
 
@@ -3187,7 +3280,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 	Set<CaseManagementIssue> getCMIssue(String code) {
 		CaseManagementIssue cmIssu = new CaseManagementIssue();
-		cmIssu.setDemographic_no(Integer.valueOf(demographicNo));
+		cmIssu.setDemographic_no(Integer.parseInt(demographicNo));
 		Issue isu = caseManagementManager.getIssueInfoByCode(StringUtils.noNull(code));
 		cmIssu.setIssue_id(isu.getId());
 		cmIssu.setType(isu.getType());
@@ -3203,7 +3296,7 @@ public class ImportDemographicDataAction4 extends Action {
 		Issue isu = caseManagementManager.getIssueInfoByCode(StringUtils.noNull(issueCode));
 		if (isu!=null) {
 			CaseManagementIssue cmIssu = new CaseManagementIssue();
-			cmIssu.setDemographic_no(Integer.valueOf(demographicNo));
+			cmIssu.setDemographic_no(Integer.parseInt(demographicNo));
 			cmIssu.setIssue_id(isu.getId());
 			cmIssu.setType(isu.getType());
 			cmIssu.setResolved(resolved);
@@ -3605,7 +3698,7 @@ public class ImportDemographicDataAction4 extends Action {
 		return msgs;
 	}
 
-	void insertIntoAdmission(String demoNo) {
+	private void insertIntoAdmission(String demoNo, String uniqueImportFileId) {
 		Admission admission = new Admission();
 		admission.setClientId(Integer.valueOf(demoNo));
 		admission.setProviderNo(admProviderNo);
@@ -3620,8 +3713,35 @@ public class ImportDemographicDataAction4 extends Action {
 		admission.setClientStatusId(null);
 		admission.setAutomaticDischarge(false);
 
-		admissionDao.saveAdmission(admission);
+		admissionManager.saveAdmission(admission);
 	}
+
+	/**
+	 * Successful import.
+	 * Updates the admission record for a specific patient identified by the demo number.
+	 * Adds an indicator to the admission notes if the patient was imported from a batch
+	 * import and marks the admission as originating from a transfer.
+	 *
+	 * @param demoNo                The demo number of the patient whose admission is being updated.
+	 * @param uniqueImportFileId    A unique identifier for the import file. If provided, it is
+	 *                              appended to the admission notes to track batch imports.
+	 */
+	private void updateAdmission(int demoNo, String uniqueImportFileId) {
+		Admission admissionRecord = admissionManager.getAdmission(programId, demoNo);
+
+		if(admissionRecord != null) {
+			// add indicator that this patient was imported from a batch import
+			// this can be used later to determine if a patient was imported from a batch import
+			// and avoid potential duplicates.
+			if(uniqueImportFileId != null && ! uniqueImportFileId.isEmpty()) {
+				admissionRecord.setAdmissionNotes(StringUtils.noNull(admissionRecord.getAdmissionNotes()) + " <uniqueImportFileId>" + uniqueImportFileId + "</uniqueImportFileId>");
+			}
+			// rare to have this set without the uuid. But it's good to know when it happens.
+			admissionRecord.setAdmissionFromTransfer(true);
+			admissionManager.saveAdmission(admissionRecord);
+		}
+	}
+
 
 //	String getLabDline(LaboratoryResults labRes, int timeShiftInDays){
 //		StringBuilder s = new StringBuilder();
@@ -4001,16 +4121,18 @@ public class ImportDemographicDataAction4 extends Action {
 			int checkFileUploadedSuccessfully = FileUploadCheck.addFile(file.getFileName().toString(), uploadStream, admProviderNo);
 
 			if (checkFileUploadedSuccessfully != FileUploadCheck.UNSUCCESSFUL_SAVE) {
-				logger.debug("savedHL7Path: " + savedHL7Path);
-				logger.info("Saving lab type:" + type);
+				logger.debug("savedHL7Path: {}", savedHL7Path);
+				logger.info("Saving lab type:{}", type);
 				MessageHandler msgHandler = HandlerClassFactory.getHandler(type);
 
-				logger.info("Using message handler: " + msgHandler.getClass().getName());
+				logger.info("Using message handler: {}", msgHandler.getClass().getName());
 
 				if (msgHandler.parse(loggedInInfo, "imported.CDS.5", savedHL7Path, checkFileUploadedSuccessfully, "") != null) {
 					addOneEntry(LABS);
 					return msgHandler.getLastLabNo();
 				}
+			} else {
+				logger.error("Lab has been uploaded previously or failed to upload {}", file.getFileName().toString());
 			}
 		}
 		return 0;
