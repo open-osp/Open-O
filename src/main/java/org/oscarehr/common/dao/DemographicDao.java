@@ -172,6 +172,17 @@ public interface DemographicDao {
 
 	public List<Demographic> getByHinAndGenderAndDobAndLastName(String hin, String gender, String dob, String lastName);
 
+	/**
+	 * Fast existence check on health number plus date of birth. Only the demographic
+	 * number is selected - no entity is loaded into the session. Parameters must be
+	 * exact (health number trimmed, month and day zero padded to 2 characters).
+	 *
+	 * @return the demographic number of the single matching record, or null when
+	 *         there is no match or more than one match.
+	 */
+	public Integer getUniqueDemographicNoByHinAndBirthDate(String hin, String yearOfBirth, String monthOfBirth,
+			String dateOfBirth);
+
 	public List<Demographic> searchDemographicByDOBAndNotStatus(String dobStr, List<String> statuses, int limit,
 			int offset, String providerNo, boolean outOfDomain);
 

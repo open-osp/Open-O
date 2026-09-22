@@ -627,6 +627,33 @@ public class DemographicDaoImpl extends HibernateDaoSupport implements Applicati
         return list;
     }
 
+    /**
+     * Scalar projection on the demographic number only: nothing is hydrated into the
+     * Hibernate session and no second level lookups are triggered. Two rows at most
+     * are fetched - just enough to tell a unique match from an ambiguous one.
+     * Relies on an index on demographic.hin to stay off a full table scan.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Integer getUniqueDemographicNoByHinAndBirthDate(String hin, String yearOfBirth, String monthOfBirth,
+            String dateOfBirth) {
+
+        String queryString = "SELECT d.DemographicNo FROM Demographic d WHERE d.Hin = :hin"
+                + " AND d.YearOfBirth = :yearOfBirth AND d.MonthOfBirth = :monthOfBirth"
+                + " AND d.DateOfBirth = :dateOfBirth";
+
+        Query query = currentSession().createQuery(queryString);
+        query.setParameter("hin", hin);
+        query.setParameter("yearOfBirth", yearOfBirth);
+        query.setParameter("monthOfBirth", monthOfBirth);
+        query.setParameter("dateOfBirth", dateOfBirth);
+        query.setMaxResults(2);
+
+        List<Integer> demographicNumbers = query.list();
+
+        return demographicNumbers.size() == 1 ? demographicNumbers.get(0) : null;
+    }
+
     @Override
     public List<Demographic> searchDemographicByDOBAndNotStatus(String dobStr, List<String> statuses, int limit,
             int offset, String providerNo, boolean outOfDomain) {

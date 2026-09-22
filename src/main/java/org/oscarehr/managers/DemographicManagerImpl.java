@@ -541,7 +541,7 @@ import java.util.regex.Pattern;
          try {
              demographic.getBirthDay();
          } catch (Exception e) {
-             throw new IllegalArgumentException("Birth date was specified for " + demographic.getFullName() + ": "
+             throw new IllegalArgumentException("No birth date was specified for " + demographic.getFullName() + ": "
                      + demographic.getBirthDayAsString());
          }
  
@@ -934,6 +934,8 @@ import java.util.regex.Pattern;
  
          return (demographics);
      }
+
+
  
      @Override
      public List<Demographic> searchByHealthCard(LoggedInInfo loggedInInfo, String hin) {
@@ -977,10 +979,56 @@ import java.util.regex.Pattern;
                  month_of_birth, date_of_birth);
  
          LogAction.addLogSynchronous(loggedInInfo, "DemographicManager.getDemographicWithLastFirstDOB", "");
- 
+
          return (results);
      }
- 
+
+     /**
+      * Determine if a demographic record exists for the given health number and date of
+      * birth. Built for speed in bulk duplicate checks (imports, HL7 and lab matching):
+      * a single indexed query selects the demographic number only - no entity, no
+      * extensions, no audit write.
+      *
+      * Merged records are ignored, and an ambiguous health number plus date of birth
+      * (more than one match) returns null rather than an arbitrary record.
+      *
+      * @param hin          health number; blank is treated as no match
+      * @param yearOfBirth  4 digit year
+      * @param monthOfBirth month; a single digit is zero padded here
+      * @param dateOfBirth  day of month; a single digit is zero padded here
+      * @return the single matching demographic number, otherwise null
+      */
+     @Override
+     public Integer getDemographicNoByHinAndBirthDate(LoggedInInfo loggedInInfo, String hin, String yearOfBirth,
+             String monthOfBirth, String dateOfBirth) {
+
+         if (loggedInInfo == null) {
+             throw (new SecurityException("user not logged in?"));
+         }
+         checkPrivilege(loggedInInfo, SecurityInfoManager.READ);
+
+         String healthNumber = hin == null ? "" : hin.trim();
+         String year = yearOfBirth == null ? "" : yearOfBirth.trim();
+         String month = padBirthDatePart(monthOfBirth);
+         String day = padBirthDatePart(dateOfBirth);
+
+         // all four are required: a missing parameter cannot identify a unique record,
+         // and a blank health number would match every record without one.
+         if (healthNumber.isEmpty() || year.isEmpty() || month.isEmpty() || day.isEmpty()) {
+             return null;
+         }
+
+         return demographicDao.getUniqueDemographicNoByHinAndBirthDate(healthNumber, year, month, day);
+     }
+
+     /**
+      * Month and day of birth are stored as zero padded 2 character columns.
+      */
+     private static String padBirthDatePart(String birthDatePart) {
+         String part = birthDatePart == null ? "" : birthDatePart.trim();
+         return part.length() == 1 ? "0" + part : part;
+     }
+
      @Override
      public List<Integer> getDemographicNumbersByMidwifeNumberAndDemographicLastNameRegex(
              LoggedInInfo loggedInInfo,

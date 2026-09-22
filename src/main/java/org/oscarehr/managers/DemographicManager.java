@@ -161,6 +161,17 @@ public interface DemographicManager {
 	public List<Demographic> getDemographicWithLastFirstDOB(LoggedInInfo loggedInInfo, String lastname,
 			String firstname, String year_of_birth, String month_of_birth, String date_of_birth);
 
+	/**
+	 * Determine if a demographic record exists for the given health number and date of
+	 * birth. Intended for high volume duplicate checks: only the demographic number is
+	 * read back and unique matches are required.
+	 *
+	 * @return the matching demographic number, or null when there is no match, more
+	 *         than one match, or any parameter is missing.
+	 */
+	public Integer getDemographicNoByHinAndBirthDate(LoggedInInfo loggedInInfo, String hin, String yearOfBirth,
+			String monthOfBirth, String dateOfBirth);
+
 	public List<Integer> getDemographicNumbersByMidwifeNumberAndDemographicLastNameRegex(
 			LoggedInInfo loggedInInfo,
 			final String midwifeNumber,
