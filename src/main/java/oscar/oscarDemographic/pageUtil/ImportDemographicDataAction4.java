@@ -229,6 +229,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 	private final NioFileManager nioFileManager = SpringUtils.getBean(NioFileManager.class);
 	private static volatile DocumentBuilderFactory importFactory;
+	private static volatile DocumentBuilderFactory safeParseFactory;
 	private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddkkmmssSS");
 
     @Override
@@ -567,13 +568,15 @@ public class ImportDemographicDataAction4 extends Action {
         File xmlF = new File(xmlFile);
         OmdCdsDocument.OmdCds omdCds=null;
         try {
-        	XmlOptions opts = new XmlOptions();
-        	opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType()); 
-        	omdCds = OmdCdsDocument.Factory.parse(xmlF,opts).getOmdCds();
-        } catch (IOException | XmlException ex) {
-			logger.error("Error", ex);
+        	omdCds = parseXML(xmlF);
+        } catch (Exception ex) {
+	        logger.error("Error parsing XML file: {}", xmlFile, ex);
 			warnings.add("Error parsing XML file: " + xmlFile);
         }
+	    if (omdCds == null) {
+		    // the parse failed above and already recorded a warning; nothing to import from this file
+		    return;
+	    }
 	    PatientRecord patientRec = omdCds.getPatientRecord();
 
         //DEMOGRAPHICS
@@ -4231,7 +4234,7 @@ public class ImportDemographicDataAction4 extends Action {
 		return ret;
 	}
 
-	public OmdCdsDocument.OmdCds validateImport(File f, ArrayList<String> err_data) throws Exception {
+	private static OmdCdsDocument.OmdCds validateImport(File f, ArrayList<String> err_data) throws Exception {
 
 		ImportValidationHandler validationHandler = new ImportValidationHandler(f.getName());
 		DocumentBuilder builder = getImportFactory().newDocumentBuilder();
@@ -4242,9 +4245,7 @@ public class ImportDemographicDataAction4 extends Action {
 		 * every schema violation would be lost.
 		 */
 		builder.setErrorHandler(validationHandler);
-		XmlOptions opts = new XmlOptions();
-		opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
-		OmdCdsDocument.OmdCds doc = OmdCdsDocument.Factory.parse(builder.parse(f), opts).getOmdCds();
+		OmdCdsDocument.OmdCds doc = OmdCdsDocument.Factory.parse(builder.parse(f), getXmlOptions()).getOmdCds();
 
 		/*
 		 * Schema violations do not stop the parse, so report whatever was collected
@@ -4284,18 +4285,67 @@ public class ImportDemographicDataAction4 extends Action {
 					factory = DocumentBuilderFactory.newInstance();
 					factory.setNamespaceAware(true);
 					factory.setSchema(xsdFactory.newSchema(url));
-					// Use parser features rather than ACCESS_EXTERNAL_* attributes. The latter are
-					// not implemented by the older XML parser bundled with some supported runtimes.
-					factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-					factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-					factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-					factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-					factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+					hardenAgainstEntityAttacks(factory);
 					importFactory = factory;
 				}
 			}
 		}
 		return factory;
+	}
+
+	/**
+	 * The same hardening as {@link #getImportFactory()}, without the schema.
+	 *
+	 * Used where a file is re-read after it has already been through validateImport(): the
+	 * parse still has to be safe, but running the whole document through schema validation a
+	 * second time would double the cost of every import and produce no signal that the first
+	 * pass did not already collect.
+	 */
+	private static OmdCdsDocument.OmdCds parseXML(File xmlF) throws Exception {
+		DocumentBuilder builder = getSafeParseFactory().newDocumentBuilder();
+		builder.setErrorHandler(new ImportValidationHandler(xmlF.getName()));
+		return OmdCdsDocument.Factory.parse(builder.parse(xmlF),getXmlOptions()).getOmdCds();
+	}
+
+	private static XmlOptions getXmlOptions() {
+		XmlOptions opts = new XmlOptions();
+		opts.setDocumentType(OmdCdsDocument.Factory.newInstance().schemaType());
+		return opts;
+	}
+
+	private static DocumentBuilderFactory getSafeParseFactory() throws Exception {
+		DocumentBuilderFactory factory = safeParseFactory;
+		if (factory == null) {
+			synchronized (ImportDemographicDataAction4.class) {
+				factory = safeParseFactory;
+				if (factory == null) {
+					factory = DocumentBuilderFactory.newInstance();
+					factory.setNamespaceAware(true);
+					hardenAgainstEntityAttacks(factory);
+					safeParseFactory = factory;
+				}
+			}
+		}
+		return factory;
+	}
+
+	/**
+	 * Refuses DOCTYPE declarations outright, which is what makes an imported file safe to parse.
+	 *
+	 * A DOCTYPE can declare nested internal entities that expand geometrically - roughly 300
+	 * bytes of declarations expand to tens of megabytes, and a few more levels exhaust the heap
+	 * AKA: the billion laughs attack. Rejecting the declaration also removes external general and parameter
+	 * entities as a class, so a CDS file cannot reference anything off the local disk or network
+	 * regardless of which parser implementation is on the classpath.
+	 */
+	private static void hardenAgainstEntityAttacks(DocumentBuilderFactory factory) throws Exception {
+		// Use parser features rather than ACCESS_EXTERNAL_* attributes. The latter are
+		// not implemented by the older XML parser bundled with some supported runtimes.
+		factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 	}
 
 	/**
