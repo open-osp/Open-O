@@ -815,7 +815,7 @@ public class ImportDemographicDataAction4 extends Action {
 	    if (healthCard != null) {
 		    hin = StringUtils.noNull(healthCard.getNumber());
 		    if (hin.isEmpty()) {
-			    err_data.add("Error! No health card number");
+			    err_data.add("Error! No health card number. File id " + uniqueSourceFileId);
 		    }
 	    }
 
@@ -828,7 +828,7 @@ public class ImportDemographicDataAction4 extends Action {
 		    month_of_birth = String.format("%02d", dateOfBirth.get(Calendar.MONTH) + 1);
 		    date_of_birth = String.format("%02d", dateOfBirth.get(Calendar.DAY_OF_MONTH));
 	    } else {
-		    err_data.add("Error! No Date Of Birth");
+		    err_data.add("Error! No Date Of Birth. File id " + uniqueSourceFileId);
 	    }
 
 	    /*
@@ -858,7 +858,7 @@ public class ImportDemographicDataAction4 extends Action {
 		     * Cross-check with the unique import id to confirm it's a pre-existing import.
 		     * Then skip it - otherwise a horrible duplication will occur.
 		     */
-		    String uniqueImportFileId = org.apache.commons.lang.StringUtils.substringBetween(admission.getAdmissionNotes(), "<uniqueImportFileId>", "</uniqueImportFileId>");
+		    String uniqueImportFileId = admission.getAdmissionStatus();
 			if(uniqueImportFileId == null) {
 				uniqueImportFileId = "";
 			}
@@ -885,6 +885,8 @@ public class ImportDemographicDataAction4 extends Action {
 				    err_data, warnings, timeShiftInDays);
 			demographicNo = demographic.getDemographicNo()+"";
 	    }
+
+	    entries.put(PATIENTID + importNo, Integer.parseInt(demographicNo));
 
 	    patientName = demographic.getFormattedName();
 
@@ -2932,7 +2934,6 @@ public class ImportDemographicDataAction4 extends Action {
 			if (!cellPhone.isEmpty())
 				demographicExtDao.addKey(primaryPhysician, demographicNo, "demo_cell", cellPhone);
 
-			entries.put(PATIENTID + importNo, demographicNo);
 			insertIntoAdmission(demographicNo+"", uvID);
 		}
 		return demographic;
@@ -3737,7 +3738,7 @@ public class ImportDemographicDataAction4 extends Action {
 			// this can be used later to determine if a patient was imported from a batch import
 			// and avoid potential duplicates.
 			if(uniqueImportFileId != null && ! uniqueImportFileId.isEmpty()) {
-				admissionRecord.setAdmissionNotes(StringUtils.noNull(admissionRecord.getAdmissionNotes()) + " <uniqueImportFileId>" + uniqueImportFileId + "</uniqueImportFileId>");
+				admissionRecord.setAdmissionStatus(uniqueImportFileId);
 			}
 			// rare to have this set without the uuid. But it's good to know when it happens.
 			admissionRecord.setAdmissionFromTransfer(true);
