@@ -815,7 +815,7 @@ public class ImportDemographicDataAction4 extends Action {
 	    if (healthCard != null) {
 		    hin = StringUtils.noNull(healthCard.getNumber());
 		    if (hin.isEmpty()) {
-			    err_data.add("Error! No health card number. File id " + uniqueSourceFileId);
+			    err_demo.add("Error! No health card number. File id " + uniqueSourceFileId);
 		    }
 	    }
 
@@ -828,7 +828,7 @@ public class ImportDemographicDataAction4 extends Action {
 		    month_of_birth = String.format("%02d", dateOfBirth.get(Calendar.MONTH) + 1);
 		    date_of_birth = String.format("%02d", dateOfBirth.get(Calendar.DAY_OF_MONTH));
 	    } else {
-		    err_data.add("Error! No Date Of Birth. File id " + uniqueSourceFileId);
+		    err_demo.add("Error! No Date Of Birth. File id " + uniqueSourceFileId);
 	    }
 
 	    /*
@@ -882,7 +882,7 @@ public class ImportDemographicDataAction4 extends Action {
 		// null demographic at this point confirms this patient is new. Create and insert a new demographic profile.
 		if (demographic == null) {
 		    demographic = createDemographic(loggedInInfo, demo, hin, year_of_birth, month_of_birth, date_of_birth,
-				    err_data, warnings, timeShiftInDays);
+				    err_demo, warnings, timeShiftInDays);
 			demographicNo = demographic.getDemographicNo()+"";
 	    }
 
@@ -2524,7 +2524,7 @@ public class ImportDemographicDataAction4 extends Action {
 
 	private Demographic createDemographic(LoggedInInfo loggedInInfo, Demographics demo,
 	                                 String hin, String birthYear, String birthMonth, String birthDay,
-	List<String> err_data, List<String> warnings,  int timeShiftInDays) {
+	List<String> err_demo, List<String> warnings,  int timeShiftInDays) {
 		//DEMOGRAPHICS
 		cdsDt.PersonNameStandard.LegalName legalName = demo.getNames().getLegalName();
 		String lastName = "", firstName = "";
@@ -2543,7 +2543,7 @@ public class ImportDemographicDataAction4 extends Action {
 				}
 			}
 		} else {
-			warnings.add("Warning No Legal Name");
+			warnings.add("Warning! No Legal Name for patient");
 		}
 
 		//other names
@@ -2588,7 +2588,7 @@ public class ImportDemographicDataAction4 extends Action {
 		// GENDER
 		String sex = demo.getGender() != null ? demo.getGender().toString() : "";
 		if (StringUtils.empty(sex)) {
-			err_data.add("Error! No Gender");
+			err_demo.add("Error! No Gender specified");
 		}
 
 		String versionCode = "",  hc_type = "", hc_renew_date = "";
@@ -2596,7 +2596,7 @@ public class ImportDemographicDataAction4 extends Action {
 		if (healthCard != null) {
 			hc_type = getProvinceCode(healthCard.getProvinceCode());
 			if (hc_type.isEmpty()) {
-				err_data.add("Error! No Province Code for health card");
+				err_demo.add("Error! No Province Code for health card");
 			}
 			versionCode = StringUtils.noNull(healthCard.getVersion());
 			hc_renew_date = Util.getCalDate(healthCard.getExpirydate());
@@ -2613,10 +2613,10 @@ public class ImportDemographicDataAction4 extends Action {
 			} else if (personStatusCode.getPersonStatusAsPlainText() != null) {
 				patient_status = personStatusCode.getPersonStatusAsPlainText();
 			} else {
-				err_data.add("Error! No Person Status Code");
+				err_demo.add("Error! No Person Status Code");
 			}
 		} else {
-			err_data.add("Error! No Person Status Code");
+			err_demo.add("Error! No Person Status Code");
 		}
 
 		EnrolmentHistory[] enrolments = new EnrolmentHistory[0];
@@ -2648,10 +2648,10 @@ public class ImportDemographicDataAction4 extends Action {
 				HashMap<String, String> personName = getPersonName(enrolledToPhysician.getName());
 				String personOHIP = enrolledToPhysician.getOHIPPhysicianId();
 				if (StringUtils.empty(personName.get("firstname")))
-					err_data.add("Error! No Enrolled To Physician first name");
+					err_demo.add("Error! No Enrolled To Physician first name");
 				if (StringUtils.empty(personName.get("lastname")))
-					err_data.add("Error! No Enrolled To Physician last name");
-				if (StringUtils.empty(personOHIP)) err_data.add("Error! No Enrolled To Physician OHIP billing number");
+					err_demo.add("Error! No Enrolled To Physician last name");
+				if (StringUtils.empty(personOHIP)) err_demo.add("Error! No Enrolled To Physician OHIP billing number");
 
 				roster_enrolledTo[i] = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, null);
 			}
@@ -2722,7 +2722,7 @@ public class ImportDemographicDataAction4 extends Action {
 		if (demo.getPreferredSpokenLanguage() != null) {
 			spoken_lang = Util.convertCodeToLanguage(demo.getPreferredSpokenLanguage());
 			if (StringUtils.empty(spoken_lang)) {
-				err_data.add("Error! Cannot map spoken language code " + demo.getPreferredSpokenLanguage());
+				err_demo.add("Error! Cannot map spoken language code " + demo.getPreferredSpokenLanguage());
 			}
 		}
 
@@ -2750,7 +2750,7 @@ public class ImportDemographicDataAction4 extends Action {
 		if (StringUtils.filled(uvID)) {
 			extra = Util.addLine(extra, "Unique Vendor ID: ", uvID);
 		} else {
-			err_data.add("Error! No Unique Vendor ID Sequence");
+			err_demo.add("Error! No Unique Vendor ID Sequence");
 		}
 
 		String address = "", city = "", province = "", postalCode = "";
@@ -2833,16 +2833,16 @@ public class ImportDemographicDataAction4 extends Action {
 			HashMap<String, String> personName = getPersonName(demoPrimaryPhysician.getName());
 			String personOHIP = demoPrimaryPhysician.getOHIPPhysicianId();
 			if (StringUtils.empty(personName.get("firstname")))
-				err_data.add("Error! No Primary Physician first name");
+				err_demo.add("Error! No Primary Physician first name");
 			if (StringUtils.empty(personName.get("lastname")))
-				err_data.add("Error! No Primary Physician last name");
-			if (StringUtils.empty(personOHIP)) err_data.add("Error! No Primary Physician OHIP billing number");
+				err_demo.add("Error! No Primary Physician last name");
+			if (StringUtils.empty(personOHIP)) err_demo.add("Error! No Primary Physician OHIP billing number");
 			String personCPSO = demoPrimaryPhysician.getPrimaryPhysicianCPSO();
 			primaryPhysician = writeProviderData(personName.get("firstname"), personName.get("lastname"), personOHIP, personCPSO);
 		}
 		if (StringUtils.empty(primaryPhysician)) {
 			primaryPhysician = defaultProviderNo();
-			err_data.add("Error! No Primary Physician; patient assigned to \"doctor oscardoc\"");
+			err_demo.add("Error! No Primary Physician; patient assigned to \"doctor oscardoc\"");
 		}
 
 		// make the cell phone a home phone if home phone is not defined.
