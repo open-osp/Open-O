@@ -19,6 +19,8 @@
 package oscar.oscarDemographic.pageUtil;
 
 import oscar.OscarProperties;
+import oscar.oscarDemographic.pageUtil.ImportDemographicDataAction4.ImportProgressListener;
+import oscar.oscarDemographic.pageUtil.ImportDemographicDataAction4.ImportProgressListener.Phase;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -33,6 +35,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -61,6 +64,7 @@ import java.util.Set;
  *   --program <id>        Program ID to associate with imported patients (default: 0)
  *   --timeshift <days>    Shift appointment/note dates by N days (default: 0)
  *   --no-match-providers  Disable provider name matching (default: matching enabled)
+ *   --no-progress         Do not report progress while importing
  *   --help                Print this help and exit
  *
  * Exit codes:
@@ -78,6 +82,9 @@ import java.util.Set;
  * Import warnings name patients, so they are not printed. They are written to
  * <importlog-basename>.warnings.log beside the import log; the console reports the count
  * and the path.
+ *
+ * Progress: on a terminal a bar is redrawn on stderr; otherwise (nohup, CI, redirected output)
+ * a log line is written at every 10%. Either way only counts are shown, never file names.
  */
 public class ImportDemographicDataCli {
 
@@ -114,6 +121,7 @@ public class ImportDemographicDataCli {
         String programId = "0";
         int timeshiftInDays = 0;
         boolean matchProviderNames = true;
+        boolean showProgress = true;
 
         try {
             for (int i = 0; i < args.length; i++) {
@@ -133,6 +141,9 @@ public class ImportDemographicDataCli {
                         break;
                     case "--no-match-providers":
                         matchProviderNames = false;
+                        break;
+                    case "--no-progress":
+                        showProgress = false;
                         break;
                     case "--help":
                         printUsage();
@@ -206,14 +217,23 @@ public class ImportDemographicDataCli {
 
             ImportDemographicDataAction4 action = new ImportDemographicDataAction4();
             ImportDemographicDataAction4.ImportResult result;
+            // Java 8's System.console() is null unless stdin and stdout are both a terminal,
+            // which is exactly when redrawing a line in place is safe.
+            ConsoleProgress progress = showProgress ? new ConsoleProgress(System.console() != null) : null;
+            long startedAt = System.currentTimeMillis();
             try {
-                result = action.importFromPath(
-                        loggedInInfo, inputPath, providerNo, programId, matchProviderNames, timeshiftInDays);
+                result = action.importFromPath(loggedInInfo, inputPath, providerNo, programId,
+                        matchProviderNames, timeshiftInDays, progress);
             } catch (Exception e) {
                 logger.error("Import failed for input path: {}", inputPath, e);
                 return EXIT_FAILED;
+            } finally {
+                if (progress != null) {
+                    progress.finish();
+                }
             }
 
+            logger.info("Import finished in {}.", formatDuration(System.currentTimeMillis() - startedAt));
             reportResult(result);
             return EXIT_OK;
         } catch (Exception e) {
@@ -222,6 +242,144 @@ public class ImportDemographicDataCli {
             logger.error("Could not start the application context", e);
             return EXIT_CONFIG;
         }
+    }
+
+    /**
+     * Shows import progress on the console.
+     *
+     * Interactive: redraws one bar line on stderr. stdout carries the log4j console appender and
+     * is the stream most often redirected, so keeping carriage returns off it keeps captured
+     * logs clean. An error logged mid-import starts after the bar on the same line; the next
+     * redraw carries on below it.
+     *
+     * Non-interactive: logs a line at each 10% step, so nohup and CI output get milestones
+     * rather than a stream of carriage returns.
+     *
+     * Counts only, never file names: see ImportProgressListener.
+     */
+    private static final class ConsoleProgress implements ImportProgressListener {
+
+        private static final int BAR_WIDTH = 30;
+        private static final int LOG_STEP_PERCENT = 10;
+
+        private final boolean interactive;
+        private final PrintStream out = System.err;
+
+        private Phase currentPhase;
+        private long phaseStartedAt;
+        private int lastLoggedStep;
+        private int lastLineLength;
+
+        ConsoleProgress(boolean interactive) {
+            this.interactive = interactive;
+        }
+
+        @Override
+        public void onProgress(Phase phase, int completed, int total) {
+            if (phase != currentPhase) {
+                endLine();
+                currentPhase = phase;
+                phaseStartedAt = System.currentTimeMillis();
+                lastLoggedStep = -1;
+            }
+
+            if (total < 0) {
+                // Size unknown (ZIP extraction): nothing to measure, just say what is happening.
+                if (interactive) {
+                    draw(label(phase) + " ...");
+                } else {
+                    logger.info("{} ...", label(phase));
+                }
+                return;
+            }
+
+            int percent = total == 0 ? 100 : (int) (completed * 100L / total);
+            if (interactive) {
+                draw(renderBar(phase, completed, total, percent));
+                return;
+            }
+            int step = percent / LOG_STEP_PERCENT;
+            if (step != lastLoggedStep) {
+                lastLoggedStep = step;
+                String remaining = remaining(completed, total);
+                logger.info("{}: {}/{} ({}%){}", label(phase), completed, total, percent,
+                        remaining.isEmpty() ? "" : ", " + remaining);
+            }
+        }
+
+        /** Moves off the bar line so whatever is printed next starts on a fresh line. */
+        void finish() {
+            endLine();
+        }
+
+        private String renderBar(Phase phase, int completed, int total, int percent) {
+            int filled = total == 0 ? BAR_WIDTH : (int) ((long) completed * BAR_WIDTH / total);
+            // Pad the label so the bar does not shift sideways between phases.
+            StringBuilder line = new StringBuilder(String.format("%-18s", label(phase))).append(" [");
+            for (int i = 0; i < BAR_WIDTH; i++) {
+                line.append(i < filled ? '#' : '-');
+            }
+            String width = String.valueOf(total);
+            line.append("] ")
+                    .append(String.format("%" + width.length() + "d/%s %3d%%", completed, width, percent))
+                    .append("  ").append(formatDuration(System.currentTimeMillis() - phaseStartedAt));
+            String remaining = remaining(completed, total);
+            if (!remaining.isEmpty()) {
+                line.append("  ").append(remaining);
+            }
+            return line.toString();
+        }
+
+        /** Linear estimate from the phase's average so far; empty until there is an average. */
+        private String remaining(int completed, int total) {
+            if (completed <= 0 || completed >= total) {
+                return "";
+            }
+            long elapsed = System.currentTimeMillis() - phaseStartedAt;
+            return "~" + formatDuration(elapsed * (total - completed) / completed) + " left";
+        }
+
+        private void draw(String line) {
+            StringBuilder sb = new StringBuilder("\r").append(line);
+            // Blank out the tail of a longer previous line; avoids ANSI codes older consoles lack.
+            for (int i = line.length(); i < lastLineLength; i++) {
+                sb.append(' ');
+            }
+            out.print(sb);
+            out.flush();
+            lastLineLength = line.length();
+        }
+
+        private void endLine() {
+            if (interactive && lastLineLength > 0) {
+                out.println();
+                lastLineLength = 0;
+            }
+        }
+
+        private static String label(Phase phase) {
+            switch (phase) {
+                case EXTRACTING:
+                    return "Extracting archive";
+                case PATIENTS:
+                    return "Importing patients";
+                case CONTACTS:
+                    return "Linking contacts";
+                default:
+                    return phase.name();
+            }
+        }
+    }
+
+    /** mm:ss, or h:mm:ss once past an hour - large imports run for hours. */
+    private static String formatDuration(long millis) {
+        long seconds = Math.max(0, millis) / 1000;
+        long hours = seconds / 3600;
+        long minutes = (seconds % 3600) / 60;
+        long secs = seconds % 60;
+        return hours > 0
+                ? String.format("%d:%02d:%02d", hours, minutes, secs)
+                : String.format("%02d:%02d", minutes, secs);
     }
 
     /**
@@ -452,7 +610,8 @@ public class ImportDemographicDataCli {
         System.out.println("  --program <id>        Program ID to associate (default: 0)");
         System.out.println("  --timeshift <days>    Shift dates by N days (default: 0)");
         System.out.println("  --no-match-providers  Disable provider name matching");
-        System.out.println("  --help                Show this help and exit");
+        System.out.println("  --no-progress         Do not report progress while importing");
+        System.out.println("  --help               Show this help and exit");
         System.out.println();
         System.out.println("oscar.properties (with DOCUMENT_DIR and DB config) must be on the classpath,");
         System.out.println("or pass -Doscar_override_properties=/path/to/oscar.properties.");

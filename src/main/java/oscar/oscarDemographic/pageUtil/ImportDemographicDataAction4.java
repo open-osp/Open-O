@@ -351,7 +351,19 @@ public class ImportDemographicDataAction4 extends Action {
     public ImportResult importFromPath(LoggedInInfo loggedInInfo, Path inputPath,
             String providerNo, String programId, boolean matchProviderNames,
             int timeshiftInDays) throws Exception {
+        return importFromPath(loggedInInfo, inputPath, providerNo, programId, matchProviderNames,
+                timeshiftInDays, ImportProgressListener.NONE);
+    }
 
+    /**
+     * As {@link #importFromPath(LoggedInInfo, Path, String, String, boolean, int)}, reporting
+     * progress to the given listener as each patient file and contact pass completes.
+     */
+    public ImportResult importFromPath(LoggedInInfo loggedInInfo, Path inputPath,
+            String providerNo, String programId, boolean matchProviderNames,
+            int timeshiftInDays, ImportProgressListener progressListener) throws Exception {
+
+        ImportProgressListener listener = progressListener != null ? progressListener : ImportProgressListener.NONE;
 		ImportResult importResult = null;
         this.admProviderNo = providerNo;
         this.matchProviderNames = matchProviderNames;
@@ -370,18 +382,24 @@ public class ImportDemographicDataAction4 extends Action {
 
 		try {
 			if (Files.isRegularFile(inputPath) && fileName.endsWith(".xml")) {
+				listener.onProgress(ImportProgressListener.Phase.PATIENTS, 0, 1);
 				processXmlFile(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+				listener.onProgress(ImportProgressListener.Phase.PATIENTS, 1, 1);
 			} else if (Files.isRegularFile(inputPath) && fileName.endsWith(".zip")) {
+				listener.onProgress(ImportProgressListener.Phase.EXTRACTING, 0, -1);
 				Path rootDirectory = unzipFile(inputPath);
-				processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+				processXmlFilesInDirectory(loggedInInfo, rootDirectory, warnings, logs, mockRequest, timeshiftInDays, students, 0, listener);
 			} else if (Files.isDirectory(inputPath)) {
-				processXmlFilesInDirectory(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0);
+				processXmlFilesInDirectory(loggedInInfo, inputPath, warnings, logs, mockRequest, timeshiftInDays, students, 0, listener);
 			} else {
 				throw new IllegalArgumentException("Input must be an .xml file, .zip file, or directory: " + inputPath);
 			}
 
-			for (Path validXmlFile : validXmlFileList) {
-				importContacts(loggedInInfo, validXmlFile.toString(), warnings, mockRequest, timeshiftInDays, students, 0);
+			int contactTotal = validXmlFileList.size();
+			listener.onProgress(ImportProgressListener.Phase.CONTACTS, 0, contactTotal);
+			for (int i = 0; i < contactTotal; i++) {
+				importContacts(loggedInInfo, validXmlFileList.get(i).toString(), warnings, mockRequest, timeshiftInDays, students, 0);
+				listener.onProgress(ImportProgressListener.Phase.CONTACTS, i + 1, contactTotal);
 			}
 		}
 		catch (Exception e) {
@@ -399,26 +417,33 @@ public class ImportDemographicDataAction4 extends Action {
 
     /**
      * Search for all XML / CDS / CMS patient files in a given directory and process.
+     *
+     * The files are collected before any are imported so the total is known up front for
+     * progress reporting.
      */
     private void processXmlFilesInDirectory(LoggedInInfo loggedInInfo, Path fileDirectory, ArrayList<String> warnings, ArrayList<String[]> logs,
-                                            HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId) throws Exception {
+                                            HttpServletRequest request, int timeshiftInDays, List<Provider> students, int courseId,
+                                            ImportProgressListener listener) throws Exception {
 
 	    // current parent directory could also contain attachments found in the same directory
 	    currentDirectory = fileDirectory.toString();
 
+		List<PendingXmlFile> pendingFiles = new ArrayList<>();
+		String attachmentDirectory = currentDirectory;
 		try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(fileDirectory, "*.{xml, XML, cds, CMS, CDS}")) {
             for (Path stream : directoryStream) {
 
                 if (Files.isDirectory(stream)) {
-                    // set the current directory globally. Other methods use it to retrieve relative files.
-                    currentDirectory = stream.toAbsolutePath().toString();
+                    // Other methods use currentDirectory to retrieve relative files, so remember which
+                    // directory was in effect for each file and restore it when that file is imported.
+                    attachmentDirectory = stream.toAbsolutePath().toString();
 
                     /* check for an XML file that matches the folder name (standard). It's best for performance
                      * to avoid hunting through the folders when not needed.
                      */
-                    Path xmlFile = Paths.get(currentDirectory, stream.toFile().getName() + ".xml");
+                    Path xmlFile = Paths.get(attachmentDirectory, stream.toFile().getName() + ".xml");
                     if (Files.exists(xmlFile)) {
-                        processXmlFile(loggedInInfo, xmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
+                        pendingFiles.add(new PendingXmlFile(xmlFile, attachmentDirectory));
                     }
 
                     /*
@@ -427,17 +452,36 @@ public class ImportDemographicDataAction4 extends Action {
                     else {
                         List<Path> possibleXmlFileList = searchFileByExtension(stream, warnings);
                         for (Path possibleXmlFile : possibleXmlFileList) {
-                            processXmlFile(loggedInInfo, possibleXmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
+                            pendingFiles.add(new PendingXmlFile(possibleXmlFile, attachmentDirectory));
                         }
                     }
                 } else if (Files.isRegularFile(stream) && Files.exists(stream)){
-					processXmlFile(loggedInInfo, stream, warnings, logs, request, timeshiftInDays, students, courseId);
+					pendingFiles.add(new PendingXmlFile(stream, attachmentDirectory));
                 } else{
 			        warnings.add("Directory not found " + stream);
 		        }
             }
         }
 
+		int total = pendingFiles.size();
+		listener.onProgress(ImportProgressListener.Phase.PATIENTS, 0, total);
+		for (int i = 0; i < total; i++) {
+			PendingXmlFile pending = pendingFiles.get(i);
+			currentDirectory = pending.attachmentDirectory;
+			processXmlFile(loggedInInfo, pending.xmlFile, warnings, logs, request, timeshiftInDays, students, courseId);
+			listener.onProgress(ImportProgressListener.Phase.PATIENTS, i + 1, total);
+		}
+    }
+
+    /** A patient file found by processXmlFilesInDirectory, with the directory its attachments resolve against. */
+    private static final class PendingXmlFile {
+        final Path xmlFile;
+        final String attachmentDirectory;
+
+        PendingXmlFile(Path xmlFile, String attachmentDirectory) {
+            this.xmlFile = xmlFile;
+            this.attachmentDirectory = attachmentDirectory;
+        }
     }
 
     /**
@@ -780,7 +824,7 @@ public class ImportDemographicDataAction4 extends Action {
 		// build patient record and validate
         File xmlF = new File(xmlFile);
 
-	    logger.error("Importing XML file: {}", xmlF.getName());
+	    logger.debug("Importing XML file: {}", xmlF.getName());
 
 	    OmdCdsDocument.OmdCds omdCdsDocument;
         try {
@@ -864,7 +908,7 @@ public class ImportDemographicDataAction4 extends Action {
 			}
 		    if (admission.isAdmissionFromTransfer() &&
 				    (uniqueImportFileId.equals(uniqueSourceFileId))) {
-			    logger.error("Warning! Patient hin {} already exists from previous import attempt! Confirm Admission records. Skipping import file: {}", hin, xmlF.getName());
+			    logger.warn("Warning! Patient hin {} already exists from previous import attempt! Confirm Admission records. Skipping import file: {}", hin, xmlF.getName());
 			    err_demo.add("Warning! Patient hin " + hin + " already exists from previous import attempt! Confirm Admission records. Skipping import file " + xmlF.getName());
 			    return packMsgs(err_demo, err_data, err_summ, err_othe, err_note, warnings);
 		    }
@@ -875,7 +919,7 @@ public class ImportDemographicDataAction4 extends Action {
 		     */
 		    demographicNo = existingDemographicNo +"";
 		    demographic = demographicManager.getDemographic(loggedInInfo, demographicNo);
-			logger.error("Warning! Patient hin {} already exists! Updating existing demographic record with file {}", hin, xmlF.getName());
+			logger.warn("Warning! Patient hin {} already exists! Updating existing demographic record with file {}", hin, xmlF.getName());
 		    warnings.add("Warning! Patient hin " + hin + " already exists! Updating existing demographic record with file " + xmlF.getName());
 	    }
 
@@ -4422,6 +4466,23 @@ public class ImportDemographicDataAction4 extends Action {
 	 * Helper class
 	 * Result returned by importFromPath() for use by command-line callers.
 	 */
+	/**
+	 * Receives progress from importFromPath. Callbacks carry counts only, never file names:
+	 * CDS export files and folders are commonly named after the patient.
+	 */
+	public interface ImportProgressListener {
+
+		enum Phase { EXTRACTING, PATIENTS, CONTACTS }
+
+		ImportProgressListener NONE = (phase, completed, total) -> { };
+
+		/**
+		 * @param completed items finished so far in this phase
+		 * @param total     items in this phase, or -1 when not known in advance
+		 */
+		void onProgress(Phase phase, int completed, int total);
+	}
+
 	public static class ImportResult {
 		public final List<String> warnings;
 		public final List<String[]> logs;
