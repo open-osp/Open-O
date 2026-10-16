@@ -19,6 +19,20 @@
 		</param-value>
 	</context-param>
 
+	<!-- must be mapped before the JavaMelody monitoring filter, which serves /monitoring itself -->
+	<filter>
+		<filter-name>MonitoringAccessFilter</filter-name>
+		<filter-class>org.oscarehr.filters.MonitoringAccessFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+	<filter-mapping>
+		<filter-name>MonitoringAccessFilter</filter-name>
+		<url-pattern>/monitoring</url-pattern>
+		<url-pattern>/monitoring/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>ASYNC</dispatcher>
+	</filter-mapping>
+
         <filter>
 		   <filter-name>monitoring</filter-name>
 		   <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
