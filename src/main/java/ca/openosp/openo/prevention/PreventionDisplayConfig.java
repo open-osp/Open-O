@@ -145,8 +145,10 @@ public class PreventionDisplayConfig {
 
                 }
 
-                prevList.add(h);
-                prevHash.put(h.get("name"), h);
+                if (h.get("name") != null) {
+                    prevList.add(h);
+                    prevHash.put(h.get("name"), h);
+                }
 
             }
 
@@ -162,7 +164,7 @@ public class PreventionDisplayConfig {
                 h.put("showIfMinRecordNum", "1");
                 h.put("snomedConceptCode", imm.getSnomedConceptId());
                 h.put("ispa", String.valueOf(imm.isIspa()));
-                if (!addedSnomeds.contains(imm.getSnomedConceptId())) {
+                if (!addedSnomeds.contains(imm.getSnomedConceptId()) && imm.getPicklistName() != null) {
                     prevList.add(h);
                     prevHash.put(h.get("name"), h);
                 }
