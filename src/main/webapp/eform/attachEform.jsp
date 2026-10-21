@@ -346,9 +346,9 @@
                                 if (curDoc.isPDF()) {
                                     onClick = "javascript:previewPDF('" + Encode.forJavaScript(curDoc.getDocId()) + "','" + Encode.forJavaScript(url) + "');";
                                 } else if (curDoc.isImage()) {
-                                    onClick = "javascript:previewImage('" + url + "');";
+                                    onClick = "javascript:previewImage('" + Encode.forJavaScript(url) + "');";
                                 } else {
-                                    onClick = "javascript:previewHTML('" + url + "');";
+                                    onClick = "javascript:previewHTML('" + Encode.forJavaScript(url) + "');";
                                 }
 
                                 if (curDoc.isPrintable()) {
@@ -383,13 +383,13 @@
 									</a>										
 			                    </span>
                                     <img title="<%=Encode.forHtmlAttribute(String.valueOf(printTitle))%>" src="<%=Encode.forHtmlAttribute(String.valueOf(printImage))%>" alt="<%=Encode.forHtmlAttribute(String.valueOf(printAlt))%>">
-                                    <a class="docPreview" href="#" onclick="<%=Encode.forJavaScript(String.valueOf(onClick))%>">
+                                    <a class="docPreview" href="#" onclick="<%=Encode.forHtmlAttribute(onClick)%>">
                                         <span class="text"><%=Encode.forHtml(String.valueOf(truncatedDisplayName))%></span>
                                     </a>
 
                                 </div>
                                 <div style="float:right; height:25px; line-height:25px; margin-top:3px;">
-                                    <a class="docPreview" href="#" onclick="<%=Encode.forJavaScript(String.valueOf(onClick))%>">
+                                    <a class="docPreview" href="#" onclick="<%=Encode.forHtmlAttribute(onClick)%>">
                                         <span>... <%=Encode.forHtml(String.valueOf(date))%></span>
                                     </a>
                                 </div>

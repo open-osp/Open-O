@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.itextpdf.text.DocumentException;
+import ca.openosp.openo.casemgmt.service.CaseManagementManager.IssueType;
 import ca.openosp.openo.commn.model.ConsultDocs;
 import ca.openosp.openo.commn.model.ConsultResponseDoc;
 import ca.openosp.openo.commn.model.ConsultationRequest;
@@ -115,4 +116,33 @@ public interface ConsultationManager {
     public Map<String, ConsultationRequestExt> getExtsAsMap(List<ConsultationRequestExt> extras);
 
     public Map<String, String> getExtValuesAsMap(List<ConsultationRequestExt> extras);
+
+    /**
+     * Builds the text a CPP section pastes into the consultation request. With the paste
+     * preferences applied, the provider's CPP Paste Format preference decides the layout:
+     * Single Line joins the notes on one line separated by commas, Multi Line keeps one note
+     * per line, and the heading preference starts the paste with the section title. Without
+     * them, the notes are pasted one per line with no heading.
+     *
+     * @param loggedInInfo LoggedInInfo the current session, also the provider whose preferences apply
+     * @param demographicNo String the patient whose notes are pasted
+     * @param issueType IssueType the CPP section to paste
+     * @param applyPastePreferences boolean true applies the provider's paste format and heading preferences
+     * @return String the pasted text, empty when the section has no notes
+     */
+    public String getCppPasteNote(LoggedInInfo loggedInInfo, String demographicNo, IssueType issueType, boolean applyPastePreferences);
+
+    /**
+     * Lays out entries for pasting into the consultation request, the same way
+     * {@link #getCppPasteNote} lays out CPP notes: with the paste preferences applied, the
+     * provider's CPP Paste Format and heading preferences decide the layout; without them,
+     * the entries are pasted one per line with no heading.
+     *
+     * @param loggedInInfo LoggedInInfo the current session, also the provider whose preferences apply
+     * @param entries List<String> the entries to paste, in paste order
+     * @param heading String section title, pasted only when the provider turned headings on
+     * @param applyPastePreferences boolean true applies the provider's paste format and heading preferences
+     * @return String the pasted text, empty when there are no entries
+     */
+    public String formatPasteNote(LoggedInInfo loggedInInfo, List<String> entries, String heading, boolean applyPastePreferences);
 }

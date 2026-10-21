@@ -35,6 +35,11 @@
             if (self.opener.refreshInfo) {
                 self.opener.refreshInfo();
                 self.setTimeout('closeThisWindow()', 5000)
+            } else if (self.opener.reloadWindows) {
+                // This window was opened from the echart, not from the prevention list. Reloading the
+                // echart would lose the note being written, and there is no need to: the echart notices
+                // this window closing and refreshes its preventions box on its own.
+                self.close();
             } else {
                 self.close();
                 self.opener.location.reload();

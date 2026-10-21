@@ -165,16 +165,18 @@ class OscarAlert {
         this.shadowHost = document.createElement('div');
         this.shadowHost.id = `host-${this.alertDiv.id}`;
 
-        // Positioning on screen
+        // Positioning on screen. The box is pinned above the bottom edge and
+        // grows upward, so a long message is never cut off by the screen.
         Object.assign(this.shadowHost.style, {
             position: 'fixed',
-            top: '85vh',
+            bottom: '5vh',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: '10001',
             width: 'auto',
-            minWidth: '350px',
+            minWidth: 'min(350px, 90vw)',
             maxWidth: '90vw',
+            maxHeight: '90vh',
             textAlign: 'left',
             fontFamily: 'sans-serif'
         });
@@ -191,7 +193,23 @@ class OscarAlert {
         const style = document.createElement('style');
         style.textContent = `
             :host { display: block; }
-            .alert { box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+            .alert {
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+                margin-bottom: 0;
+                max-height: 90vh;
+                display: flex;
+                flex-direction: column;
+            }
+            /* A message taller than the screen scrolls on its own, so the
+               countdown and the close button stay in view. */
+            .oscar-alert-message {
+                overflow-y: auto;
+                min-height: 0;
+            }
+            /* An alert is never part of the form, so keep it off the printout. */
+            @media print {
+                :host { display: none !important; }
+            }
         `;
 
         // 7. Prepare Shadow DOM
@@ -218,8 +236,8 @@ class OscarAlert {
 
     getInnerHTML(message) {
         return `
-            <strong>${this.getLabel()}</strong> ${message}
-            <br> <small>${this.getDismissalMessage()}<span id="countdown-${this.alertDiv.id}">${this.countdown}</span> seconds.</small>
+            <div class="oscar-alert-message"><strong>${this.getLabel()}</strong> ${message}</div>
+            <small>${this.getDismissalMessage()}<span id="countdown-${this.alertDiv.id}">${this.countdown}</span> seconds.</small>
             <button type="button" class="btn-close" aria-label="Close" style="cursor: pointer;"></button>
         `;
     }
@@ -231,7 +249,7 @@ class OscarAlert {
 
     getLabel() {
         const labels = {
-            danger: 'Error!', warning: 'Warning!', success: 'Success!'
+            danger: 'Error!', warning: 'Warning!', success: 'Success!', info: 'Note:'
         };
 
         return labels[this.alertType] || 'Unknown';

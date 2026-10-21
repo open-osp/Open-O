@@ -467,6 +467,12 @@
 
      */
     function notesLoader(offset, numToReturn, demoNo) {
+        var notesWrapper = $("encMainDivWrapper");
+        var preserveScrollPosition = notesCurrentTop !== null;
+        var previousScrollHeight = notesWrapper.scrollHeight;
+        var previousScrollTop = notesWrapper.scrollTop;
+        var previousNoteCount = $("encMainDiv").children.length;
+
         $("notesLoading").show();
         console.log("loading: " + " offset: " + offset + " max notes: " + numToReturn + " demo: " + demoNo);
         var params = "method=viewNotesOpt&offset=" + offset + "&numToReturn=" + numToReturn + "&demographicNo=" + demoNo;
@@ -474,27 +480,34 @@
         if (params2.length > 0) {
             params = params + "&" + params2;
         }
-        new Ajax.Updater("encMainDiv",
+        new Ajax.Updater({ success: "encMainDiv" },
             ctx + "/CaseManagementView.do",
             {
                 method: 'post',
                 postBody: params,
                 evalScripts: true,
                 insertion: Insertion.Top,
-                onSuccess: function (data) {
-                    notesRetrieveOk = (data.responseText.replace(/\s+/g, '').length > 0);
-                    if (!notesRetrieveOk) {
-                        clearInterval(scrollCheckInterval);
-                    }
-                },
-                onComplete: function () {
+                onComplete: function (request) {
                     $("notesLoading").hide();
-                    $("encMainDivWrapper").scrollTop = 10;
-
-                    <%--if (notesCurrentTop != null) {--%>
-                    <%--	$(notesCurrentTop).scrollIntoView();--%>
-                    <%--}--%>
-                    <%--scrollDownInnerBar();--%>
+                    var requestSucceeded = request.status >= 200 && request.status < 300;
+                    if (!requestSucceeded) {
+                        notesOffset = Math.max(0, offset - notesIncrement);
+                        notesRetrieveOk = true;
+                        notesCurrentTop = null;
+                        return;
+                    }
+                    notesRetrieveOk = $("encMainDiv").children.length > previousNoteCount;
+                    if (!notesRetrieveOk) {
+                        clearInterval(notesScrollCheckInterval);
+                        notesScrollCheckInterval = null;
+                    }
+                    if (preserveScrollPosition) {
+                        notesWrapper.scrollTop = previousScrollTop
+                            + notesWrapper.scrollHeight - previousScrollHeight;
+                        notesCurrentTop = null;
+                    } else {
+                        notesWrapper.scrollTop = 10;
+                    }
                 }
             });
     }

@@ -381,19 +381,19 @@ function sendFax(scriptId, signatureRequestId, useSC, scAddress, ctx) {
 }
 
 function printPasteToParent(ctx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName, providerNo, pharmacyName,
-                            pharmacyFax, prescribedBy) {
+                            pharmacyFax, prescribedBy, pharmacyPhone = "") {
     return printPaste2Parent(ctx, true, false, true, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
-        providerNo, pharmacyName, pharmacyFax, prescribedBy)
+        providerNo, pharmacyName, pharmacyFax, prescribedBy, pharmacyPhone)
 }
 
 function faxPasteToParent(ctx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName, providerNo, pharmacyName,
-                            pharmacyFax, prescribedBy) {
+                            pharmacyFax, prescribedBy, pharmacyPhone = "") {
     return printPaste2Parent(ctx, false, true, true, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
-        providerNo, pharmacyName, pharmacyFax, prescribedBy)
+        providerNo, pharmacyName, pharmacyFax, prescribedBy, pharmacyPhone)
 }
 
 function printPaste2Parent(ctx, print, fax, pasteRx, rxPasteAsterisk, prefPharmacy, demographicNo, providerName,
-                           providerNo, pharmacyName, pharmacyFax, prescribedBy) {
+                           providerNo, pharmacyName, pharmacyFax, prescribedBy, pharmacyPhone = "") {
     try {
         let text = "";
         const timeStamp = new Date().toLocaleString('en-US', {
@@ -414,9 +414,13 @@ function printPaste2Parent(ctx, print, fax, pasteRx, rxPasteAsterisk, prefPharma
         } else if (fax) {
             text = "[Rx faxed to " + pharmacyName.replace(/\\n/g, '\n') + " Fax#: " + pharmacyFax;
 
+            if (pharmacyPhone && pharmacyPhone.trim() !== "") {
+                text += " Tel: " + pharmacyPhone.trim();
+            }
+
             text += " prescribed by " + prescribedBy;
 
-            text += "," + timeStamp + "]\n";
+            text += ", " + timeStamp + "]\n";
         }
 
         if (pasteRx) {

@@ -220,6 +220,9 @@
                 }
             }
 
+            String pharmacyPhone = RxPharmacyData.composePharmacyPhone(pharmacy);
+            String pharmacyPhoneSegment = pharmacyPhone.isEmpty() ? "" : " Tel: " + pharmacyPhone;
+
             String userAgent = request.getHeader("User-Agent");
             String browserType = "";
             if (userAgent != null) {
@@ -351,6 +354,7 @@
                         <% String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm a").format(Calendar.getInstance().getTime()); %>
                         // %>
                         text = "[Rx faxed to " + '<%= pharmacy!=null?Encode.forJavaScript(pharmacy.getName()):""%>' + " Fax#: " + '<%=Encode.forJavaScript(String.valueOf(pharmacy!=null?pharmacy.getFax():""))%>';
+                        text += '<%=Encode.forJavaScript(pharmacyPhoneSegment)%>';
 
                         <%--    	 <% if (rxPreferencesMap.getOrDefault("rx_paste_provider_to_echart", false)) { %>--%>
                         text += " prescribed by <%= Encode.forJavaScript(loggedInInfo.getLoggedInProvider().getFormattedName())%>";

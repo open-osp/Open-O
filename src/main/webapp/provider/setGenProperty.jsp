@@ -41,6 +41,7 @@
     String providermsgPrefs = (String) request.getAttribute("providermsgPrefs");
     String providermsgProvider = (String) request.getAttribute("providermsgProvider");
     String providermsgEdit = (String) request.getAttribute("providermsgEdit");
+    String providermsgCheckbox = (String) request.getAttribute("providermsgCheckbox");
     String providerbtnSubmit = (String) request.getAttribute("providerbtnSubmit");
     String providermsgSuccess = (String) request.getAttribute("providermsgSuccess");
 %>
@@ -156,6 +157,17 @@
                     </c:forEach>
                 </select>
 
+                <%}%>
+                <%-- optional checkbox, shown when the action passes a providermsgCheckbox label key;
+                     saved under the plain request parameter "checkboxValue" --%>
+                <%if (providermsgCheckbox != null) {%>
+                <br>
+                <label>
+                    <input type="checkbox" name="checkboxValue" value="true"
+                        <c:if test="${checkboxProperty.value == 'true'}">checked</c:if>>
+                    <%=Encode.forHtml(String.valueOf(bundle.getString(providermsgCheckbox)))%>
+                </label>
+                <br>
                 <%}%>
                 <input type="submit"
                        value="<%=Encode.forHtmlAttribute(String.valueOf(bundle.getString(providerbtnSubmit)))%>"/>

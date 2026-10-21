@@ -38,6 +38,7 @@ public class UserProperty extends AbstractModel<Integer> implements Serializable
     public static final String CONSULTATION_TEAM_WARNING = "consultation_team_warning";
     public static final String WORKLOAD_MANAGEMENT = "workload_management";
     public static final String CONSULTATION_REQ_PASTE_FMT = "consultation_req_paste_fmt";
+    public static final String CONSULT_PASTE_HEADING = "consult_paste_heading";
     public static final String CONSULTATION_LETTERHEADNAME_DEFAULT = "consultation_letterheadname_default";
     public static final String RX_PAGE_SIZE = "rx_page_size";
     public static final String RX_DEFAULT_QUANTITY = "rx_default_quantity";

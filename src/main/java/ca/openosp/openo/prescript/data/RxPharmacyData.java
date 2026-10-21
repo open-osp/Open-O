@@ -42,6 +42,7 @@ import ca.openosp.openo.utility.SpringUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * @author Jay Gallagher
@@ -235,5 +236,36 @@ public class RxPharmacyData {
 
     public Long getTotalDemographicsPreferedToPharmacyByPharmacyId(String pharmacyId) {
         return demographicPharmacyDao.getTotalDemographicsPreferedToPharmacyByPharmacyId(Integer.parseInt(pharmacyId));
+    }
+
+    /**
+     * Composes a pharmacy's telephone numbers into the single value used wherever a pharmacy is
+     * shown to a provider -- the printed Rx address block and the "Rx faxed to" chart note. Joins
+     * phone1 and phone2 with a single space, skipping whichever is absent so there is never a stray
+     * separator or a literal "null".
+     *
+     * <p>Numbers are returned verbatim apart from trimming and newline collapsing. Stored pharmacy
+     * phone numbers are unvalidated free text in mixed formats, so callers must not normalise
+     * them.</p>
+     *
+     * @param pharmacy PharmacyInfo the pharmacy, may be null
+     * @return String the joined phone numbers, or "" if none are on file
+     * @since 2026-08-13
+     */
+    public static String composePharmacyPhone(PharmacyInfo pharmacy) {
+        if (pharmacy == null) {
+            return "";
+        }
+        StringJoiner phones = new StringJoiner(" ");
+        for (String phone : new String[]{pharmacy.getPhone1(), pharmacy.getPhone2()}) {
+            if (phone != null) {
+                // Collapse embedded newlines so the chart note stays on one line once encoded.
+                String cleaned = phone.replaceAll("[\\r\\n]+", " ").trim();
+                if (!cleaned.isEmpty()) {
+                    phones.add(cleaned);
+                }
+            }
+        }
+        return phones.toString();
     }
 }

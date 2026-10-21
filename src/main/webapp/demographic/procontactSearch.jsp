@@ -233,12 +233,12 @@
                 javax.servlet.jsp.jstl.core.LoopTagStatus i = (javax.servlet.jsp.jstl.core.LoopTagStatus) pageContext.getAttribute("i");
                 String bgColor = i.getIndex() % 2 == 0 ? "#EEEEFF" : "ivory";
                 String strOnClick;
-                strOnClick = "selectResult('" + contact.getSystemId() + "_" + contact.getId() + "','" + Encode.forJavaScript(contact.getLastName() + "," + contact.getFirstName()) + "')";
+                strOnClick = "selectResult('" + Encode.forJavaScript(contact.getSystemId() + "_" + contact.getId()) + "','" + Encode.forJavaScript(contact.getLastName() + "," + contact.getFirstName()) + "')";
 
             %>
             <tr bgcolor="<%=Encode.forHtmlAttribute(String.valueOf(bgColor))%>"
                 onMouseOver="this.style.cursor='pointer';this.style.backgroundColor='pink';"
-                onMouseout="this.style.backgroundColor='<%=Encode.forJavaScript(String.valueOf(bgColor))%>';" onClick="<%=Encode.forJavaScript(String.valueOf(strOnClick))%>">
+                onMouseout="this.style.backgroundColor='<%=Encode.forJavaScript(String.valueOf(bgColor))%>';" onClick="<%=Encode.forHtmlAttribute(strOnClick)%>">
                 <td><c:out value="${contact.lastName}"/></td>
                 <td><c:out value="${contact.firstName}"/></td>
                 <td><c:out value="${contact.residencePhone}"/></td>

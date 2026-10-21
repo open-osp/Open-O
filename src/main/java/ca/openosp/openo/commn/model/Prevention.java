@@ -36,6 +36,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -254,20 +256,23 @@ public class Prevention extends AbstractModel<Integer> implements Serializable, 
 //  public void setLastSyncedDate(Date lastSyncedDate) {
 //    this.lastSyncedDate = lastSyncedDate;
 //    }
-//
-//    @PreUpdate
-//	protected void autoSetUpdateTime()
-//	{
-//		lastUpdateDate=new Date();
-//	}
-//
+
+    @PreUpdate
+    @PrePersist
+    protected void autoSetUpdateTime() {
+        lastUpdateDate = new Date();
+    }
+
+// Do not uncomment this block as-is: it would be a second method with the same
+// name. To use it, move the autoSyncDate line into the method above.
 //    @PrePersist
 //    protected void autoSetUpdateTime() {
 //        lastUpdateDate = new Date();
 //    autoSyncDate = super.getAutoSyncDate(this.creationDate, ResourceTypeEnum.PREVENTIONS, this.getDemographicNo());
 //
 //  }
-//
+
+
 //  @PostPersist
 //  protected void logAutoSyncDate() {
 //    if (autoSyncDate != null) {

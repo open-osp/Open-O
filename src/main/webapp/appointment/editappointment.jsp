@@ -686,18 +686,29 @@
 
                 var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
 
+                // The row the user has highlighted with the arrow keys or the mouse.
+                // jQuery UI only fires select on Enter/Tab/click, so hold the row here
+                // and commit it if the field loses focus while that row is still shown.
+                var highlightedDemographic = null;
+
+                function commitDemographic(item) {
+                    jQuery("#demographic_no").val(item.value);
+                    jQuery("#mrp").val(item.provider);
+                    jQuery("#keyword").val(item.formattedName);
+                    highlightedDemographic = null;
+                }
+
                 jQuery("#keyword").autocomplete({
                     source: url,
                     minLength: 2,
 
                     focus: function (event, ui) {
                         jQuery("#keyword").val(ui.item.formattedName);
+                        highlightedDemographic = ui.item;
                         return false;
                     },
                     select: function (event, ui) {
-                        jQuery("#demographic_no").val(ui.item.value);
-                        jQuery("#mrp").val(ui.item.provider);
-                        jQuery("#keyword").val(ui.item.formattedName);
+                        commitDemographic(ui.item);
                         return false;
                     }
                 })
@@ -706,6 +717,28 @@
                         .append("<div><b>" + item.label + "</b>" + "<br>" + item.provider + "</div>")
                         .appendTo(ul);
                 };
+
+                // Typing makes the highlighted row stale. The patient link is left alone,
+                // so a stray keystroke can't unlink the appointment; only a new pick
+                // replaces it.
+                jQuery("#keyword").on("input", function () {
+                    highlightedDemographic = null;
+                });
+
+                // Escape restores the typed term without an input event, so the row the
+                // user just backed out of would still be sitting in highlightedDemographic.
+                jQuery("#keyword").on("keydown", function (event) {
+                    if (event.keyCode === jQuery.ui.keyCode.ESCAPE) {
+                        highlightedDemographic = null;
+                    }
+                });
+
+                // Highlighted but never committed with Enter/Tab/click.
+                jQuery("#keyword").on("blur", function () {
+                    if (highlightedDemographic && highlightedDemographic.formattedName === jQuery("#keyword").val()) {
+                        commitDemographic(highlightedDemographic);
+                    }
+                });
 
 
                 jQuery.widget('custom.myselectmenu', jQuery.ui.selectmenu, {

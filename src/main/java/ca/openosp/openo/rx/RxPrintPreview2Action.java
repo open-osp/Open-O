@@ -557,11 +557,10 @@ public class RxPrintPreview2Action extends ActionSupport {
         addressJoiner.add(pharmacy.getName());
         addressJoiner.add(pharmacy.getAddress());
         addressJoiner.add(pharmacy.getCity() + ", " + pharmacy.getProvince() + " " + pharmacy.getPostalCode());
-        String tel = "Tel: " + pharmacy.getPhone1();
-        if (pharmacy.getPhone2() != null && !pharmacy.getPhone2().isEmpty()) {
-            tel += " " + pharmacy.getPhone2();
+        String tel = RxPharmacyData.composePharmacyPhone(pharmacy);
+        if (!tel.isEmpty()) {
+            addressJoiner.add("Tel: " + tel);
         }
-        addressJoiner.add(tel);
         addressJoiner.add("Fax: " + pharmacy.getFax());
         if (pharmacy.getEmail() != null && !pharmacy.getEmail().isEmpty()) {
             addressJoiner.add("Email: " + pharmacy.getEmail());
@@ -655,6 +654,7 @@ public class RxPrintPreview2Action extends ActionSupport {
         request.setAttribute("pharmacyName", pharmacyName);
         String pharmacyFax = (pharmacy != null && pharmacy.getFax() != null) ? pharmacy.getFax() : "";
         request.setAttribute("pharmacyFax", pharmacyFax);
+        request.setAttribute("pharmacyPhone", RxPharmacyData.composePharmacyPhone(pharmacy));
     }
 
     /**

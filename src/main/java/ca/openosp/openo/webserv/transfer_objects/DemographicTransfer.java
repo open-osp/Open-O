@@ -68,6 +68,7 @@ public final class DemographicTransfer {
     private Date rosterDate;
     private Date rosterTerminationDate;
     private String rosterTerminationReason;
+    private String rosterEnrolledTo;
     private String links;
     private String alias;
     private String previousAddress;
@@ -350,6 +351,14 @@ public final class DemographicTransfer {
         this.rosterTerminationReason = rosterTerminationReason;
     }
 
+    public String getRosterEnrolledTo() {
+        return (rosterEnrolledTo);
+    }
+
+    public void setRosterEnrolledTo(String rosterEnrolledTo) {
+        this.rosterEnrolledTo = rosterEnrolledTo;
+    }
+
     public String getLinks() {
         return (links);
     }
@@ -606,6 +615,7 @@ public final class DemographicTransfer {
                 dto.setRosterTerminationDate(this.getRosterTerminationDate());
             else if ("rosterTerminationReason".equals(field))
                 dto.setRosterTerminationReason(this.getRosterTerminationReason());
+            else if ("rosterEnrolledTo".equals(field)) dto.setRosterEnrolledTo(this.getRosterEnrolledTo());
             else if ("sex".equals(field)) dto.setSex(this.getSex());
             else if ("sexDesc".equals(field)) dto.setSexDesc(this.getSexDesc());
             else if ("sin".equals(field)) dto.setSin(this.getSin());

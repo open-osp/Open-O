@@ -124,9 +124,9 @@
     String docId = curdoc.getDocId();
     String ackFunc;
     if(skipComment) {
-      ackFunc = "updateStatus('acknowledgeForm_" + docId + "'," + inQueueB + ");";
+      ackFunc = "updateStatus('acknowledgeForm_" + Encode.forJavaScript(String.valueOf(docId)) + "'," + inQueueB + ");";
     } else {
-      ackFunc = "getDocComment('" + docId + "','" + providerNo + "'," + inQueueB + ");";
+      ackFunc = "getDocComment('" + Encode.forJavaScript(String.valueOf(docId)) + "','" + Encode.forJavaScript(String.valueOf(providerNo)) + "'," + inQueueB + ");";
     }
 
     int slash = 0;
@@ -304,7 +304,7 @@
             }
         }
     %>
-    <form name="acknowledgeForm_<%=Encode.forHtmlAttribute(String.valueOf(docId))%>" id="acknowledgeForm_<%=Encode.forHtmlAttribute(String.valueOf(docId))%>" onsubmit="<%=Encode.forJavaScript(String.valueOf(ackFunc))%>" method="post"
+    <form name="acknowledgeForm_<%=Encode.forHtmlAttribute(String.valueOf(docId))%>" id="acknowledgeForm_<%=Encode.forHtmlAttribute(String.valueOf(docId))%>" onsubmit="<%=Encode.forHtmlAttribute(ackFunc)%>" method="post"
           action="javascript:void(0);">
 
         <input type="hidden" name="segmentID" value="<%=Encode.forHtmlAttribute(String.valueOf(docId))%>"/>

@@ -92,6 +92,8 @@
             jQuery.noConflict();
         </script>
 
+        <script type="text/javascript" src="<c:out value="${ctx}/js/formOpenGuard.js" />"></script>
+
         <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js" type="text/javascript"></script>
         <script type="text/javascript">
             // Lock prototype.js's `$` and `$F` so nothing on the page can

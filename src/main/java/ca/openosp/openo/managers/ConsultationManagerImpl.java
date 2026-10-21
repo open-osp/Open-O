@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -28,6 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.itextpdf.text.DocumentException;
 import org.apache.logging.log4j.Logger;
 import org.owasp.encoder.Encode;
+import ca.openosp.openo.casemgmt.model.CaseManagementNote;
+import ca.openosp.openo.casemgmt.model.Issue;
+import ca.openosp.openo.casemgmt.service.CaseManagementManager;
+import ca.openosp.openo.casemgmt.service.CaseManagementManager.IssueType;
 import ca.openosp.openo.commn.dao.ClinicDAO;
 import ca.openosp.openo.commn.dao.ConsultDocsDao;
 import ca.openosp.openo.commn.dao.ConsultRequestDao;
@@ -44,6 +49,7 @@ import ca.openosp.openo.commn.dao.DocumentDao.Module;
 import ca.openosp.openo.commn.dao.Hl7TextInfoDao;
 import ca.openosp.openo.commn.dao.ProfessionalSpecialistDao;
 import ca.openosp.openo.commn.dao.PropertyDao;
+import ca.openosp.openo.commn.dao.UserPropertyDAO;
 import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.OruR01;
 import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.OruR01.ObservationData;
 import ca.openosp.openo.commn.hl7.v2.oscar_to_oscar.RefI12;
@@ -68,11 +74,13 @@ import ca.openosp.openo.commn.model.Hl7TextInfo;
 import ca.openosp.openo.commn.model.ProfessionalSpecialist;
 import ca.openosp.openo.commn.model.Property;
 import ca.openosp.openo.commn.model.Provider;
+import ca.openosp.openo.commn.model.UserProperty;
 import ca.openosp.openo.consultations.ConsultationRequestSearchFilter;
 import ca.openosp.openo.consultations.ConsultationRequestSearchFilter.SORTDIR;
 import ca.openosp.openo.consultations.ConsultationResponseSearchFilter;
 import ca.openosp.openo.hospitalReportManager.HRMUtil;
 import ca.openosp.openo.hospitalReportManager.model.HRMDocument;
+import ca.openosp.openo.util.StringUtils;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
 import ca.openosp.openo.utility.PDFGenerationException;
@@ -129,6 +137,10 @@ public class ConsultationManagerImpl implements ConsultationManager {
 
     @Autowired
     DemographicManager demographicManager;
+    @Autowired
+    CaseManagementManager caseManagementManager;
+    @Autowired
+    UserPropertyDAO userPropertyDAO;
     @Autowired
     SecurityInfoManager securityInfoManager;
     @Autowired
@@ -830,5 +842,88 @@ public class ConsultationManagerImpl implements ConsultationManager {
         }
 
         return extraMap;
+    }
+
+    // Section titles pasted into the consultation request; Allergies is excluded because its field is already labelled
+    private static final Map<IssueType, String> PASTE_HEADINGS = Map.of(
+            IssueType.SOCHISTORY, "Social History",
+            IssueType.FAMHISTORY, "Family History",
+            IssueType.MEDHISTORY, "Medical History",
+            IssueType.CONCERNS, "Ongoing Concerns",
+            IssueType.OMEDS, "Other Meds",
+            IssueType.REMINDERS, "Reminders",
+            IssueType.RISKFACTORS, "Risk Factors");
+
+    @Override
+    public String getCppPasteNote(LoggedInInfo loggedInInfo, String demographicNo, IssueType issueType, boolean applyPastePreferences) {
+        Issue issue = caseManagementManager.getIssueByCode(issueType);
+        List<CaseManagementNote> issueNotes = caseManagementManager.getActiveNotes(loggedInInfo, demographicNo, new String[]{String.valueOf(issue.getId())});
+
+        List<String> notes = new ArrayList<String>();
+        if (issueNotes != null) {
+            for (CaseManagementNote issueNote : issueNotes) {
+                notes.add(issueNote.getNote());
+            }
+        }
+
+        return formatPasteNote(loggedInInfo, notes, PASTE_HEADINGS.get(issueType), applyPastePreferences);
+    }
+
+    @Override
+    public String formatPasteNote(LoggedInInfo loggedInInfo, List<String> entries, String heading, boolean applyPastePreferences) {
+        if (!applyPastePreferences) {
+            return formatIssueNotes(entries, false, null);
+        }
+        String providerNo = loggedInInfo.getLoggedInProviderNo();
+        String pastedHeading = null;
+        if (wantsPasteHeading(providerNo)) {
+            pastedHeading = heading;
+        }
+        return formatIssueNotes(entries, isSingleLinePasteFormat(providerNo), pastedHeading);
+    }
+
+    /**
+     * Builds the text a section pastes into the consultation request.
+     *
+     * @param notes List<String> the section's entries, in paste order
+     * @param singleLine boolean true joins the notes on one line separated by commas, false keeps one note per line
+     * @param heading String section title to start the paste with, or null for no heading
+     * @return String the pasted text, empty when the section has no entries
+     */
+    static String formatIssueNotes(List<String> notes, boolean singleLine, String heading) {
+        List<String> entries = notes.stream()
+                .filter(note -> note != null && !note.isBlank())
+                .collect(Collectors.toList());
+        if (entries.isEmpty()) {
+            return "";
+        }
+        if (singleLine) {
+            String entriesOnOneLine = entries.stream()
+                    .map(String::trim)
+                    .map(StringUtils::lineBreaks)
+                    .collect(Collectors.joining(", "));
+            if (heading != null) {
+                return heading + ": " + entriesOnOneLine + "\n";
+            }
+            return entriesOnOneLine + "\n";
+        }
+        if (heading != null) {
+            // a blank line after the banner, then one note per line
+            return "=====" + heading + "=====\n\n"
+                    + entries.stream().map(String::trim).collect(Collectors.joining("\n")) + "\n";
+        }
+        // the pre-preference output: notes untouched, one line break after each
+        return String.join("\n", entries) + "\n";
+    }
+
+    // multi line unless the provider chose single, so unset providers keep the output they had before this preference worked
+    private boolean isSingleLinePasteFormat(String providerNo) {
+        UserProperty property = userPropertyDAO.getProp(providerNo, UserProperty.CONSULTATION_REQ_PASTE_FMT);
+        return property != null && "single".equalsIgnoreCase(property.getValue());
+    }
+
+    private boolean wantsPasteHeading(String providerNo) {
+        UserProperty property = userPropertyDAO.getProp(providerNo, UserProperty.CONSULT_PASTE_HEADING);
+        return property != null && Boolean.parseBoolean(property.getValue());
     }
 }

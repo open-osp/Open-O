@@ -27,6 +27,8 @@
 package ca.openosp.openo.encounter.pageUtil;
 
 import ca.openosp.openo.caisi_integrator.ws.CachedDemographicPrevention;
+import ca.openosp.openo.commn.dao.CVCMappingDao;
+import ca.openosp.openo.commn.model.CVCMapping;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.SpringUtils;
 import ca.openosp.openo.prevention.Prevention;
@@ -34,12 +36,14 @@ import ca.openosp.openo.prevention.PreventionDS;
 import ca.openosp.openo.prevention.PreventionData;
 import ca.openosp.openo.prevention.PreventionDisplayConfig;
 import ca.openosp.openo.util.StringUtils;
+import org.owasp.encoder.Encode;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class EctDisplayPrevention2Action extends EctDisplayAction {
     private static final String cmd = "preventions";
+    private CVCMappingDao cvcMappingDao = SpringUtils.getBean(CVCMappingDao.class);
 
     public boolean getInfo(EctSessionBean bean, HttpServletRequest request, NavBarDisplayDAO Dao) {
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
@@ -80,7 +84,6 @@ public class EctDisplayPrevention2Action extends EctDisplayAction {
             String pendingColour = "#FF00FF";
             Date date = null;
 
-            url += "; return false;";
             ArrayList<NavBarDisplayDAO.Item> warnings = new ArrayList<NavBarDisplayDAO.Item>();
             ArrayList<NavBarDisplayDAO.Item> items = new ArrayList<NavBarDisplayDAO.Item>();
             String result;
@@ -107,8 +110,12 @@ public class EctDisplayPrevention2Action extends EctDisplayAction {
 
                 boolean show = pdc.display(loggedInInfo, h, bean.demographicNo, alist.size());
                 if (show) {
+                    String newestRecordId = null;
+                    Map<String, Object> newestRecord = null;
                     if (alist.size() > 0) {
                         Map<String, Object> hdata = alist.get(alist.size() - 1);
+                        newestRecord = hdata;
+                        newestRecordId = (String) hdata.get("id");
                         Map<String, String> hExt = PreventionData.getPreventionKeyValues((String) hdata.get("id"));
                         result = hExt.get("result");
 
@@ -139,7 +146,41 @@ public class EctDisplayPrevention2Action extends EctDisplayAction {
                     String title = StringUtils.maxLenString(h.get("name"), MAX_LEN_TITLE, CROP_LEN_TITLE, ELLIPSES);
                     item.setTitle(title);
                     item.setLinkTitle(h.get("desc"));
-                    item.setURL(url);
+
+                    //clicking this prevention in the echart opens it directly: the patient's newest record of it,
+                    //or a blank form to add one
+                    String formPage = "AddPreventionData.jsp";
+                    String formQuery = "demographic_no=" + Encode.forUriComponent(bean.demographicNo);
+                    int formHeight = 600;
+                    int formWidth = 900;
+                    if (newestRecordId != null) {
+                        formQuery += "&id=" + Encode.forUriComponent(newestRecordId);
+                    } else if (newestRecord != null && newestRecord.get("integratorFacilityId") != null) {
+                        //a record held only at another clinic has no local id; show it read-only, the same as from the list
+                        formPage = "display_remote_prevention.jsp";
+                        formHeight = 300;
+                        formWidth = 500;
+                        formQuery += "&remoteFacilityId=" + Encode.forUriComponent(String.valueOf(newestRecord.get("integratorFacilityId")))
+                                + "&remotePreventionId=" + Encode.forUriComponent(String.valueOf(newestRecord.get("integratorPreventionId")));
+                    } else {
+                        formQuery += "&prevention=" + Encode.forUriComponent(prevName)
+                                + "&prevResultDesc=" + Encode.forUriComponent(String.valueOf(h.get("resultDesc")));
+                        //the SNOMED code switches the blank form into immunization mode, the same as from the list
+                        if (h.get("snomedConceptCode") != null) {
+                            formQuery += "&snomedId=" + Encode.forUriComponent(h.get("snomedConceptCode"));
+                        }
+                        //a prevention mapped to more than one CVC vaccine first asks which one, the same as from the list
+                        List<CVCMapping> mappings = cvcMappingDao.findMultipleByOscarName(prevName);
+                        if (mappings != null && mappings.size() > 1) {
+                            formPage = "AddPreventionDataDisambiguate.jsp";
+                        }
+                    }
+                    String formUrl = request.getContextPath() + "/oscarPrevention/" + formPage + "?" + formQuery;
+                    //one prevention form window per patient
+                    String formWindow = "addPreventionData" + bean.demographicNo;
+                    //the JS encoding keeps the handler safe inside the onclick attribute the navbar writes it into
+                    item.setURL("popupPage(" + formHeight + "," + formWidth + ",'" + Encode.forJavaScript(formWindow) + "', '"
+                            + Encode.forJavaScript(formUrl) + "'); return false;");
 
                     //if there's a warning associated with this prevention set item apart
                     if (warningTable.containsKey(prevName)) {

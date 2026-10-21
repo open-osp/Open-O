@@ -128,7 +128,6 @@
 
     eForm.addCSS(request.getContextPath() + "/library/jquery/jquery-ui-1.12.1.min.css", "all");
     eForm.addBodyJavascript(request.getContextPath() + "/eform/eformFloatingToolbar/eform_floating_toolbar.js");
-    eForm.addFontLibrary(request.getContextPath() + "/share/javascript/eforms/dejavufonts/ttf/DejaVuSans.ttf");
     eForm.addHiddenInputElement("context", request.getContextPath());
     eForm.addHiddenInputElement("demographicNo", eForm.getDemographicNo());
     eForm.addHiddenInputElement("fdid", fdid);

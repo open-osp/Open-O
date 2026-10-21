@@ -522,6 +522,7 @@
 			
 			<result name="eams">/eaaps/displayEctEaaps.do</result>
         </action>
+        <action name="oscarEncounter/formExists" class="ca.openosp.openo.encounter.pageUtil.EctDisplayForm2Action" method="checkExisting"/>
         <action name="oscarEncounter/displayForms" class="ca.openosp.openo.encounter.pageUtil.EctDisplayForm2Action">
             <result name="labs">/oscarEncounter/displayLabs.do</result>
 			<result name="forms">/oscarEncounter/displayForms.do</result>

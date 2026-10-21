@@ -456,6 +456,8 @@ Ontario, Canada
 
             function onNotBook() {
                 document.forms[0].keyword.value = "<%=Encode.forJavaScript(String.valueOf(DONOTBOOK))%>";
+                // The name no longer names a patient, so drop the link and any highlighted row.
+                $("#keyword").trigger("patient:unlink");
             }
 
             function onButRepeat() {
@@ -561,18 +563,29 @@ Ontario, Canada
 
                 var url = "<%= request.getContextPath() %>/demographic/SearchDemographic.do?jqueryJSON=true&activeOnly=true";
 
+                // The row the user has highlighted with the arrow keys or the mouse.
+                // jQuery UI only fires select on Enter/Tab/click, so hold the row here
+                // and commit it if the field loses focus while that row is still shown.
+                var highlightedDemographic = null;
+
+                function commitDemographic(item) {
+                    $("#demographic_no").val(item.value);
+                    $("#mrp").val(item.provider);
+                    $("#keyword").val(item.formattedName);
+                    highlightedDemographic = null;
+                }
+
                 $("#keyword").autocomplete({
                     source: url,
                     minLength: 2,
 
                     focus: function (event, ui) {
                         $("#keyword").val(ui.item.formattedName);
+                        highlightedDemographic = ui.item;
                         return false;
                     },
                     select: function (event, ui) {
-                        $("#demographic_no").val(ui.item.value);
-                        $("#mrp").val(ui.item.provider);
-                        $("#keyword").val(ui.item.formattedName);
+                        commitDemographic(ui.item);
                         return false;
                     }
                 })
@@ -581,6 +594,36 @@ Ontario, Canada
                         .append("<div><b>" + item.label + "</b>" + "<br>" + item.provider + "</div>")
                         .appendTo(ul);
                 };
+
+                // Typing makes the highlighted row stale. The patient link is left alone,
+                // so a stray keystroke can't unlink the appointment; only a new pick
+                // replaces it.
+                $("#keyword").on("input", function () {
+                    highlightedDemographic = null;
+                });
+
+                // For code that replaces the name directly (Do Not Book): assigning value
+                // fires no input event, and triggering one would start an autocomplete search.
+                $("#keyword").on("patient:unlink", function () {
+                    highlightedDemographic = null;
+                    $("#demographic_no").val("");
+                    $("#mrp").val("");
+                });
+
+                // Escape restores the typed term without an input event, so the row the
+                // user just backed out of would still be sitting in highlightedDemographic.
+                $("#keyword").on("keydown", function (event) {
+                    if (event.keyCode === $.ui.keyCode.ESCAPE) {
+                        highlightedDemographic = null;
+                    }
+                });
+
+                // Highlighted but never committed with Enter/Tab/click.
+                $("#keyword").on("blur", function () {
+                    if (highlightedDemographic && highlightedDemographic.formattedName === $("#keyword").val()) {
+                        commitDemographic(highlightedDemographic);
+                    }
+                });
 
 
                 $.widget('custom.myselectmenu', $.ui.selectmenu, {

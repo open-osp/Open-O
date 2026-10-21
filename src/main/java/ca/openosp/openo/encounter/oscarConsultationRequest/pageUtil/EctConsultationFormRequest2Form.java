@@ -31,7 +31,9 @@ import org.apache.commons.lang3.StringUtils;
 import ca.openosp.openo.utility.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public final class EctConsultationFormRequest2Form {
 
@@ -448,6 +450,39 @@ public final class EctConsultationFormRequest2Form {
 
     public void setPatientHealthCardType(String patientHealthCardType) {
         this.patientHealthCardType = patientHealthCardType;
+    }
+
+    /**
+     * Formats the health card for display as "number version (card type)", omitting whichever
+     * optional parts are not on file. The version code and the card type are both two characters
+     * drawn from the same alphabet, so the parentheses are what stop a version code such as AB
+     * from reading as a second province code.
+     * <p>
+     * The value is returned as raw text. Callers are responsible for encoding it at the output
+     * boundary; encoding here would double-encode.
+     *
+     * @return String the formatted health card, or an empty string when nothing is on file
+     */
+    public String getFormattedHealthCard() {
+        // Delegate to the getters rather than the fields: the fields are populated straight from
+        // the demographic and may be null, while the getters normalise null to an empty string.
+        String number = getPatientHealthNum();
+        String versionCode = getPatientHealthCardVersionCode();
+        String cardType = getPatientHealthCardType();
+
+        // Collect only the parts that are on file, then join. Each part stands on its own, so no
+        // combination can produce a stray separator or an empty pair of parentheses.
+        List<String> parts = new ArrayList<String>();
+        if (!number.isEmpty()) {
+            parts.add(number);
+        }
+        if (!versionCode.isEmpty()) {
+            parts.add(versionCode);
+        }
+        if (!cardType.isEmpty()) {
+            parts.add("(" + cardType + ")");
+        }
+        return String.join(" ", parts);
     }
 
     public Integer getHl7TextMessageId() {

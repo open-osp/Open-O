@@ -190,13 +190,13 @@
                         strOnClick = "typeInData3('" + Encode.forJavaScript(prop.getProperty("referral_no", "")) + "', '" + Encode.forJavaScript(prop.getProperty("to_name", "")) + "', '" + Encode.forJavaScript(prop.getProperty("to_address", "")) + "', '" + Encode.forJavaScript(prop.getProperty("phone", "")) + "', '" + Encode.forJavaScript(prop.getProperty("to_fax", "")) + "')";
                     } else {
                         strOnClick = param2.length() > 0 ? "typeInData2('" + Encode.forJavaScript(prop.getProperty("referral_no", "")) + "','" + Encode.forJavaScript(prop.getProperty("last_name", "") + "," + prop.getProperty("first_name", "")) + "')"
-                                : "typeInData1('" + prop.getProperty("referral_no", "") + "')";
+                                : "typeInData1('" + Encode.forJavaScript(prop.getProperty("referral_no", "")) + "')";
                     }
             %>
             <tr style="background-color:<%=Encode.forHtmlAttribute(String.valueOf(bgColor))%>"
                 onmouseover="this.style.cursor='pointer';this.style.backgroundColor='LightBlue';"
                 onmouseout="this.style.backgroundColor='<%=Encode.forJavaScript(String.valueOf(bgColor))%>'"
-                onClick="<%=Encode.forJavaScript(String.valueOf(strOnClick))%>">
+                onClick="<%=Encode.forHtmlAttribute(strOnClick)%>">
                 <td><%=Encode.forHtml(prop.getProperty("referral_no", ""))%>
                 </td>
                 <td><%=Encode.forHtml(prop.getProperty("last_name", ""))%>

@@ -174,13 +174,13 @@
                             + Encode.forJavaScript(prop.getProperty("telephone", "").equals("") ? "" : (prop.getProperty("telephone") + "\n"))
                             + Encode.forJavaScript(prop.getProperty("fax", "").equals("") ? "" : (prop.getProperty("fax") + "\n"))
                             + "')" : "typeInData1('"
-                            + prop.getProperty("city", "") + "')";
+                            + Encode.forJavaScript(prop.getProperty("city", "")) + "')";
 
             %>
             <tr align="center" bgcolor="<%=Encode.forHtmlAttribute(String.valueOf(bgColor))%>"
                 onMouseOver="this.style.cursor='pointer';this.style.backgroundColor='pink';"
                 onMouseout="this.style.backgroundColor='<%=Encode.forJavaScript(String.valueOf(bgColor))%>';"
-                onClick="<%=Encode.forJavaScript(strOnClick)%>">
+                onClick="<%=Encode.forHtmlAttribute(strOnClick)%>">
                 <td><%=Encode.forHtml(String.valueOf(prop.getProperty("attention", "")))%>
                 </td>
                 <td><%=Encode.forHtml(String.valueOf(WordUtils.capitalize(prop.getProperty("company_name", "").toLowerCase())))%>

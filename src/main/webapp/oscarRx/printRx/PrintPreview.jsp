@@ -164,7 +164,8 @@
                                                 '${requestScope.providerNo}',
                                                 '${e:forJavaScript(requestScope.pharmacyName)}',
                                                 '${e:forJavaScript(requestScope.pharmacyFax)}',
-                                                '${requestScope.prescribedBy}');">
+                                                '${requestScope.prescribedBy}',
+                                                '${e:forJavaScript(requestScope.pharmacyPhone)}');">
                                     Print &amp; Add to encounter note
                                 </button>
 
@@ -207,7 +208,8 @@
                                                     '${requestScope.providerNo}',
                                                     '${e:forJavaScript(requestScope.pharmacyName)}',
                                                     '${e:forJavaScript(requestScope.pharmacyFax)}',
-                                                    '${requestScope.prescribedBy}').then(function() {
+                                                    '${requestScope.prescribedBy}',
+                                                    '${e:forJavaScript(requestScope.pharmacyPhone)}').then(function() {
                                                         sendFax('${e:forJavaScript(param.scriptId)}',
                                                     '${requestScope.signatureRequestId}',
                                                     ${requestScope.useSC != null ? requestScope.useSC : false},

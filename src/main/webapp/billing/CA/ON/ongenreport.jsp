@@ -161,7 +161,8 @@
                     objFile.setOhipFilename(ohipFilename);
                     objFile.setHtmlFilename(htmlFilename);
                     objFile.createBillingFileStr(LoggedInInfo.getLoggedInInfoFromSession(request), "" + headerId, BILLING_STATUS, false, mohOffice, false, "on".equals(useProviderMOH));
-                    if (objFile.getBigTotal().compareTo(BigDecimal.ZERO) == 0)
+                    // exclude providers with 0 billing entries
+                    if (objFile.getRecordCount() == 0)
                         continue;
                     value += objFile.getValue();
                     objFile.writeHtml(objFile.getHtmlCode());

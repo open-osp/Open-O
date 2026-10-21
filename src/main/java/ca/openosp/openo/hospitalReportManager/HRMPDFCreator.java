@@ -30,7 +30,6 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.*;
 import org.apache.logging.log4j.Logger;
-import ca.openosp.openo.commn.model.EFormData;
 import ca.openosp.openo.hospitalReportManager.dao.HRMDocumentDao;
 
 import ca.openosp.openo.hospitalReportManager.dao.HRMProviderConfidentialityStatementDao;
@@ -172,10 +171,9 @@ public class HRMPDFCreator extends PdfPageEventHelper {
 
                 document.close();
             } else if (hrmReport.getFileExtension() != null && (hrmReport.getFileExtension().equals(".html"))) {
-                EFormData eFormData = new EFormData();
                 byte[] htmlHrmReportData = hrmReport.getBinaryContent();
-                eFormData.setFormData(new String(htmlHrmReportData, StandardCharsets.UTF_8));
-                Path path = ConvertToEdoc.saveAsTempPDF(eFormData);
+                String htmlHrmReport = new String(htmlHrmReportData, StandardCharsets.UTF_8);
+                Path path = ConvertToEdoc.saveHtmlAsTempPDF(htmlHrmReport, "hrmReport");
                 outputStream.write(Files.readAllBytes(path));
             } else {
                 logger.info("HRM Report is binary, only printing the attachment");

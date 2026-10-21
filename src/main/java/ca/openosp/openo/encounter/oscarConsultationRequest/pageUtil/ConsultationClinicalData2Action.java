@@ -25,6 +25,7 @@
 package ca.openosp.openo.encounter.oscarConsultationRequest.pageUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +40,7 @@ import ca.openosp.openo.casemgmt.service.CaseManagementManager.IssueType;
 import ca.openosp.openo.commn.model.Allergy;
 import ca.openosp.openo.commn.model.Drug;
 import ca.openosp.openo.managers.AllergyManager;
+import ca.openosp.openo.managers.ConsultationManager;
 import ca.openosp.openo.managers.PrescriptionManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
@@ -59,6 +61,7 @@ public class ConsultationClinicalData2Action extends ActionSupport {
     private PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
     private CaseManagementManager caseManagementManager = SpringUtils.getBean(CaseManagementManager.class);
     private AllergyManager allergyManager = SpringUtils.getBean(AllergyManager.class);
+    private ConsultationManager consultationManager = SpringUtils.getBean(ConsultationManager.class);
 
     public ConsultationClinicalData2Action() {
         // Default
@@ -90,7 +93,7 @@ public class ConsultationClinicalData2Action extends ActionSupport {
         List<Drug> medications = prescriptionManager.getActiveMedications(loggedInInfo, demographicNo);
 
         if (medications != null) {
-            medicationToJson(response, medications, "Medications");
+            medicationToJson(loggedInInfo, response, medications, "Medications", "Active Medications");
         }
 
         return null;
@@ -104,7 +107,7 @@ public class ConsultationClinicalData2Action extends ActionSupport {
         List<Drug> medications = prescriptionManager.getLongTermDrugs(loggedInInfo, Integer.parseInt(demographicNo));
 
         if (medications != null) {
-            medicationToJson(response, medications, "LongTermMedications");
+            medicationToJson(loggedInInfo, response, medications, "LongTermMedications", "Long Term Medications");
         }
 
         return null;
@@ -201,24 +204,12 @@ public class ConsultationClinicalData2Action extends ActionSupport {
     public String fetchIssueNote() {
 
         LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
-        String issueType = request.getParameter("issueType");
         String demographicNo = request.getParameter("demographicNo");
-        IssueType issueTypeEnum = IssueType.valueOf(issueType.toUpperCase());
-        Issue issue = caseManagementManager.getIssueByCode(issueTypeEnum);
-        List<CaseManagementNote> issueNoteList = caseManagementManager.getActiveNotes(loggedInInfo, demographicNo, new String[]{issue.getId() + ""});
+        IssueType issueTypeEnum = IssueType.valueOf(request.getParameter("issueType").toUpperCase());
 
         ObjectNode json = objectMapper.createObjectNode();
         json.put("noteType", issueTypeEnum.name());
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (issueNoteList != null) {
-            for (CaseManagementNote issueNote : issueNoteList) {
-                stringBuilder.append(issueNote.getNote());
-                stringBuilder.append("\n");
-            }
-        }
-
-        json.put("note", stringBuilder.toString());
+        json.put("note", consultationManager.getCppPasteNote(loggedInInfo, demographicNo, issueTypeEnum, appliesPastePreferences()));
 
         response.setContentType("text/javascript");
         try {
@@ -230,11 +221,17 @@ public class ConsultationClinicalData2Action extends ActionSupport {
         return null;
     }
 
-    private void medicationToJson(HttpServletResponse response, List<Drug> medications, String notetype) {
+    // only the consultation request fields that carry the paste-preference cog send this; other forms
+    // calling this endpoint, such as the BCAR 2020 attachments, keep their plain one-per-line paste
+    private boolean appliesPastePreferences() {
+        return "true".equals(request.getParameter("pastePreferences"));
+    }
+
+    private void medicationToJson(LoggedInInfo loggedInInfo, HttpServletResponse response, List<Drug> medications, String notetype, String heading) {
 
         ObjectNode json = objectMapper.createObjectNode();
         json.put("noteType", notetype);
-        StringBuilder stringBuilder = new StringBuilder();
+        List<String> prescriptions = new ArrayList<String>();
         String prescription = null;
 
         for (Drug medication : medications) {
@@ -245,13 +242,13 @@ public class ConsultationClinicalData2Action extends ActionSupport {
 
                 if (prescription != null) {
                     prescription = prescription.replace("\n", " ").replace("\r", " ");
-                    stringBuilder.append(WordUtils.capitalizeFully(prescription) + "\n");
+                    prescriptions.add(WordUtils.capitalizeFully(prescription));
                 }
 
             }
         }
 
-        json.put("note", stringBuilder.toString());
+        json.put("note", consultationManager.formatPasteNote(loggedInInfo, prescriptions, heading, appliesPastePreferences()));
 
         response.setContentType("text/javascript");
         try {

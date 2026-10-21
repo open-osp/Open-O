@@ -2240,10 +2240,10 @@
                                             </tr>
                                             <%for (int i = 0; i < billlist1.length; i++) { %>
                                             <tr>
-                                                <%String svcCall = "addSvcCode('" + billlist1[i].getServiceCode() + "')"; %>
+                                                <%String svcCall = "addSvcCode('" + Encode.forJavaScript(String.valueOf(billlist1[i].getServiceCode())) + "')"; %>
                                                 <td width="25%" valign="middle">
                                                     <label class="checkbox">
-                                                        <input type="checkbox" name="service" value="<%=Encode.forHtmlAttribute(String.valueOf(billlist1[i].getServiceCode()))%>" onclick="<%=Encode.forJavaScript(String.valueOf(svcCall))%>" />
+                                                        <input type="checkbox" name="service" value="<%=Encode.forHtmlAttribute(String.valueOf(billlist1[i].getServiceCode()))%>" onclick="<%=Encode.forHtmlAttribute(svcCall)%>" />
                                                         <%=Encode.forHtml(String.valueOf(billlist1[i].getServiceCode()))%>
                                                     </label>
                                                 </td>
@@ -2279,10 +2279,10 @@
                                             </tr>
                                             <%for (int i = 0; i < billlist2.length; i++) { %>
                                             <tr>
-                                                <%String svcCall = "addSvcCode('" + billlist2[i].getServiceCode() + "')"; %>
+                                                <%String svcCall = "addSvcCode('" + Encode.forJavaScript(String.valueOf(billlist2[i].getServiceCode())) + "')"; %>
                                                 <td width="25%">
                                                     <label class="checkbox">
-                                                        <input type="checkbox" name="service" value="<%=Encode.forHtmlAttribute(String.valueOf(billlist2[i].getServiceCode()))%>" onclick="<%=Encode.forJavaScript(String.valueOf(svcCall))%>"/>
+                                                        <input type="checkbox" name="service" value="<%=Encode.forHtmlAttribute(String.valueOf(billlist2[i].getServiceCode()))%>" onclick="<%=Encode.forHtmlAttribute(svcCall)%>"/>
                                                         <%=Encode.forHtml(String.valueOf(billlist2[i].getServiceCode()))%>
                                                     </label>
                                                 </td>
