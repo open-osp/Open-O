@@ -761,8 +761,11 @@ public class OscarChartPrinter {
         	String admissionNotes = admission.getAdmissionNotes();
         	String programName = programDao.getProgramName(admission.getProgramId());
         	String programType = admission.getProgramType();
-        	String providerName = providerDao.getProvider(admission.getProviderNo()).getFormattedName();
-
+        	String providerName = "unknown";
+			Provider provider = providerDao.getProvider(admission.getProviderNo());
+			if(provider != null) {
+				providerName = provider.getFormattedName();
+			}
         	p = new Paragraph();
     		phrase = new Phrase(LEADING, "", getFont());
     		Chunk chunk = new Chunk("Summary:" + programName + "(" + programType + ")" + " by " + providerName + " on " + admissionDate + "\n");
