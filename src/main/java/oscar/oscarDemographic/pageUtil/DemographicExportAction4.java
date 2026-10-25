@@ -3849,7 +3849,7 @@ public class DemographicExportAction4 extends Action {
 			}
 
 			try (OutputStream fos = Files.newOutputStream(Paths.get(labDirectory.toString(), demographic.getLastName() + "_" + demographic.getFirstName() + "_" + demographic.getHin() + "_" + demographic.getDemographicNo() + "_" + demographic.getFormattedDob() + "_" + result.getAccessionNumber() + ".pdf"))) {
-				LabPDFCreator pdfCreator = new LabPDFCreator(fos, result.getId() +"", loggedInInfo.getLoggedInProviderNo());
+				LabPDFCreator pdfCreator = new LabPDFCreator(fos, result.getLabNumber()+"", loggedInInfo.getLoggedInProviderNo());
 				try {
 					pdfCreator.printPdf();
 				} catch (com.lowagie.text.DocumentException | IOException documentException) {
