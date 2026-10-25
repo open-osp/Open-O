@@ -2883,7 +2883,7 @@
   }, {
     "groupId" : "org.oscarehr.integration.ebs",
     "artifactId" : "edt-stubs",
-    "version" : "0.0.1-20140911.161211-1",
+    "version" : "0.0.1-SNAPSHOT",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
@@ -2891,7 +2891,7 @@
   }, {
     "groupId" : "org.oscarehr.integration.ebs",
     "artifactId" : "hcv-stubs",
-    "version" : "0.0.1-20140911.161502-1",
+    "version" : "0.0.1-SNAPSHOT",
     "scope" : "compile",
     "type" : "jar",
     "optional" : false,
