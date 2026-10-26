@@ -222,6 +222,7 @@ public class ConsultationManagerImpl implements ConsultationManager {
 		filter.setDemographicNo(demographicNo);
 		filter.setNumToReturn(100);
 		filter.setSortDir(SORTDIR.asc);
+		filter.setStatus(ConsultationRequestSearchFilter.STATUS.Incomplete);
 		
 		List<ConsultationRequestSearchResult> results = search(loggedInInfo, filter);
 		boolean outstanding = false;

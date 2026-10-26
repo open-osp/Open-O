@@ -195,10 +195,22 @@ public class ConsultRequestDaoImpl extends AbstractDaoImpl<ConsultationRequest> 
                     + " 23:59:59' ");
         }
 
-        if (filter.getStatus() != null) {
-            sql.append("and cr.status = '" + filter.getStatus() + "' ");
-        } else {
-            sql.append("and cr.status!=4 and cr.status!=5 and cr.status!=7 ");
+		/*
+		 * This is a bit of an awkward adjustment to accommodate an awkward setting for
+		 * fetching incomplete consultation requests.
+		 */
+        if (filter.getStatus()!=null && filter.getStatus().name().equalsIgnoreCase(ConsultationRequestSearchFilter.STATUS.Incomplete.name())) {
+	        sql.append("and (cr.status=").append(ConsultationRequestSearchFilter.STATUS.Nothing.getValue())
+			        .append(" or ").append("cr.status=").append(ConsultationRequestSearchFilter.STATUS.PendingSpecialist.getValue())
+			        .append(" or ").append("cr.status=").append(ConsultationRequestSearchFilter.STATUS.PendingPatient.getValue())
+			        .append(")");
+        /*
+         * When status is unset it is assumed all status' should be returned.
+         * This status is set to incomplete it is assumed that all status' except
+         * incomplete should be returned.
+         */
+		} else if(filter.getStatus()!=null){
+	        sql.append("and cr.status = '" + filter.getStatus().getValue() + "' ");
         }
 
         if (StringUtils.isNotBlank(filter.getTeam())) {
