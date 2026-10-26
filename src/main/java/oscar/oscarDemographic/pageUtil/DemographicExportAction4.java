@@ -3920,8 +3920,7 @@ public class DemographicExportAction4 extends Action {
 		for(ConsultationRequestSearchResult consultRequest : consultRequestList) {
 			try {
 				Path consultationRequestPDFPath = consultationManager.renderConsultationRequest(request, consultRequest);
-				Path exportPath = consultationRequestsDirectory.resolve(consultationRequestPDFPath.getFileName());
-				System.out.println("Moving consult request #" +consultRequest.getId() + " from: " + consultationRequestPDFPath + " to: " + exportPath);
+				Path exportPath = consultationRequestsDirectory.resolve("consultationRequest_" + demographic.getHin() + "_" + consultRequest.getId() + new Date().getTime() + ".pdf");
 				Files.move(consultationRequestPDFPath, exportPath, StandardCopyOption.REPLACE_EXISTING);
 				consoltationRequestPDFList.add(new Object[]{consultRequest, exportPath});
 			} catch (Exception e) {

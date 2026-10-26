@@ -27,19 +27,51 @@ import java.util.Date;
 
 public class ConsultationRequestSearchFilter {
 
-	public static enum SORTMODE {
+	public enum SORTMODE {
         Demographic, Service, Consultant, Team, Status, MRP, AppointmentDate, FollowUpDate ,ReferralDate, Urgency
 	}
 	
-	public static enum SORTDIR {
+	public enum SORTDIR {
         asc,desc
 	}
-	
-	
+
+	/**
+	 * Represents the various statuses that a consultation request can have.
+	 * This enum is used to track and manage the state of a consultation request throughout its lifecycle.
+	 *
+	 * Each status is assigned an ordinal value which can be used to represent the status
+	 * radio button selection in a consultation request form.
+	 *
+	 * The incomplete status is used as an indicator to fetch all statuses except complete.
+	 * There is no actual incomplete status in the form.
+	 */
+	public enum STATUS {
+		Nothing(1), PendingSpecialist(2), PendingPatient(3), Completed(4), Incomplete(5);
+
+		private final int value;
+
+		STATUS(int value) {
+			this.value = value;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public static STATUS fromValue(int value) {
+			for (STATUS s : values()) {
+				if (s.value == value) {
+					return s;
+				}
+			}
+			return null;
+		}
+	}
+
 	private Integer id;
 	private Date referralStartDate;
 	private Date referralEndDate;
-	private Integer status;
+	private STATUS status;
 	private String team;
 	private Date appointmentStartDate;
 	private Date appointmentEndDate;
@@ -70,10 +102,13 @@ public class ConsultationRequestSearchFilter {
 	public void setReferralEndDate(Date referralEndDate) {
 		this.referralEndDate = referralEndDate;
 	}
-	public Integer getStatus() {
+	public STATUS getStatus() {
 		return status;
 	}
-	public void setStatus(Integer status) {
+	/*
+	 * Default status is all status'
+	 */
+	public void setStatus(STATUS status) {
 		this.status = status;
 	}
 	public String getTeam() {
@@ -136,7 +171,7 @@ public class ConsultationRequestSearchFilter {
 	public void setNumToReturn(int numToReturn) {
 		this.numToReturn = numToReturn;
 	}
-	
-	
+
+
 	
 }

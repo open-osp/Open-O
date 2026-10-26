@@ -544,7 +544,7 @@ public class ConsultationWebService extends AbstractServiceImpl {
 		filter.setReferralEndDate(convertJSONDate((String)json.get("referralEndDate")));
 		filter.setReferralStartDate(convertJSONDate((String)json.get("referralStartDate")));
 		filter.setStartIndex((Integer)json.get("startIndex"));
-		filter.setStatus((Integer)json.get("status"));
+		filter.setStatus(ConsultationRequestSearchFilter.STATUS.fromValue((Integer)json.get("status")));
 		filter.setTeam((String)json.get("team"));
 		
 		JSONObject params = json.getJSONObject("params");
