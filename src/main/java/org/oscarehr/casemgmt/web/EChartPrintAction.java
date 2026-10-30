@@ -103,7 +103,7 @@ public class EChartPrintAction extends DispatchAction {
 		if(allergies.size()>0) {
 			printer.printAllergies(allergies);
 		}
-		printer.printRx(String.valueOf(demographic.getDemographicNo()));
+		printer.printRx(loggedInInfo, String.valueOf(demographic.getDemographicNo()));
 
 		printer.printPreventions();
 		printer.printTicklers(loggedInInfo);

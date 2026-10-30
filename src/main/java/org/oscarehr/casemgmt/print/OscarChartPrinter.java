@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.*;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -55,17 +56,8 @@ import org.oscarehr.common.dao.DemographicExtDao;
 import org.oscarehr.common.dao.DxresearchDAO;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.PreventionDao;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.CustomFilter;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicCust;
-import org.oscarehr.common.model.DemographicExt;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.Prevention;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Tickler;
+import org.oscarehr.common.model.*;
+import org.oscarehr.managers.PrescriptionManager;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
@@ -566,10 +558,11 @@ public class OscarChartPrinter {
 
 
 
-   public void printRx(String demoNo) throws DocumentException {
-        printRx(demoNo,null);
+    public void printRx(LoggedInInfo loggedInInfo, String demoNo) throws DocumentException {
+        printRx(loggedInInfo, demoNo,null);
     }
-    public void printRx(String demoNo,List<CaseManagementNote> cpp) throws DocumentException {
+
+    public void printRx(LoggedInInfo loggedInInfo, String demoNo,List<CaseManagementNote> cpp) throws DocumentException {
         if( demoNo == null )
             return;
         /*
@@ -578,11 +571,15 @@ public class OscarChartPrinter {
         else
             newPage = true;
         */
-        oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
-        arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo));
 
-        if(arr.length==0) {
+	    PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
+	    List<Drug> drugList = prescriptionManager.getUniqueDrugsByPatient(loggedInInfo, Integer.parseInt(demoNo));
+
+//        oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
+//        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
+//        arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo));
+
+        if(drugList == null || drugList.isEmpty()) {
         	return;
         }
 
@@ -596,21 +593,16 @@ public class OscarChartPrinter {
 
         Font normal = new Font(bf, FONTSIZE, Font.NORMAL);
 
-
-
         Font curFont;
-        for(int idx = 0; idx < arr.length; ++idx ) {
-            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = arr[idx];
+        for(Drug drug : drugList) {
             p = new Paragraph();
             p.setAlignment(Paragraph.ALIGN_LEFT);
-            if(drug.isCurrent() && !drug.isArchived() ){
-                curFont = normal;
-                phrase = new Phrase(LEADING, "", curFont);
-                phrase.add(formatter.format(drug.getRxDate()) + " - ");
-                phrase.add(drug.getFullOutLine().replaceAll(";", " "));
-                p.add(phrase);
-                document.add(p);
-            }
+            curFont = normal;
+            phrase = new Phrase(LEADING, "", curFont);
+            phrase.add(formatter.format(drug.getRxDate()) + " - ");
+            phrase.add(drug.getFullOutLine().replace(";", " "));
+            p.add(phrase);
+            document.add(p);
         }
 
     }

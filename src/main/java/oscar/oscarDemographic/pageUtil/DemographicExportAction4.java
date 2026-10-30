@@ -4052,7 +4052,7 @@ public class DemographicExportAction4 extends Action {
 			if(!allergies.isEmpty()) {
 				printer.printAllergies(allergies);
 			}
-			printer.printRx(String.valueOf(demographicNumber));
+			printer.printRx(loggedInInfo, String.valueOf(demographicNumber));
 
 			printer.printPreventions();
 			printer.printTicklers(loggedInInfo);
