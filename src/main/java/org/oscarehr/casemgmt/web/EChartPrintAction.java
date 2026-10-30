@@ -86,7 +86,6 @@ public class EChartPrintAction extends DispatchAction {
 		printer.printDocHeaderFooter();
 
 		printer.printMasterRecord();
-		printer.setNewPage(true);
 		printer.printAppointmentHistory();
 		printer.setNewPage(true);
 
@@ -117,8 +116,10 @@ public class EChartPrintAction extends DispatchAction {
 
 		List<CaseManagementNote> notes = this.caseManagementNoteDao.getMostRecentNotes(demographic.getDemographicNo());
 		notes = filterOutCpp(notes);
-		if(notes.size()>0)
+		if(notes.size()>0) {
+			printer.addSectionHeading("Encounter Notes");
 			printer.printNotes(notes, true);
+		}
 
 		printer.finish();
 
