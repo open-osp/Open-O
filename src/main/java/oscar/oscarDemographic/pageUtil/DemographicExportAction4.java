@@ -4035,7 +4035,6 @@ public class DemographicExportAction4 extends Action {
 			printer.printDocHeaderFooter();
 
 			printer.printMasterRecord();
-			printer.setNewPage(true);
 			printer.printAppointmentHistory();
 			printer.setNewPage(true);
 
@@ -4052,7 +4051,7 @@ public class DemographicExportAction4 extends Action {
 			if(!allergies.isEmpty()) {
 				printer.printAllergies(allergies);
 			}
-			printer.printRx(String.valueOf(demographicNumber));
+			printer.printRx(loggedInInfo, String.valueOf(demographicNumber));
 
 			printer.printPreventions();
 			printer.printTicklers(loggedInInfo);
@@ -4066,6 +4065,7 @@ public class DemographicExportAction4 extends Action {
 			List<CaseManagementNote> notes = cmm.getNotes(demographicNumber+"");
 			notes = filterOutCpp(notes);
 			if(!notes.isEmpty()) {
+				printer.addSectionHeading("Encounter Notes");
 				printer.printNotes(notes, true);
 			}
 			printer.finish();

@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -40,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.*;
 import org.oscarehr.PMmodule.dao.ProgramDao;
 import org.oscarehr.PMmodule.dao.ProviderDao;
@@ -55,17 +55,8 @@ import org.oscarehr.common.dao.DemographicExtDao;
 import org.oscarehr.common.dao.DxresearchDAO;
 import org.oscarehr.common.dao.OscarAppointmentDao;
 import org.oscarehr.common.dao.PreventionDao;
-import org.oscarehr.common.model.Admission;
-import org.oscarehr.common.model.Allergy;
-import org.oscarehr.common.model.Appointment;
-import org.oscarehr.common.model.CustomFilter;
-import org.oscarehr.common.model.Demographic;
-import org.oscarehr.common.model.DemographicCust;
-import org.oscarehr.common.model.DemographicExt;
-import org.oscarehr.common.model.Dxresearch;
-import org.oscarehr.common.model.Prevention;
-import org.oscarehr.common.model.Provider;
-import org.oscarehr.common.model.Tickler;
+import org.oscarehr.common.model.*;
+import org.oscarehr.managers.PrescriptionManager;
 import org.oscarehr.managers.TicklerManager;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.SpringUtils;
@@ -88,6 +79,18 @@ public class OscarChartPrinter {
     public final float FONTSIZE = 10;
     public final int NUMCOLS = 2;
 
+    private static final float MARGIN_SIDE = 40;
+    private static final float MARGIN_TOP = 60;
+    private static final float MARGIN_BOTTOM = 56;
+    private static final float MIN_SECTION_SPACE = 72;
+    private static final String NOT_RECORDED = "Not recorded";
+
+    private static final BaseColor ACCENT = new BaseColor(31, 58, 96);
+    private static final BaseColor TEXT_MUTED = new BaseColor(100, 100, 100);
+    private static final BaseColor RULE = new BaseColor(190, 190, 190);
+    private static final BaseColor HEADING_BG = new BaseColor(230, 235, 242);
+    private static final BaseColor ROW_ALT_BG = new BaseColor(246, 247, 249);
+
     private Demographic demographic;
     private String signingProvider;
 
@@ -100,8 +103,9 @@ public class OscarChartPrinter {
     private Document document;
     private BaseFont bf;
     private Font font, boldFont;
+    private Font titleFont, sectionFont, subSectionFont, labelFont, smallFont, tableHeaderFont, notRecordedFont;
+    private String clinicName = "";
     boolean newPage;
-    private PdfContentByte cb;
 
     private ProviderDao providerDao = (ProviderDao)SpringUtils.getBean(ProviderDao.class);
     private DemographicCustDao demographicCustDao = (DemographicCustDao)SpringUtils.getBean(DemographicCustDao.class);
@@ -112,17 +116,23 @@ public class OscarChartPrinter {
     private TicklerManager ticklerManager = SpringUtils.getBean(TicklerManager.class);
 
 	public OscarChartPrinter(OutputStream os) throws DocumentException, IOException {
-		document = new Document();
+		document = new Document(PageSize.LETTER, MARGIN_SIDE, MARGIN_SIDE, MARGIN_TOP, MARGIN_BOTTOM);
 		// writer = PdfWriterFactory.newInstance(document, os, FontSettings.HELVETICA_10PT);
 
 		writer = PdfWriter.getInstance(document, os);
 		writer.setPageEvent(new EndPage());
-		document.setPageSize(PageSize.LETTER);
-		document.open();
 		//Create the font we are going to print to
 		bf = BaseFont.createFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
 		font = new Font(bf, FONTSIZE, Font.NORMAL);
-		boldFont = new Font(bf,FONTSIZE,Font.BOLD);
+		boldFont = new Font(bf, FONTSIZE, Font.BOLD);
+		titleFont = new Font(bf, 15, Font.BOLD, ACCENT);
+		sectionFont = new Font(bf, 11, Font.BOLD, ACCENT);
+		subSectionFont = new Font(bf, FONTSIZE, Font.BOLD, ACCENT);
+		labelFont = new Font(bf, 8.5f, Font.BOLD, TEXT_MUTED);
+		smallFont = new Font(bf, 8.5f, Font.NORMAL, TEXT_MUTED);
+		tableHeaderFont = new Font(bf, 9, Font.BOLD, BaseColor.WHITE);
+		notRecordedFont = new Font(bf, FONTSIZE, Font.ITALIC, TEXT_MUTED);
+		document.open();
 	}
 
 	public OscarChartPrinter(HttpServletRequest request, OutputStream os) throws DocumentException,IOException {
@@ -170,10 +180,6 @@ public class OscarChartPrinter {
     public BaseFont getBaseFont() {
     	return bf;
     }
-    private Paragraph getParagraph(String value) {
-    	Paragraph p = new Paragraph(value,font);
-    	return p;
-    }
 
     public void finish() {
         document.close();
@@ -181,85 +187,68 @@ public class OscarChartPrinter {
 
 
 	public void printDocHeaderFooter() throws DocumentException {
-    	String headerTitle = demographic.getFormattedName() + " " + demographic.getAge() + " " + demographic.getSex() + " DOB:" + demographic.getFormattedDob();
-
-    	//set up document title and header
         ResourceBundle propResource = ResourceBundle.getBundle("oscarResources");
-        String title = propResource.getString("oscarEncounter.pdfPrint.title") + " " + (this.request != null ? (String) request.getAttribute("demoName") : demographic.getFormattedName()) + "\n";
-        String gender = propResource.getString("oscarEncounter.pdfPrint.gender") + " " + (this.request != null ? (String)  request.getAttribute("demoSex") : demographic.getSex()) + "\n";
-        String dob = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + (this.request != null ? (String)  request.getAttribute("demoDOB") : demographic.getFormattedDob()) + "\n";
-        String age = propResource.getString("oscarEncounter.pdfPrint.age") + " " + (this.request != null ? (String)  request.getAttribute("demoAge") : demographic.getAge()) + "\n";
-        String mrp = propResource.getString("oscarEncounter.pdfPrint.mrp") + " " + (this.request != null ? (String)  request.getAttribute("mrp") : demographic.getMrp()) + "\n";
-
-
-		String[] info = new String[] { title, gender, dob, age, mrp };
 
         ClinicData clinicData = new ClinicData();
         clinicData.refreshClinicData();
-        String[] clinic = new String[] {clinicData.getClinicName(), clinicData.getClinicAddress(),
-        clinicData.getClinicCity() + ", " + clinicData.getClinicProvince(),
-        clinicData.getClinicPostal(), clinicData.getClinicPhone()};
+        clinicName = nvl(clinicData.getClinicName());
 
         if( newPage ) {
             document.newPage();
             newPage=false;
         }
 
-        //Header will be printed at top of every page beginning with p2
-        Phrase headerPhrase = new Phrase(LEADING, title, font);
-        document.addHeader("", headerPhrase.getContent());
-
-        getDocument().add(headerPhrase);
-        getDocument().add(new Phrase("\n"));
-
-        Paragraph p = new Paragraph("Tel:"+demographic.getPhone(),getFont());
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-       // getDocument().add(p);
-
-        Paragraph p2 = new Paragraph("Date of Visit: ",getFont());
-        p2.setAlignment(Paragraph.ALIGN_RIGHT);
-       // getDocument().add(p);
-
-        PdfPTable table = new PdfPTable(2);
+        PdfPTable table = new PdfPTable(new float[] {55f, 45f});
         table.setWidthPercentage(100f);
-        table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-        PdfPCell cell1 = new PdfPCell(p);
-        cell1.setBorder(PdfPCell.NO_BORDER);
-        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-        PdfPCell cell2 = new PdfPCell(p2);
-        cell2.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell2.setBorder(PdfPCell.NO_BORDER);
-        table.addCell(cell1);
-        table.addCell(cell2);
 
-        getDocument().add(table);
+        //clinic details on the left
+        Paragraph clinic = new Paragraph();
+        clinic.add(new Phrase(clinicName + "\n", titleFont));
+        String cityLine = joinNonBlank(", ", clinicData.getClinicCity(), clinicData.getClinicProvince());
+        cityLine = joinNonBlank("  ", cityLine, clinicData.getClinicPostal());
+        clinic.add(new Phrase(LEADING, joinNonBlank("\n", clinicData.getClinicAddress(), cityLine), smallFont));
+        if(!isBlank(clinicData.getClinicPhone())) {
+        	clinic.add(new Phrase(LEADING, "\nTel: " + clinicData.getClinicPhone(), smallFont));
+        }
+        PdfPCell cell = new PdfPCell();
+        cell.addElement(clinic);
+        styleHeaderCell(cell);
+        table.addCell(cell);
 
-        table = new PdfPTable(3);
-        table.setWidthPercentage(100f);
-        table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-        cell1 = new PdfPCell(getParagraph("Signed Provider:" + ((signingProvider!=null)?signingProvider:"")));
-        cell1.setBorder(PdfPCell.NO_BORDER);
-        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-        cell2 = new PdfPCell(getParagraph("RFR:" ));
-        cell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-        cell2.setBorder(PdfPCell.NO_BORDER);
-        PdfPCell cell3 = new PdfPCell(getParagraph("Ref:"));
-        cell3.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        cell3.setBorder(PdfPCell.NO_BORDER);
-        table.addCell(cell1);
-        table.addCell(cell2);
-        table.addCell(cell3);
+        //patient summary on the right
+        Paragraph patient = new Paragraph();
+        patient.setAlignment(Element.ALIGN_RIGHT);
+        patient.add(new Phrase(nvl(demographic.getFormattedName()) + "\n", titleFont));
+        String line = propResource.getString("oscarEncounter.pdfPrint.dob") + " " + nvl(demographic.getFormattedDob())
+        		+ "   " + propResource.getString("oscarEncounter.pdfPrint.age") + " " + nvl(demographic.getAge())
+        		+ "   " + propResource.getString("oscarEncounter.pdfPrint.gender") + " " + nvl(demographic.getSex());
+        patient.add(new Phrase(LEADING, line, font));
+        String genderLine = joinNonBlank("   ",
+        		isBlank(demographic.getGender()) ? null : "Gender: " + demographic.getGender(),
+        		isBlank(demographic.getPronoun()) ? null : "Pronouns: " + demographic.getPronoun());
+        if(!isBlank(genderLine)) {
+        	patient.add(new Phrase(LEADING, "\n" + genderLine, font));
+        }
+        if(!isBlank(demographic.getHin())) {
+        	patient.add(new Phrase(LEADING, "\n" + propResource.getString("oscarEncounter.pdfPrint.phn") + " "
+        			+ joinNonBlank(" ", demographic.getHin(), demographic.getVer()), font));
+        }
+        String mrp = getProviderName(demographic.getProviderNo());
+        patient.add(new Phrase(LEADING, "\n" + propResource.getString("oscarEncounter.pdfPrint.mrp") + " "
+        		+ (isBlank(mrp) ? NOT_RECORDED : mrp), font));
+        cell = new PdfPCell();
+        cell.addElement(patient);
+        styleHeaderCell(cell);
+        table.addCell(cell);
 
-        getDocument().add(table);
+        table.setSpacingAfter(4f);
+        document.add(table);
 
-        //Write title with top and bottom borders on p1
-        cb = writer.getDirectContent();
-        cb.setColorStroke(new BaseColor(0,0,0));
-        cb.setLineWidth(0.5f);
-
-        cb.moveTo(document.left(), document.top() - (font.getCalculatedLeading(LINESPACING)*5f));
-        cb.lineTo(document.right(), document.top() - (font.getCalculatedLeading(LINESPACING)*5f));
-        cb.stroke();
+        if(signingProvider != null) {
+        	Paragraph signed = new Paragraph(LEADING, "Signed Provider: " + signingProvider, smallFont);
+        	signed.setAlignment(Element.ALIGN_RIGHT);
+        	document.add(signed);
+        }
     }
 
 
@@ -269,54 +258,37 @@ public class OscarChartPrinter {
             newPage=false;
         }
 
-        Paragraph p = null;
-        Phrase phrase = null;
+        addSectionHeading("Patient Information");
 
+        addSubSectionHeading("Demographics");
+        PdfPTable table = createFieldTable();
+        //name
+        addField(table, "Last Name", demographic.getLastName());
+        addField(table, "First Name", demographic.getFirstName());
+        addField(table, "Middle Name", demographic.getMiddleNames());
+        addField(table, "Preferred Name", demographic.getPrefName());
+        addRequiredField(table, "Title", demographic.getTitle());
+        table.completeRow();
+        //identity
+        addField(table, "Date of Birth", demographic.getFormattedDob());
+        addField(table, "Sex", demographic.getSex());
+        addField(table, "Gender", demographic.getGender());
+        addField(table, "Pronouns", demographic.getPronoun());
+        table.completeRow();
+        //language
+        addField(table, "Official Language", demographic.getOfficialLanguage());
+        addRequiredField(table, "Spoken Language", demographic.getSpokenLanguage());
+        addFieldTable(table);
 
-        p = new Paragraph();
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase = new Phrase(LEADING, "Patient Information", boldFont);
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-        phrase.add("Title: " + demographic.getTitle() + "\n");
-        phrase.add("Last Name: " + demographic.getLastName() + "\n");
-        phrase.add("First Name: " + demographic.getFirstName() + "\n");
-        phrase.add("Gender: " + demographic.getSex() + "\n");
-        phrase.add("Date of Birth: " + demographic.getFormattedDob() + "\n");
-        phrase.add("Offical Language: " + demographic.getOfficialLanguage()  + "\n");
-        phrase.add("Spoken Language: " + demographic.getSpokenLanguage() + "\n");
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-        phrase.add("Roster Status: " + demographic.getRosterStatus()+ "\n");
-        phrase.add("Date Rostered: " + "\n");
-        phrase.add("Patient Status: " + demographic.getPatientStatus() + "\n");
-        phrase.add("Chart No (MRN): " + demographic.getChartNo() + "\n");
-        if(demographic.getDateJoined()!=null) {
-        	phrase.add("Date Joined: " + formatter.format(demographic.getDateJoined())  + "\n");
-        }
-        if(demographic.getEndDate() != null) {
-        	phrase.add("End Date: " + formatter.format(demographic.getEndDate()) + "\n");
-        }
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-        phrase.add("Address: " + demographic.getAddress() + "\n");
-        phrase.add("City: " + demographic.getCity() + "\n");
-        phrase.add("Province: " + demographic.getProvince() + "\n");
-        phrase.add("Postal Code: " + demographic.getPostal() + "\n");
-        phrase.add("Email: " + demographic.getEmail()  + "\n");
-        phrase.add("Phone: " +  demographic.getPhone() + "\n");
+        addSubSectionHeading("Enrolment");
+        table = createFieldTable();
+        addRequiredField(table, "Roster Status", demographic.getRosterStatus());
+        addField(table, "Date Rostered", formatDate(demographic.getRosterDate()));
+        addField(table, "Patient Status", demographic.getPatientStatus());
+        addRequiredField(table, "Chart No (MRN)", demographic.getChartNo());
+        addField(table, "Date Joined", formatDate(demographic.getDateJoined()));
+        addField(table, "End Date", formatDate(demographic.getEndDate()));
+        addFieldTable(table);
 
         List<DemographicExt> exts = demographicExtDao.getDemographicExtByDemographicNo(demographic.getDemographicNo());
         String phoneExt = null;
@@ -330,83 +302,71 @@ public class OscarChartPrinter {
         	}
         }
 
-        phrase.add("Work Phone: " +  demographic.getPhone2());
-        if(phoneExt != null) {
-        	phrase.add(" ext:" + phoneExt + "\n");
-        }else {
-        	phrase.add("\n");
-        }
+        addSubSectionHeading("Contact");
+        table = createFieldTable();
+        addField(table, "Address", demographic.getAddress());
+        addField(table, "City", demographic.getCity());
+        addField(table, "Province", demographic.getProvince());
+        addField(table, "Postal Code", demographic.getPostal());
+        addField(table, "Phone", demographic.getPhone());
+        addField(table, "Work Phone", isBlank(phoneExt) ? demographic.getPhone2() : nvl(demographic.getPhone2()) + " ext: " + phoneExt);
+        addField(table, "Cell Phone", cell);
+        addField(table, "Email", demographic.getEmail());
+        addFieldTable(table);
 
-        if(cell!=null) {
-        	phrase.add("Cell Phone: " +  cell +  "\n");
-        }
-
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-        phrase.add("Health Insurance #: " + demographic.getHin() + "\n");
-        phrase.add("HC Type: " + demographic.getHcType() + "\n");
-        if(demographic.getEffDate() != null) {
-        	phrase.add("Eff Date: " + formatter.format(demographic.getEffDate())  + "\n");
-        }
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
+        addSubSectionHeading("Health Insurance");
+        table = createFieldTable();
+        addRequiredField(table, "Health Insurance #", demographic.getHin());
+        addRequiredField(table, "Version Code", demographic.getVer());
+        addField(table, "HC Type", demographic.getHcType());
+        addField(table, "Eff Date", formatDate(demographic.getEffDate()));
+        addFieldTable(table);
 
         DemographicCust demographicCust = demographicCustDao.find(demographic.getDemographicNo());
 
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-        phrase.add("Physician: " + getProviderName(demographic.getProviderNo()) + "\n");
+        addSubSectionHeading("Care Team");
+        table = createFieldTable();
+        addRequiredField(table, "Physician", getProviderName(demographic.getProviderNo()));
         if(demographicCust != null) {
-	        phrase.add("Nurse: " + getProviderName(demographicCust.getNurse()) + "\n");
-	        phrase.add("Midwife: " + getProviderName(demographicCust.getMidwife()) + "\n");
-	        phrase.add("Resident: " + getProviderName(demographicCust.getResident()) + "\n");
+	        addField(table, "Nurse", getProviderName(demographicCust.getNurse()));
+	        addField(table, "Midwife", getProviderName(demographicCust.getMidwife()));
+	        addField(table, "Resident", getProviderName(demographicCust.getResident()));
         }
-        phrase.add("Referral Doctor: " + getReferralDoctor(demographic.getFamilyDoctor()) + "\n");
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
+        addField(table, "Referral Doctor", getReferralDoctor(demographic.getFamilyDoctor()));
+        addFieldTable(table);
 
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
         //alerts & notes
         if(demographicCust != null) {
-	        phrase.add("Alerts: " + demographicCust.getAlert() + "\n");
-	        if(demographicCust.getNotes().length()>0) {
-	        	phrase.add("Notes: " + SxmlMisc.getXmlContent(demographicCust.getNotes(),"unotes") + "\n");
-	        }
+        	String alert = demographicCust.getAlert();
+        	String notes = (demographicCust.getNotes() != null && demographicCust.getNotes().length() > 0)
+        			? SxmlMisc.getXmlContent(demographicCust.getNotes(),"unotes") : null;
+        	if(!isBlank(alert) || !isBlank(notes)) {
+        		addSubSectionHeading("Alerts & Notes");
+        		table = createFieldTable(new float[] {18f, 82f});
+        		addField(table, "Alerts", alert);
+        		addField(table, "Notes", notes);
+        		addFieldTable(table);
+        	}
         }
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
 
         //relationships
-        p = new Paragraph();
-        phrase = new Phrase(LEADING, "", font);
-
         DemographicRelationship demoRel = new DemographicRelationship();
-        
 		List<Map<String,String>> demoR = demoRel.getDemographicRelationships(String.valueOf(demographic.getDemographicNo()));
-		for (int j=0; j<demoR.size(); j++) {
-		    Map<String,String> r = demoR.get(j);
-		    String relationDemographicNo = r.get("demographic_no");
-		    Demographic relationDemographic = demographicDao.getClientByDemographicNo(Integer.parseInt(relationDemographicNo));
-		    String relation = r.get("relation");
-		    String subDecisionMaker = r.get("sub_decision_maker");
-		    String emergencyContact = r.get("emergency_contact");
-		    String notes = r.get("notes");
-
-		    phrase.add(relation + " - " + relationDemographic.getFormattedName() +  " - " + subDecisionMaker + " - " + emergencyContact + " - " + notes+ "\n");
+		if(demoR != null && !demoR.isEmpty()) {
+			addSubSectionHeading("Relationships");
+			table = createDataTable(new float[] {16f, 26f, 14f, 14f, 30f}, "Relation", "Name", "Substitute Decision Maker", "Emergency Contact", "Notes");
+			for (int j=0; j<demoR.size(); j++) {
+			    Map<String,String> r = demoR.get(j);
+			    Demographic relationDemographic = demographicDao.getClientByDemographicNo(Integer.parseInt(r.get("demographic_no")));
+			    addDataRow(table, j,
+			    		r.get("relation"),
+			    		relationDemographic != null ? relationDemographic.getFormattedName() : "",
+			    		yesNo(r.get("sub_decision_maker")),
+			    		yesNo(r.get("emergency_contact")),
+			    		r.get("notes"));
+			}
+			document.add(table);
 		}
-        phrase.add("\n");
-        p.add(phrase);
-        document.add(p);
-
 	}
 
 	private String getReferralDoctor(String field) {
@@ -436,27 +396,27 @@ public class OscarChartPrinter {
 
 		List<Appointment> appts = appointmentDao.getAppointmentHistory(demographic.getDemographicNo());
 
-		PdfPTable table = new PdfPTable(6);
-        table.setWidthPercentage(100f);
-        table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-        table.addCell("Date");
-        table.addCell("From");
-        table.addCell("To");
-        table.addCell("Reason");
-        table.addCell("Provider");
-        table.addCell("Notes");
+		addSectionHeading("Appointment History");
 
+		if(appts == null || appts.isEmpty()) {
+			addEmptyNotice("No appointments on record.");
+			return;
+		}
+
+		PdfPTable table = createDataTable(new float[] {13f, 8f, 8f, 25f, 18f, 28f}, "Date", "From", "To", "Reason", "Provider", "Notes");
+		int row = 0;
         for(Appointment appt:appts) {
-	        table.addCell(generalCellForApptHistory(formatter.format(appt.getAppointmentDate())));
-	        table.addCell(generalCellForApptHistory(timeFormatter.format(appt.getStartTime())));
-	        table.addCell(generalCellForApptHistory(timeFormatter.format(appt.getEndTime())));
-	        table.addCell(generalCellForApptHistory(appt.getReason()));
 	        Provider apptProvider = providerDao.getProvider(appt.getProviderNo());
-	        table.addCell(generalCellForApptHistory(apptProvider != null ? apptProvider.getFormattedName() : appt.getProviderNo()));
-	        table.addCell(generalCellForApptHistory(appt.getNotes()));
+	        addDataRow(table, row++,
+	        		formatDate(appt.getAppointmentDate()),
+	        		appt.getStartTime() != null ? timeFormatter.format(appt.getStartTime()) : "",
+	        		appt.getEndTime() != null ? timeFormatter.format(appt.getEndTime()) : "",
+	        		appt.getReason(),
+	        		apptProvider != null ? apptProvider.getFormattedName() : appt.getProviderNo(),
+	        		appt.getNotes());
         }
 
-        getDocument().add(table);
+        document.add(table);
 	}
 
 
@@ -466,110 +426,206 @@ public class OscarChartPrinter {
       //  else
       //      newPage = true;
 
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-
-        Paragraph p = null;
-        Phrase phrase = null;
-
-
-        p = new Paragraph();
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase = new Phrase(LEADING, heading, obsfont);
-        p.add(phrase);
-        document.add(p);
+        addSectionHeading(heading);
         newPage = false;
         this.printNotes(notes,true);
 
     }
 
 
-
-
     public void printNotes(Collection<CaseManagementNote>notes, boolean compact) throws DocumentException{
 
-        CaseManagementNote note;
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Paragraph p;
-        Phrase phrase;
-        Chunk chunk;
-
-        //if( newPage )
-       //     document.newPage();
-       // else
-       //     newPage = true;
-
-        //Print notes
-        Iterator<CaseManagementNote> notesIter = notes.iterator();
-        while(notesIter.hasNext()) {
-        	note = notesIter.next();
-            p = new Paragraph();
-            //p.setSpacingBefore(font.leading(LINESPACING)*2f);
-            phrase = new Phrase(LEADING, "", font);
+        for(CaseManagementNote note : notes) {
+            Paragraph p = new Paragraph();
+            p.setLeading(LEADING);
+            p.setSpacingAfter(compact ? 4f : 8f);
 
             if(compact) {
-            	phrase.add(new Chunk(formatter.format(note.getObservation_date()) + ":"));
+            	p.add(new Chunk(formatDate(note.getObservation_date()) + "   ", boldFont));
             } else {
-            	chunk = new Chunk("Impression/Plan: (" + formatter.format(note.getObservation_date()) + ")\n", obsfont);
-            	phrase.add(chunk);
+            	p.add(new Chunk("Impression/Plan (" + formatDate(note.getObservation_date()) + ")\n", subSectionFont));
             }
-            if(compact) {
-            	phrase.add(note.getNote() + "\n");
-            } else {
-            	phrase.add(note.getNote() + "\n\n");
-            }
-            p.add(phrase);
+            p.add(new Chunk(nvl(note.getNote()).trim(), font));
             document.add(p);
         }
     }
 
     public void printBlankLine() throws DocumentException {
-    	Paragraph p = new Paragraph();
-    	p.add(new Phrase("\n"));
+    	Paragraph p = new Paragraph(LEADING, " ", font);
+    	p.setSpacingAfter(2f);
     	document.add(p);
-
     }
 
-	private PdfPCell generalCellForApptHistory(String text) {
-		Paragraph p = new Paragraph(text,getFont());
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        PdfPCell cell1 = new PdfPCell(p);
-        cell1.setBorder(PdfPCell.NO_BORDER);
-        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
-        return cell1;
+    /**
+     * Prints a full width section heading, used to start each major section of the chart.
+     */
+    public void addSectionHeading(String title) throws DocumentException {
+    	//don't strand a heading at the bottom of a page without any of its content
+    	if(writer.getVerticalPosition(true) - document.bottom() < MIN_SECTION_SPACE) {
+    		document.newPage();
+    	}
 
-	}
+    	PdfPTable table = new PdfPTable(1);
+    	table.setWidthPercentage(100f);
+    	table.setSpacingBefore(10f);
+    	table.setSpacingAfter(6f);
+
+    	PdfPCell cell = new PdfPCell(new Phrase(title.toUpperCase(), sectionFont));
+    	cell.setBackgroundColor(HEADING_BG);
+    	cell.setBorder(Rectangle.LEFT);
+    	cell.setBorderColor(ACCENT);
+    	cell.setBorderWidthLeft(3f);
+    	cell.setPaddingTop(4f);
+    	cell.setPaddingBottom(6f);
+    	cell.setPaddingLeft(8f);
+    	table.addCell(cell);
+
+    	document.add(table);
+    }
+
+    private void addSubSectionHeading(String title) throws DocumentException {
+    	PdfPTable table = new PdfPTable(1);
+    	table.setWidthPercentage(100f);
+    	table.setSpacingBefore(4f);
+    	table.setSpacingAfter(2f);
+
+    	PdfPCell cell = new PdfPCell(new Phrase(title, subSectionFont));
+    	cell.setBorder(Rectangle.BOTTOM);
+    	cell.setBorderColor(RULE);
+    	cell.setBorderWidthBottom(0.5f);
+    	cell.setPaddingLeft(0f);
+    	cell.setPaddingBottom(3f);
+    	table.addCell(cell);
+
+    	document.add(table);
+    }
+
+    private void addEmptyNotice(String text) throws DocumentException {
+    	Paragraph p = new Paragraph(LEADING, text, smallFont);
+    	p.setIndentationLeft(8f);
+    	document.add(p);
+    }
+
+    private void styleHeaderCell(PdfPCell cell) {
+    	cell.setBorder(Rectangle.BOTTOM);
+    	cell.setBorderColor(ACCENT);
+    	cell.setBorderWidthBottom(1.5f);
+    	cell.setPaddingLeft(0f);
+    	cell.setPaddingRight(0f);
+    	cell.setPaddingBottom(8f);
+    }
+
+    /**
+     * A label/value grid laid out as two label/value pairs per row.
+     */
+    private PdfPTable createFieldTable() throws DocumentException {
+    	return createFieldTable(new float[] {18f, 32f, 18f, 32f});
+    }
+
+    private PdfPTable createFieldTable(float[] widths) throws DocumentException {
+    	PdfPTable table = new PdfPTable(widths);
+    	table.setWidthPercentage(100f);
+    	table.setSpacingAfter(4f);
+    	//completeRow() pads with default cells, which must not draw borders
+    	table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+    	return table;
+    }
+
+    private void addField(PdfPTable table, String label, String value) {
+    	if(isBlank(value)) {
+    		return;
+    	}
+    	addFieldCells(table, label, new Phrase(value.trim(), font));
+    }
+
+    /**
+     * Like addField, but a blank value is printed as "Not recorded" so missing chart data is visible.
+     */
+    private void addRequiredField(PdfPTable table, String label, String value) {
+    	if(isBlank(value)) {
+    		addFieldCells(table, label, new Phrase(NOT_RECORDED, notRecordedFont));
+    	} else {
+    		addField(table, label, value);
+    	}
+    }
+
+    private void addFieldCells(PdfPTable table, String label, Phrase value) {
+    	PdfPCell labelCell = new PdfPCell(new Phrase(label, labelFont));
+    	labelCell.setBorder(Rectangle.NO_BORDER);
+    	labelCell.setPadding(2f);
+    	labelCell.setPaddingLeft(0f);
+    	table.addCell(labelCell);
+
+    	PdfPCell valueCell = new PdfPCell(value);
+    	valueCell.setBorder(Rectangle.NO_BORDER);
+    	valueCell.setPadding(2f);
+    	table.addCell(valueCell);
+    }
+
+    private void addFieldTable(PdfPTable table) throws DocumentException {
+    	table.completeRow();
+    	if(table.size() > 0) {
+    		document.add(table);
+    	} else {
+    		addEmptyNotice("No information recorded.");
+    	}
+    }
+
+    /**
+     * A bordered table with a shaded header row that repeats across pages.
+     */
+    private PdfPTable createDataTable(float[] widths, String... headers) throws DocumentException {
+    	PdfPTable table = new PdfPTable(widths);
+    	table.setWidthPercentage(100f);
+    	table.setSpacingAfter(6f);
+    	table.setHeaderRows(1);
+    	for(String header : headers) {
+    		PdfPCell cell = new PdfPCell(new Phrase(header, tableHeaderFont));
+    		cell.setBackgroundColor(ACCENT);
+    		cell.setBorderColor(ACCENT);
+    		cell.setPadding(4f);
+    		cell.setPaddingBottom(5f);
+    		table.addCell(cell);
+    	}
+    	return table;
+    }
+
+    private void addDataRow(PdfPTable table, int rowIndex, String... values) {
+    	for(String value : values) {
+    		PdfPCell cell = new PdfPCell(new Phrase(nvl(value), font));
+    		cell.setBorder(Rectangle.BOTTOM);
+    		cell.setBorderColor(RULE);
+    		cell.setBorderWidthBottom(0.5f);
+    		cell.setPadding(4f);
+    		if(rowIndex % 2 == 1) {
+    			cell.setBackgroundColor(ROW_ALT_BG);
+    		}
+    		table.addCell(cell);
+    	}
+    }
 
 
     public void printAllergies(List<Allergy> allergies) throws DocumentException {
 
-        Font obsfont = new Font(getBaseFont(), FONTSIZE, Font.UNDERLINE);
+        addSectionHeading("Allergies");
 
-        Paragraph p = new Paragraph();
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        Phrase phrase = new Phrase(LEADING, "\n", getFont());
-        p.add(phrase);
-        phrase = new Phrase(LEADING, "Allergies", obsfont);
-        p.add(phrase);
-        getDocument().add(p);
-
+        PdfPTable table = createDataTable(new float[] {30f, 45f, 12f, 13f}, "Allergen", "Reaction", "Severity", "Start Date");
+        int row = 0;
         for(Allergy allergy:allergies) {
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk(allergy.getDescription());
-    		phrase.add(chunk);
-    		p.add(phrase);
-    		getDocument().add(p);
+        	String startDate = formatDate(allergy.getStartDate());
+        	addDataRow(table, row++, allergy.getDescription(), allergy.getReaction(),
+        			isBlank(allergy.getSeverityOfReaction()) ? NOT_RECORDED : allergy.getSeverityOfReactionDesc(),
+        			isBlank(startDate) ? NOT_RECORDED : startDate);
         }
-        getDocument().add(new Phrase("\n",getFont()));
+        document.add(table);
     }
 
 
-
-
-   public void printRx(String demoNo) throws DocumentException {
-        printRx(demoNo,null);
+    public void printRx(LoggedInInfo loggedInInfo, String demoNo) throws DocumentException {
+        printRx(loggedInInfo, demoNo,null);
     }
-    public void printRx(String demoNo,List<CaseManagementNote> cpp) throws DocumentException {
+
+    public void printRx(LoggedInInfo loggedInInfo, String demoNo,List<CaseManagementNote> cpp) throws DocumentException {
         if( demoNo == null )
             return;
         /*
@@ -578,41 +634,39 @@ public class OscarChartPrinter {
         else
             newPage = true;
         */
-        oscar.oscarRx.data.RxPrescriptionData prescriptData = new oscar.oscarRx.data.RxPrescriptionData();
-        oscar.oscarRx.data.RxPrescriptionData.Prescription [] arr = {};
-        arr = prescriptData.getUniquePrescriptionsByPatient(Integer.parseInt(demoNo));
 
-        if(arr.length==0) {
+	    PrescriptionManager prescriptionManager = SpringUtils.getBean(PrescriptionManager.class);
+	    List<Drug> drugList = prescriptionManager.getUniqueDrugsByPatient(loggedInInfo, Integer.parseInt(demoNo));
+
+        if(drugList == null || drugList.isEmpty()) {
         	return;
         }
 
-        Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Prescriptions");
-        p.add(phrase);
-        document.add(p);
+        addSectionHeading("Prescriptions");
 
-        Font normal = new Font(bf, FONTSIZE, Font.NORMAL);
-
-
-
-        Font curFont;
-        for(int idx = 0; idx < arr.length; ++idx ) {
-            oscar.oscarRx.data.RxPrescriptionData.Prescription drug = arr[idx];
-            p = new Paragraph();
-            p.setAlignment(Paragraph.ALIGN_LEFT);
-            if(drug.isCurrent() && !drug.isArchived() ){
-                curFont = normal;
-                phrase = new Phrase(LEADING, "", curFont);
-                phrase.add(formatter.format(drug.getRxDate()) + " - ");
-                phrase.add(drug.getFullOutLine().replaceAll(";", " "));
-                p.add(phrase);
-                document.add(p);
-            }
+        PdfPTable table = createDataTable(new float[] {13f, 61f, 13f, 13f}, "Rx Date", "Prescription", "End Date", "Status");
+        int row = 0;
+        for(Drug drug : drugList) {
+        	addDataRow(table, row++,
+        			formatDate(drug.getRxDate()),
+        			nvl(drug.getFullOutLine()).replace(";", " "),
+        			formatDate(drug.getEndDate()),
+        			getDrugStatus(drug));
         }
+        document.add(table);
+    }
 
+    private String getDrugStatus(Drug drug) {
+    	if(drug.isArchived()) {
+    		return "Archived";
+    	}
+    	if(drug.isDiscontinued()) {
+    		return "Discontinued";
+    	}
+    	if(drug.isLongTerm()) {
+    		return "Long Term";
+    	}
+    	return drug.isCurrent() ? "Current" : "Expired";
     }
 
 
@@ -623,26 +677,14 @@ public class OscarChartPrinter {
         	return;
         }
 
-        Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Preventions");
-        p.add(phrase);
-        document.add(p);
+        addSectionHeading("Preventions");
 
+        PdfPTable table = createDataTable(new float[] {70f, 30f}, "Prevention", "Date");
+        int row = 0;
         for(Prevention prevention:preventions) {
-        	String type = prevention.getPreventionType();
-        	Date date = prevention.getPreventionDate();
-
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk(type + " " + formatter.format(date)+"\n");
-    		phrase.add(chunk);
-    		p.add(phrase);
-    		getDocument().add(p);
+        	addDataRow(table, row++, prevention.getPreventionType(), formatDate(prevention.getPreventionDate()));
         }
-
+        document.add(table);
     }
 
     public void printTicklers(LoggedInInfo loggedInInfo) throws DocumentException {
@@ -654,89 +696,72 @@ public class OscarChartPrinter {
     		return;
     	}
 
-    	Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Ticklers");
-        p.add(phrase);
-        document.add(p);
+    	addSectionHeading("Ticklers");
 
+    	PdfPTable table = createDataTable(new float[] {12f, 9f, 10f, 15f, 15f, 39f}, "Service Date", "Priority", "Status", "Provider", "Assignee", "Message");
+    	int row = 0;
         for(Tickler tickler:ticklers) {
-        	String providerName = tickler.getProvider().getFormattedName();
-        	String assigneeName = tickler.getAssignee().getFormattedName();
-        	String serviceDate = tickler.getServiceDateWeb();
-        	String priority = tickler.getPriority().toString();
-        	char status = tickler.getStatus().toString().charAt(0);
-        	String message = tickler.getMessage();
-
-
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk("Provider:" + providerName+ "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Assignee:" + assigneeName+ "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Service Date:" + serviceDate+ "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Priority:" + priority+ "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Status:" + status+ "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Message:" + message+ "\n\n");
-    		phrase.add(chunk);
-
-    		p.add(phrase);
-    		getDocument().add(p);
+        	addDataRow(table, row++,
+        			tickler.getServiceDateWeb(),
+        			tickler.getPriority() != null ? tickler.getPriority().toString() : "",
+        			getTicklerStatus(tickler.getStatus()),
+        			tickler.getProvider() != null ? tickler.getProvider().getFormattedName() : "",
+        			tickler.getAssignee() != null ? tickler.getAssignee().getFormattedName() : "",
+        			tickler.getMessage());
         }
+        document.add(table);
+    }
 
+    private String getTicklerStatus(Tickler.STATUS status) {
+    	if(status == null) {
+    		return "";
+    	}
+    	switch(status) {
+    		case A: return "Active";
+    		case C: return "Completed";
+    		case D: return "Deleted";
+    		default: return status.toString();
+    	}
     }
 
     public void printDiseaseRegistry() throws DocumentException {
     	DxresearchDAO dxDao = (DxresearchDAO)SpringUtils.getBean(DxresearchDAO.class);
     	IssueDAO issueDao = (IssueDAO)SpringUtils.getBean(IssueDAO.class);
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     	List<Dxresearch> dxs = dxDao.getDxResearchItemsByPatient(demographic.getDemographicNo());
 
     	if(dxs.size()==0) {
     		return;
     	}
-    	Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Disease Registry");
-        p.add(phrase);
-        document.add(p);
 
+    	addSectionHeading("Disease Registry");
+
+    	PdfPTable table = createDataTable(new float[] {14f, 56f, 20f, 10f}, "Start Date", "Issue", "Code", "Status");
+    	int row = 0;
         for(Dxresearch dx:dxs) {
         	String codingSystem = dx.getCodingSystem();
         	String code = dx.getDxresearchCode();
-        	Date startDate = dx.getStartDate();
-        	char status = dx.getStatus();
-
         	Issue issue = issueDao.findIssueByTypeAndCode(codingSystem, code);
 
-
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk("Start Date:" + formatter.format(startDate) + "\n");
-    		phrase.add(chunk);
-    		if(issue != null) {
-    			chunk = new Chunk("Issue:" + issue.getDescription()+ "\n");
-    			phrase.add(chunk);
-    		} else {
-    			chunk = new Chunk("Issue: <Unknown>"+ "\n");
-    			phrase.add(chunk);
-    		}
-    		chunk = new Chunk("Status:" + status+ "\n\n");
-			phrase.add(chunk);
-
-    		p.add(phrase);
-    		getDocument().add(p);
+        	addDataRow(table, row++,
+        			formatDate(dx.getStartDate()),
+        			issue != null ? issue.getDescription() : "<Unknown>",
+        			joinNonBlank(" ", codingSystem, code),
+        			getDxStatus(dx.getStatus()));
         }
+        document.add(table);
+    }
 
+    private String getDxStatus(Character status) {
+    	if(status == null) {
+    		return "";
+    	}
+    	switch(status) {
+    		case 'A': return "Active";
+    		case 'C': return "Resolved";
+    		case 'D': return "Deleted";
+    		default: return String.valueOf(status);
+    	}
     }
 
     public void printCurrentAdmissions() throws DocumentException {
@@ -748,41 +773,26 @@ public class OscarChartPrinter {
     	if(admissions.size()==0) {
     		return;
     	}
-    	Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Current Admissions");
-        p.add(phrase);
-        document.add(p);
 
+    	addSectionHeading("Current Admissions");
+
+    	PdfPTable table = createDataTable(new float[] {25f, 12f, 18f, 13f, 32f}, "Program", "Type", "Provider", "Admitted", "Admission Notes");
+    	int row = 0;
         for(Admission admission:admissions) {
-        	String admissionDate =admission.getAdmissionDate("yyyy-MM-dd");
-        	String admissionNotes = admission.getAdmissionNotes();
-        	String programName = programDao.getProgramName(admission.getProgramId());
-        	String programType = admission.getProgramType();
-        	String providerName = "unknown";
-			Provider provider = providerDao.getProvider(admission.getProviderNo());
-			if(provider != null) {
-				providerName = provider.getFormattedName();
-			}
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk("Summary:" + programName + "(" + programType + ")" + " by " + providerName + " on " + admissionDate + "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Admission Notes:" + admissionNotes+ "\n\n");
-			phrase.add(chunk);
-
-    		p.add(phrase);
-    		getDocument().add(p);
+        	String providerName = getProviderName(admission.getProviderNo());
+        	addDataRow(table, row++,
+        			programDao.getProgramName(admission.getProgramId()),
+        			admission.getProgramType(),
+        			isBlank(providerName) ? "unknown" : providerName,
+        			admission.getAdmissionDate("yyyy-MM-dd"),
+        			admission.getAdmissionNotes());
         }
-
+        document.add(table);
     }
 
     public void printPastAdmissions() throws DocumentException {
     	AdmissionDao admissionDao = (AdmissionDao)SpringUtils.getBean(AdmissionDao.class);
     	ProgramDao programDao = (ProgramDao)SpringUtils.getBean(ProgramDao.class);
-    	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     	List<Admission> admissions = admissionDao.getAdmissions(demographic.getDemographicNo());
     	admissions = filterOutCurrentAdmissions(admissions);
@@ -790,36 +800,24 @@ public class OscarChartPrinter {
     	if(admissions.size()==0) {
     		return;
     	}
-    	Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Past Admissions");
-        p.add(phrase);
-        document.add(p);
 
+    	addSectionHeading("Past Admissions");
+
+    	PdfPTable table = createDataTable(new float[] {18f, 9f, 15f, 11f, 18f, 11f, 18f},
+    			"Program", "Type", "Provider", "Admitted", "Admission Notes", "Discharged", "Discharge Notes");
+    	int row = 0;
         for(Admission admission:admissions) {
-        	String admissionDate =admission.getAdmissionDate("yyyy-MM-dd");
-        	String admissionNotes = admission.getAdmissionNotes();
-        	String programName = programDao.getProgramName(admission.getProgramId());
-        	String programType = admission.getProgramType();
-        	String providerName = providerDao.getProvider(admission.getProviderNo()).getFormattedName();
-        	String dischargeDate = formatter.format(admission.getDischargeDate());
-        	String dischargeNotes = admission.getDischargeNotes();
-
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk("Summary:" + programName + "(" + programType + ")" + " by " + providerName + " on " + admissionDate + "\n");
-    		phrase.add(chunk);
-    		chunk = new Chunk("Admission Notes:" + admissionNotes+ "\n\n");
-			phrase.add(chunk);
-			chunk = new Chunk("Discharged on " + dischargeDate + ", Notes:" + dischargeNotes+ "\n\n");
-			phrase.add(chunk);
-
-    		p.add(phrase);
-    		getDocument().add(p);
+        	String providerName = getProviderName(admission.getProviderNo());
+        	addDataRow(table, row++,
+        			programDao.getProgramName(admission.getProgramId()),
+        			admission.getProgramType(),
+        			isBlank(providerName) ? "unknown" : providerName,
+        			admission.getAdmissionDate("yyyy-MM-dd"),
+        			admission.getAdmissionNotes(),
+        			formatDate(admission.getDischargeDate()),
+        			admission.getDischargeNotes());
         }
-
+        document.add(table);
     }
 
     public void printCurrentIssues() throws  DocumentException {
@@ -827,24 +825,18 @@ public class OscarChartPrinter {
 
     	List<CaseManagementIssue> issues = cmIssueDao.getIssuesByDemographic(String.valueOf(demographic.getDemographicNo()));
 
-    	Paragraph p = new Paragraph();
-        Font obsfont = new Font(bf, FONTSIZE, Font.UNDERLINE);
-        Phrase phrase = new Phrase(LEADING, "", obsfont);
-        p.setAlignment(Paragraph.ALIGN_LEFT);
-        phrase.add("Current Issues");
-        p.add(phrase);
-        document.add(p);
+    	addSectionHeading("Current Issues");
+
+    	if(issues == null || issues.isEmpty()) {
+    		addEmptyNotice("No current issues.");
+    		return;
+    	}
 
         for(CaseManagementIssue issue:issues) {
-        	String description = issue.getIssue().getDescription();
-
-        	p = new Paragraph();
-    		phrase = new Phrase(LEADING, "", getFont());
-    		Chunk chunk = new Chunk(description + "\n\n");
-    		phrase.add(chunk);
-
-    		p.add(phrase);
-    		getDocument().add(p);
+        	Paragraph p = new Paragraph(LEADING, "•  " + nvl(issue.getIssue().getDescription()), font);
+        	p.setIndentationLeft(8f);
+        	p.setSpacingAfter(2f);
+        	document.add(p);
         }
 
     }
@@ -859,12 +851,48 @@ public class OscarChartPrinter {
     	return results;
     }
 
+    private String formatDate(Date date) {
+    	return date != null ? formatter.format(date) : "";
+    }
+
+    private static String nvl(String value) {
+    	return (value == null || "null".equalsIgnoreCase(value)) ? "" : value;
+    }
+
+    private static boolean isBlank(String value) {
+    	return nvl(value).trim().isEmpty();
+    }
+
+    private static String yesNo(String value) {
+    	if(isBlank(value)) {
+    		return "";
+    	}
+    	String v = value.trim();
+    	return ("1".equals(v) || "true".equalsIgnoreCase(v) || "yes".equalsIgnoreCase(v) || "y".equalsIgnoreCase(v)) ? "Yes" : "No";
+    }
+
+    private static String joinNonBlank(String separator, String... values) {
+    	StringBuilder sb = new StringBuilder();
+    	for(String value : values) {
+    		if(isBlank(value)) {
+    			continue;
+    		}
+    		if(sb.length() > 0) {
+    			sb.append(separator);
+    		}
+    		sb.append(value.trim());
+    	}
+    	return sb.toString();
+    }
+
     /*
-     *Used to print footers on each page
+     *Used to print the running header and footer on each page
      */
     class EndPage extends PdfPageEventHelper {
         private Date now;
         private String promoTxt;
+        private PdfTemplate totalPages;
+        private int lastPageNumber;
 
         public EndPage() {
             now = new Date();
@@ -874,26 +902,57 @@ public class OscarChartPrinter {
             }
         }
 
+        @Override
+        public void onOpenDocument(PdfWriter writer, Document document) {
+            totalPages = writer.getDirectContent().createTemplate(30, 12);
+        }
+
+        @Override
         public void onEndPage( PdfWriter writer, Document document ) {
-            //Footer contains page numbers and date printed on all pages
             PdfContentByte cb = writer.getDirectContent();
             cb.saveState();
 
-            String strFooter = promoTxt + " " + formatter.format(now);
+            float left = document.left();
+            float right = document.right();
+            lastPageNumber = writer.getPageNumber();
 
-            float textBase = document.bottom();
-            cb.beginText();
-            cb.setFontAndSize(font.getBaseFont(),FONTSIZE);
-            Rectangle page = document.getPageSize();
-            float width = page.getWidth();
+            //Running header with patient identifiers on every page after the first
+            if(lastPageNumber > 1 && demographic != null) {
+                float headerBase = document.top() + 16;
+                String patient = joinNonBlank("   |   ", demographic.getFormattedName(),
+                		isBlank(demographic.getFormattedDob()) ? null : "DOB: " + demographic.getFormattedDob(),
+                		isBlank(demographic.getHin()) ? null : "HIN: " + demographic.getHin());
+                ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(patient, labelFont), left, headerBase, 0);
+                ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase(clinicName, smallFont), right, headerBase, 0);
+                drawRule(cb, left, right, headerBase - 5);
+            }
 
-            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase - 20, 0);
+            //Footer with print date and page numbers
+            float footerBase = document.bottom() - 24;
+            drawRule(cb, left, right, footerBase + 11);
 
-            strFooter = "-" + writer.getPageNumber() + "-";
-            cb.showTextAligned(PdfContentByte.ALIGN_CENTER, strFooter, (width/2.0f), textBase-10, 0);
+            String strFooter = joinNonBlank("   |   ", "Confidential", "Printed " + formatter.format(now), promoTxt);
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, new Phrase(strFooter, smallFont), left, footerBase, 0);
 
-            cb.endText();
+            //trailing whitespace is trimmed by showTextAligned, so leave a gap before the total page template
+            float totalWidth = 14f;
+            ColumnText.showTextAligned(cb, Element.ALIGN_RIGHT, new Phrase("Page " + lastPageNumber + " of", smallFont), right - totalWidth - 3f, footerBase, 0);
+            cb.addTemplate(totalPages, right - totalWidth, footerBase);
+
             cb.restoreState();
+        }
+
+        @Override
+        public void onCloseDocument(PdfWriter writer, Document document) {
+            ColumnText.showTextAligned(totalPages, Element.ALIGN_LEFT, new Phrase(String.valueOf(lastPageNumber), smallFont), 0, 0, 0);
+        }
+
+        private void drawRule(PdfContentByte cb, float left, float right, float y) {
+            cb.setColorStroke(RULE);
+            cb.setLineWidth(0.5f);
+            cb.moveTo(left, y);
+            cb.lineTo(right, y);
+            cb.stroke();
         }
     }
 
