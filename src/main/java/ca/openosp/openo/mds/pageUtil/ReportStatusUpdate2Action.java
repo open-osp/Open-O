@@ -28,6 +28,7 @@ package ca.openosp.openo.mds.pageUtil;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.Logger;
 import ca.openosp.openo.commn.dao.PatientLabRoutingDao;
 import ca.openosp.openo.commn.model.PatientLabRouting;
+import ca.openosp.openo.commn.model.ProviderLabRoutingModel;
+import ca.openosp.openo.managers.LabManager;
 import ca.openosp.openo.managers.SecurityInfoManager;
 import ca.openosp.openo.utility.LoggedInInfo;
 import ca.openosp.openo.utility.MiscUtils;
@@ -62,6 +65,7 @@ public class ReportStatusUpdate2Action extends ActionSupport {
     private static Logger logger = MiscUtils.getLogger();
 
     private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private LabManager labManager = SpringUtils.getBean(LabManager.class);
 
     public ReportStatusUpdate2Action() {
     }
@@ -77,8 +81,8 @@ public class ReportStatusUpdate2Action extends ActionSupport {
     }
 
     public String executemain() {
-
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(request), "_lab", "w", null)) {
+        LoggedInInfo loggedInInfo = LoggedInInfo.getLoggedInInfoFromSession(request);
+        if (!securityInfoManager.hasPrivilege(loggedInInfo, "_lab", "w", null)) {
             throw new SecurityException("missing required sec object (_lab)");
         }
 
@@ -102,7 +106,10 @@ public class ReportStatusUpdate2Action extends ActionSupport {
                 int i = 0;
                 int idNum = Integer.parseInt(id[i]);
                 while (idNum != labNo) {
-                    CommonLabResultData.updateReportStatus(idNum, providerNo, 'F', "", lab_type);
+                    List<ProviderLabRoutingModel> providerLabRoutingModels = labManager.findByLabNoAndLabTypeAndProviderNo(loggedInInfo, idNum, lab_type, providerNo);
+                    if (providerLabRoutingModels.isEmpty() || !"A".equals(providerLabRoutingModels.get(0).getStatus())) {
+                        CommonLabResultData.updateReportStatus(idNum, providerNo, 'F', "", lab_type);
+                    }
                     i++;
                     idNum = Integer.parseInt(id[i]);
                 }

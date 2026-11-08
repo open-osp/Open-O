@@ -23,114 +23,113 @@
     Ontario, Canada
 
 --%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/security.tld" prefix="security" %>
 
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/casemgmt/taglibs.jsp" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.util.ResourceBundle"%>
-<%@ page import="org.owasp.encoder.Encode" %>
+<c:set var="roleName" value="${sessionScope.userrole},${sessionScope.user}" />
 
-<%
-    if (session.getValue("user") == null)
-        response.sendRedirect(request.getContextPath() + "/logout.htm");
-    String curUser_no;
-    curUser_no = (String) session.getAttribute("user");
-    String tite = (String) request.getAttribute("provider.title");
+<security:oscarSec roleName="${roleName}" objectName="_lab" rights="w" reverse="true">
+    <c:redirect url="../securityError.jsp">
+        <c:param name="type" value="_lab" />
+    </c:redirect>
+</security:oscarSec>
 
-    ResourceBundle bundle = ResourceBundle.getBundle("oscarResources", request.getLocale());
-
-    String providertitle = (String) request.getAttribute("providertitle");
-    String providermsgPrefs = (String) request.getAttribute("providermsgPrefs");
-    String providermsgProvider = (String) request.getAttribute("providermsgProvider");
-    String providermsgEdit = (String) request.getAttribute("providermsgEdit");
-    String providermsgSuccess = (String) request.getAttribute("providermsgSuccess");
-%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
-<c:set var="ctx" value="${pageContext.request.contextPath}"
-       scope="request"/>
+<!DOCTYPE html>
 <html>
-    <head>
-        <script type="text/javascript" src="<%= request.getContextPath() %>/js/global.js"></script>
-        <base href="<%= request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/" %>">
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><%=Encode.forHtml(String.valueOf(bundle.getString(providertitle)))%></title>
+<head>
+    <title>Manage Comment Box When Acknowledging Labs</title>
 
-        <link rel="stylesheet" type="text/css"
-              href="<%= request.getContextPath() %>/oscarEncounter/encounterStyles.css">
-        <!-- calendar stylesheet -->
-        <link rel="stylesheet" type="text/css" media="all"
-              href="<c:out value="${ctx}"/>/share/calendar/calendar.css"
-              title="win2k-cold-1">
+    <link href="${pageContext.servletContext.contextPath}/library/bootstrap/5.0.2/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="${pageContext.servletContext.contextPath}/library/jquery/jquery-3.6.4.min.js"></script>
+    <script src="${pageContext.servletContext.contextPath}/library/bootstrap/5.0.2/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<jsp:include page="../images/spinner.jsp" flush="true"/>
 
-        <script src="<c:out value="${ctx}"/>/share/javascript/prototype.js"
-                type="text/javascript"></script>
-        <script src="<c:out value="${ctx}"/>/share/javascript/scriptaculous.js"
-                type="text/javascript"></script>
+<div class="container py-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Manage Comment Box When Acknowledging Labs</h5>
+        </div>
+        <div class="card-body">
 
-        <!-- main calendar program -->
-        <script type="text/javascript"
-                src="<c:out value="${ctx}"/>/share/calendar/calendar.js"></script>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="disableComment"
+                       <c:if test="${disableComment}">checked</c:if>>
+                <label class="form-check-label" for="disableComment">
+                    Do you want to disable the comment box before acknowledging labs?
+                </label>
+                <div class="form-text text-muted">(default: no)</div>
+            </div>
 
-        <!-- language for the calendar -->
-        <script type="text/javascript"
-                src="<c:out value="${ctx}"/>/share/calendar/lang/<fmt:setBundle basename="oscarResources"/><fmt:message key="global.javascript.calendar"/>"></script>
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="offerFileForOthers"
+                       <c:if test="${offerFileForOthers}">checked</c:if>>
+                <label class="form-check-label" for="offerFileForOthers">
+                    Automatically expand "File Document on Behalf of Others" in comment box
+                </label>
+                <div class="form-text text-muted">(default: no)</div>
+            </div>
 
-        <!-- the following script defines the Calendar.setup helper function, which makes
-                       adding a calendar a matter of 1 or 2 lines of code. -->
-        <script type="text/javascript"
-                src="<c:out value="${ctx}"/>/share/calendar/calendar-setup.js"></script>
-        <script type="text/javascript">
-            function setup() {
-                Calendar.setup({
-                    inputField: "staleDate",
-                    ifFormat: "%Y-%m-%d",
-                    showsTime: false,
-                    button: "staleDate_cal",
-                    singleClick: true,
-                    step: 1
-                });
+            <div class="form-check form-switch mb-3">
+                <input class="form-check-input" type="checkbox" id="allowOthersFileForYou"
+                       <c:if test="${allowOthersFileForYou}">checked</c:if>>
+                <label class="form-check-label" for="allowOthersFileForYou">
+                    Allow other providers to file results on your behalf when they acknowledge HL7 lab results
+                </label>
+                <div class="form-text text-muted">(default: no)</div>
+            </div>
+
+            <div id="successMessage" class="alert alert-success d-none" role="alert">
+                Preferences updated successfully.
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updatePreference(methodName, key, value) {
+        ShowSpin(true);
+        jQuery.ajax({
+            url: '${pageContext.request.contextPath}/setProviderStaleDate.do?method=' + methodName,
+            method: 'POST',
+            data: {
+                key: key,
+                value: value
+            },
+            success: function (response) {
+                const status = response.status;
+                jQuery('#' + key).prop('checked', status);
+                const msg = jQuery('#successMessage');
+                msg.removeClass('d-none');
+                setTimeout(() => msg.addClass('d-none'), 3000);
+            },
+            error: function (xhr, status, error) {
+                alert("Error updating preference: " + error);
+                jQuery('#' + key).prop('checked', !value);
+            },
+            complete: function () {
+                HideSpin();
             }
+        });
+    }
 
-            function validate() {
-                var date = document.getElementById("staleDate");
-                if (date.value == "") {
-                    alert("Please select a date before saving");
-                    return false;
-                }
+    jQuery(function () {
+        jQuery('#disableComment').on('change', function () {
+            updatePreference('setDisableAckCommentPref', 'disableComment', this.checked);
+        });
 
-                return true;
-            }
-        </script>
+        jQuery('#offerFileForOthers').on('change', function () {
+            updatePreference('setOfferFileForOthersPref', 'offerFileForOthers', this.checked);
+        });
 
-    </head>
+        jQuery('#allowOthersFileForYou').on('change', function () {
+            updatePreference('setAllowOthersFileForYouPref', 'allowOthersFileForYou', this.checked);
+        });
+    });
+</script>
 
-    <body class="BodyStyle" vlink="#0000FF">
-
-    <table class="MainTable" id="scrollNumber1" name="encounterTable">
-        <tr class="MainTableTopRow">
-            <td class="MainTableTopRowLeftColumn"><%=Encode.forHtml(String.valueOf(bundle.getString(providermsgPrefs)))%></td>
-            <td style="color: white" class="MainTableTopRowRightColumn"><%=Encode.forHtml(String.valueOf(bundle.getString(providermsgProvider)))%></td>
-        </tr>
-        <tr>
-            <td class="MainTableLeftColumn">&nbsp;</td>
-            <td class="MainTableRightColumn">
-                <%if (request.getAttribute("status") == null) {%>
-                <%=Encode.forHtml(String.valueOf(bundle.getString(providermsgEdit)))%>
-                <form action="${pageContext.request.contextPath}/setProviderStaleDate.do" method="post">
-                    <input type="hidden" name="method" value="<c:out value="${method}"/>">
-                    <input type="checkbox" name="labAckCommentProperty.checked" <c:if test="${labAckComment.checked}">checked</c:if> />Disable Comment on Acknowledgement
-                    <br/>
-                    <input type="submit" name="btnApply" value="Apply" />
-                    <%--  <input type="submit" value="<%=Encode.forHtmlAttribute(String.valueOf(bundle.getString(providerbtnSubmit)))%>" />--%>
-                </form> <%} else {%> <%=Encode.forHtml(String.valueOf(bundle.getString(providermsgSuccess)))%> <br>
-                <%}%>
-            </td>
-        </tr>
-        <tr>
-            <td class="MainTableBottomRowLeftColumn"></td>
-            <td class="MainTableBottomRowRightColumn"></td>
-        </tr>
-    </table>
-    </body>
+</body>
 </html>

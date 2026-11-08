@@ -61,8 +61,17 @@
                     <param name="enforcingMode">false</param>
                     <param name="exemptedPaths"/>
                 </interceptor-ref>
+                <!--
+                    COOP disabled. The Struts 6.8 default emits
+                    "Cross-Origin-Opener-Policy: same-origin" on every .do response,
+                    which isolates the popup from its opener JSP and breaks the
+                    named-window pattern window.open(url, "encounter", ...).
+                    Result: clicking E / Rx / T / C on patient search opens a new
+                    window every time instead of reusing the existing popup.
+                    Re-enable only when openers (JSPs) also send a compatible COOP.
+                -->
                 <interceptor-ref name="coop">
-                    <param name="disabled">false</param>
+                    <param name="disabled">true</param>
                     <param name="exemptedPaths"/>
                     <param name="mode">same-origin</param>
                 </interceptor-ref>
